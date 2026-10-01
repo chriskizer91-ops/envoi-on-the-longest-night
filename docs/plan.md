@@ -1,59 +1,67 @@
-# Build Plan: One Demo at a Time
+# Build Plan
 
-Chris wants to see each aspect working on its own before everything is put together. Every step below ends in a demo: one web page, published as a private link he can open on his phone. Each demo is also saved in this repo.
+Chris wants to see each piece working on its own before anything is put together, and every model finished before anything else is built. Every step ends in a demo page he can open on his phone, published as a private link and saved in this repo.
 
-Status: proposed, October 1, 2026. Nothing is built yet.
+Updated October 1, 2026, after the lore answers (`lore/lore-answers-2026-10-01.md`).
 
-## How each demo works
+## Phase 1: the models
 
-- **One page.** The same single-file format as the demos Chris made, with three.js r128 loaded from cdnjs.
-- **Built from bricks.** The code lives in small files (one per model, rules, battle, walking, airship), and a build step stitches them into the page. A later demo reuses the bricks from earlier ones instead of copying code.
-- **Easy to judge by eye.** Model pages get a before/after switch. Pieces borrowed from other repos (the pixel walker especially) get live sliders, so Chris can tune the look himself and tell me the settings he likes.
-- **Checked before it ships.** Each page is rendered headless and screenshotted, and the battle rules have tests and a balance simulator.
+A model is finished when:
 
-## The steps
+- it looks as close to its concept art as code-built 3D allows;
+- every attack, summon and reaction it will use in the game works, with hit times that match the motion;
+- it follows the Model Build Spec interface and stays inside its budget, so a battle with five of them on screen runs on a phone;
+- its demo shows it **in a battle setting**: the Night square, with its opponents standing in their battle places. There is a button for each action, hit markers and damage numbers where the blows land, and a before/after switch against the old model.
 
-Models and systems alternate, so every step shows something new and the early steps don't wait on the lore conversation.
-
-| # | Demo | What it shows | Needs from Chris |
+| # | Step | What changes | Waiting on |
 |---|---|---|---|
-| 1 | **The cast** | All seven models side by side at true scale under the game's lighting, a turntable, and a button for every action. Each touch-up lands here with a before/after switch. | Nothing |
-| 2 | **The Witch and the Wraith, ready for battle** | Both models on the shared model interface. The Witch looks and moves exactly as now (checked pixel for pixel); the Wraith gets its polish. | Nothing |
-| 3 | **The first fight** | The Night square battle rebuilt on the bricks: the Witch alone against a Shadow Wraith. Set damage with a swing instead of dice, a fight you can lose, and experience and a level-up screen at the end. | Nothing |
-| 4 | **Noctara, touched up** | The biggest model upgrade (see `model-review.md`). | Which sheet she should follow: `noctara-model-sheet-a.png` (simpler robe) or `-b.png` (gold filigree) |
-| 5 | **Sol, touched up** | A better face, bronze armor, the sun crest. | Her model and action sheets, if he still has them |
-| 6 | **The party** | The Witch and Sol against a pack of wraiths: Heat and Sunburn, healing, enemy targeting, and Lunara (touched up) as the summon. | Nothing |
-| 7 | **Walking** | The pixel Witch, drawn in code to match her 3D outfit, walking on a painted map with d-pad and tap-to-walk. She crosses to a second screen and bumps a visible wraith, and the 3D battle starts in the same place. Sliders for her pixel look and the map's lighting. | Nothing to start: it can use the Night square painting and an existing Wickhollow painting |
-| 8 | **The Magpie** | The airship ported to the same three.js as everything else, flying a painted world map between four landing places, with wilderness spots to discover. Landing switches to walking. | The four places (lore conversation), then a world map painting |
-| 9 | **Envoi** | The touched-up wyrm, and the summon in battle at mid-game strength, growing with the Witch's level. | Its sheets, if he still has them; how it works now (lore questions 11 and 12) |
-| 10 | **The knight's ambush** | The unwinnable fight against Halcyon. He breaks off before the Witch falls. | Man or woman (lore question 1); his sheets, if he still has them |
-| 11 | **The final battle** | Noctara with Halcyon at her side: Blackout, Void Sphere, Frost Dust and Crown Shards, tuned so a player who plays it well wins about half the time. | Where it happens (lore question 9) and a backdrop painting |
-| 12 | **The game** | The steps joined from title to ending: the story from the lore breakdown, saves, menus, music. | The lore breakdown, and paintings for each place |
+| 1 | **The shared bench** | One battle-bench page that every model plugs into, a build step that turns it into a single file, and the current models moved into their own files unchanged | Nothing |
+| 2 | **Noctara** | Face, sheer veil, sculpted collar, gold filigree, a star-filled lining, a fuller build with fewer draw calls (see `model-review.md`) | Nothing |
+| 3 | **Lunara** | Face, hair and gown from her sheet, less glare, the scale from the Envoi scenes, and the Embrace action | Nothing |
+| 4 | **Shadow Wraith** | Tattered robe, hands and scythe in soul-green, a pale moth rising on defeat, a tougher look at higher levels | Nothing; the optional green sheet helps |
+| 5 | **Great wraith** | The wraith at three times the size, with stolen lamplight inside | Its concept sheet |
+| 6 | **Halcyon** | Cold blue eyes and blade edge, a retreat into the dark, a moth rising at the very end | Nothing; her sheets help |
+| 7 | **The Witch** | Technical only: the shared interface and fewer draw calls. Checked pixel for pixel so nothing visible changes | Nothing |
+| 8 | **Sol** | Face, bronze armor, the sun crest | Her sheets |
+| 9 | **Envoi** | Paper-lantern body, a bigger head and seal, the scale and low coil from the Envoi scenes | Its sheets |
+| 10 | **Wisp** | A new model, with its frost variant | Its sheets |
+| 11 | **The cast** | Everyone together at true scale, every action playable | Steps 2 to 10 |
 
-The lower-level foe slots in once it is designed (lore question 16): its art sheets, then its model, then it joins the party fights and the wilderness.
+The sheets are requested in `art-requests/01-model-sheets.md`. Steps 2, 3, 4, 6 and 7 can start now. The rest start when their sheets arrive.
 
-## Travel, as proposed
+## Phase 2: battles
 
-Chris's direction: about four places the Magpie flies between, wilderness between them that can be walked but slowly, and not much running around. The proposal to try in demos 7 and 8:
+Rules live in data tables, with set damage and a random swing instead of dice, and a balance simulator that plays thousands of fights to check win rates.
 
-- **Each place** is a handful of painted walking screens: a town, a ruin, the final stronghold.
-- **The world map** is one painting of the whole region, crossed two ways:
-  - **By air:** the Magpie flies it freely and lands at the four places. It's fast and has no fights.
-  - **On foot:** the pixel Witch can walk the same map, slowly. Visible foes roam it, and discovery spots (hidden places, items, people) sit off the main routes.
-- **Quests always name the next place,** so the player never has to wander to find the story.
+| # | Demo | What it shows |
+|---|---|---|
+| 12 | The first fight | The Witch alone against a Shadow Wraith in the Night square, at level 1. You can lose. Experience and a level-up at the end. |
+| 13 | The party | The Witch and Sol against wisps and wraiths at a chosen level: Heat and Sunburn, healing, Lunara. |
+| 14 | The ambush | Halcyon, unwinnable. Sol steps in front of the Witch, and Halcyon leaves. |
+| 15 | The great wraith | The Bogmire boss at about level 10. |
+| 16 | Halcyon | The winnable fight at about level 20, with the Kestrel story command, ending in her retreat. Envoi is in the summon menu. |
+| 17 | The final battle | Noctara with Halcyon at the dead Moonwell: Blackout, Void Sphere, Frost Dust and Crown Shards, and Envoi's ward and strike. Tuned so a player who plays it well wins about half the time. |
 
-## Art Chris will be asked for
+## Phase 3: travel
 
-Prompts go in `docs/art-requests/` as markdown, as each one becomes needed:
+Like FF9: the world is walked on foot, and later flown over.
 
-- Painted walking screens for the four places, once the lore conversation names them.
-- A world map painting with the four landing places.
-- Battle backdrops for each place, and for the final battle.
-- Model and action sheets for the lower-level foe.
-- Possibly fresh model sheets for Sol, Envoi or Halcyon, if the old ones are gone.
+| # | Demo | What it shows |
+|---|---|---|
+| 18 | Walking | The pixel Witch, drawn in code to match her 3D outfit, walking a painted ground-level map: d-pad and tap-to-walk, a second screen, herbs and a letter at a small well, and a visible wisp that starts the 3D battle. Sliders for her pixel look and the map's lighting. |
+| 19 | The Magpie | The airship flying the world map between the four stops. Its range is locked to the party's level band, and landing switches to walking. |
+
+**The two maps.** The flying map is the world from the air: one painting, or a few joined pieces, that shows all four stops. The walking maps are the ground up close, painted at the pixel Witch's scale: the wilderness around each stop, and the stops themselves.
+
+**The level bands.** 1 to 10 (Wickhollow and Bogmire), 10 to 20 (the Warden waystation), 20 to 30 (Misthollow). The story reason the Magpie can't go farther is still open (`questions/open.md`). The world map prompts get written once it is settled.
+
+## Phase 4: the game
+
+The steps joined from title to ending: the story from the lore answers, saves, menus and music.
 
 ## Technical choices
 
-- **One three.js, r128,** for every page: all seven models are built for it. The Magpie (built on r186) gets ported down, not the other way around.
-- **Pages stay single files** while they fit under 16 MB. If the full game outgrows that, the paintings can ship as separate files inside the same published page. It is still one link.
-- **Rules live in data tables,** not inside the animation code, so balance changes are one-line edits. The balance simulator plays thousands of fights to check win rates.
+- **One three.js, r128,** for every page: all the models are built for it. The Magpie, built on r186, gets ported down.
+- **Pages are single files** while they fit under 16 MB. If the whole game outgrows that, its paintings can ship as separate files in the same published page, which is still one link.
+- **Bricks:** the code lives in small files (one per model, plus rules, battle, walking and airship), and a build step stitches each demo into its page, so later demos reuse earlier ones instead of copying them.
+- **Checked before it ships:** every page is rendered headless and screenshotted before Chris sees it.

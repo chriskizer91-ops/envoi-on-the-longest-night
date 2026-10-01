@@ -40,9 +40,12 @@ Chris loves how she looks and moves, so nothing visible changes.
 - **Body:** the 16 segments read as spiky starbursts, not paper lanterns. They should be faceted ivory paper lanterns lit from inside, with ink columns showing through and red tassels at the joints, as in `envoi-summon-scene-a.png`.
 - **Head:** small and hard to read from the battle camera. It needs to be bigger, with long swept horns, a folded frill, whisker barbels, gold eyes and a red wax seal that reads.
 - **Wings:** the pleated fans are close; push the scorched, glowing tips.
+- **Scale and pose:** match its size and its long low coil next to the Witch and the wraith in the two Envoi scenes.
 - **Spec fixes:** skin the body to a bone chain, make `block` 0.45 s, and keep `busy` true while a hold action plays, so a stray `play()` can't cut off the summon.
 
 ### Noctara: visible upgrade, the biggest gap
+
+Chris wants her as close as possible to her stylized concept art. Where her two sheets differ, follow `noctara-model-sheet-b.png`: its gold filigree robe is also the one in the Void Sphere and Blackout scenes.
 
 - **Face:** a flat white mask. The sheets show a mature, regal face with defined cheekbones, violet eyes, dark lips and a cold expression.
 - **Veil:** reads as a solid purple panel. It should be a sheer black veil falling from the crown, moving as one shape.
@@ -56,26 +59,41 @@ Chris loves how she looks and moves, so nothing visible changes.
 - **Face and hair:** the face is a blank egg with closed-eye arcs. The pose sheet shows a delicate face with closed eyes, long flowing lavender-silver hair, and a gold crescent crown.
 - **Glare:** the whole figure blows out to white, and the moon disc behind her dominates. Bring her into readable mid-tones.
 - **Gown and wings:** add the gown's gold detail, and move the wings toward the sheet's luna-moth green with purple edges and eye spots.
+- **Scale:** her height next to the Witch and the wraith should match `envoi-summon-scene-a.png`, which makes her smaller than now.
+- **Embrace:** the bible's Pale Mother's Embrace needs its own action: her wings close over the party, then open (her sheet, row 3, second pose).
 - Give her the spec interface.
 
-### Shadow Wraith: polish
+### Shadow Wraith: polish, release, and the great wraith
 
-- It already reads well: a dark hood, glowing green eyes and a ribcage.
-- Replace the spotted robe texture with layered, tattered cloth, add skeletal hands, and bring in the ornate crescent scythe and moon emblems from the pose sheet, in green.
+- It already reads well: a dark hood, glowing green eyes and a ribcage. It stays soul-green (lore answer 18).
+- Replace the spotted robe texture with layered, tattered cloth, add skeletal hands, and bring in the ornate crescent scythe from the pose sheet, in green.
+- **Release on defeat:** a pale moth rises out of the empty robe (lore answer 21).
+- **Level look:** wraiths meet the party at any level, so higher-level ones should look tougher, through a tint or size setting.
+- **The great wraith** (the Bogmire boss) reuses this model at about three times the size, with stolen lamplight glowing inside its ribs and robe (lore answer 17).
 - Give it the spec interface.
 
-### Halcyon: waiting on an answer
+### Halcyon: recolor and two new endings
 
-The strongest model of the set: the helm, feathers, gold eye and braid all read. Whether Halcyon is a man or a woman decides whether this is polish or a rebuild of the face and body (see `questions/lore-and-story.md`).
+The strongest model of the set: the helm, feathers and braid all read. She stays a woman, with her face and body as built (lore answer 1).
+
+- **Cold blue:** both eyes and the blade's edge glow cold blue at all times. Remove the gold eye and the violet blade veins (lore answer 4).
+- **Retreat:** a new action for the end of the level 20 fight, stepping back into the dark. It replaces the black-water `sink`.
+- **Release:** at the very end she kneels, the blade warms with a thin line of light, and a pale moth rises from her (lore answer 10).
+- Fix any "he" left in code comments.
+
+### Wisp: new model
+
+The low-level foe (lore answer 16): a soul starting to go hollow, the early form of a wraith, in groups of one to three. A frost-colored variant comes later. It starts from its sheets (`art-requests/01-model-sheets.md`, request 3).
 
 ## Source art to match
 
 | Model | Sheets in hand | Missing |
 |---|---|---|
 | The Witch | Not needed | — |
-| Sol | None | The model and action sheets used to build her |
-| Envoi | `envoi-summon-scene-a.png`, `envoi-strike-scene-b.png` | The model and action sheets used to build it |
+| Sol | None | Model and action sheets (art request 01) |
+| Envoi | `envoi-summon-scene-a.png`, `envoi-strike-scene-b.png` | Model and action sheets (art request 01) |
 | Noctara | `noctara-model-sheet-a.png`, `noctara-model-sheet-b.png` and four scenes | — |
 | Lunara | `lunara-pose-sheet.png` | — |
-| Shadow Wraith | `shadow-wraith-pose-sheet.png` (violet) | — |
-| Halcyon | The Blackout scene | The model and action sheets used to build it |
+| Shadow Wraith | `shadow-wraith-pose-sheet.png` (violet, out of date) | A soul-green sheet (optional), the great wraith sheet (art request 01) |
+| Halcyon | The Blackout scene | Model and action sheets in cold blue (art request 01) |
+| Wisp | None | Model and action sheets (art request 01) |

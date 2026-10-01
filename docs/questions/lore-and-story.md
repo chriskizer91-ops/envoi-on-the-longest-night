@@ -1,5 +1,7 @@
 # Lore and Story Questions
 
+**Answered October 1, 2026:** see `../lore/lore-answers-2026-10-01.md`. What is still open is in `open.md`.
+
 For Chris to take to the lore conversation. Updated October 1, 2026, after the second round of decisions (see `../design-decisions.md`).
 
 ## Already settled
