@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#26212f}canvas{display:block}</style></head><body>
+<script>
+// Renders one model like a model sheet: front, left side, back and three-quarter, plus close-ups, under the
+// game's lighting (Model Build Spec) or flat studio light. Query: ?model=noctara&fn=makeNoctara&light=game&src=../../src/models/
+const Q = new URLSearchParams(location.search);
+const files = ['../.cache/three.min.js', (Q.get('src') || '../../src/models/') + Q.get('model') + '.js'];
+(function load(i) { if (i >= files.length) return start(); const s = document.createElement('script'); s.src = files[i]; s.onload = () => load(i + 1); s.onerror = () => { window.__err = 'load ' + files[i]; }; document.body.appendChild(s); })(0);
+function start() {
+  const W = +(Q.get('w') || 1600), H = +(Q.get('h') || 900);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(W, H); renderer.localClippingEnabled = true; document.body.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  if (Q.get('light') === 'studio') {
+    renderer.setClearColor(0xd9d9d9, 1);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x9a96a0, 1.0));
+    const k = new THREE.DirectionalLight(0xffffff, 0.55); k.position.set(2, 4, 8); scene.add(k);
+  } else {
+    renderer.setClearColor(0x26212f, 1);
+    scene.add(new THREE.HemisphereLight(0x756aa8, 0x33262f, 1.1));
+    const moon = new THREE.DirectionalLight(0xb8c0ff, 0.62); moon.position.set(-5, 9, -12); scene.add(moon);
+    const fill = new THREE.DirectionalLight(0xffdcc0, 0.42); fill.position.set(2, 5, 10); scene.add(fill);
+    for (const x of [-4, 4]) { const p = new THREE.PointLight(0xffb46a, 1.0, 8, 2); p.position.set(x, 2.4, 3); scene.add(p); }
+  }
+  const make = window[Q.get('fn')];
+  const opts = Q.get('opts') ? JSON.parse(Q.get('opts')) : {};
+  const m = make(opts);
+  scene.add(m.root); if (m.fx) scene.add(m.fx); window.__m = m; window.__scene = scene;
+  let t = 0;
+  const step = (n) => { for (let i = 0; i < n; i++) { t += 1 / 60; if (m.animate) m.animate(0, 0, t, 1 / 60); else if (m.update) m.update(t, 1 / 60); } };
+  step(90);
+  const cam = new THREE.PerspectiveCamera(8, W / H, 0.1, 200);
+  window.__view = (v) => {
+    const s = v.split(':'), kind = s[0];
+    const yaw = { front: 0, left: -Math.PI / 2, back: Math.PI, right: Math.PI / 2, three: 0.62 }[s[1] || kind] || 0;
+    m.root.rotation.y = yaw;
+    if (s[2]) { m.play(s[2], true); step(Math.round(+s[3] * 60) || 1); } else step(2);
+    if (kind === 'face') {
+      const p = m.anchor ? m.anchor('head', new THREE.Vector3()) : new THREE.Vector3(0, 1.6, 0);
+      cam.fov = 6; cam.aspect = W / H; cam.updateProjectionMatrix();
+      cam.position.set(p.x, p.y + 0.02, p.z + 3.4); cam.lookAt(p.x, p.y - 0.02, p.z);
+    } else if (kind === 'bust') {
+      cam.fov = 8; cam.updateProjectionMatrix(); cam.position.set(0, 1.5, 6.5); cam.lookAt(0, 1.45, 0);
+    } else {
+      const ht = +(Q.get('height') || 2.0);
+      cam.fov = 8; cam.updateProjectionMatrix();
+      const d = ht * 0.62 / Math.tan(4 * Math.PI / 180);
+      cam.position.set(0, ht * 0.52, d); cam.lookAt(0, ht * 0.5, 0);
+    }
+    renderer.render(scene, cam);
+    return true;
+  };
+  window.__ready = true;
+}
+</script></body></html>

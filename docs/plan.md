@@ -15,8 +15,8 @@ A model is finished when:
 
 | # | Step | What changes | Waiting on |
 |---|---|---|---|
-| 1 | **The shared bench** | One battle-bench page that every model plugs into, a build step that turns it into a single file, and the current models moved into their own files unchanged | Nothing |
-| 2 | **Noctara** | Face, sheer veil, sculpted collar, gold filigree, a star-filled lining, a fuller build with fewer draw calls (see `model-review.md`) | Nothing |
+| 1 | **The shared bench** (done) | One battle-bench page that every model plugs into, a build step that turns it into a single file, and the current models moved into their own files unchanged | Nothing |
+| 2 | **Noctara** (done) | Face, sheer veil, sculpted collar, gold filigree, a star-filled lining, a fuller build with fewer draw calls (see `model-review.md`) | Nothing |
 | 3 | **Lunara** | Face, hair and gown from her sheet, less glare, the scale from the Envoi scenes, and the Embrace action | Nothing |
 | 4 | **Shadow Wraith** | Tattered robe, hands and scythe in soul-green, a pale moth rising on defeat, a tougher look at higher levels | Nothing; the optional green sheet helps |
 | 5 | **Great wraith** | The wraith at three times the size, with stolen lamplight inside | Its concept sheet |

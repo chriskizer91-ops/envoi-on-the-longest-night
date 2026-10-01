@@ -11,7 +11,8 @@ The spec's targets: 70k to 100k triangles (minimum 50k, ceiling 120k for bosses)
 | The Witch | `night-square-shadow-wraith.html` | 99k | 51 | 84 | No (older interface) |
 | Sol | `sol-in-the-night-square.html` | 83k | 54 | 38 | Yes |
 | Halcyon (v2) | `halcyon-in-the-night-square.html` | 88k | 63 | 31 | Yes |
-| Noctara | `noctara-in-the-night-square.html` | 28k | none (rigid joints) | 88 | Mostly (no `setFade`; `block` is 0.6 s) |
+| Noctara, touched up | `src/models/noctara.js` | 72k | 30 joints, hands skinned | 24 | Yes |
+| Noctara, original | `noctara-in-the-night-square.html` | 28k | none (rigid joints) | 88 | Mostly (no `setFade`; `block` is 0.6 s) |
 | Shadow Wraith | `night-square-shadow-wraith.html` | 55k | 32 | 35 | No (older interface) |
 | Lunara | `night-square-shadow-wraith.html` | 56k | none | 60 | No (its own interface) |
 | Envoi | `envoi-letter-wyrm-model-preview.html` | 83k (instanced) | 20 | 27 | Mostly (no skinning; `block` 0.6 s; `busy` is false during holds) |
@@ -43,7 +44,11 @@ Chris loves how she looks and moves, so nothing visible changes.
 - **Scale and pose:** match its size and its long low coil next to the Witch and the wraith in the two Envoi scenes.
 - **Spec fixes:** skin the body to a bone chain, make `block` 0.45 s, and keep `busy` true while a hold action plays, so a stray `play()` can't cut off the summon.
 
-### Noctara: visible upgrade, the biggest gap
+### Noctara: done October 1, 2026
+
+Touched up after sheet b: a sculpted face with eye geometry and blinking lids, sleek parted hair, a sheer veil that drapes over the cape to a gold-edged point with a star, a stiff collar with gold piping and a purple inside, a four-pointed star clasp, a faceted crown, the gold filigree on bodice, skirt, sleeves and cape, skinned hands, and a defeat in which she becomes night with stars in it. Animation cost went from about 1.0 to 1.5 ms per frame on the test machine. The notes below were the plan.
+
+### Noctara: the plan
 
 Chris wants her as close as possible to her stylized concept art. Where her two sheets differ, follow `noctara-model-sheet-b.png`: its gold filigree robe is also the one in the Void Sphere and Blackout scenes.
 
