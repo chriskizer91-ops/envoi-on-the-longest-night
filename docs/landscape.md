@@ -63,6 +63,18 @@ The `main` branch only has a D&D-style character sheet and a painted parchment m
 
 Empty on GitHub: no commits, no branches.
 
+## Travel: how the Aethermoor game walks
+
+Chris chose this style for walking (see `design-decisions.md`). Source: `New-game`, branch `claude/cool-ptolemy-uc93gg`, under `game/`.
+
+- **The sprite is drawn in code.** `src/art/walkers.js` and `src/art/forge.js` build a 16×24 pixel character from a look object (body build, skin, hair, hat, robe, staff) with palette ramps. That makes a 3-frame walk in 4 directions. A witch already exists: `NPC_LOOKS.nettie` in `src/art/map-sprites.js`, with a tall bent witch's hat. A look for our Witch would be one more look object.
+- **Maps come in two kinds.** Code-drawn tile maps (41 biomes in `src/art/tiles.js`), and painted maps where the painting is the ground and a grid of letters only marks what is solid. There are 60 maps. 12 of them are Gloomfen places that match this world, all traced from paintings: murkway, willowmurk, rotbridge, bogmire, lanternfen, mothers-hollow, long-boardwalk, misthollow, drowned-belfry, blackwater-reach, tidal-flats, causeway.
+- **Map format** (`src/data/maps/*.js`): size in 16-px tiles, `rows` of tile letters, `entities` (people, signs, chests, rest fires, placed fights), `exits`, `anchors` (arrival points), and `roam` (where visible enemy packs wander).
+- **Movement** is one tile per step in 4 directions, with a d-pad, tap-to-walk (A* pathfinding), hold to run, and a camera that eases after the player. It scales by whole pixels to fit a phone.
+- **Fights** are never invisible random encounters. They are placed foes you bump into, or visible packs that spot and chase you; hitting a pack from behind gives the first strike. `battle()` in `src/ui/screens/world.js` is where a 3D battle screen would plug in.
+- **What lifts cleanly:** `forge.js`, `walkers.js` (with a few stubs), the camera, the game loop, the controls, pathfinding, and the tile legend. The world screen and world rules are tangled with that game's quests and four-hero party, so the small core (move, collision, exits, entering a map) should be rewritten, not copied.
+- **Builds to look at:** `game/dist/aethermoor-m3.html` (1.4 MB) is the smallest with walking on code-drawn tiles. The painted Gloomfen maps are in `aethermoor-m6.html` and later (about 31 MB). On `claude/tender-babbage-4wiplk`, `thareia/demo2/dist/thareia-demo-2.html` walks a painted town square and then runs a battle.
+
 ## Character readiness
 
 | Character | Code model | Art in hand | Gaps |
