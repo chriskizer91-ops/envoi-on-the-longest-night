@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Halcyon, the Gloam Knight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/bench/bench.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/night-square.js"></script>
+<script src="../src/models/originals/witch.js"></script>
+<script src="../src/models/sol.js"></script>
+<script src="../src/models/halcyon.js"></script>
+<script src="../src/models/originals/halcyon.js"></script>
+<script src="../src/bench/bench.js"></script>
+<script src="../src/bench/stage-halcyon.js"></script>
+<script>
+Bench.start({
+  title: 'Halcyon, the Gloam Knight',
+  blurb: "Noctara's knight in the Night square, facing the Witch and Sol, her old squire.",
+  subject: {
+    id: 'halcyon', name: 'Halcyon', make: () => makeHalcyon({}), before: () => makeHalcyonOriginal({}),
+    home: [860, 800], face: 'witch', yawBias: 0.15, shadow: 0.62, target: 'sol',
+    walkLabel: 'Walk', walkSpeed: 1.8, height: '1.88 m, 2.16 m with the crest',
+  },
+  cast: [
+    { id: 'witch', name: 'Witch', kind: 'witch', make: () => makeWitchOriginal(), home: [560, 812], face: 'halcyon', yawBias: -0.38, shadow: 0.62 },
+    { id: 'sol', name: 'Sol', make: () => makeSol({}), home: [650, 868], face: 'halcyon', yawBias: -0.3, shadow: 0.6 },
+  ],
+  groups: [
+    { title: 'Attacks', acts: ['gloamCleave', 'duskArc', 'severance', 'lightDrinker'] },
+    { title: "Warden's Vow and Black Noon", acts: ['vowStance', 'counter', 'blackNoonCharge', 'blackNoon'] },
+    { title: 'Story', acts: ['stagger', 'appear', 'retreat', 'die'] },
+    { title: 'Reactions', acts: ['hurt', 'block'] },
+  ],
+  names: { gloamCleave: 'Gloam Cleave', duskArc: 'Dusk Arc', severance: 'Severance', lightDrinker: 'Light-Drinker', vowStance: "Warden's Vow", counter: 'Counter', blackNoonCharge: 'Charge', blackNoon: 'Black Noon', stagger: 'Kestrel!', appear: 'Appear', retreat: 'Retreat', die: 'Release', hurt: 'Hurt', block: 'Block' },
+  hints: { gloamCleave: 'Sol, 1,100', duskArc: 'both, 800', severance: 'the Witch, 900', lightDrinker: 'drains Sol', counter: 'Sol, 900', blackNoon: 'both, 2,400', stagger: 'Sol calls her name', retreat: 'end of the level 20 fight', die: 'the very end' },
+  wide: { duskArc: 1, blackNoon: 1, blackNoonCharge: 1 },
+  stage: STAGES.halcyon,
+  note: "Gold rings mark hits; numbers are the bible's level 20 damage. Warden's Vow and the Black Noon charge hold until the next press. Retreat is how the level 20 fight ends: she backs away and the dark takes her from the feet up. Release is the very end: her blade warms and a pale moth rises out of her. Before and After switch between the old model and the cold blue one.",
+});
+</script>
+</body>
+</html>

@@ -35,6 +35,19 @@
     return { triangles: Math.round(tri), drawCalls: draws, fxDrawCalls: fxDraws, bones: Math.max(bones.size, plainBones), textures: tex.size, texMB: texBytes / 1048576 };
   }
 
+  // The 3D layer is a transparent canvas over the painting. Plain additive blending also adds to the canvas's alpha,
+  // which turns a dim glow into an opaque dark patch over the painting; this keeps additive effects to light alone.
+  function lightOnly(obj) {
+    obj.traverse((o) => {
+      if (!o.material) return;
+      for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
+        if (m.blending !== THREE.AdditiveBlending) continue;
+        m.blending = THREE.CustomBlending; m.blendEquation = THREE.AddEquation; m.blendSrc = THREE.SrcAlphaFactor; m.blendDst = THREE.OneFactor;
+        m.blendEquationAlpha = THREE.AddEquation; m.blendSrcAlpha = THREE.ZeroFactor; m.blendDstAlpha = THREE.OneFactor; m.needsUpdate = true;
+      }
+    });
+  }
+
   function dispose(m) {
     for (const g of [m.root, m.fx]) if (g) g.traverse((o) => {
       if (o.geometry) o.geometry.dispose();
@@ -174,6 +187,7 @@
           a.m = make();
           a.buildMs = performance.now() - t0;
           scene.add(a.m.root); if (a.m.fx) scene.add(a.m.fx);
+          lightOnly(a.m.root); if (a.m.fx) lightOnly(a.m.fx);
           if (a.kind === 'goddess' && a.m.show) a.m.show();
           a.setVisible(a.visible);
         },
@@ -355,7 +369,7 @@
     // ---------- shared helpers for stage hooks ----------
     let darkK = 0;
     const ctx = {
-      THREE, scene, camera, fullCam, stage, overlay, night, actors, cast, cfg, UI, g, toPx, toScreen, ring, damage, swing, radialTex, smooth, clamp, faceYaw, wrapA, DPR, REDUCED,
+      THREE, scene, camera, fullCam, lightOnly, stage, overlay, night, actors, cast, cfg, UI, g, toPx, toScreen, ring, damage, swing, radialTex, smooth, clamp, faceYaw, wrapA, DPR, REDUCED,
       get subject() { return sub; },
       setDark(k) { darkK = k; night.style.opacity = (k * 0.97).toFixed(3); for (const L of sceneLights) L.o.intensity = L.i * (1 - 0.96 * k); },
       get dark() { return darkK; },
@@ -376,6 +390,7 @@
       LOOP.x = sub.home.x + 0.2; LOOP.z = sub.home.z - 0.5;
       buildSubject();
       if (cfg.stage && cfg.stage.init) cfg.stage.init(ctx);
+      lightOnly(scene);
       new ResizeObserver(() => { layoutView(); }).observe(stage);
       frameShot(); cam.cx = cam.tx; cam.cy = cam.ty; cam.s = cam.ts; applyCam(1);
       let last = performance.now(), t = 0;
