@@ -1,6 +1,6 @@
 # Lay of the Land
 
-What exists across the project's materials and the four sibling repos, as of October 1, 2026. Nothing here is built yet; this is the inventory to build from.
+What exists across the project's materials and the four sibling repos, as of October 1, 2026. Nothing here is built yet; this is the inventory to build from. Decisions made since this was written are in `design-decisions.md` and win over anything below; in particular the Drowned Mother, Old Snuff and the mandrakes are retired, and walking maps are painted.
 
 ## The game, as the materials describe it
 
@@ -84,7 +84,7 @@ Chris chose this style for walking (see `design-decisions.md`). Source: `New-gam
 | Lunara | `makeGoddess` in the battle demo (its own interface) | `reference/art/lunara-pose-sheet.png` | Needs the spec interface |
 | Envoi | `makeEnvoi`, spec-conforming | `reference/art/envoi-*.png` | Its "strip the stolen lights" effect was written for the Drowned Mother |
 | Shadow Wraith | `makeWraith` in the battle demo (older interface) | `reference/art/shadow-wraith-pose-sheet.png` (violet) | Color: the sheet is violet, the battle build and the Envoi scenes are green, and the amendment keeps the Wraith green to stay apart from Noctara's purple |
-| Noctara | Not uploaded yet. The amendment describes a 1.9 m demo build with Blackout, Void Sphere, Frost Dust, Crown Shards and a Frost Dust slider | Two model sheets (`noctara-model-sheet-a/b.png`), Blackout and Void Sphere scenes | The demo build itself |
+| Noctara | `makeNoctara(opts)` in `reference/demos/noctara-in-the-night-square.html`: blackout, voidSphere, crownShards, frostDust, appear, die, hurt, block, with a Frost Dust length slider (6 to 20 s). Rigid joints, 28k triangles | Two model sheets (`noctara-model-sheet-a/b.png`), Blackout and Void Sphere scenes | A big touch-up (see `model-review.md`); her page bundles the older Halcyon v1 |
 | Halcyon | `makeHalcyon(opts)` v2 in `reference/demos/halcyon-in-the-night-square.html`, spec-conforming: 1.88 m (2.16 m with crest), 63 bones. The file also keeps the older `makeHalcyonV1` | The Blackout scene | Built to the bible's look (gold eye, violet-veined blade, sinks into black water); the amendment's open questions still apply |
 | Old Snuff, Mandrake | None | Prompts in `specs/model-prompt-pack.md` | Everything |
 
@@ -93,7 +93,7 @@ Chris chose this style for walking (see `design-decisions.md`). Source: `New-gam
 - **Night square:** the 1448×1086 painting embedded in both battle demos, already matched to the camera.
 - **Battle backdrops:** 5 in `20-min/art/battle/`, 10 in `New-game` (`tender-babbage`).
 - **Field backdrops:** 16 in `20-min/art/backgrounds/`, 20 or more in `follow-me-down-witch-way`.
-- **Nothing yet for Noctara's arena.** Mother's Hollow exists (`20-min`), but its theme is drowning, which the amendment retired.
+- **Nothing yet for Noctara's arena.** Mother's Hollow exists (`20-min`), but it belongs to the retired Drowned Mother.
 
 ## Technical forks in the road
 

@@ -14,6 +14,9 @@
 ## Project
 
 - Working title: *Envoi on the Longest Night*.
-- Design context lives in `docs/game-context.md`; decisions in `docs/design-decisions.md`.
+- Design context lives in `docs/game-context.md`; decisions in `docs/design-decisions.md`; the build order in `docs/plan.md`.
+- The Drowned Mother, Old Snuff and the mandrakes are retired. Never use them or their lore, even though the bible and prompt pack still describe them.
+- The Witch's 3D model must keep exactly how she looks and moves; changes to her are technical only.
+- Every step ends in a demo page Chris can open on his phone, before anything is put together.
 - Lore questions go to Chris in `docs/questions/`; he answers them in a separate lore conversation.
 - When new art is needed, write the image prompts as markdown files in `docs/art-requests/` for Chris to generate.

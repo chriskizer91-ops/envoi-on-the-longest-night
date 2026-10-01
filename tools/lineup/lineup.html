@@ -1,0 +1,95 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#1b1724}canvas{display:block}</style></head><body>
+<script src="build/three.min.js"></script>
+<script src="build/ns_models.js"></script>
+<script src="build/sol.js"></script>
+<script src="build/halcyon.js"></script>
+<script src="build/envoi.js"></script>
+<script src="build/noctara.js"></script>
+<script>
+'use strict';
+const W = 1600, H = 720;
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(W, H); renderer.setClearColor(0x2b2536, 1);
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.add(new THREE.HemisphereLight(0x756aa8, 0x33262f, 1.1));
+const moon = new THREE.DirectionalLight(0xb8c0ff, 0.62); moon.position.set(-5, 9, -12); scene.add(moon);
+const fill = new THREE.DirectionalLight(0xffdcc0, 0.42); fill.position.set(2, 5, 10); scene.add(fill);
+for (const x of [-6, 6]) { const p = new THREE.PointLight(0xffb46a, 1.1, 9, 2); p.position.set(x, 2.6, 3); scene.add(p); }
+const ground = new THREE.Mesh(new THREE.CircleGeometry(40, 64), new THREE.MeshStandardMaterial({ color: 0x3a3346, roughness: 0.95 }));
+ground.rotation.x = -Math.PI / 2; scene.add(ground);
+const camera = new THREE.PerspectiveCamera(14, W / H, 0.1, 200);
+const M = {}, info = {}, errors = [];
+function add(name, make, x, kind) {
+  try {
+    const t0 = performance.now();
+    const m = make(); m.__kind = kind; M[name] = m;
+    scene.add(m.root); if (m.fx) scene.add(m.fx);
+    m.root.position.set(x, 0, 0);
+    info[name] = { ms: Math.round(performance.now() - t0), stats: m.stats || null };
+  } catch (e) { errors.push(name + ': ' + e.message); }
+}
+add('Witch', () => makeWitch(), -4.6, 'ns');
+add('Sol', () => makeSol({ detail: 1 }), -2.9, 'spec');
+add('Halcyon', () => makeHalcyon({ detail: 1 }), -1.1, 'spec');
+add('Noctara', () => makeNoctara({}), 0.9, 'spec');
+add('Wraith', () => makeWraith(), 2.9, 'wraith');
+add('Lunara', () => { const g = makeGoddess(); g.show(); return g; }, 5.4, 'goddess');
+add('Envoi', () => makeEnvoi({ detail: 1 }), 0, 'spec');
+if (M.Envoi) { M.Envoi.root.visible = false; if (M.Envoi.fx) M.Envoi.fx.visible = false; }
+let T = 0;
+function step(n) {
+  for (let i = 0; i < n; i++) {
+    T += 1 / 60; const dt = 1 / 60;
+    for (const k in M) { const m = M[k];
+      try {
+        if (m.__kind === 'ns') m.animate(0, 0, T, dt);
+        else if (m.__kind === 'wraith') m.animate(T, dt);
+        else if (m.__kind === 'goddess') m.update(T, dt);
+        else m.animate(0, 0, T, dt);
+      } catch (e) { if (errors.length < 20) errors.push(k + ' animate: ' + e.message); }
+    }
+  }
+}
+function count(o) { let tri = 0, dc = 0; o.traverse(q => { if ((q.isMesh || q.isSkinnedMesh) && q.visible !== false) { dc++; const g = q.geometry; tri += (g.index ? g.index.count : g.attributes.position.count) / 3; } else if (q.isPoints || q.isSprite || q.isLine) dc++; }); return { tri: Math.round(tri), dc }; }
+const heads = {};
+function headPos(name) {
+  const m = M[name], v = new THREE.Vector3();
+  if (m.anchor) return m.anchor('head', v);
+  if (m.headPos) return m.headPos(v);
+  if (m.chestPos) { m.chestPos(v); v.y += 0.38; return v; }
+  return v.set(m.root.position.x, 1.6, 0);
+}
+window.view = function (v) {
+  const yaw = v === 'three-quarter' ? 0.62 : v === 'back' ? Math.PI : v === 'side' ? Math.PI / 2 : 0;
+  for (const k in M) if (k !== 'Envoi') M[k].root.rotation.y = yaw;
+  if (v === 'envoi') {
+    for (const k in M) M[k].root.visible = false;
+    for (const k of ['Envoi', 'Witch', 'Sol']) M[k].root.visible = true; if (M.Envoi.fx) M.Envoi.fx.visible = true;
+    M.Envoi.root.position.set(0, 0, -1.5); M.Envoi.root.rotation.y = 0.5;
+    M.Witch.root.position.set(-3.2, 0, 1.6); M.Sol.root.position.set(-1.9, 0, 1.6);
+    M.Witch.root.rotation.y = 0.3; M.Sol.root.rotation.y = 0.3;
+    camera.fov = 26; camera.updateProjectionMatrix();
+    camera.position.set(1.5, 4.2, 22); camera.lookAt(0, 3.0, 0);
+  } else if (v === 'battle') {
+    for (const k in M) M[k].root.rotation.y = 0;
+    camera.fov = 12; camera.updateProjectionMatrix();
+    const pitch = 24 * Math.PI / 180, dist = 48;
+    camera.position.set(0.4, 1.0 + dist * Math.sin(pitch), dist * Math.cos(pitch)); camera.lookAt(0.4, 1.0, 0);
+  } else if (v.startsWith('face:')) {
+    const n = v.slice(5); step(2); const p = headPos(n); window.__lastHead = [n, p.x.toFixed(2), p.y.toFixed(2), p.z.toFixed(2)];
+    camera.fov = 14; camera.updateProjectionMatrix();
+    const d = n === 'Lunara' ? 4.2 : 2.6;
+    camera.position.set(p.x, p.y + 0.05, p.z + d); camera.lookAt(p.x, p.y - 0.05, p.z);
+  } else {
+    camera.fov = 14; camera.updateProjectionMatrix();
+    camera.position.set(0.4, 1.6, 38); camera.lookAt(0.4, 1.35, 0);
+  }
+  step(90);
+  renderer.render(scene, camera);
+  return renderer.info.render.calls;
+};
+step(120);
+const counts = {}; for (const k in M) counts[k] = count(M[k].root);
+window.__report = { errors, info, counts };
+</script></body></html>
