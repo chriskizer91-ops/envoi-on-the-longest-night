@@ -6,8 +6,10 @@ A game in early development.
 
 ## Status
 
-Project setup. The game design and tech stack are still to be decided.
+Gathering context. Nothing is built yet.
 
 ## Layout
 
-- `docs/` holds game design notes and context.
+- `docs/`: lore, specs, the project brief, and `landscape.md` (an inventory of what exists).
+- `reference/demos/`: the single-file HTML demos this game starts from.
+- `reference/art/`: concept art and pose sheets.
