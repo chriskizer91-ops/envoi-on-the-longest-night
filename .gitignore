@@ -1,0 +1,18 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Dependencies and build output
+node_modules/
+dist/
+build/
+.cache/
+
+# Logs and env
+*.log
+.env
+.env.*
+!.env.example
