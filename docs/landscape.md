@@ -13,7 +13,7 @@ An FF9-style browser JRPG: painted backdrops, code-built three.js characters sta
 
 The title fits the amendment well. In the bible, keepers burn the letters to the dead "on the longest night," and Envoi is made from those letters. Noctara is darkness and cold, and Halcyon is midwinter.
 
-**Canon order:** `lore/amendment-noctara-the-starless.md` wins over `lore/lore-and-party-bible.md`, which wins over anything in a sibling repo.
+**Canon order:** `design-decisions.md`, then `lore/amendment-noctara-the-starless.md`, then `lore/lore-and-party-bible.md`. Anything Chris brings to this project outranks anything in a sibling repo.
 
 ## What each source gives us
 
@@ -26,6 +26,7 @@ All target three.js r128 loaded from cdnjs.
 | `night-square-shadow-wraith.html` | The full ATB battle: the Witch alone against the Shadow Wraith, with Lunara | Witch model (51 bones), Wraith model, Lunara, backdrop camera rig (12° FOV, 24° pitch, 54 px/m), camera director, effects library, synth audio, battle UI, hit-stop clock with `untilP(model, u)` |
 | `sol-in-the-night-square.html` | A test bench for Sol in the square (no battle) | `makeSol(opts)`, the first model that follows the Model Build Spec exactly |
 | `envoi-letter-wyrm-model-preview.html` | A test bench for Envoi | `makeEnvoi(opts)`, which follows the spec with small deviations (18 bones, `block` 0.6 s, `busy` false during holds) |
+| `halcyon-in-the-night-square.html` | A test bench for Halcyon in the square | `makeHalcyon(opts)`: gloamCleave, duskArc, severance, lightDrinker (drain span), vowStance → counter, blackNoonCharge → blackNoon, stagger, appear, die, hurt, block. State: drink, charge, crack, sink. Anchors: chest, head, hit, blade, eye |
 | `the-magpie.html` | Airship world map over the Gloomfen | Built from the 20-min engine (three r186, bundled), not the r128 demos |
 
 Known weak spots in the battle demo: everything assumes one hero against one foe, damage numbers and MP costs are written inline (and duplicated in the menus), hit times are hard-coded instead of read from each model's `ACTIONS`, and the Witch, Wraith and Lunara each use a different, older model interface.
@@ -72,7 +73,7 @@ Empty on GitHub: no commits, no branches.
 | Envoi | `makeEnvoi`, spec-conforming | `reference/art/envoi-*.png` | Its "strip the stolen lights" effect was written for the Drowned Mother |
 | Shadow Wraith | `makeWraith` in the battle demo (older interface) | `reference/art/shadow-wraith-pose-sheet.png` (violet) | Color: the sheet is violet, the battle build and the Envoi scenes are green, and the amendment keeps the Wraith green to stay apart from Noctara's purple |
 | Noctara | Not uploaded yet. The amendment describes a 1.9 m demo build with Blackout, Void Sphere, Frost Dust, Crown Shards and a Frost Dust slider | Two model sheets (`noctara-model-sheet-a/b.png`), Blackout and Void Sphere scenes | The demo build itself |
-| Halcyon | None | Only the Blackout scene silhouette | Model sheet, action sheet, model; the open questions in the amendment |
+| Halcyon | `makeHalcyon(opts)` v2 in `reference/demos/halcyon-in-the-night-square.html`, spec-conforming: 1.88 m (2.16 m with crest), 63 bones. The file also keeps the older `makeHalcyonV1` | The Blackout scene | Built to the bible's look (gold eye, violet-veined blade, sinks into black water); the amendment's open questions still apply |
 | Old Snuff, Mandrake | None | Prompts in `specs/model-prompt-pack.md` | Everything |
 
 ## Backdrops in hand
@@ -86,7 +87,7 @@ Empty on GitHub: no commits, no branches.
 
 1. **three.js r128 or r186.** The demos, the Model Build Spec and every finished model use r128 as a global from cdnjs. The 20-min engine uses r186 bundled with esbuild. The lighting model changed between them (r155 made lights physically based), so models tuned under r128 will look different under r186. Porting 20-min's engine pieces down to r128 looks cheaper than re-tuning every model up.
 2. **Four model interfaces.** The battle demo's Witch, Wraith and Lunara, the 20-min `createX()` characters, and the spec models (Sol, Envoi) all differ. The spec interface should win, with adapters for the rest.
-3. **ATB or Initiative Ribbon.** The demos and the bible use ATB; 20-min uses the d20 ribbon. The concept art and the bible point to ATB.
+3. **ATB or Initiative Ribbon.** Decided: ATB as in the demos, with no dice (see `design-decisions.md`).
 4. **Single-file pages.** The brief asks for one self-contained HTML per game, under 16 MB. Each embedded backdrop costs about 0.6 MB as webp, so a build step that inlines assets (as 20-min does) will be needed once there is more than a handful of scenes.
 
 ## Lore that disagrees between sources
