@@ -53,6 +53,14 @@ Chris's world, painted as nine detailed tiles in a 3×3 grid, received October 2
 - The section names in the packs describe the land; they don't set lore.
 - `world-map/bands-and-stops.webp` marks where the four level bands and the stops sit, and the areas under mist, as Chris confirmed on October 2.
 
+## Portrait references
+
+For art request 05 (`docs/art-requests/05-portraits.md`), in `portraits/`:
+
+- `witch-calm-20min.webp`: the Witch's portrait from `20-min` (`art/portraits/witch-calm.webp`), the closest painted match to Io's 3D look;
+- `io-face-render.png`: Io's 3D model, face close-up (from `../renders/2026-10-01-baseline/face-witch.png`);
+- `sol-face-sheet.png`: the face views cropped from Sol's model sheet A.
+
 ## Key art
 
 `key-art-advert.png` (1672×941) is an advert for the game, not a title screen. It shows the Witch casting at Noctara, with Lunara and Envoi above, Sol and Halcyon crossing blades below, and a wraith behind Noctara. Use it later wherever a poster fits: a loading screen, the back of the title, or a page's cover image.

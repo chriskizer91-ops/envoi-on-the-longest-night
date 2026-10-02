@@ -345,3 +345,28 @@ This replaces the visible packs from Aethermoor that the plan first proposed.
 ### The camera for summons
 
 - **Whenever Envoi is summoned, the camera pulls back to a wide shot** so the whole wyrm is in frame. It stays wide for its strike, a blow on its ward and its leaving. The battle's camera does the same for every summon.
+
+## October 2, 2026, seventh round
+
+### Money is sunstone shards
+
+- **The money is shards of sunstone.** Fights give them, shops take them for herbs, and the Magpie's upgrades cost them. Sunstone is also what gives the Magpie its lift, so the money and the ship run on the same thing.
+
+### Envoi and Dawnroost
+
+- **Envoi is made after the Dawnroost fight,** as its reward. It is not in the summon menu during that fight.
+
+### Halcyon's ambush
+
+- **The party learns the knight is Halcyon during the ambush fight, because Sol recognizes her.**
+
+### The Aurosi and the shipyard
+
+- **The shipyard is run by the moon's people.** Chris's own D&D world (his Thareia and Aethermoor compendium, `New-game`, branch `claude/tender-babbage-4wiplk`, `thareia/lore/thareia-aethermoor-lore-compendium.md`) calls them the **Aurosi**: the elves and gnomes of Auros, the moon.
+- What Chris said about them: this world's elves. They grew up on a moon much like this world but with less gravity and covered in sunstone, so they are elegant, fancy, wealthy and long-lived, and they control the shipping. They haven't been depicted anywhere yet.
+- In this game they appear only at the shipyard for now. One of them is the shipmaster, a new character.
+- How this fits with this game's Auros, the living Moon asleep in the sky, is a lore question (`questions/open.md`).
+
+### Talking portraits
+
+- **When someone speaks, a detailed painted portrait of them appears** beside the words, so the player sees who they're talking to and not only a tiny pixel sprite. The pixel sprites stay for walking. Portraits are requested in `art-requests/05-portraits.md`, starting with a pilot of Io, Sol and the shipmaster.

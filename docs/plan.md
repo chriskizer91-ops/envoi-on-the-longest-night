@@ -2,7 +2,7 @@
 
 Chris wants to see each piece working on its own before anything is put together, and every model finished before anything else is built. Every step ends in a demo page he can open on his phone, published as a private link and saved in this repo.
 
-Updated October 2, 2026, sixth round (`design-decisions.md`). This plan runs from where things stand to the finished game, about five hours of play:
+Updated October 2, 2026, seventh round (`design-decisions.md`). This plan runs from where things stand to the finished game, about five hours of play:
 
 1. Finish the models.
 2. Build the battles and balance them.
@@ -92,8 +92,8 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 | 12 | The first fight | Io alone against a Shadow Wraith in the Night square, at level 1, with the Night square demo's numbers. You can lose. Experience and a level-up at the end. |
 | 13 | The party | Io and Sol against wisps and wraiths at a chosen level: Heat and Sunburn, Waxing Light and Moonsteel, Lunara. A level slider from 1 to 20 shows the numbers growing. |
 | 14 | The great wraith | The Bogmire boss, the level 5 gate. Winning leads to the refit and Moth Veil. |
-| 15 | Dawnroost | The level 10 gate, at the living node: the largest group of stronger wraiths the party has faced. Envoi comes with it. |
-| 16 | Halcyon's ambush | The level 15 gate, on the way to the shipyard: Halcyon at level 20 against the party at 15 or more, overwhelming, with the Kestrel story command and Envoi in the summon menu. It ends with the party falling, Sol stepping in front of Io and Halcyon leaving; or, if they bring her down to 20% of her HP, with her retreat into the dark. Afterwards Sol learns Kestrel Stoop. |
+| 15 | Dawnroost | The level 10 gate, at the living node: the largest group of stronger wraiths the party has faced, without Envoi. Envoi is made after it, as the reward. |
+| 16 | Halcyon's ambush | The level 15 gate, on the way to the shipyard: Halcyon at level 20 against the party at 15 or more, overwhelming, with the Kestrel story command and Envoi in the summon menu. Sol recognizes her during the fight. It ends with the party falling, Sol stepping in front of Io and Halcyon leaving; or, if they bring her down to 20% of her HP, with her retreat into the dark. Afterwards Sol learns Kestrel Stoop. |
 | 17 | The final battle | Noctara with Halcyon at level 20, at the dead Moonwell in Misthollow: Blackout, Void Sphere, Frost Dust and Crown Shards, Moth Veil against the telegraphed hits, and Envoi's ward and strike. Tuned so a player who plays well at level 20 wins about half the time, and loses narrowly at 19. |
 
 ## Phase 3: the story's fights
@@ -105,7 +105,7 @@ Every fight gets its place in the story before travel is built. It is drafted on
 - **Towns are safe.** People to talk to: shops, and people with information.
 - **The wilds have random encounters.** No foes are drawn on the map. Each step in wild country fills a hidden counter, and a fight starts when it passes a random threshold. That keeps the rate even: never two fights back to back, and never a long walk with none. Each area has its own rate, and the rate is a number the balancing tunes. A player can walk back and forth to grind levels.
 - **Set fights** wait at fixed places: the gate fights and the story fights.
-- **Money.** Fights give money. The Magpie's upgrades cost money and need the party's level, so moving on to the next band takes both. Shops sell herbs. The simulator balances money too: what a player has earned by each gate.
+- **Money is sunstone shards.** Fights give them. The Magpie's upgrades cost shards and need the party's level, so moving on to the next band takes both. Shops sell herbs for shards. The simulator balances shards too: what a player has earned by each gate.
 
 **About five hours:** the story, about 60 wild fights from level 1 to 20 against wisps, frost wisps, wraiths and the great wraith, and the set fights.
 
@@ -124,7 +124,7 @@ As in FF9: the world is walked on foot, and later flown over. All of it at night
 
 | # | Demo | What it shows |
 |---|---|---|
-| 18 | Walking | The pixel Io, drawn in code to match her 3D outfit, walking the night world map and one ground-level map: d-pad and tap-to-walk, a town with a shopkeeper and someone to talk to, herbs and a letter at a small well, and a random encounter in the wilds that starts the 3D battle. Sliders for her pixel look, the map's lighting and the encounter rate. |
+| 18 | Walking | The pixel Io, drawn in code to match her 3D outfit, walking the night world map and one ground-level map: d-pad and tap-to-walk, a town with a shopkeeper and someone to talk to, each with a painted portrait when they speak, herbs and a letter at a small well, and a random encounter in the wilds that starts the 3D battle. Sliders for her pixel look, the map's lighting and the encounter rate. |
 | 19 | The Magpie | The airship flying the far view of the world between the stops, through the drifting clouds and fog of `reference/demos/the-magpie.html`. Its four levels (refit, charge, final upgrade) set how far it can fly, and landing switches to walking. |
 
 **The maps:**
@@ -147,7 +147,8 @@ The pieces joined from title to ending, one band at a time.
 Around them:
 
 - **Story scenes:** big beats as painted stills with camera moves and dialogue, as FF9 did with its FMVs. Their prompts will go in `art-requests/`.
-- **Towns:** shopkeepers and people with information.
+- **Towns:** shopkeepers and people with information. When anyone speaks, their painted portrait appears beside the words (`art-requests/05-portraits.md`); the pixel sprites stay for walking.
+- **The shipyard:** run by an Aurosi shipmaster, one of the moon's elves, where the Magpie gets its final upgrade.
 - **Menus and saves:** party status, spells, herbs; saves kept in the browser.
 - **Music and sound:** the synthesized music and effects from the Night square demo, plus the sound library in `20-min`.
 - **The key art** (`../reference/art/key-art-advert.png`) as a poster: a loading screen or the back of the title.
@@ -160,7 +161,8 @@ Around them:
 | 2 | Eight night battle backdrops | All in (`art-requests/03-battle-backdrops.md`) |
 | 4 | The world map: nine tiles in a 3×3 grid | Day and night versions in |
 | 4 | Ground-level maps: towns, the shipyard and set-fight places | Prompts ready, pilot first (`art-requests/04-walking-maps.md`) |
-| 5 | Story stills | A later request |
+| 4 | Talking portraits: Io, Sol and the shipmaster first | Prompts ready, pilot first (`art-requests/05-portraits.md`) |
+| 5 | Talking portraits for the rest of the cast and the townsfolk; story stills | Later requests |
 
 ## Technical choices
 
