@@ -18,6 +18,7 @@ The spec's targets: 70k to 100k triangles (minimum 50k, ceiling 120k for bosses)
 | Lunara | `night-square-shadow-wraith.html` | 56k | none | 60 | No (its own interface) |
 | Lunara, touched up | `src/models/lunara.js` | 97k | 62 | 14 (+ up to 21 for effects) | Yes |
 | Envoi | `envoi-letter-wyrm-model-preview.html` | 83k (instanced) | 20 | 27 | Mostly (no skinning; `block` 0.6 s; `busy` is false during holds) |
+| Wisp, new | `src/models/wisp.js` | 16k | none (all in shaders) | 9 | Yes |
 
 Draw calls here were counted in the line-up scene and include glow sprites and particles. The Noctara page bundles the older Halcyon (v1); the rebuilt v2 is in the Halcyon page.
 
@@ -111,7 +112,20 @@ The strongest model of the set: the helm, feathers and braid all read. She stays
 - **Release:** at the very end she kneels, the blade warms with a thin line of light, and a pale moth rises from her (lore answer 10).
 - Fix any "he" left in code comments.
 
-### Wisp: new model
+### Wisp: done October 2, 2026
+
+A new model built entirely in shaders, with no textures and no bones.
+
+- **Body:** a teardrop flame with a curled candle tip, flame tongues and a glowing rim.
+- **Face:** drawn in the shader, calm, hungry or wailing, and it blinks.
+- **The hollow:** torn smoke winding into a black core, which grows wider and darker with its level. It gets about 12% bigger and brighter by level 20.
+- **The rest:** tendrils that fling, coil and go limp, a braided smoke tail, and drifting leaf specks.
+- **Frost variant:** switches at runtime through `state.frost`, with ice shards instead of leaves.
+- **Actions:** Flicker, Cling (a drain), Gutter (a dodge), Wail, Frost Breath, hurt, block, appear, and its release, in which a moth rises from the hollow.
+- **Budget:** 16k triangles, 9 draw calls, about 0.04 to 0.28 ms per frame.
+- **Still to improve:** it's smoother than the painted sheets, its long Cling tendrils are thin lines at battle distance, and its face shrinks to dots in the phone's Full view.
+
+### Wisp: the plan
 
 The low-level foe (lore answer 16): a soul starting to go hollow, the early form of a wraith, in groups of one to three. A frost-colored variant comes later. It starts from its sheets (`art-requests/01-model-sheets.md`, request 3).
 

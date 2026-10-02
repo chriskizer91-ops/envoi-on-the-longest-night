@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Wisp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/bench/bench.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/night-square.js"></script>
+<script src="../src/models/originals/witch.js"></script>
+<script src="../src/models/originals/sol.js"></script>
+<script src="../src/models/wisp.js"></script>
+<script src="../src/bench/bench.js"></script>
+<script src="../src/bench/stage-wisp.js"></script>
+<script>
+Bench.start({
+  title: 'The Wisp',
+  blurb: 'A soul starting to go hollow, the early form of a wraith. Three of them in the Night square, facing Io the Witch and Sol.',
+  subject: {
+    id: 'wisp', name: 'Wisp', make: () => makeWisp({ seed: 1 }),
+    home: [860, 820], face: 'witch', yawBias: 1.05, shadow: 0.24, shadowY: 0.75, target: 'witch',
+    walkLabel: 'Glide', walkSpeed: 0.9, height: '0.8 m to the crown, 0.9 m to the flame tip, floating', frameHeight: 0.46, closeSpan: 64, tall: 1.0,
+  },
+  cast: [
+    { id: 'witch', name: 'Io', kind: 'witch', make: () => makeWitchOriginal(), home: [560, 812], face: 'wisp', yawBias: -0.38, shadow: 0.62 },
+    { id: 'sol', name: 'Sol', make: () => makeSolOriginal({}), home: [650, 868], face: 'wisp', yawBias: -0.3, shadow: 0.6 },
+    { id: 'wisp2', name: 'Wisp', make: () => makeWisp({ seed: 2 }), home: [930, 780], face: 'witch', yawBias: 0.95, shadow: 0.24, shadowY: 0.75, tall: 1.0 },
+    { id: 'wisp3', name: 'Frost wisp', make: () => makeWisp({ seed: 3, frost: true }), home: [905, 880], face: 'witch', yawBias: 0.95, shadow: 0.24, shadowY: 0.75, tall: 1.0 },
+  ],
+  groups: [
+    { title: 'Attacks', acts: ['flicker', 'cling', 'wail', 'breath'] },
+    { title: 'Dodge and reactions', acts: ['gutter', 'hurt', 'block'] },
+    { title: 'Arrival and release', acts: ['appear', 'die'] },
+  ],
+  names: { flicker: 'Flicker', cling: 'Cling', wail: 'Wail', breath: 'Frost Breath', gutter: 'Gutter', hurt: 'Hurt', block: 'Block', appear: 'Appear', die: 'Release' },
+  hints: { flicker: 'Io', cling: 'drains Io', wail: 'the party', breath: 'the party, frost', gutter: 'dodges', die: 'a moth rises' },
+  sliders: [
+    { label: 'Frost', min: 0, max: 1, step: 1, value: 0, onInput: (v, ctx) => STAGES.wisp.setFrost(ctx, v) },
+    { label: 'Level', min: 1, max: 20, step: 1, value: 1, onInput: (v, ctx) => STAGES.wisp.setLevel(ctx, v) },
+  ],
+  stage: STAGES.wisp,
+  note: 'The numbers are placeholders until the battle steps: a level 1 base (Flicker 50, Cling 30 a pull, Wail 40 and Frost Breath 45 on each of the party) that grows 20% a level, with a 25% swing. Gold rings mark hits. Cling heals the wisp by what it drains. In Gutter, Io throws her flame and misses. Frost turns this wisp into the frost variant; Level (applied to all three) darkens and widens the hollow at its centre and makes it a little bigger and brighter. In Release it is not killed: a pale moth rises out of it.',
+});
+</script>
+</body>
+</html>

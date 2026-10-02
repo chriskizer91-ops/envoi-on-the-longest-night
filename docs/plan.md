@@ -24,7 +24,7 @@ A model is finished when:
 | 7 | **Io, the Witch** (technical pass done; new spells next) | Technical only: the shared interface and fewer draw calls, checked pixel for pixel so nothing visible changes. Her four spells (Lunar Mend, Waxing Light, Moonsteel, Moth Veil) play on her existing motions, with their own effects | Nothing |
 | 8 | **Sol** | Face, bronze armor, the sun crest, and her new Kestrel Stoop: a turn hovering, then the biggest sword hit in the game | Nothing (sheets in) |
 | 9 | **Envoi** | Paper-lantern body, a bigger head and seal, the scale and low coil from the Envoi scenes | Nothing (sheets in) |
-| 10 | **Wisp** | A new model, with its frost variant | Nothing (sheets in) |
+| 10 | **Wisp** (done) | A new model, with its frost variant | Nothing (sheets in) |
 | 11 | **The cast** | Everyone together at true scale, every action playable | Steps 2 to 10 |
 
 The sheets were requested in `art-requests/01-model-sheets.md`, and all of them arrived on October 2, 2026. Every step can now run.
