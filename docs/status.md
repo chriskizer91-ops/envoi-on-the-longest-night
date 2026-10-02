@@ -51,25 +51,24 @@ We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Ev
 - **Commit an agent's files only after its report, and only its own files,** by explicit path. Several agents work in the same folder at once.
 - **The machine has 4 cores.** With six agents rendering, headless checks slow down a lot. Give checks long timeouts and run renders one at a time.
 
-## Bench and tool changes the agents asked for
+## Bench and tool changes (done October 2)
 
-Make these once no agent is mid-pass, since every page shares these files:
+Every change the agents asked for is in, and all eight pages were rebuilt and checked:
 
-- `bench.css`: a `.dmg.miss` style. The wisp's stage file injects one for now.
+- `bench.css` has the `.dmg.miss` style; the wisp's stage no longer injects it.
 - `bench.js`:
-  - a Before model of a different actor kind than After (Lunara's stage wraps her old model in an adapter);
-  - placing the subject by an offset in meters, not only by painting pixel;
-  - an option to aim the subject's dash along its target line;
-  - a real walk phase for the 'witch' actor kind (Io's stage computes one).
-- `tools/check.mjs`:
-  - a wait before each screenshot, so damage numbers, which fade in with CSS, show up;
-  - shots of actions on original models that have no `ACTIONS`.
-- `tools/turnaround`: choosing which anchor a close-up frames.
-- The Night square's lantern occluder covers part of Lunara's skirt when she stands behind the well.
+  - `subject.beforeKind` gives the Before model its own actor kind;
+  - `offset: [x, z]` in meters nudges any actor from its painting pixel;
+  - `dashAim: true` sends a dash straight along the line to the actor's target;
+  - every actor gets a real walk phase (meters walked × 4.2), so Io's stage no longer wraps her models;
+  - the painting is drawn into a stage-sized canvas, which removed the seam line in close view and the huge scaled image layer.
+- `tools/check.mjs` creates its cache folder on a fresh copy, waits `--wait` ms (350 by default) before each shot, and takes `action@1.2s` for models with no `ACTIONS`.
+- `tools/turnaround`: `--q anchor=<name>` and `--q fov=<deg>` for close-ups of any anchor.
+- The Night square's well: its lantern cutout is traced to the painted lantern instead of a box, and its bucket chain has a cutout.
 
 ## Next steps
 
-1. The polish round (plan step 10b): the bench and tool changes above, then every model's "what's left" list, one model at a time, each page rebuilt and republished here.
+1. The polish round (plan step 10b): every model's "what's left" list, one model at a time, each page rebuilt and republished here. The shared bench and tool changes are done.
 2. The cast page (step 11).
 3. Phase 2, the battles. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
 
@@ -83,4 +82,3 @@ The ground-level map prompts are request 04, with a pilot of three to make first
 
 `tools/compress.mjs` makes the game's WebP copies of Chris's images (`npm install --prefix tools` first).
 
-`tools/check.mjs` needs `mkdir -p tools/.cache` on a fresh copy of the repo until the polish round fixes it.

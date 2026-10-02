@@ -8,7 +8,6 @@
 // Her new Moonlore (src/fx/io-spells.js) plays on her existing motions: Waxing Light on mend, Moonsteel and Moth Veil
 // on cast. While one plays, its own effect, cue and hit times and name replace those of the motion. Moth Veil and the
 // wraith's Shadow Grasp go to the target picked under the Moonlore buttons (Sol or Io), so the veil can be tested.
-// The bench passes walk phase 0, so gait() gives her a real stride from the distance she moves (as the battle does).
 window.STAGES = window.STAGES || {};
 window.STAGES.witch = (function () {
   'use strict';
@@ -278,20 +277,6 @@ window.STAGES.witch = (function () {
 
   return {
     TIMES,
-    // gives the subject a real walk phase: the bench passes 0, the battle passes the meters walked x 4.2
-    gait(make) {
-      return () => {
-        const m = make(), anim = m.animate;
-        let ph = 0, px = null, pz = null;
-        const animate = (phase, wb, t, dt) => {
-          const x = m.root.position.x, z = m.root.position.z;
-          if (px !== null && !m.busy) ph += Math.hypot(x - px, z - pz) * 4.2;
-          px = x; pz = z;
-          return anim(ph, wb, t, dt);
-        };
-        return new Proxy(m, { get: (o, k) => (k === 'animate' ? animate : o[k]), set: (o, k, v) => { o[k] = v; return true; } });
-      };
-    },
     init(c) {
       ctx = c; THREE = c.THREE;
       FX = makeBattleFX(); c.scene.add(FX.grp);

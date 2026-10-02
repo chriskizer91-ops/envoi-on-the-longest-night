@@ -1,5 +1,6 @@
 // Usage: node tools/turnaround/render.mjs <model> <fn> <outDir> [--light studio] [--size 1600x900] [--q k=v] view ...
 //   views: front | left | back | right | three | face[:front|three] | bust | <kind>:<yaw>:<action>:<seconds>
+//   --q anchor=<name> makes face frame another anchor (chest, blade, orb...); --q fov=<deg> sets the close-up's lens (6)
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';

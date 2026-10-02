@@ -18,11 +18,12 @@ The process every model touch-up follows, so the cast stays consistent. Noctara 
 ```sh
 node tools/build.mjs demos/<id>.html                                      # build the page
 node tools/check.mjs dist/<id>.html --out <dir> idle <action>@0.5 ...    # bench screenshots, any action at any point
+node tools/check.mjs dist/<id>.html --out <dir> before <action>@1.2s     # an original with no ACTIONS: give seconds
 node tools/turnaround/render.mjs <id> make<Name> <dir> front left back three face bust:back
 node tools/turnaround/render.mjs <id> make<Name> <dir> --eval "m.root.traverse(o => ...)" back   # hide parts to debug
 ```
 
-`check.mjs` freezes the bench clock and steps it by hand, so every shot lands exactly where asked. `turnaround` renders the model alone like a model sheet, under the game's lighting (or `--light studio`). Crop and combine shots with ImageMagick (`convert a.png b.png +append out.png`) to compare against the concept art.
+`check.mjs` freezes the bench clock and steps it by hand, so every shot lands exactly where asked, then waits `--wait` ms (350) so CSS damage numbers show. In a page's config, an actor's `offset: [x, z]` in meters nudges it from its painting pixel, `dashAim: true` sends its dashes along the line to its target, and `subject.beforeKind` gives the Before model an older actor kind. `turnaround` takes `--q anchor=<name>` to frame a close-up on any anchor. `turnaround` renders the model alone like a model sheet, under the game's lighting (or `--light studio`). Crop and combine shots with ImageMagick (`convert a.png b.png +append out.png`) to compare against the concept art.
 
 ## Done means
 

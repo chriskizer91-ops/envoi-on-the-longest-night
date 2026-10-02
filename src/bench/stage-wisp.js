@@ -72,9 +72,6 @@ window.STAGES.wisp = (function () {
   return {
     init(ctx) {
       THREE = ctx.THREE; fx2 = ctx.overlay.getContext('2d');
-      const st = document.createElement('style');
-      st.textContent = '.dmg.miss{color:#e9f2ff;font-size:19px;font-style:italic;text-shadow:0 0 6px #000,0 2px 0 #222a44}';
-      document.head.appendChild(st);
       const t = ctx.radialTex('rgba(255,240,255,1)', 'rgba(190,110,255,0.6)', 'rgba(120,40,220,0)');
       const spr = (s) => { const o = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, color: 0xe2b8ff, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending })); o.scale.setScalar(s); o.visible = false; o.renderOrder = 9; ctx.scene.add(o); return o; };
       bolt = spr(0.55); bolt.userData.tr = [0, 1, 2, 3, 4].map((i) => spr(0.42 - i * 0.06));

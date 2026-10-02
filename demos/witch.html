@@ -26,7 +26,7 @@ Bench.start({
   blurb: 'The heroine in her battle place in the Night square, with Sol beside her, facing a Shadow Wraith. Every command plays as in the battle.',
   subject: {
     id: 'witch', name: 'Io',
-    make: STAGES.witch.gait(() => makeWitch({})), before: STAGES.witch.gait(() => makeWitchOriginal()),
+    make: () => makeWitch({}), before: () => makeWitchOriginal(),
     home: [560, 812], face: 'wraith', yawBias: -0.38, shadow: 0.62, target: 'wraith', tall: 2.1,
     walkSpeed: 0.9, height: '2.08 m to the tip of her hat',
   },

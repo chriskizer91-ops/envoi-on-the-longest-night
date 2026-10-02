@@ -35,8 +35,9 @@ function start() {
     m.root.rotation.y = yaw;
     if (s[2]) { m.play(s[2], true); step(Math.round(+s[3] * 60) || 1); } else step(2);
     if (kind === 'face') {
-      const p = m.anchor ? m.anchor('head', new THREE.Vector3()) : new THREE.Vector3(0, 1.6, 0);
-      cam.fov = 6; cam.aspect = W / H; cam.updateProjectionMatrix();
+      // --q anchor=<name> frames another anchor (chest, blade, orb...), --q fov=<deg> widens or narrows the close-up
+      const p = m.anchor ? m.anchor(Q.get('anchor') || 'head', new THREE.Vector3()) : new THREE.Vector3(0, 1.6, 0);
+      cam.fov = +(Q.get('fov') || 6); cam.aspect = W / H; cam.updateProjectionMatrix();
       cam.position.set(p.x, p.y + 0.02, p.z + 3.4); cam.lookAt(p.x, p.y - 0.02, p.z);
     } else if (kind === 'bust') {
       cam.fov = 8; cam.updateProjectionMatrix(); cam.position.set(0, 1.5, 6.5); cam.lookAt(0, 1.45, 0);

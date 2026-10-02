@@ -69,7 +69,10 @@
     if (cfg.blurb) el('p', null, header, cfg.blurb);
     const wrap = el('div', { class: 'wrap' }, document.body);
     const stage = el('main', { id: 'stage', 'aria-label': cfg.title }, wrap);
-    const paintEl = el('img', { id: 'paint', alt: '', draggable: 'false' }, stage);
+    // The painting is drawn into a canvas the size of the stage, only the part the camera shows. Scaling the whole
+    // image up with CSS made a layer of up to 10,000 pixels a side: heavy on a phone, and the browser split it with a seam.
+    const paintCv = el('canvas', { id: 'paint', 'aria-hidden': 'true' }, stage), paintCtx = paintCv.getContext('2d');
+    const paintImg = new Image();
     const night = el('div', { id: 'night', 'aria-hidden': 'true' }, stage);
     const glCanvas = el('canvas', { id: 'gl', 'aria-hidden': 'true' }, stage);
     const overlay = el('canvas', { id: 'overlay', 'aria-hidden': 'true' }, stage);
@@ -176,12 +179,15 @@
     // kind: 'spec' follows the Model Build Spec; 'witch', 'wraith' and 'goddess' are the older Night square interfaces.
     const actors = {};
     const _h = new THREE.Vector3();
-    function placeOf(spec) { const p = g(spec.home[0], spec.home[1]); return { x: p.x, z: p.z, yaw: 0 }; }
+    // home is a painting pixel; offset, in meters (x to the right, z toward the camera), nudges it from there
+    function placeOf(spec) { const p = g(spec.home[0], spec.home[1]), o = spec.offset || [0, 0]; return { x: p.x + o[0], z: p.z + o[1], yaw: 0 }; }
     function makeActor(spec, isSubject) {
       const home = placeOf(spec);
       const a = {
         id: spec.id, spec, m: null, kind: spec.kind || 'spec', home, x: home.x, z: home.z, yaw: 0, wb: 0, ts: 1, wt: 0, visible: spec.visible !== false, shadow: disc(spec.shadow || 0.6), isSubject,
-        build(make) {
+        phase: 0, px: null, pz: null,
+        build(make, kind) {
+          a.kind = kind || spec.kind || 'spec'; a.px = null;
           if (a.m) { scene.remove(a.m.root); if (a.m.fx) scene.remove(a.m.fx); dispose(a.m); }
           const t0 = performance.now();
           a.m = make();
@@ -195,9 +201,12 @@
         animate(t, dt) {
           const m = a.m;
           m.root.position.set(a.x, 0, a.z); m.root.rotation.y = a.yaw;
+          // the walk phase is the meters walked x 4.2, as the battle passes it (Model Build Spec: animate(phase, ...))
+          if (a.px !== null && !m.busy) a.phase += Math.hypot(a.x - a.px, a.z - a.pz) * 4.2;
+          a.px = a.x; a.pz = a.z;
           if (a.kind === 'wraith') m.animate(t, dt);
           else if (a.kind === 'goddess') m.update(t, dt);
-          else m.animate(0, a.wb, t, dt);
+          else m.animate(a.phase, a.wb, t, dt);
           a.shadow.position.set(a.x, 0.006, a.z);
         },
         play(name, force) { const m = a.m; if (!m.play) return false; if (a.kind === 'goddess') { if (m[name]) { m[name](); return true; } return false; } return m.play(name, force); },
@@ -227,8 +236,9 @@
     const faceOf = (spec) => { const t = spec.face ? actors[spec.face] : null; return t ? t.home : null; };
 
     function buildSubject() {
-      const make = UI.after || !cfg.subject.before ? cfg.subject.make : cfg.subject.before;
-      sub.build(make);
+      const after = UI.after || !cfg.subject.before;
+      // the Before model may use an older interface than the After one (beforeKind: 'witch', 'wraith' or 'goddess')
+      sub.build(after ? cfg.subject.make : cfg.subject.before, after ? cfg.subject.kind : cfg.subject.beforeKind || cfg.subject.kind);
       sub.x = sub.home.x; sub.z = sub.home.z; sub.yaw = sub.home.yaw; S.prog = -1; shownAct = null;
       if (UI.guard && sub.m.guard) sub.m.guard(true);
       const B = budget(sub.m);
@@ -266,7 +276,11 @@
     // ---------- camera: a crop of the painting plus a zoom, as in the battle ----------
     const cam = { cx: IW / 2, cy: IH / 2, s: 2, tx: IW / 2, ty: IH / 2, ts: 2 };
     let renderer = null, lastTf = '';
-    function layoutView() { view.w = stage.clientWidth; view.h = stage.clientHeight; if (renderer) renderer.setSize(view.w, view.h); overlay.width = Math.round(view.w * DPR); overlay.height = Math.round(view.h * DPR); }
+    function layoutView() {
+      view.w = stage.clientWidth; view.h = stage.clientHeight; if (renderer) renderer.setSize(view.w, view.h);
+      overlay.width = Math.round(view.w * DPR); overlay.height = Math.round(view.h * DPR);
+      paintCv.width = Math.round(view.w * DPR); paintCv.height = Math.round(view.h * DPR); lastTf = '';
+    }
     function applyCam(rdt) {
       const k = REDUCED ? 1 : 1 - Math.exp(-rdt * 4);
       cam.cx += (cam.tx - cam.cx) * k; cam.cy += (cam.ty - cam.cy) * k; cam.s += (cam.ts - cam.s) * k;
@@ -275,8 +289,12 @@
       ox = clamp(ox, 0, IW * S2 - view.w); oy = clamp(oy, 0, IH * S2 - view.h);
       ox = Math.round(ox * DPR) / DPR; oy = Math.round(oy * DPR) / DPR;
       camera.setViewOffset(IW * S2, IH * S2, ox, oy, view.w, view.h);
-      const tf = 'translate3d(' + (-ox) + 'px,' + (-oy) + 'px,0) scale(' + S2.toFixed(5) + ')';
-      if (tf !== lastTf) { paintEl.style.transform = tf; lastTf = tf; }
+      const tf = ox + ',' + oy + ',' + S2.toFixed(5) + ',' + view.w + ',' + view.h;
+      if (tf !== lastTf && paintImg.complete && paintImg.naturalWidth) {
+        paintCtx.imageSmoothingEnabled = true; paintCtx.imageSmoothingQuality = 'high';
+        paintCtx.drawImage(paintImg, ox / S2, oy / S2, view.w / S2, view.h / S2, 0, 0, paintCv.width, paintCv.height);
+        lastTf = tf;
+      }
     }
     const subjectHeight = cfg.subject.frameHeight || 1.1;
     function frameShot() {
@@ -310,8 +328,9 @@
       const restAct = m.action && !m.busy; // a hold action that has finished (die, kneel, victory)
       if (UI.walk && restAct) { const back = m.ACTIONS && (m.ACTIONS.appear ? 'appear' : m.ACTIONS.rise ? 'rise' : null); if (back) sub.play(back, true); else if (m.reset) m.reset(); }
       const busy = m.busy, hold = m.action && !m.busy;
+      const tgt = actors[cfg.subject.target] || cast[0];
       let tx = null, tz = null, speed = 0;
-      if (busy && m.dash) { sub.x += Math.sin(sub.yaw) * m.dash * dt; sub.z += Math.cos(sub.yaw) * m.dash * dt; }
+      if (busy && m.dash) dashStep(sub, cfg.subject.dashAim ? tgt : null, m.dash * dt);
       if (UI.walk && !busy && !hold) {
         LOOP.a += dt * (cfg.subject.walkSpeed || 0.8) / LOOP.r;
         tx = LOOP.x + Math.sin(LOOP.a + 0.7) * LOOP.r; tz = LOOP.z + Math.cos(LOOP.a + 0.7) * LOOP.r; speed = cfg.subject.walkSpeed || 0.8;
@@ -330,7 +349,6 @@
         if (sub.wb === 0 && !busy) LOOP.a = Math.atan2(sub.x - LOOP.x, sub.z - LOOP.z) - 0.7;
       }
       if (!busy || !m.dash) sub.yaw += wrapA(tyaw - sub.yaw) * (1 - Math.exp(-dt * (UI.turn && tx === null ? 0.65 : 3)));
-      const tgt = actors[cfg.subject.target] || cast[0];
       if (tgt && m.state && cfg.subject.aim !== false) { tgt.chest(tmpV); m.state.target = { x: tmpV.x, y: tmpV.y, z: tmpV.z }; }
       sub.animate(t, dt);
       const a = sub.action, p = sub.progress;
@@ -357,11 +375,17 @@
       const t = cfg.subject.target || (cast[0] && cast[0].id); if (t) damage(t, swing(300));
     }
 
+    // a dash moves along the actor's facing, or, with dashAim, straight along the line to its target
+    function dashStep(a, aimAt, d) {
+      let dx = Math.sin(a.yaw), dz = Math.cos(a.yaw);
+      if (aimAt) { const ex = aimAt.x - a.x, ez = aimAt.z - a.z, r = Math.hypot(ex, ez); if (r > 1e-3) { dx = ex / r; dz = ez / r; } }
+      a.x += dx * d; a.z += dz * d;
+    }
     function stepCast(rdt, t) {
       for (const a of cast) {
         if (!a.m) continue;
         const dt = rdt * a.ts; a.wt += dt;
-        if (a.busy && a.m.dash) { a.x += Math.sin(a.yaw) * a.m.dash * dt; a.z += Math.cos(a.yaw) * a.m.dash * dt; }
+        if (a.busy && a.m.dash) dashStep(a, a.spec.dashAim ? actors[a.spec.target] : null, a.m.dash * dt);
         if (a.visible) a.animate(a.wt, dt);
       }
     }
@@ -378,12 +402,13 @@
 
     // ---------- start ----------
     function init() {
-      paintEl.src = SC.image.startsWith('data:') ? SC.image : '../' + SC.image;
+      paintImg.onload = () => { lastTf = ''; };
+      paintImg.src = SC.image.startsWith('data:') ? SC.image : '../' + SC.image;
       renderer = new THREE.WebGLRenderer({ canvas: glCanvas, alpha: true, antialias: true });
       renderer.setPixelRatio(DPR); renderer.setClearColor(0x000000, 0); renderer.localClippingEnabled = true;
       layoutView();
       for (const a of cast) {
-        a.build(a.spec.make);
+        a.build(a.spec.make, a.spec.kind);
         const f = faceOf(a.spec) || sub.home; a.home.yaw = faceYaw(a.home, f) + (a.spec.yawBias || 0); a.x = a.home.x; a.z = a.home.z; a.yaw = a.home.yaw;
       }
       { const f = faceOf(cfg.subject) || (cast[0] && cast[0].home) || { x: sub.home.x, z: sub.home.z + 1 }; sub.home.yaw = faceYaw(sub.home, f) + (cfg.subject.yawBias || 0); }
