@@ -2,7 +2,7 @@
 
 A handoff for the next session. Updated October 2, 2026, after the battle groundwork and the walking choices of the eleventh round.
 
-**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Next is step 13, the party.
+**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Step 13, the party, is built too. Next is step 14, the great wraith.
 
 ## Working from the second account
 
@@ -89,12 +89,15 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 - `src/battle/screen.js` with `screen.css` and `sound.js` (the Night square demo's synthesized music and sound, unchanged). The page holds the markup and a config: the fight's setup, the models to build, and the end texts.
 - Each turn, the engine resolves the action and returns its log. The screen splits the log at each move, plays that move's choreography with the model's own hit and cue times, and shows the engine's numbers as the blows land. What the player has been shown (HP, MP, Trance) catches up blow by blow, then matches the engine.
-- Test hooks on `window.__battle`: `begin()`, `skip()`, `pick(id)`, `auto = 'expert'` (a play style from `sim.js` chooses the commands), `turbo`, `weaken(n, who)`, `trace`.
+- One screen plays any party (Io alone, or Io and Sol) against up to three foes. The page's config names the heroes and their places, the foe slots, how each foe looks, and `fight(level, pack)`, which returns the engine's setup. A start card can offer a level and a pack (`levels`, `packs`).
+- Every command with more than one target opens a target list (foes with their HP left, allies with their HP); an arrow marks the one pointed at, and the most hurt is pointed at first.
+- Test hooks on `window.__battle`: `begin()`, `skip()`, `pick(id)`, `auto = 'expert'` (a play style from `sim.js` chooses the commands), `turbo`, `setFight(level, pack)`, `weaken(n, who)`, `trace`. At high `turbo` the models' animations lag the clock (they cap their own step), so a sped-up test takes longer per action than its clock suggests.
 
 ## Next steps
 
-1. Step 13, the party: Io and Sol against wisps and wraiths at a chosen level, with Sol's Heat and Sword Arts, Waxing Light and Moonsteel, target picking, and a level slider.
-2. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.
+1. Step 14, the great wraith: the Bogmire boss and level 5 gate, with its Stolen Fire, Swallow Lamplight and its lights released at the end; winning leads to the refit and Moth Veil.
+2. The progression pass (`plan.md`): foe levels set by area, the experience curve, and half the fights in the last five levels, once Chris answers question 6.
+3. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.
 
 Art in hand (`../reference/art/README.md`):
 

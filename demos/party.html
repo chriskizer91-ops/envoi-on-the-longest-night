@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>The First Fight</title>
+<title>The Party</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
@@ -11,10 +11,10 @@
 </head>
 <body>
 <header>
-  <h1>The First Fight</h1>
+  <h1>The Party</h1>
   <button type="button" class="hbtn" id="snd" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3Zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Zm-2.5-8.8v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6Z"/></svg><span>Sound on</span></button>
 </header>
-<main id="stage" aria-label="Battle between Io and the Shadow Wraith in the Night square">
+<main id="stage" aria-label="Battle between Io and Sol and a pack of foes in the Night square">
   <canvas id="paint" aria-hidden="true"></canvas>
   <div id="tint" class="fill"></div>
   <canvas id="gl" aria-hidden="true"></canvas>
@@ -34,8 +34,13 @@
   <div id="skip" hidden><button type="button" class="skipb" id="skipBtn">Skip intro</button></div>
   <div id="start" class="overlay">
     <div class="card win">
-      <h2>The Shadow Wraith</h2>
-      <p>A Shadow Wraith has crossed the bridge from the Thornwood, drawn to the Moonwell at the heart of the square. When Io’s turn gauge fills, choose a command. Taking hits builds her Trance for Moonlight, and once a battle she can call Lunara, the Pale Mother, up from the well. Choose badly and Io can fall.</p>
+      <h2>Io and Sol</h2>
+      <p>The witch and the last Ember Warden fight side by side. Sol builds Heat with every blow and burns hotter above 70; Io keeps her standing and spends Moonsteel to stoke her. Pick the party’s level and the foes, then pick a target for every blow.</p>
+      <div class="pickr" id="picker" hidden>
+        <label for="pickLevel"><span>Party level</span><input type="range" id="pickLevel" min="1" max="20" step="1" value="3"><output id="pickLevelOut" for="pickLevel">3</output></label>
+        <label for="pickPack"><span>Foes</span><select id="pickPack"></select></label>
+        <p id="pickNote"></p>
+      </div>
       <button type="button" class="go" id="begin" disabled>Setting the scene…</button>
     </div>
   </div>
@@ -61,29 +66,55 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="../src/stage/night-square.js"></script>
 <script src="../src/models/witch.js"></script>
+<script src="../src/models/sol.js"></script>
 <script src="../src/models/wraith.js"></script>
+<script src="../src/models/wisp.js"></script>
 <script src="../src/models/lunara.js"></script>
 <script src="../src/fx/battle-fx.js"></script>
+<script src="../src/fx/io-spells.js"></script>
 <script src="../src/battle/rules.js"></script>
 <script src="../src/battle/engine.js"></script>
 <script src="../src/battle/sim.js"></script>
 <script src="../src/battle/sound.js"></script>
 <script src="../src/battle/screen.js"></script>
 <script>
-// Step 12: Io alone against a Shadow Wraith in the Night square, at level 1, with the Night square demo's numbers
-// (the lone wraith hits 15% harder, so a careless player can lose).
+// Step 13: Io and Sol against wisps, frost wisps and wraiths at a chosen level. Sol's Heat, Sunburn, Sword Arts and
+// Dawnbreaker; Io's Waxing Light, Moonsteel and, from level 6, Moth Veil; Lunara; herbs; a target for every blow.
+const PACKS = [
+  { name: 'Two wisps', foes: ['wisp', 'wisp'] },
+  { name: 'A Shadow Wraith', foes: ['wraith'] },
+  { name: 'A wisp and a wraith', foes: ['wisp', 'wraith'] },
+  { name: 'Three wisps', foes: ['wisp', 'wisp', 'wisp'] },
+  { name: 'Two wraiths', foes: ['wraith', 'wraith'] },
+  { name: 'A wraith and two wisps', foes: ['wraith', 'wisp', 'wisp'] },
+  { name: 'Two frost wisps and a wraith', foes: ['frostWisp', 'frostWisp', 'wraith'] },
+  { name: 'Three frost wisps', foes: ['frostWisp', 'frostWisp', 'frostWisp'] },
+  { name: 'Two wraiths and a frost wisp', foes: ['wraith', 'wraith', 'frostWisp'] },
+];
 BattleScreen.start({
-  level: 1, bridge: true,
-  heroes: [{ id: 'io', make: () => makeWitch({}), home: [560, 812], yawBias: -0.38, shadow: 0.62, tall: 2.1, kind: 'io' }],
-  slots: [[860, 800]],
-  foeLook: { wraith: { kind: 'wraith', shadow: 0.8, tall: 2.3, yawBias: 0.38, glow: [1.6, 0x2cff7a] } },
-  makeFoe: () => makeWraith({ level: 1 }),
+  level: 3, pack: 2, levels: [1, 20], packs: PACKS,
+  heroes: [
+    { id: 'io', make: () => makeWitch({}), home: [560, 812], yawBias: -0.38, shadow: 0.62, tall: 2.1, kind: 'io' },
+    { id: 'sol', make: () => makeSol({}), home: [650, 868], yawBias: -0.3, shadow: 0.6, tall: 1.9, kind: 'sol', stop: 0.9 },
+  ],
+  slots: [[860, 805], [950, 765], [925, 885]],
+  foeLook: {
+    wraith: { kind: 'wraith', shadow: 0.75, tall: 2.3, yawBias: 0.45, glow: [1.6, 0x2cff7a] },
+    wisp: { kind: 'wisp', shadow: 0.3, tall: 1.0, yawBias: 0.9, glow: [0.9, 0xb070ff], state: (u) => ({ level: u.level }) },
+    frostWisp: { kind: 'wisp', shadow: 0.3, tall: 1.0, yawBias: 0.9, glow: [0.9, 0x9fd8ff], state: (u) => ({ level: u.level }) },
+  },
+  makeFoe: (id, level, i) => (id === 'wraith' ? makeWraith({ level }) : makeWisp({ seed: i + 1, frost: id === 'frostWisp' })),
   makeLunara: () => makeLunara({}),
-  fight: (L) => ({ party: [{ id: 'io', level: L, atb: 0.6 }], foes: [{ id: 'wraith', level: 1, atb: 0.15 }], flags: {}, herbs: {} }),
-  attackText: () => 'The Shadow Wraith attacks!',
-  winMoth: 'A pale moth rises from the empty robe and drifts down into the Moonwell.',
-  winText: 'The wraith’s robe falls empty, and its soul goes home at last as a pale moth. The Moonwell shines again.',
-  loseText: 'The wraith’s shadow swallows the square. Heal before Io runs low, and keep something back for its Eclipse once it is badly hurt.',
+  fight: (L, p) => ({
+    party: [{ id: 'io', level: L }, { id: 'sol', level: L }],
+    foes: PACKS[p].foes.map((id) => ({ id, level: L })),
+    flags: { party: true, veil: L > 5, stoop: L > 15 },
+    herbs: { moonpetal: 2, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 },
+  }),
+  pickNote: (L) => 'Foes at level ' + L + ', like the party. ' + (L > 5 ? 'Moth Veil is in Io’s Moonlore. ' : 'Moth Veil comes after the Bogmire refit (level 6 here). ') + (L > 15 ? 'Sol has Kestrel Stoop.' : 'Kestrel Stoop comes after Halcyon (level 16 here).') + ' Envoi joins at Dawnroost, in a later step.',
+  attackText: (fs) => (fs.length > 1 ? 'The foes close in!' : 'The ' + fs[0].name + ' attacks!'),
+  winText: 'The souls go home as pale moths, and the square is quiet again.',
+  loseText: 'The party falls. Keep both above half, let Sol’s Heat ride but heal her burns, and save Lunara for when you need her.',
 });
 </script>
 </body>

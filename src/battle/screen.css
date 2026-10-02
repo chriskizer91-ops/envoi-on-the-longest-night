@@ -26,12 +26,13 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 #barT{top:0}#barB{bottom:0}
 .cine #barT,.cine #barB{height:9%}
 .win{background:linear-gradient(180deg,var(--w1),var(--w2));border:2px solid var(--wb);border-radius:7px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.55),0 4px 16px rgba(0,0,0,.5);color:var(--wt);text-shadow:0 1px 0 rgba(0,0,0,.7)}
-#enemy{position:absolute;left:10px;top:10px;padding:6px 10px 8px;min-width:156px;z-index:4}
-.ename{font-family:"IM Fell English",Georgia,serif;font-size:16px;margin-bottom:5px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+#enemy{position:absolute;left:10px;top:10px;padding:6px 10px 8px;min-width:156px;max-width:calc(100% - 20px);z-index:4;display:flex;flex-direction:column;gap:6px}
+.foe.down{opacity:.4}
+.ename{font-family:"IM Fell English",Georgia,serif;font-size:16px;margin-bottom:4px;display:flex;justify-content:space-between;gap:10px;align-items:baseline;white-space:nowrap}
 .ename small{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:12px;color:var(--dim)}
 .gauge{position:relative;height:8px;border-radius:4px;background:rgba(0,0,0,.55);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);overflow:hidden}
 .gauge i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:4px}
-#ehp{background:linear-gradient(90deg,#46e38c,#b7ffcf);transition:width .25s}
+#enemy .ehp{background:linear-gradient(90deg,#46e38c,#b7ffcf);transition:width .25s}
 #banner{position:absolute;left:50%;top:10px;transform:translate(-50%,-8px);padding:7px 18px;font-family:"IM Fell English",Georgia,serif;font-size:19px;white-space:nowrap;opacity:0;transition:opacity .2s,transform .2s;z-index:5;pointer-events:none}
 #banner.on{opacity:1;transform:translate(-50%,0)}
 #msg{position:absolute;left:50%;top:56px;transform:translateX(-50%);max-width:calc(100% - 24px);width:max-content;padding:10px 16px;font-size:16px;line-height:1.35;text-align:center;opacity:0;transition:opacity .35s;z-index:5;pointer-events:none}
@@ -39,7 +40,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 #msg.low{top:auto;bottom:calc(var(--uih,190px) + 14px)}
 #nums{position:absolute;inset:0;pointer-events:none;z-index:6;overflow:hidden}
 .num{position:absolute;left:0;top:0;font-weight:700;font-size:26px;color:#fff;text-shadow:-2px 0 #000,2px 0 #000,0 -2px #000,0 2px #000,0 3px 6px rgba(0,0,0,.6);will-change:transform,opacity;white-space:nowrap}
-.num.heal{color:var(--good)}.num.big{font-size:34px;color:#fff6c8}.num.small{font-size:18px}.num.word{font-size:18px;color:#e9d8ff}
+.num.heal{color:var(--good)}.num.big{font-size:34px;color:#fff6c8}.num.small{font-size:18px}.num.word{font-size:17px;color:#e9d8ff}
+.num.burn{font-size:16px;color:#ffb35c}.num.veil{font-size:16px;color:#cfe6ff}.num.heat{font-size:16px;color:#ffc46e}
 #ui{position:absolute;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;max-width:760px;margin:0 auto;z-index:7}
 #cmd{padding:6px 4px;min-height:172px;display:flex;flex-direction:column}
 #cmd .title{font-size:12px;color:var(--dim);padding:2px 10px 4px;letter-spacing:.04em;text-transform:uppercase}
@@ -52,21 +54,38 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 #cmd button .mp{margin-left:auto;font-size:13px;color:var(--dim);padding-right:4px;white-space:nowrap}
 #cmd .wait{margin:auto;color:var(--dim);font-size:14px}
 @keyframes bob{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
-#status{padding:8px 12px 10px;display:flex;flex-direction:column;gap:5px;min-height:172px}
-#status .name{font-family:"IM Fell English",Georgia,serif;font-size:19px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-#status .name small{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:12px;color:var(--dim);margin-right:auto;margin-left:8px}
-#tranceTag{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:12px;font-weight:700;color:#1a1530;background:linear-gradient(90deg,#ffe3f4,#e2ecff);border-radius:4px;padding:2px 6px;opacity:0;transition:opacity .3s;text-shadow:none}
-#tranceTag.on{opacity:1}
-.stat{display:flex;align-items:baseline;gap:8px}
-.stat .lbl{font-size:13px;color:var(--dim);width:22px}
-.stat .v{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
-.stat .m{font-size:14px;color:var(--dim);font-variant-numeric:tabular-nums}
+/* the party's window: a block per hero (name and level, HP with MP or Heat, the turn and Trance gauges) */
+#status{padding:7px 10px 9px;display:flex;flex-direction:column;justify-content:center;gap:8px;min-height:172px}
+.hero{display:flex;flex-direction:column;gap:3px;padding-left:6px;border-left:2px solid transparent;transition:border-color .2s}
+.hero.turn{border-left-color:var(--gold)}
+.hero.down{opacity:.55}
+.hero .name{font-family:"IM Fell English",Georgia,serif;font-size:17px;line-height:1.15;display:flex;align-items:baseline;gap:7px}
+.hero .name small{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:11.5px;color:var(--dim);margin-right:auto}
+.ttag{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:11px;font-weight:700;color:#1a1530;background:linear-gradient(90deg,#ffe3f4,#e2ecff);border-radius:4px;padding:1px 6px;opacity:0;transition:opacity .3s;text-shadow:none;align-self:center}
+.ttag.on{opacity:1}
+.stat{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.stat .lbl{font-size:12px;color:var(--dim)}
+.stat .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat .m{font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums}
 .stat .v.low{color:var(--gold)}.stat .v.crit{color:#ff8a8a}
-.glbl{font-size:11px;color:var(--dim);margin-bottom:2px}
-#atb i{background:linear-gradient(90deg,#4f7bff,#a8c4ff)}
-#atb.full i{background:linear-gradient(90deg,#ffd66e,#fff3c4);animation:pulse .6s ease-in-out infinite}
-#tr i{background:linear-gradient(90deg,#ff9fd4,#f4f2ff)}
-#tr.full i{animation:pulse .5s ease-in-out infinite}
+.stat .sec{margin-left:auto;display:flex;gap:5px;align-items:baseline}
+.stat .sv{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat .sv.burn{color:#ffb35c}
+.gs{display:grid;grid-template-columns:3fr 2fr;gap:8px}
+.gw{display:flex;flex-direction:column;gap:2px}
+.gw span{font-size:10.5px;color:var(--dim);line-height:1}
+.gauge.atb i{background:linear-gradient(90deg,#4f7bff,#a8c4ff)}
+.gauge.atb.full i{background:linear-gradient(90deg,#ffd66e,#fff3c4);animation:pulse .6s ease-in-out infinite}
+.gauge.tr i{background:linear-gradient(90deg,#ff9fd4,#f4f2ff)}
+.gauge.tr.full i{animation:pulse .5s ease-in-out infinite}
+#status.solo .hero .name{font-size:19px}
+#status.solo .stat .v{font-size:22px}
+#status.solo .gs{grid-template-columns:1fr;gap:5px}
+/* the arrow over the fighter a menu points at, and the frost at the edges */
+#marker{position:absolute;left:0;top:0;z-index:6;pointer-events:none;width:22px;height:18px;color:var(--gold);filter:drop-shadow(0 2px 2px rgba(0,0,0,.7))}
+#marker svg{display:block;width:22px;height:18px;animation:hover .8s ease-in-out infinite}
+@keyframes hover{50%{transform:translateY(-5px)}}
+#rime{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;opacity:0}
 @keyframes pulse{50%{filter:brightness(1.35)}}
 .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;z-index:9;background:rgba(8,5,12,.45);overflow:auto}
 .card{max-width:380px;width:100%;padding:18px 18px 16px;text-align:center;margin:auto}
@@ -92,6 +111,16 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 #skip{position:absolute;right:10px;top:10px;z-index:8}
 .skipb{appearance:none;border:1px solid rgba(255,255,255,.35);background:rgba(10,8,18,.6);color:#fff;border-radius:18px;padding:8px 14px;font-size:14px}
 @media (min-width:700px){#cmd,#status{min-height:150px}}
-@media (max-width:560px){#banner{top:58px;font-size:17px;padding:6px 14px}#msg{top:104px}}
+@media (max-width:560px){#banner{left:auto;right:10px;top:10px;transform:translate(0,-8px);font-size:16px;padding:6px 12px;white-space:normal;text-align:center;max-width:calc(100% - 196px)}#banner.on{transform:translate(0,0)}#msg{top:34%}}
 @media (max-width:420px){#cmd button{font-size:15px;gap:4px;min-height:34px}#cmd button .hand{width:22px}#cmd button .mp{font-size:11.5px}.stat .v{font-size:20px}#status .name{font-size:17px}header{padding-inline:12px}}
-@media (prefers-reduced-motion:reduce){#cmd button.sel .hand{animation:none}#atb.full i,#tr.full i{animation:none}.card .xp .gauge i{transition:none}}
+/* the start card's choices: the party's level and the pack */
+.pickr{display:flex;flex-direction:column;gap:10px;margin:0 0 14px;text-align:left}
+.pickr label{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;font-size:14px;color:#dfe4ff}
+.pickr input[type=range]{width:100%;accent-color:var(--gold);min-height:28px}
+.pickr output{font-weight:700;font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
+.pickr select{font:inherit;color:var(--wt);background:rgba(10,12,34,.55);border:1px solid rgba(214,222,255,.35);border-radius:6px;min-height:40px;padding:6px 10px;grid-column:2/4}
+.pickr select option{background:#1c2040}
+.pickr p{margin:0;font-size:13px;color:var(--dim)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.go.alt{background:rgba(10,12,34,.45);color:var(--wt);border:1px solid rgba(214,222,255,.4);box-shadow:none}
+@media (prefers-reduced-motion:reduce){#cmd button.sel .hand{animation:none}.gauge.atb.full i,.gauge.tr.full i{animation:none}.card .xp .gauge i{transition:none}#marker svg{animation:none}}
