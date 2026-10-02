@@ -48,7 +48,7 @@ Each model gets its page rebuilt and republished after its polish. Noctara's lis
 | Wisp | Done: a darker, fuller smoke tail with strands that part and curl; deeper tears in the hollow with pale lips; the frost variant checked in all nine actions |
 | Wraith and great wraith | Done: the scythe's ornate openwork head with burning slots, a hem of fewer, longer, wavier tails with the green climbing up them, and the great wraith switched in place |
 | Sol | Done: wispier hair with a fringe across her forehead, a rounder face, the cape over her shoulders, and Ember Rush aimed at the wraith. Her 140 KB of code has no unused parts; the final build can minify it |
-| Envoi | A full ring round the foe in the strike; a dark splash when the ward takes a hit; the tail kept clear of Io; longer bipyramid lanterns |
+| Envoi | Done: longer lanterns pointed at both ends; the strike's ring sized from its body so it closes round the foe; a dark splash thrown off the ward when it takes a blow; its place on the bench moved so its coils keep at least 1.6 m from Io |
 | Halcyon | Light-Drinker's streams and Black Noon's swirls as ribbons; the brief cut line in the retreat around u 0.65. Her face stays as it is. |
 
 ### 11: the cast page

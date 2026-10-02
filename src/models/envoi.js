@@ -420,10 +420,13 @@ function makeEnvoi(opts) {
     }
     return out;
   }
-  const LR = 0.3, LH = 0.3; // lantern radius and half-height at size 1
+  const LR = 0.3, LH = 0.36; // lantern radius and half-height at size 1
+  // longer than they are wide and drawn to a point at each end, like the sheet's paper bipyramids: the sphere's width
+  // falls off linearly toward the poles instead of round
+  const bipy = (v) => { const y = v.y, r = Math.hypot(v.x, v.z), w = Math.pow(Math.max(0, 1 - Math.abs(y)), 0.8); return r > 1e-6 ? V3(v.x / r * w * LR, y * LH, v.z / r * w * LR) : V3(0, y * LH, 0); };
   function lanternGeo() {
-    const S = new Soup(CELLUV), O = V3(), k = V3(LR, LH, LR);
-    for (const [a, b, c] of geodesic()) facet(S, a.clone().multiply(k), b.clone().multiply(k), c.clone().multiply(k), O, 0.04);
+    const S = new Soup(CELLUV), O = V3();
+    for (const [a, b, c] of geodesic()) facet(S, bipy(a), bipy(b), bipy(c), O, 0.04);
     return S.geo();
   }
   // the heart: eight-sided, with flat caps, a top knot and a long tassel (sheet A, "heart lantern (eight-sided)")
@@ -740,8 +743,9 @@ function makeEnvoi(opts) {
   const CENTER = V3(0, 0, 4.5), _tl = V3();
   // the strike (sheets, panels 6 and 7; strike scene B): the body rings the foe low, the neck rises from the ring's near
   // side and the head hangs over it, looking down into the middle
+  let RING_R = 1.6; // sized at build time (fitRing) so the body is just long enough to close the ring round the foe
   function poseHelix(p, t) {
-    const R = 1.6, spin = t * 0.2, c = Math.cos(aim), s = Math.sin(aim);
+    const R = RING_R, spin = t * 0.2, c = Math.cos(aim), s = Math.sin(aim);
     const put = (o, x, y, z) => o.set(x * c + z * s, y, -x * s + z * c);
     put(p.pts[0], 0.15 + Math.sin(spin * 0.5) * 0.15, 4.0, REACH - R * 0.55);
     put(p.pts[1], 0.42, 3.05, REACH - R - 0.25);
@@ -790,6 +794,8 @@ function makeEnvoi(opts) {
   const GAP = 0.05;
   const SEG_D = []; { let d = 0.34 + LH * SIZE[0]; for (let i = 0; i < NSEG; i++) { SEG_D.push(d); d += LH * (SIZE[i] + (SIZE[i + 1] || SIZE[i])) + GAP; } }
   const KNOT_D = []; for (let i = 0; i <= NSEG; i++) KNOT_D.push(i === 0 ? SEG_D[0] - LH * SIZE[0] - GAP * 0.5 : SEG_D[i - 1] + LH * SIZE[i - 1] + GAP * 0.5);
+  // the strike's ring closes round the foe: the largest ring whose helix the body's length still fills
+  { const fp = mkPose(); let lo = 0.6, hi = 2.2; for (let it = 0; it < 24; it++) { RING_R = (lo + hi) / 2; poseHelix(fp, 0); sampleSpine(fp.pts); if (sLen[NS - 1] > KNOT_D[NSEG] + 0.1) hi = RING_R; else lo = RING_R; } RING_R = lo; }
   const segPos = Array.from({ length: NSEG }, () => V3()), segTan = Array.from({ length: NSEG }, () => V3()), knotPos = Array.from({ length: NKN }, () => V3()), knotTan = Array.from({ length: NKN }, () => V3());
   const tailTip = V3(), tailDir = V3();
   const _m = new T.Matrix4(), _q = new T.Quaternion(), _s = V3(), _x = V3(), _y = V3(), _z = V3(), _q2 = new T.Quaternion();

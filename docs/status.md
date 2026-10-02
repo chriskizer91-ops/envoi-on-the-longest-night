@@ -19,6 +19,7 @@ We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Ev
 | The wisp | https://claude.ai/artifact/GG9LKbSjeohk7UA2UJ7Kcp | Polished October 2: a darker, fuller tail and a deeper, torn hollow; the frost variant checked in every action |
 | Shadow Wraith and great wraith | https://claude.ai/artifact/VzY24F1cx38cVhs87wfvKU | Polished October 2: the scythe's ornate head and the long torn hem from its sheet; the Great wraith toggle switches in place |
 | Sol | https://claude.ai/artifact/9Sbu4aSYqmmiKytpy3y8as | Polished October 2: wispier hair, a rounder face, the cape over her shoulders, Ember Rush aimed at the wraith |
+| Envoi | https://claude.ai/artifact/4XL684grjKstJCGud3MnNm | Polished October 2: longer pointed lanterns, a strike that rings the foe all the way round, a dark splash on the ward, its coils clear of Io |
 | Art requests | https://claude.ai/artifact/MNozyJ4DQys2syLfyyv44c | Retired: Chris found the page clunky. Image requests now go to him as Markdown files in the chat (`SendUserFile`). |
 
 ## Published from the first account
@@ -44,7 +45,7 @@ We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Ev
 | Wisp | Done, polished twice | — |
 | Shadow Wraith and great wraith | Done, polished | The great wraith's numbers belong to the battle step |
 | Sol | Done, polished | Her code stays 140 KB: it has no unused parts, so only minifying would shrink it, which the final game's build can do |
-| Envoi | Done | A full ring round the foe in the strike; a dark splash when the ward takes a hit; keep the tail clear of Io; longer bipyramid lanterns |
+| Envoi | Done, polished | — |
 | Halcyon | Done | Her face is still rounder than the sheets' gaunt one (kept as built); Light-Drinker's streams and Black Noon's swirls could be ribbons; a brief cut line in the retreat around u 0.65 |
 | The cast (step 11) | Not started | Every model together at true scale, after all of the above |
 

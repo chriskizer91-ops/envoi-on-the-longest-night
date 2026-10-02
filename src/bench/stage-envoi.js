@@ -18,6 +18,7 @@ window.STAGES.envoi = (function () {
     spent: false,       // the ward took its hit
   };
   let THREE = null, V1, V2, V3, beam, beamPos, beamGlow = [], sparks = [], moth = null, mothGlow = null, mothT = -1, mothP;
+  const ink = []; // the dark splash when a blow lands on the ward: drops of the wraith's darkness thrown off the paper
   const mul = () => Math.pow(1.2, S.level - 1);
   const fmt = (n) => Math.round(n).toLocaleString('en-US');
 
@@ -82,6 +83,27 @@ window.STAGES.envoi = (function () {
     sparks.forEach((q, i) => { const f = (t * 1.6 + i / sparks.length) % 1; q.position.copy(V1).addScaledVector(V3, f); q.position.y += Math.sin(f * Math.PI) * 0.25 * Math.sin(i * 2.1); q.scale.setScalar(0.22 + 0.1 * Math.sin(t * 31 + i)); q.material.opacity = k * Math.sin(f * Math.PI); });
   }
 
+  // ---------- the dark splash: ink-dark drops burst off the ward where the blow lands and fall to the cobbles ----------
+  function splash(p, cam) {
+    // thrown out over the paper toward the party's side (the camera), so the splash reads in front of the wall
+    const tx = cam.x - p.x, tz = cam.z - p.z, tl = Math.hypot(tx, tz) || 1;
+    for (const d of ink) {
+      const a = Math.random() * Math.PI * 2, sp = 1.2 + Math.random() * 2.4;
+      d.s.position.set(p.x + (Math.random() - 0.5) * 0.3, p.y + (Math.random() - 0.5) * 0.3, p.z + (Math.random() - 0.5) * 0.3);
+      d.v.set(Math.cos(a) * sp + tx / tl * 1.8, 0.6 + Math.random() * 2.6, Math.sin(a) * sp + tz / tl * 1.8);
+      d.life = 0; d.max = 0.7 + Math.random() * 0.6; d.r = 0.22 + Math.random() * 0.34; d.s.visible = true;
+    }
+  }
+  function stepInk(rdt) {
+    for (const d of ink) {
+      if (!d.s.visible) continue;
+      d.life += rdt; if (d.life >= d.max) { d.s.visible = false; continue; }
+      d.v.y -= 7 * rdt; d.s.position.addScaledVector(d.v, rdt);
+      if (d.s.position.y < 0.03) { d.s.position.y = 0.03; d.v.set(0, 0, 0); }
+      const f = d.life / d.max; d.s.scale.setScalar(d.r * (1 + 1.4 * f)); d.s.material.opacity = 0.92 * (1 - f * f);
+    }
+  }
+
   // ---------- the wraith attacks: the ward takes it all, or the party takes it ----------
   function startFoe(ctx) {
     const w = foe(ctx); if (!w || !w.m) return;
@@ -97,7 +119,7 @@ window.STAGES.envoi = (function () {
       F.hit = true;
       if (wardUp(ctx)) {
         ctx.subject.play('block', true); S.spent = true;
-        const m = ctx.subject.m; ctx.ring(m.anchor(m.ACTIONS && 'warded' in m ? 'ward' : 'chest', new THREE.Vector3()), 'hit');
+        const m = ctx.subject.m, at = m.anchor(m.ACTIONS && 'warded' in m ? 'ward' : 'chest', new THREE.Vector3()); ctx.ring(at, 'hit'); splash(at, ctx.camera.position);
         float(ctx, 'witch', 'Warded', WARD, -6); float(ctx, 'sol', 'Warded', WARD, 6);
         say('Warded: the Folding Ward takes the whole blow', 2.4);
       } else {
@@ -208,6 +230,8 @@ window.STAGES.envoi = (function () {
       moth = new THREE.Sprite(new THREE.SpriteMaterial({ map: mothTex(), transparent: true, depthWrite: false })); moth.visible = false; moth.renderOrder = 6; ctx.scene.add(moth);
       mothGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: ctx.radialTex('rgba(255,255,250,0.9)', 'rgba(226,222,255,0.35)', 'rgba(200,196,255,0)'), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
       mothGlow.visible = false; mothGlow.renderOrder = 5; ctx.scene.add(mothGlow);
+      const inkTex = ctx.radialTex('rgba(10,4,18,0.96)', 'rgba(26,10,40,0.6)', 'rgba(26,10,40,0)');
+      for (let i = 0; i < 40; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: inkTex, color: i % 5 ? 0xffffff : 0x9dffc0, transparent: true, depthWrite: false, depthTest: false })); sp.visible = false; sp.renderOrder = 6; ctx.scene.add(sp); ink.push({ s: sp, v: new THREE.Vector3(), life: 0, max: 1, r: 0.2 }); }
       this.setLevel(ctx, S.level);
     },
     onBuild(ctx) { if (THREE) resetAll(ctx); },
@@ -229,6 +253,7 @@ window.STAGES.envoi = (function () {
       stepSummon(ctx);
       stepBeam(ctx, t);
       stepFoe(ctx, rdt);
+      stepInk(rdt);
       stepRelease(ctx, rdt);
       stepMoth(ctx, rdt, t);
     },
