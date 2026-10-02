@@ -125,3 +125,17 @@ The lore answers (`lore/lore-answers-2026-10-01.md`) settle the story, the world
 - **The flying map is different from the walking map.** The flying map is the world seen from the Magpie.
 - The walking map looks like the ground, with the pixel Witch walking on it.
 - Chris is thinking of how travel worked in FF9: you walk the world on foot, then later fly over it.
+
+## October 2, 2026
+
+### Big numbers
+
+- **Damage numbers should be big and climb all game.** Chris: at the start a hit does about 100; by the end it does about 3,000, so a player feels how far they have come.
+- **The game finishes at about level 20.**
+
+### The curve (proposed; the battle steps tune it)
+
+- **Every level makes every move about 20% stronger** (×1.2 per level). A basic hit is about 100 at level 1, 500 at level 10 and 3,200 at level 20.
+- **Foes scale the same way.** HP and damage both rise about 20% per level, so a fight against foes of the party's level lasts about as long at level 20 as at level 1; the numbers are just bigger. A party a few levels above its foes wins more easily, which is the reward for exploring.
+- **Moves keep their ratios as they grow.** A big Sword Art does several times a basic hit, a Trance attack more, and Envoi the most: about 100,000 for its whole strike at level 20.
+- **The 25% swing stays.** No 9,999 cap.
