@@ -13,6 +13,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Lunara | https://claude.ai/artifact/XpsLozXGFgPCwLG5s5iUce | Done |
 | Io, the Witch | https://claude.ai/artifact/1mF6YFp3xg1KhGs5tZNYky | Technical pass done. Her three new spells are in progress (below). |
 | Sol | https://claude.ai/artifact/FpVoGvTKCwv8GWiuouJu7N | Done, with Kestrel Stoop |
+| Envoi | https://claude.ai/artifact/6W5ZvTmsusQwAEBEkP95hx | Done, with its summon, ward and strike |
 | The wisp | https://claude.ai/artifact/TDbtEVzrdJFQ2cXevWFiVF | Done, with its polish round |
 
 ## The models
