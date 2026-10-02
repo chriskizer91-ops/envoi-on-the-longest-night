@@ -2,14 +2,14 @@
 // level curve grows everything about 20% a level (design decisions, October 2). No dice: each hit is its number times
 // a random swing of up to 25% either way. Level 1 is the Night square demo's numbers
 // (reference/demos/night-square-shadow-wraith.html); Sol, the herbs and the foes' kits come from the lore bible and
-// the Noctara amendment, rescaled to this curve. Anything marked "proposed" is a starting number for the balance
-// simulator (tools/balance.mjs) to check. Defines globalThis.BattleRules; engine.js reads it.
+// the Noctara amendment, rescaled to this curve; the rest was set with the balance simulator (tools/balance.mjs) and
+// approved by Chris on October 2. Defines globalThis.BattleRules; engine.js reads it.
 (function (G) {
   'use strict';
   const CURVE = 1.2, SWING = 0.25, MAX_LEVEL = 20;
   // damage, healing and HP at a level: x1.2 a level, so a basic hit is about 100 at 1, 500 at 10 and 3,200 at 20
   const scale = (level) => Math.pow(CURVE, level - 1);
-  // MP grows 6% a level while spell costs stay put (proposed): 120 at level 1, about 360 at 20, as in the bible
+  // MP grows 6% a level while spell costs stay put : 120 at level 1, about 360 at 20, as in the bible
   const mpScale = (level) => Math.pow(1.06, level - 1);
 
   // ---------- the party ----------
@@ -50,7 +50,7 @@
         // halves what she takes, and takes any single hit aimed at Io, until her next turn
         guard: { name: 'Guard', kind: 'defend', heat: -40, target: 'self', time: 0.8 },
         // Kestrel Stoop: a turn hovering, then on her next turn the biggest sword hit in the game. It costs what one
-        // Ember Rush does and beats two of them (proposed)
+        // Ember Rush does and beats two of them
         stoopRise: { name: 'Kestrel Stoop', kind: 'art', heat: -40, need: 'stoop', target: 'foe', time: 1.6 },
         stoop: { name: 'Stoop', kind: 'auto', hits: [1500], element: 'sun', physical: true, target: 'foe', time: 2.6 },
         // Dawnbreaker: Attack becomes Daybreak, and High Noon ends the Trance
@@ -71,7 +71,7 @@
   // Trance: the gauge fills from damage taken (n / max HP x 1.35) and 0.02 for each hit dealt. When it's full, the
   // hero enters Trance at the start of her next turn, free. Io's Twin Moons: Moonlore costs half and every heal lands
   // on both; Moonlight cashes it in. Sol's Dawnbreaker: Heat locked at 100, Sunburn costs no HP; High Noon cashes it
-  // in. Either way it lasts at most 4 of her turns (proposed), so it can't be held for a whole fight.
+  // in. Either way it lasts at most 4 of her turns , so it can't be held for a whole fight.
   const TRANCE = { taken: 1.35, dealt: 0.02, turns: 4 };
 
   // ---------- summons, each once a battle; Io's level sets their numbers ----------
@@ -101,7 +101,7 @@
         eclipse: { name: 'Eclipse', below: 0.35, once: true, hits: [360], hitsSolo: [480], target: 'all', time: 3.4 },
       },
     },
-    // a soul starting to go hollow: weaker than a wraith, quicker (proposed)
+    // a soul starting to go hollow: weaker than a wraith, quicker
     wisp: {
       name: 'Wisp', hp: 1100, atb: 2.8, weak: { moon: 1.5 }, shards: 14, xp: 18,
       moves: {
@@ -112,7 +112,7 @@
         gutter: { name: 'Gutter', weight: 0.15, evade: 1, target: 'self', noRepeat: true, time: 1.5 },
       },
     },
-    // the later variant, from Noctara's cold: its breath slows the party's gauges for a few seconds (proposed)
+    // the later variant, from Noctara's cold: its breath slows the party's gauges for a few seconds
     frostWisp: {
       name: 'Frost wisp', hp: 1200, atb: 2.8, weak: { moon: 1.3, fire: 1.5 }, shards: 18, xp: 22,
       moves: {
@@ -154,7 +154,7 @@
     },
     // Noctara the Starless, fixed at level 20, with Halcyon beside her. The cold deepens as the fight goes on: every
     // turn she takes makes her blows 6% harder (rage), so the finale is a race. Tuned so an expert at 20 wins a little
-    // over half the time, and at 19 falls with about a third of the two bosses' HP left (proposed)
+    // over half the time, and at 19 falls with about a third of the two bosses' HP left
     noctara: {
       name: 'Noctara', hp: 29000, atb: 2.8, fixedLevel: 20, boss: true, rage: 0.06, shards: 0, xp: 0,
       moves: {
@@ -177,7 +177,7 @@
   };
 
   // ---------- herbs, the items (bible); the map lists them by place, shops sell them for sunstone shards ----------
-  // heal and revive grow with the user's level; prices are level 1 shards and grow with the shop's band (proposed)
+  // heal and revive grow with the user's level; prices are level 1 shards and grow with the shop's band
   const HERBS = {
     moonpetal: { name: 'Moonpetal', heal: 500, target: 'ally', price: 40 },
     lavender: { name: 'Lavender', heal: 200, target: 'allies', price: 60 },
@@ -187,11 +187,11 @@
   };
 
   // ---------- experience and shards ----------
-  // to go from level L to L+1 (proposed): three or four wild fights a level, about 60 from 1 to 20; a gate is worth
+  // to go from level L to L+1 : three or four wild fights a level, about 60 from 1 to 20; a gate is worth
   // about one level, and the first fight takes Io straight to level 2
   const xpNeed = (level) => Math.round(200 * Math.pow(CURVE, level - 1));
   const grows = (n, level) => Math.round(n * Math.pow(CURVE, level - 1));
-  // the Magpie's upgrades: the party's level and a price in shards (proposed; the story chain sets them)
+  // the Magpie's upgrades: the party's level and a price in shards (the story chain will check them)
   const MAGPIE = [
     { level: 5, name: 'The Bogmire refit', shards: 500 },
     { level: 10, name: "The charge at Dawnroost's living node", shards: 1800 },

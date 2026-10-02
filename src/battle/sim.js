@@ -56,7 +56,7 @@
     finale: {
       // at Noctara's side Halcyon fights at a little over a third of her ambush strength: Blackout gives her extra
       // blows, and at full strength the two of them end the fight before it can become a race. The cold deepens for
-      // both (proposed)
+      // both
       name: 'The finale', note: 'Noctara with Halcyon, both at 20, at the dead Moonwell; the cold deepens every turn', level: 20, levels: [17, 20],
       setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'halcyon', hpMul: 0.4, dmgMul: 0.35, rage: 0.06 }, { id: 'noctara' }], flags: { party: true, veil: true, envoi: true, stoop: true }, herbs: BAGS.finale }),
     },

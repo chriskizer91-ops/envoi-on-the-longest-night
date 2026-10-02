@@ -456,3 +456,21 @@ Several rules and numbers are new, set while balancing. They wait for Chris's ap
 - **Wisps and frost wisps** have their own moves.
 - **Herbs** cover only the statuses this game has.
 - **The Magpie's upgrades** cost 500, 1,800 and 4,500 shards.
+
+## October 2, 2026, twelfth round
+
+- **Chris approved every new battle rule and number** from the eleventh round:
+  - the finale as a race, with the cold deepening;
+  - Halcyon at Noctara's side at a little over a third of her ambush strength;
+  - Halcyon's ambush tuning;
+  - three level 12 wraiths at Dawnroost;
+  - Trance lasting at most four turns;
+  - Kestrel Stoop at 40 Heat;
+  - where Lunara's beams and Envoi's strike land;
+  - MP growing 6% a level;
+  - the wisps' and frost wisps' moves;
+  - the five herbs;
+  - the Magpie's prices.
+
+  They are no longer "proposed".
+- **Step 12, the first fight, is next.**
