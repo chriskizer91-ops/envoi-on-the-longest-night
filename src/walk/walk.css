@@ -1,0 +1,16 @@
+/* walk.css: the walking test's map canvas, d-pad and dialogue box, on top of bench.css */
+#walk{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.pad{position:absolute;right:10px;bottom:10px;width:132px;height:132px;display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);z-index:3;touch-action:none}
+.pad button{appearance:none;border:1px solid rgba(214,222,255,.45);border-radius:10px;background:rgba(18,16,40,.55);color:#f4f6ff;font-size:17px;line-height:1;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none}
+.pad button:active{background:rgba(255,179,71,.35)}
+.pad-n{grid-column:2;grid-row:1}.pad-w{grid-column:1;grid-row:2}.pad-e{grid-column:3;grid-row:2}.pad-s{grid-column:2;grid-row:3}
+.talk{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:12px;align-items:stretch;padding:8px;z-index:4;cursor:pointer;max-height:46%}
+.talk[hidden]{display:none!important}
+.talk-face{flex:0 0 auto;width:min(30vw,148px);aspect-ratio:1;height:auto;max-width:100%;border-radius:6px;border:1px solid rgba(214,222,255,.55);object-fit:cover;background:#151236}
+.talk-words{position:relative;flex:1 1 auto;min-width:0;padding:2px 22px 4px 2px}
+.talk-who{font-family:"IM Fell English",Georgia,serif;font-style:italic;font-size:19px;color:#ffd88f;margin-bottom:4px}
+.talk-said{margin:0;font-size:15.5px;line-height:1.4}
+.talk-next{position:absolute;right:4px;bottom:2px;font-size:12px;color:#ffc46e;animation:nudge 1s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){.talk-next{animation:none}}
+#stage #now{max-width:calc(100% - 170px)}

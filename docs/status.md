@@ -13,7 +13,8 @@ We are finishing **phase 1, the models** (`plan.md`). The polish round (step 10b
 
 | Page | Link | State |
 |---|---|---|
-| The cast | https://claude.ai/artifact/Qk8apijsA3ZjVoK88XF4bJ | Step 11, first version (October 2): every model at true scale; pick an encounter, who acts and their target. Waiting on Chris's phone check of the frame rate |
+| The cast | https://claude.ai/artifact/Qk8apijsA3ZjVoK88XF4bJ | Step 11 (October 2): every model at true scale; pick an encounter, who acts and their target. Pixel 7a: 60 fps with five models, 39 with eight. Builds models when first needed |
+| Walking test | https://claude.ai/artifact/3YJkf77SD43iWJgo6pXmcf | The pixel Io on the three pilot ground-level maps, to check their scale; the talking portraits in a dialogue box. Waiting on Chris's verdict on the scale |
 | Noctara | https://claude.ai/artifact/JWFwFUZTDum2CZjbGXotir | Rebuilt October 2 with the finished Io, Sol and Halcyon |
 | Lunara | https://claude.ai/artifact/Y1hTureSoXGBnTer4tJNSX | Polished October 2: heavier skirt chains and pointed ears |
 | Io, the Witch | https://claude.ai/artifact/6vRCkyYzZjn5Fc77GYebyE | Polished October 2: her new spells sized for the battle camera |
@@ -77,15 +78,16 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 ## Next steps
 
-1. The cast page: Chris's phone check (the frame rate with five models), then any fixes.
-2. Phase 2, the battles, starting with the groundwork: the rules tables, the level curve and the balance simulator.
-3. When Chris's pilot ground-level maps arrive: a quick scale test with a pixel Io walking on them. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
+1. Phase 2, the battles, starting with the groundwork: the rules tables, the level curve and the balance simulator.
+2. The walking test: Chris's verdict on Io's size on the maps (36 map px to start), which sets the scale of the rest of request 04.
+3. Chris's older phone: its make, and whether a single model's page opens on it. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
 
 Art in hand (`../reference/art/README.md`):
 
 - every sheet from art request 01;
 - all eight battle backdrops from request 03, compressed into `art/backdrops/`;
-- the world map: nine tiles in a 3×3 grid, in day and night versions, with the bands and stops Chris confirmed (`reference/art/world-map/bands-and-stops.webp`).
+- the world map: nine tiles in a 3×3 grid, in day and night versions, with the bands and stops Chris confirmed (`reference/art/world-map/bands-and-stops.webp`);
+- the three pilot ground-level maps (request 04) and the three pilot portraits (request 05).
 
 The ground-level map prompts are request 04, with a pilot of three to make first; it went to Chris as a Markdown file. The questions for Chris, and the lore questions for his lore conversation, are in `questions/open.md`.
 

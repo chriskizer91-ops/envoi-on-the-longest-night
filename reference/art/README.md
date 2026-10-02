@@ -61,6 +61,13 @@ For art request 05 (`docs/art-requests/05-portraits.md`), in `portraits/`:
 - `io-face-render.png`: Io's 3D model, face close-up (from `../renders/2026-10-01-baseline/face-witch.png`);
 - `sol-face-sheet.png`: the face views cropped from Sol's model sheet A.
 
+## Pilot portraits and maps
+
+Received October 2, 2026:
+
+- `portraits/portrait-io.png`, `portrait-sol.png`, `portrait-shipmaster-a.png`: the talking portraits (art request 05), 1254×1254, with `prompts-pilot.txt` from Chris's generator. The game's 640-pixel copies are in `../../art/portraits/`.
+- `walk/walk-wickhollow-square.webp`, `walk-bogmire.webp`, `walk-northern-crossroads.webp`: the pilot ground-level maps (art request 04), 1536×1024 at night. They are used as they came, in `../../art/walk/`.
+
 ## Key art
 
 `key-art-advert.png` (1672×941) is an advert for the game, not a title screen. It shows the Witch casting at Noctara, with Lunara and Envoi above, Sol and Halcyon crossing blades below, and a wraith behind Noctara. Use it later wherever a poster fits: a loading screen, the back of the title, or a page's cover image.

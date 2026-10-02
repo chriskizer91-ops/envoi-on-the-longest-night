@@ -11,7 +11,7 @@ Every earlier question has been answered; the answers are in `design-decisions.m
 ## Design questions
 
 2. **Names from Aethermoor.** The map pack's notes name Willowmurk, Rotbridge and "Misthollow Ruins" in the southern wetlands. In this game Misthollow is the frozen town in the north. Do the pale flooded ruins in the wetlands get another name, or none?
-3. **The shipmaster:** a woman or a man (portrait A or B in `art-requests/05-portraits.md`), and a name.
+3. **The shipmaster's name.** She is a woman (portrait A).
 
 ## Lore questions
 

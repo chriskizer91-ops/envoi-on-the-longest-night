@@ -370,3 +370,25 @@ This replaces the visible packs from Aethermoor that the plan first proposed.
 ### Talking portraits
 
 - **When someone speaks, a detailed painted portrait of them appears** beside the words, so the player sees who they're talking to and not only a tiny pixel sprite. The pixel sprites stay for walking. Portraits are requested in `art-requests/05-portraits.md`, starting with a pilot of Io, Sol and the shipmaster.
+
+## October 2, 2026, eighth round
+
+### The phone budget
+
+Chris checked the cast page on his Pixel 7a:
+
+| What was on screen | Models | Triangles | Draw calls | Frame rate |
+|---|---|---|---|---|
+| The finale with Envoi summoned (Io, Sol, Halcyon, Noctara, Envoi) | 5 | 422,000 | up to 236 | 60 |
+| Everyone, with both summons, through Envoi's summon and strike | 8 | 598,000 | up to 298 | 39 |
+
+- **Five models at 60 frames a second is the budget a battle is built to.** No fight puts eight on screen.
+- **Chris's older phone doesn't load the cast page.** Its make and whether it opens a single model's page are still to find out. The cast page now builds each model only when it first appears, to ask less of an older phone.
+
+### Talking portraits
+
+- The pilot portraits arrived on October 2, 2026: Io, Sol, and the shipmaster. **The shipmaster is a woman (portrait A).** Originals in `../reference/art/portraits/`, the game's copies in `../art/portraits/`.
+
+### Ground-level maps
+
+- The three pilot maps arrived on October 2, 2026: Wickhollow square, Bogmire and the northern crossroads (`../reference/art/walk/`). The walking test checks their scale against the pixel Io.

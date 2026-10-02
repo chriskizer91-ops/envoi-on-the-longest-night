@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Walking Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/bench/bench.css">
+<link rel="stylesheet" href="../src/walk/walk.css">
+</head>
+<body>
+<script src="../src/walk/pixel-io.js"></script>
+<script src="../src/walk/walk-content.js"></script>
+<script src="../src/walk/walk-test.js"></script>
+<script>
+WalkTest.start({
+  title: 'Walking Test',
+  blurb: 'The pixel Io on the pilot ground-level maps, to check their scale. Walk with the arrows, the d-pad or a tap.',
+  maps: WALK.maps, portraits: WALK.portraits, lines: WALK.lines, ioHeight: 36,
+  note: "A scale test: no walls yet, so Io walks over everything. Her height on the map starts at 36 map pixels, from the doors in Wickhollow square (about 25 by 40 map pixels). Try the slider until she looks right next to the doors, and tell me the number. Talk shows the talking portraits with sample lines.",
+});
+</script>
+</body>
+</html>

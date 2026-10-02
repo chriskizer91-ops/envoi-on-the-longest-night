@@ -218,7 +218,7 @@
           if (a.kind === 'goddess' && a.m.show) a.m.show();
           a.setVisible(a.visible);
         },
-        setVisible(v) { a.visible = v; if (!a.m) return; a.m.root.visible = v; if (a.m.fx) a.m.fx.visible = v; a.shadow.visible = v; },
+        setVisible(v) { a.visible = v; a.shadow.visible = v; if (!a.m) return; a.m.root.visible = v; if (a.m.fx) a.m.fx.visible = v; },
         animate(t, dt) {
           const m = a.m;
           m.root.position.set(a.x, 0, a.z); m.root.rotation.y = a.yaw;
@@ -505,8 +505,17 @@
       chips('Acting', acting.map((a) => ({ label: a.spec.name, a })), (it) => it.a === sub, (it) => select(it.a));
       if (sub.spec.side !== 'foe') chips('Target', visibleFoes().map((a) => ({ label: a.spec.name, a })), (it) => foeOf(sub) === it.a, (it) => { sub.spec.target = it.a.id; refreshPick(); });
     }
+    // the cast page builds a model the first time it is needed, so an older phone isn't asked to hold all nine at once
+    function ensure(a) {
+      if (a.m) return;
+      a.build(a.spec.make, a.spec.kind);
+      if (a.stage && a.stage.onBuild) a.stage.onBuild(a.ctx);
+      if (a.stage && a.stage.init && !a.stage.__inited) { a.stage.init(a.ctx); a.stage.__inited = true; }
+      a.ready = !!a.cfg;
+    }
     function setEncounter(e) {
       enc = e;
+      for (const id of e.foes) ensure(actors[id]);
       for (const a of all) {
         const side = a.spec.side;
         if (side === 'foe') { a.setVisible(e.foes.includes(a.id)); a.home = placeOf(a.spec, e.place && e.place[a.id]); }
@@ -526,6 +535,7 @@
       resetLoop(); refreshPick(); showBudget(sub);
     }
     function select(a, quiet) {
+      ensure(a);
       if (a !== sub) {
         if (UI.guard) { if (sub.m.guard) sub.m.guard(false); UI.guard = false; guardTog.set(false); }
         if (UI.walk) { UI.walk = false; walkTog.set(false); }
@@ -544,9 +554,7 @@
       renderer.setPixelRatio(DPR); renderer.setClearColor(0x000000, 0); renderer.localClippingEnabled = true;
       layoutView();
       if (CAST) {
-        for (const a of all) a.build(a.spec.make, a.spec.kind);
-        for (const a of all) if (a.stage && a.stage.onBuild) a.stage.onBuild(a.ctx);
-        for (const a of all) { if (a.stage && a.stage.init && !a.stage.__inited) { a.stage.init(a.ctx); a.stage.__inited = true; } a.ready = !!a.cfg; }
+        for (const a of all) if (a.spec.side === 'party') ensure(a);
         setEncounter(cfg.encounters[0]);
         select(sub);
       } else {
