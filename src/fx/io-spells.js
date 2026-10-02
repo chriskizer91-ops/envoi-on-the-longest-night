@@ -62,7 +62,7 @@ function makeIoSpells(fx) {
       if (Math.abs(k - lastK) > 0.004) { drawMoon(c, k); tex.needsUpdate = true; lastK = k; }
       const appear = sm(0, 0.22 * L, el), gone = sm(L + 0.12, T, el), full = sm(0.7 * L, 0.8 * L, el);
       moon.position.copy(sky); moon.position.y += 0.25 * gone;
-      moon.scale.setScalar(0.8 * (0.7 + 0.3 * appear) * (1 + 0.1 * full * (1 - gone)));
+      moon.scale.setScalar(1.55 * (0.7 + 0.3 * appear) * (1 + 0.1 * full * (1 - gone))); // sized to read from the battle camera
       moon.material.opacity = appear * (1 - gone);
       if (!fell && el >= 0.72 * L) { // the light starts to fall
         fell = true;
@@ -107,7 +107,7 @@ function makeIoSpells(fx) {
     for (let i = 0; i <= N; i++) for (let s = 0; s < 2; s++) P.set([s ? 1 : -1, lerp(-0.1, 1.1, i / N), 0], (i * 2 + s) * 3);
     for (let i = 0; i < N; i++) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(P, 3)); geo.setIndex(idx);
-    const U = { uA: { value: V3() }, uB: { value: V3() }, uW: { value: 0.075 }, uColor: { value: new THREE.Color(color || 0xcfe0ff) }, uOpacity: { value: 0 }, uTime: { value: 0 } };
+    const U = { uA: { value: V3() }, uB: { value: V3() }, uW: { value: 0.11 }, uColor: { value: new THREE.Color(color || 0xcfe0ff) }, uOpacity: { value: 0 }, uTime: { value: 0 } };
     const mat = new THREE.ShaderMaterial({ uniforms: U, vertexShader: BLADE_VS, fragmentShader: BLADE_FS, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
     const mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false; mesh.renderOrder = 6; fx.grp.add(mesh);
     let el = 0;
@@ -132,7 +132,7 @@ function makeIoSpells(fx) {
         el += dt || 0; const d = dt || 0;
         if (el < rel) { // forming: it grows and turns in her palm
           pt(o.palm, p); const k = sm(0, rel * 0.85, el);
-          cres.position.copy(p); cres.scale.setScalar(0.03 + 0.17 * k); cres.material.opacity = k;
+          cres.position.copy(p); cres.scale.setScalar(0.05 + 0.3 * k); cres.material.opacity = k;
           rot += d * (2 + 4 * k);
           if (Math.random() < 0.4) fx.sparks.emit(p, [0.8, 0.88, 1], 1, { speed: 0.4, life: 0.35, spread: 0.04, grav: 0, drag: 3 });
         } else { // flying in a low arc to the middle of the blade
@@ -142,9 +142,9 @@ function makeIoSpells(fx) {
           mid.copy(from).lerp(to, 0.5); mid.y += 0.35;
           const k0 = (1 - e) * (1 - e), k1 = 2 * (1 - e) * e, k2 = e * e;
           p.set(from.x * k0 + mid.x * k1 + to.x * k2, from.y * k0 + mid.y * k1 + to.y * k2, from.z * k0 + mid.z * k1 + to.z * k2);
-          cres.position.copy(p); cres.scale.setScalar(0.2 - 0.06 * e); cres.material.opacity = 1;
+          cres.position.copy(p); cres.scale.setScalar(0.36 - 0.1 * e); cres.material.opacity = 1;
           rot += d * 14;
-          fx.embers.emit(p, [0.75, 0.85, 1], 2, { speed: 0.2, life: 0.35, grav: 0, drag: 4 });
+          fx.embers.emit(p, [0.75, 0.85, 1], 3, { speed: 0.25, life: 0.45, grav: 0, drag: 4 });
         }
         cres.material.rotation = rot;
       }, () => {
@@ -293,7 +293,7 @@ function makeIoSpells(fx) {
         const rad = 0.3 * Math.sin(Math.PI * s), ang = m.ph + m.turn * s * TAU * 1.3;
         p.lerpVectors(m.from, dest, e).addScaledVector(u1, Math.cos(ang) * rad).addScaledVector(u2, Math.sin(ang) * rad); p.y += 0.25 * Math.sin(Math.PI * s);
         P.set([p.x, p.y, p.z], i * 3);
-        S[i] = lerp(0.15, 0.1, s); F[i] = 0.2 + 0.8 * Math.abs(Math.sin(el * 24 + m.ph)); W[i] = 0.5 * Math.sin(el * 6 + m.ph);
+        S[i] = lerp(0.26, 0.16, s); F[i] = 0.2 + 0.8 * Math.abs(Math.sin(el * 24 + m.ph)); W[i] = 0.5 * Math.sin(el * 6 + m.ph);
         A[i] = sm(0, 0.1, s) * (1 - sm(0.88, 1, s));
         if (s >= 1) { m.settled = true; settled++; A[i] = 0; if (settled === N) { veil.up = struckAt < 0 && fadeFrom < 0; ready(); } }
         else flying++;

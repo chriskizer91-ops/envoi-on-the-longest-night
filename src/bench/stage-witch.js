@@ -121,7 +121,7 @@ window.STAGES.witch = (function () {
     const S = IO.SPELLS[id], dur = DUR[S.motion], left = (h) => Math.max(0.05, (h - u) * dur);
     if (id === 'waxing' && i === 0) {
       const w = W(), s = SOL();
-      IO.waxingLight({ sky: () => V().set((w.x + s.x) / 2, 2.55, (w.z + s.z) / 2), allies: [chestW, chestOf('sol')], landIn: left(S.hits[0]) });
+      IO.waxingLight({ sky: () => V().set((w.x + s.x) / 2, 2.9, (w.z + s.z) / 2), allies: [chestW, chestOf('sol')], landIn: left(S.hits[0]) });
     } else if (id === 'moonsteel' && i === 0) {
       IO.moonsteel({ palm: flameW, blade: solBlade, releaseIn: left(S.cues[1]), landIn: left(S.hits[0]), glowFor: S.glow });
     } else if (id === 'veil') {
