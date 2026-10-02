@@ -19,6 +19,7 @@ The spec's targets: 70k to 100k triangles (minimum 50k, ceiling 120k for bosses)
 | Lunara | `night-square-shadow-wraith.html` | 56k | none | 60 | No (its own interface) |
 | Lunara, touched up | `src/models/lunara.js` | 97k | 62 | 14 (+ up to 21 for effects) | Yes |
 | Envoi | `envoi-letter-wyrm-model-preview.html` | 83k (instanced) | 20 | 27 | Mostly (no skinning; `block` 0.6 s; `busy` is false during holds) |
+| Envoi, touched up | `src/models/envoi.js` | 64k (bench count) | 23 | 9 + 12 effects | Yes |
 | Wisp, new | `src/models/wisp.js` | 16k | none (all in shaders) | 9 | Yes |
 
 Draw calls here were counted in the line-up scene and include glow sprites and particles. The Noctara page bundles the older Halcyon (v1); the rebuilt v2 is in the Halcyon page.
@@ -67,7 +68,24 @@ Brought toward her model sheet A. Every duration and hit time is kept.
 - **Tabard and cape:** the tabard is a plain orange panel. Add the gold sun crest, and the gold sun on the back of the cape.
 - Keep what already works: the copper hair and braid, the feathered pauldron, the sword and its glow, and every action and its timing.
 
-### Envoi: visible upgrade
+### Envoi: done October 2, 2026
+
+Brought toward its model and action sheets and the two Envoi scenes.
+
+- **Body:** 16 faceted ivory paper lanterns that glow gold from inside, with ink columns, red cord knots and red tassels.
+- **Head:** a larger folded-paper head with swept horns, a scorched frill, gold eyes, trailing whiskers and the red wax seal (crescent and flame) at twice the size.
+- **Heart lantern:** eight-sided, the brightest light on the wyrm.
+- **Wings and tail:** bigger fan wings with burning tips, and scorched tail streamers.
+- **Pose:** it coils low around the well toward the party, as in scene A.
+- **Spec fixes:** `block` is 0.45 s, and `busy` holds through the summon.
+- **Bench page:** Io summons, Sol's blade lights the heart, the ward takes the wraith's hit, and the strike rings the wraith in fire. Its numbers grow with Io's level, to about 103,500 at level 20.
+- **Still to improve:**
+  - The strike's ring wraps only half to two-thirds round the wraith.
+  - The ward hit has no dark splash.
+  - The tail comes close to Io in idle.
+  - The lanterns could be longer bipyramids.
+
+### Envoi: the plan
 
 - **Body:** the 16 segments read as spiky starbursts, not paper lanterns. They should be faceted ivory paper lanterns lit from inside, with ink columns showing through and red tassels at the joints, as in `envoi-summon-scene-a.png`.
 - **Head:** small and hard to read from the battle camera. It needs to be bigger, with long swept horns, a folded frill, whisker barbels, gold eyes and a red wax seal that reads.

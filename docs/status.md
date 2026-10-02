@@ -25,7 +25,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Wisp | Done, polished | A darker, fuller smoke tail; stronger tears in the hollow; check the frost variant in every action |
 | Shadow Wraith and great wraith | In progress since October 1 | Match the soul-green sheets; the great wraith with stolen flames in its ribs and lanterns on its chain |
 | Sol | Done | Wispier hair, a rounder face, the cape over her shoulders, and compacting the code (140 KB) |
-| Envoi | In progress | The look from its sheets, the Envoi scenes' scale, and its bench page |
+| Envoi | Done | A full ring round the foe in the strike; a dark splash when the ward takes a hit; keep the tail clear of Io; longer bipyramid lanterns |
 | Halcyon | Done | Her face is still rounder than the sheets' gaunt one (kept as built); Light-Drinker's streams and Black Noon's swirls could be ribbons; a brief cut line in the retreat around u 0.65 |
 | The cast (step 11) | Not started | Every model together at true scale, after all of the above |
 

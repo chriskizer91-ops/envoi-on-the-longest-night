@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Envoi, the Letter Wyrm</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/bench/bench.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/night-square.js"></script>
+<script src="../src/models/originals/witch.js"></script>
+<script src="../src/models/originals/sol.js"></script>
+<script src="../src/models/originals/wraith.js"></script>
+<script src="../src/models/envoi.js"></script>
+<script src="../src/models/originals/envoi.js"></script>
+<script src="../src/bench/bench.js"></script>
+<script src="../src/bench/stage-envoi.js"></script>
+<script>
+Bench.start({
+  title: 'Envoi, the Letter Wyrm',
+  blurb: "The summon of Io, the Witch, in the Night square: her letters to the dead, folded into a dragon and lit by Sol's blade, facing a Shadow Wraith.",
+  subject: {
+    id: 'envoi', name: 'Envoi', make: () => makeEnvoi({}), before: () => makeEnvoiOriginal({}),
+    home: [720, 790], face: 'wraith', yawBias: -0.5, shadow: 1.6, shadowY: 0.6, target: 'wraith', tall: 9.5,
+    walkLabel: 'Glide', walkSpeed: 0.9, loopR: 1.2, frameHeight: 2.9, closeSpan: 430,
+    height: '6.4 m to the wing tops, about 9 m from snout to streamers',
+  },
+  cast: [
+    { id: 'witch', name: 'Io', kind: 'witch', make: () => makeWitchOriginal(), home: [560, 812], face: 'wraith', yawBias: -0.38, shadow: 0.62 },
+    { id: 'sol', name: 'Sol', make: () => makeSolOriginal({}), home: [650, 868], face: 'wraith', yawBias: -0.3, shadow: 0.6 },
+    { id: 'wraith', name: 'Wraith', kind: 'wraith', make: () => makeWraithOriginal(), home: [860, 800], face: 'sol', yawBias: 0.2, shadow: 0.7, tall: 2.4 },
+  ],
+  groups: [
+    { title: 'Both turns', acts: ['bothTurns'] },
+    { title: 'Summon, ward and strike', acts: ['summon', 'wardHit', 'envoi'] },
+    { title: 'Leaving and reactions', acts: ['leave', 'hurt', 'block'] },
+  ],
+  names: { bothTurns: 'Play both turns', summon: 'Summon', wardHit: 'A foe hits the ward', envoi: 'Envoi', leave: 'Leave', hurt: 'Hurt', block: 'Block', appear: 'Summon', die: 'Leave' },
+  hints: { bothTurns: 'summon, a hit, the strike', summon: 'Sol 70+ Heat, spends it', wardHit: 'the ward takes it all', envoi: '9 hits, Last Word', leave: 'battle ends first', block: 'the ward absorbs' },
+  sliders: [{ label: "Io's level", min: 10, max: 20, step: 1, value: 10, onInput: (v, ctx) => STAGES.envoi.setLevel(ctx, v) }],
+  stage: STAGES.envoi,
+  note: "Envoi can be summoned once per battle, on Io's turn, and only while Sol is standing with 70 or more Heat; summoning spends all of it. Letters fold into the wyrm, Sol's blade lights its heart lantern, the seal breaks, and it coils into the Folding Ward, which takes the next enemy attack completely. On its turn it wraps the foe, burns from tail to head as a ring of fire, and drops its heart for the Last Word. Io gains it at level 10, and its strike grows with her level: eight hits of 180 and a Last Word of 1,800 at level 1, about 20% more per level, so about 16,700 in all at level 10 and about 103,500 at level 20, the cap. The numbers are placeholders until the battle steps. The beaten wraith is released, not killed: a pale moth rises. Before and After switch between the old model and the touched-up one.",
+});
+</script>
+</body>
+</html>
