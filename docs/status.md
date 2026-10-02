@@ -14,7 +14,7 @@ We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Ev
 | Page | Link | State |
 |---|---|---|
 | Noctara | https://claude.ai/artifact/JWFwFUZTDum2CZjbGXotir | Rebuilt October 2 with the finished Io, Sol and Halcyon |
-| Art requests | https://claude.ai/artifact/MNozyJ4DQys2syLfyyv44c | The open prompts (requests 03 and 02) with copy buttons. Rebuild with `node tools/art-page.mjs` and republish `dist/art-requests.html` whenever a request changes. |
+| Art requests | https://claude.ai/artifact/MNozyJ4DQys2syLfyyv44c | The open prompts with copy buttons: the ground-level maps (request 04) and the night world tiles (request 02). Rebuild with `node tools/art-page.mjs` and republish `dist/art-requests.html` whenever a request changes. |
 
 ## Published from the first account
 
@@ -73,6 +73,14 @@ Make these once no agent is mid-pass, since every page shares these files:
 2. The cast page (step 11).
 3. Phase 2, the battles. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
 
-Art in hand: every sheet from art request 01 (`../reference/art/README.md`). The battle backdrop prompts are in `art-requests/03-battle-backdrops.md`. Chris is painting the world maps himself: nine detailed images with night versions. The questions for Chris, and the lore questions for his lore conversation, are in `questions/open.md`.
+Art in hand (`../reference/art/README.md`):
+
+- every sheet from art request 01;
+- all eight battle backdrops from request 03, compressed into `art/backdrops/`;
+- the world map, day versions: nine tiles in a 3×3 grid. The night versions come next (request 02).
+
+The ground-level map prompts are request 04, with a pilot of three to make first. The questions for Chris, and the lore questions for his lore conversation, are in `questions/open.md`; the biggest is where the bands and stops sit on the world map.
+
+`tools/compress.mjs` makes the game's WebP copies of Chris's images (`npm install --prefix tools` first).
 
 `tools/check.mjs` needs `mkdir -p tools/.cache` on a fresh copy of the repo until the polish round fixes it.

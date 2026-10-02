@@ -1,0 +1,43 @@
+Generated with the built-in image-generation tool.
+
+Use case: precise-object-edit. Asset: one of nine equal adjoining regional paintings in a 3x3 fantasy RPG continent grid. Edit target: Image 1 is an exact regional crop from the user's finished continent map. Repaint this same crop with significantly richer fine detail; this is generative detail restoration, not a new map composition or a simple blurred enlargement. Use the largest available native image rendering. Keep the exact camera, zoom, framing, shoreline shapes, mountain locations, island positions, river routes, existing path courses, settlement anchor positions and sizes, and features entering/exiting all four edges. Never recenter the scene. Do not draw the whole continent.
+Supporting close-up references show the desired microscopic painted materials: finely textured grass, wildflowers, pebbled dirt paths, mossy stone, individual foliage, translucent turquoise water with submerged rocks. Borrow their painting technique and material logic, NOT their composition and NOT their camera scale. Refine existing surfaces so zooming reveals structure instead of mush, while staying a regional aerial painting.
+HARD SETTLEMENT LOCK: No new towns, villages, castles, towers, hamlets, cottages or house clusters. Retain exactly the existing settlement groups visible in image 1; sharpen their architecture and surfaces rather than adding structures. Empty wilderness stays wilderness. No extra settlements along paths. No replacement of geographic layout. No new mountains, rivers or islands.
+Painterly fantasy RPG terrain, orthographic high oblique birds-eye view, warm upper-left daylight, coherent shadows, jade foliage, tan stone, rich teal waters, tiny medieval architecture. Crisp but hand-painted, not photorealistic, not pixel art. Show fine natural textures without uniform noise or excessive oversharpening.
+Outer 8% overlaps neighbor sections: preserve its macrogeography particularly tightly; major changes stay inside this collar. Any flat dark blue strip along canvas edge is artificial padding: extend matching sea texture over it and never paint a frame. No text, names, labels, grid, title, frames, parchment, UI, people, creatures, airships, or compositional panels. Full-bleed landscape terrain only.
+
+REGION 1: Northwest Islands and Pine Coast
+Snowy archipelago at top-left, broad ocean channel across center, western forest mainland at bottom-right. Render snow crevices, small rocky beaches, existing village roof shingles and detailed pine and broadleaf crowns.
+
+REGION 2: Northern Passage
+The northern inland-sea entrance runs through middle, fertile fields and existing clustered settlements on left, alpine slopes and existing cliff settlements on right. Preserve every town cluster and bridge footprint.
+
+REGION 3: Northeast Peaks and Coast
+Snowy northeast islands, eastern alpine massif, turquoise coves and open sea. Refine mountain strata, snow gullies, tree crowns and existing roof tiles. Keep all coastal land silhouettes.
+
+REGION 4: Western Forests and Riverlands
+Western green mainland, mature forest, cliffs, connected rivers, farms and existing red-roof settlements. Refine individual canopy branches, grass texture along existing paths, field crop rows and stonework. Do not fill woodland with new houses.
+
+REGION 5: Central Sea and Island Capital
+The same single large island capital near upper-middle, surrounding inland sea, coastal landmarks at left and right, southern strait near bottom-middle. Preserve the capital's exact island silhouette, tower number and overall scale. Add windows, roof shingles, worn masonry, harbor planks and layered shallow-water texture. Do not add buildings or new islands in empty sea.
+
+REGION 6: Eastern Mountains and Desert
+The eastern alpine spine turns into ochre desert plateaus, existing roads and existing settlement clusters, outer ocean on right. Refine sandstone strata, scree, glacial water, sparse shrubs, and existing architecture.
+
+REGION 7: Southwest Isles and River Mouths
+Southwest archipelago and forested cliff coast, existing rivers and stone bridges upper-right, outer ocean middle and bottom. Keep every island and existing village; refine submerged coastal stones and tree crowns.
+
+REGION 8: Southern Wetlands — Bogmire and Willowmurk
+CANONICAL SOUTHERN BIOME CORRECTION: the user-supplied southern regional painting is already-used game art. The source crop's grassy southern band must instead be a richly resolved coastal wetland with winding shallow waterways, reed beds, willow trees, stilt architecture, wooden boardwalks, tidal flats and weathered pale stone ruins, matching the supplied wetland painting and labeled geographic reference. Preserve source crop's outer coast, inland-sea inlet at top and neighboring terrain at left and right. Reinterpret the SAME existing principal settlement anchors: the existing upper-left settlement becomes Bogmire's stilt buildings, the existing settlement on the right becomes Willowmurk's smaller stilt buildings. Convert the existing route between them into Rotbridge wooden boardwalks and relate the existing central stone site to Misthollow Ruins. Do NOT create extra settlement clusters to populate the swamp. Remove incompatible broad golden cultivated fields, adapt them to reeds and marsh. Keep architecture locally smaller than the terrain.
+
+REGION 9: Southeast Canyon Coast
+Southeast desert coast and rocky offshore islands, canyon plateaus toward upper-left, outer sea lower-right. Sharpen sandstone stratification, dry scrub, existing ruins and paths, coastal shallows and fine breakers. No new settlements or islands.
+
+SOUTHERN INPUT ROLES
+Image 1: exact source crop. Image 2: user wetland artwork. Image 3: labeled geographic reference. Images 4 and 5: path and bridge materials.
+
+SOUTHERN DUPLICATION CORRECTION
+Use case: precise-object-edit. Edit this regional wetland painting with TWO very localized removals to avoid duplicate towns. Keep everything else exactly unchanged.
+1. Remove the old dryland town with the orange roofs and tall red-roof church in the upper-left quadrant (approximately x=0.14 to0.35,y=0.09to0.23). Replace that entire cluster with natural flooded willow woodland and reeds, preserving the existing path corridors. Do not leave a church, house, village, roof, wall or tower there.
+2. Remove the old dryland stone fortified town with orange roofs and a tall church in the upper-right quadrant (approximately x=0.73to0.86,y=0.26to0.40). Replace with natural willow marsh, reed beds and shallow water; no buildings at that site.
+The two wooden stilt settlements in the lower-left and lower-right are the replacement forms of those same towns, so keep them exactly as they are. Keep the pale flooded ruin center-right, all boardwalks, water channels, major coastlines, offshore rocks, top central harbor and remaining original landmarks. No new buildings anywhere. No new settlements. No new islands. No pan, recenter, zoom or changes to framing. Same light, camera and fine painted detail. No labels or text. Remove only the two specified dryland clusters; preserve all other details, especially terrain near image edges.

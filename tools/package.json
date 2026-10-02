@@ -1,0 +1,8 @@
+{
+  "name": "envoi-tools",
+  "private": true,
+  "description": "Dependencies for the tools that need them: sharp for tools/compress.mjs. Install with npm install --prefix tools",
+  "dependencies": {
+    "sharp": "^0.34.5"
+  }
+}

@@ -30,6 +30,27 @@ From Chris's first uploads, October 1, 2026.
 | `lunara-pose-sheet.png` | Lunara, the moth goddess summon |
 | `shadow-wraith-pose-sheet.png` | The Shadow Wraith. It is violet here but soul-green in the game. |
 
+## Battle backdrops
+
+From art request 03 (`docs/art-requests/03-battle-backdrops.md`), all received October 2, 2026, in `backdrops/`: eight night paintings at 1448×1086 in the Night square's view. `backdrops/prompts.json` records the prompts Chris's generator used. The game's compressed copies are in `../../art/backdrops/`.
+
+| File | Place | Fight |
+|---|---|---|
+| `battle-gloamwood-road.png` | The Gloamwood road | Band 1 wild fights |
+| `battle-thornwood-bridge.png` | The Thornwood bridge | Band 1 wild fights |
+| `battle-bogmire-boardwalk.png` | Bogmire's dark heart | The great wraith, the level 5 gate |
+| `battle-warm-road.png` | The Warm Road | Band 2 wild fights |
+| `battle-dawnroost-node.png` | Dawnroost's living node | The level 10 gate |
+| `battle-northern-crossroads.png` | The northern crossroads | Halcyon's ambush and the level 15 gate |
+| `battle-frozen-road.png` | The frozen road | Band 4 wild fights |
+| `battle-dead-moonwell.png` | The dead Moonwell at Misthollow | The finale |
+
+## The world map
+
+Chris's world, painted as nine detailed tiles in a 3×3 grid, received October 2, 2026. The day versions are in `world-map/day/`: `regions/` holds the nine 1536×1024 tiles, `placement.json` says where each goes in the 4608×3072 world (north up), and `README.txt` and `Art-Prompts.txt` come from his generator. The night versions come next (`docs/art-requests/02-world-map.md`). The section names in the pack describe the land; they don't set lore.
+
+`world-map/proposal-bands-and-stops.webp` marks a proposal for where the four level bands and stops sit, for Chris to confirm (`docs/questions/open.md`).
+
 ## Key art
 
 `key-art-advert.png` (1672×941) is an advert for the game, not a title screen. It shows the Witch casting at Noctara, with Lunara and Envoi above, Sol and Halcyon crossing blades below, and a wraith behind Noctara. Use it later wherever a poster fits: a loading screen, the back of the title, or a page's cover image.

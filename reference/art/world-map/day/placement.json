@@ -1,0 +1,172 @@
+{
+  "world": "Aethermoor",
+  "layout": {
+    "columns": 3,
+    "rows": 3,
+    "width": 4608,
+    "height": 3072,
+    "tileWidth": 1536,
+    "tileHeight": 1024,
+    "north": "up",
+    "origin": "top-left"
+  },
+  "sourceAtlas": {
+    "width": 4320,
+    "height": 2880
+  },
+  "tiles": [
+    {
+      "id": 1,
+      "name": "Northwest Islands and Pine Coast",
+      "file": "regions/01-northwest-islands-and-pine-coast.png",
+      "row": 0,
+      "column": 0,
+      "x": 0,
+      "y": 0,
+      "width": 1536,
+      "height": 1024,
+      "sourceRectangle": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 960
+      }
+    },
+    {
+      "id": 2,
+      "name": "Northern Passage",
+      "file": "regions/02-northern-passage.png",
+      "row": 0,
+      "column": 1,
+      "x": 1536,
+      "y": 0,
+      "width": 1536,
+      "height": 1024,
+      "sourceRectangle": {
+        "x": 1440,
+        "y": 0,
+        "width": 1440,
+        "height": 960
+      }
+    },
+    {
+      "id": 3,
+      "name": "Northeast Peaks and Coast",
+      "file": "regions/03-northeast-peaks-and-coast.png",
+      "row": 0,
+      "column": 2,
+      "x": 3072,
+      "y": 0,
+      "width": 1536,
+      "height": 1024,
+      "sourceRectangle": {
+        "x": 2880,
+        "y": 0,
+        "width": 1440,
+        "height": 960
+      }
+    },
+    {
+      "id": 4,
+      "name": "Western Forests and Riverlands",
+      "file": "regions/04-western-forests-and-riverlands.png",
+      "row": 1,
+      "column": 0,
+      "x": 0,
+      "y": 1024,
+      "width": 1536,
+      "height": 1024,
+      "sourceRectangle": {
+        "x": 0,
+        "y": 960,
+        "width": 1440,
+        "height": 960
+      }
+    },
+    {
+      "id": 5,
+      "name": "Central Sea and Island Capital",
+      "file": "regions/05-central-sea-and-island-capital.png",
+      "row": 1,
+      "column": 1,
+      "x": 1536,
+      "y": 1024,
+      "width": 1536,
+      "height": 1024,
+      "sourceRectangle": {
+        "x": 1440,
+        "y": 960,
+        "width": 1440,
+        "height": 960
+      }
+    },
+    {
+      "id": 6,
+      "name": "Eastern Mountains and Desert",
+      "file": "regions/06-eastern-mountains-and-desert.png",
+      "row": 1,
+      "column": 2,
+      "x": 3072,
+      "y": 1024,
+      "width": 1536,
+      "height": 1024,
+      "sourceRectangle": {
+        "x": 2880,
+        "y": 960,
+        "width": 1440,
+        "height": 960
+      }
+    },
+    {
+      "id": 7,
+      "name": "Southwest Isles and River Mouths",
+      "file": "regions/07-southwest-isles-and-river-mouths.png",
+      "row": 2,
+      "column": 0,
+      "x": 0,
+      "y": 2048,
+      "width": 1536,
+      "height": 1024,
+      "sourceRectangle": {
+        "x": 0,
+        "y": 1920,
+        "width": 1440,
+        "height": 960
+      }
+    },
+    {
+      "id": 8,
+      "name": "Southern Wetlands — Bogmire and Willowmurk",
+      "file": "regions/08-southern-wetlands-bogmire-and-willowmurk.png",
+      "row": 2,
+      "column": 1,
+      "x": 1536,
+      "y": 2048,
+      "width": 1536,
+      "height": 1024,
+      "sourceRectangle": {
+        "x": 1440,
+        "y": 1920,
+        "width": 1440,
+        "height": 960
+      }
+    },
+    {
+      "id": 9,
+      "name": "Southeast Canyon Coast",
+      "file": "regions/09-southeast-canyon-coast.png",
+      "row": 2,
+      "column": 2,
+      "x": 3072,
+      "y": 2048,
+      "width": 1536,
+      "height": 1024,
+      "sourceRectangle": {
+        "x": 2880,
+        "y": 1920,
+        "width": 1440,
+        "height": 960
+      }
+    }
+  ]
+}

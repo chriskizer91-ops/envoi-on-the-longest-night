@@ -1,8 +1,8 @@
 # Still Open
 
-Everything not yet decided, as of October 2, 2026, fourth round. None of it blocks the polish round or the cast page.
+Everything not yet decided, as of October 2, 2026, fifth round. None of it blocks the polish round or the cast page.
 
-The first set of questions here (the Witch's name, the waystation's name, the Magpie's limits, the final battle's level, the Witch's healing) and every follow-up (the finale, Kestrel Stoop, the third band, the level 15 fight) were answered on October 2. The answers are in `design-decisions.md`, under the October 2 rounds.
+Every earlier question has been answered; the answers are in `design-decisions.md`, under the October 2 rounds.
 
 ## Battle numbers
 
@@ -10,20 +10,22 @@ The first set of questions here (the Witch's name, the waystation's name, the Ma
 
 ## Design questions
 
-2. **The nine map images.** How do they fit together: a 3×3 grid of one world (ideally with edges that overlap a little), or nine separate places? Which are the far view and which the close aerial views for walking? They can be uploaded in the chat, and they'll be compressed into `art/maps/`.
-3. **How long the game should be.** A first guess: four to five hours, with about 60 fights from level 1 to 20 (plan phase 3).
-4. **Leveling for the finale.** Should wilderness packs come back after a rest, so a player at 19 can level once more before the finale?
-5. **Foe variety.** Over about 60 fights the foes are wisps, frost wisps, wraiths and the great wraith (lore answer 17: no other new foes). Keep it that way, or add band variants, such as a frost wraith in the north?
-6. **Halcyon's face.** The October 1 decisions keep her face and body as built, and it is still rounder than the gaunt face on her new sheets. Move it toward the sheets in the polish round, or keep it?
+2. **Where the bands and stops sit on the world map.** The proposal is drawn on `../../reference/art/world-map/proposal-bands-and-stops.webp`:
+   - band 1, the southwest and the southern wetlands: Wickhollow in the southwest, and Bogmire, the stilt town in the wetlands;
+   - band 2, the western forests and riverlands: Dawnroost near the top of them;
+   - band 3, the northwest and the northern passage: the wilds and Halcyon's crossroads;
+   - band 4, the snowy northeast peaks: Misthollow.
+
+   It follows the battle backdrops already painted: moorland hills for band 2, pines and frost for band 3, snow for band 4. Is it right?
+3. **The rest of the map.** The central island capital, the eastern mountains and desert, and the southeast canyon coast fall outside the four bands. Should they stay under mist all game, or be optional places to explore?
+4. **Names from Aethermoor.** The map pack's notes name Willowmurk, Rotbridge and "Misthollow Ruins" in the southern wetlands. In this game Misthollow is the frozen town in the north. Do the pale flooded ruins in the wetlands get another name, or none?
+5. **Shops.** What do they take: coins, or trades? Herbs are the item list; is that what they sell?
+6. **The ambush and the level 15 gate.** As drafted, they are two fights in a row: Halcyon ambushes the party on the road and leaves when Sol steps in front of Io; then at the crossroads comes the gate fight, which ends in defeat or her retreat. Or should the ambush be the gate fight itself, with "Sol steps in front of Io" as what happens when the party loses?
+7. **How hard Halcyon is.** Gate fights are a little harder than the wild fights. Halcyon's gate was set earlier as her at level 20 against a party at 15, which is much harder, with defeat as one of its two endings. Keep her as the exception?
 
 ## Lore questions
 
 For the separate lore conversation.
 
-7. **Why is it always night?** The whole game now takes place at night, while the story runs up to the longest night, when Noctara means to make the night permanent. How does the story explain never seeing day? For example:
-   - the game only shows the nights, and the days pass off screen between stops; or
-   - something has already taken the days, which would change what Noctara still has to do on the longest night; or
-   - another reason.
-8. **The stars.** The story ends with the sky getting its stars back, so the backdrops and maps show a sky with no stars until then. Is that right?
-9. **Where the ambush happens.** Early, after Sol joins. The Thornwood bridge on the way to Bogmire is drafted as a backdrop (`art-requests/03-battle-backdrops.md`); is it there, or somewhere else?
-10. **A fight at the level 10 gate?** The gates at 5, 15 and 20 are fights (the great wraith, Halcyon, the finale). At 10 the gate is Envoi's making and the charge at Dawnroost. Should something attack the node there, or is it a story scene only?
+8. **What attacks Dawnroost at the level 10 gate?** The foe list is wisps, frost wisps, wraiths and the great wraith. A great wraith drawn to the living node's light, with wraiths, would fit. And is Envoi made before that fight, and summoned in it, or after it, as the reward?
+9. **When the party learns who the knight is.** The ambush now comes just before the level 15 gate, so Halcyon first appears late in the story. The lore answers say the reveal (the knight is Halcyon, and she serves Noctara) comes after the ambush. Does it come at the crossroads fight, or later?

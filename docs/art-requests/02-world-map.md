@@ -1,8 +1,8 @@
 # Art Request 02: The World Map
 
-The flying map: the world as the party sees it from the Magpie (plan step 19). The ground-level walking maps are a separate request, later.
+The flying map: the world as the party sees it from the Magpie (plan step 20), and the world map Io walks (step 19). The ground-level maps are `04-walking-maps.md`.
 
-Chris is now painting the maps himself, matched to this world but more detailed (see "Your own map images" at the end). The prompts below stay as the description of the world.
+Chris painted the world himself as nine detailed tiles in a 3×3 grid, received on October 2, 2026 as day versions (`../../reference/art/world-map/day/`). The night versions are next: their prompts are at the end ("The night versions"). The prompts just below were the first description of the world and are kept for reference.
 
 The map has to show the four level bands as four regions, from the warm south to the frozen north, because the Magpie can only fly as far as its sunstone allows:
 
@@ -67,13 +67,46 @@ Around the edges of the land, the Aether: a glowing sea of moonlit cloud that sh
 - The four stops get small markers and names in code, so the painting needs none.
 - If one painting is too coarse up close on a phone, a later request can add a close-up piece for each band.
 
-## Your own map images
+## The night versions
 
-Chris is painting nine highly detailed images of the world, with night versions. What helps when they come in:
+The game takes place at night, so the night versions are the ones it uses. Make each by attaching the day tile as image 1 and pasting its prompt. Keep every night tile exactly aligned with its day tile: walk areas and town entrances get traced once and used on both, and a tile that moves things would break the joins.
 
-- **Upload them full size,** PNG or WebP. They get compressed here: the far view from the Magpie scaled down, and the walking views kept sharp at the pixel Io's scale.
-- **Say how the nine fit together.** If they are a 3×3 grid of one world, a little overlap at the edges makes the joins clean.
-- **Keep one angle** across all nine, so the joins and the walking views match.
-- **Night, with no stars.** The whole game is at night, and the sky gets its stars back only at the ending.
-- **No labels or text.** The game adds the names in code.
-- **Clear ground for walking.** Roads, paths, bridges and doorways should read clearly up close, since the pixel Io walks on them.
+Check each result against its day tile before keeping it: the coastlines, roads, bridges and towns should sit in the same places. Save each one under its day name with `-night` before `.png`, such as `08-southern-wetlands-bogmire-and-willowmurk-night.png`.
+
+### Tiles 4, 5, 6, 7 and 9
+
+The forests, the central sea, the east and the southwest.
+
+```text
+Use case: precise-object-edit. Image 1 is one of nine adjoining regional paintings of a fantasy RPG continent, seen from a high oblique bird's-eye view. Repaint this exact image as the same place at night. Keep everything exactly where it is: the camera, framing, coastlines, mountains, rivers, roads, bridges, islands and every settlement, the same size and shape, and every feature that crosses the four edges, so the nine night paintings still join. Change only the light and the season. Night under a bright moon: deep blue and violet shadows, silver-blue moonlight from the upper left with soft shadows to the lower right, dark water with moonlight glinting on it, and warm amber light in the windows and lamps of every settlement. No stars and no sky. No text, labels, grid, frames, UI, people, creatures or airships. Landscape 3:2, 1536 × 1024, the same size as image 1.
+```
+
+### Tile 8: the southern wetlands
+
+Bogmire's lights are being eaten, so its lamps are mostly dark.
+
+```text
+Use case: precise-object-edit. Image 1 is one of nine adjoining regional paintings of a fantasy RPG continent, seen from a high oblique bird's-eye view. Repaint this exact image as the same place at night. Keep everything exactly where it is: the camera, framing, coastlines, mountains, rivers, roads, bridges, islands and every settlement, the same size and shape, and every feature that crosses the four edges, so the nine night paintings still join. Change only the light and the season. Night under a bright moon: deep blue and violet shadows, silver-blue moonlight from the upper left with soft shadows to the lower right, dark water with moonlight glinting on it, and warm amber light in the windows and lamps of every settlement. No stars and no sky. No text, labels, grid, frames, UI, people, creatures or airships. Landscape 3:2, 1536 × 1024, the same size as image 1.
+
+This tile is the southern wetlands. The stilt town at the lower left keeps only a few lit lanterns; the rest of its windows and lamps are dark and cold, with a faint green mist over the water round it. The other settlements keep their warm lights.
+```
+
+### Tiles 1 and 2: the north
+
+Noctara's cold is setting in.
+
+```text
+Use case: precise-object-edit. Image 1 is one of nine adjoining regional paintings of a fantasy RPG continent, seen from a high oblique bird's-eye view. Repaint this exact image as the same place at night. Keep everything exactly where it is: the camera, framing, coastlines, mountains, rivers, roads, bridges, islands and every settlement, the same size and shape, and every feature that crosses the four edges, so the nine night paintings still join. Change only the light and the season. Night under a bright moon: deep blue and violet shadows, silver-blue moonlight from the upper left with soft shadows to the lower right, dark water with moonlight glinting on it, and warm amber light in the windows and lamps of every settlement. No stars and no sky. No text, labels, grid, frames, UI, people, creatures or airships. Landscape 3:2, 1536 × 1024, the same size as image 1.
+
+This tile is the north, where a deep cold is setting in: frost on the high ground and the tops of the trees, thin ice at the edges of rivers and coves, and fewer lit windows than in the south.
+```
+
+### Tile 3: the far north
+
+Misthollow's mountains, under Noctara's cold.
+
+```text
+Use case: precise-object-edit. Image 1 is one of nine adjoining regional paintings of a fantasy RPG continent, seen from a high oblique bird's-eye view. Repaint this exact image as the same place at night. Keep everything exactly where it is: the camera, framing, coastlines, mountains, rivers, roads, bridges, islands and every settlement, the same size and shape, and every feature that crosses the four edges, so the nine night paintings still join. Change only the light and the season. Night under a bright moon: deep blue and violet shadows, silver-blue moonlight from the upper left with soft shadows to the lower right, dark water with moonlight glinting on it, and warm amber light in the windows and lamps of every settlement. No stars and no sky. No text, labels, grid, frames, UI, people, creatures or airships. Landscape 3:2, 1536 × 1024, the same size as image 1.
+
+This tile is the far north, held by a deep unnatural cold: heavy snow on the mountains and valleys, frozen rivers and waterfalls, ice along the coasts, freezing mist in the valleys, and only a few faint lit windows in the mountain town.
+```

@@ -1,6 +1,6 @@
 # Art Request 03: Battle Backdrops
 
-The paintings the 3D fights stand in, for phase 2 (`plan.md`). The Night square (`art/backdrops/night-square.webp`) is the model for all of them: the same high, steep three-quarter view, the same detailed painted look, and night.
+The paintings the 3D fights stand in, for phase 2 (`plan.md`). All eight arrived on October 2, 2026: the originals are in `../../reference/art/backdrops/`, the game's copies in `../../art/backdrops/`. The Night square (`art/backdrops/night-square.webp`) is the model for all of them: the same high, steep three-quarter view, the same detailed painted look, and night.
 
 Each painting needs:
 
@@ -33,7 +33,7 @@ A forest road in the Gloamwood just outside a small village: a wide clearing of 
 
 ## 2. The Thornwood bridge
 
-Band 1. Wilderness fights on the way to Bogmire. A candidate for the ambush too, if the lore puts it here. Save as `battle-thornwood-bridge.png`.
+Band 1. Wilderness fights on the way to Bogmire. Save as `battle-thornwood-bridge.png`.
 
 ```text
 Highly detailed hand-painted JRPG battle backdrop in a rich painterly pixel-art style, seen from high above at a steep three-quarter angle, like a diorama, with a long-lens flattened perspective so distant things are barely smaller than near ones. Night: deep violet and indigo shadows, silver-blue moonlight, warm amber lamplight pooling on the ground. A starless sky with only the moon and clouds. Fine texture on every stone, plank and leaf. The middle of the picture is a wide, flat, open stretch of ground with nothing standing in it; tall things stay at the edges and the back. No characters, no creatures, no text, no UI. 4:3 landscape.
@@ -43,7 +43,7 @@ The old stone bridge over a slow black river at the edge of the Thornwood. The n
 
 ## 3. Bogmire, the dark boardwalk
 
-Band 1 boss: the great wraith, which has eaten the town's lights (plan step 15). Save as `battle-bogmire-boardwalk.png`.
+Band 1 boss: the great wraith, which has eaten the town's lights (plan step 14). Save as `battle-bogmire-boardwalk.png`.
 
 ```text
 Highly detailed hand-painted JRPG battle backdrop in a rich painterly pixel-art style, seen from high above at a steep three-quarter angle, like a diorama, with a long-lens flattened perspective so distant things are barely smaller than near ones. Night: deep violet and indigo shadows, silver-blue moonlight, warm amber lamplight pooling on the ground. A starless sky with only the moon and clouds. Fine texture on every stone, plank and leaf. The middle of the picture is a wide, flat, open stretch of ground with nothing standing in it; tall things stay at the edges and the back. No characters, no creatures, no text, no UI. 4:3 landscape.
@@ -61,9 +61,9 @@ Highly detailed hand-painted JRPG battle backdrop in a rich painterly pixel-art 
 An old paved road crossing rolling moorland hills: broad worn flagstones, with glowing amber veins of sunstone running just under the cracks. At one side stands a squat stone waymarker with an amber crystal glowing in its top, lighting the road like a hearth. Heather, gorse and low dry-stone walls at the edges, and a far hilltop with a stone tower at the back.
 ```
 
-## 5. Dawnroost's living node (optional)
+## 5. Dawnroost's living node
 
-Band 2. Only needed if a fight happens at Dawnroost; otherwise Envoi's making is a story still. Save as `battle-dawnroost-node.png`.
+Band 2. The level 10 gate fight (plan step 15). Save as `battle-dawnroost-node.png`.
 
 ```text
 Highly detailed hand-painted JRPG battle backdrop in a rich painterly pixel-art style, seen from high above at a steep three-quarter angle, like a diorama, with a long-lens flattened perspective so distant things are barely smaller than near ones. Night: deep violet and indigo shadows, silver-blue moonlight, warm amber lamplight pooling on the ground. A starless sky with only the moon and clouds. Fine texture on every stone, plank and leaf. The middle of the picture is a wide, flat, open stretch of ground with nothing standing in it; tall things stay at the edges and the back. No characters, no creatures, no text, no UI. 4:3 landscape.
@@ -73,7 +73,7 @@ The inner courtyard of a fortified stone waystation on a hilltop: worn flagstone
 
 ## 6. The northern crossroads
 
-Band 3. The level 15 fight with Halcyon (plan step 16). Save as `battle-northern-crossroads.png`.
+Band 3. The level 15 fight with Halcyon (plan step 17). Save as `battle-northern-crossroads.png`.
 
 ```text
 Highly detailed hand-painted JRPG battle backdrop in a rich painterly pixel-art style, seen from high above at a steep three-quarter angle, like a diorama, with a long-lens flattened perspective so distant things are barely smaller than near ones. Night: deep violet and indigo shadows, silver-blue moonlight, warm amber lamplight pooling on the ground. A starless sky with only the moon and clouds. Fine texture on every stone, plank and leaf. The middle of the picture is a wide, flat, open stretch of ground with nothing standing in it; tall things stay at the edges and the back. No characters, no creatures, no text, no UI. 4:3 landscape.
@@ -93,7 +93,7 @@ A road through the frozen north: packed snow and ice over old flagstones, the am
 
 ## 8. The dead Moonwell
 
-The finale: Noctara and Halcyon at Misthollow (plan step 17). Save as `battle-dead-moonwell.png`.
+The finale: Noctara and Halcyon at Misthollow (plan step 18). Save as `battle-dead-moonwell.png`.
 
 ```text
 Highly detailed hand-painted JRPG battle backdrop in a rich painterly pixel-art style, seen from high above at a steep three-quarter angle, like a diorama, with a long-lens flattened perspective so distant things are barely smaller than near ones. Night: deep violet and indigo shadows, silver-blue moonlight, warm amber lamplight pooling on the ground. A starless sky with only the moon and clouds. Fine texture on every stone, plank and leaf. The middle of the picture is a wide, flat, open stretch of ground with nothing standing in it; tall things stay at the edges and the back. No characters, no creatures, no text, no UI. 4:3 landscape.

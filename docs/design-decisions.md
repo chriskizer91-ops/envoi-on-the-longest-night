@@ -269,3 +269,47 @@ The demo swings damage by 7% either way. The decided swing of up to 25% replaces
 
 - Chris is painting the world maps himself, matched to the current world but more detailed: nine highly detailed images, with night versions.
 - The game compresses them so pages stay small. The far view from the Magpie doesn't need full detail; the closer aerial views are for walking.
+
+## October 2, 2026, fifth round
+
+### Fights on the walking maps
+
+- **Towns are safe,** with people to talk to: shops, and people who give information.
+- **The wilds have random encounters.** No foes are drawn on the map; walking through the wilderness (or other places set aside for it) can start a fight at any step, and a player can walk back and forth to grind levels. The encounter rate has to be balanced.
+- **A few fights are set** at fixed places: the gate fights and the story fights.
+- **Gate fights are a little harder than the wild fights** around them.
+
+This replaces the visible packs from Aethermoor that the plan first proposed.
+
+### The foes
+
+- **Keep the foe list as it is:** wisps, frost wisps, wraiths and the great wraith, for about 60 fights from level 1 to 20, plus Halcyon and Noctara.
+
+### The story's fights
+
+- **The ambush moves.** Halcyon's ambush happens just before the level 15 gate, as the party, at about level 15, approaches it. It no longer comes early in the story.
+- **Dawnroost has a fight at the level 10 gate.**
+
+### Halcyon's face
+
+- **Halcyon's face stays as it is.** Chris thinks her model is one of the best-looking ones. It comes off the polish list.
+
+### Night and the stars
+
+- **It is always night because Noctara the Starless is affecting the land.**
+- **The sky has no stars until the ending.**
+
+### Size and length
+
+- **The goal is about five hours of play.**
+- **The final deliverable is one HTML file,** around 30 MB at most. A published page can be 16 MB at most, so the published game is one link with its paintings as separate files beside the page; the single file is the same game with everything inside it, sent to Chris to keep.
+
+### Maps
+
+- **The nine world map images are a 3×3 grid of the whole world.**
+- **The Magpie flies through weather:** the drifting clouds and fog of `reference/demos/the-magpie.html`, which make flying look real. They stay.
+- **Walking maps are their own images,** painted close to the ground (`art-requests/04-walking-maps.md`).
+
+### Battle backdrops
+
+- All eight from art request 03 arrived on October 2, 2026. The originals are in `reference/art/backdrops/`, and the game's compressed copies in `art/backdrops/`.

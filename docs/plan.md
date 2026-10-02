@@ -2,7 +2,7 @@
 
 Chris wants to see each piece working on its own before anything is put together, and every model finished before anything else is built. Every step ends in a demo page he can open on his phone, published as a private link and saved in this repo.
 
-Updated October 2, 2026, fourth round (`design-decisions.md`). This plan runs from where things stand to the finished game:
+Updated October 2, 2026, fifth round (`design-decisions.md`). This plan runs from where things stand to the finished game, about five hours of play:
 
 1. Finish the models.
 2. Build the battles and balance them.
@@ -10,7 +10,7 @@ Updated October 2, 2026, fourth round (`design-decisions.md`). This plan runs fr
 4. Build walking and flying.
 5. Put the game together, one band at a time.
 
-The whole game takes place at night.
+The whole game takes place at night. The final deliverable is one HTML file of about 30 MB at most (see "Size" at the end).
 
 ## Phase 1: the models
 
@@ -49,7 +49,7 @@ Each model gets its page rebuilt and republished after its polish. Noctara's lis
 | Wraith and great wraith | A scythe head and hem closer to the sheet; switching to the great wraith without reloading the page |
 | Sol | Wispier hair, a rounder face, the cape over her shoulders, and smaller code (140 KB now) |
 | Envoi | A full ring round the foe in the strike; a dark splash when the ward takes a hit; the tail kept clear of Io; longer bipyramid lanterns |
-| Halcyon | Light-Drinker's streams and Black Noon's swirls as ribbons; the brief cut line in the retreat around u 0.65; her face, which is rounder than the sheets' gaunt one (see `questions/open.md`) |
+| Halcyon | Light-Drinker's streams and Black Noon's swirls as ribbons; the brief cut line in the retreat around u 0.65. Her face stays as it is. |
 
 ### 11: the cast page
 
@@ -71,17 +71,19 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 | **Battle rules** | Turn gauges for up to two heroes and three foes; Trance; Heat and Sunburn; summons (Lunara from the start, Envoi from Dawnroost, with Sol at 70 Heat or more); herbs as items; elements (Moon against shadow foes, Sun against Halcyon); statuses (Bound, Sundered, Severed, Frost, Moth Veil, Folding Ward, Guard, Warden's Vow, Blackout). |
 | **The balance simulator** | A script that plays each fight thousands of times with three play styles (careless, sensible, expert) and reports win rates, fight length and close calls. It checks the targets below every time a number changes. |
 | **The battle screen** | Command menus as in the Night square demo, turn bars, HP and MP, Trance and Heat gauges, big damage numbers, a phone layout, experience and level-ups at the end. |
-| **Battle backdrops** | Any night painting with its own matched camera, walk area, cutouts and lamps (the format the Night square already uses). New paintings come from `art-requests/03-battle-backdrops.md`. The four night battle paintings in `20-min` can stand in until they arrive; they come with matched cameras. |
+| **Battle backdrops** | Any night painting with its own matched camera, walk area, cutouts and lamps (the format the Night square already uses). All eight from `art-requests/03-battle-backdrops.md` are in `art/backdrops/`; each needs its camera matched and its lamps traced. |
 
 ### The balance targets
 
 | Fight | Target |
 |---|---|
 | The first fight | Winnable at level 1, but a player who chooses badly can lose |
-| Ordinary fights | About a minute or two at the party's level; easier a few levels above |
-| The ambush | Can't be won; it ends when Sol steps in front of Io |
-| The great wraith | A real test at about level 5 |
-| Halcyon | Level 20 against a party at 15 or more; it ends in defeat, or in her retreat at 20% HP |
+| Wild fights | About a minute or two at the party's level; easier a few levels above |
+| Gate fights | A little harder than the wild fights around them |
+| The great wraith | The level 5 gate |
+| Dawnroost | The level 10 gate |
+| The ambush | Halcyon, just before the level 15 gate. Can't be won; it ends when Sol steps in front of Io |
+| Halcyon | The level 15 gate: Halcyon at 20 against a party at 15 or more. It ends in defeat, or in her retreat at 20% HP |
 | The finale | An expert at level 20 wins about half the time; at 19 a player loses, but narrowly; below that it can't be won |
 
 ### The battle demos
@@ -90,27 +92,32 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 |---|---|---|
 | 12 | The first fight | Io alone against a Shadow Wraith in the Night square, at level 1, with the Night square demo's numbers. You can lose. Experience and a level-up at the end. |
 | 13 | The party | Io and Sol against wisps and wraiths at a chosen level: Heat and Sunburn, Waxing Light and Moonsteel, Lunara. A level slider from 1 to 20 shows the numbers growing. |
-| 14 | The ambush | Halcyon, unwinnable. Sol steps in front of Io, and Halcyon leaves. |
-| 15 | The great wraith | The Bogmire boss at about level 5. Winning leads to the refit and Moth Veil. |
-| 16 | Halcyon | The level 15 gate, in the wilderness: Halcyon at level 20 against the party at 15 or more, with the Kestrel story command. It ends with Halcyon defeating the party, or, if they bring her down to 20% of her HP, with her retreat into the dark. Envoi is in the summon menu. Afterwards Sol learns Kestrel Stoop. |
-| 17 | The final battle | Noctara with Halcyon at level 20, at the dead Moonwell in Misthollow: Blackout, Void Sphere, Frost Dust and Crown Shards, Moth Veil against the telegraphed hits, and Envoi's ward and strike. Tuned so a player who plays well at level 20 wins about half the time, and loses narrowly at 19. |
+| 14 | The great wraith | The Bogmire boss, the level 5 gate. Winning leads to the refit and Moth Veil. |
+| 15 | Dawnroost | The level 10 gate, at the living node. Envoi comes with it. |
+| 16 | The ambush | Halcyon, unwinnable, as the party approaches the level 15 gate. Sol steps in front of Io, and Halcyon leaves. |
+| 17 | Halcyon | The level 15 gate, in the wilderness: Halcyon at level 20 against the party at 15 or more, with the Kestrel story command. It ends with Halcyon defeating the party, or, if they bring her down to 20% of her HP, with her retreat into the dark. Envoi is in the summon menu. Afterwards Sol learns Kestrel Stoop. |
+| 18 | The final battle | Noctara with Halcyon at level 20, at the dead Moonwell in Misthollow: Blackout, Void Sphere, Frost Dust and Crown Shards, Moth Veil against the telegraphed hits, and Envoi's ward and strike. Tuned so a player who plays well at level 20 wins about half the time, and loses narrowly at 19. |
 
 ## Phase 3: the story's fights
 
-Every fight gets its place in the story before travel is built, so the maps are painted and traced around them. It is drafted on paper first, then the simulator plays the whole chain in order, carrying HP, MP and herbs from fight to fight, to check that a player who goes straight through arrives at each gate at the right level.
+Every fight gets its place in the story before travel is built. It is drafted on paper first, then the simulator plays the whole chain in order, carrying HP, MP and herbs from fight to fight, to check that a player who goes straight through arrives at each gate at the right level.
 
-Fights are never invisible random encounters. Foes stand on the walking map, as in Aethermoor: placed fights and visible packs that spot and chase Io. That lets every fight be counted and placed.
+**How fights happen:**
 
-The first draft, to settle with Chris:
+- **Towns are safe.** People to talk to: shops, and people with information.
+- **The wilds have random encounters.** No foes are drawn on the map. Each step in wild country fills a hidden counter, and a fight starts when it passes a random threshold. That keeps the rate even: never two fights back to back, and never a long walk with none. Each area has its own rate, and the rate is a number the balancing tunes. A player can walk back and forth to grind levels.
+- **Set fights** wait at fixed places: the gate fights and the story fights.
 
-| Band | Levels | Places | Fights |
-|---|---|---|---|
-| 1 | 1 to 5 | Wickhollow, the Gloamwood road, the Thornwood, Bogmire | The Night square wraith (Io alone). Sol joins. Wisps, then wraiths, in packs of one to three. The ambush (Halcyon, unwinnable). The great wraith at Bogmire. |
-| 2 | 5 to 10 | The Warm Roads hills, Dawnroost | Wisps and wraiths in bigger packs, along roads with dark nodes for Sol to relight. Envoi is made at Dawnroost. |
-| 3 | 10 to 15 | The northern wilds | Wraith packs; the first frost wisps as the cold sets in. Halcyon at the level 15 gate. |
-| 4 | 15 to 20 | The frozen north, Misthollow | Frost wisps and wraiths at full strength. Noctara and Halcyon at the dead Moonwell. |
+**About five hours:** the story, about 60 wild fights from level 1 to 20 against wisps, frost wisps, wraiths and the great wraith, and the set fights.
 
-To settle with Chris (`questions/open.md`): how long the whole game should take, how many fights that means, whether wilderness packs come back after a rest (so a player can level for the finale), and whether the foe list needs more variety than wisps and wraiths over about 60 fights.
+The first draft, to settle with Chris. The places follow the proposal in `../reference/art/world-map/proposal-bands-and-stops.webp`, which Chris still has to confirm:
+
+| Band | Levels | Where on the world map | Places | Fights |
+|---|---|---|---|---|
+| 1 | 1 to 5 | The southwest and the southern wetlands | Wickhollow, Bogmire | The Night square wraith (Io alone). Sol joins. Wild wisps, then wraiths. The great wraith at Bogmire's dark heart (gate). |
+| 2 | 5 to 10 | The western forests and riverlands | The Warm Roads, Dawnroost | Wild wisps and wraiths in bigger packs, along roads with dark nodes for Sol to relight. The fight at Dawnroost's living node (gate), and Envoi. |
+| 3 | 10 to 15 | The northwest and the northern passage | The northern wilds | Wild wraith packs; the first frost wisps as the cold sets in. Halcyon's ambush, then the crossroads (gate). |
+| 4 | 15 to 20 | The snowy northeast peaks | Misthollow and the dead Moonwell | Frost wisps and wraiths at full strength. Noctara and Halcyon (the finale). |
 
 ## Phase 4: travel
 
@@ -118,10 +125,15 @@ As in FF9: the world is walked on foot, and later flown over. All of it at night
 
 | # | Demo | What it shows |
 |---|---|---|
-| 18 | Walking | The pixel Io, drawn in code to match her 3D outfit, walking one of Chris's close aerial night maps: d-pad and tap-to-walk, a second screen, herbs and a letter at a small well, and a visible wisp that starts the 3D battle. Sliders for her pixel look and the map's lighting. |
-| 19 | The Magpie | The airship flying the far view of the world between the stops. Its four levels (refit, charge, final upgrade) set how far it can fly, and landing switches to walking. |
+| 19 | Walking | The pixel Io, drawn in code to match her 3D outfit, walking the night world map and one ground-level map: d-pad and tap-to-walk, a town with a shopkeeper and someone to talk to, herbs and a letter at a small well, and a random encounter in the wilds that starts the 3D battle. Sliders for her pixel look, the map's lighting and the encounter rate. |
+| 20 | The Magpie | The airship flying the far view of the world between the stops, through the drifting clouds and fog of `reference/demos/the-magpie.html`. Its four levels (refit, charge, final upgrade) set how far it can fly, and landing switches to walking. |
 
-**The maps.** Chris is painting nine highly detailed images of the world, with night versions. The far view from the Magpie is the whole world, scaled down and compressed, since it doesn't need full detail. The walking maps are cut from the detailed images at the pixel Io's scale. A phone-friendly tracing tool marks where she can walk, what she walks behind, and the exits.
+**The maps:**
+
+- **The world map** is Chris's nine detailed tiles in a 3×3 grid, 4608×3072 in all, north up (`../reference/art/world-map/day/`; the night versions are next, `art-requests/02-world-map.md`). The pixel Io walks it at full detail between places, and the random fights happen in its wild country.
+- **The far view** from the Magpie is the same world, scaled down, since it doesn't need full detail.
+- **Ground-level maps** are entered from the world map: the towns and the set-fight places (`art-requests/04-walking-maps.md`).
+- A phone-friendly tracing tool marks where Io can walk, what she walks behind, the town entrances and the wild areas, once per tile; the day and night versions share it.
 
 **The level bands.** Four bands, 1 to 5, 5 to 10, 10 to 15 and 15 to 20, opened by the Bogmire refit, the charge at Dawnroost's living node, and the upgrade after Halcyon. Sunstone gives the Magpie its lift, and Noctara's cold drains it. A band the ship can't reach yet sits under cold mist on the flying map.
 
@@ -129,13 +141,14 @@ As in FF9: the world is walked on foot, and later flown over. All of it at night
 
 The pieces joined from title to ending, one band at a time.
 
-1. **Band 1 first, as a playable slice:** the title, the Night square, Sol joining, the Magpie, the ambush, Bogmire and the great wraith, ending at the refit. This is where pacing and balance are checked in real play before the rest is built.
+1. **Band 1 first, as a playable slice:** the title, the Night square, Sol joining, the Magpie, the wilds, Bogmire and the great wraith, ending at the refit. This is where pacing and balance are checked in real play before the rest is built.
 2. **Bands 2, 3 and 4,** each playable when finished.
 3. **The ending:** Envoi's last strike, the letters burning, the stars coming back.
 
 Around them:
 
 - **Story scenes:** big beats as painted stills with camera moves and dialogue, as FF9 did with its FMVs. Their prompts will go in `art-requests/`.
+- **Towns:** shopkeepers and people with information.
 - **Menus and saves:** party status, spells, herbs; saves kept in the browser.
 - **Music and sound:** the synthesized music and effects from the Night square demo, plus the sound library in `20-min`.
 - **The key art** (`../reference/art/key-art-advert.png`) as a poster: a loading screen or the back of the title.
@@ -145,14 +158,29 @@ Around them:
 | Phase | Art | State |
 |---|---|---|
 | 1 | Model and action sheets | All in (`art-requests/01-model-sheets.md`) |
-| 2 | Battle backdrops for the bands and the finale | Prompts ready: `art-requests/03-battle-backdrops.md` |
-| 4 | The world maps: nine detailed images and night versions | Chris is painting them; `art-requests/02-world-map.md` has the first prompts |
-| 5 | Story stills; close-up walking pieces for the towns if the maps need them | Later requests |
+| 2 | Eight night battle backdrops | All in (`art-requests/03-battle-backdrops.md`) |
+| 4 | The world map: nine tiles in a 3×3 grid | Day versions in; night versions next (`art-requests/02-world-map.md`) |
+| 4 | Ground-level maps: towns and set-fight places | Prompts ready, pilot first (`art-requests/04-walking-maps.md`) |
+| 5 | Story stills | A later request |
 
 ## Technical choices
 
 - **One three.js, r128,** for every page: all the models are built for it. The Magpie, built on r186, gets ported down.
-- **Pages are single files** while they fit under 16 MB. When the game outgrows that, its paintings ship as separate files in the same published page, which is still one link.
 - **Bricks:** the code lives in small files (one per model, plus rules, battle, walking and airship), and a build step stitches each demo into its page, so later demos reuse earlier ones instead of copying them.
 - **Checked before it ships:** every page is rendered headless and screenshotted before Chris sees it.
-- **Images are compressed** to WebP at the size each view needs, so the detailed maps and paintings stay light on a phone.
+- **Images are compressed** to WebP at the size each view needs (`tools/compress.mjs`), and the originals stay in `../reference/art/`.
+
+## Size
+
+The final deliverable is one HTML file with everything inside it, about 30 MB at most, sent to Chris to keep. A published page can be 16 MB at most, so the published game is one link with its paintings as separate files beside the page.
+
+A first budget, with the paintings compressed:
+
+| Part | About |
+|---|---|
+| The code: models, effects, battle, walking, airship, music | 3 MB |
+| The world map at night: nine tiles, plus the far view | 5 MB |
+| Eight battle backdrops and the Night square | 4 MB |
+| About twelve ground-level maps | 6 MB |
+| Story stills and the title | 4 MB |
+| **Total** | **about 22 MB** |

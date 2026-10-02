@@ -1,19 +1,21 @@
 // Turns the art requests in docs/art-requests/ into one phone page Chris can open, with a Copy button on every
 // prompt and a "Made it" tick he can keep per prompt. The Night square painting is embedded as the reference for
 // the camera angle. Writes dist/art-requests.html, ready to publish as is (no outer document tags).
-// Usage: node tools/art-page.mjs [docs/art-requests/03-battle-backdrops.md ...]  (default: the open requests)
+// Usage: node tools/art-page.mjs [docs/art-requests/04-walking-maps.md ...]  (default: the open requests)
+// A file given as path#Heading shows only that ## section and what follows it, under the file's title.
 import fs from 'fs';
 import path from 'path';
 const R = path.resolve(new URL('..', import.meta.url).pathname);
-const OPEN = ['docs/art-requests/03-battle-backdrops.md', 'docs/art-requests/02-world-map.md'];
+const OPEN = ['docs/art-requests/04-walking-maps.md', 'docs/art-requests/02-world-map.md#The night versions'];
 const files = process.argv.slice(2).length ? process.argv.slice(2) : OPEN;
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const inline = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-function render(md, reqId) {
-  const lines = md.split('\n');
+function render(md, reqId, from) {
+  let lines = md.split('\n');
+  if (from) { const k = lines.indexOf('## ' + from); if (k < 0) throw new Error('no heading ## ' + from); lines = lines.filter((l, j) => j >= k || /^# /.test(l)); }
   let html = '', i = 0, para = [], title = '', sectionId = reqId, prompts = 0;
   const flush = () => { if (para.length) { html += '<p>' + inline(para.join(' ')) + '</p>\n'; para = []; } };
   while (i < lines.length) {
@@ -22,6 +24,10 @@ function render(md, reqId) {
     if (/^## /.test(ln)) {
       flush(); const h = ln.slice(3).trim(); sectionId = reqId + '-' + slug(h);
       html += '</section>\n<section class="part" id="' + sectionId + '"><h3>' + inline(h) + '</h3>\n'; i++; continue;
+    }
+    if (/^### /.test(ln)) {
+      flush(); const h = ln.slice(4).trim(); sectionId = reqId + '-' + slug(h);
+      html += '<h4 id="' + sectionId + '">' + inline(h) + '</h4>\n'; i++; continue;
     }
     if (/^```/.test(ln)) {
       flush(); const body = []; i++;
@@ -52,9 +58,10 @@ function render(md, reqId) {
   return { title, prompts, html: '<section class="part" id="' + reqId + '-top">' + html + '</section>' };
 }
 
-const reqs = files.map((f) => {
+const reqs = files.map((arg) => {
+  const [f, from] = arg.split('#');
   const id = path.basename(f, '.md').replace(/^(\d+)-.*/, 'r$1');
-  return Object.assign({ id }, render(fs.readFileSync(path.resolve(R, f), 'utf8'), id));
+  return Object.assign({ id }, render(fs.readFileSync(path.resolve(R, f), 'utf8'), id, from));
 });
 const ref = 'data:image/webp;base64,' + fs.readFileSync(path.join(R, 'art/backdrops/night-square.webp')).toString('base64');
 
@@ -87,6 +94,7 @@ nav a:hover{border-color:var(--accent)}
 nav a small{color:var(--soft)}
 h2{font-family:var(--display);font-weight:400;font-size:1.6rem;line-height:1.15;margin:2.4rem 0 .6rem;padding-top:1rem;border-top:1px solid var(--line);text-wrap:balance}
 h3{font-family:var(--display);font-style:italic;font-weight:400;font-size:1.3rem;margin:1.8rem 0 .4rem;color:var(--moon);text-wrap:balance}
+h4{font-family:var(--body);font-weight:700;font-size:1.02rem;margin:1.4rem 0 .3rem}
 p,li{max-width:65ch}
 ul{padding-left:1.2rem;margin:.5rem 0}
 li{margin:.25rem 0}
@@ -118,7 +126,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 </header>
 <main>
 ${reqs.map((r) => `<h2 id="${r.id}">${esc(r.title)}</h2>
-${r.id === 'r03' ? `<figure class="ref"><img src="${ref}" alt="The Night square painting: a moonlit village square seen from high above, with a stone well in the open middle and warm lamps around it."><small>The Night square: match this camera angle and style. Press and hold to save it if your phone allows; it is also in the repo at <code>art/backdrops/night-square.webp</code>.</small></figure>` : ''}
+${r.id === 'r04' ? `<figure class="ref"><img src="${ref}" alt="The Night square painting: a moonlit village square seen from high above, with a stone well in the middle and warm lamps around it."><small>The Night square, the style reference for Wickhollow square. Press and hold to save it if your phone allows; it is also in the repo at <code>art/backdrops/night-square.webp</code>. The battle backdrops you made are the style references for the other places.</small></figure>` : ''}
 ${r.html}`).join('\n')}
 </main>
 </div>
