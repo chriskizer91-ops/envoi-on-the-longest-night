@@ -865,7 +865,7 @@
             const fn = (f.kind === 'wisp' ? WISP_MOVES : WRAITH_MOVES)[hd.move];
             if (fn) await fn(f, ev); else { await wait(0.8); ev.rest(); }
           }
-        } else ev.rest();
+        } else { apply(hd); ev.rest(); } // anything between turns, such as the frost wearing off
         if (E.over === 'lose' && !living('hero').length) break;
       }
       sync();
@@ -1004,7 +1004,7 @@
     }
     async function finish() {
       if (S.state === 'over') return;
-      S.state = 'over'; S.acting = true; UI.waitMenu();
+      S.state = 'over'; S.acting = true; UI.waitMenu(); S.rimeOn = false;
       const r = E.result(); S.result = r;
       const mark = (k) => S.trace.push([k, +clock.t.toFixed(2)]);
       mark('finish');
