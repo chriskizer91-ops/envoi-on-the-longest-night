@@ -80,7 +80,7 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 | Fight | Target |
 |---|---|
 | The first fight | A player who pays attention doesn't lose; a careless one often does (Chris, October 2) |
-| Wild fights | About a minute or two at the party's level; easier a few levels above |
+| Wild fights | About a minute or two. Each foe is a level in its band's range (1 to 5, 6 to 10, 11 to 15, 16 to 20), so a band is dangerous to enter and easy by its end |
 | Gate fights | A little harder than the wild fights around them |
 | The great wraith | The level 5 gate |
 | Dawnroost | The level 10 gate: the largest group of stronger wraiths so far |
@@ -135,12 +135,12 @@ As in FF9: the world is walked on foot, and later flown over. All of it at night
 | # | Demo | What it shows |
 |---|---|---|
 | 18 | Walking | The pixel Io, drawn in code to match her 3D outfit, walking the night world map and one ground-level map: d-pad and tap-to-walk, a town with a shopkeeper and someone to talk to, each with a painted portrait when they speak, herbs and a letter at a small well, and a random encounter in the wilds that starts the 3D battle. Sliders for her pixel look, the map's lighting and the encounter rate. |
-| 19 | The Magpie | The airship flying the far view of the world between the stops, through the drifting clouds and fog of `reference/demos/the-magpie.html`. Its four levels (refit, charge, final upgrade) set how far it can fly, and landing switches to walking. |
+| 19 | The Magpie | The airship flying the far view of the world between the stops, built from Chris's world travel demo, `reference/demos/the-magpie-over-aethermoor.html`: the skiff in 3D, tap-to-fly and steering, the follow camera and zoom, the whole-map view and mini-map, town banners and cards, docking and take-off, the drifting clouds and fog, and the flying music. It flies over this game's night atlas at 3072×2048 in AVIF (about 740 KB). Its four levels (refit, charge, final upgrade) set how far it can fly, and landing switches to walking. |
 
 **The maps:**
 
 - **The world map** is Chris's nine detailed tiles in a 3×3 grid, 4608×3072 in all, north up, in day and night versions (`../reference/art/world-map/`); the game uses the night ones, with their joins blended in code. The pixel Io walks it at full detail between places, and the random fights happen in its wild country.
-- **The far view** from the Magpie is the same world, scaled down, since it doesn't need full detail.
+- **The far view** from the Magpie is the same world, scaled down, since it doesn't need full detail: 3072×2048 with the joins blended, compressed to AVIF at about 740 KB, as in Chris's world travel demo.
 - **Ground-level maps** are entered from the world map: the towns and the set-fight places (`art-requests/04-walking-maps.md`).
 - A phone-friendly tracing tool marks where Io can walk, what she walks behind, the town entrances and the wild areas, once per tile; the day and night versions share it.
 - **Walking:** Io is 42 map pixels tall on maps shipped at 768 pixels wide with sharp pixels, at 0.7× zoom (0.8 or 0.9 on a more detailed map), with one walking speed (110 map pixels a second). A **navigation mini-map** in the corner shows the whole map, the part on screen and Io; once the maps are traced it also shows paths, exits and towns.

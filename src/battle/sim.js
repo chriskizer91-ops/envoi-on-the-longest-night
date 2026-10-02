@@ -29,6 +29,10 @@
     finale: { moonpetal: 6, lavender: 3, mugwort: 4, emberLily: 3, nightrose: 3 },
   };
   const bandOf = (L) => (L <= 5 ? 1 : L <= 10 ? 2 : L <= 15 ? 3 : 4);
+  // a wild foe's level: any level in its band's range, whatever the party's level (Chris, October 2). A band is
+  // dangerous to enter and easy by its end, and a stronger foe is worth more experience
+  const BAND_LEVELS = { 1: [1, 5], 2: [6, 10], 3: [11, 15], 4: [16, 20] };
+  const wildLevel = (band, rand) => { const [lo, hi] = BAND_LEVELS[band]; return lo + Math.floor(rand() * (hi - lo + 1)); };
   // the story flags a party has at a level when it isn't in the gate fight that grants them
   const flagsAt = (L) => ({ party: true, veil: L > 5, envoi: L > 10, stoop: L > 15 });
   const FIGHTS = {
@@ -37,10 +41,10 @@
       setup: (L) => ({ party: [{ id: 'io', level: L }], foes: [{ id: 'wraith', level: 1 }], flags: {}, herbs: {} }),
     },
     wild: {
-      name: 'Wild fights', note: 'a random pack from the band, at the party level', level: 3, levels: [2, 20],
+      name: 'Wild fights', note: "a random pack from the party's band, each foe at a level in the band's range", level: 3, levels: [2, 20],
       setup: (L, rand) => {
-        const packs = BAND_PACKS[bandOf(L)], pack = packs[Math.floor(rand() * packs.length)];
-        return { party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: pack.map((id) => ({ id, level: L })), flags: flagsAt(L), herbs: BAGS.wild };
+        const b = bandOf(L), packs = BAND_PACKS[b], pack = packs[Math.floor(rand() * packs.length)];
+        return { party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: pack.map((id) => ({ id, level: wildLevel(b, rand) })), flags: flagsAt(L), herbs: BAGS.wild };
       },
     },
     greatWraith: {
@@ -69,8 +73,10 @@
   const TARGETS = [
     { fight: 'first', level: 1, policy: 'careless', win: [0.45, 0.75], why: 'The first fight: a careless player loses it often' },
     { fight: 'first', level: 1, policy: 'sensible', win: [0.99, 1], why: 'The first fight: a player who pays attention doesn’t lose it' },
-    ...[2, 5, 8, 12, 16, 20].map((L) => ({ fight: 'wild', level: L, policy: 'careless', win: [0.85, 1], why: 'Wild fights: most are won even when playing carelessly' })),
-    ...[2, 5, 8, 12, 16, 20].map((L) => ({ fight: 'wild', level: L, policy: 'sensible', win: [0.97, 1], minutes: [0.7, 2.2], why: 'Wild fights: about a minute or two at the party level' })),
+    ...[2, 5, 8, 13, 18, 20].map((L) => ({ fight: 'wild', level: L, policy: 'careless', win: [0.8, 1], why: 'Wild fights: once into a band, most are won even when playing carelessly' })),
+    ...[6, 11, 16].map((L) => ({ fight: 'wild', level: L, policy: 'careless', win: [0.3, 0.9], why: 'Wild fights on entering a band: a careless player loses some' })),
+    ...[2, 5, 8, 13, 18, 20].map((L) => ({ fight: 'wild', level: L, policy: 'sensible', win: [0.97, 1], minutes: [0.6, 2.2], why: 'Wild fights: about a minute or two' })),
+    ...[6, 11, 16].map((L) => ({ fight: 'wild', level: L, policy: 'sensible', win: [0.9, 1], minutes: [0.6, 2.5], why: 'Wild fights on entering a band: an attentive player loses now and then' })),
     { fight: 'greatWraith', level: 5, policy: 'careless', win: [0.2, 0.6], why: 'The level 5 gate: a little harder than the wild fights' },
     { fight: 'greatWraith', level: 5, policy: 'sensible', win: [0.8, 0.96], why: 'The level 5 gate: a little harder than the wild fights' },
     { fight: 'greatWraith', level: 5, policy: 'expert', win: [0.97, 1], why: 'The level 5 gate: a good player wins' },
@@ -79,8 +85,9 @@
     { fight: 'halcyon', level: 15, policy: 'expert', win: [0, 0.1], why: 'Halcyon at 15: overwhelming' },
     { fight: 'halcyon', level: 18, policy: 'expert', win: [0.4, 0.85], why: 'Halcyon: leveling past 15 is what makes her retreat' },
     { fight: 'halcyon', level: 20, policy: 'expert', win: [0.8, 1], why: 'Halcyon: leveling past 15 is what makes her retreat' },
-    { fight: 'finale', level: 20, policy: 'expert', win: [0.4, 0.65], why: 'The finale at 20: a good player wins about half the time' },
-    { fight: 'finale', level: 19, policy: 'expert', win: [0, 0.1], margin: 0.4, why: 'The finale at 19: no real chance, but close' },
+    { fight: 'finale', level: 20, policy: 'expert', win: [0.4, 0.65], why: 'The finale at 20: a player who is locked in wins about half the time' },
+    { fight: 'finale', level: 20, policy: 'sensible', win: [0.03, 0.1], why: 'The finale at 20: an attentive player rarely wins; it takes being locked in' },
+    { fight: 'finale', level: 19, policy: 'expert', win: [0, 0.1], margin: 0.45, why: 'The finale at 19: no real chance' },
     { fight: 'finale', level: 18, policy: 'expert', win: [0, 0.02], why: 'The finale below 19 cannot be won' },
   ];
   function check(t, r) {
@@ -92,14 +99,15 @@
   }
 
   // ---------- experience and shards along the way ----------
-  // the average wild fight's experience and shards at a level, and how many wild fights a level takes
+  // the average wild fight's experience and shards at a level (its band's packs, at every level in the band's range),
+  // and how many wild fights a level takes
   function economy() {
     const RL = G.BattleRules, rows = [];
     for (let L = 1; L < RL.MAX_LEVEL; L++) {
-      const packs = BAND_PACKS[bandOf(Math.max(2, L))];
-      let xp = 0, sh = 0;
-      for (const p of packs) for (const id of p) { xp += RL.grows(RL.FOES[id].xp, L); sh += RL.grows(RL.FOES[id].shards, L); }
-      xp /= packs.length; sh /= packs.length;
+      const b = bandOf(Math.max(2, L)), packs = BAND_PACKS[b], [lo, hi] = BAND_LEVELS[b];
+      let xp = 0, sh = 0, n = 0;
+      for (const p of packs) for (let lv = lo; lv <= hi; lv++, n++) for (const id of p) { xp += RL.grows(RL.FOES[id].xp, lv); sh += RL.grows(RL.FOES[id].shards, lv); }
+      xp /= n; sh /= n;
       rows.push({ level: L, need: RL.xpNeed(L), xp: Math.round(xp), shards: Math.round(sh), fights: RL.xpNeed(L) / xp });
     }
     return rows;
@@ -297,5 +305,5 @@
     return out;
   }
 
-  G.BattleSim = { FIGHTS, POLICIES, BAND_PACKS, BAGS, TARGETS, check, economy, playOne, run, bandOf, THINK };
+  G.BattleSim = { FIGHTS, POLICIES, BAND_PACKS, BAND_LEVELS, wildLevel, BAGS, TARGETS, check, economy, playOne, run, bandOf, THINK };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

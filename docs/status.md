@@ -1,6 +1,6 @@
 # Where Things Stand
 
-A handoff for the next session. Updated October 2, 2026, after the fourteenth round: the frame-rate button, Envoi on the party page, and the Kestrel Stoop fix.
+A handoff for the next session. Updated October 2, 2026, after the fifteenth round: the world travel demo, a finale that takes being locked in, and wild foes at their band's levels.
 
 **Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Step 13, the party, is built too. Next is step 14, the great wraith.
 
@@ -99,8 +99,9 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 ## Next steps
 
 1. Step 14, the great wraith: the Bogmire boss and level 5 gate, with its Stolen Fire, Swallow Lamplight and its lights released at the end; winning leads to the refit and Moth Veil.
-2. The progression pass (`plan.md`): foe levels set by area, the experience curve, and half the fights in the last five levels, once Chris answers question 6.
-3. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.
+2. The progression pass (`plan.md`): the experience curve, so the last band holds a third to half of the fights, once Chris answers question 9 (how long the game is). Wild foes already roll a level in their band's range.
+3. Step 19, the Magpie, builds on Chris's world travel demo (`reference/demos/the-magpie-over-aethermoor.html`).
+4. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.
 
 Art in hand (`../reference/art/README.md`):
 

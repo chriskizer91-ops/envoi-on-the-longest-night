@@ -530,3 +530,42 @@ Another session read every commit and replayed the simulator. What it found:
   - When Io's gauge next fills, it wraps the foe she chose, burns from tail to head as a ring of fire, and drops its heart for the Last Word. Io still takes her turn.
   - If the fight ends first, it burns away quietly.
 
+## October 2, 2026, fifteenth round
+
+### The world travel system
+
+- **Chris sent the Magpie's world travel demo,** to make the world feel bigger: `../reference/demos/the-magpie-over-aethermoor.html`. It is the newer version of `the-magpie.html`. Its readable code is an earlier version, in the read-only `chriskizer91-ops/20-min` repo, branch `ccr-5afa0fa7-7ojc16` (`src/airship/main.js`, `src/actors/airship.js`).
+- **It flies over this game's night atlas,** with the tiles' joins blended, at 3072×2048. The map was compressed to AVIF (about 740 KB) and the fonts to WOFF, so the whole page with three.js and its music is 2.6 MB. That is how the flying map stays small.
+- **It is what step 19 builds on:**
+  - the skiff in 3D;
+  - tap-to-fly, steering and full sail;
+  - the follow camera, zoom, the whole-map view and the mini-map;
+  - town banners, sight pins and town cards;
+  - docking and take-off;
+  - the clouds and fog;
+  - the flying music, Sunstone Wind.
+- **Its place names and town notes come from the other game and the map pack:** Mayor Gretch, Nettie, Quill, Hilde, Mother's Hollow, Willowmurk, Rotbridge, and Misthollow as sunken ruins in the fen. In this game the flying map shows this game's four stops and bands, with mist where the ship can't fly yet, and the notes come from this game's lore. Mother's Hollow belongs to the Drowned Mother's story and stays out. Question 2 (`questions/open.md`) still asks about the names.
+
+### The finale: you have to be locked in
+
+- **The average player should win the finale even less often than one time in eight.** It should almost require being locked in, but not be impossible.
+- **The cold deepens 8% a turn** (it was 7.5%). An expert at 20 wins half the time, and an attentive player about one time in eleven. A new target holds the attentive player at 3% to 10%.
+- **At 19 the party falls with about two fifths of the bosses' HP left.** That gap comes from the level curve, so the finale at 19 no longer looks close. Its check allows up to 45%.
+
+### Wild foes' levels (question 6, answered)
+
+- **Each wild foe is a level in its band's range:** 1 to 5, 6 to 10, 11 to 15 and 16 to 20, whatever the party's level. A stronger foe gives more experience, as before: experience grows with the foe's own level.
+- **So a band is dangerous to enter and easy by its end.** Entering a band (wild fights, 1,000 each):
+  - at level 6: careless 72%, attentive 99%;
+  - at level 11: careless 58%, attentive 97%;
+  - at level 16: careless 39%, attentive 93%.
+
+  Late in each band, nearly everyone wins. New targets cover the band entries.
+- **The party page rolls its foes this way,** and each foe's level shows in the foe window.
+
+### The progression pass: the experience curve (noted, not built)
+
+- **With the curve as it is, the last band holds about 9 of 55 wild fights (16%).** Chris wants a third to half.
+- **Getting there means about double the experience per level from 16 on,** and a little more each level after the first few. That makes about 100 wild fights in all, instead of 55: roughly an hour more of fighting.
+- **The other way to get there** is to make the early bands quicker and keep the game near its current length. A question for Chris (`questions/open.md`, 9).
+
