@@ -1,14 +1,16 @@
-// pixel-io.js: Io, the Witch, as a 24 x 36 pixel walker drawn entirely in code, after her 3D look and her portrait: the
+// pixel-io.js: Io, the Witch, as a 28 x 42 pixel walker drawn entirely in code, after her 3D look and her portrait: the
 // magenta hat with its curled cream horns, gold band and moon, wavy chestnut hair, round black glasses, the magenta robe
-// with gold trim over a dark bodice, and dark boots. At 36 px she stands one art pixel to one map pixel on the walking
-// maps (Chris, October 2). Each shape is filled with three tones lit from the upper left, then outlined.
-// makePixelIo(scale) -> { canvas, w: 24, h: 36, scale, foot: [12, 35], frame(dir, step) -> [sx, sy] }
+// with gold trim over a dark bodice, and dark boots. Chris chose 42 map pixels for her height (October 2), one art pixel
+// to one map pixel. The shapes are laid out on a 24 x 36 design grid and drawn at 7/6 of that, so the masses grow while
+// the one-pixel details (the glasses, the chain, the horns, the moon) stay one pixel. Each shape is filled with three
+// tones lit from the upper left, then outlined.
+// makePixelIo(scale) -> { canvas, w: 28, h: 42, scale, foot: [14, 41], frame(dir, step) -> [sx, sy] }
 //   the canvas holds 3 frames (stand, step A, step B) across x 4 rows (s, n, e, w), each w x h art px x scale.
 // The layout follows the Aethermoor walkers (New-game, claude/cool-ptolemy-uc93gg, game/src/art/walkers.js): three
 // frames, four directions, west mirrored from east. The drawing itself is new.
 function makePixelIo(scale) {
   'use strict';
-  const W = 24, H = 36, K = scale || 1;
+  const W = 28, H = 42, Z = W / 24, K = scale || 1;
   const PAL = {
     o: '#1a0c1d',
     H1: '#dc3a94', H2: '#ab2174', H3: '#701150', // hat
@@ -23,9 +25,16 @@ function makePixelIo(scale) {
   };
   const grid = () => Array.from({ length: H }, () => new Array(W).fill(''));
   const inb = (x, y) => x >= 0 && x < W && y >= 0 && y < H;
-  const put = (g, x, y, c) => { x = Math.round(x); y = Math.round(y); if (inb(x, y)) g[y][x] = c; };
-  // fill every pixel whose centre passes test(x, y); tone(x, y) picks the colour
-  const fill = (g, test, tone) => { for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (test(x + 0.5, y + 0.5)) g[y][x] = typeof tone === 'function' ? tone(x + 0.5, y + 0.5) : tone; };
+  const px = (g, x, y, c) => { if (inb(x, y)) g[y][x] = c; };
+  // design grid to art pixels: the art pixel under the centre of design pixel v
+  const D = (v) => Math.floor((Math.round(v) + 0.5) * Z);
+  const put = (g, x, y, c) => px(g, D(x), D(y), c);
+  // a one-pixel detail anchored on the design grid: the offsets are art pixels, so it keeps its pixel size
+  const at = (g, ax, ay, dx, dy, c) => px(g, D(ax) + Math.round(dx), D(ay) + Math.round(dy), c);
+  const hline = (g, x0, x1, y, c) => { for (let x = D(x0); x <= D(x1); x++) px(g, x, D(y), c); };
+  const vline = (g, x, y0, y1, c) => { for (let y = D(y0); y <= D(y1); y++) px(g, D(x), y, c); };
+  // fill every art pixel whose centre, on the design grid, passes test(x, y); tone(x, y) picks the colour
+  const fill = (g, test, tone) => { for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const X = (x + 0.5) / Z, Y = (y + 0.5) / Z; if (test(X, Y)) g[y][x] = typeof tone === 'function' ? tone(X, Y) : tone; } };
   const inEll = (cx, cy, rx, ry) => (x, y) => ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1;
   const inPoly = (pts) => (px, py) => { let ins = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > py) !== (yj > py) && px < (xj - xi) * (py - yi) / (yj - yi) + xi) ins = !ins; } return ins; };
   const and = (a, b) => (x, y) => a(x, y) && b(x, y);
@@ -58,22 +67,22 @@ function makePixelIo(scale) {
     const top = 21 + bob;
     const robe = side ? [[8.6, top], [15.4, top], [17.4 + sw, 33], [7 + sw, 33]] : [[6.8, top], [17.2, top], [19.4 + sw, 33], [4.6 + sw, 33]];
     fill(g, inPoly(robe), (x, y) => { const k = (y - top) / (33 - top), l = (side ? 8.6 : 6.8) - k * (side ? 1.6 : 2.2) + sw * k, r = (side ? 15.4 : 17.2) + k * (side ? 2 : 2.2) + sw * k; return shade3('R1', 'R2', 'R3', l, r, 0.22, 0.7)(x); });
-    for (let x = 0; x < W; x++) if (g[32][x] && g[32][x][0] === 'R') g[32][x] = x % 2 ? 'g2' : 'g1';
+    const hem = D(32); for (let x = 0; x < W; x++) if (g[hem][x] && g[hem][x][0] === 'R') g[hem][x] = x % 2 ? 'g2' : 'g1';
     if (!back) { // the open front: the dark bodice, a gold chain, the robe's gold edges
       const bx = side ? 13.6 : 12;
       fill(g, inPoly(side ? [[13, top + 1], [15, top + 1], [15.4, top + 7], [13.4, top + 7]] : [[10, top + 1], [14, top + 1], [13.4, top + 7.5], [10.6, top + 7.5]]), (x) => (x < bx ? 'D1' : 'D2'));
-      if (front) { for (let i = 0; i <= 4; i++) { put(g, 10.2 + i * 0.45, top + 1.4 + i * 0.75, 'g1'); put(g, 13.8 - i * 0.45, top + 1.4 + i * 0.75, 'g1'); } put(g, 12, top + 5.2, 'g2'); for (let y = top + 8; y < 32; y++) put(g, 12, y, 'R3'); }
+      if (front) { for (let i = 0; i <= 4; i++) { put(g, 10.2 + i * 0.45, top + 1.4 + i * 0.75, 'g1'); put(g, 13.8 - i * 0.45, top + 1.4 + i * 0.75, 'g1'); } put(g, 12, top + 5.2, 'g2'); vline(g, 12, top + 8, 31, 'R3'); }
     }
     // ---- sleeves: wide, gold-cuffed, a hand at each cuff ----
     if (side) {
       fill(g, inPoly([[11, top + 0.5], [14, top + 0.5], [15.6, top + 8.5], [11.2, top + 9]]), (x) => (x < 12.6 ? 'R1' : x > 14.6 ? 'R3' : 'R2'));
-      for (let x = 11; x <= 15; x++) put(g, x, top + 8.6, 'g2');
+      hline(g, 11, 15, top + 8.6, 'g2');
       put(g, 14, top + 9.6, 'S2'); put(g, 15, top + 9.6, 'S3');
     } else {
       fill(g, inPoly([[5.6, top + 0.6], [8.6, top + 0.6], [8.8, top + 8.5], [4.2, top + 9.2]]), (x) => (x < 6.2 ? 'R1' : 'R2'));
       fill(g, inPoly([[15.4, top + 0.6], [18.4, top + 0.6], [19.8, top + 9.2], [15.2, top + 8.5]]), (x) => (x > 18 ? 'R3' : 'R2'));
-      for (let x = 4; x <= 8; x++) put(g, x, top + 8.8, 'g2');
-      for (let x = 16; x <= 20; x++) put(g, x, top + 8.8, 'g2');
+      hline(g, 4, 8, top + 8.8, 'g2');
+      hline(g, 16, 20, top + 8.8, 'g2');
       if (front) { put(g, 6, top + 9.8, 'S2'); put(g, 7, top + 9.8, 'S2'); put(g, 17, top + 9.8, 'S2'); put(g, 18, top + 9.8, 'S3'); }
     }
     // the high collar
@@ -83,16 +92,16 @@ function makePixelIo(scale) {
     if (back) {
       fill(g, inEll(12, 15.6 + bob, 7, 6.6), (x) => (x < 9 ? 'B1' : x > 15.5 ? 'B3' : 'B2'));
       fill(g, inPoly([[5.6, 16 + bob], [18.4, 16 + bob], [18.2, 24 + bob], [16.4, 25.6 + bob], [14.4, 24.8 + bob], [12, 26.2 + bob], [9.6, 24.8 + bob], [7.6, 25.6 + bob], [5.8, 24 + bob]]), (x) => (x < 8.6 ? 'B1' : x > 15.4 ? 'B3' : 'B2'));
-      for (const [x0, y0] of [[9, 18], [12, 19], [15, 18], [10.5, 22], [13.5, 22]]) for (let k = 0; k < 4; k++) put(g, x0 + Math.sin(k) * 0.6, y0 + k + bob, 'B3');
-      for (let k = 0; k < 5; k++) put(g, 7 + Math.sin(k) * 0.5, 17 + k + bob, 'B1');
+      for (const [x0, y0] of [[9, 18], [12, 19], [15, 18], [10.5, 22], [13.5, 22]]) for (let k = 0; k < 5; k++) at(g, x0, y0 + bob, Math.sin(k) * 0.6, k, 'B3');
+      for (let k = 0; k < 6; k++) at(g, 7, 17 + bob, Math.sin(k) * 0.5, k, 'B1');
     } else if (side) {
       fill(g, inEll(10.8, 15.8 + bob, 6.2, 6.2), (x) => (x < 8 ? 'B1' : 'B2'));
       fill(g, inPoly([[5, 15 + bob], [11.6, 15 + bob], [11.4, 24 + bob], [9.6, 25.4 + bob], [7.4, 24.6 + bob], [5.4, 25.6 + bob], [4.4, 21 + bob]]), (x) => (x < 7 ? 'B1' : x > 10 ? 'B3' : 'B2'));
-      for (let k = 0; k < 6; k++) put(g, 8.4 + Math.sin(k * 1.3) * 0.6, 17 + k + bob, 'B3');
+      for (let k = 0; k < 7; k++) at(g, 8.4, 17 + bob, Math.sin(k * 1.3) * 0.6, k, 'B3');
     } else {
       fill(g, inEll(12, 15.4 + bob, 7, 6.3), (x) => (x < 9 ? 'B1' : x > 15.6 ? 'B3' : 'B2'));
       for (const [l, r, s1, s3] of [[4.6, 8.4, 'B1', 'B2'], [15.6, 19.4, 'B2', 'B3']]) fill(g, inPoly([[l, 15 + bob], [r, 15 + bob], [r - 0.2, 24 + bob], [r - 1.6, 25.6 + bob], [l + 1.4, 24.6 + bob], [l - 0.2, 25.4 + bob]]), (x) => (x < (l + r) / 2 ? s1 : s3));
-      for (let k = 0; k < 6; k++) { put(g, 6.4 + Math.sin(k * 1.4) * 0.6, 18 + k + bob, 'B1'); put(g, 17.4 + Math.sin(k * 1.4) * 0.6, 18 + k + bob, 'B3'); }
+      for (let k = 0; k < 7; k++) { at(g, 6.4, 18 + bob, Math.sin(k * 1.4) * 0.6, k, 'B1'); at(g, 17.4, 18 + bob, Math.sin(k * 1.4) * 0.6, k, 'B3'); }
     }
     // ---- the face ----
     if (!back) {
@@ -102,13 +111,14 @@ function makePixelIo(scale) {
       if (side) fill(g, inPoly([[9.6, 11 + bob], [17, 11 + bob], [17.2, 13.2 + bob], [16, 14.4 + bob], [14.6, 13.4 + bob], [13.4, 14.8 + bob], [12, 13.6 + bob], [10.6, 15.4 + bob]]), (x) => (x < 12 ? 'B1' : 'B2'));
       else fill(g, inPoly([[6.4, 11 + bob], [17.6, 11 + bob], [17.8, 14.6 + bob], [16.4, 13.4 + bob], [15, 14.8 + bob], [13.4, 13.6 + bob], [12, 15 + bob], [10.6, 13.6 + bob], [9, 14.8 + bob], [7.6, 13.4 + bob], [6.2, 14.8 + bob]]), (x) => (x < 9.4 ? 'B1' : x > 15.4 ? 'B3' : 'B2'));
       // round glasses, eyes with a glint, a small smile and soft cheeks
-      const lens = (x0, y0) => { // a 4 x 3 ring: the glint on the left, the eye on the right
-        for (const [dx, dy] of [[1, 0], [2, 0], [0, 1], [3, 1], [1, 2], [2, 2]]) put(g, x0 + dx, y0 + dy, 'G');
-        put(g, x0 + 1, y0 + 1, 'L'); put(g, x0 + 2, y0 + 1, 'E');
+      // round glasses: a 5 x 4 ring in art pixels, a glint at the top left, the eye two pixels tall in the middle
+      const lens = (ax, ay) => {
+        for (const [dx, dy] of [[1, 0], [2, 0], [3, 0], [0, 1], [4, 1], [0, 2], [4, 2], [1, 3], [2, 3], [3, 3]]) px(g, ax + dx, ay + dy, 'G');
+        px(g, ax + 1, ay + 1, 'L'); px(g, ax + 2, ay + 1, 'E'); px(g, ax + 2, ay + 2, 'E');
       };
-      const ey = 16.8 + bob;
-      if (side) { lens(14, ey - 1); for (let x = 11; x <= 13; x++) put(g, x, ey, 'G'); put(g, 17.6, ey + 1.2, 'S2'); put(g, 15.6, 19.8 + bob, 'M'); put(g, 14.4, 19 + bob, 'P'); }
-      else { lens(7, ey - 1); lens(13, ey - 1); put(g, 11, ey, 'G'); put(g, 12, ey, 'G'); put(g, 12, 20 + bob, 'M'); put(g, 7.8, 19.2 + bob, 'P'); put(g, 16.2, 19.2 + bob, 'P'); }
+      const ey = 16.8 + bob, ly = D(ey - 1) - 1; // the lenses' top row, in art pixels
+      if (side) { lens(D(14), ly); for (let x = D(11); x < D(14); x++) px(g, x, ly + 1, 'G'); put(g, 17.6, ey + 1.2, 'S2'); put(g, 15.6, 19.8 + bob, 'M'); put(g, 14.4, 19 + bob, 'P'); }
+      else { const c = D(12); lens(c - 5, ly); lens(c + 1, ly); px(g, c, ly + 1, 'G'); put(g, 12, 20 + bob, 'M'); put(g, 7.8, 19.2 + bob, 'P'); put(g, 16.2, 19.2 + bob, 'P'); }
     }
     // ---- the hat: a wide brim, a tall cone that bends at the tip, a gold band with the moon, two curled horns ----
     const by = 11.6 + bob, bcx = side ? 12.4 : 12;
@@ -119,17 +129,26 @@ function makePixelIo(scale) {
     const inCone = inPoly(cone);
     fill(g, inCone, (x) => { const u = (x - 7) / 10; return u < 0.32 ? 'H1' : u > 0.7 ? 'H3' : 'H2'; });
     // the gold band round the base of the cone, two pixels deep
-    for (let x = 0; x < W; x++) for (const [dy, c] of [[-1.4, x < bcx + 3 ? 'g1' : 'g2'], [-2.2, 'g2']]) { const y = Math.round(by + dy); if (inCone(x + 0.5, y + 0.5)) g[y][x] = c; }
-    if (front) { for (const [dx, dy] of [[0.4, -1.6], [-0.6, -1], [-0.8, 0], [-0.4, 1], [0.6, 1.2]]) put(g, 12 + dx, by - 5.4 + dy, 'g1'); }
-    if (side) { for (const [dx, dy] of [[0, -1.6], [-0.8, -0.6], [-0.6, 0.6], [0.4, 1.2]]) put(g, 14.6 + dx, by - 5 + dy, 'g1'); }
+    const band = D(by - 1.4);
+    for (let x = 0; x < W; x++) for (const [y, c] of [[band, x < D(bcx + 3) ? 'g1' : 'g2'], [band - 1, 'g2']]) { if (inb(x, y) && inCone((x + 0.5) / Z, (y + 0.5) / Z)) g[y][x] = c; }
+    if (front) { for (const [dx, dy] of [[0.4, -1.6], [-0.6, -1], [-0.8, 0], [-0.4, 1], [0.6, 1.2]]) at(g, 12, by - 5.4, dx, dy, 'g1'); }
+    if (side) { for (const [dx, dy] of [[0, -1.6], [-0.8, -0.6], [-0.6, 0.6], [0.4, 1.2]]) at(g, 14.6, by - 5, dx, dy, 'g1'); }
     // a horn: out from the band, up, and curling back in at the tip; cream with pink stripes
+    // a ram's horn: out from the band, up, and curling back toward the hat at the tip, stripes on every other step;
+    // the curve is scaled to her size and drawn as joined pixels, so it reads as one unbroken curl
+    const seg = (x0, y0, x1, y1, c) => {
+      const n = Math.max(1, Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0))));
+      for (let i = 1; i <= n; i++) px(g, Math.round(x0 + (x1 - x0) * i / n), Math.round(y0 + (y1 - y0) * i / n), c);
+    };
     const horn = (sx, x0, y0) => {
-      // a ram's horn: out from the band, up, and curling back toward the hat at the tip; stripes on every other step
       const P = [[0, 0], [1, -0.6], [1.8, -1.6], [2.4, -2.8], [2.4, -4], [1.8, -5], [0.8, -5.4], [0.2, -4.8]];
+      const ax = D(x0), ay = D(y0);
+      let prev = null;
       P.forEach(([dx, dy], i) => {
-        const c = i % 2 ? 'n' : i < 3 ? 'N2' : 'N1';
-        put(g, x0 + sx * dx, y0 + dy, c);
-        if (i < 5) put(g, x0 + sx * (dx + 1), y0 + dy, i % 2 ? 'n' : 'N2'); // thick at the root
+        const x = ax + sx * dx * Z, y = ay + dy * Z, c = i % 2 ? 'n' : i < 3 ? 'N2' : 'N1';
+        if (prev) seg(prev[0], prev[1], x, y, c); else px(g, Math.round(x), Math.round(y), c);
+        if (i < 5) px(g, Math.round(x + sx), Math.round(y), i % 2 ? 'n' : 'N2'); // thick at the root
+        prev = [x, y];
       });
     };
     if (side) { horn(1, 15.6, by - 2); horn(-1, 9.4, by - 2.4); }
@@ -149,5 +168,5 @@ function makePixelIo(scale) {
       }
     }
   });
-  return { canvas, w: W, h: H, scale: K, foot: [12, 35], frame: (dir, step) => [step * W * K, DIRS.indexOf(dir) * H * K] };
+  return { canvas, w: W, h: H, scale: K, foot: [W / 2, H - 1], frame: (dir, step) => [step * W * K, DIRS.indexOf(dir) * H * K] };
 }

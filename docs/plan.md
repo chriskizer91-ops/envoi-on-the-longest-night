@@ -133,6 +133,7 @@ As in FF9: the world is walked on foot, and later flown over. All of it at night
 - **The far view** from the Magpie is the same world, scaled down, since it doesn't need full detail.
 - **Ground-level maps** are entered from the world map: the towns and the set-fight places (`art-requests/04-walking-maps.md`).
 - A phone-friendly tracing tool marks where Io can walk, what she walks behind, the town entrances and the wild areas, once per tile; the day and night versions share it.
+- **Walking:** Io is 42 map pixels tall, at 1× zoom, with one walking speed (110 map pixels a second). A **navigation mini-map** in the corner shows the whole map, the part on screen and Io; once the maps are traced it also shows paths, exits and towns.
 
 **The level bands.** Four bands, 1 to 5, 5 to 10, 10 to 15 and 15 to 20, opened by the Bogmire refit, the charge at Dawnroost's living node, and the upgrade after Halcyon. Sunstone gives the Magpie its lift, and Noctara's cold drains it. A band the ship can't reach yet sits under cold mist on the flying map. The central island capital, the east and the southeast are under mist all game: they aren't in the story.
 
@@ -176,13 +177,13 @@ Around them:
 
 The final deliverable is one HTML file with everything inside it, about 30 MB at most, sent to Chris to keep. A published page can be 16 MB at most, so the published game is one link with its paintings as separate files beside the page.
 
-A first budget, with the paintings compressed:
+A first budget, with the paintings compressed. The battle images stay high quality, the walking maps can drop to a lower resolution, and the far view from the Magpie is compressed the most (Chris, October 2, tenth round):
 
 | Part | About |
 |---|---|
 | The code: models, effects, battle, walking, airship, music | 3 MB |
-| The world map at night: nine tiles, plus the far view | 5 MB |
+| The world map at night: nine tiles for walking, plus a lighter far view for flying | 4 MB |
 | Eight battle backdrops and the Night square | 4 MB |
-| About twelve ground-level maps | 6 MB |
+| Thirteen ground-level maps, at 1024 or 768 pixels wide (Chris picks) | 2 to 3 MB |
 | Story stills and the title | 4 MB |
-| **Total** | **about 22 MB** |
+| **Total** | **about 18 MB** |

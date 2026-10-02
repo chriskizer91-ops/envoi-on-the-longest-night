@@ -411,3 +411,20 @@ Chris checked the cast page on his Pixel 7a:
 ### Art
 
 - **All 13 ground-level maps arrived** on October 2, 2026, including the two optional ones (the Thornwood and the frozen pass). Every image requested so far is in.
+
+## October 2, 2026, tenth round
+
+### The walking scale
+
+This round replaces the ninth round's 36 pixels.
+
+- **Io is 42 map pixels tall** (Chris). Anything from 42 to 45 fits all 13 maps, without her looking too big on some or too small on others, and he likes 42 for the number. She is drawn 28 × 42, still one pixel of her to one pixel of the painting.
+- **The camera zoom is 1×:** one map pixel to one screen pixel.
+- **One walking speed, twice the first test's.** That's 110 map pixels a second, about two and a half of her heights. There's no separate run, so there's only one speed to build.
+- **Every walking map gets a navigation mini-map** in a corner: the whole map, the part on screen and a dot for Io. Once the maps are traced, it can also show the paths, the exits and the towns.
+
+### Image compression
+
+- **Battle images stay high quality.** They are still compressed from the originals, but only lightly.
+- **The walking maps can be compressed harder,** down to a lower resolution, even if they look a little more pixelated, since a pixel character walks across them. The walking test carries every map at 1024 and at 768 pixels wide (from the 1536 originals) so Chris can choose; positions stay in the originals' pixels whatever size is shipped.
+- **The world map seen from the Magpie can be compressed the most.** It is seen from high up, at night and through mist, so fine detail isn't missed. Even so, nothing is compressed too much.

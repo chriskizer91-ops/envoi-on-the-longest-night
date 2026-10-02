@@ -18,8 +18,9 @@
 WalkTest.start({
   title: 'Walking Test',
   blurb: 'The pixel Io on the ground-level maps. Walk with the arrows, the d-pad or a tap.',
-  maps: WALK.maps, portraits: WALK.portraits, lines: WALK.lines, ioHeight: 36,
-  note: "No walls yet, so Io walks over everything. She is 36 map pixels tall, the height Chris chose: one pixel of her to one pixel of the painting. Zoom sets how close the camera is. Talk shows the talking portraits with sample lines.",
+  maps: WALK.maps, portraits: WALK.portraits, lines: WALK.lines, size: WALK.size, details: WALK.details,
+  ioHeight: 42, zoom: 1, speed: 110,
+  note: "No walls yet, so Io walks over everything. She is 42 map pixels tall, the height Chris chose, drawn 28 by 42: one pixel of her to one pixel of the painting. Zoom starts at 1x. Map detail switches every map between a 1024 and a 768 pixel wide copy, so you can see how much lighter maps can get before they look worse; Sharp pixels keeps the map's pixels square instead of blurring them. Tap the mini-map to make it bigger. Talk shows the talking portraits with sample lines.",
 });
 </script>
 </body>
