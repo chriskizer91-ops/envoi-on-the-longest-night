@@ -392,3 +392,22 @@ Chris checked the cast page on his Pixel 7a:
 ### Ground-level maps
 
 - The three pilot maps arrived on October 2, 2026: Wickhollow square, Bogmire and the northern crossroads (`../reference/art/walk/`). The walking test checks their scale against the pixel Io.
+
+## October 2, 2026, ninth round
+
+### The walking scale
+
+- **Io is 36 map pixels tall on the ground-level maps** (Chris). The pixel Io is drawn 24 × 36 art pixels, so one pixel of her is one pixel of the painting; a zoom setting chooses how close the camera is.
+- Chris asked for a better pixel Io; she was redrawn with three-tone shading, round glasses, curled horns, the gold band and moon, wavy hair and gold trim.
+
+### The shipmaster's name
+
+- **Ysmera Brightkeel.** Chris left the name to Claude. She is an Aurosi elf, the woman of portrait A, and runs the shipyard where the Magpie gets its final upgrade.
+
+### The older phone
+
+- The cast page doesn't load on Chris's older phone even with models loaded as needed. It works on the phone he uses every day (a Pixel 7a), which is the one that matters. Not pursued further.
+
+### Art
+
+- **All 13 ground-level maps arrived** on October 2, 2026, including the two optional ones (the Thornwood and the frozen pass). Every image requested so far is in.

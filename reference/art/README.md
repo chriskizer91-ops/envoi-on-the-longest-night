@@ -61,12 +61,12 @@ For art request 05 (`docs/art-requests/05-portraits.md`), in `portraits/`:
 - `io-face-render.png`: Io's 3D model, face close-up (from `../renders/2026-10-01-baseline/face-witch.png`);
 - `sol-face-sheet.png`: the face views cropped from Sol's model sheet A.
 
-## Pilot portraits and maps
+## Portraits and ground-level maps
 
 Received October 2, 2026:
 
-- `portraits/portrait-io.png`, `portrait-sol.png`, `portrait-shipmaster-a.png`: the talking portraits (art request 05), 1254×1254, with `prompts-pilot.txt` from Chris's generator. The game's 640-pixel copies are in `../../art/portraits/`.
-- `walk/walk-wickhollow-square.webp`, `walk-bogmire.webp`, `walk-northern-crossroads.webp`: the pilot ground-level maps (art request 04), 1536×1024 at night. They are used as they came, in `../../art/walk/`.
+- `portraits/portrait-io.png`, `portrait-sol.png`, `portrait-shipmaster-a.png` (Ysmera Brightkeel): the pilot talking portraits (art request 05), 1254×1254, with `prompts-pilot.txt` from Chris's generator. The game's 640-pixel copies are in `../../art/portraits/`.
+- `walk/walk-*.png`: all 13 ground-level maps (art request 04), 1536×1024 at night, with `prompts.txt` and `prompts-pilot.txt`. The game's WebP copies are in `../../art/walk/`.
 
 ## Key art
 

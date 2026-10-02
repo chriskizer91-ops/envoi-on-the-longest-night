@@ -10,7 +10,7 @@
   const src = (s) => (s.startsWith('data:') ? s : '../' + s);
 
   function start(cfg) {
-    const DPR = Math.min(window.devicePixelRatio || 1, 2), SPR = 2; // the sprite is drawn at 2 screen px per art px
+    const DPR = Math.min(window.devicePixelRatio || 1, 3);
     document.title = cfg.title;
     const header = el('header', null, document.body); el('h1', null, header, cfg.title); if (cfg.blurb) el('p', null, header, cfg.blurb);
     const wrap = el('div', { class: 'wrap' }, document.body);
@@ -41,18 +41,20 @@
     const talkBtn = el('button', { class: 'tog', type: 'button' }, talkBox, 'Talk');
     talkBtn.addEventListener('click', () => { line = -1; nextLine(); });
     el('h2', null, panel, 'Scale and light');
-    const S = { ioH: cfg.ioHeight || 36, mapLight: 1, ioLight: 0.85 };
+    // Io is 36 art px tall, one art px to one map px at Chris's chosen height; zoom sets screen px per map px
+    const S = { ioH: cfg.ioHeight || 36, zoom: window.innerWidth < 700 ? 1.6 : 1.4, mapLight: 1, ioLight: 0.9 };
     function slider(label, min, max, step, key, fmt) {
       const lab = el('label', { class: 'sl' }, panel); el('span', null, lab, label);
       const inp = el('input', { type: 'range', min, max, step, value: S[key] }, lab), out = el('output', null, lab, fmt(S[key]));
       inp.addEventListener('input', () => { S[key] = +inp.value; out.textContent = fmt(S[key]); });
     }
-    slider("Io's height on the map", 20, 72, 1, 'ioH', (v) => v + ' map px');
+    slider('Zoom', 0.8, 3, 0.1, 'zoom', (v) => v.toFixed(1) + '×');
+    slider("Io's height on the map", 24, 60, 1, 'ioH', (v) => v + ' map px');
     slider('Light on the map', 0.5, 1.5, 0.05, 'mapLight', (v) => Math.round(v * 100) + '%');
     slider('Light on Io', 0.4, 1.3, 0.05, 'ioLight', (v) => Math.round(v * 100) + '%');
     el('p', { class: 'note' }, panel, cfg.note || '');
 
-    const io = makePixelIo(SPR);
+    const io = makePixelIo(1);
     const P = { x: 0, y: 0, dir: 's', walkT: 0, moving: false };
     const held = new Set(); let tap = null, map = null, img = null, line = -1;
     const KEYS = { ArrowUp: 'n', ArrowDown: 's', ArrowLeft: 'w', ArrowRight: 'e', w: 'n', s: 's', a: 'w', d: 'e', W: 'n', S: 's', A: 'w', D: 'e' };
@@ -96,7 +98,7 @@
           P.walkT += dt;
         } else P.walkT = 0;
         const W = cv.width / DPR, H = cv.height / DPR;
-        cam.z = (io.h * SPR) / S.ioH;
+        cam.z = S.zoom; const sk = cam.z * S.ioH / io.h; // screen px per art px
         const vw = W / cam.z, vh = H / cam.z;
         cam.x = vw >= MW ? (MW - vw) / 2 : clamp(P.x - vw / 2, 0, MW - vw);
         cam.y = vh >= MH ? (MH - vh) / 2 : clamp(P.y - vh * 0.55, 0, MH - vh);
@@ -108,12 +110,12 @@
         g.filter = 'none';
         // Io: a soft shadow, then the sprite, pixel-snapped, her feet on her spot
         const fx = (P.x - cam.x) * cam.z, fy = (P.y - cam.y) * cam.z;
-        g.fillStyle = 'rgba(0,0,0,0.38)'; g.beginPath(); g.ellipse(fx, fy - 1, 6.5 * SPR, 2.2 * SPR, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = 'rgba(0,0,0,0.38)'; g.beginPath(); g.ellipse(fx, fy - sk, 9 * sk, 2.6 * sk, 0, 0, Math.PI * 2); g.fill();
         const step = P.moving ? [1, 0, 2, 0][Math.floor(P.walkT / 0.14) % 4] : 0, [sx, sy] = io.frame(P.dir, step);
-        const ox = Math.round((fx - io.foot[0] * SPR) * DPR) / DPR, oy = Math.round((fy - (io.foot[1] + 1) * SPR) * DPR) / DPR;
+        const ox = Math.round((fx - io.foot[0] * sk) * DPR) / DPR, oy = Math.round((fy - (io.foot[1] + 1) * sk) * DPR) / DPR;
         g.imageSmoothingEnabled = false;
         g.filter = S.ioLight !== 1 ? 'brightness(' + S.ioLight + ')' : 'none';
-        g.drawImage(io.canvas, sx, sy, io.w * SPR, io.h * SPR, ox, oy, io.w * SPR, io.h * SPR);
+        g.drawImage(io.canvas, sx, sy, io.w, io.h, ox, oy, io.w * sk, io.h * sk);
         g.filter = 'none';
         if (box.hidden) nowName.textContent = map.name;
       }

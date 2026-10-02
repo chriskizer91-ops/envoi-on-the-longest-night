@@ -1,0 +1,132 @@
+Walking maps — selected production prompts
+
+All 13 locations from 04-walking-maps.md are included, including the two optional maps. Built-in image generation used. Two candidates generated per map and selected visually for route clarity. Existing pilots retained. Wickhollow square pilot supplied as style reference for the ten remaining maps; named battle-reference paintings were unavailable. Images are visual map assets; movement, collision boundaries and character scale require in-game testing.
+
+Io's cottage
+Filename: walk-wickhollow-cottage.png
+Selected candidate: 1
+
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+A witch's cottage at the edge of the village: a small crooked cottage with a mossy roof, a round window and a lit lantern by the door. A fenced herb garden in neat beds of lavender, pale moon-white flowers and bell-shaped blooms, with a potting bench, a rain barrel, drying racks and a garden gate. A lane leaves at the top edge toward the village square. A forest path leaves at the right edge into a dark wood of huge twisted oaks with hanging moss.
+
+Input image is a STYLE REFERENCE ONLY: match painterly pixel detail, colors and materials, not its village layout. Create the requested different location. Critical camera: orthographic high overhead JRPG map with axis-aligned architecture, no perspective convergence, no isometric rotation. No visible moon, sky, horizon, lettering, people, creatures, boats or airships. Empty landing and mooring spaces. Maintain continuous clearly visible walkable routes to specified exits and doorways. Doorways approximately 51 pixels wide; a future character will stand about 73 pixels tall. Output one complete 1536x1024 landscape map.
+
+--------------------
+
+The jetty
+Filename: walk-wickhollow-jetty.png
+Selected candidate: 2
+
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+The river jetty below the village: a slow black river with silver moonlight on it fills the lower part of the picture. An old wooden jetty runs out over the water, with a long empty berth beside it where a small airship ties up, and mooring posts with coiled ropes. On the bank, a trader's covered stall with crates, nets and a hanging lantern, reeds and a few willows. A lane leaves at the top edge, up to the village.
+
+Input image is a STYLE REFERENCE ONLY: match painterly pixel detail, colors and materials, not its village layout. Create the requested different location. Critical camera: orthographic high overhead JRPG map with axis-aligned architecture, no perspective convergence, no isometric rotation. No visible moon, sky, horizon, lettering, people, creatures, boats or airships. Empty landing and mooring spaces. Maintain continuous clearly visible walkable routes to specified exits and doorways. Doorways approximately 51 pixels wide; a future character will stand about 73 pixels tall. Output one complete 1536x1024 landscape map.
+Alternative layout: wider wooden jetty deck with an unobstructed central walking lane, empty water beside its long berth, stall and crates entirely off the approach path. Keep scene modest with only the specified trader stall, no extra houses.
+
+--------------------
+
+Bogmire's dark heart
+Filename: walk-bogmire-heart.png
+Selected candidate: 2
+
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+The dark heart of a stilt town: a broad square platform of weathered planks raised on stilts over black water in the middle of the picture. The houses round it stand on tall stilts with every window dark and cold, and thin smoke curls from their empty lanterns, as if the light has been eaten out of them. Broken rails, a faint green mist over the water, and two lanterns still burning at the near corners. One walkway arrives at the bottom edge.
+
+Input image is a STYLE REFERENCE ONLY: match painterly pixel detail, colors and materials, not its village layout. Create the requested different location. Critical camera: orthographic high overhead JRPG map with axis-aligned architecture, no perspective convergence, no isometric rotation. No visible moon, sky, horizon, lettering, people, creatures, boats or airships. Empty landing and mooring spaces. Maintain continuous clearly visible walkable routes to specified exits and doorways. Doorways approximately 51 pixels wide; a future character will stand about 73 pixels tall. Output one complete 1536x1024 landscape map.
+Alternative composition: a single large square plank arena centered, one entrance walkway from the bottom edge only. Houses positioned along the far and side edges. Arena floor intact and unobstructed; damage only in perimeter rails. Keep all house windows fully black, two near-corner lanterns only. Thin green mist remains over water, never hiding playable planks.
+
+--------------------
+
+Dawnroost
+Filename: walk-dawnroost.png
+Selected candidate: 2
+
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+The outer yard of a fortified stone waystation on a hilltop, inside its walls: stables, a long barracks hall with a few lit windows, a smithy with a cold forge, a well, weapon racks, and faded banners with a sun crest on the walls. Old paved paths with faint amber veins glowing in the cracks. A tall round tower with nesting ledges for birds rises at the top. The main gate opens at the bottom edge onto the hill road. An inner archway at the top edge leads to a courtyard glowing amber. A landing yard by the wall at the right where a small airship ties up.
+
+Input image is a STYLE REFERENCE ONLY: match painterly pixel detail, colors and materials, not its village layout. Create the requested different location. Critical camera: orthographic high overhead JRPG map with axis-aligned architecture, no perspective convergence, no isometric rotation. No visible moon, sky, horizon, lettering, people, creatures, boats or airships. Empty landing and mooring spaces. Maintain continuous clearly visible walkable routes to specified exits and doorways. Doorways approximately 51 pixels wide; a future character will stand about 73 pixels tall. Output one complete 1536x1024 landscape map.
+Alternative layout prioritizing navigation: main gate at bottom MUST be wide open, no portcullis, closed doors, bars or obstacles across entrance. Unobstructed north-south paved route to open inner archway at top. Well beside main path instead of on it. Broad open connecting path to empty landing yard on right. Fort is on a grassy rocky hilltop, not an island in water. Only a few barracks windows lit, cold forge. Tower at top with empty nesting ledges.
+
+--------------------
+
+Dawnroost's living node
+Filename: walk-dawnroost-node.png
+Selected candidate: 2
+
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+The inner courtyard of a stone waystation: worn flagstones round a huge living crystal of amber sunstone set into the ground near the top of the picture, glowing like a hearth and lighting the walls amber. Iron braziers, banners with a sun crest, and stone steps up to the wall walk. Amber veins run out from the crystal through the cracks between the stones. The archway from the outer yard is at the bottom edge.
+
+Input image is a STYLE REFERENCE ONLY: match painterly pixel detail, colors and materials, not its village layout. Create the requested different location. Critical camera: orthographic high overhead JRPG map with axis-aligned architecture, no perspective convergence, no isometric rotation. No visible moon, sky, horizon, lettering, people, creatures, boats or airships. Empty landing and mooring spaces. Maintain continuous clearly visible walkable routes to specified exits and doorways. Doorways approximately 51 pixels wide; a future character will stand about 73 pixels tall. Output one complete 1536x1024 landscape map.
+Alternative composition: enclosed stone inner courtyard of a hilltop fort, no water or river anywhere. Outer edges show additional stone walls, rocky hill and dark scrub. Large living sunstone embedded directly in paving near top. Broad open central flagstone floor with fine amber cracks. Bottom archway fully open. Two perimeter stairs lead to wall walks. Style reference supplies painting technique only, never its river scenery.
+
+--------------------
+
+The shipyard
+Filename: walk-shipyard.png
+Selected candidate: 1
+
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+A shipyard for airships inside a stone fortress on a rock in a cold northern sea. A long arched stone bridge from the shore arrives at the bottom edge through a gatehouse. Inside the walls: a great empty wooden slipway with a scaffold cradle where a small airship is refitted, with cranes, winches, coils of rope and stacked timber; workshops and a shipwright's hall with lit windows; crates of amber sunstone glowing faintly through their slats; a small forge; stone quays stepping down to dark water with thin ice at the edges. Frost on the roofs and walls, and lamps along the battlements.
+
+Input image is a STYLE REFERENCE ONLY: match painterly pixel detail, colors and materials, not its village layout. Create the requested different location. Critical camera: orthographic high overhead JRPG map with axis-aligned architecture, no perspective convergence, no isometric rotation. No visible moon, sky, horizon, lettering, people, creatures, boats or airships. Empty landing and mooring spaces. Maintain continuous clearly visible walkable routes to specified exits and doorways. Doorways approximately 51 pixels wide; a future character will stand about 73 pixels tall. Output one complete 1536x1024 landscape map.
+The slipway scaffold cradle is entirely empty, no ship hull or airship present. Gatehouse bottom gate fully open. Continuous broad walkable bridge from bottom edge through gatehouse to workshops, slipway and quays. Cold northern sea and thin coastal ice. Cranes and material stacks off the walking routes.
+
+--------------------
+
+Misthollow
+Filename: walk-misthollow.png
+Selected candidate: 2
+
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+Misthollow, a town of tall pale stone towers half lost in freezing mist, among snowy mountains. Narrow frosted streets with steps and arches, frost on every ledge and snow banked against the walls. A few shops still have lit windows: an apothecary with herbs hanging in its window, and an inn with a lantern over the door. Most other windows are dark. A landing yard at the bottom edge where a small airship ties up. A broad street leaves at the top edge toward the town square.
+
+Input image is a STYLE REFERENCE ONLY: match painterly pixel detail, colors and materials, not its village layout. Create the requested different location. Critical camera: orthographic high overhead JRPG map with axis-aligned architecture, no perspective convergence, no isometric rotation. No visible moon, sky, horizon, lettering, people, creatures, boats or airships. Empty landing and mooring spaces. Maintain continuous clearly visible walkable routes to specified exits and doorways. Doorways approximately 51 pixels wide; a future character will stand about 73 pixels tall. Output one complete 1536x1024 landscape map.
+Alternative layout: snowy pale-stone tower town on solid mountain ground, no water, docks or river. Empty paved landing yard at bottom edge joins a broad north-south street that reaches top edge. Narrow side streets and stairs connect to tower doorways without being concealed. Just apothecary and inn windows glow amber; all other windows dark. No sun-crest banners from reference. Frosted ledges, snow piled beside streets, low mist confined to margins.
+
+--------------------
+
+The dead Moonwell
+Filename: walk-misthollow-moonwell.png
+Selected candidate: 1
+
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+The square of a dead well in a town of pale stone towers: a wide round plaza of pale frosted flagstones. In the middle, a great round stone well with moths and crescent moons carved round its rim; its basin is black and empty and gives no light at all, and its silver fittings are broken. Tall pale towers stand round the plaza with dark windows, frost covers everything, and two tall braziers burn low near the bottom. The street arrives at the bottom edge.
+
+Input image is a STYLE REFERENCE ONLY: match painterly pixel detail, colors and materials, not its village layout. Create the requested different location. Critical camera: orthographic high overhead JRPG map with axis-aligned architecture, no perspective convergence, no isometric rotation. No visible moon, sky, horizon, lettering, people, creatures, boats or airships. Empty landing and mooring spaces. Maintain continuous clearly visible walkable routes to specified exits and doorways. Doorways approximately 51 pixels wide; a future character will stand about 73 pixels tall. Output one complete 1536x1024 landscape map.
+Large central dead well with pitch-black empty non-glowing basin, carved stone moth motifs and crescent moons are carvings only, not living insects. Broad unobstructed circular path around well and open bottom-edge street. Pale stone towers, all windows black. Two low braziers near bottom only. No river, village houses or sun symbols.
+
+--------------------
+
+The Thornwood (optional)
+Filename: walk-thornwood.png
+Selected candidate: 2
+
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+A tangled dark wood: black thorn trees with long spines, briars and dead brambles, with a winding path of packed earth through it from the left edge to the right edge, opening into two small clearings. A slow black river crosses the left part of the picture under an arched stone bridge with a lantern on its keystone. A mossy waystone carved with a crescent moon stands in one clearing. Cold mist lies in the hollows.
+
+Input image is a STYLE REFERENCE ONLY: match painterly pixel detail, colors and materials, not its village layout. Create the requested different location. Critical camera: orthographic high overhead JRPG map with axis-aligned architecture, no perspective convergence, no isometric rotation. No visible moon, sky, horizon, lettering, people, creatures, boats or airships. Empty landing and mooring spaces. Maintain continuous clearly visible walkable routes to specified exits and doorways. Doorways approximately 51 pixels wide; a future character will stand about 73 pixels tall. Output one complete 1536x1024 landscape map.
+Alternative composition: broad winding packed-earth trail between two generous clearings, uninterrupted from left image edge to right image edge. River crosses left third vertically, arched stone bridge carries the main path across it with one lantern on keystone. Mossy crescent-carved waystone beside clearing, not blocking path. Black thorn trees and tangled dead brambles framing outer margins, no branches hanging over route. No village buildings or additional lamp posts.
+
+--------------------
+
+The frozen pass (optional)
+Filename: walk-frozen-pass.png
+Selected candidate: 2
+
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+A mountain pass in the frozen north: packed snow and ice over an old paved road that winds from the bottom edge to the top edge between snowy rocks and frozen pines heavy with snow. A frozen stream with an ice-covered stone bridge, freezing mist low in the hollows, an abandoned sledge, and one iron lamp post with a dim amber flame.
+
+Input image is a STYLE REFERENCE ONLY: match painterly pixel detail, colors and materials, not its village layout. Create the requested different location. Critical camera: orthographic high overhead JRPG map with axis-aligned architecture, no perspective convergence, no isometric rotation. No visible moon, sky, horizon, lettering, people, creatures, boats or airships. Empty landing and mooring spaces. Maintain continuous clearly visible walkable routes to specified exits and doorways. Doorways approximately 51 pixels wide; a future character will stand about 73 pixels tall. Output one complete 1536x1024 landscape map.
+Alternative composition emphasizing walkability: generous-width winding icy paved road from bottom edge to top edge, continuous over a short flat-deck stone bridge across a narrow frozen stream. Bridge deck unmistakably connects both road ends with no gap or blocked passage. Packed snow thin enough to show paving, snow banks at sides. Snowy rocks and heavy frozen pines at margins, one dim amber iron lamp post, abandoned wooden sledge beside road. No village, fences, buildings or extra lamps.
+
+Pilot prompts are in pilot-prompts.txt.
