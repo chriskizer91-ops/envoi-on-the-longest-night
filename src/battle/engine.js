@@ -442,7 +442,7 @@
         afterHero(h, h.def.moves.stoop); return 'auto';
       }
       if (h.tranceReady) {
-        h.tranceReady = false; h.inTrance = true; h.tranceLeft = TR.turns; h.trance = 1;
+        h.tranceReady = false; h.inTrance = true; h.tranceLeft = TR.turns; h.trance = 1; B.t += TR.time || 0;
         if (h.id === 'sol') { h.heatBefore = h.heat; h.heat = HE.sol.heat.max; }
         emit({ t: 'trance', who: h.key });
       }

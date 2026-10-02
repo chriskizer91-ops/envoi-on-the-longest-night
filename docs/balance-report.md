@@ -6,31 +6,31 @@ The play styles: **careless** picks moves almost at random and heals late; **att
 
 | Fight | Level | Style | Wins | Target | Median length | Losses leave | Met |
 |---|---|---|---|---|---|---|---|
-| The first fight | 1 | careless | 62% | 45% to 75% | 1.0 min | 12% of foe HP | Yes |
+| The first fight | 1 | careless | 62% | 45% to 75% | 1.1 min | 12% of foe HP | Yes |
 | The first fight | 1 | attentive | 100% | 99% to 100% | 1.3 min | 31% of foe HP | Yes |
 | Wild fights | 2 | careless | 100% | 85% to 100% | 1.1 min |  | Yes |
 | Wild fights | 5 | careless | 100% | 85% to 100% | 1.1 min |  | Yes |
-| Wild fights | 8 | careless | 100% | 85% to 100% | 1.4 min | 8% of foe HP | Yes |
-| Wild fights | 12 | careless | 97% | 85% to 100% | 1.5 min | 16% of foe HP | Yes |
-| Wild fights | 16 | careless | 92% | 85% to 100% | 1.6 min | 19% of foe HP | Yes |
-| Wild fights | 20 | careless | 92% | 85% to 100% | 1.6 min | 19% of foe HP | Yes |
+| Wild fights | 8 | careless | 100% | 85% to 100% | 1.5 min | 8% of foe HP | Yes |
+| Wild fights | 12 | careless | 97% | 85% to 100% | 1.6 min | 16% of foe HP | Yes |
+| Wild fights | 16 | careless | 92% | 85% to 100% | 1.7 min | 19% of foe HP | Yes |
+| Wild fights | 20 | careless | 92% | 85% to 100% | 1.7 min | 19% of foe HP | Yes |
 | Wild fights | 2 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 0.8 min |  | Yes |
 | Wild fights | 5 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 0.8 min |  | Yes |
 | Wild fights | 8 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 1.1 min |  | Yes |
 | Wild fights | 12 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 1.2 min |  | Yes |
-| Wild fights | 16 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 1.4 min |  | Yes |
-| Wild fights | 20 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 1.4 min |  | Yes |
-| The great wraith | 5 | careless | 36% | 20% to 60% | 2.0 min | 17% of foe HP | Yes |
-| The great wraith | 5 | attentive | 90% | 80% to 96% | 2.3 min | 14% of foe HP | Yes |
-| The great wraith | 5 | expert | 99% | 97% to 100% | 2.6 min | 13% of foe HP | Yes |
-| Dawnroost | 10 | attentive | 91% | 80% to 96% | 2.9 min | 55% of foe HP | Yes |
-| Dawnroost | 10 | expert | 97% | 93% to 100% | 3.6 min | 43% of foe HP | Yes |
-| Halcyon's ambush | 15 | expert | 0% | 0% to 10% | 2.2 min | 90% of foe HP | Yes |
-| Halcyon's ambush | 18 | expert | 68% (retreats) | 40% to 85% | 5.1 min | 38% of foe HP | Yes |
-| Halcyon's ambush | 20 | expert | 100% (retreats) | 80% to 100% | 3.0 min |  | Yes |
-| The finale | 20 | expert | 60% | 40% to 65% | 8.0 min | 17% of foe HP | Yes |
-| The finale | 19 | expert | 0% | 0% to 10%, losses leave under 40% | 7.6 min | 38% of foe HP | Yes |
-| The finale | 18 | expert | 0% | 0% to 2% | 5.3 min | 66% of foe HP | Yes |
+| Wild fights | 16 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 1.5 min |  | Yes |
+| Wild fights | 20 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 1.5 min |  | Yes |
+| The great wraith | 5 | careless | 36% | 20% to 60% | 2.2 min | 17% of foe HP | Yes |
+| The great wraith | 5 | attentive | 90% | 80% to 96% | 2.4 min | 14% of foe HP | Yes |
+| The great wraith | 5 | expert | 99% | 97% to 100% | 2.7 min | 13% of foe HP | Yes |
+| Dawnroost | 10 | attentive | 91% | 80% to 96% | 3.1 min | 55% of foe HP | Yes |
+| Dawnroost | 10 | expert | 97% | 93% to 100% | 3.9 min | 43% of foe HP | Yes |
+| Halcyon's ambush | 15 | expert | 0% | 0% to 10% | 2.4 min | 90% of foe HP | Yes |
+| Halcyon's ambush | 18 | expert | 68% (retreats) | 40% to 85% | 5.6 min | 38% of foe HP | Yes |
+| Halcyon's ambush | 20 | expert | 100% (retreats) | 80% to 100% | 3.3 min |  | Yes |
+| The finale | 20 | expert | 60% | 40% to 65% | 8.6 min | 17% of foe HP | Yes |
+| The finale | 19 | expert | 0% | 0% to 10%, losses leave under 40% | 8.1 min | 38% of foe HP | Yes |
+| The finale | 18 | expert | 0% | 0% to 2% | 5.7 min | 66% of foe HP | Yes |
 
 ## Experience and shards
 

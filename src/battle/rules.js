@@ -33,8 +33,9 @@
         mothveil: { name: 'Moth Veil', kind: 'moonlore', mp: 22, veil: 0.35, veilTurns: 2, target: 'ally', need: 'veil', time: 2 },
         defend: { name: 'Defend', kind: 'defend', target: 'self', time: 0.8 },
         moonlight: { name: 'Moonlight', kind: 'trance', hits: [420, 380, 450], element: 'moon', target: 'foe', ends: true, time: 4 },
-        lunara: { name: 'Lunara', kind: 'summon', target: 'party', time: 6 },
-        envoi: { name: 'Envoi', kind: 'summon', target: 'party', need: 'envoi', time: 6 },
+        // a summon's arrival, as long as it plays on the battle screen (measured October 2)
+        lunara: { name: 'Lunara', kind: 'summon', target: 'party', time: 9.8 },
+        envoi: { name: 'Envoi', kind: 'summon', target: 'party', need: 'envoi', time: 8.2 },
       },
     },
     sol: {
@@ -71,17 +72,18 @@
   // Trance: the gauge fills from damage taken (n / max HP x 1.35) and 0.02 for each hit dealt. When it's full, the
   // hero enters Trance at the start of her next turn, free. Io's Twin Moons: Moonlore costs half and every heal lands
   // on both; Moonlight cashes it in. Sol's Dawnbreaker: Heat locked at 100, Sunburn costs no HP; High Noon cashes it
-  // in. Either way it lasts at most 4 of her turns , so it can't be held for a whole fight.
-  const TRANCE = { taken: 1.35, dealt: 0.02, turns: 4 };
+  // in. Either way it lasts at most 4 of her turns , so it can't be held for a whole fight. time: how long the
+  // transformation plays on the battle screen.
+  const TRANCE = { taken: 1.35, dealt: 0.02, turns: 4, time: 3.8 };
 
   // ---------- summons, each once a battle; Io's level sets their numbers ----------
   const SUMMONS = {
     // the Embrace on arrival (both heal 60% of max HP, a fallen ally revives at 60%, the party takes 40% less), then
     // Silver Requiem on Io's next turn, which it spends
-    lunara: { name: 'Lunara', heal: 0.6, revive: 0.6, cut: 0.6, hits: [150, 150, 150, 150, 150, 150, 1150], element: 'moon', time: 7 },
+    lunara: { name: 'Lunara', heal: 0.6, revive: 0.6, cut: 0.6, hits: [150, 150, 150, 150, 150, 150, 1150], element: 'moon', time: 9.4 },
     // Sol standing with 70 Heat or more lights its heart, spending all of it. The Folding Ward then takes the next
     // enemy attack whole, every target included. It strikes when Io's gauge next fills, and Io still takes her turn
-    envoi: { name: 'Envoi', heatNeed: 70, hits: [180, 180, 180, 180, 180, 180, 180, 180, 1800], element: 'sun', time: 7 },
+    envoi: { name: 'Envoi', heatNeed: 70, hits: [180, 180, 180, 180, 180, 180, 180, 180, 1800], element: 'sun', time: 8.2 },
   };
 
   // ---------- foes ----------

@@ -516,7 +516,10 @@ Another session read every commit and replayed the simulator. What it found:
 - **With the hit, an expert won the finale 87% of the time,** against a target of 40% to 65%. To keep the approved target, the cold deepens faster: Noctara and Halcyon hit 7.5% harder with every turn they take, instead of 6%. An expert at 20 now wins 60%; at 19 none, with losses leaving 38% of the bosses' HP. All 25 targets are met.
 - **Moth Veil covers only one hero,** though both Void Sphere and Black Noon hit the whole party. A question for Chris (`questions/open.md`, 7).
 - **In the finale, Io's choices decide the fight** (Envoi, herbs, Lunara, Briars, Moonlight); Sol's barely matter. Something for the gates to teach, in the progression pass.
-- **Fight length:** the session found on-screen fights running longer than the simulator says. Measured at real speed, the screen matches the simulator's move times within a few percent. (It ran its own fights sped up and headless, where the models lag the clock.)
+- **Fight length:** the session found on-screen fights running longer than the simulator says. Measured at real speed on the battle screen:
+  - Ordinary moves match the simulator's times within a few percent: the first fight ran 35.8 seconds on screen against 34.0 estimated, and a level 8 party fight 58.4 against 56.6.
+  - Summons and Trance ran long. A level 12 expert fight with Lunara and a Trance ran 77.2 against 66.4. Lunara's arrival plays for about 9.8 seconds (the simulator had 6), her strike 9.4 (it had 7), Envoi's arrival and strike about 8.2 each (it had 6 and 7), and each Trance transformation 3.8 (it had none).
+  - The rules now use those times. Win rates don't change; the long fights get a little longer (the finale's median is 8.6 minutes instead of 8.0).
 
 ### Envoi on the party page
 
