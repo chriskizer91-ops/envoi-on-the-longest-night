@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sol, the Last Ember Warden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/bench/bench.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/night-square.js"></script>
+<script src="../src/models/originals/witch.js"></script>
+<script src="../src/models/originals/wraith.js"></script>
+<script src="../src/models/sol.js"></script>
+<script src="../src/models/originals/sol.js"></script>
+<script src="../src/bench/bench.js"></script>
+<script src="../src/bench/stage-sol.js"></script>
+<script>
+Bench.start({
+  title: 'Sol, the Last Ember Warden',
+  blurb: 'The party’s sword in the Night square, beside the Witch and facing a Shadow Wraith.',
+  subject: {
+    id: 'sol', name: 'Sol', make: () => makeSol({}), before: () => makeSolOriginal({}),
+    home: [650, 868], face: 'wraith', yawBias: -0.3, shadow: 0.6, target: 'wraith',
+    walkLabel: 'Walk', walkSpeed: 2.2, height: '1.78 m',
+  },
+  cast: [
+    { id: 'witch', name: 'Witch', kind: 'witch', make: () => makeWitchOriginal(), home: [560, 812], face: 'wraith', yawBias: -0.38, shadow: 0.62 },
+    { id: 'wraith', name: 'Wraith', kind: 'wraith', make: () => makeWraithOriginal(), home: [860, 800], face: 'sol', yawBias: 0.2, shadow: 0.7, tall: 2.4 },
+  ],
+  groups: [
+    { title: 'Attack', acts: ['combo'] },
+    { title: 'Sword Arts', acts: ['flareCut', 'sunder', 'emberRush', 'solarCrest'] },
+    { title: 'Guard', acts: ['guardStep', 'block'] },
+    { title: 'Dawnbreaker trance', acts: ['transform', 'daybreak', 'highNoon'] },
+    { title: 'Story and reactions', acts: ['kestrel', 'hurt', 'kneel', 'rise', 'victory'] },
+  ],
+  names: { combo: 'Attack', flareCut: 'Flare Cut', sunder: 'Sunder', emberRush: 'Ember Rush', solarCrest: 'Solar Crest', guardStep: 'Guard Step', block: 'Block', transform: 'Transform', daybreak: 'Daybreak', highNoon: 'High Noon', kestrel: 'Kestrel!', hurt: 'Hurt', kneel: 'Kneel', rise: 'Rise', victory: 'Victory' },
+  hints: { combo: '+20 Heat', flareCut: '520', sunder: '280', emberRush: '4 × 170', solarCrest: '12 × Heat', daybreak: 'Trance attack', highNoon: 'ends the Trance' },
+  wide: { emberRush: 1, solarCrest: 1, highNoon: 1 },
+  sliders: [
+    { label: 'Heat', min: 0, max: 100, step: 5, value: 0, onInput: (v, ctx) => STAGES.sol.setHeat(ctx, v) },
+    { label: 'Trance', min: 0, max: 1, step: 0.1, value: 0, onInput: (v, ctx) => STAGES.sol.setTrance(ctx, v) },
+  ],
+  stage: STAGES.sol,
+  note: "Numbers are the bible's level 1 damage. At 70 Heat or more she is in Sunburn: her blade glows white-hot and every hit lands 35% harder. Her sheets for the touch-up are still to come, so Before and After show the same model for now.",
+});
+</script>
+</body>
+</html>
