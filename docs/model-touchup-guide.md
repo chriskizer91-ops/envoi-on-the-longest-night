@@ -36,3 +36,17 @@ node tools/turnaround/render.mjs <id> make<Name> <dir> --eval "m.root.traverse(o
 ## The Witch is different
 
 Her pass is technical only: the interface and fewer draw calls. Render her before and after from the same angles and compare the pixels. Nothing visible may change.
+
+## The cast page
+
+`demos/cast.html` runs the bench in **roster mode** (`cfg.roster` instead of `cfg.subject` and `cfg.cast`). Every roster entry is an actor with its own `stage`, `groups`, `names`, `hints`, `wide`, `toggles` and `sliders`, and a `side`: `party`, `summon` (hidden until picked) or `foe`. `cfg.encounters` choose which foes stand in the square and where, and can run `enter(actors)` to set one up (the great wraith). `act: false` marks an actor that only stands and takes blows (the extra wisps).
+
+What the bench does for each acting actor:
+
+- It gets its own `ctx`, where `ctx.subject` is itself, `ctx.cfg.subject` is its own spec, `ctx.foe()` is its picked target, and `ctx.damage` makes whoever takes the blow react.
+- Its stage's `update` runs every frame whoever is picked, so a move keeps playing when you switch.
+- Its hits and cues are read from its `ACTIONS`.
+- Its `setDark` is its own; the bench shows the darkest of them.
+- `onPanel(ctx)` runs whenever its buttons are built (Io's Moth Veil target uses it).
+
+A new model joins the cast with one roster entry. Its stage should strike `ctx.foe()` rather than a fixed id, as Io's, Sol's, Lunara's and Envoi's do.

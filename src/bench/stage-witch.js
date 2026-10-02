@@ -29,7 +29,7 @@ window.STAGES.witch = (function () {
   const timers = [];
   let clock = 0, blades = null, ATK = null, DEF = null, SPELL = null, GR = null, marked = null, wideTill = 0;
 
-  const W = () => ctx.subject, E = () => ctx.actors.wraith, SOL = () => ctx.actors.sol;
+  const W = () => ctx.subject, E = () => (ctx.foe && ctx.foe()) || ctx.actors.wraith, SOL = () => ctx.actors.sol;
   const V = () => new THREE.Vector3();
   const posW = () => ({ x: W().x, z: W().z }), posE = () => ({ x: E().x, z: E().z });
   const posOf = (id) => () => ({ x: ctx.actors[id].x, z: ctx.actors[id].z });
@@ -37,7 +37,7 @@ window.STAGES.witch = (function () {
   const chestW = () => W().chest(V()), chestE = () => E().chest(V());
   const timesOf = (m, a) => (SPELL && SPELL.motion === a ? IO.SPELLS[SPELL.id] : (m.ACTIONS && m.ACTIONS[a]) || TIMES[a] || NONE);
   const later = (sec, fn) => timers.push({ at: clock + sec, fn });
-  const hitE = (n) => ctx.damage('wraith', ctx.swing(n, 0.07));
+  const hitE = (n) => ctx.damage(E().id, ctx.swing(n, 0.07));
   const tipW = () => { const m = W().m; return m.anchor ? m.anchor('hit', V()) : m.tip(V()); }; // the dagger tip, on either model
   const flameW = () => W().m.flamePos(V());
   // a palm from her wrist bones, the same on both models (-1 her right, the dagger hand; 1 her left, the flame hand)
@@ -97,7 +97,7 @@ window.STAGES.witch = (function () {
       const big = a === 'lunge' || i === 2, p = chestE(), rot = a === 'lunge' ? 0.15 : [-0.5, 2.5, 0.15][i];
       FX.slash(p, 0xffffff, rot, big ? 1.3 : 1.05, 0.3); FX.burst(p, [1, 0.95, 0.8], big ? 40 : 26, big ? 4 : 3.2); FX.flashLight(p, 0xfff1d0, big ? 3 : 2, 0.2);
       hitE(a === 'lunge' ? 110 : [70, 75, 120][i]);
-    } else if (a === 'briar') { FX.flashLight(chestE(), 0xb455ff, 3, 0.4); hitE(260); later(0.15, () => tag('wraith', 'Bound', 'dark')); }
+    } else if (a === 'briar') { FX.flashLight(chestE(), 0xb455ff, 3, 0.4); hitE(260); later(0.15, () => tag(E().id, 'Bound', 'dark')); }
     else if (a === 'mend') { ctx.damage(W().id, Math.round(380 * rnd(0.95, 1.05)), 'heal'); FX.burst(chestW(), [0.6, 1, 0.75], 30, 2, { up: 1 }); }
     else if (a === 'moon') {
       const p = chestE(); FX.burst(p, [0.85, 0.92, 1], 70, 5, { spread: 0.3 }); FX.ring(posE(), 0xe6eeff, 0.3, 3.2, 0.7, 1); FX.flashLight(p, 0xe8f0ff, 6, 0.5, 9);
@@ -286,8 +286,9 @@ window.STAGES.witch = (function () {
       flashEl.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0';
       c.stage.appendChild(flashEl);
       tranceBtn = [...document.querySelectorAll('button.tog')].find((b) => b.textContent === 'Trance') || null;
-      targetControl();
     },
+    // the bench calls this whenever it builds her buttons
+    onPanel() { targetControl(); },
     onBuild(c) { if (!ctx) return; abort(true); SEEN.act = ''; SEEN.p = -1; },
     beforePlay(c, name) {
       if (name === 'wraithGrasp') { if (!GR) grasp(); return; } // the wraith's turn: whatever Io is doing goes on

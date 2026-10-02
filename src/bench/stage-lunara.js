@@ -12,7 +12,7 @@ window.STAGES.lunara = (function () {
   const veils = [];                        // the Embrace's veil on each ally: a pale sigil that holds until the strike
   const S = { flash: 0, dark: 0, veil: 0, moonfall: 0 };
 
-  const foe = (ctx) => ctx.actors.wraith;
+  const foe = (ctx) => (ctx.foe && ctx.foe()) || ctx.actors.wraith;
   const at = (a, y) => new THREE.Vector3(a.x, y || 0, a.z);
   const chestOf = (a) => a.chest(new THREE.Vector3());
 
@@ -143,7 +143,7 @@ window.STAGES.lunara = (function () {
         const b = beams[i] || { x: E.x, z: E.z };
         FX.beam(b, 0xe6eeff, 0.9, 12, 0.55); FX.ring(b, 0xe6eeff, 0.1, 1.2, 0.5, 0.9); FX.burst(new THREE.Vector3(b.x, 0.3, b.z), [0.8, 0.88, 1], 26, 3, { up: 1 });
         ctx.ring(new THREE.Vector3(b.x, 1.0, b.z), 'hit');
-        ctx.damage('wraith', ctx.swing(150, 0.07));
+        ctx.damage(foe(ctx).id, ctx.swing(150, 0.07));
         return true;
       }
       if (a === 'release' && i === 6) { // Moonfall
@@ -151,7 +151,7 @@ window.STAGES.lunara = (function () {
         FX.beam(at(E), 0xffffff, 5.4, 16, 1.6); FX.sigil(at(E), 0xe6eeff, 4.8, 1.9, 3);
         for (const [r1, d, op] of [[5.5, 0.9, 1], [7.5, 1.3, 0.7], [3.5, 0.6, 1]]) FX.ring(at(E), 0xffffff, 0.3, r1, d, op);
         FX.burst(c, [0.9, 0.95, 1], 160, 6.5, { spread: 0.6 }); FX.flashLight(c, 0xffffff, 10, 0.9, 13);
-        ctx.ring(c, 'cue'); ctx.damage('wraith', ctx.swing(1150, 0.05), 'dark');
+        ctx.ring(c, 'cue'); ctx.damage(foe(ctx).id, ctx.swing(1150, 0.05), 'dark');
         flash(1); S.veil = Math.min(S.veil, 0.15);
         return true;
       }

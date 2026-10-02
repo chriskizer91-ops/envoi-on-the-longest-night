@@ -21,7 +21,7 @@ window.STAGES.sol = (function () {
       if (!m) return;
       const air = !!AIR[a];
       sub.spec.tall = air && m.lift > .3 ? 2.4 + m.lift : undefined;
-      const w = ctx.actors.wraith;
+      const w = (ctx.foe && ctx.foe()) || ctx.actors.wraith;
       if (air && w && (a === 'stoopRise' || sub.progress < .1)) sub.yaw += ctx.wrapA(ctx.faceYaw(sub, w) - sub.yaw) * .2;
     },
     onHit(ctx, a, i) {
@@ -31,7 +31,7 @@ window.STAGES.sol = (function () {
       if (n === undefined) return true;
       if (S.heat >= 70 || S.trance > 0.5) n *= 1.35;
       ctx.ring(m.anchor('hit', v), 'hit');
-      ctx.damage('wraith', ctx.swing(Math.round(n), 0.1));
+      ctx.damage(((ctx.foe && ctx.foe()) || ctx.actors.wraith).id, ctx.swing(Math.round(n), 0.1));
       return true;
     },
     wide(ctx) { const a = ctx.subject.action; return a === 'emberRush' || a === 'solarCrest' || a === 'highNoon' || !!AIR[a]; },

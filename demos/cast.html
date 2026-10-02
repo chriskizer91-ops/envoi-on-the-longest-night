@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Cast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/bench/bench.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/night-square.js"></script>
+<script src="../src/models/witch.js"></script>
+<script src="../src/models/sol.js"></script>
+<script src="../src/models/lunara.js"></script>
+<script src="../src/models/envoi.js"></script>
+<script src="../src/models/wraith.js"></script>
+<script src="../src/models/wisp.js"></script>
+<script src="../src/models/halcyon.js"></script>
+<script src="../src/models/noctara.js"></script>
+<script src="../src/fx/battle-fx.js"></script>
+<script src="../src/fx/io-spells.js"></script>
+<script src="../src/bench/bench.js"></script>
+<script src="../src/bench/stage-witch.js"></script>
+<script src="../src/bench/stage-sol.js"></script>
+<script src="../src/bench/stage-lunara.js"></script>
+<script src="../src/bench/stage-envoi.js"></script>
+<script src="../src/bench/stage-wraith.js"></script>
+<script src="../src/bench/stage-wisp.js"></script>
+<script src="../src/bench/stage-halcyon.js"></script>
+<script src="../src/bench/stage-noctara.js"></script>
+<script>
+// The whole cast at true scale in the Night square (plan step 11). Pick an encounter, pick who acts, and for the party and
+// the summons, their target. Each actor plays with its own staging from its own page.
+const W = STAGES.wraith;
+Bench.start({
+  title: 'The Cast',
+  blurb: 'Everyone at true scale in the Night square. Pick an encounter, who acts and their target.',
+  first: 'witch',
+  roster: [
+    { id: 'witch', name: 'Io', side: 'party', make: () => makeWitch({}), home: [560, 812], yawBias: -0.38, shadow: 0.62, tall: 2.1, walkSpeed: 0.9, height: '2.08 m to the tip of her hat',
+      stage: STAGES.witch,
+      groups: [{ title: 'Attack', acts: ['attack'] }, { title: 'Witchcraft', acts: ['throw', 'crescent', 'briar'] }, { title: 'Moonlore', acts: ['mend', 'waxing', 'moonsteel', 'mothveil'] }, { title: 'Summon', acts: ['summon'] }, { title: 'Trance', acts: ['transform', 'moon'] }, { title: 'Defend', acts: ['defend'] }, { title: 'Reactions', acts: ['hurt', 'block', 'kneel', 'rise', 'victory'] }],
+      names: { attack: 'Attack', combo: 'Attack', throw: 'Flame Bolt', crescent: 'Crescent Blades', briar: 'Nightbloom Briars', mend: 'Lunar Mend', waxing: 'Waxing Light', moonsteel: 'Moonsteel', mothveil: 'Moth Veil', summon: 'Lunara', transform: 'Lunar Trance', moon: 'Moonlight', defend: 'Defend', hurt: 'Hurt', block: 'Block', kneel: 'Kneel', rise: 'Rise', victory: 'Victory', cast: 'Battle start', lunge: 'Lunge', lungeAt: 'Lunge' },
+      hints: { attack: 'three blows', throw: '12 MP', crescent: '24 MP', briar: '18 MP, binds', mend: '16 MP, heals', waxing: '24 MP, heals both', moonsteel: '18 MP, Sol +40 Heat', mothveil: '22 MP, barrier', summon: 'her part only', transform: 'Trance full', moon: 'spends Trance', kneel: 'KO' },
+      wide: { combo: 1, throw: 1, crescent: 1, briar: 1, summon: 1, moon: 1, lunge: 1 },
+      toggles: [{ label: 'Trance', value: false, onToggle: () => STAGES.witch.toggleTrance() }] },
+    { id: 'sol', name: 'Sol', side: 'party', make: () => makeSol({}), home: [650, 868], yawBias: -0.3, shadow: 0.6, walkSpeed: 2.2, dashAim: true, height: '1.78 m',
+      stage: STAGES.sol,
+      groups: [{ title: 'Attack', acts: ['combo'] }, { title: 'Sword Arts', acts: ['flareCut', 'sunder', 'emberRush', 'solarCrest'] }, { title: 'Guard', acts: ['guardStep', 'block'] }, { title: 'Kestrel Stoop', acts: ['stoopRise', 'stoop'] }, { title: 'Dawnbreaker trance', acts: ['transform', 'daybreak', 'highNoon'] }, { title: 'Story and reactions', acts: ['kestrel', 'hurt', 'kneel', 'rise', 'victory'] }],
+      names: { combo: 'Attack', flareCut: 'Flare Cut', sunder: 'Sunder', emberRush: 'Ember Rush', solarCrest: 'Solar Crest', stoopRise: 'Hover', stoop: 'Stoop', guardStep: 'Guard Step', block: 'Block', transform: 'Transform', daybreak: 'Daybreak', highNoon: 'High Noon', kestrel: 'Kestrel!', hurt: 'Hurt', kneel: 'Kneel', rise: 'Rise', victory: 'Victory' },
+      hints: { combo: '+20 Heat', flareCut: '520', sunder: '280', emberRush: '4 × 170', solarCrest: '12 × Heat', stoopRise: 'turn 1', stoop: '1,500', daybreak: 'Trance attack', highNoon: 'ends the Trance' },
+      wide: { emberRush: 1, solarCrest: 1, highNoon: 1, stoopRise: 1, stoop: 1 },
+      sliders: [{ label: 'Heat', min: 0, max: 100, step: 5, value: 0, onInput: (v, ctx) => STAGES.sol.setHeat(ctx, v) }, { label: 'Trance', min: 0, max: 1, step: 0.1, value: 0, onInput: (v, ctx) => STAGES.sol.setTrance(ctx, v) }] },
+    { id: 'lunara', name: 'Lunara', side: 'summon', make: () => makeLunara({}), home: [712, 704], shadow: 0.9, shadowY: 0.7, walkSpeed: 0.5, loopR: 0.6, frameHeight: 2.7, closeSpan: 225, tall: 4.3, height: '3.1 m to her hair, floating 0.55 m up',
+      stage: STAGES.lunara,
+      groups: [{ title: 'Summoned', acts: ['appear', 'embrace'] }, { title: 'Silver Requiem', acts: ['charge', 'release'] }, { title: 'Leaving', acts: ['leave'] }, { title: 'Reactions', acts: ['hurt', 'block'] }],
+      names: { appear: 'Rise', embrace: "Pale Mother's Embrace", charge: 'Charge', release: 'Silver Requiem', leave: 'Leave', hurt: 'Hurt', block: 'Block' },
+      hints: { appear: 'from the Moonwell', embrace: 'heal and veil', charge: 'the moon overhead', release: 'six beams, Moonfall', leave: 'into sparkles' },
+      wide: { appear: 1, embrace: 1, charge: 1, release: 1, leave: 1 } },
+    { id: 'envoi', name: 'Envoi', side: 'summon', make: () => makeEnvoi({}), home: [720, 790], offset: [0.55, -0.3], yawBias: -0.5, shadow: 1.6, shadowY: 0.6, tall: 9.5, walkSpeed: 0.9, loopR: 1.2, frameHeight: 2.9, closeSpan: 430, height: '6.4 m to the wing tops',
+      stage: STAGES.envoi,
+      groups: [{ title: 'Both turns', acts: ['bothTurns'] }, { title: 'Summon, ward and strike', acts: ['summon', 'wardHit', 'envoi'] }, { title: 'Leaving and reactions', acts: ['leave', 'hurt', 'block'] }],
+      names: { bothTurns: 'Play both turns', summon: 'Summon', wardHit: 'The foe hits the ward', envoi: 'Envoi', leave: 'Leave', hurt: 'Hurt', block: 'Block', appear: 'Summon', die: 'Leave' },
+      hints: { bothTurns: 'summon, a hit, the strike', summon: 'Sol 70+ Heat, spends it', wardHit: 'the ward takes it all', envoi: '9 hits, Last Word', leave: 'battle ends first', block: 'the ward absorbs' },
+      sliders: [{ label: "Io's level", min: 10, max: 20, step: 1, value: 10, onInput: (v, ctx) => STAGES.envoi.setLevel(ctx, v) }] },
+    { id: 'wraith', name: 'Shadow Wraith', side: 'foe', make: () => makeWraith(W.opts()), home: [860, 800], face: 'witch', yawBias: 0.75, shadow: 0.75, target: 'witch', walkSpeed: 0.8, frameHeight: 1.05, closeSpan: 130, tall: 2.4, aim: false, height: '2.0 m to the hood tip',
+      stage: W,
+      groups: [{ title: 'Attacks', acts: ['sweep', 'cast', 'grasp'] }, { title: 'Under 35% health', acts: ['eclipse'] }, { title: 'The great wraith', acts: ['swallow', 'breath'] }, { title: 'Arrival and release', acts: ['appear', 'die'] }, { title: 'Reactions', acts: ['hurt', 'block'] }],
+      names: { sweep: 'Soul Reaper', cast: 'Soul Bolts', grasp: 'Shadow Grasp', eclipse: 'Eclipse', swallow: 'Swallow Lamplight', breath: 'Stolen Fire', appear: 'Appear', die: 'Defeat', hurt: 'Hurt', block: 'Block' },
+      hints: { sweep: 'on Sol', cast: 'three, at random', grasp: 'on Io', eclipse: 'a black sun, on both', swallow: 'it heals', breath: 'on both', die: 'a pale moth rises' },
+      wide: { sweep: 1, cast: 1, grasp: 1, eclipse: 1, breath: 1 },
+      toggles: [{ label: 'Great wraith', get value() { return W.great; }, onToggle: (v, ctx) => W.setGreat(v, ctx) }],
+      sliders: [{ label: 'Level', min: 1, max: 20, step: 1, value: W.level, onInput: (v, ctx) => W.setLevel(v, ctx) }] },
+    { id: 'wisp', name: 'Wisp', side: 'foe', make: () => makeWisp({ seed: 1 }), home: [860, 820], face: 'witch', yawBias: 1.05, shadow: 0.24, shadowY: 0.75, target: 'witch', walkSpeed: 0.9, frameHeight: 0.46, closeSpan: 64, tall: 1.0, height: '0.8 m to the crown, floating',
+      stage: STAGES.wisp,
+      groups: [{ title: 'Attacks', acts: ['flicker', 'cling', 'wail', 'breath'] }, { title: 'Dodge and reactions', acts: ['gutter', 'hurt', 'block'] }, { title: 'Arrival and release', acts: ['appear', 'die'] }],
+      names: { flicker: 'Flicker', cling: 'Cling', wail: 'Wail', breath: 'Frost Breath', gutter: 'Gutter', hurt: 'Hurt', block: 'Block', appear: 'Appear', die: 'Release' },
+      hints: { flicker: 'Io', cling: 'drains Io', wail: 'the party', breath: 'the party, frost', gutter: 'dodges', die: 'a moth rises' },
+      sliders: [{ label: 'Frost', min: 0, max: 1, step: 1, value: 0, onInput: (v, ctx) => STAGES.wisp.setFrost(ctx, v) }, { label: 'Level', min: 1, max: 20, step: 1, value: 1, onInput: (v, ctx) => STAGES.wisp.setLevel(ctx, v) }] },
+    { id: 'wisp2', name: 'Wisp 2', side: 'foe', act: false, make: () => makeWisp({ seed: 2 }), home: [930, 780], face: 'witch', yawBias: 0.95, shadow: 0.24, shadowY: 0.75, tall: 1.0 },
+    { id: 'wisp3', name: 'Frost wisp', side: 'foe', act: false, make: () => makeWisp({ seed: 3, frost: true }), home: [905, 880], face: 'witch', yawBias: 0.95, shadow: 0.24, shadowY: 0.75, tall: 1.0 },
+    { id: 'halcyon', name: 'Halcyon', side: 'foe', make: () => makeHalcyon({}), home: [840, 820], face: 'witch', yawBias: 0.15, shadow: 0.62, target: 'sol', walkSpeed: 1.8, height: '1.88 m, 2.11 m with the crest',
+      stage: STAGES.halcyon,
+      groups: [{ title: 'Attacks', acts: ['gloamCleave', 'duskArc', 'severance', 'lightDrinker'] }, { title: "Warden's Vow and Black Noon", acts: ['vowStance', 'counter', 'blackNoonCharge', 'blackNoon'] }, { title: 'Story', acts: ['stagger', 'appear', 'retreat', 'die'] }, { title: 'Reactions', acts: ['hurt', 'block'] }],
+      names: { gloamCleave: 'Gloam Cleave', duskArc: 'Dusk Arc', severance: 'Severance', lightDrinker: 'Light-Drinker', vowStance: "Warden's Vow", counter: 'Counter', blackNoonCharge: 'Charge', blackNoon: 'Black Noon', stagger: 'Kestrel!', appear: 'Appear', retreat: 'Retreat', die: 'Release', hurt: 'Hurt', block: 'Block' },
+      hints: { gloamCleave: 'Sol, 1,100', duskArc: 'both, 800', severance: 'Io, 900', lightDrinker: 'drains Sol', counter: 'Sol, 900', blackNoon: 'both, 2,400', stagger: 'Sol calls her name', retreat: 'at 20% of her HP', die: 'the very end' },
+      wide: { duskArc: 1, blackNoon: 1, blackNoonCharge: 1 } },
+    { id: 'noctara', name: 'Noctara', side: 'foe', make: () => makeNoctara({}), home: [905, 770], face: 'witch', yawBias: 0.3, shadow: 0.75, target: 'witch', walkSpeed: 0.8, height: '1.9 m with the crown',
+      stage: STAGES.noctara,
+      groups: [{ title: 'Darkness', acts: ['blackout', 'voidSphere'] }, { title: 'Cold', acts: ['frostDust'] }, { title: 'Basic attack', acts: ['crownShards'] }, { title: 'Arrival and defeat', acts: ['appear', 'die'] }, { title: 'Reactions', acts: ['hurt', 'block'] }],
+      names: { blackout: 'Blackout', voidSphere: 'Void Sphere', frostDust: 'Frost Dust', crownShards: 'Crown Shards', appear: 'Appear', die: 'Defeat', hurt: 'Hurt', block: 'Block' },
+      hints: { blackout: 'Halcyon strikes in the dark', die: 'becomes night' },
+      wide: { blackout: 1, voidSphere: 1, frostDust: 1, crownShards: 1 },
+      sliders: [{ label: 'Frost length', min: 6, max: 20, step: 1, value: 10, unit: ' s', onInput: (v) => STAGES.noctara.setFrostLength(v) }] },
+  ],
+  // the fights of the story, in the Night square for now; the battle steps move each to its own backdrop
+  encounters: [
+    { name: 'Shadow Wraith', foes: ['wraith'], enter: (A) => W.setGreat(false, A.wraith.ctx) },
+    { name: 'Wisps', foes: ['wisp', 'wisp2', 'wisp3'] },
+    { name: 'Great wraith', foes: ['wraith'], place: { wraith: [900, 780] }, enter: (A) => W.setGreat(true, A.wraith.ctx) },
+    { name: 'Halcyon', foes: ['halcyon'] },
+    { name: 'Noctara and Halcyon', foes: ['noctara', 'halcyon'], place: { halcyon: [790, 845] } },
+    { name: 'Everyone', foes: ['noctara', 'halcyon', 'wraith', 'wisp'], place: { noctara: [930, 745], halcyon: [800, 850], wraith: [990, 815], wisp: [880, 925] }, enter: (A) => W.setGreat(false, A.wraith.ctx) },
+  ],
+  note: 'Everyone stands at true scale. Encounter picks the foes; Acting picks who moves, with its own buttons and settings; Target picks whom the party and the summons strike. Lunara and Envoi step in when you pick them. The budget shows the picked model and everyone in the square, with the frame rate, for the phone check: five models and their effects at once.',
+});
+</script>
+</body>
+</html>

@@ -34,7 +34,7 @@ A model is finished when:
 | 9 | **Envoi** | Paper-lantern body, a bigger head and seal, the scale and low coil from the Envoi scenes | Done |
 | 10 | **Wisp** | A new model, with its frost variant | Done |
 | 10b | **The polish round** | Every item on every model's "what's left" list (below), plus the shared bench and tool fixes | Done |
-| 11 | **The cast** | Everyone together at true scale, every action playable against any target, and every attack visual sized for the battle camera | Next |
+| 11 | **The cast** | Everyone together at true scale, every action playable against any target, and every attack visual sized for the battle camera | First version published; waiting on the phone check |
 
 ### 10b: the polish round
 

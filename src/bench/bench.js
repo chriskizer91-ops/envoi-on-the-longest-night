@@ -61,6 +61,10 @@
     const DIST = (IH / 2) / (PXM * Math.tan(FOV / 2 * Math.PI / 180));
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
     const REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    // Two modes. A model's own page (cfg.subject): one subject with its stage and Before/After, facing the actors in
+    // cfg.cast. The cast page (cfg.roster): every actor in the roster can act, each with its own stage, actions, settings
+    // and target, and cfg.encounters choose which foes stand in the square.
+    const CAST = !!cfg.roster;
 
     // ---------- page ----------
     document.title = cfg.title;
@@ -80,34 +84,49 @@
     const nowName = el('div', { id: 'nowName' }, now, 'Building the model');
     const bar = el('div', { id: 'bar' }, now), barFill = el('div', { id: 'barFill' }, bar);
     const panel = el('section', { id: 'panel', class: 'win', 'aria-label': 'Controls' }, wrap);
-    const btns = {};
-    let req = null;
-    for (const grp of cfg.groups) {
-      el('h2', null, panel, grp.title);
-      const box = el('div', { class: 'acts' }, panel);
-      for (const a of grp.acts) {
-        const b = el('button', { type: 'button' }, box, (cfg.names && cfg.names[a]) || a);
-        if (cfg.hints && cfg.hints[a]) el('small', null, b, cfg.hints[a]);
-        b.addEventListener('click', () => { req = a; });
-        btns[a] = b;
-      }
-    }
     const UI = { walk: false, guard: false, turn: false, view: 'close', after: true };
-    el('h2', null, panel, 'Movement and look');
-    const togs = el('div', { class: 'togs' }, panel);
     const setPressed = (e, on) => e.setAttribute('aria-pressed', on ? 'true' : 'false');
-    function toggle(label, on, fn) { const b = el('button', { class: 'tog', type: 'button', 'aria-pressed': on ? 'true' : 'false' }, togs, label); let v = on; b.addEventListener('click', () => { v = !v; setPressed(b, v); fn(v); }); return { el: b, set(x) { v = x; setPressed(b, x); } }; }
-    const walkTog = toggle(cfg.subject.walkLabel || 'Walk', false, (v) => { UI.walk = v; });
-    toggle('Guard', false, (v) => { UI.guard = v; if (sub && sub.m.guard) sub.m.guard(v); });
-    toggle('Turn', false, (v) => { UI.turn = v; });
-    for (const t of cfg.toggles || []) toggle(t.label, !!t.value, (v) => t.onToggle(v, ctx));
-    for (const c of cfg.cast || []) if (c.toggle !== false) toggle(c.name, c.visible !== false, (v) => { const a = actors[c.id]; if (a) a.setVisible(v); });
-    for (const s of cfg.sliders || []) {
-      const lab = el('label', { class: 'sl' }, panel); el('span', null, lab, s.label);
+    function toggle(parent, label, on, fn) { const b = el('button', { class: 'tog', type: 'button', 'aria-pressed': on ? 'true' : 'false' }, parent, label); let v = on; b.addEventListener('click', () => { v = !v; setPressed(b, v); fn(v); }); return { el: b, set(x) { v = x; setPressed(b, x); } }; }
+    function slider(parent, s, c) {
+      const lab = el('label', { class: 'sl' }, parent); el('span', null, lab, s.label);
       const inp = el('input', { type: 'range', min: s.min, max: s.max, step: s.step, value: s.value }, lab);
       const out = el('output', null, lab, s.value + (s.unit || ''));
-      inp.addEventListener('input', () => { out.textContent = inp.value + (s.unit || ''); s.onInput(+inp.value, ctx); });
+      inp.addEventListener('input', () => { s.value = +inp.value; out.textContent = inp.value + (s.unit || ''); s.onInput(+inp.value, c()); });
     }
+    let btns = {}, req = null;
+    // the cast page's pickers: the encounter, who acts, and their target
+    const pick = CAST ? el('div', { class: 'pick' }, panel) : null;
+    // the acting actor's actions (and, on the cast page, its own switches and sliders)
+    const actsBox = el('div', { class: 'actsbox' }, panel);
+    function buildActs(a) {
+      actsBox.textContent = ''; btns = {};
+      const ac = a.cfg;
+      for (const grp of ac.groups || []) {
+        el('h2', null, actsBox, grp.title);
+        const box = el('div', { class: 'acts' }, actsBox);
+        for (const n of grp.acts) {
+          const b = el('button', { type: 'button' }, box, (ac.names && ac.names[n]) || n);
+          if (ac.hints && ac.hints[n]) el('small', null, b, ac.hints[n]);
+          b.addEventListener('click', () => { req = n; });
+          btns[n] = b;
+        }
+      }
+      if (CAST && ((a.spec.toggles || []).length || (a.spec.sliders || []).length)) {
+        el('h2', null, actsBox, a.spec.name + ': settings');
+        if ((a.spec.toggles || []).length) { const tg = el('div', { class: 'togs' }, actsBox); for (const t of a.spec.toggles) toggle(tg, t.label, !!t.value, (v) => { const d = Object.getOwnPropertyDescriptor(t, 'value'); if (!d || d.writable) t.value = v; t.onToggle(v, a.ctx); }); }
+        for (const s of a.spec.sliders || []) slider(actsBox, s, () => a.ctx);
+      }
+      if (a.m && a.action && btns[a.action]) btns[a.action].setAttribute('aria-current', 'true');
+      if (a.ready && a.stage && a.stage.onPanel) a.stage.onPanel(a.ctx);
+    }
+    el('h2', null, panel, 'Movement and look');
+    const togs = el('div', { class: 'togs' }, panel);
+    const walkTog = toggle(togs, (!CAST && cfg.subject.walkLabel) || 'Walk', false, (v) => { UI.walk = v; });
+    const guardTog = toggle(togs, 'Guard', false, (v) => { UI.guard = v; if (sub && sub.m.guard) sub.m.guard(v); });
+    toggle(togs, 'Turn', false, (v) => { UI.turn = v; });
+    for (const t of cfg.toggles || []) toggle(togs, t.label, !!t.value, (v) => t.onToggle(v, ctx));
+    if (!CAST) for (const c of cfg.cast || []) if (c.toggle !== false) toggle(togs, c.name, c.visible !== false, (v) => { const a = actors[c.id]; if (a) a.setVisible(v); });
+    for (const s of cfg.sliders || []) slider(panel, s, () => ctx);
     const seg = el('div', { class: 'seg', role: 'group', 'aria-label': 'Camera' }, panel);
     const camBtns = [['close', 'Close'], ['full', 'Full'], ['square', 'Square']].map(([mode, label]) => {
       const b = el('button', { type: 'button', 'aria-pressed': mode === 'close' ? 'true' : 'false' }, seg, label);
@@ -115,7 +134,7 @@
       return b;
     });
     let vsBtns = null;
-    if (cfg.subject.before) {
+    if (!CAST && cfg.subject.before) {
       const vs = el('div', { class: 'vs', role: 'group', 'aria-label': 'Model version' }, panel);
       vsBtns = [['before', 'Before'], ['after', 'After']].map(([k, label]) => {
         const b = el('button', { type: 'button', 'aria-pressed': k === 'after' ? 'true' : 'false' }, vs, label);
@@ -126,8 +145,9 @@
     el('h2', null, panel, 'Budget');
     const dl = el('dl', null, panel);
     const stat = {};
-    for (const [k, label] of [['tri', 'Triangles'], ['draw', 'Draw calls'], ['bones', 'Bones'], ['tex', 'Textures'], ['height', 'Height'], ['ms', 'Build time']]) { el('dt', null, dl, label); stat[k] = el('dd', null, dl, '-'); }
-    stat.height.textContent = cfg.subject.height || '-';
+    const STATS = [['tri', 'Triangles'], ['draw', 'Draw calls'], ['bones', 'Bones'], ['tex', 'Textures'], ['height', 'Height'], ['ms', 'Build time']].concat(CAST ? [['scene', 'In the square'], ['fps', 'Frame rate']] : []);
+    for (const [k, label] of STATS) { el('dt', null, dl, label); stat[k] = el('dd', null, dl, '-'); }
+    if (!CAST) stat.height.textContent = cfg.subject.height || '-';
     if (cfg.note) el('p', { class: 'note' }, panel, cfg.note);
 
     // ---------- the painting's camera, exactly as the battle builds it ----------
@@ -180,12 +200,13 @@
     const actors = {};
     const _h = new THREE.Vector3();
     // home is a painting pixel; offset, in meters (x to the right, z toward the camera), nudges it from there
-    function placeOf(spec) { const p = g(spec.home[0], spec.home[1]), o = spec.offset || [0, 0]; return { x: p.x + o[0], z: p.z + o[1], yaw: 0 }; }
-    function makeActor(spec, isSubject) {
+    function placeOf(spec, home) { const h = home || spec.home, p = g(h[0], h[1]), o = spec.offset || [0, 0]; return { x: p.x + o[0], z: p.z + o[1], yaw: 0 }; }
+    function makeActor(spec) {
       const home = placeOf(spec);
       const a = {
-        id: spec.id, spec, m: null, kind: spec.kind || 'spec', home, x: home.x, z: home.z, yaw: 0, wb: 0, ts: 1, wt: 0, visible: spec.visible !== false, shadow: disc(spec.shadow || 0.6), isSubject,
-        phase: 0, px: null, pz: null,
+        id: spec.id, spec, m: null, kind: spec.kind || 'spec', home, x: home.x, z: home.z, yaw: 0, wb: 0, ts: 1, wt: 0, visible: spec.visible !== false, shadow: disc(spec.shadow || 0.6),
+        phase: 0, px: null, pz: null, prog: -1, shownAct: null, stage: null, cfg: null, ctx: null, ready: false,
+        get isSubject() { return a === sub; },
         build(make, kind) {
           a.kind = kind || spec.kind || 'spec'; a.px = null;
           if (a.m) { scene.remove(a.m.root); if (a.m.fx) scene.remove(a.m.fx); dispose(a.m); }
@@ -231,28 +252,47 @@
       actors[spec.id] = a;
       return a;
     }
-    const sub = makeActor(Object.assign({ id: cfg.subject.id }, cfg.subject), true);
-    const cast = (cfg.cast || []).map((c) => makeActor(c, false));
+    let sub;
+    if (CAST) { for (const s of cfg.roster) makeActor(s); sub = actors[cfg.first] || actors[cfg.roster[0].id]; }
+    else { sub = makeActor(Object.assign({ id: cfg.subject.id }, cfg.subject)); for (const c of cfg.cast || []) makeActor(c); }
+    const all = Object.values(actors);
+    const others = () => all.filter((a) => a !== sub);
     const faceOf = (spec) => { const t = spec.face ? actors[spec.face] : null; return t ? t.home : null; };
+    // each acting actor has its own stage and its own view of the page config, where cfg.subject is its own spec
+    for (const a of all) {
+      if (CAST && a.spec.act !== false) { a.stage = a.spec.stage || null; a.cfg = Object.assign(Object.create(cfg), { subject: a.spec, groups: a.spec.groups || [], names: a.spec.names || {}, hints: a.spec.hints || {}, wide: a.spec.wide || {} }); }
+      else if (a === sub) { a.stage = cfg.stage || null; a.cfg = cfg; }
+    }
+    const visibleFoes = () => all.filter((a) => a.visible && a.spec.side === 'foe');
+    function foeOf(a) { const t = a && a.cfg && actors[a.cfg.subject.target]; return t && (t.visible || !CAST) ? t : (CAST ? visibleFoes()[0] : others()[0]) || null; }
 
-    function buildSubject() {
-      const after = UI.after || !cfg.subject.before;
-      // the Before model may use an older interface than the After one (beforeKind: 'witch', 'wraith' or 'goddess')
-      sub.build(after ? cfg.subject.make : cfg.subject.before, after ? cfg.subject.kind : cfg.subject.beforeKind || cfg.subject.kind);
-      sub.x = sub.home.x; sub.z = sub.home.z; sub.yaw = sub.home.yaw; S.prog = -1; shownAct = null;
-      if (UI.guard && sub.m.guard) sub.m.guard(true);
-      const B = budget(sub.m);
+    function showBudget(a) {
+      const B = budget(a.m);
       stat.tri.textContent = B.triangles.toLocaleString('en-US');
       stat.draw.innerHTML = B.drawCalls + ' <small>+ up to ' + B.fxDrawCalls + ' for effects</small>';
       stat.bones.textContent = B.bones ? String(B.bones) : 'none (rigid joints)';
       stat.tex.textContent = B.textures + ' (' + B.texMB.toFixed(1) + ' MB)';
-      stat.ms.textContent = Math.round(sub.buildMs) + ' ms on this device';
-      if (cfg.stage && cfg.stage.onBuild) cfg.stage.onBuild(ctx);
-      window.__bench && (window.__bench.budget = B);
+      stat.ms.textContent = Math.round(a.buildMs) + ' ms on this device';
+      if (CAST) {
+        stat.height.textContent = a.spec.height || '-';
+        let tri = 0, draws = 0, n = 0; for (const b of all) if (b.visible && b.m) { const q = budget(b.m); tri += q.triangles; draws += q.drawCalls + q.fxDrawCalls; n++; }
+        stat.scene.textContent = n + ' models, ' + tri.toLocaleString('en-US') + ' triangles, up to ' + draws + ' draw calls';
+      }
+      if (window.__bench) window.__bench.budget = B;
+      return B;
+    }
+    function buildSubject() {
+      const after = UI.after || !cfg.subject.before;
+      // the Before model may use an older interface than the After one (beforeKind: 'witch', 'wraith' or 'goddess')
+      sub.build(after ? cfg.subject.make : cfg.subject.before, after ? cfg.subject.kind : cfg.subject.beforeKind || cfg.subject.kind);
+      sub.x = sub.home.x; sub.z = sub.home.z; sub.yaw = sub.home.yaw; sub.prog = -1; sub.shownAct = null;
+      if (UI.guard && sub.m.guard) sub.m.guard(true);
+      showBudget(sub);
+      if (sub.stage && sub.stage.onBuild) sub.stage.onBuild(ctx);
     }
 
     // ---------- status window, hit rings, damage numbers ----------
-    let shownAct = null, lastLabel = '';
+    let lastLabel = '';
     function label(text) { if (text !== lastLabel) { nowName.textContent = text; lastLabel = text; } }
     function setTicks(def) {
       for (const i of bar.querySelectorAll('i')) i.remove(); if (!def) return;
@@ -262,13 +302,14 @@
     const view = { w: 1, h: 1 };
     function toScreen(p) { tmpV.copy(p).project(camera); return [(tmpV.x + 1) / 2 * view.w, (1 - tmpV.y) / 2 * view.h, tmpV.z]; }
     function ring(p3, cls) { const p = toScreen(p3); if (p[2] > 1) return; const d = el('div', { class: cls || 'hit' }, stage); d.style.left = p[0] + 'px'; d.style.top = p[1] + 'px'; d.addEventListener('animationend', () => d.remove()); }
-    function damage(id, n, cls, delay) {
+    // from: the actor dealing it (the cast page), so whoever takes the blow reacts, unless it is the one who dealt it
+    function damage(id, n, cls, delay, from) {
       setTimeout(() => {
         const a = actors[id]; if (!a || !a.visible) return;
         const p = toScreen(a.head(new THREE.Vector3())); if (p[2] > 1) return;
         const d = el('div', { class: 'dmg ' + (cls || '') }, stage, typeof n === 'number' ? n.toLocaleString('en-US') : n);
         d.style.left = (p[0] + (Math.random() - 0.5) * 26) + 'px'; d.style.top = p[1] + 'px'; d.addEventListener('animationend', () => d.remove());
-        if (cls !== 'heal' && !a.isSubject) a.play(a.guarding ? 'block' : 'hurt', true);
+        if (cls !== 'heal' && (from ? a !== from : !a.isSubject)) a.play(a.guarding ? 'block' : 'hurt', true);
       }, delay || 0);
     }
     const swing = (n, k) => Math.round(n * (1 + (Math.random() * 2 - 1) * (k === undefined ? 0.1 : k)));
@@ -296,44 +337,72 @@
         lastTf = tf;
       }
     }
-    // frameHeight and closeSpan are read every frame, so a stage can reframe a subject that changes size
+    // frameHeight and closeSpan are read every frame, so a stage can reframe a subject that changes size; on the cast
+    // page an actor in the middle of a wide action (a summon, a strike) keeps the shot wide whoever is picked
+    function isWide(a) { return !!((a.cfg && a.cfg.wide && a.cfg.wide[a.action]) || (a.stage && a.stage.wide && a.stage.wide(a.ctx))); }
     function frameShot() {
-      const sp = toPx(tmpV.set(sub.x, cfg.subject.frameHeight || 1.1, sub.z));
-      const wideAct = (cfg.wide && cfg.wide[sub.action]) || (cfg.stage && cfg.stage.wide && cfg.stage.wide(ctx));
+      const sc = sub.cfg.subject;
+      const sp = toPx(tmpV.set(sub.x, sc.frameHeight || 1.1, sub.z));
+      const wideAct = isWide(sub) || (CAST && others().some((a) => a.visible && a.stage && a.busy && isWide(a)));
       const wide = UI.view === 'full' || (UI.view === 'close' && wideAct);
       if (UI.view === 'square') { cam.tx = IW / 2; cam.ty = IH / 2; cam.ts = 0; return; }
       if (wide) {
         let x0 = sp[0], x1 = sp[0], y0 = sp[1], y1 = sp[1], top = Infinity;
-        for (const a of Object.values(actors)) {
+        for (const a of all) {
           if (!a.visible) continue;
           const p = toPx(tmpV.set(a.x, 1.0, a.z)), q = toPx(tmpV.set(a.x, a.spec.tall || 2.2, a.z));
           x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, p[1]); y1 = Math.max(y1, p[1]); top = Math.min(top, q[1]);
         }
         cam.tx = (x0 + x1) / 2; cam.ty = (y0 + y1) / 2 - 18;
         cam.ts = Math.min((view.w - 16) / (x1 - x0 + 230), (view.h - 30) / (y1 - top + 150));
-      } else { cam.tx = sp[0]; cam.ty = sp[1] - 6; cam.ts = clamp(0.58 * view.h / (cfg.subject.closeSpan || 110), 1, 8); }
+      } else { cam.tx = sp[0]; cam.ty = sp[1] - 6; cam.ts = clamp(0.58 * view.h / (sc.closeSpan || 110), 1, 8); }
     }
 
     // ---------- the subject: its home spot, a walk loop, and gliding back ----------
-    const S = { prog: -1 };
-    const LOOP = { x: 0, z: 0, r: cfg.subject.loopR || 1.0, a: 0 };
-    function stepSubject(dt, t) {
-      const m = sub.m;
+    const LOOP = { x: 0, z: 0, r: 1.0, a: 0 };
+    function resetLoop() { LOOP.r = sub.spec.loopR || 1.0; LOOP.x = sub.home.x + 0.2; LOOP.z = sub.home.z - 0.5; }
+    // hits, cues and the start of each action, read from the model's ACTIONS, for every actor that acts
+    function track(a) {
+      const m = a.m, act = a.action, p = a.progress, st = a.stage;
+      if (act !== a.shownAct) {
+        if (a === sub) {
+          if (a.shownAct && btns[a.shownAct]) btns[a.shownAct].removeAttribute('aria-current');
+          if (act && btns[act]) btns[act].setAttribute('aria-current', 'true');
+          setTicks(act && m.ACTIONS ? m.ACTIONS[act] : null);
+        }
+        a.shownAct = act; a.prog = -1;
+        if (act && st && st.onAction) st.onAction(a.ctx, act);
+      }
+      if (act && m.ACTIONS && m.ACTIONS[act]) {
+        const def = m.ACTIONS[act];
+        (def.hits || []).forEach((h, i) => { if (a.prog < h && p >= h) onHit(a, act, i); });
+        (def.cues || []).forEach((h, i) => { if (a.prog < h && p >= h && st && st.onCue) st.onCue(a.ctx, act, i); });
+        a.prog = p;
+      }
+    }
+    function aimAt(a) { // the model's state.target follows its target's chest
+      const m = a.m, tgt = foeOf(a);
+      if (tgt && m.state && a.cfg && a.cfg.subject.aim !== false) { tgt.chest(tmpV); m.state.target = { x: tmpV.x, y: tmpV.y, z: tmpV.z }; }
+      return tgt;
+    }
+    function stepSubject(rdt, t) {
+      const m = sub.m, sc = sub.cfg.subject;
+      const dt = CAST ? rdt * sub.ts : rdt, tt = CAST ? (sub.wt += dt) : t;
       if (req) {
         if (UI.walk) { UI.walk = false; walkTog.set(false); }
         const name = req; req = null;
-        if (cfg.stage && cfg.stage.beforePlay) cfg.stage.beforePlay(ctx, name);
+        if (sub.stage && sub.stage.beforePlay) sub.stage.beforePlay(sub.ctx, name);
         sub.play(name, true);
       }
       const restAct = m.action && !m.busy; // a hold action that has finished (die, kneel, victory)
       if (UI.walk && restAct) { const back = m.ACTIONS && (m.ACTIONS.appear ? 'appear' : m.ACTIONS.rise ? 'rise' : null); if (back) sub.play(back, true); else if (m.reset) m.reset(); }
       const busy = m.busy, hold = m.action && !m.busy;
-      const tgt = actors[cfg.subject.target] || cast[0];
+      const tgt = foeOf(sub);
       let tx = null, tz = null, speed = 0;
-      if (busy && m.dash) dashStep(sub, cfg.subject.dashAim ? tgt : null, m.dash * dt);
+      if (busy && m.dash) dashStep(sub, sc.dashAim ? tgt : null, m.dash * dt);
       if (UI.walk && !busy && !hold) {
-        LOOP.a += dt * (cfg.subject.walkSpeed || 0.8) / LOOP.r;
-        tx = LOOP.x + Math.sin(LOOP.a + 0.7) * LOOP.r; tz = LOOP.z + Math.cos(LOOP.a + 0.7) * LOOP.r; speed = cfg.subject.walkSpeed || 0.8;
+        LOOP.a += dt * (sc.walkSpeed || 0.8) / LOOP.r;
+        tx = LOOP.x + Math.sin(LOOP.a + 0.7) * LOOP.r; tz = LOOP.z + Math.cos(LOOP.a + 0.7) * LOOP.r; speed = sc.walkSpeed || 0.8;
       } else if (!busy && !hold && Math.hypot(sub.x - sub.home.x, sub.z - sub.home.z) > 0.06) {
         tx = sub.home.x; tz = sub.home.z; speed = Math.min(1.2, 0.3 + 2 * Math.hypot(sub.x - sub.home.x, sub.z - sub.home.z));
       }
@@ -349,30 +418,19 @@
         if (sub.wb === 0 && !busy) LOOP.a = Math.atan2(sub.x - LOOP.x, sub.z - LOOP.z) - 0.7;
       }
       if (!busy || !m.dash) sub.yaw += wrapA(tyaw - sub.yaw) * (1 - Math.exp(-dt * (UI.turn && tx === null ? 0.65 : 3)));
-      if (tgt && m.state && cfg.subject.aim !== false) { tgt.chest(tmpV); m.state.target = { x: tmpV.x, y: tmpV.y, z: tmpV.z }; }
-      sub.animate(t, dt);
-      const a = sub.action, p = sub.progress;
-      if (a !== shownAct) {
-        if (shownAct && btns[shownAct]) btns[shownAct].removeAttribute('aria-current');
-        shownAct = a; if (a && btns[a]) btns[a].setAttribute('aria-current', 'true');
-        setTicks(a && m.ACTIONS ? m.ACTIONS[a] : null); S.prog = -1;
-        if (a && cfg.stage && cfg.stage.onAction) cfg.stage.onAction(ctx, a);
-      }
-      if (a && m.ACTIONS && m.ACTIONS[a]) {
-        const def = m.ACTIONS[a];
-        (def.hits || []).forEach((h, i) => { if (S.prog < h && p >= h) onHit(a, i); });
-        (def.cues || []).forEach((h, i) => { if (S.prog < h && p >= h && cfg.stage && cfg.stage.onCue) cfg.stage.onCue(ctx, a, i); });
-        S.prog = p;
-      }
-      barFill.style.width = ((a ? p : (cfg.stage && cfg.stage.barValue ? cfg.stage.barValue(ctx) : 0)) * 100).toFixed(1) + '%';
-      const custom = cfg.stage && cfg.stage.label ? cfg.stage.label(ctx) : null;
-      const nm = (cfg.names && cfg.names[a]) || a;
-      label(custom || (a ? (hold ? nm + '. Press ' + (cfg.subject.walkLabel || 'Walk') + ' to get up' : nm) : sub.wb > 0.5 ? (cfg.subject.walkLabel || 'Walking') : UI.guard ? 'Guarding' : 'Waiting'));
+      aimAt(sub);
+      sub.animate(tt, dt);
+      track(sub);
+      const a = sub.action, p = sub.progress, st = sub.stage;
+      barFill.style.width = ((a ? p : (st && st.barValue ? st.barValue(sub.ctx) : 0)) * 100).toFixed(1) + '%';
+      const custom = st && st.label ? st.label(sub.ctx) : null;
+      const nm = (sub.cfg.names && sub.cfg.names[a]) || a, wl = sc.walkLabel || 'Walk';
+      label(custom || (a ? (hold ? nm + '. Press ' + wl + ' to get up' : nm) : sub.wb > 0.5 ? (sc.walkLabel || 'Walking') : UI.guard ? 'Guarding' : 'Waiting'));
     }
-    function onHit(a, i) {
-      if (cfg.stage && cfg.stage.onHit && cfg.stage.onHit(ctx, a, i) !== false) return;
-      ring(sub.m.anchor ? sub.m.anchor('hit', new THREE.Vector3()) : sub.chest(new THREE.Vector3()), 'hit');
-      const t = cfg.subject.target || (cast[0] && cast[0].id); if (t) damage(t, swing(300));
+    function onHit(a, act, i) {
+      if (a.stage && a.stage.onHit && a.stage.onHit(a.ctx, act, i) !== false) return;
+      ring(a.m.anchor ? a.m.anchor('hit', new THREE.Vector3()) : a.chest(new THREE.Vector3()), 'hit');
+      const t = foeOf(a); if (t) damage(t.id, swing(300), '', 0, a);
     }
 
     // a dash moves along the actor's facing, or, with dashAim, straight along the line to its target, stopping at
@@ -386,24 +444,97 @@
       }
       a.x += dx * d; a.z += dz * d;
     }
-    function stepCast(rdt, t) {
-      for (const a of cast) {
+    // everyone but the subject: on a model's page they only dash and animate; on the cast page they also aim, glide
+    // back home after a move, and have their hits and cues read
+    function stepCast(rdt) {
+      for (const a of others()) {
         if (!a.m) continue;
         const dt = rdt * a.ts; a.wt += dt;
-        if (a.busy && a.m.dash) dashStep(a, a.spec.dashAim ? actors[a.spec.target] : null, a.m.dash * dt);
+        if (!CAST) {
+          if (a.busy && a.m.dash) dashStep(a, a.spec.dashAim ? actors[a.spec.target] : null, a.m.dash * dt);
+          if (a.visible) a.animate(a.wt, dt);
+          continue;
+        }
+        const m = a.m, busy = m.busy, hold = m.action && !m.busy, tgt = aimAt(a);
+        if (busy && m.dash) dashStep(a, a.spec.dashAim ? tgt : null, m.dash * dt);
+        const d = Math.hypot(a.x - a.home.x, a.z - a.home.z);
+        if (!busy && !hold && d > 0.06) {
+          const ty = faceYaw(a, a.home), sp = Math.min(1.2, 0.3 + 2 * d), go = Math.max(0, Math.cos(wrapA(ty - a.yaw)));
+          a.yaw += wrapA(ty - a.yaw) * (1 - Math.exp(-dt * 3)); a.x += Math.sin(a.yaw) * sp * go * dt; a.z += Math.cos(a.yaw) * sp * go * dt; a.wb = Math.min(1, a.wb + dt * 2);
+        } else {
+          a.wb = Math.max(0, a.wb - dt * 2);
+          if (!busy || !m.dash) a.yaw += wrapA(a.home.yaw - a.yaw) * (1 - Math.exp(-dt * 3));
+        }
         if (a.visible) a.animate(a.wt, dt);
+        if (a.cfg) track(a);
       }
     }
 
     // ---------- shared helpers for stage hooks ----------
     let darkK = 0;
     const ctx = {
-      THREE, scene, camera, fullCam, lightOnly, stage, overlay, night, actors, cast, cfg, UI, g, toPx, toScreen, ring, damage, swing, radialTex, smooth, clamp, faceYaw, wrapA, DPR, REDUCED,
+      THREE, scene, camera, fullCam, lightOnly, stage, overlay, night, actors, cfg, UI, g, toPx, toScreen, ring, damage, swing, radialTex, smooth, clamp, faceYaw, wrapA, DPR, REDUCED,
       get subject() { return sub; },
+      get cast() { return others(); },
+      foe() { return foeOf(sub); },
       setDark(k) { darkK = k; night.style.opacity = (k * 0.97).toFixed(3); for (const L of sceneLights) L.o.intensity = L.i * (1 - 0.96 * k); },
       get dark() { return darkK; },
       label, setPressed,
     };
+    // each acting actor's own ctx: on a model's page the subject uses ctx itself; on the cast page every actor gets a view
+    // of it where it is the subject, its cfg is its own, its blows come from it, and its foe is its own target
+    for (const a of all) if (a.cfg) a.ctx = !CAST ? ctx : Object.create(ctx, {
+      subject: { get: () => a }, cfg: { value: a.cfg }, foe: { value: () => foeOf(a) },
+      damage: { value: (id, n, cls, delay) => damage(id, n, cls, delay, a) },
+      // each stage darkens the square on its own; the bench shows the darkest of them
+      setDark: { value: (k) => { a.darkK = k; } }, dark: { get: () => a.darkK || 0 },
+    });
+
+    // ---------- the cast page: encounters, who acts, and their target ----------
+    let enc = null;
+    const chips = (title, items, isOn, onPick) => {
+      el('h2', null, pick, title);
+      const box = el('div', { class: 'togs', role: 'group', 'aria-label': title }, pick);
+      for (const it of items) { const b = el('button', { class: 'tog', type: 'button', 'aria-pressed': isOn(it) ? 'true' : 'false' }, box, it.label); b.addEventListener('click', () => onPick(it)); }
+    };
+    function refreshPick() {
+      if (!CAST) return;
+      pick.textContent = '';
+      chips('Encounter', cfg.encounters.map((e) => ({ label: e.name, e })), (it) => it.e === enc, (it) => setEncounter(it.e));
+      const acting = all.filter((a) => a.cfg && (a.spec.side !== 'foe' || a.visible));
+      chips('Acting', acting.map((a) => ({ label: a.spec.name, a })), (it) => it.a === sub, (it) => select(it.a));
+      if (sub.spec.side !== 'foe') chips('Target', visibleFoes().map((a) => ({ label: a.spec.name, a })), (it) => foeOf(sub) === it.a, (it) => { sub.spec.target = it.a.id; refreshPick(); });
+    }
+    function setEncounter(e) {
+      enc = e;
+      for (const a of all) {
+        const side = a.spec.side;
+        if (side === 'foe') { a.setVisible(e.foes.includes(a.id)); a.home = placeOf(a.spec, e.place && e.place[a.id]); }
+        else if (side === 'summon') a.setVisible(false);
+        if (a.m && a.m.reset && a.action) a.m.reset();
+      }
+      const first = actors[e.foes[0]];
+      for (const a of all) {
+        const f = a.spec.side === 'foe' ? (faceOf(a.spec) || actors.witch.home) : first.home;
+        a.home.yaw = faceYaw(a.home, f) + (a.spec.yawBias || 0);
+        a.x = a.home.x; a.z = a.home.z; a.yaw = a.home.yaw; a.px = null; a.prog = -1; a.shownAct = null;
+        if (a.spec.side !== 'foe') a.spec.target = e.foes[0];
+      }
+      if (e.enter) e.enter(actors);
+      if (!sub.visible) select(actors[cfg.first] || all[0], true);
+      else buildActs(sub);
+      resetLoop(); refreshPick(); showBudget(sub);
+    }
+    function select(a, quiet) {
+      if (a !== sub) {
+        if (UI.guard) { if (sub.m.guard) sub.m.guard(false); UI.guard = false; guardTog.set(false); }
+        if (UI.walk) { UI.walk = false; walkTog.set(false); }
+        sub = a; resetLoop();
+      }
+      if (!a.visible) a.setVisible(true); // a summon steps in
+      buildActs(a); setTicks(a.action && a.m.ACTIONS ? a.m.ACTIONS[a.action] : null);
+      if (!quiet) { refreshPick(); showBudget(a); }
+    }
 
     // ---------- start ----------
     function init() {
@@ -412,27 +543,43 @@
       renderer = new THREE.WebGLRenderer({ canvas: glCanvas, alpha: true, antialias: true });
       renderer.setPixelRatio(DPR); renderer.setClearColor(0x000000, 0); renderer.localClippingEnabled = true;
       layoutView();
-      for (const a of cast) {
-        a.build(a.spec.make, a.spec.kind);
-        const f = faceOf(a.spec) || sub.home; a.home.yaw = faceYaw(a.home, f) + (a.spec.yawBias || 0); a.x = a.home.x; a.z = a.home.z; a.yaw = a.home.yaw;
+      if (CAST) {
+        for (const a of all) a.build(a.spec.make, a.spec.kind);
+        for (const a of all) if (a.stage && a.stage.onBuild) a.stage.onBuild(a.ctx);
+        for (const a of all) { if (a.stage && a.stage.init && !a.stage.__inited) { a.stage.init(a.ctx); a.stage.__inited = true; } a.ready = !!a.cfg; }
+        setEncounter(cfg.encounters[0]);
+        select(sub);
+      } else {
+        for (const a of others()) {
+          a.build(a.spec.make, a.spec.kind);
+          const f = faceOf(a.spec) || sub.home; a.home.yaw = faceYaw(a.home, f) + (a.spec.yawBias || 0); a.x = a.home.x; a.z = a.home.z; a.yaw = a.home.yaw;
+        }
+        { const f = faceOf(cfg.subject) || (others()[0] && others()[0].home) || { x: sub.home.x, z: sub.home.z + 1 }; sub.home.yaw = faceYaw(sub.home, f) + (cfg.subject.yawBias || 0); }
+        resetLoop();
+        buildSubject();
+        if (sub.stage && sub.stage.init) sub.stage.init(ctx);
+        sub.ready = true;
+        if (sub.stage && sub.stage.onPanel) sub.stage.onPanel(ctx);
       }
-      { const f = faceOf(cfg.subject) || (cast[0] && cast[0].home) || { x: sub.home.x, z: sub.home.z + 1 }; sub.home.yaw = faceYaw(sub.home, f) + (cfg.subject.yawBias || 0); }
-      LOOP.x = sub.home.x + 0.2; LOOP.z = sub.home.z - 0.5;
-      buildSubject();
-      if (cfg.stage && cfg.stage.init) cfg.stage.init(ctx);
       lightOnly(scene);
       new ResizeObserver(() => { layoutView(); }).observe(stage);
       frameShot(); cam.cx = cam.tx; cam.cy = cam.ty; cam.s = cam.ts; applyCam(1);
-      let last = performance.now(), t = 0;
+      let last = performance.now(), t = 0, fpsN = 0, fpsT = 0;
       function step(rdt) {
         t += rdt;
         stepSubject(rdt, t);
-        if (cfg.stage && cfg.stage.update) cfg.stage.update(ctx, rdt, t);
-        stepCast(rdt, t);
+        if (CAST) {
+          let dk = 0;
+          for (const a of all) { if (a.stage && a.stage.update && a.ready) a.stage.update(a.ctx, rdt, t); dk = Math.max(dk, a.darkK || 0); }
+          if (dk !== darkK) ctx.setDark(dk);
+        }
+        else if (sub.stage && sub.stage.update) sub.stage.update(ctx, rdt, t);
+        stepCast(rdt);
         frameShot(); applyCam(rdt);
       }
-      function frame(now) {
-        const rdt = DBG.freeze ? 0 : Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now;
+      function frame(nowMs) {
+        const raw = Math.max(0, (nowMs - last) / 1000), rdt = DBG.freeze ? 0 : Math.min(0.05, raw); last = nowMs;
+        if (CAST) { fpsN++; fpsT += raw; if (fpsT > 0.5) { stat.fps.textContent = Math.round(fpsN / fpsT) + ' frames a second'; fpsN = 0; fpsT = 0; } }
         if (!DBG.freeze) step(rdt);
         renderer.render(scene, camera);
         requestAnimationFrame(frame);
@@ -445,9 +592,13 @@
         advance(sec, fps) { const n = Math.max(1, Math.round(sec * (fps || 60))); for (let i = 0; i < n; i++) step(1 / (fps || 60)); cam.cx = cam.tx; cam.cy = cam.ty; cam.s = cam.ts; applyCam(1); renderer.render(scene, camera); },
         setView(mode) { UI.view = mode; },
         setAfter(after) { if (after !== UI.after) { UI.after = after; if (vsBtns) vsBtns.forEach((q, i) => setPressed(q, (i === 1) === after)); buildSubject(); } },
+        select(id) { if (actors[id]) select(actors[id]); },
+        encounter(name) { const e = (cfg.encounters || []).find((x) => x.name === name); if (e) setEncounter(e); },
+        target(id) { if (actors[id]) { sub.spec.target = id; refreshPick(); } },
       });
     }
     const DBG = { freeze: false };
+    buildActs(sub);
     window.__bench = window.__bench || {};
     setTimeout(() => {
       try { init(); }

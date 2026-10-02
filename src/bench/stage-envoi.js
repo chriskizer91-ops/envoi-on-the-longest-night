@@ -9,6 +9,7 @@ window.STAGES = window.STAGES || {};
 window.STAGES.envoi = (function () {
   'use strict';
   const HIT = 180, LAST = 1800, FOE_HIT = 120;
+  const FOE_ATK = { wraith: 'sweep', wisp: 'flicker', halcyon: 'gloamCleave', noctara: 'crownShards' };
   const S = {
     level: 10, total: 0, msg: '', msgT: 0,
     sum: null,          // summon choreography: Sol's cut and the Heat she spends
@@ -44,7 +45,7 @@ window.STAGES.envoi = (function () {
     const a = m.action; return (a === 'summon' || a === 'appear') && m.progress >= 0.74;
   }
   function anchor(ctx, name, out) { const m = ctx.subject.m; return m.anchor(name, out); }
-  function foe(ctx) { return ctx.actors.wraith; }
+  function foe(ctx) { return (ctx.foe && ctx.foe()) || ctx.actors.wraith; }
 
   // ---------- the summon: Io's summon, Sol's blade lighting the heart, the Heat it spends ----------
   function startSummon(ctx) {
@@ -114,8 +115,10 @@ window.STAGES.envoi = (function () {
   function stepFoe(ctx, rdt) {
     const F = S.foe, w = foe(ctx); if (!F || !w) return;
     if (F.wait > 0) { F.wait -= rdt; return; }
-    if (!F.started) { F.started = true; w.play('sweep', true); return; }
-    if (!F.hit && w.action === 'sweep' && w.progress >= 0.5) {
+    // each foe swings its own basic attack at the ward, and the blow lands at that attack's first hit
+    const atk = FOE_ATK[w.id] || 'sweep', at = (w.m.ACTIONS && w.m.ACTIONS[atk] && w.m.ACTIONS[atk].hits[0]) || 0.5;
+    if (!F.started) { F.started = true; w.play(atk, true); return; }
+    if (!F.hit && w.action === atk && w.progress >= at) {
       F.hit = true;
       if (wardUp(ctx)) {
         ctx.subject.play('block', true); S.spent = true;
@@ -128,7 +131,7 @@ window.STAGES.envoi = (function () {
         say(S.spent ? 'The ward is spent: the party takes the blow' : 'No ward up: the party takes the blow', 2.4);
       }
     }
-    if (F.hit && w.action !== 'sweep') S.foe = null;
+    if (F.hit && w.action !== atk) S.foe = null;
   }
 
   // ---------- the strike: nine hits on the wraith, then it is released as a pale moth ----------
@@ -141,10 +144,10 @@ window.STAGES.envoi = (function () {
     const w = foe(ctx); if (!w || !w.visible) return;
     S.total += n;
     if (last) {
-      float(ctx, 'wraith', fmt(n), BIG, 0);
+      float(ctx, foe(ctx).id, fmt(n), BIG, 0);
       w.play('die', true); S.gone = 0; mothT = -0.7;
     } else {
-      float(ctx, 'wraith', fmt(n));
+      float(ctx, foe(ctx).id, fmt(n));
       if (S.gone < 0) w.play('hurt', true);
     }
   }

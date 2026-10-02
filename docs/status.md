@@ -2,7 +2,7 @@
 
 A handoff for the next session. Updated October 2, 2026, after the polish round on Chris's second account. Every model is touched up and polished, and every page is republished here with the shared fixes.
 
-We are in **phase 1, the models** (`plan.md`). The polish round (step 10b) is done; step 11, the cast page, is next. Every model gets touched up against its sheets and shown on a battle bench page in the Night square, then published as a private page Chris can open on his phone.
+We are finishing **phase 1, the models** (`plan.md`). The polish round (step 10b) is done, and the first version of the cast page (step 11) is published; it needs Chris's phone check. Every model gets touched up against its sheets and shown on a battle bench page in the Night square, then published as a private page Chris can open on his phone.
 
 ## Working from the second account
 
@@ -13,6 +13,7 @@ We are in **phase 1, the models** (`plan.md`). The polish round (step 10b) is do
 
 | Page | Link | State |
 |---|---|---|
+| The cast | https://claude.ai/artifact/Qk8apijsA3ZjVoK88XF4bJ | Step 11, first version (October 2): every model at true scale; pick an encounter, who acts and their target. Waiting on Chris's phone check of the frame rate |
 | Noctara | https://claude.ai/artifact/JWFwFUZTDum2CZjbGXotir | Rebuilt October 2 with the finished Io, Sol and Halcyon |
 | Lunara | https://claude.ai/artifact/Y1hTureSoXGBnTer4tJNSX | Polished October 2: heavier skirt chains and pointed ears |
 | Io, the Witch | https://claude.ai/artifact/6vRCkyYzZjn5Fc77GYebyE | Polished October 2: her new spells sized for the battle camera |
@@ -48,7 +49,7 @@ We are in **phase 1, the models** (`plan.md`). The polish round (step 10b) is do
 | Sol | Done, polished | Her code stays 140 KB: it has no unused parts, so only minifying would shrink it, which the final game's build can do |
 | Envoi | Done, polished | — |
 | Halcyon | Done, polished | Her face stays as built (Chris, October 2) |
-| The cast (step 11) | Not started | Every model together at true scale, after all of the above |
+| The cast (step 11) | First version published | `demos/cast.html`: the bench's roster mode. Each actor plays with its own stage; the party's and the summons' stages strike whatever target is picked |
 
 "What's left" comes from each agent's last report. Every model step (2 to 10) is done; step 11, the cast, is next.
 
@@ -76,8 +77,9 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 ## Next steps
 
-1. The cast page (step 11).
-2. Phase 2, the battles. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
+1. The cast page: Chris's phone check (the frame rate with five models), then any fixes.
+2. Phase 2, the battles, starting with the groundwork: the rules tables, the level curve and the balance simulator.
+3. When Chris's pilot ground-level maps arrive: a quick scale test with a pixel Io walking on them. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
 
 Art in hand (`../reference/art/README.md`):
 
