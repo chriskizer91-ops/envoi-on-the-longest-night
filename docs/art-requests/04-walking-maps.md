@@ -1,6 +1,6 @@
 # Art Request 04: Ground-Level Maps
 
-The close-up maps the pixel Io walks in when she leaves the world map: the towns, and the places where the set fights happen (plan phase 4).
+The close-up maps the pixel Io walks in when she leaves the world map: the towns, the shipyard, and the places where the set fights happen (plan phase 4).
 
 How walking works:
 
@@ -100,7 +100,7 @@ The inner courtyard of a stone waystation: worn flagstones round a huge living c
 
 ## 8. The northern crossroads (Pilot)
 
-Set fight: Halcyon's ambush and the level 15 gate, in the wilds. Attach `battle-northern-crossroads.png` as the style reference. Save as `walk-northern-crossroads.png`.
+Set fight: Halcyon's ambush on the way to the shipyard, the level 15 gate. Attach `battle-northern-crossroads.png` as the style reference. Save as `walk-northern-crossroads.png`.
 
 ```text
 Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
@@ -108,7 +108,17 @@ Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pi
 A ruined crossroads in empty northern wild country. Four broken paved roads meet at a cracked circle of flagstones in the middle of the picture, each road leaving at a different edge, with long stretches of paving lost under dead grass. A toppled stone waymarker lies beside the circle, its amber crystal down to a faint ember. A small lonely stone well with an old lantern on its post. Dark pine copses, boulders and bare moor, and frost creeping across the stones from the top of the picture.
 ```
 
-## 9. Misthollow
+## 9. The shipyard
+
+Town: where the Magpie gets its final upgrade, at the fortress at the end of the long stone bridge in the northern passage. A shipwright and a few hands. Attach `battle-northern-crossroads.png` as the style reference for the cold. Save as `walk-shipyard.png`.
+
+```text
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of walls, houses and trees, like a classic 16-bit JRPG town map but richly painted. Never isometric, no horizon, no sky. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, warm amber light pooling around lamps and lit windows. Roads, paths, bridges, doorways and open yards are clear and easy to read, never hidden under roofs or branches. A doorway is about one thirtieth of the picture's width. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+A shipyard for airships inside a stone fortress on a rock in a cold northern sea. A long arched stone bridge from the shore arrives at the bottom edge through a gatehouse. Inside the walls: a great empty wooden slipway with a scaffold cradle where a small airship is refitted, with cranes, winches, coils of rope and stacked timber; workshops and a shipwright's hall with lit windows; crates of amber sunstone glowing faintly through their slats; a small forge; stone quays stepping down to dark water with thin ice at the edges. Frost on the roofs and walls, and lamps along the battlements.
+```
+
+## 10. Misthollow
 
 Town: the last town in the frozen north. Attach `battle-dead-moonwell.png` as the style reference. Save as `walk-misthollow.png`.
 
@@ -118,7 +128,7 @@ Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pi
 Misthollow, a town of tall pale stone towers half lost in freezing mist, among snowy mountains. Narrow frosted streets with steps and arches, frost on every ledge and snow banked against the walls. A few shops still have lit windows: an apothecary with herbs hanging in its window, and an inn with a lantern over the door. Most other windows are dark. A landing yard at the bottom edge where a small airship ties up. A broad street leaves at the top edge toward the town square.
 ```
 
-## 10. The dead Moonwell
+## 11. The dead Moonwell
 
 Set fight: the finale, Noctara and Halcyon. Attach `battle-dead-moonwell.png` as the style reference. Save as `walk-misthollow-moonwell.png`.
 
@@ -128,7 +138,7 @@ Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pi
 The square of a dead well in a town of pale stone towers: a wide round plaza of pale frosted flagstones. In the middle, a great round stone well with moths and crescent moons carved round its rim; its basin is black and empty and gives no light at all, and its silver fittings are broken. Tall pale towers stand round the plaza with dark windows, frost covers everything, and two tall braziers burn low near the bottom. The street arrives at the bottom edge.
 ```
 
-## 11. The Thornwood (optional)
+## 12. The Thornwood (optional)
 
 A wild place near Wickhollow with random fights, if the world map's forest needs a close-up. Attach `battle-thornwood-bridge.png` as the style reference. Save as `walk-thornwood.png`.
 
@@ -138,7 +148,7 @@ Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pi
 A tangled dark wood: black thorn trees with long spines, briars and dead brambles, with a winding path of packed earth through it from the left edge to the right edge, opening into two small clearings. A slow black river crosses the left part of the picture under an arched stone bridge with a lantern on its keystone. A mossy waystone carved with a crescent moon stands in one clearing. Cold mist lies in the hollows.
 ```
 
-## 12. The frozen pass (optional)
+## 13. The frozen pass (optional)
 
 A wild place on the way to Misthollow with random fights, if the world map's mountains need a close-up. Attach `battle-frozen-road.png` as the style reference. Save as `walk-frozen-pass.png`.
 

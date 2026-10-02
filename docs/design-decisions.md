@@ -313,3 +313,31 @@ This replaces the visible packs from Aethermoor that the plan first proposed.
 ### Battle backdrops
 
 - All eight from art request 03 arrived on October 2, 2026. The originals are in `reference/art/backdrops/`, and the game's compressed copies in `art/backdrops/`.
+
+## October 2, 2026, sixth round
+
+### The world map
+
+- **The bands and stops sit where the proposal put them** (`../reference/art/world-map/bands-and-stops.webp`): band 1 in the southwest and the southern wetlands (Wickhollow, Bogmire), band 2 in the western forests and riverlands (Dawnroost), band 3 in the northwest and the northern passage, and band 4 in the snowy northeast peaks (Misthollow).
+- **The rest is under mist.** The central island capital, the eastern mountains and desert, and the southeast canyon coast are not in the story. Mist covers them, and the Magpie can't fly over them.
+- The night versions of the nine tiles arrived on October 2, 2026 (`../reference/art/world-map/night/`). They line up exactly with the day tiles. Some joins differ in brightness; the game blends them in code.
+
+### Money
+
+- **Fights give money.** The Magpie's upgrades cost money as well as needing the party's level, so moving on to the next band takes both enough fighting and enough levels.
+- Shops sell herbs. What the money is in the world is a lore question (`questions/open.md`).
+
+### Halcyon's ambush is the level 15 gate
+
+- **One fight, not two.** As the party, at level 15, approaches the place that opens the next band, Halcyon ambushes them. That place is a shipyard, where the Magpie gets its final upgrade.
+- **Halcyon is level 20, and the fight is overwhelming.** It ends one of two ways: the party falls, Sol steps in front of Io, and Halcyon leaves; or, if they bring her down to 20% of her HP, she retreats into the dark. The story goes on either way, and Sol learns Kestrel Stoop.
+- Halcyon is the exception to "gate fights are a little harder than the wild fights."
+- The shipyard is proposed at the fortress at the end of the long stone bridge in the northern passage.
+
+### Dawnroost's gate fight
+
+- **The largest group of stronger wraiths the party has faced so far** attacks Dawnroost at the level 10 gate.
+
+### Art requests
+
+- **Future image requests come as Markdown files,** sent in the chat. The HTML page was too clunky.

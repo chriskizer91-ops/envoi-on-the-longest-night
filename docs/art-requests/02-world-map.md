@@ -1,6 +1,6 @@
 # Art Request 02: The World Map
 
-The flying map: the world as the party sees it from the Magpie (plan step 20), and the world map Io walks (step 19). The ground-level maps are `04-walking-maps.md`.
+The flying map: the world as the party sees it from the Magpie (plan step 19), and the world map Io walks (step 18). The ground-level maps are `04-walking-maps.md`.
 
 Chris painted the world himself as nine detailed tiles in a 3×3 grid, received on October 2, 2026 as day versions (`../../reference/art/world-map/day/`). The night versions are next: their prompts are at the end ("The night versions"). The prompts just below were the first description of the world and are kept for reference.
 
@@ -69,7 +69,7 @@ Around the edges of the land, the Aether: a glowing sea of moonlit cloud that sh
 
 ## The night versions
 
-The game takes place at night, so the night versions are the ones it uses. Make each by attaching the day tile as image 1 and pasting its prompt. Keep every night tile exactly aligned with its day tile: walk areas and town entrances get traced once and used on both, and a tile that moves things would break the joins.
+The night versions arrived on October 2, 2026 (`../../reference/art/world-map/night/`); the prompts are kept for reference. The game takes place at night, so the night versions are the ones it uses. Make each by attaching the day tile as image 1 and pasting its prompt. Keep every night tile exactly aligned with its day tile: walk areas and town entrances get traced once and used on both, and a tile that moves things would break the joins.
 
 Check each result against its day tile before keeping it: the coastlines, roads, bridges and towns should sit in the same places. Save each one under its day name with `-night` before `.png`, such as `08-southern-wetlands-bogmire-and-willowmurk-night.png`.
 

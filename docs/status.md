@@ -17,7 +17,7 @@ We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Ev
 | Lunara | https://claude.ai/artifact/Y1hTureSoXGBnTer4tJNSX | Polished October 2: heavier skirt chains and pointed ears |
 | Io, the Witch | https://claude.ai/artifact/6vRCkyYzZjn5Fc77GYebyE | Polished October 2: her new spells sized for the battle camera |
 | The wisp | https://claude.ai/artifact/GG9LKbSjeohk7UA2UJ7Kcp | Polished October 2: a darker, fuller tail and a deeper, torn hollow; the frost variant checked in every action |
-| Art requests | https://claude.ai/artifact/MNozyJ4DQys2syLfyyv44c | The open prompts with copy buttons: the ground-level maps (request 04) and the night world tiles (request 02). Rebuild with `node tools/art-page.mjs` and republish `dist/art-requests.html` whenever a request changes. |
+| Art requests | https://claude.ai/artifact/MNozyJ4DQys2syLfyyv44c | Retired: Chris found the page clunky. Image requests now go to him as Markdown files in the chat (`SendUserFile`). |
 
 ## Published from the first account
 
@@ -79,9 +79,9 @@ Art in hand (`../reference/art/README.md`):
 
 - every sheet from art request 01;
 - all eight battle backdrops from request 03, compressed into `art/backdrops/`;
-- the world map, day versions: nine tiles in a 3×3 grid. The night versions come next (request 02).
+- the world map: nine tiles in a 3×3 grid, in day and night versions, with the bands and stops Chris confirmed (`reference/art/world-map/bands-and-stops.webp`).
 
-The ground-level map prompts are request 04, with a pilot of three to make first. The questions for Chris, and the lore questions for his lore conversation, are in `questions/open.md`; the biggest is where the bands and stops sit on the world map.
+The ground-level map prompts are request 04, with a pilot of three to make first; it went to Chris as a Markdown file. The questions for Chris, and the lore questions for his lore conversation, are in `questions/open.md`.
 
 `tools/compress.mjs` makes the game's WebP copies of Chris's images (`npm install --prefix tools` first).
 

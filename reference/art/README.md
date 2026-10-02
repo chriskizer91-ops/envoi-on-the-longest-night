@@ -47,9 +47,11 @@ From art request 03 (`docs/art-requests/03-battle-backdrops.md`), all received O
 
 ## The world map
 
-Chris's world, painted as nine detailed tiles in a 3×3 grid, received October 2, 2026. The day versions are in `world-map/day/`: `regions/` holds the nine 1536×1024 tiles, `placement.json` says where each goes in the 4608×3072 world (north up), and `README.txt` and `Art-Prompts.txt` come from his generator. The night versions come next (`docs/art-requests/02-world-map.md`). The section names in the pack describe the land; they don't set lore.
+Chris's world, painted as nine detailed tiles in a 3×3 grid, received October 2, 2026, in day and night versions:
 
-`world-map/proposal-bands-and-stops.webp` marks a proposal for where the four level bands and stops sit, for Chris to confirm (`docs/questions/open.md`).
+- `world-map/day/` and `world-map/night/`: `regions/` holds the nine 1536×1024 tiles, `placement.json` says where each goes in the 4608×3072 world (north up), and `README.txt` and `Art-Prompts.txt` come from his generator. The night tiles line up exactly with the day ones; some joins differ in brightness, which the game blends in code.
+- The section names in the packs describe the land; they don't set lore.
+- `world-map/bands-and-stops.webp` marks where the four level bands and the stops sit, and the areas under mist, as Chris confirmed on October 2.
 
 ## Key art
 

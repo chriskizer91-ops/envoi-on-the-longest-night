@@ -2,7 +2,7 @@
 
 Chris wants to see each piece working on its own before anything is put together, and every model finished before anything else is built. Every step ends in a demo page he can open on his phone, published as a private link and saved in this repo.
 
-Updated October 2, 2026, fifth round (`design-decisions.md`). This plan runs from where things stand to the finished game, about five hours of play:
+Updated October 2, 2026, sixth round (`design-decisions.md`). This plan runs from where things stand to the finished game, about five hours of play:
 
 1. Finish the models.
 2. Build the battles and balance them.
@@ -81,9 +81,8 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 | Wild fights | About a minute or two at the party's level; easier a few levels above |
 | Gate fights | A little harder than the wild fights around them |
 | The great wraith | The level 5 gate |
-| Dawnroost | The level 10 gate |
-| The ambush | Halcyon, just before the level 15 gate. Can't be won; it ends when Sol steps in front of Io |
-| Halcyon | The level 15 gate: Halcyon at 20 against a party at 15 or more. It ends in defeat, or in her retreat at 20% HP |
+| Dawnroost | The level 10 gate: the largest group of stronger wraiths so far |
+| Halcyon's ambush | The level 15 gate: Halcyon at 20 against a party at 15 or more, overwhelming, the exception to "a little harder". It ends with the party falling, or with her retreat at 20% HP |
 | The finale | An expert at level 20 wins about half the time; at 19 a player loses, but narrowly; below that it can't be won |
 
 ### The battle demos
@@ -93,10 +92,9 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 | 12 | The first fight | Io alone against a Shadow Wraith in the Night square, at level 1, with the Night square demo's numbers. You can lose. Experience and a level-up at the end. |
 | 13 | The party | Io and Sol against wisps and wraiths at a chosen level: Heat and Sunburn, Waxing Light and Moonsteel, Lunara. A level slider from 1 to 20 shows the numbers growing. |
 | 14 | The great wraith | The Bogmire boss, the level 5 gate. Winning leads to the refit and Moth Veil. |
-| 15 | Dawnroost | The level 10 gate, at the living node. Envoi comes with it. |
-| 16 | The ambush | Halcyon, unwinnable, as the party approaches the level 15 gate. Sol steps in front of Io, and Halcyon leaves. |
-| 17 | Halcyon | The level 15 gate, in the wilderness: Halcyon at level 20 against the party at 15 or more, with the Kestrel story command. It ends with Halcyon defeating the party, or, if they bring her down to 20% of her HP, with her retreat into the dark. Envoi is in the summon menu. Afterwards Sol learns Kestrel Stoop. |
-| 18 | The final battle | Noctara with Halcyon at level 20, at the dead Moonwell in Misthollow: Blackout, Void Sphere, Frost Dust and Crown Shards, Moth Veil against the telegraphed hits, and Envoi's ward and strike. Tuned so a player who plays well at level 20 wins about half the time, and loses narrowly at 19. |
+| 15 | Dawnroost | The level 10 gate, at the living node: the largest group of stronger wraiths the party has faced. Envoi comes with it. |
+| 16 | Halcyon's ambush | The level 15 gate, on the way to the shipyard: Halcyon at level 20 against the party at 15 or more, overwhelming, with the Kestrel story command and Envoi in the summon menu. It ends with the party falling, Sol stepping in front of Io and Halcyon leaving; or, if they bring her down to 20% of her HP, with her retreat into the dark. Afterwards Sol learns Kestrel Stoop. |
+| 17 | The final battle | Noctara with Halcyon at level 20, at the dead Moonwell in Misthollow: Blackout, Void Sphere, Frost Dust and Crown Shards, Moth Veil against the telegraphed hits, and Envoi's ward and strike. Tuned so a player who plays well at level 20 wins about half the time, and loses narrowly at 19. |
 
 ## Phase 3: the story's fights
 
@@ -107,16 +105,17 @@ Every fight gets its place in the story before travel is built. It is drafted on
 - **Towns are safe.** People to talk to: shops, and people with information.
 - **The wilds have random encounters.** No foes are drawn on the map. Each step in wild country fills a hidden counter, and a fight starts when it passes a random threshold. That keeps the rate even: never two fights back to back, and never a long walk with none. Each area has its own rate, and the rate is a number the balancing tunes. A player can walk back and forth to grind levels.
 - **Set fights** wait at fixed places: the gate fights and the story fights.
+- **Money.** Fights give money. The Magpie's upgrades cost money and need the party's level, so moving on to the next band takes both. Shops sell herbs. The simulator balances money too: what a player has earned by each gate.
 
 **About five hours:** the story, about 60 wild fights from level 1 to 20 against wisps, frost wisps, wraiths and the great wraith, and the set fights.
 
-The first draft, to settle with Chris. The places follow the proposal in `../reference/art/world-map/proposal-bands-and-stops.webp`, which Chris still has to confirm:
+The first draft. The places are marked on `../reference/art/world-map/bands-and-stops.webp`, which Chris confirmed:
 
 | Band | Levels | Where on the world map | Places | Fights |
 |---|---|---|---|---|
 | 1 | 1 to 5 | The southwest and the southern wetlands | Wickhollow, Bogmire | The Night square wraith (Io alone). Sol joins. Wild wisps, then wraiths. The great wraith at Bogmire's dark heart (gate). |
-| 2 | 5 to 10 | The western forests and riverlands | The Warm Roads, Dawnroost | Wild wisps and wraiths in bigger packs, along roads with dark nodes for Sol to relight. The fight at Dawnroost's living node (gate), and Envoi. |
-| 3 | 10 to 15 | The northwest and the northern passage | The northern wilds | Wild wraith packs; the first frost wisps as the cold sets in. Halcyon's ambush, then the crossroads (gate). |
+| 2 | 5 to 10 | The western forests and riverlands | The Warm Roads, Dawnroost | Wild wisps and wraiths in bigger packs, along roads with dark nodes for Sol to relight. The largest group of stronger wraiths so far, at Dawnroost's living node (gate), and Envoi. |
+| 3 | 10 to 15 | The northwest and the northern passage | The northern wilds, the shipyard | Wild wraith packs; the first frost wisps as the cold sets in. Halcyon's ambush on the way to the shipyard (gate). |
 | 4 | 15 to 20 | The snowy northeast peaks | Misthollow and the dead Moonwell | Frost wisps and wraiths at full strength. Noctara and Halcyon (the finale). |
 
 ## Phase 4: travel
@@ -125,17 +124,17 @@ As in FF9: the world is walked on foot, and later flown over. All of it at night
 
 | # | Demo | What it shows |
 |---|---|---|
-| 19 | Walking | The pixel Io, drawn in code to match her 3D outfit, walking the night world map and one ground-level map: d-pad and tap-to-walk, a town with a shopkeeper and someone to talk to, herbs and a letter at a small well, and a random encounter in the wilds that starts the 3D battle. Sliders for her pixel look, the map's lighting and the encounter rate. |
-| 20 | The Magpie | The airship flying the far view of the world between the stops, through the drifting clouds and fog of `reference/demos/the-magpie.html`. Its four levels (refit, charge, final upgrade) set how far it can fly, and landing switches to walking. |
+| 18 | Walking | The pixel Io, drawn in code to match her 3D outfit, walking the night world map and one ground-level map: d-pad and tap-to-walk, a town with a shopkeeper and someone to talk to, herbs and a letter at a small well, and a random encounter in the wilds that starts the 3D battle. Sliders for her pixel look, the map's lighting and the encounter rate. |
+| 19 | The Magpie | The airship flying the far view of the world between the stops, through the drifting clouds and fog of `reference/demos/the-magpie.html`. Its four levels (refit, charge, final upgrade) set how far it can fly, and landing switches to walking. |
 
 **The maps:**
 
-- **The world map** is Chris's nine detailed tiles in a 3×3 grid, 4608×3072 in all, north up (`../reference/art/world-map/day/`; the night versions are next, `art-requests/02-world-map.md`). The pixel Io walks it at full detail between places, and the random fights happen in its wild country.
+- **The world map** is Chris's nine detailed tiles in a 3×3 grid, 4608×3072 in all, north up, in day and night versions (`../reference/art/world-map/`); the game uses the night ones, with their joins blended in code. The pixel Io walks it at full detail between places, and the random fights happen in its wild country.
 - **The far view** from the Magpie is the same world, scaled down, since it doesn't need full detail.
 - **Ground-level maps** are entered from the world map: the towns and the set-fight places (`art-requests/04-walking-maps.md`).
 - A phone-friendly tracing tool marks where Io can walk, what she walks behind, the town entrances and the wild areas, once per tile; the day and night versions share it.
 
-**The level bands.** Four bands, 1 to 5, 5 to 10, 10 to 15 and 15 to 20, opened by the Bogmire refit, the charge at Dawnroost's living node, and the upgrade after Halcyon. Sunstone gives the Magpie its lift, and Noctara's cold drains it. A band the ship can't reach yet sits under cold mist on the flying map.
+**The level bands.** Four bands, 1 to 5, 5 to 10, 10 to 15 and 15 to 20, opened by the Bogmire refit, the charge at Dawnroost's living node, and the upgrade after Halcyon. Sunstone gives the Magpie its lift, and Noctara's cold drains it. A band the ship can't reach yet sits under cold mist on the flying map. The central island capital, the east and the southeast are under mist all game: they aren't in the story.
 
 ## Phase 5: the game
 
@@ -159,8 +158,8 @@ Around them:
 |---|---|---|
 | 1 | Model and action sheets | All in (`art-requests/01-model-sheets.md`) |
 | 2 | Eight night battle backdrops | All in (`art-requests/03-battle-backdrops.md`) |
-| 4 | The world map: nine tiles in a 3×3 grid | Day versions in; night versions next (`art-requests/02-world-map.md`) |
-| 4 | Ground-level maps: towns and set-fight places | Prompts ready, pilot first (`art-requests/04-walking-maps.md`) |
+| 4 | The world map: nine tiles in a 3×3 grid | Day and night versions in |
+| 4 | Ground-level maps: towns, the shipyard and set-fight places | Prompts ready, pilot first (`art-requests/04-walking-maps.md`) |
 | 5 | Story stills | A later request |
 
 ## Technical choices

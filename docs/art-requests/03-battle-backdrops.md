@@ -73,7 +73,7 @@ The inner courtyard of a fortified stone waystation on a hilltop: worn flagstone
 
 ## 6. The northern crossroads
 
-Band 3. The level 15 fight with Halcyon (plan step 17). Save as `battle-northern-crossroads.png`.
+Band 3. Halcyon's ambush on the way to the shipyard, the level 15 gate (plan step 16). Save as `battle-northern-crossroads.png`.
 
 ```text
 Highly detailed hand-painted JRPG battle backdrop in a rich painterly pixel-art style, seen from high above at a steep three-quarter angle, like a diorama, with a long-lens flattened perspective so distant things are barely smaller than near ones. Night: deep violet and indigo shadows, silver-blue moonlight, warm amber lamplight pooling on the ground. A starless sky with only the moon and clouds. Fine texture on every stone, plank and leaf. The middle of the picture is a wide, flat, open stretch of ground with nothing standing in it; tall things stay at the edges and the back. No characters, no creatures, no text, no UI. 4:3 landscape.
@@ -93,7 +93,7 @@ A road through the frozen north: packed snow and ice over old flagstones, the am
 
 ## 8. The dead Moonwell
 
-The finale: Noctara and Halcyon at Misthollow (plan step 18). Save as `battle-dead-moonwell.png`.
+The finale: Noctara and Halcyon at Misthollow (plan step 17). Save as `battle-dead-moonwell.png`.
 
 ```text
 Highly detailed hand-painted JRPG battle backdrop in a rich painterly pixel-art style, seen from high above at a steep three-quarter angle, like a diorama, with a long-lens flattened perspective so distant things are barely smaller than near ones. Night: deep violet and indigo shadows, silver-blue moonlight, warm amber lamplight pooling on the ground. A starless sky with only the moon and clouds. Fine texture on every stone, plank and leaf. The middle of the picture is a wide, flat, open stretch of ground with nothing standing in it; tall things stay at the edges and the back. No characters, no creatures, no text, no UI. 4:3 landscape.
