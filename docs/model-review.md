@@ -9,6 +9,7 @@ The spec's targets: 70k to 100k triangles (minimum 50k, ceiling 120k for bosses)
 | Model | Source | Triangles | Bones | Draw calls | Spec interface |
 |---|---|---|---|---|---|
 | The Witch | `night-square-shadow-wraith.html` | 99k | 51 | 84 | No (older interface) |
+| Io (the Witch), technical pass | `src/models/witch.js` | 99k | 51 | 48 counted, 39 drawn at idle | Yes, with the old interface kept |
 | Sol | `sol-in-the-night-square.html` | 83k | 54 | 38 | Yes |
 | Halcyon (v2) | `halcyon-in-the-night-square.html` | 88k | 63 | 31 | Yes |
 | Noctara, touched up | `src/models/noctara.js` | 72k | 30 joints, hands skinned | 24 | Yes |
@@ -22,7 +23,18 @@ Draw calls here were counted in the line-up scene and include glow sprites and p
 
 ## Touch-up targets
 
-### The Witch: technical only
+### Io, the Witch: technical pass done October 2, 2026
+
+She looks and moves exactly as before.
+
+- **Proof it's unchanged:** before and after renders differ only by scattered single pixels at the edges of tiny details, from rounding (59 to 65 dB PSNR).
+- **Interface:** she has the spec interface (`ACTIONS` with hit and cue times, `anchor`, `state.trance`, `setFade`, `opts.detail`) and a new `rise`. Her old interface still works.
+- **Draw calls:** every material is drawn once, skinned to her existing 51 bones, which takes her from 74 meshes drawn per frame to 39.
+- **Cost:** animation costs about 0.05 ms per frame, down from 0.06.
+- **Her page:** it plays all her commands from the Night square demo.
+- **Still to come:** her three new spells, Waxing Light, Moonsteel and Moth Veil, need their effects on her existing motions.
+
+### The Witch: the plan (technical only)
 
 Chris loves how she looks and moves, so nothing visible changes.
 

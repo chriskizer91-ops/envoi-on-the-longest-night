@@ -1,5 +1,15 @@
-// Imported unchanged from reference/demos/night-square-shadow-wraith.html. three.js r128 (global THREE).
-function makeWitch() {
+// witch.js: Io, the Witch, the heroine. Imported from reference/demos/night-square-shadow-wraith.html; three.js r128
+// (global THREE). Defines makeWitch(opts) only. Her look and motion are the original's (src/models/originals/witch.js),
+// checked pixel for pixel. This pass is technical only:
+// - the Model Build Spec interface on top of the old one: opts.detail, ACTIONS (with hit and cue times taken from the
+//   battle demo), anchor(), state, setFade() and a `rise` action to get up after `kneel`;
+// - fewer draw calls: parts that share a material are merged into one mesh, skinned to the bones they rode on, and the
+//   eyes, brows and trance wings are merged in place. Every part keeps its shape, material, physics and motion.
+function makeWitch(opts) {
+  opts = opts || {};
+  // detail 0.5 to 1 scales segment counts for slower phones; at 1 every count is the original's
+  const DET = Math.max(0.5, Math.min(1, opts.detail == null || !Number.isFinite(+opts.detail) ? 1 : +opts.detail));
+  const Q = (n, min) => (DET >= 1 ? n : Math.max(min || 3, Math.round(n * DET)));
   let hs = 90210;
   const hr = () => (hs = (hs * 16807) % 2147483647) / 2147483647;
   const cl = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -215,6 +225,24 @@ function makeWitch() {
     out.computeBoundingSphere();
     return out;
   }
+  // merges indexed geometries that carry the same attributes, whatever they are (skin indices and weights, vertex colors)
+  function mergeAll(list) {
+    const out = new THREE.BufferGeometry();
+    let nv = 0, ni = 0;
+    for (const g of list) { nv += g.attributes.position.count; ni += g.index.count; }
+    for (const k of Object.keys(list[0].attributes)) {
+      const a0 = list[0].attributes[k], A = new a0.array.constructor(nv * a0.itemSize);
+      let o = 0;
+      for (const g of list) { const a = g.attributes[k].array; A.set(a, o); o += a.length; }
+      out.setAttribute(k, new THREE.BufferAttribute(A, a0.itemSize));
+    }
+    const I = nv > 65535 ? new Uint32Array(ni) : new Uint16Array(ni);
+    let vo = 0, io = 0;
+    for (const g of list) { const a = g.index.array; for (let k = 0; k < a.length; k++) I[io + k] = a[k] + vo; io += a.length; vo += g.attributes.position.count; }
+    out.setIndex(new THREE.BufferAttribute(I, 1));
+    out.computeBoundingSphere();
+    return out;
+  }
   const skinned = [], skinCache = new Map();
   const skinMat = (m) => { let s = skinCache.get(m); if (!s) { s = m.clone(); s.skinning = true; skinCache.set(m, s); } return s; };
   function weights(geo, fn) {
@@ -228,29 +256,52 @@ function makeWitch() {
     geo.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4));
     geo.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4));
   }
+  // a copy of geo placed by position, rotation (or quaternion) and scale, as every part adds its pieces
+  function place(geo, p, rot, sc, quat) {
+    dummy.position.set(p ? p[0] : 0, p ? p[1] : 0, p ? p[2] : 0);
+    if (quat) dummy.quaternion.copy(quat); else dummy.rotation.set(rot ? rot[0] : 0, rot ? rot[1] : 0, rot ? rot[2] : 0);
+    if (sc === null || sc === undefined) dummy.scale.set(1, 1, 1);
+    else if (typeof sc === 'number') dummy.scale.set(sc, sc, sc);
+    else dummy.scale.set(sc[0], sc[1], sc[2]);
+    dummy.updateMatrix();
+    const g = geo.clone(); g.applyMatrix4(dummy.matrix);
+    return g;
+  }
+  // ---------- merging: one skinned mesh per material (built at bind) ----------
+  // Skinned parts pool their geometry by material. A rigid part riding on a bone, directly or through a group that
+  // never moves relative to it (STATIC), pools too when its material is in RIGID_POOL: it is skinned to that bone
+  // with full weight, so it moves exactly as before. Materials that differ only in texture repeat share one mesh
+  // through ALIAS: the UVs are rescaled by a factor that keeps the shader's UVs bit-identical.
+  const POOL = new Map(), STATIC = new Set();
+  const RIGID_POOL = new Set([M.skin, M.gold, M.boot, M.bootDark, M.silver, M.cord, M.nail, M.hair, M.hair2, M.hat, M.trimS]);
+  const ALIAS = new Map([[M.coat, [M.sleeve, 2.5, 2]], [M.trim, [M.trimS, 4, 1]], [M.sleeveLining, [M.lining, 1, 1]]]);
+  function boneOf(p) { while (p && !p.isBone) { if (!STATIC.has(p)) return null; p = p.parent; } return p || null; }
+  function poolAdd(mat, geo, rigid) {
+    const al = ALIAS.get(mat);
+    if (al) {
+      if (al[1] !== 1 || al[2] !== 1) { const uv = geo.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * al[1], uv.getY(i) * al[2]); }
+      mat = al[0];
+    }
+    let list = POOL.get(mat); if (!list) POOL.set(mat, (list = []));
+    list.push({ geo, rigid });
+  }
   function part(wfn) {
     const buckets = new Map();
     return {
       add(geo, mat, p, rot, sc, quat) {
-        dummy.position.set(p ? p[0] : 0, p ? p[1] : 0, p ? p[2] : 0);
-        if (quat) dummy.quaternion.copy(quat); else dummy.rotation.set(rot ? rot[0] : 0, rot ? rot[1] : 0, rot ? rot[2] : 0);
-        if (sc === null || sc === undefined) dummy.scale.set(1, 1, 1);
-        else if (typeof sc === 'number') dummy.scale.set(sc, sc, sc);
-        else dummy.scale.set(sc[0], sc[1], sc[2]);
-        dummy.updateMatrix();
-        const g = geo.clone(); g.applyMatrix4(dummy.matrix);
+        const g = place(geo, p, rot, sc, quat);
         let list = buckets.get(mat); if (!list) buckets.set(mat, (list = []));
         list.push(g);
         return this;
       },
       addWorld(geo, mat) { let list = buckets.get(mat); if (!list) buckets.set(mat, (list = [])); list.push(geo); return this; },
       build(parent, off) {
-        const out = [];
+        const out = [], bone = wfn ? null : boneOf(parent);
         for (const [mat, list] of buckets) {
           const geo = merge(list);
-          let m;
-          if (wfn) { weights(geo, wfn); m = new THREE.SkinnedMesh(geo, skinMat(mat)); m.frustumCulled = false; skinned.push(m); }
-          else m = new THREE.Mesh(geo, mat);
+          if (wfn) { weights(geo, wfn); poolAdd(mat, geo, null); continue; }
+          if (bone && RIGID_POOL.has(mat)) { poolAdd(mat, geo, { parent, off, bone }); continue; }
+          const m = new THREE.Mesh(geo, mat);
           if (off) m.position.set(-off[0], -off[1], -off[2]);
           if (mat.transparent) m.renderOrder = 2;
           parent.add(m); out.push(m);
@@ -431,31 +482,31 @@ function makeWitch() {
 
   // ---------- skinned body ----------
   const Tp = part(wTorso);
-  Tp.add(lathe([[0.118, 1.13], [0.126, 1.16], [0.13, 1.19], [0.12, 1.22], [0.098, 1.25], [0.07, 1.28], [0.05, 1.3]], 40, null, 0.78, undefined, undefined, 1.22), M.skin);
+  Tp.add(lathe([[0.118, 1.13], [0.126, 1.16], [0.13, 1.19], [0.12, 1.22], [0.098, 1.25], [0.07, 1.28], [0.05, 1.3]], Q(40, 16), null, 0.78, undefined, undefined, 1.22), M.skin);
   const bust = (r, y, a) => r + 0.016 * Math.exp(-(((y - 1.085) / 0.035) ** 2)) * Math.max(0, Math.cos(a)) ** 2;
-  Tp.add(lathe([[0.112, 0.86], [0.1, 0.9], [0.094, 0.95], [0.1, 1.0], [0.114, 1.04], [0.126, 1.08], [0.128, 1.11], [0.124, 1.14], [0.12, 1.165], [0.104, 1.17]], 48, bust, 0.82, undefined, undefined, 1.05), M.bodice);
+  Tp.add(lathe([[0.112, 0.86], [0.1, 0.9], [0.094, 0.95], [0.1, 1.0], [0.114, 1.04], [0.126, 1.08], [0.128, 1.11], [0.124, 1.14], [0.12, 1.165], [0.104, 1.17]], Q(48, 20), bust, 0.82, undefined, undefined, 1.05), M.bodice);
   Tp.build(root);
 
   const Sk = part(wSkirt);
-  Sk.add(lathe([[0.112, 0.876], [0.116, 0.884], [0.116, 0.912], [0.11, 0.921]], 48, null, 0.9), M.sash);
-  Sk.add(new THREE.SphereGeometry(1, 16, 12), M.sash, [0.012, 0.895, 0.104], null, [0.024, 0.02, 0.016]);
+  Sk.add(lathe([[0.112, 0.876], [0.116, 0.884], [0.116, 0.912], [0.11, 0.921]], Q(48, 20), null, 0.9), M.sash);
+  Sk.add(new THREE.SphereGeometry(1, Q(16, 8), Q(12, 6)), M.sash, [0.012, 0.895, 0.104], null, [0.024, 0.02, 0.016]);
   for (const s of [-1, 1]) {
     const pts = [[0.012 + 0.006 * s, 0.888, 0.112], [0.02 * s + 0.013, 0.82, 0.148], [0.03 * s + 0.014, 0.75, 0.166]];
-    Sk.add(strand(pts, 14, 6, (t) => 0.011 * (1 - 0.3 * t), 0.3, (c) => new THREE.Vector3(0, c.y, 0)), M.sash);
+    Sk.add(strand(pts, Q(14, 7), 6, (t) => 0.011 * (1 - 0.3 * t), 0.3, (c) => new THREE.Vector3(0, c.y, 0)), M.sash);
   }
   const ruff = (amp, n, y0, y1) => (r, y, a) => r + amp * sm(y0, y1, y) * (Math.sin(n * a + 0.5) + 0.35 * Math.sin(2 * n * a + 1.3));
   const SLIT = 0.42;
-  Sk.add(lathe([[0.14, 0.575], [0.212, 0.582], [0.2, 0.64], [0.176, 0.72], [0.148, 0.8], [0.124, 0.86], [0.108, 0.9]], 72, ruff(0.012, 12, 0.72, 0.6), 0.9), M.dress);
-  Sk.add(lathe([[0.2, 0.3], [0.274, 0.306], [0.262, 0.38], [0.242, 0.48], [0.216, 0.56], [0.19, 0.6], [0.162, 0.645]], 72, ruff(0.017, 11, 0.5, 0.32), 0.9, SLIT + 0.17, TAU - 0.34), M.dress);
-  Sk.add(lathe([[0.27, 0.05], [0.322, 0.056], [0.312, 0.12], [0.296, 0.22], [0.276, 0.3], [0.255, 0.34], [0.232, 0.372]], 80, ruff(0.02, 13, 0.25, 0.07), 0.9, SLIT + 0.24, TAU - 0.48), M.dress);
+  Sk.add(lathe([[0.14, 0.575], [0.212, 0.582], [0.2, 0.64], [0.176, 0.72], [0.148, 0.8], [0.124, 0.86], [0.108, 0.9]], Q(72, 52), ruff(0.012, 12, 0.72, 0.6), 0.9), M.dress);
+  Sk.add(lathe([[0.2, 0.3], [0.274, 0.306], [0.262, 0.38], [0.242, 0.48], [0.216, 0.56], [0.19, 0.6], [0.162, 0.645]], Q(72, 52), ruff(0.017, 11, 0.5, 0.32), 0.9, SLIT + 0.17, TAU - 0.34), M.dress);
+  Sk.add(lathe([[0.27, 0.05], [0.322, 0.056], [0.312, 0.12], [0.296, 0.22], [0.276, 0.3], [0.255, 0.34], [0.232, 0.372]], Q(80, 56), ruff(0.02, 13, 0.25, 0.07), 0.9, SLIT + 0.24, TAU - 0.48), M.dress);
   Sk.build(root);
 
   const Lg = part(wLeg);
-  for (const sd of [-1, 1]) Lg.add(lathe([[0.052, 0.39], [0.057, 0.44], [0.061, 0.5], [0.068, 0.58], [0.074, 0.66], [0.08, 0.74], [0.084, 0.8], [0.08, 0.86]], 24, null, 0.95), M.skin, [0.075 * sd, 0, 0]);
+  for (const sd of [-1, 1]) Lg.add(lathe([[0.052, 0.39], [0.057, 0.44], [0.061, 0.5], [0.068, 0.58], [0.074, 0.66], [0.08, 0.74], [0.084, 0.8], [0.08, 0.86]], Q(24, 12), null, 0.95), M.skin, [0.075 * sd, 0, 0]);
   Lg.build(root);
 
   const Ar = part(wArm);
-  for (const sd of [-1, 1]) Ar.add(lathe([[0.027, 0.735], [0.029, 0.76], [0.033, 0.82], [0.036, 0.88], [0.037, 0.94], [0.035, 0.965], [0.039, 1.0], [0.043, 1.08], [0.045, 1.15], [0.044, 1.2], [0.034, 1.235], [0.0, 1.248]], 20, null, 0.92), M.skin, [0.155 * sd, 0, 0]);
+  for (const sd of [-1, 1]) Ar.add(lathe([[0.027, 0.735], [0.029, 0.76], [0.033, 0.82], [0.036, 0.88], [0.037, 0.94], [0.035, 0.965], [0.039, 1.0], [0.043, 1.08], [0.045, 1.15], [0.044, 1.2], [0.034, 1.235], [0.0, 1.248]], Q(20, 10), null, 0.92), M.skin, [0.155 * sd, 0, 0]);
   Ar.build(root);
 
   // ---------- the cloak: open front, handkerchief-point hem, folds, gold-stitched trim ----------
@@ -472,12 +523,12 @@ function makeWitch() {
     o[0] = r * Math.sin(a) * xs; o[1] = y; o[2] = r * Math.cos(a) * zs;
   }
   const Co = part(wCoat);
-  const coatG = sheet(128, 44, (u, v, o) => coatPt(u, v, o, 0));
+  const coatG = sheet(Q(128, 64), Q(44, 22), (u, v, o) => coatPt(u, v, o, 0));
   Co.addWorld(coatG, M.coat); Co.addWorld(coatG.clone(), M.lining);
-  Co.addWorld(sheet(128, 2, (u, v, o) => coatPt(u, 0.968 + v * 0.032, o, 0.003)), M.trim);
-  Co.addWorld(sheet(2, 44, (u, v, o) => coatPt(u * 0.012, v, o, 0.003), true), M.trimS);
-  Co.addWorld(sheet(2, 44, (u, v, o) => coatPt(0.988 + u * 0.012, v, o, 0.003), true), M.trimS);
-  Co.addWorld(sheet(128, 2, (u, v, o) => coatPt(u, v * 0.03, o, 0.003)), M.trimS);
+  Co.addWorld(sheet(Q(128, 64), 2, (u, v, o) => coatPt(u, 0.968 + v * 0.032, o, 0.003)), M.trim);
+  Co.addWorld(sheet(2, Q(44, 22), (u, v, o) => coatPt(u * 0.012, v, o, 0.003), true), M.trimS);
+  Co.addWorld(sheet(2, Q(44, 22), (u, v, o) => coatPt(0.988 + u * 0.012, v, o, 0.003), true), M.trimS);
+  Co.addWorld(sheet(Q(128, 64), 2, (u, v, o) => coatPt(u, v * 0.03, o, 0.003)), M.trimS);
   Co.build(root);
 
   function sleevePt(sd) {
@@ -492,42 +543,42 @@ function makeWitch() {
   }
   const Sl = part(wArm);
   for (const sd of [-1, 1]) {
-    const f = sleevePt(sd), g = sheet(40, 20, (u, v, o) => f(u, v, o, 0));
+    const f = sleevePt(sd), g = sheet(Q(40, 24), Q(20, 10), (u, v, o) => f(u, v, o, 0));
     Sl.addWorld(g, M.sleeve); Sl.addWorld(g.clone(), M.sleeveLining);
-    Sl.addWorld(sheet(40, 2, (u, v, o) => f(u, 0.955 + v * 0.045, o, 0.003)), M.trimS);
+    Sl.addWorld(sheet(Q(40, 24), 2, (u, v, o) => f(u, 0.955 + v * 0.045, o, 0.003)), M.trimS);
   }
   Sl.build(root);
 
   // hood lying down at the back of the neck
   const chB = bw(chest), Hood = part();
-  Hood.add(new THREE.SphereGeometry(1, 24, 14), M.coat, [0, 1.175, -0.1], null, [0.13, 0.055, 0.05]);
-  Hood.add(new THREE.TorusGeometry(0.12, 0.006, 6, 30, Math.PI), M.trimS, [0, 1.2, -0.11], [Math.PI / 2 + 0.25, 0, Math.PI], [1, 0.42, 1]);
+  Hood.add(new THREE.SphereGeometry(1, Q(24, 12), Q(14, 8)), M.coat, [0, 1.175, -0.1], null, [0.13, 0.055, 0.05]);
+  Hood.add(new THREE.TorusGeometry(0.12, 0.006, 6, Q(30, 16), Math.PI), M.trimS, [0, 1.2, -0.11], [Math.PI / 2 + 0.25, 0, Math.PI], [1, 0.42, 1]);
   Hood.build(chest, chB);
 
   // ---------- knee-high boots with buckle straps and a crescent anklet ----------
   for (let i = 0; i < 2; i++) {
     const sd = i === 0 ? -1 : 1;
     const Bs = part();
-    Bs.add(lathe([[0.046, -0.345], [0.049, -0.3], [0.052, -0.22], [0.056, -0.12], [0.059, -0.05], [0.066, -0.02], [0.068, -0.004], [0.062, 0.0]], 24, null, 0.95), M.boot);
+    Bs.add(lathe([[0.046, -0.345], [0.049, -0.3], [0.052, -0.22], [0.056, -0.12], [0.059, -0.05], [0.066, -0.02], [0.068, -0.004], [0.062, 0.0]], Q(24, 12), null, 0.95), M.boot);
     for (const y of [-0.27, -0.13]) {
-      Bs.add(new THREE.TorusGeometry(0.052 + (y + 0.34) * 0.03, 0.0062, 6, 28), M.bootDark, [0, y, 0], [Math.PI / 2, 0, 0], [1, 0.95, 1]);
+      Bs.add(new THREE.TorusGeometry(0.052 + (y + 0.34) * 0.03, 0.0062, 6, Q(28, 14)), M.bootDark, [0, y, 0], [Math.PI / 2, 0, 0], [1, 0.95, 1]);
       Bs.add(new THREE.BoxGeometry(0.008, 0.022, 0.02), M.gold, [sd * 0.057, y, 0.004]);
       Bs.add(new THREE.BoxGeometry(0.009, 0.012, 0.012), M.bootDark, [sd * 0.06, y, 0.004]);
     }
     Bs.build(knees[i]);
     const Ft = part();
-    Ft.add(new THREE.SphereGeometry(1, 20, 14), M.boot, [0, -0.036, 0.04], null, [0.047, 0.042, 0.1]);
-    Ft.add(new THREE.SphereGeometry(1, 16, 12), M.boot, [0, -0.048, 0.1], null, [0.04, 0.032, 0.05]);
-    Ft.add(new THREE.CylinderGeometry(1, 1, 1, 20), M.bootDark, [0, -0.082, 0.042], null, [0.05, 0.014, 0.115]);
+    Ft.add(new THREE.SphereGeometry(1, Q(20, 10), Q(14, 8)), M.boot, [0, -0.036, 0.04], null, [0.047, 0.042, 0.1]);
+    Ft.add(new THREE.SphereGeometry(1, Q(16, 8), Q(12, 6)), M.boot, [0, -0.048, 0.1], null, [0.04, 0.032, 0.05]);
+    Ft.add(new THREE.CylinderGeometry(1, 1, 1, Q(20, 10)), M.bootDark, [0, -0.082, 0.042], null, [0.05, 0.014, 0.115]);
     Ft.add(new THREE.BoxGeometry(0.042, 0.05, 0.04), M.bootDark, [0, -0.07, -0.035]);
-    Ft.add(new THREE.TorusGeometry(0.05, 0.0028, 5, 28), M.gold, [0, 0.0, 0.002], [Math.PI / 2 - 0.1, 0, 0]);
+    Ft.add(new THREE.TorusGeometry(0.05, 0.0028, 5, Q(28, 14)), M.gold, [0, 0.0, 0.002], [Math.PI / 2 - 0.1, 0, 0]);
     Ft.add(new THREE.TorusGeometry(0.009, 0.0026, 5, 12, Math.PI * 1.3), M.gold, [sd * 0.034, -0.014, 0.037], [0, sd * 0.8, Math.PI * 1.35]);
     Ft.build(ankles[i]);
   }
 
   // ---------- hands: slender two-jointed fingers with dark polish ----------
   function hand(P, sd, cup) {
-    P.add(new THREE.SphereGeometry(1, 16, 12), M.skin, [0, -0.028, 0.002], null, [0.016, 0.03, 0.03]);
+    P.add(new THREE.SphereGeometry(1, Q(16, 8), Q(12, 6)), M.skin, [0, -0.028, 0.002], null, [0.016, 0.03, 0.03]);
     const zs = [0.016, 0.005, -0.006, -0.016], L1 = [0.019, 0.021, 0.02, 0.016], L2 = [0.017, 0.019, 0.018, 0.015];
     for (let f = 0; f < 4; f++) {
       const a1 = cup ? 0.35 + f * 0.06 : 1.25 + f * 0.05, a2 = a1 + (cup ? 0.45 : 1.45);
@@ -552,7 +603,7 @@ function makeWitch() {
   Br.build(elbows[1]);
 
   // ---------- the dagger (right hand) ----------
-  const dagger = new THREE.Group(); dagger.position.set(0.018, -0.048, 0.004); dagger.rotation.set(-0.25, 0, 0); wrists[0].add(dagger);
+  const dagger = new THREE.Group(); dagger.position.set(0.018, -0.048, 0.004); dagger.rotation.set(-0.25, 0, 0); wrists[0].add(dagger); STATIC.add(dagger);
   const Dg = part();
   Dg.add(new THREE.CylinderGeometry(0.0105, 0.0115, 0.085, 12), M.handle, [0, 0, 0], [Math.PI / 2, 0, 0]);
   for (const z of [-0.03, -0.01, 0.01, 0.03]) Dg.add(new THREE.TorusGeometry(0.0113, 0.0017, 4, 14), M.gold, [0, 0, z]);
@@ -595,7 +646,7 @@ function makeWitch() {
   // ---------- necklace: black cord, gold crescent and cross ----------
   const Nl = part();
   const cord = new THREE.CatmullRomCurve3([[0, 1.275, -0.075], [0.066, 1.268, -0.03], [0.078, 1.245, 0.04], [0.046, 1.2, 0.1], [0, 1.162, 0.123], [-0.046, 1.2, 0.1], [-0.078, 1.245, 0.04], [-0.066, 1.268, -0.03]].map((p) => new THREE.Vector3(p[0], p[1], p[2])), true);
-  Nl.add(new THREE.TubeGeometry(cord, 64, 0.0024, 5, true), M.cord);
+  Nl.add(new THREE.TubeGeometry(cord, Q(64, 32), 0.0024, 5, true), M.cord);
   Nl.add(new THREE.TorusGeometry(0.004, 0.0015, 4, 10), M.gold, [0, 1.157, 0.126]);
   Nl.add(new THREE.TorusGeometry(0.017, 0.0042, 6, 18, Math.PI).rotateZ(Math.PI), M.gold, [0, 1.145, 0.128]);
   Nl.add(new THREE.BoxGeometry(0.0042, 0.03, 0.003), M.gold, [0, 1.108, 0.13]);
@@ -606,7 +657,7 @@ function makeWitch() {
   const Nk = part();
   Nk.add(new THREE.CylinderGeometry(0.041, 0.047, 0.14, 16), M.skin, [0, 1.3, -0.005]);
   Nk.build(neck, bw(neck));
-  const head = new THREE.Group(); headB.add(head);
+  const head = new THREE.Group(); headB.add(head); STATIC.add(head);
   const HR = 0.15, HS = [1.0, 1.06, 0.97];
   const headPt = (az, el, k) => [HR * HS[0] * Math.sin(az) * Math.cos(el) * k, HR * HS[1] * Math.sin(el) * k, HR * HS[2] * Math.cos(az) * Math.cos(el) * k];
   function jaw(x, y, z) {
@@ -621,10 +672,13 @@ function makeWitch() {
     _bm.makeBasis(_bx, _by, _bz);
     return { p: [p[0] + _bz.x * off, p[1] + _bz.y * off, p[2] + _bz.z * off], q: new THREE.Quaternion().setFromRotationMatrix(_bm) };
   }
-  const hg = new THREE.SphereGeometry(1, 44, 32), hpos = hg.attributes.position;
+  const hg = new THREE.SphereGeometry(1, Q(44, 24), Q(32, 16)), hpos = hg.attributes.position;
   for (let i = 0; i < hpos.count; i++) { const p = jaw(hpos.getX(i), hpos.getY(i), hpos.getZ(i)); hpos.setXYZ(i, p[0], p[1], p[2]); }
   hg.computeVertexNormals();
   const headC = new THREE.Vector3(0, 0, 0);
+  // brows and lower lashes share a roughness, so they are one mesh that carries their two colors per vertex
+  const colorize = (g, c) => { const n = g.attributes.position.count, a = new Float32Array(n * 3); for (let i = 0; i < n; i++) { a[i * 3] = c.r; a[i * 3 + 1] = c.g; a[i * 3 + 2] = c.b; } g.setAttribute('color', new THREE.BufferAttribute(a, 3)); return g; };
+  const darkG = [];
   const Hd = part();
   Hd.addWorld(hg, M.skin);
   for (const sd of [-1, 1]) {
@@ -632,7 +686,7 @@ function makeWitch() {
     Hd.add(strand([b0, b1, b2], 12, 10, (t) => 0.017 * Math.pow(1 - t, 0.7) + 0.0015, 0.42, () => headC), M.skin);
     Hd.add(strand([headPt(sd * 1.5, -0.1, 0.985), [sd * 0.16, -0.002, -0.02], [sd * 0.168, 0.035, -0.038]], 10, 8, (t) => 0.011 * Math.pow(1 - t, 0.8), 0.35, () => headC), M.skinShade);
     const fb = frameAt(sd * 0.31, 0.2, 0.0015);
-    Hd.add(new THREE.TorusGeometry(0.033, 0.0036, 5, 14, Math.PI * 0.42).rotateZ(Math.PI * 0.29), M.brow, fb.p, null, [1, 0.55, 1], qz(fb.q, -sd * 0.08));
+    darkG.push(colorize(place(new THREE.TorusGeometry(0.033, 0.0036, 5, 14, Math.PI * 0.42).rotateZ(Math.PI * 0.29), fb.p, null, [1, 0.55, 1], qz(fb.q, -sd * 0.08)), M.brow.color));
   }
   { const f = frameAt(0, -0.24, -0.002); Hd.add(new THREE.SphereGeometry(1, 12, 10), M.skinShade, f.p, null, [0.009, 0.007, 0.008], f.q); }
   { const f = frameAt(0, -0.42, 0.0005); Hd.add(new THREE.TorusGeometry(0.017, 0.003, 6, 16, Math.PI * 0.62).rotateZ(Math.PI * 1.19), M.lip, f.p, null, null, f.q); }
@@ -642,29 +696,27 @@ function makeWitch() {
   for (const sd of [-1, 1]) { const f = frameAt(sd * 0.56, -0.3, 0.003); Bl.add(new THREE.CircleGeometry(1, 20), M.blush, f.p, null, [0.026, 0.015, 1], f.q); }
   Bl.build(head);
 
-  // eyes: shaded whites, a textured iris that looks around, fixed highlights, real lids for blinking
+  // eyes: shaded whites, a textured iris that looks around, fixed highlights, real lids for blinking.
+  // The pieces that never move within an eye are placed in head space and shared by both eyes: one mesh for the
+  // whites, one for the irises (their rings are rewritten whenever the gaze moves, as before), one for the
+  // highlights (its draw range leaves out a closed eye's), and the lower lashes join the brows. Lids and upper
+  // lashes still move per eye.
   const SX = 0.03, SY = 0.036, SZ = 0.0078;
   const zS = (x, y) => SZ * Math.sqrt(Math.max(0, 1 - (x / SX) ** 2 - (y / SY) ** 2));
-  const eyes = [];
+  const eyes = [], whiteG = [], shineG = [], irisE = [];
   for (const sd of [-1, 1]) {
     const f = frameAt(sd * 0.34, -0.07, -0.003);
-    const eg = new THREE.Group(); eg.position.set(f.p[0], f.p[1], f.p[2]); eg.quaternion.copy(f.q); head.add(eg);
+    const eg = new THREE.Group(); eg.position.set(f.p[0], f.p[1], f.p[2]); eg.quaternion.copy(f.q); head.add(eg); eg.updateMatrix();
     const sg = new THREE.SphereGeometry(1, 24, 16); sg.scale(SX, SY, SZ);
     const spos = sg.attributes.position, col = new Float32Array(spos.count * 3);
     for (let i = 0; i < spos.count; i++) { const y = spos.getY(i), k = 1 - 0.32 * sm(0.006, 0.034, y) - 0.06 * sm(-0.018, -0.036, y); col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = k; }
     sg.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    eg.add(new THREE.Mesh(sg, M.eyeW));
+    whiteG.push(sg.applyMatrix4(eg.matrix));
     const ig = new THREE.RingGeometry(0, 1, 32, 5), ip = ig.attributes.position, base = new Float32Array(ip.count * 2);
     for (let i = 0; i < ip.count; i++) { base[i * 2] = ip.getX(i) * 0.0215; base[i * 2 + 1] = ip.getY(i) * 0.028; }
-    const iris = new THREE.Mesh(ig, M.iris); eg.add(iris);
-    const hl = new THREE.Group(); eg.add(hl);
-    const HL = part();
-    HL.add(new THREE.SphereGeometry(0.0062, 10, 8), M.shine, [-0.0075, 0.0085, 0.0098]);
-    HL.add(new THREE.SphereGeometry(0.0033, 8, 6), M.shine, [0.007, -0.0135, 0.0092]);
-    HL.build(hl);
-    const LL = part();
-    LL.add(new THREE.TorusGeometry(0.0285, 0.0016, 4, 16, Math.PI * 0.5).rotateZ(Math.PI * 1.25), M.lashLow, [0, -0.002, 0.004], null, [1.02, 1.2, 1]);
-    LL.build(eg);
+    irisE.push({ ig, base, n: ip.count, m: eg.matrix.clone(), q: eg.quaternion.clone() });
+    shineG.push(merge([place(new THREE.SphereGeometry(0.0062, 10, 8), [-0.0075, 0.0085, 0.0098]), place(new THREE.SphereGeometry(0.0033, 8, 6), [0.007, -0.0135, 0.0092])]).applyMatrix4(eg.matrix));
+    darkG.push(colorize(place(new THREE.TorusGeometry(0.0285, 0.0016, 4, 16, Math.PI * 0.5).rotateZ(Math.PI * 1.25), [0, -0.002, 0.004], null, [1.02, 1.2, 1]).applyMatrix4(eg.matrix), M.lashLow.color));
     const dome = new THREE.SphereGeometry(1, 24, 8, 0, TAU, 0, Math.PI / 2); dome.rotateX(Math.PI / 2);
     const lid = new THREE.Group(); lid.position.set(0, 0.038, 0); eg.add(lid);
     const LD = part(); LD.add(dome, M.skin, [0, -0.038, 0], null, [0.0325, 0.038, 0.0105]); LD.build(lid);
@@ -677,18 +729,35 @@ function makeWitch() {
     LS.add(new THREE.ConeGeometry(0.0034, 0.015, 6), M.lash, [sd * 0.036, -0.011, 0.004], [0, 0, -sd * 1.45]);
     LS.build(lash);
     lid.visible = low.visible = false;
-    eyes.push({ iris, ip, ig, base, hl, lid, low, lash, ox: 9, oy: 9 });
+    eyes.push({ lid, low, lash });
   }
-  function setIris(e, ox, oy) {
-    if (Math.abs(ox - e.ox) < 1e-4 && Math.abs(oy - e.oy) < 1e-4) return;
-    e.ox = ox; e.oy = oy; e.iris.position.set(ox, oy, 0);
-    const nrm = e.ig.attributes.normal;
-    for (let i = 0; i < e.ip.count; i++) {
-      const x = e.base[i * 2], y = e.base[i * 2 + 1], X = x + ox, Y = y + oy, Z = zS(X, Y);
-      e.ip.setXYZ(i, x, y, Z + 0.0005);
-      _v.set(X / (SX * SX), Y / (SY * SY), Z / (SZ * SZ) + 1e-3).normalize(); nrm.setXYZ(i, _v.x, _v.y, _v.z);
+  head.add(new THREE.Mesh(mergeAll(whiteG), M.eyeW));
+  head.add(new THREE.Mesh(mergeAll(darkG), std(0xffffff, 0.7, { vertexColors: true }))); // = M.brow and M.lashLow, per vertex
+  const irisG = mergeAll(irisE.map((e) => e.ig)), irisMesh = new THREE.Mesh(irisG, M.iris);
+  irisMesh.frustumCulled = false; head.add(irisMesh);
+  const shineGeo = merge(shineG), SH0 = shineG[0].index.count, SH1 = shineG[1].index.count, shineMesh = new THREE.Mesh(shineGeo, M.shine);
+  head.add(shineMesh);
+  const IR = { ox: 9, oy: 9 };
+  function setIris(ox, oy) {
+    if (Math.abs(ox - IR.ox) < 1e-4 && Math.abs(oy - IR.oy) < 1e-4) return;
+    IR.ox = ox; IR.oy = oy;
+    const pos = irisG.attributes.position, nrm = irisG.attributes.normal;
+    let o = 0;
+    for (const e of irisE) {
+      for (let i = 0; i < e.n; i++) {
+        const x = e.base[i * 2], y = e.base[i * 2 + 1], X = x + ox, Y = y + oy, Z = zS(X, Y);
+        _v.set(X, Y, Z + 0.0005).applyMatrix4(e.m); pos.setXYZ(o + i, _v.x, _v.y, _v.z);
+        _v.set(X / (SX * SX), Y / (SY * SY), Z / (SZ * SZ) + 1e-3).normalize().applyQuaternion(e.q); nrm.setXYZ(o + i, _v.x, _v.y, _v.z);
+      }
+      o += e.n;
     }
-    e.ip.needsUpdate = true; nrm.needsUpdate = true; e.ig.computeBoundingSphere();
+    pos.needsUpdate = true; nrm.needsUpdate = true;
+  }
+  setIris(0, 0); IR.ox = IR.oy = 9; // a sensible ring until the first frame sets the real gaze
+  // highlights show for each open eye; the right eye (drawn first) is never more closed than the left
+  function setShine(v0, v1) {
+    shineMesh.visible = v0 || v1;
+    shineGeo.setDrawRange(v0 ? 0 : SH0, (v0 ? SH0 : 0) + (v1 ? SH1 : 0));
   }
 
   // round glasses
@@ -710,7 +779,7 @@ function makeWitch() {
   // ---------- hair: scalp, bangs and crown (rigid); side locks and a long wavy ponytail (skinned, physics-driven) ----------
   const lockMat = () => (hr() < 0.62 ? M.hair : M.hair2);
   const Hc = part();
-  const capG = new THREE.SphereGeometry(1, 48, 24, 0, TAU, 0, Math.PI * 0.56); capG.rotateX(-0.45);
+  const capG = new THREE.SphereGeometry(1, Q(48, 24), Q(24, 12), 0, TAU, 0, Math.PI * 0.56); capG.rotateX(-0.45);
   Hc.add(capG, M.cap, [0, 0.003, -0.004], null, [HR * HS[0] * 1.05, HR * HS[1] * 1.05, HR * HS[2] * 1.06]);
   function wavy(pts, amp, freq, ph, cen, n) {
     const cv = new THREE.CatmullRomCurve3(pts.map((p) => new THREE.Vector3(p[0], p[1], p[2])));
@@ -728,13 +797,13 @@ function makeWitch() {
     const az = -0.88 + i * (1.76 / 11) + (hr() - 0.5) * 0.05, side = az > PART ? 1 : -1;
     const endEl = 0.12 + hr() * 0.13 - (Math.abs(az) > 0.62 ? 0.32 : 0);
     const p0 = headPt(PART + (az - PART) * 0.3, 1.2, 0.97), p1 = headPt(az + side * 0.08, 0.62, 1.13), p2 = headPt(az + side * 0.17, endEl, 1.11);
-    Hc.add(strand(wavy([p0, p1, p2], 0.009, 7, hr() * 6, () => headC, 10), 22, 7, (t) => 0.021 * Math.pow(1 - t, 0.7) + 0.0015, 0.5, () => headC), lockMat());
+    Hc.add(strand(wavy([p0, p1, p2], 0.009, 7, hr() * 6, () => headC, 10), Q(22, 11), Q(7, 5), (t) => 0.021 * Math.pow(1 - t, 0.7) + 0.0015, 0.5, () => headC), lockMat());
   }
   const tie = [0, -0.085, -0.14];
   for (let i = 0; i < 13; i++) {
     const az = Math.PI / 2 + 0.15 + i * ((Math.PI - 0.3) / 12);
     const p0 = headPt(az, 1.32, 0.97), p1 = headPt(az, 0.55, 1.13), p2 = [tie[0] + Math.sin(az) * 0.025, tie[1] + 0.02, tie[2] + 0.012];
-    Hc.add(strand([p0, p1, p2], 20, 7, (t) => 0.032 * (1 - 0.5 * t), 0.42, () => headC), lockMat());
+    Hc.add(strand([p0, p1, p2], Q(20, 10), Q(7, 5), (t) => 0.032 * (1 - 0.5 * t), 0.42, () => headC), lockMat());
   }
   Hc.build(head);
   const hb = bw(headB), Wd = (p) => [p[0] + hb[0], p[1] + hb[1], p[2] + hb[2]];
@@ -745,7 +814,7 @@ function makeWitch() {
       const az = sd * (0.72 + k * 0.16);
       const p0 = headPt(az, 0.72, 0.99), p1 = headPt(az, 0.15, 1.2), p2 = headPt(az - sd * 0.02, -0.45, 1.3 + k * 0.02);
       const p3 = [p2[0] + sd * (0.02 + k * 0.006), p2[1] - 0.1 - hr() * 0.04, p2[2] - 0.02 - k * 0.008];
-      Hs.add(strand(wavy([p0, p1, p2, p3].map(Wd), 0.016, 9, hr() * 6, () => sideCen, 12), 30, 7, (t) => 0.024 * Math.pow(1 - t, 0.55) + 0.002, 0.5, () => sideCen), lockMat());
+      Hs.add(strand(wavy([p0, p1, p2, p3].map(Wd), 0.016, 9, hr() * 6, () => sideCen, 12), Q(30, 14), Q(7, 5), (t) => 0.024 * Math.pow(1 - t, 0.55) + 0.002, 0.5, () => sideCen), lockMat());
     }
   }
   for (let i = 0; i < 28; i++) {
@@ -757,7 +826,7 @@ function makeWitch() {
       const z = -0.15 - 0.045 * Math.sin(s * 2.4) - 0.07 * s * s + 0.012 * Math.cos(s * 9 + ph) * s - Math.abs(fx) * 0.03 * s;
       pts.push(Wd([x, y, z]));
     }
-    Hs.add(strand(pts, 30, 7, (t) => (0.02 + 0.006 * Math.cos(i)) * Math.pow(1 - t, 0.55) + 0.0025, 0.45, (cc) => new THREE.Vector3(0, cc.y, 0.03)), lockMat());
+    Hs.add(strand(pts, Q(30, 14), Q(7, 5), (t) => (0.02 + 0.006 * Math.cos(i)) * Math.pow(1 - t, 0.55) + 0.0025, 0.45, (cc) => new THREE.Vector3(0, cc.y, 0.03)), lockMat());
   }
   Hs.build(root);
   const Sc = part(), scG = new THREE.TorusGeometry(0.028, 0.013, 10, 22), scP = scG.attributes.position;
@@ -777,13 +846,13 @@ function makeWitch() {
     o[0] = r * Math.sin(a); o[2] = r * Math.cos(a) * 0.97;
     o[1] = -0.028 * Math.pow(e, 1.7) + 0.013 * Math.sin(3 * a + 1) * Math.pow(e, 1.2) - 0.012 * Math.max(0, Math.cos(a)) * e + (dy || 0);
   };
-  HatP.addWorld(sheet(96, 10, (u, v, o) => brimPt(u, v, o)), M.hat);
+  HatP.addWorld(sheet(Q(96, 48), Q(10, 5), (u, v, o) => brimPt(u, v, o)), M.hat);
   const edge = []; for (let k = 0; k < 96; k++) { const o = [0, 0, 0]; brimPt(k / 96, 1, o); edge.push(new THREE.Vector3(o[0], o[1], o[2])); }
-  HatP.add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(edge, true), 120, 0.0045, 6, true), M.hat);
+  HatP.add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(edge, true), Q(120, 60), 0.0045, 6, true), M.hat);
   HatP.add(lathe([[0.13, -0.008], [0.136, 0.0], [0.138, 0.022], [0.135, 0.046], [0.127, 0.054]], 64, (r, y, a) => r + (y < 0.008 ? 0.004 * Math.sin(36 * a) : 0), 1), M.hatBand);
   for (const sd of [-1, 1]) {
     const pts = [[sd * 0.122, 0.028, 0.0], [sd * 0.185, 0.04, -0.03], [sd * 0.228, 0.085, -0.045], [sd * 0.22, 0.132, -0.02], [sd * 0.185, 0.128, 0.012], [sd * 0.172, 0.1, 0.02]];
-    HatP.add(strand(pts, 40, 12, (t) => 0.03 * (1 - t * 0.8), 1, null), M.horn);
+    HatP.add(strand(pts, Q(40, 20), Q(12, 8), (t) => 0.03 * (1 - t * 0.8), 1, null), M.horn);
   }
   const chainPt = (s) => { const ang = s * 1.2; return [0.142 * Math.sin(ang), 0.062 - 0.03 * (1 - s * s), 0.142 * Math.cos(ang) * 0.97]; };
   for (let k = 0; k <= 34; k++) { const s = -1 + k / 17; HatP.add(new THREE.TorusGeometry(0.0052, 0.0014, 4, 8), M.silver, chainPt(s), [k % 2 ? Math.PI / 2 : 0, s * 1.2, 0]); }
@@ -797,7 +866,7 @@ function makeWitch() {
   HatP.add(new THREE.BoxGeometry(0.026, 0.0045, 0.003), M.gold, [0, 0.088, 0.133], [-0.12, 0, 0]);
   HatP.add(new THREE.BoxGeometry(0.0055, 0.075, 0.0035), M.gold, [0, 0.03, 0.14], [-0.12, 0, 0]);
   HatP.build(hatB);
-  const crownG = strand([[0, -0.012, 0], [0, 0.1, -0.004], [0.004, 0.2, -0.025], [-0.02, 0.29, -0.055], [-0.075, 0.36, -0.08], [-0.14, 0.385, -0.07], [-0.185, 0.36, -0.045]], 40, 28,
+  const crownG = strand([[0, -0.012, 0], [0, 0.1, -0.004], [0.004, 0.2, -0.025], [-0.02, 0.29, -0.055], [-0.075, 0.36, -0.08], [-0.14, 0.385, -0.07], [-0.185, 0.36, -0.045]], Q(40, 20), Q(28, 14),
     (t) => (0.127 * Math.pow(1 - t, 0.85) + 0.004) * (1 + 0.05 * Math.sin(t * 25 + 1.3)), 1, null);
   crownG.applyMatrix4(hatB.matrixWorld);
   const hatY = bw(hatB)[1];
@@ -809,8 +878,26 @@ function makeWitch() {
   Cr.addWorld(crownG, M.hat);
   Cr.build(root);
 
-  // ---------- bind ----------
+  // ---------- bind: one skinned mesh per pooled material ----------
   root.updateMatrixWorld(true);
+  const _pm = new THREE.Matrix4(), _po = new THREE.Matrix4();
+  for (const [mat, list] of POOL) {
+    const geos = list.map(({ geo, rigid }) => {
+      if (rigid) {
+        // a rigid piece goes into bind space and follows its bone at full weight, exactly as when it was parented to it
+        _pm.copy(rigid.parent.matrixWorld);
+        if (rigid.off) _pm.multiply(_po.makeTranslation(-rigid.off[0], -rigid.off[1], -rigid.off[2]));
+        geo.applyMatrix4(_pm);
+        const n = geo.attributes.position.count, si = new Uint16Array(n * 4), sw = new Float32Array(n * 4), b = bones.indexOf(rigid.bone);
+        for (let i = 0; i < n; i++) { si[i * 4] = b; sw[i * 4] = 1; }
+        geo.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4));
+        geo.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4));
+      }
+      return geo;
+    });
+    const m = new THREE.SkinnedMesh(geos.length > 1 ? mergeAll(geos) : geos[0], skinMat(mat));
+    m.frustumCulled = false; root.add(m); skinned.push(m);
+  }
   const skeleton = new THREE.Skeleton(bones);
   for (const m of skinned) m.bind(skeleton);
   const glowMats = [];
@@ -928,17 +1015,32 @@ function makeWitch() {
   const gwm = (cnv) => new THREE.MeshBasicMaterial({ map: ctex(cnv), color: 0xdcecff, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
   const gwMF = gwm(ghostWing(false)), gwMH = gwm(ghostWing(true));
   const tWing = new THREE.Group(); tWing.position.set(0, 0.1, -0.18); chest.add(tWing); tWing.visible = false;
-  const tSides = [];
+  // Both fore wings are one mesh and both hind wings another. Their corners are placed each frame (in trance only)
+  // through the same side, fore and hind joints as before; the wings are unlit, so only the corners matter.
+  const tSides = [], FORE = new THREE.PlaneGeometry(0.95, 0.95), HIND = new THREE.PlaneGeometry(0.8, 1.2);
+  const foreGeo = merge([FORE, FORE]), hindGeo = merge([HIND, HIND]);
+  for (const [geo, mat] of [[foreGeo, gwMF], [hindGeo, gwMH]]) { const w = new THREE.Mesh(geo, mat); w.renderOrder = 6; w.frustumCulled = false; tWing.add(w); }
   for (const sd of [-1, 1]) {
-    const side = new THREE.Group(); side.scale.x = sd; tWing.add(side);
-    const fo = new THREE.Group(); fo.rotation.z = 0.2; side.add(fo);
-    const f = new THREE.Mesh(new THREE.PlaneGeometry(0.95, 0.95), gwMF); f.position.set(0.445, 0.08, 0); f.renderOrder = 6; fo.add(f);
-    const hi = new THREE.Group(); hi.position.set(0, -0.07, -0.01); hi.rotation.z = -0.25; side.add(hi);
-    const h = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 1.2), gwMH); h.position.set(0.375, -0.538, 0); h.renderOrder = 6; hi.add(h);
+    const side = new THREE.Object3D(); side.scale.x = sd;
+    const fo = new THREE.Object3D(); fo.rotation.z = 0.2;
+    const hi = new THREE.Object3D(); hi.position.set(0, -0.07, -0.01); hi.rotation.z = -0.25; hi.updateMatrix();
     tSides.push({ side, fo, hi, sd });
   }
+  const _wm = new THREE.Matrix4(), _wt = new THREE.Matrix4();
+  function wingCorners(geo, k, base, m) {
+    const pos = geo.attributes.position, b = base.attributes.position;
+    for (let i = 0; i < 4; i++) { _v.fromBufferAttribute(b, i).applyMatrix4(m); pos.setXYZ(k * 4 + i, _v.x, _v.y, _v.z); }
+    pos.needsUpdate = true;
+  }
+  function placeWings() {
+    tSides.forEach((s, k) => {
+      s.side.updateMatrix(); s.fo.updateMatrix();
+      wingCorners(foreGeo, k, FORE, _wm.multiplyMatrices(s.side.matrix, s.fo.matrix).multiply(_wt.makeTranslation(0.445, 0.08, 0)));
+      wingCorners(hindGeo, k, HIND, _wm.multiplyMatrices(s.side.matrix, s.hi.matrix).multiply(_wt.makeTranslation(0.375, -0.538, 0)));
+    });
+  }
   const tAura = new THREE.Sprite(new THREE.SpriteMaterial({ map: ctex((() => { const c = cvs(256, 256), g = c.getContext('2d'); g.shadowColor = '#cfe0ff'; g.shadowBlur = 26; g.fillStyle = '#ffffff'; g.beginPath(); g.arc(128, 128, 96, 0, TAU); g.arc(150, 104, 86, 0, TAU, true); g.fill('evenodd'); return c; })()), color: 0xdfe9ff, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }));
-  tAura.position.set(0, 0.32, -0.45); tAura.scale.setScalar(1.3); tAura.renderOrder = 1; chest.add(tAura);
+  tAura.position.set(0, 0.32, -0.45); tAura.scale.setScalar(1.3); tAura.renderOrder = 1; tAura.visible = false; chest.add(tAura);
   const TRC = new THREE.Color(0x6a80d8), INDIGO = new THREE.Color(0x1c2660);
   const trTint = [M.hair, M.hair2, M.cap, skinMat(M.hair), skinMat(M.hair2), M.iris];
   for (const q of glowMats) q.tr = trTint.includes(q.m) ? (q.m === M.iris ? 0.8 : 0.45) : 0;
@@ -1047,9 +1149,31 @@ function makeWitch() {
     k0: [0.03, 0.25, 0.15, 0.22, 0.2, 0.03], k1: [0.03, 0.25, 0.15, 0.22, 0.2, 0.03], a0: [0, 0.1, 0.25, 0.35, 0.3, 0], a1: [0, 0.1, 0.25, 0.35, 0.3, 0],
     flame: (u) => 1 + 0.9 * kf(u, [0, 0.45, 0.55, 0.8, 1], [0, 0.4, 1.2, 0.4, 0]), shut: [0.12, 0.48], glow: (u) => 0.6 * kf(u, [0, 0.4, 0.6, 1], [0.2, 0.5, 1, 0]) };
   const GUARD = { sX0: -1.15, sZ0: 0.35, eX0: -1.35, wX0: 0.35, sX1: -1.0, sZ1: 0.15, eX1: -0.8, h0: -0.25, k0: 0.3, h1: 0.25, k1: 0.3, a1: 0.1, pDY: -0.05, cY: 0.15, hp: 0.05 };
+  // rise (new in this pass): getting up after kneel. It starts from the pose she is holding, captured when it is
+  // played so nothing pops; from a kneel she pushes up off her front knee, then she blends back into her idle.
+  // It needs a pose to rise from, so it returns false when she is already up.
+  const RISE_DUR = 1.2;
+  ACTS.rise = { dur: RISE_DUR, t: [0, 1], w: [[0, 1], [0, 0]] };
+  const POSE_KEYS = ['pDY', 'pX', 'pY', 'pZ', 'cX', 'cY', 'hp', 'sX0', 'sZ0', 'eX0', 'wX0', 'sX1', 'sZ1', 'eX1', 'h0', 'k0', 'a0', 'h1', 'k1', 'a1'];
+  const IDLE = { pDY: 0, pX: 0, pY: 0, pZ: 0, cX: 0, cY: 0, hp: 0, sX0: -0.18, sZ0: -0.32, eX0: -0.55, wX0: 0.12, sX1: -0.75, sZ1: 0.3, eX1: -1.25, h0: 0, k0: 0.03, a0: 0, h1: 0, k1: 0.03, a1: 0 };
+  const PUSH = { pDY: -0.17, pX: 0.3, cX: 0.16, hp: 0.22, h0: -0.95, k0: 1.0, a0: -0.08, h1: 0.22, k1: 0.75, a1: 0.22, sX0: -0.45, sZ0: -0.25, eX0: -0.65, sX1: -0.45, sZ1: 0.35, eX1: -0.85 };
+  function riseFrom(cur) {
+    const d = cur.def, u0 = Math.min(1, cur.t / cur.dur), w0 = kf(u0, d.w[0], d.w[1]);
+    if (w0 < 0.05) return null;
+    const kneel = cur.type === 'kneel', R = { dur: RISE_DUR, t: kneel ? [0, 0.42, 1] : [0, 1], w: [[0, 0.72, 1], [w0, w0, 0]] };
+    for (const k of POSE_KEYS) {
+      if (!d[k]) continue;
+      const v0 = kf(u0, d.t, d[k]);
+      R[k] = kneel ? [v0, PUSH[k] !== undefined ? PUSH[k] : lerp(v0, IDLE[k], 0.5), IDLE[k]] : [v0, IDLE[k]];
+    }
+    const f0 = d.flame ? d.flame(u0) : 1;
+    R.flame = (u) => lerp(f0, 1, sm(0.15, 0.85, u));
+    return R;
+  }
   function play(name, force) {
-    const def = ACTS[name]; if (!def) return false;
+    let def = ACTS[name]; if (!def) return false;
     if (act && !force && !def.interrupt && !(act.def.hold)) return false;
+    if (name === 'rise') { def = act && act.type !== 'cast' && act.type !== 'rise' ? riseFrom(act) : null; if (!def) return false; }
     act = { type: name, t: 0, dur: def.dur, def }; return true;
   }
 
@@ -1141,16 +1265,18 @@ function makeWitch() {
     if (blinkT >= 0) { blinkT += dt; const bu = blinkT / 0.16; if (bu >= 1) { blinkT = -1; blinkIn = 1.8 + hr() * 3.2; } else close = Math.sin(Math.PI * Math.min(1, bu * 1.1)); }
     if (P && P.shut) close = Math.max(close, win(u, P.shut[0], P.shut[1], 0.06));
     const eyeX = cl((lookTY - lookYaw) * 0.018 + lookYaw * 0.007, -0.007, 0.007), eyeY = cl(-lookPitch * 0.018, -0.005, 0.004);
+    setIris(eyeX, eyeY);
+    const hlOn = [false, false];
     eyes.forEach((e, i) => {
       const cc = (P && P.wink && i === 1) ? Math.max(close, sm(P.wink, P.wink + 0.08, u)) : close;
-      setIris(e, eyeX, eyeY);
       e.lid.visible = e.low.visible = cc > 0.01;
       e.lid.scale.set(1, 0.085 + (0.8 - 0.085) * cc, 0.45 + 0.55 * cc);
       e.low.scale.set(1, 0.015 + 0.225 * cc, 0.45 + 0.55 * cc);
       e.lash.position.y = 0.038 - 0.076 * e.lid.scale.y;
       e.lash.scale.y = 1 - 0.85 * cc;
-      e.hl.visible = cc < 0.35;
+      hlOn[i] = cc < 0.35;
     });
+    setShine(hlOn[0], hlOn[1]);
 
     // physics: skirt, two-level cloak, hair chain and side locks, floppy hat tip, dagger charms
     root.updateMatrixWorld(true);
@@ -1259,7 +1385,8 @@ function makeWitch() {
     if (Math.abs(gk - glowK) > 1e-3 || Math.abs(trance - trK) > 1e-3 || (gk === 0 && glowK !== 0)) { glowK = gk; trK = trance; for (const q of glowMats) { q.m.emissive.copy(q.e).lerp(WHITE, gk); if (q.tr) q.m.emissive.lerp(TRC, trance * q.tr); } }
     TR.u.value = trance; TR.time.value = t;
     tWing.visible = trance > 0.01;
-    if (tWing.visible) { gwMF.opacity = gwMH.opacity = 0.85 * trance; const fl = Math.sin(t * 2.4); for (const sw of tSides) { sw.side.rotation.y = sw.sd * (0.45 + 0.3 * fl); sw.side.scale.set(sw.sd * (0.3 + 0.7 * trance), 0.3 + 0.7 * trance, 1); sw.fo.rotation.x = 0.08 * fl; } }
+    if (tWing.visible) { gwMF.opacity = gwMH.opacity = 0.85 * trance; const fl = Math.sin(t * 2.4); for (const sw of tSides) { sw.side.rotation.y = sw.sd * (0.45 + 0.3 * fl); sw.side.scale.set(sw.sd * (0.3 + 0.7 * trance), 0.3 + 0.7 * trance, 1); sw.fo.rotation.x = 0.08 * fl; } placeWings(); }
+    tAura.visible = trance > 1e-3; // below this its additive light is under half a color step: nothing to draw
     tAura.material.opacity = 0.7 * trance; tAura.material.rotation = Math.sin(t * 0.5) * 0.1; tAura.scale.setScalar(1.2 + 0.1 * Math.sin(t * 1.7));
     for (const L of liningMats) L.m.color.copy(L.c).lerp(INDIGO, trance);
 
@@ -1281,12 +1408,56 @@ function makeWitch() {
   }
 
   const _tp = new THREE.Vector3();
+
+  // ---------- the Model Build Spec interface, on top of the older one ----------
+  // Hit and cue times (0 to 1) as the battle demo times them. Hits are when damage shows; cues are when the game
+  // starts a spell's own effects (it owns projectiles, blades, beams and sigils). Where a projectile flies, the hit
+  // includes the demo's flight: Flame Bolt flies 0.5 s from cue 0.44; the five Crescent Blades leave at 0.6, one every
+  // 0.13 s, and fly 0.32 s; Moonlight's beam falls at 0.389 and strikes three times; the Briars grasp 0.22 s after
+  // they burst up at 0.45; the summon's orb leaves at 0.3 and reaches the well at 0.569.
+  const TIMES = {
+    lunge: { hits: [0.36] }, combo: { hits: [0.17, 0.37, 0.6] },
+    throw: { hits: [0.87], cues: [0.44] }, crescent: { hits: [0.733, 0.788, 0.842, 0.896, 0.95], cues: [0.18, 0.6] },
+    briar: { hits: [0.613], cues: [0.45] }, mend: { hits: [0.6] },
+    moon: { hits: [0.407, 0.521, 0.636], cues: [0.3, 0.389] }, summon: { cues: [0.3, 0.569] }, transform: { cues: [0.55] }
+  };
+  const ACTIONS = {};
+  for (const n in ACTS) {
+    const d = ACTS[n], q = TIMES[n] || {};
+    ACTIONS[n] = Object.freeze({ dur: d.dur, hits: Object.freeze((q.hits || []).slice()), cues: Object.freeze((q.cues || []).slice()), hold: !!d.hold, interrupt: !!d.interrupt });
+  }
+  Object.freeze(ACTIONS);
+  // named points in world space: chest, head (face center), hit (dagger tip), flame (the witchfire spells leave
+  // from), handL (the flame hand's palm), handR (the dagger hand's palm)
+  function anchor(name, out) {
+    out = out || new THREE.Vector3();
+    switch (name) {
+      case 'hit': case 'tip': dagger.updateWorldMatrix(true, false); return dagger.localToWorld(out.copy(tipL));
+      case 'flame': return flame.getWorldPosition(out);
+      case 'head': headB.updateWorldMatrix(true, false); return headB.localToWorld(out.set(0, 0, 0.05));
+      case 'handL': wrists[1].updateWorldMatrix(true, false); return wrists[1].localToWorld(out.set(0, -0.03, 0.002));
+      case 'handR': wrists[0].updateWorldMatrix(true, false); return wrists[0].localToWorld(out.set(0, -0.03, 0.002));
+      default: return chest.getWorldPosition(out);
+    }
+  }
+  // state: trance (0 to 1) brings in the starlight cloak, ghost wings and crescent aura (the same as m.trance)
+  const state = {};
+  Object.defineProperty(state, 'trance', { enumerable: true, get: () => trance, set: (v) => { trance = cl(v, 0, 1); } });
+  // a party member does not fade; at 0 she is hidden, anything above shows her
+  let fade = 1;
+  function setFade(f) {
+    const was = fade > 0.001; fade = cl(Number.isFinite(+f) ? +f : 1, 0, 1);
+    const now = fade > 0.001; if (now !== was) { root.visible = now; fx.visible = now; }
+  }
+
   return {
     root, skeleton, bones, animate, flameLight: fLight, flame, fx,
     play, cast() { return play('cast'); }, lunge() { return play('lunge'); }, moonlight() { return play('moon'); },
     guard(on) { guardOn = !!on; },
     reset() { act = null; guardOn = false; gW = 0; trance = 0; },
     set trance(v) { trance = cl(v, 0, 1); }, get trance() { return trance; },
+    ACTIONS, anchor, setFade, get fade() { return fade; },
+    get state() { return state; }, set state(v) { if (v) Object.assign(state, v); },
     get busy() { return !!act && !(act.def.hold && act.t >= act.dur); },
     get action() { return act ? act.type : ''; },
     get casting() { return !!act && act.type === 'cast'; },

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Io, the Witch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/bench/bench.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/night-square.js"></script>
+<script src="../src/models/witch.js"></script>
+<script src="../src/models/originals/witch.js"></script>
+<script src="../src/models/originals/sol.js"></script>
+<script src="../src/models/originals/wraith.js"></script>
+<script src="../src/fx/battle-fx.js"></script>
+<script src="../src/bench/bench.js"></script>
+<script src="../src/bench/stage-witch.js"></script>
+<script>
+Bench.start({
+  title: 'Io, the Witch',
+  blurb: 'The heroine in her battle place in the Night square, with Sol beside her, facing a Shadow Wraith. Every command plays as in the battle.',
+  subject: {
+    id: 'witch', name: 'Io',
+    make: STAGES.witch.gait(() => makeWitch({})), before: STAGES.witch.gait(() => makeWitchOriginal()),
+    home: [560, 812], face: 'wraith', yawBias: -0.38, shadow: 0.62, target: 'wraith', tall: 2.1,
+    walkSpeed: 0.9, height: '2.08 m to the tip of her hat',
+  },
+  cast: [
+    { id: 'sol', name: 'Sol', make: () => makeSolOriginal({}), home: [650, 868], face: 'wraith', yawBias: -0.3, shadow: 0.6 },
+    { id: 'wraith', name: 'Wraith', kind: 'wraith', make: () => makeWraithOriginal(), home: [860, 800], face: 'witch', yawBias: 0.38, shadow: 0.8 },
+  ],
+  groups: [
+    { title: 'Attack', acts: ['attack'] },
+    { title: 'Witchcraft', acts: ['throw', 'crescent', 'briar'] },
+    { title: 'Moonlore', acts: ['mend'] },
+    { title: 'Summon', acts: ['summon'] },
+    { title: 'Trance', acts: ['transform', 'moon'] },
+    { title: 'Defend', acts: ['defend'] },
+    { title: 'Reactions', acts: ['hurt', 'block', 'kneel', 'rise', 'victory'] },
+    { title: 'Other moves', acts: ['cast', 'lungeAt'] },
+  ],
+  names: {
+    attack: 'Attack', combo: 'Attack', throw: 'Flame Bolt', crescent: 'Crescent Blades', briar: 'Nightbloom Briars', mend: 'Lunar Mend',
+    summon: 'Lunara', transform: 'Lunar Trance', moon: 'Moonlight', defend: 'Defend', hurt: 'Hurt', block: 'Block', kneel: 'Kneel',
+    rise: 'Rise', victory: 'Victory', cast: 'Battle start', lunge: 'Lunge', lungeAt: 'Lunge',
+  },
+  hints: { attack: 'three blows', throw: '12 MP', crescent: '24 MP', briar: '18 MP, binds', mend: '16 MP, heals', summon: 'her part only', transform: 'Trance full', moon: 'spends Trance', defend: 'Soul Bolts break on it', kneel: 'KO', rise: 'new' },
+  wide: { combo: 1, throw: 1, crescent: 1, briar: 1, summon: 1, moon: 1, lunge: 1 },
+  toggles: [{ label: 'Trance', value: false, onToggle: () => STAGES.witch.toggleTrance() }],
+  stage: STAGES.witch,
+  note: 'Gold rings mark the hit times in her ACTIONS table and lilac rings its cues (where a spell leaves or begins); gold numbers are damage on the wraith, green ones her healing. Attack runs up to the wraith, strikes three times and runs back. Summon shows only her calling: Lunara herself rises in her own model. Lunar Trance turns the Trance look on (so does the toggle) and Moonlight spends it. Rise is new: it gets her up from Kneel. Before and After switch between the original model and this technical pass: they must look and move the same, and the budget shows the drop in draw calls.',
+});
+</script>
+</body>
+</html>
