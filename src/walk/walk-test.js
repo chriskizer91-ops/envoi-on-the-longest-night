@@ -1,9 +1,9 @@
 // walk-test.js: the walking test on Chris's ground-level maps (art request 04). The pixel Io walks a painted map
 // with a d-pad, the arrow keys or a tap, the camera following her, and a mini-map in the corner shows where she is.
-// Map coordinates are the paintings' own 1536 x 1024 pixels whatever size the image is shipped at, so a lighter copy
-// of a map changes how fine it looks, not where anything is. Sliders set her height, the zoom and the light; toggles
-// choose the map detail and sharp or smooth map pixels. Talk shows the talking portraits (art request 05) in a dialogue
-// box. No walls yet: she walks over everything; tracing the maps comes later.
+// Map coordinates are the paintings' own 1536 x 1024 pixels whatever size the image is shipped at (768 wide, drawn
+// with sharp pixels). Zoom starts at the map's own setting, or the standard 0.7. Sliders set her height, the zoom and
+// the light. Talk shows the talking portraits (art request 05) in a dialogue box. No walls yet: she walks over
+// everything; tracing the maps comes later.
 // Defines window.WalkTest = { start(cfg) }; needs makePixelIo (pixel-io.js).
 (function () {
   'use strict';
@@ -42,21 +42,17 @@
     const talkBox = el('div', { class: 'togs' }, panel);
     const talkBtn = el('button', { class: 'tog', type: 'button' }, talkBox, 'Talk');
     talkBtn.addEventListener('click', () => { line = -1; nextLine(); });
-    // the map detail: each map is shipped at two sizes for Chris to compare; sharp keeps the map's pixels square
-    el('h2', null, panel, 'Map detail');
-    const S = { ioH: cfg.ioHeight || 42, zoom: cfg.zoom || 1, mapLight: 1, ioLight: 0.9, detail: 0, sharp: true, mini: true };
-    const detBox = el('div', { class: 'togs', role: 'group', 'aria-label': 'Map detail' }, panel);
-    const detBtns = cfg.details.map((d, i) => { const b = el('button', { class: 'tog', type: 'button', 'aria-pressed': i === S.detail ? 'true' : 'false' }, detBox, d); b.addEventListener('click', () => { S.detail = i; detBtns.forEach((x, j) => x.setAttribute('aria-pressed', j === i ? 'true' : 'false')); load(map, true); }); return b; });
-    const pixBox = el('div', { class: 'togs', role: 'group', 'aria-label': 'Map pixels' }, panel);
-    const pixBtns = [['Sharp pixels', true], ['Smooth', false]].map(([n, v]) => { const b = el('button', { class: 'tog', type: 'button', 'aria-pressed': S.sharp === v ? 'true' : 'false' }, pixBox, n); b.addEventListener('click', () => { S.sharp = v; pixBtns.forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false')); }); return b; });
+    // the maps ship at 768 wide and are drawn with sharp pixels (Chris); each map may carry its own zoom
+    const S = { ioH: cfg.ioHeight || 42, zoom: cfg.zoom || 0.7, mapLight: 1, ioLight: 0.9, sharp: true };
     el('h2', null, panel, 'Scale and light');
     // Io is 42 art px tall, one art px to one map px at Chris's chosen height; zoom sets screen px per map px
     function slider(label, min, max, step, key, fmt) {
       const lab = el('label', { class: 'sl' }, panel); el('span', null, lab, label);
       const inp = el('input', { type: 'range', min, max, step, value: S[key] }, lab), out = el('output', null, lab, fmt(S[key]));
       inp.addEventListener('input', () => { S[key] = +inp.value; out.textContent = fmt(S[key]); });
+      return (v) => { S[key] = v; inp.value = v; out.textContent = fmt(v); };
     }
-    slider('Zoom', 0.6, 3, 0.1, 'zoom', (v) => v.toFixed(1) + '×');
+    const zoomIn = slider('Zoom', 0.5, 2, 0.1, 'zoom', (v) => v.toFixed(1) + '×');
     slider("Io's height on the map", 24, 60, 1, 'ioH', (v) => v + ' map px');
     slider('Light on the map', 0.5, 1.5, 0.05, 'mapLight', (v) => Math.round(v * 100) + '%');
     slider('Light on Io', 0.4, 1.3, 0.05, 'ioLight', (v) => Math.round(v * 100) + '%');
@@ -83,8 +79,8 @@
 
     function load(m, keep) {
       map = m; mapBtns.forEach((b, i) => b.setAttribute('aria-pressed', cfg.maps[i] === m ? 'true' : 'false'));
-      const next = new Image(); next.onload = () => { img = next; nowName.textContent = m.name; }; next.src = src(m.srcs[S.detail]);
-      if (!keep) { img = null; P.x = m.start[0]; P.y = m.start[1]; P.dir = 's'; tap = null; }
+      const next = new Image(); next.onload = () => { img = next; nowName.textContent = m.name; }; next.src = src(m.src);
+      if (!keep) { img = null; P.x = m.start[0]; P.y = m.start[1]; P.dir = 's'; tap = null; zoomIn(m.zoom || cfg.zoom || 0.7); }
     }
     function nextLine() {
       line++;
