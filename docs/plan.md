@@ -53,7 +53,7 @@ Like FF9: the world is walked on foot, and later flown over.
 
 **The two maps.** The flying map is the world from the air: one painting, or a few joined pieces, that shows all four stops. The walking maps are the ground up close, painted at the pixel Witch's scale: the wilderness around each stop, and the stops themselves.
 
-**The level bands.** Four bands, 1 to 5, 5 to 10, 10 to 15 and 15 to 20, opened by the Bogmire refit, the charge at Dawnroost's living node, and the upgrade after Halcyon. Sunstone gives the Magpie its lift, and Noctara's cold drains it. The bands hold Wickhollow and Bogmire (1), Dawnroost (2), the wilderness where the party meets Halcyon (3), and Misthollow (4). With that settled, the world map prompts can be written.
+**The level bands.** Four bands, 1 to 5, 5 to 10, 10 to 15 and 15 to 20, opened by the Bogmire refit, the charge at Dawnroost's living node, and the upgrade after Halcyon. Sunstone gives the Magpie its lift, and Noctara's cold drains it. The bands hold Wickhollow and Bogmire (1), Dawnroost (2), the wilderness where the party meets Halcyon (3), and Misthollow (4). The world map prompts are in `art-requests/02-world-map.md`.
 
 ## Phase 4: the game
 
