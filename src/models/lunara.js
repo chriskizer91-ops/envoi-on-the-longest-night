@@ -43,7 +43,7 @@ function makeLunara(opts) {
   const c = cvs(W, H), g = c.getContext('2d', { willReadFrequently: true }), e = cvs(W, H), eg = e.getContext('2d');
   g.fillStyle = col; g.fillRect(0, 0, W, H);
   for (let i = 0; i < (n || 80); i++) {
-   const x = rnd() * W, w = 4 + rnd() * W * .035, a = (.04 + rnd() * .08).toFixed(3), cc = rnd() < .5 ? '118,104,156' : '255,252,255';
+   const x = rnd() * W, w = 4 + rnd() * W * .035, a = (.05 + rnd() * .09).toFixed(3), cc = rnd() < .55 ? '112,128,190' : '255,253,250';
    const gr = g.createLinearGradient(x - w, 0, x + w, 0); gr.addColorStop(0, 'rgba(' + cc + ',0)'); gr.addColorStop(.5, 'rgba(' + cc + ',' + a + ')'); gr.addColorStop(1, 'rgba(' + cc + ',0)');
    g.fillStyle = gr; g.fillRect(x - w, 0, w * 2, H);
   }
@@ -66,7 +66,7 @@ function makeLunara(opts) {
  const fin = (F, rx, ry) => [tex(F.c, rx, ry), tex(F.e, rx, ry)];
 
  // skirt: u runs around her (front at the middle), v runs waist to hem
- const skirtF = fabric(1024, 512, '#f1ece8');
+ const skirtF = fabric(1024, 512, '#f6f3ee');
  {
   const F = skirtF, W = F.W, H = F.H, cx = W / 2;
   for (let i = 0; i < 900; i++) { // a shimmer of tiny stars, thicker toward the hem
@@ -76,9 +76,18 @@ function makeLunara(opts) {
   gRect(F, 0, H - 15, W, 9); gRect(F, 0, H - 22, W, 2.5);
   for (let x = 0; x < W; x += 48) { curl(F, 1.6, x, H - 30, -PI * .5, 12, 1, .75); curl(F, 1.6, x + 24, H - 30, -PI * .5, 12, -1, .75); star4(F, 1.3, x + 12, H - 54, 5, 9); }
   for (const s of [-1, 1]) gLine(F, 1.8, (c) => { c.moveTo(cx + s * 16, 0); c.bezierCurveTo(cx + s * 22, H * .4, cx + s * 40, H * .7, cx + s * 58, H - 30); });
+  // the front panel: a gold vine down the middle with paired curls and stars, and two finer vines beside it
+  gLine(F, 2.4, (c) => { c.moveTo(cx, 4); c.lineTo(cx, H - 24); });
+  for (let y = 22; y < H - 50; y += 34) { for (const s of [-1, 1]) curl(F, 1.5, cx, y, s < 0 ? PI * .8 : PI * .2, 11, s, .75); if ((y / 34 | 0) % 2) star4(F, 1.4, cx, y + 17, 4, 7); }
+  for (const s of [-1, 1]) {
+   gLine(F, 1.4, (c) => { c.moveTo(cx + s * 64, 10); c.bezierCurveTo(cx + s * 70, H * .35, cx + s * 84, H * .7, cx + s * 100, H - 34); });
+   for (let k = 0; k < 9; k++) { const f = (k + .5) / 9, x = cx + s * (64 + 36 * f * f), y = 10 + f * (H - 50); curl(F, 1.2, x, y, s < 0 ? PI * .1 : PI * .9, 8, -s, .7); }
+  }
+  for (let i = 0; i < 26; i++) { const x = cx + (rnd() - .5) * W * .55, y = H * (.45 + .45 * rnd()); star4(F, 1.1, x, y, 3.5, 6); } // little gold stars on the lower skirt
+  gRect(F, 0, H - 31, W, 2); for (let x = 6; x < W; x += 12) { F.g.fillStyle = GOLD; F.g.beginPath(); F.g.arc(x, H - 3, 2.2, 0, TAU); F.g.fill(); }
  }
  // bodice: u around, v from the neckline down to the waist
- const bodF = fabric(512, 256, '#f4efec', 40);
+ const bodF = fabric(512, 256, '#f8f5f1', 40);
  {
   const F = bodF, W = F.W, H = F.H, cx = W / 2;
   gRect(F, 0, 0, W, 7); gRect(F, 0, H - 9, W, 8);
@@ -91,10 +100,17 @@ function makeLunara(opts) {
    gLine(F, 1.4, (c) => { c.moveTo(cx + s * 128, 8); c.lineTo(cx + s * 128, H - 10); });
   }
   star4(F, 1.8, cx, H * .42, 7, 14);
+  // filigree lace over the bust and down the sides, beads along the neckline, and a heavier band under the bust
+  for (const s of [-1, 1]) {
+   for (let k = 0; k < 5; k++) curl(F, 1.3, cx + s * (40 + 14 * k), 22 + 10 * (k % 2), s < 0 ? PI * .5 : PI * .5, 7, s, .7);
+   for (let k = 0; k < 6; k++) curl(F, 1.2, cx + s * (92 + 6 * k), 60 + 26 * k, s < 0 ? PI * .9 : PI * .1, 8, -s, .7);
+   gLine(F, 2.2, (c) => { c.moveTo(cx + s * 110, H * .55); c.quadraticCurveTo(cx + s * 56, H * .6, cx + s * 14, H * .7); });
+  }
+  for (let x = 4; x < W; x += 9) { F.g.fillStyle = GOLD; F.g.beginPath(); F.g.arc(x, 11, 1.8, 0, TAU); F.g.fill(); F.eg.fillStyle = GOLDE; F.eg.beginPath(); F.eg.arc(x, 11, 1.8, 0, TAU); F.eg.fill(); }
  }
  // sheer sleeves and overskirt: pale periwinkle gauze; the sleeve gets gold at its band and cuff
  const slT = (() => {
-  const c = cvs(256, 256), g = c.getContext('2d'); g.fillStyle = '#cfd5f5'; g.fillRect(0, 0, 256, 256);
+  const c = cvs(256, 256), g = c.getContext('2d'); g.fillStyle = '#c9d9fb'; g.fillRect(0, 0, 256, 256);
   for (let i = 0; i < 40; i++) { const x = rnd() * 256, w = 3 + rnd() * 10; g.fillStyle = rnd() < .5 ? 'rgba(255,255,255,.18)' : 'rgba(120,120,180,.12)'; g.fillRect(x - w / 2, 0, w, 256); }
   g.fillStyle = '#c9a25a'; g.fillRect(0, 248, 256, 5); g.fillRect(0, 0, 256, 4);
   g.strokeStyle = 'rgba(214,190,130,.9)'; g.lineWidth = 1.6; for (let x = 0; x < 256; x += 16) { g.beginPath(); g.arc(x + 8, 246, 7, PI, TAU); g.stroke(); }
@@ -102,7 +118,7 @@ function makeLunara(opts) {
   return tex(c);
  })();
  const ovT = (() => {
-  const c = cvs(256, 256), g = c.getContext('2d'); g.fillStyle = '#e6e6fb'; g.fillRect(0, 0, 256, 256);
+  const c = cvs(256, 256), g = c.getContext('2d'); g.fillStyle = '#eef0fb'; g.fillRect(0, 0, 256, 256);
   for (let i = 0; i < 30; i++) { const x = rnd() * 256, w = 4 + rnd() * 14; g.fillStyle = rnd() < .5 ? 'rgba(255,255,255,.25)' : 'rgba(140,140,200,.12)'; g.fillRect(x - w / 2, 0, w, 256); }
   for (let i = 0; i < 220; i++) { const b = rnd(); g.fillStyle = 'rgba(255,255,255,' + (.4 + .6 * b).toFixed(2) + ')'; const s = b > .93 ? 2.2 : 1.1; g.fillRect(rnd() * 256, rnd() * 256, s, s); }
   return tex(c, 5, 2);
@@ -112,19 +128,19 @@ function makeLunara(opts) {
  const FW = 512, FS = FW / 2.2, PX = (X) => (X / 1.1 * .5 + .5) * FW, PY = (Y) => (.5 - Y / 1.1 * .5) * FW;
  function faceTex() {
   const c = cvs(FW, FW), g = c.getContext('2d');
-  g.fillStyle = '#eedcd9'; g.fillRect(0, 0, FW, FW);
+  g.fillStyle = '#f3ebe6'; g.fillRect(0, 0, FW, FW);
   const B = (X, Y, r, col, sx) => blob(g, PX(X), PY(Y), r * FS, col, sx);
   B(0, .36, .55, 'rgba(250,242,246,.5)', 1.3); B(0, -.12, .13, 'rgba(252,246,248,.55)', .45); B(0, -.84, .15, 'rgba(250,242,246,.35)', 1.2);
   for (const s of [-1, 1]) {
-   B(s * .5, -.25, .21, 'rgba(238,150,168,.24)', 1.25);  // a soft blush
-   B(s * .78, .16, .3, 'rgba(150,126,172,.3)');         // temples
-   B(s * .7, -.6, .28, 'rgba(162,128,164,.32)');        // the jaw turning under
-   B(s * .36, .06, .21, 'rgba(178,150,206,.5)', 1.45);  // lavender over the closed lids
-   B(s * .52, .08, .12, 'rgba(146,116,184,.42)');       // deeper at the outer corners
-   B(s * .085, -.2, .06, 'rgba(184,146,166,.28)', .5);  // the sides of the nose
+   B(s * .5, -.25, .21, 'rgba(240,164,176,.16)', 1.25);  // a soft blush
+   B(s * .78, .16, .3, 'rgba(160,152,192,.22)');        // temples
+   B(s * .7, -.6, .28, 'rgba(160,148,182,.26)');        // the jaw turning under
+   B(s * .36, .06, .21, 'rgba(176,164,214,.42)', 1.45); // lavender over the closed lids
+   B(s * .52, .08, .12, 'rgba(150,134,198,.36)');       // deeper at the outer corners
+   B(s * .085, -.2, .06, 'rgba(186,164,180,.22)', .5);  // the sides of the nose
    B(s * .062, -.365, .018, 'rgba(130,86,108,.4)');     // nostrils
   }
-  B(0, -1.02, .36, 'rgba(150,116,150,.5)', 1.5);         // under the chin
+  B(0, -1.02, .36, 'rgba(150,142,176,.42)', 1.5);        // under the chin
   g.save(); g.lineCap = 'round';
   for (const s of [-1, 1]) { // thin, soft brows in lavender-grey
    g.strokeStyle = 'rgba(150,132,178,.9)'; g.lineWidth = 3; g.beginPath(); g.moveTo(PX(s * .14), PY(.185)); g.quadraticCurveTo(PX(s * .34), PY(.285), PX(s * .58), PY(.215)); g.stroke();
@@ -153,11 +169,13 @@ function makeLunara(opts) {
   return tex(c);
  }
  // hair: lavender-silver strands, darker at the edges of each lock, pointed wisps at the ends (the last stretch of v)
+ // The wisps are cut into a separate mask and the colour is kept under them, so the filtered tips stay silver
+ // instead of fringing dark against transparent black.
  function hairTex() {
-  const W = 256, H = 512, c = cvs(W, H), g = c.getContext('2d');
-  const gr = g.createLinearGradient(0, 0, W, 0); gr.addColorStop(0, '#a6a4b2'); gr.addColorStop(.28, '#d2d1dc'); gr.addColorStop(.5, '#efeff4'); gr.addColorStop(.72, '#d2d1dc'); gr.addColorStop(1, '#a6a4b2');
+  const W = 256, H = 512, c = cvs(W, H), g = c.getContext('2d', { willReadFrequently: true });
+  const gr = g.createLinearGradient(0, 0, W, 0); gr.addColorStop(0, '#adb0c6'); gr.addColorStop(.28, '#dadcea'); gr.addColorStop(.5, '#f6f7fc'); gr.addColorStop(.72, '#dadcea'); gr.addColorStop(1, '#adb0c6');
   g.fillStyle = gr; g.fillRect(0, 0, W, H);
-  const gv = g.createLinearGradient(0, 0, 0, H); gv.addColorStop(0, 'rgba(70,64,104,.2)'); gv.addColorStop(.3, 'rgba(70,58,112,0)'); gv.addColorStop(.75, 'rgba(255,250,255,.08)'); gv.addColorStop(1, 'rgba(255,250,255,.2)');
+  const gv = g.createLinearGradient(0, 0, 0, H); gv.addColorStop(0, 'rgba(80,86,124,.16)'); gv.addColorStop(.3, 'rgba(70,58,112,0)'); gv.addColorStop(.75, 'rgba(255,250,255,.08)'); gv.addColorStop(1, 'rgba(255,250,255,.2)');
   g.fillStyle = gv; g.fillRect(0, 0, W, H);
   for (let k = 0; k < 9; k++) { const y = (k + .5) / 9 * H, q = g.createLinearGradient(0, y - 30, 0, y + 30); q.addColorStop(0, 'rgba(255,255,255,0)'); q.addColorStop(.5, 'rgba(255,255,255,.13)'); q.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = q; g.fillRect(0, y - 30, W, 60); }
   for (let i = 0; i < 520; i++) {
@@ -165,12 +183,17 @@ function makeLunara(opts) {
    g.strokeStyle = lt ? 'rgba(250,248,255,' + (.08 + rnd() * .16).toFixed(2) + ')' : 'rgba(96,90,124,' + (.06 + rnd() * .14).toFixed(2) + ')'; g.lineWidth = .8 + rnd() * 1.8;
    g.beginPath(); g.moveTo(x, y0); g.bezierCurveTo(x + (rnd() - .5) * 10, y0 + H * .3, x + (rnd() - .5) * 14, y0 + H * .6, x + (rnd() - .5) * 10, H); g.stroke();
   }
-  g.globalCompositeOperation = 'destination-out'; g.fillStyle = '#000';
-  const top = H * .92; g.beginPath(); g.moveTo(0, H + 2); let x = 0;
-  g.lineTo(0, top + rnd() * 20);
-  while (x < W) { const w = 7 + rnd() * 16; g.lineTo(x + w * .5, H - rnd() * (H - top) * .25); x += w; g.lineTo(Math.min(W, x), top + rnd() * (H - top) * .35); }
-  g.lineTo(W, H + 2); g.closePath(); g.fill();
-  return tex(c);
+  const m = cvs(W, H), mg = m.getContext('2d', { willReadFrequently: true });
+  mg.fillStyle = '#fff'; mg.fillRect(0, 0, W, H); mg.globalCompositeOperation = 'destination-out'; mg.fillStyle = '#000';
+  const top = H * .92; mg.beginPath(); mg.moveTo(0, H + 2); let x = 0;
+  mg.lineTo(0, top + rnd() * 20);
+  while (x < W) { const w = 7 + rnd() * 16; mg.lineTo(x + w * .5, H - rnd() * (H - top) * .25); x += w; mg.lineTo(Math.min(W, x), top + rnd() * (H - top) * .35); }
+  mg.lineTo(W, H + 2); mg.closePath(); mg.fill();
+  const col = g.getImageData(0, 0, W, H).data, al = mg.getImageData(0, 0, W, H).data, px = new Uint8Array(W * H * 4);
+  for (let y = 0; y < H; y++) { const s0 = y * W * 4, d0 = (H - 1 - y) * W * 4; for (let i = 0; i < W * 4; i += 4) { px[d0 + i] = col[s0 + i]; px[d0 + i + 1] = col[s0 + i + 1]; px[d0 + i + 2] = col[s0 + i + 2]; px[d0 + i + 3] = al[s0 + i + 3]; } }
+  const t = new THREE.DataTexture(px, W, H, THREE.RGBAFormat);
+  t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; t.anisotropy = 4; t.needsUpdate = true;
+  return t;
  }
  // luna-moth wings, one atlas: the forewing in the left half, the hindwing (with its long tail) in the right half.
  // Both are painted in meters as seen from the front, so the wing panels map straight onto them.
@@ -242,19 +265,19 @@ function makeLunara(opts) {
   return tex(c); })();
 
  // ---------- materials: mid-tones, a lavender rim light, a floor clip, and alpha cuts that ignore fading ----------
- const U = { rim: { value: .3 }, rimC: { value: new THREE.Color(0xc4bcff) }, time: { value: 0 } };
+ const U = { rim: { value: .3 }, rimC: { value: new THREE.Color(0xc8d0ff) }, time: { value: 0 }, selfK: { value: 1 } };
  const allMats = [];
  function std(key, color, rough, o, po) {
   po = po || {};
   const m = new THREE.MeshStandardMaterial(Object.assign({ color, roughness: rough, metalness: 0 }, o || {}));
-  const rS = { value: po.rim === undefined ? 1 : po.rim };
+  const rS = { value: po.rim === undefined ? 1 : po.rim }, uS = { value: new THREE.Color().fromArray(po.self || [0, 0, 0]) };
   m.clippingPlanes = [CLIP];
   m.onBeforeCompile = (sh) => {
-   sh.uniforms.uRim = U.rim; sh.uniforms.uRimC = U.rimC; sh.uniforms.uRimS = rS; sh.uniforms.uTime = U.time;
+   sh.uniforms.uRim = U.rim; sh.uniforms.uRimC = U.rimC; sh.uniforms.uRimS = rS; sh.uniforms.uTime = U.time; sh.uniforms.uSelf = uS; sh.uniforms.uSelfK = U.selfK;
    if (po.uniforms) Object.assign(sh.uniforms, po.uniforms);
-   sh.fragmentShader = 'uniform float uRim;\nuniform vec3 uRimC;\nuniform float uRimS;\n' + sh.fragmentShader
+   sh.fragmentShader = 'uniform float uRim;\nuniform vec3 uRimC;\nuniform float uRimS;\nuniform vec3 uSelf;\nuniform float uSelfK;\n' + sh.fragmentShader
     .replace('#include <alphatest_fragment>', '#ifdef ALPHATEST\n if ( diffuseColor.a < ALPHATEST * opacity ) discard;\n#endif')
-    .replace('#include <dithering_fragment>', 'float nFr = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition)));\n gl_FragColor.rgb += uRimC * (uRim * uRimS * pow(nFr, 2.4)) * opacity;\n#include <dithering_fragment>');
+    .replace('#include <dithering_fragment>', 'float nFr = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition)));\n gl_FragColor.rgb += uSelf * uSelfK * diffuseColor.rgb + uRimC * (uRim * uRimS * pow(nFr, 2.4)) * opacity;\n#include <dithering_fragment>');
    if (po.vert) { sh.vertexShader = po.vhead + sh.vertexShader; for (const [a, b] of po.vert) sh.vertexShader = sh.vertexShader.replace(a, b); }
   };
   m.customProgramCacheKey = () => 'lunara-' + key;
@@ -267,22 +290,24 @@ function makeLunara(opts) {
  // and how far it may fall; its lower side drops toward the floor, the upper side stays on the arm
  const DR_HEAD = 'attribute vec4 anchor;\nuniform float uTime;\nuniform float uDrape;\n';
  const DRAPE = ['#include <skinning_vertex>', '#include <skinning_vertex>\n#ifdef USE_SKINNING\n{\n vec4 av = bindMatrix * vec4(anchor.xyz, 1.0);\n vec4 as4 = boneMatX * av * skinWeight.x + boneMatY * av * skinWeight.y + boneMatZ * av * skinWeight.z + boneMatW * av * skinWeight.w;\n vec3 ac = (bindMatrixInverse * as4).xyz;\n vec3 rd = transformed - ac;\n float rl = max(length(rd), 1e-4);\n float L = anchor.w * uDrape;\n float kk = smoothstep(-0.45, 0.95, -rd.y / rl);\n transformed.y -= L * kk;\n transformed.x += L * 0.1 * sin(uTime * 1.6 + anchor.y * 11.0 + rd.z * 40.0);\n transformed.z += L * 0.1 * cos(uTime * 1.3 + anchor.y * 9.0 + rd.x * 40.0);\n}\n#endif'];
- const GE = new THREE.Color(0xffffff), SKK = .86; // SKK: skin albedo, shared by body, face and lids so they match
+ const GE = new THREE.Color(0xffffff), SKK = .96; // SKK: skin albedo, shared by body, face and lids so they match
+ // the night light (lavender sky, warm fill) turns white pink; these fills put the green back so silk and skin read white
+ const SELF_SKIN = [.12, .2, .15], SELF_SILK = [.12, .2, .14];
  const M = {
-  skin: std('skin', new THREE.Color(0xeedcd8).multiplyScalar(SKK), .62, { emissive: 0x150f1a, skinning: true }, { rim: .7 }),
-  face: std('face', new THREE.Color(SKK, SKK, SKK), .6, { map: faceMap, emissive: 0x150f1a }, { rim: .7 }),
+  skin: std('skin', new THREE.Color(.94, .9, .87).multiplyScalar(SKK), .6, { emissive: 0x0c0a10, skinning: true }, { rim: .7, self: SELF_SKIN }),
+  face: std('face', new THREE.Color(SKK, SKK, SKK), .58, { map: faceMap, emissive: 0x0c0a10 }, { rim: .7, self: SELF_SKIN }),
   eyeW: std('eyew', 0xffffff, .3, { vertexColors: true, emissive: 0x16121c }, { rim: .2 }),
   iris: std('iris', 0xffffff, .25, { map: irisMap, emissive: 0xd0c8ff, emissiveMap: irisMap, emissiveIntensity: .2 }, { rim: .2 }),
-  lid: std('lid', new THREE.Color(SKK, SKK, SKK), .62, { vertexColors: true, emissive: 0x150f1a, morphTargets: true }, { rim: .7 }),
+  lid: std('lid', new THREE.Color(SKK, SKK, SKK), .6, { vertexColors: true, emissive: 0x0c0a10, morphTargets: true }, { rim: .7, self: SELF_SKIN }),
   mouthIn: std('mouth', 0x3a1626, .7, {}, { rim: 0 }),
-  hair: std('hair', 0xdedccc, .5, { map: hairMap, alphaTest: .45, side: THREE.DoubleSide, emissive: 0x1e1830, skinning: true }, { rim: 1.1 }),
-  gold: std('gold', 0xe0b86c, .32, { metalness: .55, emissive: 0x4e3812, skinning: true }, { rim: .45 }),
+  hair: std('hair', new THREE.Color(.96, .96, .99), .48, { map: hairMap, alphaTest: .45, side: THREE.DoubleSide, emissive: 0x0e0e18, skinning: true }, { rim: 1.0, self: [.16, .23, .17] }),
+  gold: std('gold', 0xecc476, .3, { metalness: .5, emissive: 0x5c4416, skinning: true }, { rim: .45, self: [.16, .11, .02] }),
   gem: std('gem', 0x8fa2ff, .12, { metalness: .2, emissive: 0x4a50c0, emissiveIntensity: .7, skinning: true }, { rim: 1.2 }),
-  bodice: std('bodice', 0xd0d2dc, .62, { map: bdMap, emissive: GE, emissiveMap: bdEm, emissiveIntensity: .35, skinning: true }, { rim: .8 }),
-  skirt: std('skirt', 0xcccfdb, .72, { map: skMap, emissive: GE, emissiveMap: skEm, emissiveIntensity: .3, side: THREE.DoubleSide, skinning: true }, { rim: .55, vhead: FL_HEAD, vert: [FLUTTER], uniforms: { uAmp: { value: .016 } } }),
-  over: std('over', 0xf0eeff, .45, { map: ovT, transparent: true, opacity: .3, depthWrite: false, side: THREE.DoubleSide, emissive: 0x1c1a34, skinning: true }, { rim: 1.0, vhead: FL_HEAD, vert: [FLUTTER], uniforms: { uAmp: { value: .03 } } }),
-  sleeve: std('sleeve', 0xffffff, .5, { map: slT, transparent: true, opacity: .62, depthWrite: false, side: THREE.DoubleSide, emissive: 0x20224a, skinning: true }, { rim: 1.3, vhead: DR_HEAD, vert: [DRAPE], uniforms: { uDrape: { value: 1 } } }),
-  wing: std('wing', 0xe6e6e6, .55, { map: wingMap, emissive: GE, emissiveMap: wingMap, emissiveIntensity: .18, alphaTest: .5, side: THREE.DoubleSide, skinning: true }, { rim: .5 }),
+  bodice: std('bodice', new THREE.Color(.86, .85, .83), .6, { map: bdMap, emissive: GE, emissiveMap: bdEm, emissiveIntensity: .35, skinning: true }, { rim: .7, self: SELF_SILK }),
+  skirt: std('skirt', new THREE.Color(.86, .85, .83), .72, { map: skMap, emissive: GE, emissiveMap: skEm, emissiveIntensity: .3, side: THREE.DoubleSide, skinning: true }, { rim: .5, self: SELF_SILK, vhead: FL_HEAD, vert: [FLUTTER], uniforms: { uAmp: { value: .016 } } }),
+  over: std('over', 0xf8f8ff, .45, { map: ovT, transparent: true, opacity: .24, depthWrite: false, side: THREE.DoubleSide, emissive: 0x0c0c18, skinning: true }, { rim: .9, self: [.1, .16, .16], vhead: FL_HEAD, vert: [FLUTTER], uniforms: { uAmp: { value: .03 } } }),
+  sleeve: std('sleeve', new THREE.Color(.86, .92, 1), .5, { map: slT, transparent: true, opacity: .56, depthWrite: false, side: THREE.DoubleSide, emissive: 0x101830, skinning: true }, { rim: 1.2, self: [.08, .15, .19], vhead: DR_HEAD, vert: [DRAPE], uniforms: { uDrape: { value: 1 } } }),
+  wing: std('wing', 0xe6e6e6, .55, { map: wingMap, emissive: GE, emissiveMap: wingMap, emissiveIntensity: .18, alphaTest: .5, side: THREE.DoubleSide, skinning: true }, { rim: .5, self: [.03, .08, .06] }),
  };
  const CLOTH_EM = [[M.bodice, .35], [M.skirt, .3], [M.wing, .18]];
 
@@ -365,11 +390,13 @@ function makeLunara(opts) {
  const hb = (x, y, z) => [HB.x + x, HB.y + y, HB.z + z]; // head space to body space (bind)
  // five big locks of hair, each on a chain of three bones: three down her back, two over her shoulders to the waist
  const LOCKS = [
-  { n: 'hC', pts: [hb(0, .17, -.05), hb(0, .1, -.095), [0, 1.5, -.13], [0, 1.28, -.165], [0, 1.0, -.19], [0, .7, -.245], [0, .38, -.34]], w: (t) => lerp(.09, .145, sm(0, .35, t)) * (1 - .6 * sm(.72, 1, t)), th: (t) => .028 * (1 - .45 * t), side: () => V3(1, 0, 0), wave: .034, back: 1 },
-  { n: 'hL', pts: [hb(.06, .15, -.035), hb(.095, .07, -.055), [.15, 1.47, -.1], [.2, 1.3, -.13], [.23, 1.02, -.155], [.24, .74, -.205], [.24, .44, -.275]], w: (t) => lerp(.065, .115, sm(0, .35, t)) * (1 - .6 * sm(.72, 1, t)), th: (t) => .024 * (1 - .45 * t), side: (t) => V3(1, 0, -.6).normalize(), wave: .034, back: 1 },
-  { n: 'hR', pts: [hb(-.06, .15, -.035), hb(-.095, .07, -.055), [-.15, 1.47, -.1], [-.2, 1.3, -.13], [-.23, 1.02, -.155], [-.24, .74, -.205], [-.24, .44, -.275]], w: (t) => lerp(.065, .115, sm(0, .35, t)) * (1 - .6 * sm(.72, 1, t)), th: (t) => .024 * (1 - .45 * t), side: (t) => V3(1, 0, .6).normalize(), wave: .034, back: 1 },
-  { n: 'hFL', pts: [hb(.074, .09, .045), hb(.09, .02, .05), hb(.1, -.05, .04), [.15, 1.41, .07], [.14, 1.22, .125], [.125, .98, .11]], w: (t) => lerp(.028, .055, sm(0, .25, t)) * (1 - .55 * sm(.7, 1, t)), th: (t) => .015 * (1 - .3 * t), side: (t) => V3(.35, 0, -1).normalize(), wave: .022, back: 0 },
-  { n: 'hFR', pts: [hb(-.074, .09, .045), hb(-.09, .02, .05), hb(-.1, -.05, .04), [-.15, 1.41, .07], [-.14, 1.22, .125], [-.125, .98, .11]], w: (t) => lerp(.028, .055, sm(0, .25, t)) * (1 - .55 * sm(.7, 1, t)), th: (t) => .015 * (1 - .3 * t), side: (t) => V3(.35, 0, 1).normalize(), wave: .022, back: 0 },
+  { n: 'hC', pts: [hb(0, .17, -.05), hb(0, .1, -.095), [0, 1.5, -.13], [0, 1.28, -.165], [0, 1.0, -.19], [0, .7, -.25], [0, .4, -.34], [0, .1, -.47]], w: (t) => lerp(.09, .2, sm(0, .5, t)) * (1 - .62 * sm(.76, 1, t)), th: (t) => .03 * (1 - .4 * t), side: () => V3(1, 0, 0), wave: .05, back: 1 },
+  { n: 'hL', pts: [hb(.06, .15, -.035), hb(.095, .07, -.055), [.15, 1.47, -.1], [.2, 1.3, -.13], [.23, 1.02, -.155], [.25, .74, -.21], [.28, .46, -.29], [.31, .22, -.38]], w: (t) => lerp(.065, .135, sm(0, .4, t)) * (1 - .66 * sm(.72, 1, t)), th: (t) => .026 * (1 - .4 * t), side: (t) => V3(1, 0, -.6).normalize(), wave: .05, back: 1 },
+  { n: 'hR', pts: [hb(-.06, .15, -.035), hb(-.095, .07, -.055), [-.15, 1.47, -.1], [-.2, 1.3, -.13], [-.23, 1.02, -.155], [-.25, .74, -.21], [-.28, .46, -.29], [-.31, .22, -.38]], w: (t) => lerp(.065, .135, sm(0, .4, t)) * (1 - .66 * sm(.72, 1, t)), th: (t) => .026 * (1 - .4 * t), side: (t) => V3(1, 0, .6).normalize(), wave: .05, back: 1 },
+  { n: 'hFL', pts: [hb(.074, .09, .045), hb(.09, .02, .05), hb(.1, -.05, .04), [.15, 1.41, .07], [.145, 1.22, .13], [.15, 1.0, .135], [.17, .8, .16]], w: (t) => lerp(.03, .066, sm(0, .25, t)) * (1 - .5 * sm(.75, 1, t)), th: (t) => .016 * (1 - .3 * t), side: (t) => V3(.35, 0, -1).normalize(), wave: .03, back: 0 },
+  { n: 'hGL', pts: [hb(.085, .05, -.03), hb(.11, -.02, -.005), [.16, 1.44, .03], [.178, 1.34, .085], [.172, 1.18, .12], [.178, 1.0, .128], [.19, .84, .145]], w: (t) => lerp(.026, .055, sm(0, .3, t)) * (1 - .5 * sm(.75, 1, t)), th: (t) => .015 * (1 - .3 * t), side: (t) => V3(.6, 0, -1).normalize(), wave: .03, back: 0 },
+  { n: 'hFR', pts: [hb(-.074, .09, .045), hb(-.09, .02, .05), hb(-.1, -.05, .04), [-.15, 1.41, .07], [-.145, 1.22, .13], [-.15, 1.0, .135], [-.17, .8, .16]], w: (t) => lerp(.03, .066, sm(0, .25, t)) * (1 - .5 * sm(.75, 1, t)), th: (t) => .016 * (1 - .3 * t), side: (t) => V3(.35, 0, 1).normalize(), wave: .03, back: 0 },
+  { n: 'hGR', pts: [hb(-.085, .05, -.03), hb(-.11, -.02, -.005), [-.16, 1.44, .03], [-.178, 1.34, .085], [-.172, 1.18, .12], [-.178, 1.0, .128], [-.19, .84, .145]], w: (t) => lerp(.026, .055, sm(0, .3, t)) * (1 - .5 * sm(.75, 1, t)), th: (t) => .015 * (1 - .3 * t), side: (t) => V3(.6, 0, 1).normalize(), wave: .03, back: 0 },
  ];
  for (const Lk of LOCKS) {
   Lk.curve = new THREE.CatmullRomCurve3(Lk.pts.map((p) => V3(p[0], p[1], p[2])));
@@ -492,8 +519,6 @@ function makeLunara(opts) {
   for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) { const a = j * (nu + 1) + i, b = a + 1, c = a + nu + 1, d = c + 1; idx.push(a, c, b, b, c, d); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(UV, 2)); g.setAttribute('anchor', new THREE.Float32BufferAttribute(AN, 4)); g.setIndex(idx); g.computeVertexNormals();
   add(g, M.sleeve, w);
-  add(new THREE.TorusGeometry(.052, .0055, 6, Q(28)), M.gold, w, [S.x, y0 + .003, S.z + .006], [PI / 2, 0, 0]);
-  add(new THREE.TorusGeometry(.024, .0045, 6, Q(20)), M.gold, wArmFn(A), [Wp.x, Wp.y + .02, Wp.z], [PI / 2, 0, 0]); // bracelet
  }
 
  // ---------- head: a delicate face on an egg; the front view of the face is painted in X and Y ----------
@@ -567,7 +592,7 @@ function makeLunara(opts) {
  let lidMesh;
  {
   const P = [], PO = [], C = [], I = [], _v = V3();
-  const skin = [.71, .63, .7], shade = [.57, .48, .66], lash = [.2, .13, .24];
+  const skin = [.78, .75, .8], shade = [.64, .6, .74], lash = [.2, .14, .26];
   const mix3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
   const put = (f, x, y, yo, zl, col) => { // y: where it rests (closed); yo: where it goes when open
    const z = Math.max(zS(x, y) + .0009, .0024) + zl, zo = Math.max(zS(x, yo) + .0009, .0024) + zl;
@@ -615,7 +640,7 @@ function makeLunara(opts) {
    const th = (u - .5) * TAU, a = Math.abs(th), ph = v * vEnd(th) * PI;
    const X = Math.sin(ph) * Math.sin(th), Y = Math.cos(ph), Z = Math.sin(ph) * Math.cos(th);
    const part = 1 - .025 * Math.exp(-th * th / .02) * sm(.5, .1, v);
-   const vol = (1.07 + .05 * sm(.4, 1, v) * sm(.6, 1.6, a)) * part;
+   const vol = (1.09 + .07 * sm(.4, 1, v) * sm(.6, 1.6, a)) * part;
    o[0] = HB.x + X * HR[0] * vol + HC.x; o[1] = HB.y + Y * HR[1] * (1.06 + .01 * (1 - v)) + HC.y; o[2] = HB.z + Z * HR[2] * (Z > 0 ? 1.06 : 1.1 * vol) + HC.z; return o;
   }, (u, v) => hairUV(u, v), true);
   add(g, M.hair, BI.head);
@@ -626,10 +651,10 @@ function makeLunara(opts) {
   for (let i = 0; i <= ns; i++) {
    const t = i / ns; curve.getPointAt(t, c); curve.getTangentAt(t, T);
    S.copy(sideFn(t)); S.addScaledVector(T, -S.dot(T)).normalize(); N.crossVectors(T, S).normalize();
-   const wv = wave * Math.sin(t * 15 + ph) * sm(0, .25, t), w = wFn(t), th = thFn(t);
+   const wv = wave * (Math.sin(t * 13 + ph) + .35 * Math.sin(t * 29 + ph * 2)) * sm(0, .22, t), w = wFn(t), th = thFn(t);
    c.addScaledVector(S, wv * .7).addScaledVector(N, wv * .5);
    for (let j = 0; j <= nr; j++) {
-    const a = j / nr * TAU, ca = Math.cos(a), sa = Math.sin(a), rip = 1 + .07 * Math.sin(a * 3 + t * 11 + ph);
+    const a = j / nr * TAU, ca = Math.cos(a), sa = Math.sin(a), rip = 1 + .1 * Math.sin(a * 3 + t * 11 + ph) * sm(.05, .4, t);
     pos.push(c.x + S.x * ca * w * rip + N.x * sa * th, c.y + S.y * ca * w * rip + N.y * sa * th, c.z + S.z * ca * w * rip + N.z * sa * th);
     uv.push(.5 + .5 * ca, 1 - t);
    }
@@ -639,54 +664,82 @@ function makeLunara(opts) {
  }
  for (const s of [-1, 1]) { // curtain bangs from the part, sweeping over the temples to the cheeks
   for (const [a, b, w] of [[.006, .028, .026], [.03, .05, .024]]) {
-   const c = new THREE.CatmullRomCurve3([hb(s * a, .205, .062), hb(s * (a + .035), .19, .092), hb(s * (b + .035), .148, .1), hb(s * (b + .045), .085, .088), hb(s * (b + .046), .02, .07), hb(s * (b + .036), -.04, .052)].map((p) => V3(p[0], p[1], p[2])));
+   const c = new THREE.CatmullRomCurve3([hb(s * a, .196, .035), hb(s * (a + .03), .178, .07), hb(s * (b + .035), .142, .097), hb(s * (b + .045), .085, .09), hb(s * (b + .046), .02, .07), hb(s * (b + .036), -.04, .052)].map((p) => V3(p[0], p[1], p[2])));
    const g = lockGeo(c, Q(22, 12), Q(10, 6), (t) => w * (1 - .8 * t * t), () => .007, () => V3(1, .2, .2), .004, s * 2), uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setY(i, .45 + .5 * uv.getY(i));
    add(g, M.hair, BI.head);
   }
  }
  for (const Lk of LOCKS) add(lockGeo(Lk.curve, Q(44, 18), Q(14, 8), Lk.w, Lk.th, Lk.side, Lk.wave, Lk.ph), M.hair, wChain(Lk.bones, Lk.P, head, .75));
+ for (const s of [-1, 1]) { // two under-locks close the gaps between the back locks into one mass; they ride the centre chain, so no extra bones
+  const c = new THREE.CatmullRomCurve3([hb(s * .035, .12, -.085), [s * .09, 1.48, -.12], [s * .12, 1.26, -.15], [s * .14, .98, -.17], [s * .16, .68, -.228], [s * .18, .38, -.318], [s * .19, .15, -.425]].map((p) => V3(p[0], p[1], p[2])));
+  add(lockGeo(c, Q(40, 16), Q(12, 8), (t) => lerp(.05, .12, sm(0, .45, t)) * (1 - .6 * sm(.74, 1, t)), (t) => .022 * (1 - .4 * t), () => V3(1, 0, -s * .3).normalize(), .045, s * 1.3 + 1), M.hair, wChain(LOCKS[0].bones, LOCKS[0].P, head, .75));
+ }
 
- // ---------- gold and gems: the crescent halo and its little moon, the circlet, choker, neckline, belt and the long chain ----------
+ // ---------- gold and gems: the great halo ring, the circlet, the collar and chest piece, cuffs, belt, chains and pendants ----------
  {
   const ext = (shape, depth, bev) => { const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bev, bevelSize: bev, bevelSegments: 2, curveSegments: Q(40, 16) }); g.translate(0, 0, -depth / 2); return g; };
-  // the great crescent behind her head, horns rising past the crown
-  const hz = HC.z - .17, hy = HC.y + .04;
-  add(ext(crescentShape(.2, .05, .17), .009, .0028), M.gold, BI.head, hb(0, hy, hz), [-.1, 0, 0]);
-  { const pts = []; for (let k = 0; k <= 40; k++) { const a = lerp(-.3, PI + .3, k / 40) + PI; pts.push(V3(HB.x + Math.cos(a) * .1825, HB.y + hy + .0225 + Math.sin(a) * .1825, HB.z + hz + .007)); } add(tubeR(pts, Q(80, 30), 5, () => .0022), M.gold, BI.head); } // a fine inner line
-  for (let k = 0; k < 17; k++) { // a row of gold beads along the lower arc
-   const a = -PI / 2 + (k - 8) * .16, r = k % 2 ? .0045 : .0068;
-   add(new THREE.SphereGeometry(r, 8, 6), M.gold, BI.head, hb(Math.cos(a) * .209, hy + Math.sin(a) * .209 * Math.cos(.1), hz - Math.sin(a) * .209 * Math.sin(.1)));
-  }
-  for (const s of [-1, 1]) { // pendants from the horns
-   const tipX = s * .135, tipY = hy + .13;
-   for (let k = 0; k < 3; k++) add(new THREE.SphereGeometry(.0042, 6, 5), M.gold, BI.head, hb(tipX - s * .012, tipY - .02 - k * .013, hz + .004));
-   add(new THREE.OctahedronGeometry(.008, 0), M.gem, BI.head, hb(tipX - s * .012, tipY - .066, hz + .004), null, [1, 1.6, .7]);
-  }
-  // the little crescent moon above her head, on a fine stem
-  add(ext(crescentShape(.034, .011, .031), .006, .0018), M.gold, BI.head, hb(0, HC.y + .158, HC.z - .03));
-  add(new THREE.CylinderGeometry(.0028, .0028, .05, 6), M.gold, BI.head, hb(0, HC.y + .112, HC.z - .03));
-  add(new THREE.SphereGeometry(.0085, Q(12, 6), Q(8, 5)), M.gem, BI.head, hb(0, HC.y + .146, HC.z - .028));
+  const bead = (r, w, p, m) => add(new THREE.SphereGeometry(r, 7, 5), m || M.gold, w, p);
+  const star4 = (r, k) => { const sh = new THREE.Shape(); for (let i = 0; i < 8; i++) { const a = PI / 2 + i * PI / 4, rr = i % 2 ? r * k : r; if (i) sh.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); else sh.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); } return sh; };
+  // a fine chain of beads hanging from a point, ending in a teardrop gem
+  const pendant = (w, p, n, step, gem) => { for (let k = 0; k < n; k++) bead(k % 2 ? .0028 : .0036, w, [p[0], p[1] - k * step, p[2]]); add(new THREE.OctahedronGeometry(gem, 0), M.gem, w, [p[0], p[1] - n * step - gem * 1.2, p[2]], null, [1, 1.7, .75]); };
+  // the great ring behind her head: nearly a full circle of gold, beaded outside, a fine line inside, the crescent moon at its
+  // top and little pendants hanging at her ears
+  const hz = HC.z - .17, hy = HC.y + .06, RO = .245, RI = .218, A0 = -PI / 2 + .3, A1 = 3 * PI / 2 - .3;
+  { const sh = new THREE.Shape(); sh.absarc(0, 0, RO, A0, A1, false); sh.absarc(0, 0, RI, A1, A0, true); add(ext(sh, .01, .0026), M.gold, BI.head, hb(0, hy, hz), [-.06, 0, 0]); }
+  const ringPt = (r, a, dz) => hb(Math.cos(a) * r, hy + Math.sin(a) * r * Math.cos(.06), hz + dz - Math.sin(a) * r * Math.sin(.06));
+  { const pts = []; for (let k = 0; k <= 60; k++) pts.push(V3(...ringPt(.207, lerp(A0 + .06, A1 - .06, k / 60), .002))); add(tubeR(pts, Q(120, 48), 5, () => .0024), M.gold, BI.head); }
+  for (let k = 0; k <= 46; k++) bead(k % 2 ? .0034 : .0056, BI.head, ringPt(.254, lerp(A0 + .03, A1 - .03, k / 46), 0));
+  for (const a of [PI / 4, 3 * PI / 4, -PI / 7, PI + PI / 7]) add(ext(star4(.019, .32), .004, .001), M.gold, BI.head, ringPt(.2315, a, .007), [-.06, 0, 0]);
+  add(ext(crescentShape(.07, .03, .058), .009, .0024), M.gold, BI.head, hb(0, hy + RO, hz + .004), [-.06, 0, 0]);
+  add(new THREE.SphereGeometry(.0125, Q(14, 8), Q(10, 6)), M.gem, BI.head, hb(0, hy + RO + .014, hz + .012));
+  for (const s of [-1, 1]) for (const a of [.16, .4]) { const q = ringPt(RO + .004, s < 0 ? PI + a : -a, .006); pendant(BI.head, [q[0], q[1] - .006, q[2]], 5, .0105, .0075); }
   // the circlet: a fine band at the hairline with a teardrop gem on her brow
-  { const pts = []; for (let k = 0; k <= 32; k++) { const a = lerp(-1.75, 1.75, k / 32); pts.push(V3(HB.x + Math.sin(a) * .082, HB.y + HC.y + .05 + .022 * (1 - Math.cos(a)), HB.z + HC.z + Math.cos(a) * .079)); } add(tubeR(pts, Q(64, 32), 6, () => .0032), M.gold, BI.head); }
-  { const g = new THREE.SphereGeometry(1, Q(12, 6), Q(10, 5)); g.scale(.0065, .011, .005); add(g, M.gem, BI.head, hb(0, HC.y + .045, HC.z + HR[2] * 1.02)); }
-  add(new THREE.TorusGeometry(.009, .0018, 5, Q(16)), M.gold, BI.head, hb(0, HC.y + .045, HC.z + HR[2] * 1.0), null, [.85, 1.3, 1]);
-  // choker with a gem, and a fine chain down to a crescent pendant at the neckline
-  add(new THREE.TorusGeometry(.043, .0055, 6, Q(32)), M.gold, wNeck, [0, 1.47, -.01], [PI / 2 - .12, 0, 0]);
-  add(new THREE.SphereGeometry(.007, Q(10, 6), Q(8, 5)), M.gem, BI.chest, [0, 1.462, .036]);
-  add(tubeR([[0, 1.458, .046], [0, 1.4, .094], [0, 1.35, .104]], Q(10, 6), 5, () => .0018), M.gold, wTorso);
-  add(ext(crescentShape(.016, .006, .0145), .004, .001), M.gold, BI.chest, [0, 1.338, .109], [.15, 0, PI]);
-  // the neckline's gold edge and the belt at the waist with its crescent clasp
-  { const pts = []; for (let k = 0; k < 64; k++) { const th = (k / 64 - .5) * TAU, o = [0, 0, 0]; torsoPt(th, neckY(th), .006, o); pts.push(V3(o[0], o[1], o[2])); } add(tubeR(pts, Q(160, 64), 5, () => .0035, true), M.gold, wTorso); }
-  { const pts = []; for (let k = 0; k < 48; k++) { const th = (k / 48 - .5) * TAU, o = [0, 0, 0]; torsoPt(th, 1.07, .011, o); pts.push(V3(o[0], o[1], o[2])); } add(tubeR(pts, Q(96, 40), 6, () => .0065, true), M.gold, wTorso); }
-  add(ext(crescentShape(.028, .01, .025), .006, .0015), M.gold, BI.hips, [0, 1.062, .096], [0, 0, PI]);
-  add(new THREE.SphereGeometry(.0095, Q(12, 6), Q(10, 5)), M.gem, BI.hips, [0, 1.062, .1]);
-  // the long chain down the front of the skirt, ending in a four-pointed star
+  { const pts = []; for (let k = 0; k <= 32; k++) { const a = lerp(-1.75, 1.75, k / 32); pts.push(V3(HB.x + Math.sin(a) * .085, HB.y + HC.y + .05 + .022 * (1 - Math.cos(a)), HB.z + HC.z + Math.cos(a) * .081)); } add(tubeR(pts, Q(64, 32), 6, () => .0032), M.gold, BI.head); }
+  { const g = new THREE.SphereGeometry(1, Q(12, 6), Q(10, 5)); g.scale(.0065, .011, .005); add(g, M.gem, BI.head, hb(0, HC.y + .045, HC.z + HR[2] * 1.03)); }
+  add(new THREE.TorusGeometry(.009, .0018, 5, Q(16)), M.gold, BI.head, hb(0, HC.y + .045, HC.z + HR[2] * 1.01), null, [.85, 1.3, 1]);
+  for (const s of [-1, 1]) pendant(BI.head, hb(s * .087, HC.y + .012, HC.z - .03), 3, .009, .0055); // earrings below the cuffs
+  // the collar: a double choker, three tiers of gold over her collarbones, a filigree medallion and drops, and straps to the bodice
+  const chestPt = (x, y, off) => { const rx = crv(TPROF, 1, y) + off, o = [0, 0, 0]; torsoPt(Math.asin(cl(x / rx, -1, 1)), y, off, o); return V3(o[0], o[1], o[2]); };
+  add(new THREE.TorusGeometry(.043, .0052, 6, Q(32)), M.gold, wNeck, [0, 1.478, -.01], [PI / 2 - .12, 0, 0]);
+  add(new THREE.TorusGeometry(.0465, .0042, 6, Q(32)), M.gold, wNeck, [0, 1.458, -.01], [PI / 2 - .12, 0, 0]);
+  for (let k = 0; k < 13; k++) { const a = lerp(-1.25, 1.25, k / 12); bead(.0042, wNeck, [Math.sin(a) * .047, 1.468, -.01 + Math.cos(a) * .047]); }
+  add(new THREE.SphereGeometry(.007, Q(10, 6), Q(8, 5)), M.gem, BI.chest, [0, 1.462, .041]);
+  for (let t = 0; t < 3; t++) {
+   const pts = []; for (let k = 0; k <= 26; k++) { const sx = lerp(-1, 1, k / 26), x = sx * (.068 + .026 * t), y = 1.452 - .006 * t - (.03 + .024 * t) * Math.pow(1 - sx * sx, .8); pts.push(chestPt(x, y, .006)); }
+   add(tubeR(pts, Q(52, 26), 5, () => .0029 - .0003 * t), M.gold, wTorso);
+   if (t === 1) for (let k = 2; k <= 24; k += 2) bead(.0036, wTorso, pts[k].toArray());
+   if (t === 2) for (const sx of [-.82, -.55, -.27, .27, .55, .82]) { const k = Math.round((sx + 1) / 2 * 26), q = pts[k]; pendant(wTorso, [q.x, q.y - .004, q.z + .002], 2, .008, .0045); }
+  }
+  { const sh = new THREE.Shape(); sh.moveTo(0, .02); sh.quadraticCurveTo(.016, .006, 0, -.024); sh.quadraticCurveTo(-.016, .006, 0, .02); const c = chestPt(0, 1.366, .01); add(ext(sh, .004, .0012), M.gold, wTorso, [c.x, c.y, c.z], [-.25, 0, 0]); add(new THREE.SphereGeometry(.0072, 10, 8), M.gem, wTorso, [c.x, c.y + .002, c.z + .005]); pendant(wTorso, [c.x, c.y - .027, c.z + .002], 2, .008, .0068); }
+  for (const s of [-1, 1]) { const x1 = .108, y1 = neckY(Math.asin(cl(x1 / crv(TPROF, 1, 1.34), -1, 1))) + .004, pts = []; for (let k = 0; k <= 10; k++) { const f = k / 10; pts.push(chestPt(s * lerp(.12, x1, f), lerp(1.44, y1, f), .006)); } add(tubeR(pts, Q(20, 10), 5, () => .0026), M.gold, wTorso); }
+  // the neckline's gold edge, a line of beads down the bodice, and the double belt with its crescent clasp and drops
+  { const pts = []; for (let k = 0; k < 64; k++) { const th = (k / 64 - .5) * TAU, o = [0, 0, 0]; torsoPt(th, neckY(th), .006, o); pts.push(V3(o[0], o[1], o[2])); } add(tubeR(pts, Q(160, 64), 5, () => .0038, true), M.gold, wTorso); }
+  for (let k = 0; k < 9; k++) { const q = chestPt(0, lerp(1.285, 1.095, k / 8), .007); bead(k % 2 ? .0038 : .0055, wTorso, q.toArray()); }
+  for (const [y, gr, r] of [[1.078, .011, .0058], [1.062, .013, .0045]]) { const pts = []; for (let k = 0; k < 48; k++) { const th = (k / 48 - .5) * TAU, o = [0, 0, 0]; torsoPt(th, y, gr, o); pts.push(V3(o[0], o[1], o[2])); } add(tubeR(pts, Q(96, 40), 6, () => r, true), M.gold, wTorso); }
+  add(ext(crescentShape(.034, .012, .03), .006, .0015), M.gold, BI.hips, [0, 1.064, .098], [0, 0, PI]);
+  add(new THREE.SphereGeometry(.011, Q(12, 6), Q(10, 5)), M.gem, BI.hips, [0, 1.064, .103]);
+  // chains down the front of the skirt: a long centre chain to a four-pointed star, two side chains to small stars, and swags
   { const o = [0, 0, 0];
-   for (let k = 0; k < 26; k++) { const v = .02 + k / 25 * .6; skirtPt(0, v, .012, o); add(new THREE.SphereGeometry(k % 3 === 0 ? .006 : .0042, 6, 5), M.gold, wSkirt, [o[0], o[1], o[2]]); }
-   skirtPt(0, .64, .016, o); const st = new THREE.Shape(); for (let k = 0; k < 8; k++) { const a = PI / 2 + k * PI / 4, r = k % 2 ? .009 : .032 - (k === 4 ? 0 : .004); if (k) st.lineTo(Math.cos(a) * r, Math.sin(a) * r); else st.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
-   add(ext(st, .005, .0012), M.gold, wSkirt, [o[0], o[1] - .03, o[2]]);
+   for (let k = 0; k < 26; k++) { const v = .02 + k / 25 * .6; skirtPt(0, v, .012, o); bead(k % 3 === 0 ? .006 : .0042, wSkirt, [o[0], o[1], o[2]]); }
+   skirtPt(0, .64, .016, o); add(ext(star4(.032, .28), .005, .0012), M.gold, wSkirt, [o[0], o[1] - .03, o[2]]);
    add(new THREE.SphereGeometry(.007, 8, 6), M.gem, wSkirt, [o[0], o[1] - .03, o[2] + .006]);
-   for (const s of [-1, 1]) for (let k = 0; k < 14; k++) { const f = k / 13, th = s * lerp(.12, .95, f), v = .03 + .16 * Math.sin(PI * f); skirtPt(th, v, .014, o); add(new THREE.SphereGeometry(.0038, 5, 4), M.gold, wSkirt, [o[0], o[1], o[2]]); }
+   for (const s of [-1, 1]) {
+    for (let k = 0; k < 17; k++) { const v = .03 + k / 16 * .4; skirtPt(s * .42, v, .013, o); bead(k % 3 === 0 ? .0052 : .0038, wSkirt, [o[0], o[1], o[2]]); }
+    skirtPt(s * .42, .445, .016, o); add(ext(star4(.021, .3), .004, .001), M.gold, wSkirt, [o[0], o[1] - .02, o[2]], [0, s * .42, 0]);
+    add(new THREE.SphereGeometry(.005, 8, 6), M.gem, wSkirt, [o[0], o[1] - .02, o[2] + .004]);
+    for (const [a0, a1, d] of [[.12, .95, .16], [.1, .4, .1]]) for (let k = 0; k < 14; k++) { const f = k / 13, th = s * lerp(a0, a1, f), v = .03 + d * Math.sin(PI * f); skirtPt(th, v, .014, o); bead(.0036, wSkirt, [o[0], o[1], o[2]]); }
+    for (const th of [.2, .62]) { skirtPt(s * th, .035, .014, o); pendant(wSkirt, [o[0], o[1] - .006, o[2]], 2, .009, .0055); }
+   }
+  }
+  // cuffs: a double band set with beads and a gem on each upper arm, with a dangle; a double cuff at each wrist
+  for (const A of arms) {
+   const S = BP(A.sh), Wp = BP(A.wr), y0 = S.y - .085, w = wArmFn(A), cx = S.x + A.sx * .002, cz = S.z + .006;
+   for (const [dy, r, tr] of [[.008, .0535, .0048], [-.012, .0515, .0042]]) add(new THREE.TorusGeometry(r, tr, 6, Q(28)), M.gold, w, [cx, y0 + dy, cz], [PI / 2, 0, 0]);
+   for (let k = 0; k < 10; k++) { const a = k / 10 * TAU; bead(.0036, w, [cx + Math.sin(a) * .055, y0 - .002, cz + Math.cos(a) * .055]); }
+   add(new THREE.SphereGeometry(.0068, 10, 8), M.gem, w, [cx + A.sx * .057, y0 - .002, cz]);
+   pendant(w, [cx + A.sx * .058, y0 - .016, cz], 3, .0095, .006);
+   for (const [dy, r] of [[.03, .0255], [.012, .0245]]) add(new THREE.TorusGeometry(r, .0042, 6, Q(20)), M.gold, wArmFn(A), [Wp.x, Wp.y + dy, Wp.z], [PI / 2, 0, 0]);
+   for (let k = 0; k < 8; k++) { const a = k / 8 * TAU; bead(.003, wArmFn(A), [Wp.x + Math.sin(a) * .027, Wp.y + .021, Wp.z + Math.cos(a) * .027]); }
   }
  }
 
@@ -827,7 +880,7 @@ function makeLunara(opts) {
 
  // ---------- secondary motion: hair on spring chains (1/120 s substeps, body colliders), a skirt that sways, wings that lag ----------
  const DOWN = V3(0, -1, 0), UPV = V3(0, 1, 0), PH = 1 / 120;
- const COL = []; for (let i = 0; i < 8; i++) COL.push({ a: V3(), r: 0 });
+ const COL = []; for (let i = 0; i < 9; i++) COL.push({ a: V3(), r: 0 });
  function updateColliders() {
   head.localToWorld(COL[0].a.copy(HC)); COL[0].r = .1 * K;
   chest.localToWorld(COL[1].a.set(0, .06, .012)); COL[1].r = .132 * K;
@@ -837,13 +890,14 @@ function makeLunara(opts) {
   hips.localToWorld(COL[5].a.set(0, -.7, -.05)); COL[5].r = .31 * K;
   R.sh.localToWorld(COL[6].a.set(0, -.02, 0)); COL[6].r = .058 * K;
   L.sh.localToWorld(COL[7].a.set(0, -.02, 0)); COL[7].r = .058 * K;
+  hips.localToWorld(COL[8].a.set(0, -.92, -.06)); COL[8].r = .4 * K;
  }
  const _cb = V3();
  function collide(p, v, ids, m) {
   for (const k of ids) { const c = COL[k]; _cb.subVectors(p, c.a); const d = _cb.length(), Rr = c.r + m; if (d < Rr) { if (d < 1e-6) _cb.set(0, 0, -1); else _cb.multiplyScalar(1 / d); p.copy(c.a).addScaledVector(_cb, Rr); const vn = v.dot(_cb); if (vn < 0) v.addScaledVector(_cb, -vn); } }
  }
  const CH = LOCKS.map((Lk) => ({ bs: Lk.bones, offs: [Lk.bones[1].position.clone(), Lk.bones[2].position.clone(), Lk.tip.clone()], L: [0, 0, 0], p: [V3(), V3(), V3()], v: [V3(), V3(), V3()], T: [V3(), V3(), V3()],
-  K: Lk.back ? 34 : 40, C: Lk.back ? 4.6 : 5, gks: Lk.back ? [.12, .42, .6] : [.2, .5, .62], cols: Lk.back ? [0, 2, 3, 4, 5, 6, 7] : [0, 1, 3, 6, 7], m: .02 * K, ph: Lk.ph, init: false }));
+  K: Lk.back ? 34 : 40, C: Lk.back ? 4.6 : 5, gks: Lk.back ? [.12, .42, .6] : [.2, .5, .62], cols: Lk.back ? [0, 2, 3, 4, 5, 6, 7, 8] : [0, 1, 3, 4, 6, 7], m: .02 * K, ph: Lk.ph, init: false }));
  for (const ch of CH) ch.L = ch.offs.map((o) => o.length() * K);
  const _cm = new THREE.Matrix4(), _cj = V3(), _cv = V3(), _cw = V3(), _cq = new THREE.Quaternion(), _cq2 = new THREE.Quaternion(), _cq3 = new THREE.Quaternion();
  function physics(t, dt, hf, reset) {
@@ -953,8 +1007,8 @@ function makeLunara(opts) {
   // her soft aura and the halo's glow
   P3(chest, 0, .02, -.08, _t1);
   aura.visible = on && _t1.y > state.floor; aura.position.copy(_t1); aura.scale.setScalar(K * 2.1 * (.9 + .1 * glow)); aura.material.opacity = .1 * glow * pres;
-  P3(head, 0, HC.y + .09, HC.z - .17, _t2);
-  haloGlow.visible = on && _t2.y > state.floor; haloGlow.position.copy(_t2); haloGlow.scale.setScalar(K * .42); haloGlow.material.opacity = (.12 + .06 * glow) * pres;
+  P3(head, 0, HC.y + .06, HC.z - .2, _t2);
+  haloGlow.visible = on && _t2.y > state.floor; haloGlow.position.copy(_t2); haloGlow.scale.setScalar(K * .62); haloGlow.material.opacity = (.12 + .06 * glow) * pres;
   const hk = name === 'charge' || name === 'embrace' || name === 'release' ? cl(glow - 1, 0, 1) : 0;
   handGlow.forEach((s, i) => { s.visible = on && hk > .02; if (s.visible) { s.position.copy(PALM[i]); s.scale.setScalar(K * (.16 + .1 * hk)); s.material.opacity = .5 * hk * pres; } });
   light.position.copy(_t1).addScaledVector(_t3.set(0, 0, 1).applyQuaternion(root.getWorldQuaternion(_q1)), 2.6); light.position.y -= 1; light.intensity = on ? (.15 * glow + .3 * FIN.orb) * pres : 0;
@@ -1040,7 +1094,7 @@ function makeLunara(opts) {
    case 'handL': return out.copy(PALM[1]);
    case 'handR': return out.copy(PALM[0]);
    case 'orb': return out.copy(orbMesh.visible ? ORB : ORB_LAST);
-   case 'crown': return P3(head, 0, HC.y + .158, HC.z - .03, out);
+   case 'crown': return P3(head, 0, HC.y + .32, HC.z - .166, out); // the crescent on top of her halo ring
    case 'wings': return P3(chest, 0, .08, -.25, out);
    case 'hem': return P3(hips, 0, -.95, 0, out);
    case 'sky': return out.set(state.target.x, 9.5, state.target.z);

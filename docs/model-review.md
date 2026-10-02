@@ -15,6 +15,7 @@ The spec's targets: 70k to 100k triangles (minimum 50k, ceiling 120k for bosses)
 | Noctara, original | `noctara-in-the-night-square.html` | 28k | none (rigid joints) | 88 | Mostly (no `setFade`; `block` is 0.6 s) |
 | Shadow Wraith | `night-square-shadow-wraith.html` | 55k | 32 | 35 | No (older interface) |
 | Lunara | `night-square-shadow-wraith.html` | 56k | none | 60 | No (its own interface) |
+| Lunara, touched up | `src/models/lunara.js` | 97k | 62 | 14 (+ up to 21 for effects) | Yes |
 | Envoi | `envoi-letter-wyrm-model-preview.html` | 83k (instanced) | 20 | 27 | Mostly (no skinning; `block` 0.6 s; `busy` is false during holds) |
 
 Draw calls here were counted in the line-up scene and include glow sprites and particles. The Noctara page bundles the older Halcyon (v1); the rebuilt v2 is in the Halcyon page.
@@ -59,7 +60,19 @@ Chris wants her as close as possible to her stylized concept art. Where her two 
 - **Budget:** raise her from 28k triangles to 70k or more, and cut draw calls from 88 to 60 or fewer.
 - **Spec:** add `setFade`, and make `block` 0.45 s.
 
-### Lunara: visible upgrade
+### Lunara: done October 2, 2026
+
+Rebuilt as `makeLunara` with the spec interface and one 62-bone skeleton, which takes her body from 60 draw calls to 14. Her new look:
+
+- **Face:** sculpted, with porcelain skin, closed lidded eyes, a circlet and earrings.
+- **Hair:** fuller lavender-silver hair on spring chains, with long locks in front and a mass down her back.
+- **Gown and gold:** an ivory gown with painted gold filigree; a choker, collar, chains, cuffs and pendants; sheer periwinkle sleeves.
+- **Halo and wings:** the big ornate halo ring, and sage-and-plum luna moth wings that fold and wrap.
+- **Glow:** calmer, with no moon disc.
+
+She is 3.1 m tall, measured from the two Envoi scenes. Animation costs about 0.09 ms per frame (the original's was 0.06). Still short of the sheet: heavier skirt chains, and the pointed ears under her hair. The notes below were the plan.
+
+### Lunara: the plan
 
 - **Face and hair:** the face is a blank egg with closed-eye arcs. The pose sheet shows a delicate face with closed eyes, long flowing lavender-silver hair, and a gold crescent crown.
 - **Glare:** the whole figure blows out to white, and the moon disc behind her dominates. Bring her into readable mid-tones.

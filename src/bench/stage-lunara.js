@@ -67,9 +67,6 @@ window.STAGES.lunara = (function () {
     before,
     init(ctx) {
       THREE = ctx.THREE; V1 = new THREE.Vector3(); V2 = new THREE.Vector3();
-      // battle-fx.js's geyser, rise, spiral and converge use a scratch vector `tmpV` that was a global in the Night square demo
-      // and is not defined in the brick; give it one here rather than edit the shared file
-      if (typeof window.tmpV === 'undefined') window.tmpV = new THREE.Vector3();
       FX = makeBattleFX(); ctx.scene.add(FX.grp);
       fx2 = ctx.overlay.getContext('2d');
       // she stands 0.9 m behind the well's centre, as the summon did in the Night square build, turned a little toward the foe
