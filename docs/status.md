@@ -1,8 +1,8 @@
 # Where Things Stand
 
-A handoff for the next session. Updated October 2, 2026, after the polish round on Chris's second account. Every model is touched up and polished, and every page is republished here with the shared fixes.
+A handoff for the next session. Updated October 2, 2026, after the battle groundwork and the walking choices of the eleventh round.
 
-We are finishing **phase 1, the models** (`plan.md`). The polish round (step 10b) is done, and the first version of the cast page (step 11) is published; it needs Chris's phone check. Every model gets touched up against its sheets and shown on a battle bench page in the Night square, then published as a private page Chris can open on his phone.
+**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork:** the rules tables, a battle engine without graphics, and a balance simulator that meets all 25 targets. Next is the battle screen, starting with step 12, the first fight.
 
 ## Working from the second account
 
@@ -13,8 +13,9 @@ We are finishing **phase 1, the models** (`plan.md`). The polish round (step 10b
 
 | Page | Link | State |
 |---|---|---|
+| Battle balance | https://claude.ai/artifact/DruqrA8zAzZNpe4ahRXFwe | Phase 2 groundwork (October 2): all 25 balance targets with the simulator's results, any fight played turn by turn with its gauges, the level curve, experience and shards, and the new rules for Chris to approve |
 | The cast | https://claude.ai/artifact/Qk8apijsA3ZjVoK88XF4bJ | Step 11 (October 2): every model at true scale; pick an encounter, who acts and their target. Pixel 7a: 60 fps with five models, 39 with eight. Builds models when first needed |
-| Walking test | https://claude.ai/artifact/3YJkf77SD43iWJgo6pXmcf | The redrawn pixel Io (24 × 36) on all 13 ground-level maps at Chris's 36-pixel height; the talking portraits in a dialogue box. No walls yet |
+| Walking test | https://claude.ai/artifact/3YJkf77SD43iWJgo6pXmcf | The pixel Io (28 × 42) on all 13 ground-level maps at 768 wide with sharp pixels, 0.7× zoom, one walking speed and a mini-map; the talking portraits in a dialogue box. No walls yet |
 | Noctara | https://claude.ai/artifact/JWFwFUZTDum2CZjbGXotir | Rebuilt October 2 with the finished Io, Sol and Halcyon |
 | Lunara | https://claude.ai/artifact/Y1hTureSoXGBnTer4tJNSX | Polished October 2: heavier skirt chains and pointed ears |
 | Io, the Witch | https://claude.ai/artifact/6vRCkyYzZjn5Fc77GYebyE | Polished October 2: her new spells sized for the battle camera |
@@ -76,10 +77,18 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 - `tools/turnaround`: `--q anchor=<name>` and `--q fov=<deg>` for close-ups of any anchor.
 - The Night square's well: its lantern cutout is traced to the painted lantern instead of a box, and its bucket chain has a cutout.
 
+## The battle groundwork
+
+- `src/battle/rules.js`: every hero, summon, foe, herb and status as data at level 1, growing ×1.2 a level; numbers marked "proposed" wait for Chris (`questions/open.md`).
+- `src/battle/engine.js`: the battle without graphics. Seeded and in wait mode, like the Night square demo. `turn()` runs the gauges to the next turn; `choose(move, target)` plays a hero's command; each returns a log of every blow, heal and status for the battle screen to play back.
+- `src/battle/sim.js`: the fights (the first fight, the wild packs of each band, the four gates, the finale), the three play styles, and the targets.
+- `node tools/balance.mjs --n 1000 --report docs/balance-report.md --results src/battle/balance-results.js` checks every target after any change (about 10 seconds) and refreshes the report and the balance page's results.
+
 ## Next steps
 
-1. Phase 2, the battles, starting with the groundwork: the rules tables, the level curve and the balance simulator.
-2. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts; the scale is settled at 36 map px for Io. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
+1. Step 12, the first fight: the 3D battle screen in the Night square playing the engine, with a camera director, menus, gauges, damage numbers, and experience at the end.
+2. Chris's answers on the new battle rules (`questions/open.md`), then rerun the balance check.
+3. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.
 
 Art in hand (`../reference/art/README.md`):
 

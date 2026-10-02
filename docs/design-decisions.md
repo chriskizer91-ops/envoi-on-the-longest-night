@@ -428,3 +428,31 @@ This round replaces the ninth round's 36 pixels.
 - **Battle images stay high quality.** They are still compressed from the originals, but only lightly.
 - **The walking maps can be compressed harder,** down to a lower resolution, even if they look a little more pixelated, since a pixel character walks across them. The walking test carries every map at 1024 and at 768 pixels wide (from the 1536 originals) so Chris can choose; positions stay in the originals' pixels whatever size is shipped.
 - **The world map seen from the Magpie can be compressed the most.** It is seen from high up, at night and through mist, so fine detail isn't missed. Even so, nothing is compressed too much.
+
+## October 2, 2026, eleventh round
+
+### Walking
+
+These answers settle what the tenth round left open.
+
+- **Io stays 42 map pixels tall** (Chris).
+- **The walking maps ship at 768 pixels wide, drawn with sharp pixels.** Chris compared them with the 1024 copies, and the 768 ones looked best to him. The 1536 originals stay in `../reference/art/walk/`. The walking test drops from 9.3 MB to 2.7 MB.
+- **The standard camera zoom is 0.7×.** At that walking speed, 0.6 to 0.7 works on most maps. At 0.8 or 0.9 some maps don't show enough of the surroundings to choose a direction easily, though the mini-map helps.
+- **A map can have a closer zoom of its own** (0.8 or 0.9) where it is more detailed. Which maps get one is decided once Chris has walked them.
+- **The mini-map stays.** Chris found it a big help for finding the way.
+
+### The battle groundwork
+
+The rules tables, the battle engine and the balance simulator are built (`../src/battle/`, `../tools/balance.mjs`, `balance-report.md`). All 25 balance targets in `plan.md` are met.
+
+Several rules and numbers are new, set while balancing. They wait for Chris's approval (`questions/open.md`):
+
+- **The finale is a race.** Noctara's cold deepens: she and Halcyon hit 6% harder with every turn they take.
+- **Halcyon at Noctara's side** fights at a little over a third of her ambush strength.
+- **Dawnroost** is three level 12 wraiths.
+- **Trance** lasts at most four of the hero's turns.
+- **Kestrel Stoop** costs 40 Heat.
+- **MP** grows 6% a level.
+- **Wisps and frost wisps** have their own moves.
+- **Herbs** cover only the statuses this game has.
+- **The Magpie's upgrades** cost 500, 1,800 and 4,500 shards.

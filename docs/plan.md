@@ -73,6 +73,8 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 | **The battle screen** | A camera director that pulls back to a wide shot for every summon (Lunara, Envoi) and big attack, so the whole creature is in frame; command menus as in the Night square demo, turn bars, HP and MP, Trance and Heat gauges, big damage numbers, a phone layout, experience and level-ups at the end. |
 | **Battle backdrops** | Any night painting with its own matched camera, walk area, cutouts and lamps (the format the Night square already uses). All eight from `art-requests/03-battle-backdrops.md` are in `art/backdrops/`; each needs its camera matched and its lamps traced. |
 
+**The groundwork is built (October 2):** the rules tables (`../src/battle/rules.js`), a battle engine that runs without graphics (`engine.js`), and the simulator with its three play styles (`sim.js`, run by `../tools/balance.mjs`). Every target below is met; the report is `balance-report.md`, and the balance page plays any fight turn by turn. The battle screen is next, with step 12.
+
 ### The balance targets
 
 | Fight | Target |
@@ -133,7 +135,7 @@ As in FF9: the world is walked on foot, and later flown over. All of it at night
 - **The far view** from the Magpie is the same world, scaled down, since it doesn't need full detail.
 - **Ground-level maps** are entered from the world map: the towns and the set-fight places (`art-requests/04-walking-maps.md`).
 - A phone-friendly tracing tool marks where Io can walk, what she walks behind, the town entrances and the wild areas, once per tile; the day and night versions share it.
-- **Walking:** Io is 42 map pixels tall, at 1× zoom, with one walking speed (110 map pixels a second). A **navigation mini-map** in the corner shows the whole map, the part on screen and Io; once the maps are traced it also shows paths, exits and towns.
+- **Walking:** Io is 42 map pixels tall on maps shipped at 768 pixels wide with sharp pixels, at 0.7× zoom (0.8 or 0.9 on a more detailed map), with one walking speed (110 map pixels a second). A **navigation mini-map** in the corner shows the whole map, the part on screen and Io; once the maps are traced it also shows paths, exits and towns.
 
 **The level bands.** Four bands, 1 to 5, 5 to 10, 10 to 15 and 15 to 20, opened by the Bogmire refit, the charge at Dawnroost's living node, and the upgrade after Halcyon. Sunstone gives the Magpie its lift, and Noctara's cold drains it. A band the ship can't reach yet sits under cold mist on the flying map. The central island capital, the east and the southeast are under mist all game: they aren't in the story.
 
@@ -184,6 +186,6 @@ A first budget, with the paintings compressed. The battle images stay high quali
 | The code: models, effects, battle, walking, airship, music | 3 MB |
 | The world map at night: nine tiles for walking, plus a lighter far view for flying | 4 MB |
 | Eight battle backdrops and the Night square | 4 MB |
-| Thirteen ground-level maps, at 1024 or 768 pixels wide (Chris picks) | 2 to 3 MB |
+| Thirteen ground-level maps, at 768 pixels wide with sharp pixels (Chris) | 2 MB |
 | Story stills and the title | 4 MB |
-| **Total** | **about 18 MB** |
+| **Total** | **about 17 MB** |

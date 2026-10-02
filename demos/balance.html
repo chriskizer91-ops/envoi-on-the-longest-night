@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Battle Balance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/battle/balance.css">
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>Battle Balance</h1>
+    <p>The battle rules for the whole game, played by a simulator: every fight, thousands of times, by a careless, a sensible and an expert player. Level 1 is the Night square demo; everything grows about 20% a level up to 20.</p>
+  </header>
+
+  <section class="win" aria-labelledby="h-targets">
+    <h2 id="h-targets">The balance targets</h2>
+    <div class="score"><b id="met">25 of 25</b><span id="metNote">targets met</span></div>
+    <div class="targets" id="targets"></div>
+    <p>“Losses leave” is how much of the foes’ HP is still standing when the party falls. A fight’s length counts the time the menus are open, at a second and a half for each choice.</p>
+    <div class="row">
+      <button type="button" class="btn go" id="runBtn">Play them all again here</button>
+      <label for="runN" class="status">Fights per row</label>
+      <select id="runN"><option value="100">100</option><option value="300" selected>300</option><option value="1000">1,000</option></select>
+    </div>
+    <div class="status" id="runStatus" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="win" aria-labelledby="h-watch">
+    <h2 id="h-watch">Watch one fight</h2>
+    <p id="fightNote"></p>
+    <div class="row">
+      <select id="fight" aria-label="Fight"></select>
+      <label class="sl" for="level"><span>Party level</span><input type="range" id="level" min="1" max="20" step="1" value="1"><output id="levelOut" for="level">1</output></label>
+    </div>
+    <div class="row">
+      <div class="seg" id="style" role="group" aria-label="Play style"></div>
+      <button type="button" class="btn go" id="again">Play another</button>
+      <button type="button" class="btn" id="skip">Skip to the end</button>
+    </div>
+    <div class="fighters" id="fighters"></div>
+    <div class="result" id="result" role="status" aria-live="polite"></div>
+    <ol class="log" id="log" aria-label="What happened, turn by turn"></ol>
+  </section>
+
+  <section class="win" aria-labelledby="h-curve">
+    <h2 id="h-curve">The level curve</h2>
+    <p>Every number grows about 20% a level from its level 1 value, for the party and the foes alike, so a fight at the party’s level lasts about as long at 20 as at 1. MP grows more slowly, so spells stay worth thinking about.</p>
+    <div class="scroll">
+      <table class="curve">
+        <thead><tr id="curveHead"></tr></thead>
+        <tbody id="curve"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="win" aria-labelledby="h-econ">
+    <h2 id="h-econ">Experience and sunstone shards</h2>
+    <p>An average wild fight at each level, and how many it takes to reach the next. Each gate is worth about one level, and the first fight takes Io straight to level 2.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th class="num">Level</th><th class="num">To next</th><th class="num">A wild fight gives</th><th class="num">Fights</th><th class="num">Shards a fight</th></tr></thead>
+        <tbody id="econ"></tbody>
+      </table>
+    </div>
+    <p id="econTotal"></p>
+  </section>
+
+  <section class="win" aria-labelledby="h-new">
+    <h2 id="h-new">New rules and numbers for Chris to approve</h2>
+    <p>Everything else comes from the Night square demo, the lore bible and the Noctara amendment. These are new, set while balancing:</p>
+    <ul class="props">
+      <li><b>The finale is a race.</b> Noctara’s cold deepens: she and Halcyon hit 6% harder with every turn they take. <small>Without it the finale is decided by whether the party survives Halcyon’s opening blows, and a loss at level 19 never looks close.</small></li>
+      <li><b>At Noctara’s side, Halcyon fights at a little over a third of her ambush strength.</b> <small>Blackout already gives her extra blows; at full strength the two of them end the fight before it can become a race.</small></li>
+      <li><b>Halcyon’s ambush at 15 is lost in about two minutes.</b> An expert at 18 brings her to 20% and her retreat about two times in three; at 20, every time.</li>
+      <li><b>Dawnroost is three level 12 wraiths</b> against a party at 10.</li>
+      <li><b>Trance lasts at most four of the hero’s turns,</b> or until Moonlight or High Noon ends it.</li>
+      <li><b>Kestrel Stoop costs 40 Heat,</b> what one Ember Rush costs, and hits for 1,500 at level 1 on the turn after the hover.</li>
+      <li><b>Lunara’s six beams fall on any foe;</b> Moonfall lands on the foe Io chose. Envoi wraps the foe Io chose.</li>
+      <li><b>MP grows 6% a level</b> (about 360 at level 20, as in the bible) while spells keep their costs.</li>
+      <li><b>Wisps:</b> Flicker, Cling (drinks what it takes), Wail (both) and Gutter (the next blow at it misses). <b>Frost wisps</b> add Frost Breath, which slows the party for 4 seconds.</li>
+      <li><b>Herbs:</b> Moonpetal, Lavender, Silver Mugwort, Ember-star Lily and Nightrose, from the bible. Its cures for statuses this game no longer has are left out.</li>
+      <li><b>The Magpie’s upgrades</b> cost 500, 1,800 and 4,500 sunstone shards.</li>
+    </ul>
+  </section>
+
+  <footer>The numbers live in <code>src/battle/rules.js</code>; <code>tools/balance.mjs</code> checks every target after any change. The 3D battle screen that plays these rules comes next, starting with the first fight.</footer>
+</div>
+<script src="../src/battle/rules.js"></script>
+<script src="../src/battle/engine.js"></script>
+<script src="../src/battle/sim.js"></script>
+<script src="../src/battle/balance-results.js"></script>
+<script src="../src/battle/balance-page.js"></script>
+</body>
+</html>
