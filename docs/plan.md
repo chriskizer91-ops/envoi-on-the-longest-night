@@ -33,8 +33,8 @@ A model is finished when:
 | 8 | **Sol** | Face, bronze armor, the sun crest, and her new Kestrel Stoop: a turn hovering, then the biggest sword hit in the game | Done |
 | 9 | **Envoi** | Paper-lantern body, a bigger head and seal, the scale and low coil from the Envoi scenes | Done |
 | 10 | **Wisp** | A new model, with its frost variant | Done |
-| 10b | **The polish round** | Every item on every model's "what's left" list (below), plus the shared bench and tool fixes | Next |
-| 11 | **The cast** | Everyone together at true scale, every action playable against any target, and every attack visual sized for the battle camera | After 10b |
+| 10b | **The polish round** | Every item on every model's "what's left" list (below), plus the shared bench and tool fixes | Done |
+| 11 | **The cast** | Everyone together at true scale, every action playable against any target, and every attack visual sized for the battle camera | Next |
 
 ### 10b: the polish round
 
@@ -49,7 +49,7 @@ Each model gets its page rebuilt and republished after its polish. Noctara's lis
 | Wraith and great wraith | Done: the scythe's ornate openwork head with burning slots, a hem of fewer, longer, wavier tails with the green climbing up them, and the great wraith switched in place |
 | Sol | Done: wispier hair with a fringe across her forehead, a rounder face, the cape over her shoulders, and Ember Rush aimed at the wraith. Her 140 KB of code has no unused parts; the final build can minify it |
 | Envoi | Done: longer lanterns pointed at both ends; the strike's ring sized from its body so it closes round the foe; a dark splash thrown off the ward when it takes a blow; its place on the bench moved so its coils keep at least 1.6 m from Io |
-| Halcyon | Light-Drinker's streams and Black Noon's swirls as ribbons; the brief cut line in the retreat around u 0.65. Her face stays as it is. |
+| Halcyon | Done: Light-Drinker's streams of stolen light as ribbons from her target and round her into the blade; Black Noon's swirls as dark bands spiraling up into the black sun; the retreat sinks into the dark instead of a hard cut. Her face stays as it is. |
 
 ### 11: the cast page
 

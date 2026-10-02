@@ -1053,6 +1053,38 @@ function makeHalcyon(opts) {
  const trail = new THREE.Mesh(trGeo, new THREE.MeshBasicMaterial({ vertexColors: true, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
  trail.frustumCulled = false; trail.renderOrder = 6; trail.visible = false; fx.add(trail);
  const trTip = [], trMid = []; for (let i = 0; i < TRN; i++) { trTip.push(new THREE.Vector3()); trMid.push(new THREE.Vector3()); }
+ // ribbons: soft strips that always face the camera, drawn along a curve set every frame (world space), for
+ // Light-Drinker's streams of stolen light and Black Noon's dark swirls. One draw call per set.
+ const RBN = 26;
+ function ribbons(n, core, edge, dark) {
+  const nv = n * RBN * 2, pos = new Float32Array(nv * 3), nxt = new Float32Array(nv * 3), sd = new Float32Array(nv), al = new Float32Array(nv), wd = new Float32Array(nv), idx = [];
+  for (let r = 0; r < n; r++) for (let k = 0; k < RBN; k++) { const v = (r * RBN + k) * 2; sd[v] = -1; sd[v + 1] = 1; if (k < RBN - 1) idx.push(v, v + 1, v + 2, v + 1, v + 3, v + 2); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('nxt', new THREE.BufferAttribute(nxt, 3)); g.setAttribute('sd', new THREE.BufferAttribute(sd, 1));
+  g.setAttribute('al', new THREE.BufferAttribute(al, 1)); g.setAttribute('wd', new THREE.BufferAttribute(wd, 1)); g.setIndex(idx);
+  const mat = new THREE.ShaderMaterial({
+   uniforms: { uCore: { value: new THREE.Color(core) }, uEdge: { value: new THREE.Color(edge) } },
+   vertexShader: 'attribute vec3 nxt; attribute float sd; attribute float al; attribute float wd; varying float vS; varying float vA;\nvoid main() { vec3 T = nxt - position; if (dot(T, T) < 1e-10) T = vec3(0.0, 1.0, 0.0); vec3 s = cross(normalize(T), normalize(cameraPosition - position)); float l = length(s); s = l > 1e-4 ? s / l : vec3(1.0, 0.0, 0.0); vS = sd; vA = al; gl_Position = projectionMatrix * viewMatrix * vec4(position + s * sd * wd, 1.0); }',
+   fragmentShader: 'uniform vec3 uCore; uniform vec3 uEdge; varying float vS; varying float vA;\nvoid main() { float x = abs(vS), c = 1.0 - x * x; vec3 col = mix(uEdge, uCore, pow(c, 2.0)); gl_FragColor = ' + (dark ? 'vec4(col, vA * pow(c, 0.7))' : 'vec4(col * vA * c, 1.0)') + '; }',
+   transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: dark ? THREE.NormalBlending : THREE.AdditiveBlending,
+  });
+  const mesh = new THREE.Mesh(g, mat); mesh.frustumCulled = false; mesh.renderOrder = dark ? 5 : 8; mesh.visible = false; fx.add(mesh);
+  // set(r, curve, alpha, width): curve(f, out) for f 0..1 along ribbon r
+  const _c = new THREE.Vector3(), _n = new THREE.Vector3();
+  return {
+   mesh, n,
+   set(r, curve, alpha, width) {
+    for (let k = 0; k < RBN; k++) {
+     const f = k / (RBN - 1); curve(f, _c); curve(Math.min(1, f + 1 / (RBN - 1)), _n); if (k === RBN - 1) { curve(f - 1 / (RBN - 1), _n); _n.sub(_c).negate().add(_c); }
+     const a = alpha(f), w = width(f);
+     for (let j = 0; j < 2; j++) { const v = (r * RBN + k) * 2 + j; pos.set([_c.x, _c.y, _c.z], v * 3); nxt.set([_n.x, _n.y, _n.z], v * 3); al[v] = a; wd[v] = w; }
+    }
+   },
+   flush(on) { mesh.visible = on; if (on) for (const k of ['position', 'nxt', 'al', 'wd']) g.attributes[k].needsUpdate = true; },
+  };
+ }
+ const drinkR = ribbons(6, 0xf4f0ff, 0x8d7cff, false), noonR = ribbons(5, 0x020308, 0x5a96ff, true);
+ const RIB = { from: Array.from({ length: 6 }, () => new THREE.Vector3()), to: new THREE.Vector3(), mid: new THREE.Vector3(), c: new THREE.Vector3(), sun: new THREE.Vector3(), at: new THREE.Vector3() };
  // point particles, each with its own size and alpha; sizes are true world sizes in any perspective camera, including a narrow
  // zoomed battle camera. Light adds; the black smoke blends normally, so it darkens whatever is behind it.
  function particles(n, size, map, dark) {
@@ -1415,7 +1447,7 @@ function makeHalcyon(opts) {
  const st = { init: false, px: 0, pz: 0, ph: 0, spd: 0, q: new THREE.Quaternion() }, _rq = new THREE.Quaternion();
  let actv = null, gOn = false, gW = 0, dashV = 0, liftV = 0, fadeV = 1, fadeE = 1, prevU = 0, rbT = 0, trOn = 0, moteAcc = 0, sinkV = 0, smokeAcc = 0, noonAcc = 0;
  let blinkIn = 2.5, blinkT = -1, lookT = 1.2, gzX = 0, gzY = 0, gzTX = 0, gzTY = 0, mCur = 0, mNext = 0, mK = 1;
- const _p1 = new THREE.Vector3(), _p2 = new THREE.Vector3(), _p3 = new THREE.Vector3(), _p4 = new THREE.Vector3(), _p5 = new THREE.Vector3();
+ const _p1 = new THREE.Vector3(), _p2 = new THREE.Vector3(), _p3 = new THREE.Vector3(), _p4 = new THREE.Vector3(), _p5 = new THREE.Vector3(), _ax = new THREE.Vector3();
  const EYEO = EYEL.clone().add(new THREE.Vector3(0, 0, .012)), EYEOR = new THREE.Vector3().setFromMatrixPosition(EF[0].m).add(new THREE.Vector3(0, 0, .012));
  const winK = (list, u) => { let k = 0; if (list) for (const r of list) k = Math.max(k, sm(r[0] - .03, r[0] + .02, u) * (1 - sm(r[1] - .03, r[1] + .02, u))); return k; };
  function animate(phase, walk, t, dt) {
@@ -1490,7 +1522,7 @@ function makeHalcyon(opts) {
   }
   // stolen light streaming into the edge
   if (dt > 0 && drink > .05) {
-   moteAcc += dt * 58 * drink;
+   moteAcc += dt * 34 * drink;
    while (moteAcc > 1) { moteAcc -= 1; const a = (rnd() - .5) * 2.4, r = .7 + rnd() * 1.0; _p5.set(Math.sin(a) * r, .5 + rnd() * 1.4, Math.cos(a) * r); root.localToWorld(_p5); const i = emit(motes, _p5.x, _p5.y, _p5.z, 0, 0, 0, 1.4); motes.tg[i] = .15 + .85 * rnd(); }
   }
   stepP(motes, dt, (i, h, a) => {
@@ -1501,6 +1533,37 @@ function makeHalcyon(opts) {
    p[i * 3] += v[i * 3] * h; p[i * 3 + 1] += v[i * 3 + 1] * h; p[i * 3 + 2] += v[i * 3 + 2] * h;
    return sm(0, .15, a) * Math.min(1, d * 4) * fd;
   }, [.85, .74, 1]);
+  // Light-Drinker's streams: ribbons of stolen light that arc in from round her (and one from her target) into the edge,
+  // with bright pulses running down them toward the blade
+  const dOn = drink > .03 && fd > .02;
+  if (dOn) {
+   root.getWorldPosition(RIB.at); const tg = state.target;
+   for (let r = 0; r < drinkR.n; r++) {
+    const S = RIB.from[r];
+    if (r === 0 && tg && isFinite(tg.x)) S.set(+tg.x, +tg.y || 1, +tg.z);
+    else { const a = root.rotation.y + (r - 2.5) * .9 + .25 * Math.sin(t * .7 + r), rr = 1.25 + .3 * Math.sin(r * 1.7); S.set(RIB.at.x + Math.sin(a) * rr, .5 + .28 * r + .1 * Math.sin(t + r), RIB.at.z + Math.cos(a) * rr); }
+    RIB.to.copy(_p4).lerp(_p1, .25 + .12 * r);
+    RIB.mid.copy(S).lerp(RIB.to, .5); RIB.mid.y += .35 + .1 * Math.sin(t * 1.3 + r);
+    RIB.c.subVectors(RIB.to, S).cross(_ax.set(0, 1, 0)).normalize().multiplyScalar(.35 * Math.sin(t * 1.1 + r * 2.1)); RIB.mid.add(RIB.c);
+    const ph = t * 1.6 + r * .37;
+    drinkR.set(r, (f, o) => { const a = 1 - f; return o.set(a * a * S.x + 2 * a * f * RIB.mid.x + f * f * RIB.to.x, a * a * S.y + 2 * a * f * RIB.mid.y + f * f * RIB.to.y, a * a * S.z + 2 * a * f * RIB.mid.z + f * f * RIB.to.z); },
+     (f) => { const band = Math.pow(.5 + .5 * Math.cos((f - (ph % 1)) * TAU), 6); return drink * fd * sm(0, .12, f) * (1 - sm(.88, 1, f)) * (.28 + .9 * band) * (r === 0 ? 1.3 : 1); },
+     (f) => (r === 0 ? .055 : .04) * (1 - .55 * f));
+   }
+  }
+  drinkR.flush(dOn);
+  // Black Noon's swirls: dark bands edged in cold blue spiral up round her into the dark sun as it charges
+  const nOn = chg > .04 && fd > .02;
+  if (nOn) {
+   root.getWorldPosition(RIB.at); RIB.sun.copy(sunDisc.position);
+   for (let r = 0; r < noonR.n; r++) {
+    const a0 = r * TAU / noonR.n + t * 1.6;
+    noonR.set(r, (f, o) => { const a = a0 + f * 7.5, rr = lerp(1.3, .14, Math.pow(f, .8)) * (.85 + .15 * chg); return o.set(lerp(RIB.at.x, RIB.sun.x, f * f) + Math.sin(a) * rr, lerp(.15, RIB.sun.y, f), lerp(RIB.at.z, RIB.sun.z, f * f) + Math.cos(a) * rr); },
+     (f) => Math.min(1, 1.25 * chg) * fd * sm(0, .12, f) * (1 - sm(.88, 1, f)) * (.75 + .25 * Math.sin(f * 20 - t * 6 + r)),
+     (f) => .16 * (1 - .55 * f) * (.6 + .4 * chg));
+   }
+  }
+  noonR.flush(nOn);
   // cold blue sparks off the tip at each hit
   if (def && dt > 0) for (const hh of def.hits) if (prevU < hh && u >= hh) for (let i = 0; i < 16; i++) { const a = rnd() * TAU, sp = .8 + rnd() * 2; emit(sparks, _p1.x, _p1.y, _p1.z, Math.cos(a) * sp, .5 + rnd() * 1.8, Math.sin(a) * sp, .35 + rnd() * .25); }
   stepP(sparks, dt, (i, h, a) => { const p = sparks.pos, v = sparks.vel; v[i * 3 + 1] -= 6 * h; p[i * 3] += v[i * 3] * h; p[i * 3 + 1] += v[i * 3 + 1] * h; p[i * 3 + 2] += v[i * 3 + 2] * h; return (1 - a) * fd; }, [.6, .8, 1]);

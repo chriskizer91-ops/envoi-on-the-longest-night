@@ -1,8 +1,8 @@
 # Where Things Stand
 
-A handoff for the next session. Updated October 2, 2026, after the move to Chris's second account. Every model is touched up and committed. Noctara's page has been rebuilt with the finished cast.
+A handoff for the next session. Updated October 2, 2026, after the polish round on Chris's second account. Every model is touched up and polished, and every page is republished here with the shared fixes.
 
-We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Every model gets touched up against its sheets and shown on a battle bench page in the Night square, then published as a private page Chris can open on his phone.
+We are in **phase 1, the models** (`plan.md`). The polish round (step 10b) is done; step 11, the cast page, is next. Every model gets touched up against its sheets and shown on a battle bench page in the Night square, then published as a private page Chris can open on his phone.
 
 ## Working from the second account
 
@@ -19,7 +19,8 @@ We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Ev
 | The wisp | https://claude.ai/artifact/GG9LKbSjeohk7UA2UJ7Kcp | Polished October 2: a darker, fuller tail and a deeper, torn hollow; the frost variant checked in every action |
 | Shadow Wraith and great wraith | https://claude.ai/artifact/VzY24F1cx38cVhs87wfvKU | Polished October 2: the scythe's ornate head and the long torn hem from its sheet; the Great wraith toggle switches in place |
 | Sol | https://claude.ai/artifact/9Sbu4aSYqmmiKytpy3y8as | Polished October 2: wispier hair, a rounder face, the cape over her shoulders, Ember Rush aimed at the wraith |
-| Envoi | https://claude.ai/artifact/4XL684grjKstJCGud3MnNm | Polished October 2: longer pointed lanterns, a strike that rings the foe all the way round, a dark splash on the ward, its coils clear of Io |
+| Envoi | https://claude.ai/artifact/4XL684grjKstJCGud3MnNm | Polished October 2: longer pointed lanterns, a strike that rings the wraith, a dark splash on the ward, its coils clear of Io, and a wide shot whenever it is summoned |
+| Halcyon | https://claude.ai/artifact/WsZX1VshXXxjyfB4cKF1UE | Polished October 2: Light-Drinker's streams and Black Noon's swirls as ribbons, and a retreat that sinks into the dark |
 | Art requests | https://claude.ai/artifact/MNozyJ4DQys2syLfyyv44c | Retired: Chris found the page clunky. Image requests now go to him as Markdown files in the chat (`SendUserFile`). |
 
 ## Published from the first account
@@ -46,13 +47,14 @@ We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Ev
 | Shadow Wraith and great wraith | Done, polished | The great wraith's numbers belong to the battle step |
 | Sol | Done, polished | Her code stays 140 KB: it has no unused parts, so only minifying would shrink it, which the final game's build can do |
 | Envoi | Done, polished | — |
-| Halcyon | Done | Her face is still rounder than the sheets' gaunt one (kept as built); Light-Drinker's streams and Black Noon's swirls could be ribbons; a brief cut line in the retreat around u 0.65 |
+| Halcyon | Done, polished | Her face stays as built (Chris, October 2) |
 | The cast (step 11) | Not started | Every model together at true scale, after all of the above |
 
 "What's left" comes from each agent's last report. Every model step (2 to 10) is done; step 11, the cast, is next.
 
 ## Rules that bit us
 
+- **Never put a `//` comment in the middle of a config line.** It cuts off the rest of the line. Envoi's page once lost its target, height and shadow that way, so its strike wrapped Io instead of the wraith.
 - **A bench page must load only original models for its supporting actors** (`makeWitchOriginal`, `makeSolOriginal`, `makeWraithOriginal`...). Lunara's page once bundled a half-edited Sol and crashed on Chris's phone.
 - **Commit an agent's files only after its report, and only its own files,** by explicit path. Several agents work in the same folder at once.
 - **The machine has 4 cores.** With six agents rendering, headless checks slow down a lot. Give checks long timeouts and run renders one at a time.
@@ -74,9 +76,8 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 ## Next steps
 
-1. The polish round (plan step 10b): every model's "what's left" list, one model at a time, each page rebuilt and republished here. The shared bench and tool changes are done.
-2. The cast page (step 11).
-3. Phase 2, the battles. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
+1. The cast page (step 11).
+2. Phase 2, the battles. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
 
 Art in hand (`../reference/art/README.md`):
 
