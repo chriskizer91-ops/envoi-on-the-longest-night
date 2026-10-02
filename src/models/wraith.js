@@ -117,9 +117,10 @@ function makeWraith(opts) {
   const fsc = 256 / AW; F.save(); F.shadowColor = 'rgb(255,170,80)'; F.shadowBlur = 6; F.fillStyle = '#fff'; tear(F, x * fsc, y * fsc, s * fsc * .95); F.restore();
  }
 
- // eight torn strips side by side across the top half, each splitting into two to four flame-like tails
+ // eight torn strips side by side across the top half, each splitting into two or three long, wavy flame-like tails
+ // that part high up and curl at the tips, as on the sheet
  for (let k = 0; k < 8; k++) {
-  const nT = 2 + (k % 3), vt = .52 + rnd() * .12, hw = (v) => .37 - .06 * v;
+  const nT = 2 + (k % 2), vt = .38 + rnd() * .12, hw = (v) => .37 - .06 * v;
   const notches = [0, 1].map(() => [.1 + rnd() * .45, .03 + rnd() * .09, rnd() < .5 ? -1 : 1]);
   const jag = (v, s) => { let d = .014 * Math.sin(v * 57 + s * 5 + k * 2.1) + .009 * Math.sin(v * 131 + k * 1.3 - s); for (const [nv, nd, ns] of notches) if (ns === s) d += nd * Math.max(0, 1 - Math.abs(v - nv) / .03); return d; };
   const out = [];
@@ -128,9 +129,9 @@ function makeWraith(opts) {
   for (let i = 1; i < nT; i++) { ed.push(lerp(u0, u1, i / nT + (rnd() - .5) * .12)); sv.push(vt + .03 + rnd() * .1); }
   ed.push(u1); sv.push(vt);
   for (let i = 0; i < nT; i++) {
-   const tu = lerp(ed[i], ed[i + 1], .25 + rnd() * .5), tv = .86 + rnd() * .125, ph = rnd() * 9, cu = (rnd() - .5) * .06;
-   for (let s = 1; s <= 10; s++) { const f = s / 10; out.push([lerp(ed[i], tu, Math.pow(f, 1.4)) + .01 * Math.sin(f * 19 + ph) + cu * f * f, lerp(sv[i], tv, f)]); }
-   for (let s = 1; s <= 10; s++) { const f = 1 - s / 10; out.push([lerp(ed[i + 1], tu, Math.pow(f, 1.4)) - .01 * Math.sin(f * 17 + ph) + cu * f * f, lerp(sv[i + 1], tv, f)]); }
+   const tu = lerp(ed[i], ed[i + 1], .25 + rnd() * .5), tv = .9 + rnd() * .09, ph = rnd() * 9, cu = (rnd() - .5) * .16;
+   for (let s = 1; s <= 14; s++) { const f = s / 14; out.push([lerp(ed[i], tu, Math.pow(f, 1.25)) + .022 * Math.sin(f * 13 + ph) * f + cu * f * f * f, lerp(sv[i], tv, f)]); }
+   for (let s = 1; s <= 14; s++) { const f = 1 - s / 14; out.push([lerp(ed[i + 1], tu, Math.pow(f, 1.25)) + .022 * Math.sin(f * 13 + ph) * f + cu * f * f * f, lerp(sv[i + 1], tv, f)]); }
   }
   for (let i = 26; i >= 0; i--) { const v = i / 26 * vt; out.push([.5 + hw(v) - jag(v, 1), v]); }
   const holes = []; for (let i = 0, nh = ((GREAT ? 1.5 : 0) + rnd() * 2.6) | 0; i < nh; i++) holes.push([.38 + rnd() * .24, .14 + rnd() * (vt - .22), .03 + rnd() * .05, .015 + rnd() * .03, rnd() * 6]);
@@ -138,11 +139,11 @@ function makeWraith(opts) {
   A.save(); trace(A, out, holes, R[0], 0, 128, 512); A.clip('evenodd');
   A.fillStyle = CLOTH; A.fillRect(R[0], 0, 128, 512); folds(A, R[0], 0, 128, 512, 16);
   const gr = A.createLinearGradient(R[0], 0, R[0] + 128, 0); gr.addColorStop(0, 'rgba(0,0,0,.5)'); gr.addColorStop(.32, 'rgba(0,0,0,0)'); gr.addColorStop(.68, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,0,.5)'); A.fillStyle = gr; A.fillRect(R[0], 0, 128, 512);
-  const gv = A.createLinearGradient(0, 512 * .7, 0, 512); gv.addColorStop(0, `rgba(${G255},0)`); gv.addColorStop(1, `rgba(${G255},.26)`); A.fillStyle = gv; A.fillRect(R[0], 0, 128, 512);
+  const gv = A.createLinearGradient(0, 512 * .5, 0, 512); gv.addColorStop(0, `rgba(${G255},0)`); gv.addColorStop(.6, `rgba(${G255},.14)`); gv.addColorStop(1, `rgba(${G255},.36)`); A.fillStyle = gv; A.fillRect(R[0], 0, 128, 512);
   if (GREAT) for (let i = 0; i < 2; i++) flameSpot(R[0] + 44 + rnd() * 40, 70 + i * 120 + rnd() * 80, 11 + rnd() * 5);
   A.lineWidth = 2.2; A.strokeStyle = 'rgba(150,145,165,.26)'; trace(A, out, holes, R[0], 0, 128, 512); A.stroke();
   A.restore();
-  edgeGlow(out, holes, R, 4, .68, .42);
+  edgeGlow(out, holes, R, 4, .55, .5);
   // tongues of green fire licking up from the tails
   E.save(); E.globalCompositeOperation = 'lighter'; E.strokeStyle = `rgba(${G255},.5)`; E.lineCap = 'round';
   for (let i = 0; i < 5; i++) { const x = (R[0] + 128 * (.25 + .5 * rnd())) * ES, y = 512 * (.86 + rnd() * .12) * ES; E.lineWidth = 1 + rnd() * 1.6; E.beginPath(); E.moveTo(x, y); E.bezierCurveTo(x + (rnd() - .5) * 8, y - 18, x + (rnd() - .5) * 8, y - 30, x + (rnd() - .5) * 6, y - 40 - rnd() * 30); E.stroke(); }
@@ -427,7 +428,7 @@ function makeWraith(opts) {
    STRIPS.push({ a, yTop: yTop + (rnd() - .5) * .03, len: lerp(lA, lB, rnd()), w: lerp(wA, wB, rnd()), rOff: rOff + .006 * (i % 3), flare: flare * (.75 + .5 * rnd()), k: (rnd() * 8) | 0, ph: rnd() * TAU, kind, curl: (rnd() - .5) * .4, twist: (rnd() - .5) * .3 });
   }
  }
- layer(32, .24, 1.17, 1.18, 1.42, .17, .24, .014, .2, 0);
+ layer(24, .24, 1.17, 1.12, 1.5, .21, .3, .014, .3, 0);
  layer(18, .2, 1.25, .56, .86, .15, .2, .045, .14, 1);
  layer(16, .82, 0, .36, .62, .13, .17, 0, .1, 2);
  for (const s of STRIPS) {
@@ -569,16 +570,22 @@ function makeWraith(opts) {
   const fr2 = new THREE.TorusGeometry(.028, .007, 6, 14); fr2.rotateX(PI / 2); fr2.translate(0, -1.51, 0); SCY.fit.push(fr2);
   for (const y of [-.07, -.045, -.02, .005, .03]) { const r = new THREE.TorusGeometry(.027, .0055, 5, 14); r.rotateX(PI / 2); r.translate(0, y, 0); SCY.fit.push(r); }
   // the head: a ring with a burning eye, a crown of black thorns, and the blade's root
-  const ring = new THREE.TorusGeometry(.046, .011, 8, 24); ring.translate(-.02, .82, 0); SCY.fit.push(ring);
-  const orb = new THREE.SphereGeometry(.03, 14, 10); orb.scale(1, 1, .7); orb.translate(-.02, .82, 0); SCY.glow.push(orb);
-  for (const [ang, l, r] of [[95, .11, .011], [128, .13, .012], [160, .1, .01], [192, .12, .011], [228, .08, .009], [60, .07, .008], [262, .07, .008]]) {
-   const a = ang * PI / 180, d = V3(Math.cos(a), Math.sin(a), 0), c = new THREE.ConeGeometry(r, l, 6); turn(c, d); c.translate(-.02 + d.x * (.05 + l / 2), .82 + d.y * (.05 + l / 2), 0); SCY.fit.push(c);
+  const ring = new THREE.TorusGeometry(.04, .011, 8, 24); ring.translate(-.02, .84, .012); SCY.fit.push(ring);
+  const orb = new THREE.SphereGeometry(.03, 14, 10); orb.scale(1, 1, .7); orb.translate(-.02, .84, 0); SCY.glow.push(orb);
+  for (const [ang, l, r] of [[92, .15, .012], [118, .17, .012], [142, .14, .011], [168, .1, .01], [66, .1, .009]]) {
+   const a = ang * PI / 180, d = V3(Math.cos(a), Math.sin(a), 0), c = new THREE.ConeGeometry(r, l, 6); turn(c, d); c.translate(-.02 + d.x * (.13 + l / 2), .84 + d.y * (.12 + l / 2), -.004); SCY.fit.push(c);
   }
   const neckS = new THREE.CylinderGeometry(.02, .026, .08, 8); neckS.translate(0, .74, 0); SCY.fit.push(neckS);
-  const plate = new THREE.Shape(); plate.moveTo(.0, .74); plate.lineTo(.13, .8); plate.lineTo(.14, .9); plate.lineTo(.05, .9); plate.lineTo(-.01, .86); plate.closePath();
-  const hole = new THREE.Path(); hole.absarc(.075, .83, .018, 0, TAU, true); plate.holes.push(hole);
-  const pg = new THREE.ExtrudeGeometry(plate, { depth: .014, bevelEnabled: true, bevelThickness: .004, bevelSize: .004, bevelSegments: 1, curveSegments: 10 }); pg.translate(0, 0, -.007); SCY.fit.push(pg);
-  const ho = new THREE.SphereGeometry(.016, 10, 8); ho.scale(1, 1, .5); ho.translate(.075, .83, 0); SCY.glow.push(ho);
+  // the mount, as on the sheet: a big openwork plate of black iron with tall thorny spikes, four slots burning green
+  // behind, and the eye's ring at its heart; the blade grows out of its right side
+  const plate = new THREE.Shape();
+  for (const [x, y, i] of [[0, .74, 0], [.07, .755], [.15, .79], [.185, .85], [.15, .87], [.17, .93], [.12, .915], [.1, 1.0], [.07, .93], [.03, .95], [0, 1.06], [-.025, .95], [-.07, .99], [-.075, .925], [-.15, .97], [-.12, .9], [-.165, .85], [-.115, .83], [-.13, .77], [-.07, .79], [-.04, .745]]) i === 0 ? plate.moveTo(x, y) : plate.lineTo(x, y);
+  plate.closePath();
+  const SLOTS = [[.105, .83, .03, .011, .45], [.09, .885, .011, .022, -.3], [-.075, .875, .011, .024, .35], [-.105, .815, .026, .01, -.4]];
+  for (const [x, y, rx, ry, rt] of SLOTS) { const h = new THREE.Path(); h.absellipse(x, y, rx, ry, 0, TAU, true, rt); plate.holes.push(h); }
+  { const h = new THREE.Path(); h.absarc(-.02, .84, .032, 0, TAU, true); plate.holes.push(h); }
+  const pg = new THREE.ExtrudeGeometry(plate, { depth: .02, bevelEnabled: true, bevelThickness: .005, bevelSize: .004, bevelSegments: 1, curveSegments: 12 }); pg.translate(0, 0, -.01); SCY.fit.push(pg);
+  for (const [x, y, rx, ry, rt] of SLOTS) { const g = new THREE.SphereGeometry(1, 10, 6); g.scale(rx * 1.05, ry * 1.05, .006); g.rotateZ(rt); g.translate(x, y, 0); SCY.glow.push(g); }
   SCY.fit.push(tube([[-.06, .86, 0], [-.11, .92, 0], [-.1, .98, 0], [-.06, .99, 0], [-.05, .95, 0]], 18, 6, (t) => .01 - .006 * t));
   // the blade
   const bs = new THREE.Shape(); bs.moveTo(BLADE[0][0], BLADE[0][1]);
@@ -587,7 +594,7 @@ function makeWraith(opts) {
   bg.translate(0, 0, -.003); SCY.blade.push(bg);
  }
  for (const [k, mat] of [['wood', M.wood], ['blade', M.blade], ['fit', M.fitting], ['glow', M.glow]]) scy.add(new THREE.Mesh(mergeAll(SCY[k]), mat));
- const TIP = V3(1.38, .58, 0), BMID = V3(.74, 1.02, 0), ORB = V3(-.02, .82, 0);
+ const TIP = V3(1.38, .58, 0), BMID = V3(.74, 1.02, 0), ORB = V3(-.02, .84, 0);
  const BGLOW = [[.2, .98], [.45, 1.07], [.75, 1.06], [1.05, .97], [1.3, .72], [1.1, .85], [.82, .94], [.45, .97]].map(([x, y]) => V3(x, y, 0));
 
  // ---------- the great wraith: stolen flames in its ribs, and lanterns on a heavy chain round its neck ----------

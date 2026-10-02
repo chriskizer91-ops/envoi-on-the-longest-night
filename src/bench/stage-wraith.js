@@ -5,13 +5,12 @@
 // bolts come from the shared effects brick (src/fx/battle-fx.js); the wraith draws its own trail, smoke, fire and the moth.
 // Level and Great wraith rebuild the model; the original model plays through a small adapter (wrapOriginal) so the
 // Before/After switch works with the older interface. The stage aims the wraith (state.target), so the page sets aim: false.
-// Page options: ?level=1..20&great=1 (&play=<action> to start one)
+// Page options: ?level=1..20&great=1
 window.STAGES = window.STAGES || {};
 window.STAGES.wraith = (function () {
   'use strict';
-  // A published page gets no query string, so a reload carries its options in sessionStorage; ?level=&great=&play= still work locally.
+  // ?level= and ?great= still work locally; the Great wraith toggle and the Level slider switch in place
   const Q = new URLSearchParams(location.search);
-  try { const kept = JSON.parse(sessionStorage.getItem('wraith-bench') || 'null'); sessionStorage.removeItem('wraith-bench'); if (kept) for (const k of ['level', 'great', 'play']) if (kept[k] && !Q.has(k)) Q.set(k, String(kept[k])); } catch (e) { /* storage blocked: start plain */ }
   const VAR = { level: Q.get('level') ? Math.max(1, Math.min(20, Math.round(+Q.get('level')) || 1)) : 0, great: Q.get('great') === '1' }; // 0: the model's own default
   const GREAT_ONLY = ['swallow', 'breath'];
   const PARTY = ['witch', 'sol'];
@@ -85,19 +84,13 @@ window.STAGES.wraith = (function () {
   }
   function later(ctx) { clearTimeout(timer); timer = setTimeout(() => rebuild(ctx), 160); }
   const greatView = () => (window.innerWidth < 700 ? 'square' : 'close');
-  // The bench frames the subject at the height the page gives it when it starts, so the great wraith gets its own page
-  // load (?great=1, framed higher up); a great-wraith move asked for on the plain wraith carries over (?play=).
-  function reload(great, play) {
-    if (location.search) { // local file with options in the address: keep using it
-      const q = new URLSearchParams(location.search);
-      if (great) q.set('great', '1'); else q.delete('great');
-      if (VAR.level) q.set('level', String(VAR.level)); else q.delete('level');
-      if (play) q.set('play', play); else q.delete('play');
-      const s = q.toString(); location.replace(location.pathname + (s ? '?' + s : '') + location.hash);
-      return;
-    }
-    try { sessionStorage.setItem('wraith-bench', JSON.stringify({ great: great ? '1' : '', level: VAR.level || '', play: play || '' })); } catch (e) { /* storage blocked */ }
-    location.reload();
+  // the great wraith is rebuilt in place: the bench reads the framing height every frame
+  function setGreat(on, ctx) {
+    if (!!on === VAR.great) return;
+    VAR.great = !!on;
+    ctx.cfg.subject.frameHeight = VAR.great ? 2.6 : 1.05;
+    if (!ctx.UI.after) { const b = button('After'); if (b) b.click(); } else rebuild(ctx);
+    pickView(VAR.great ? greatView() : 'close');
   }
   function pickView(mode) { const b = document.querySelectorAll('#panel .seg button')[{ close: 0, full: 1, square: 2 }[mode]]; if (b) b.click(); }
   function button(text) { return Array.from(document.querySelectorAll('#panel button')).find((b) => b.textContent.trim() === text); }
@@ -127,12 +120,12 @@ window.STAGES.wraith = (function () {
     get level() { return VAR.level || (VAR.great ? 5 : 1); }, get great() { return VAR.great; },
     setLevel(v, ctx) { VAR.level = Math.round(v); later(ctx); },
     beforePlay(ctx, name) {
-      // the great wraith's own moves: switch to it first
+      // the great wraith's own moves: switch to it first (through its toggle, so the toggle shows it)
       if (!GREAT_ONLY.includes(name) || (VAR.great && ctx.UI.after)) return;
-      if (!VAR.great) { reload(true, name); return; }
+      if (!VAR.great) { const t = button('Great wraith'); if (t) t.click(); else setGreat(true, ctx); return; }
       if (!ctx.UI.after) { const b = button('After'); if (b) b.click(); }
     },
-    setGreat(on) { if (!!on !== VAR.great) reload(!!on); },
+    setGreat,
     onBuild,
     init(ctx) {
       THREE = ctx.THREE; V1 = new THREE.Vector3();
@@ -141,9 +134,6 @@ window.STAGES.wraith = (function () {
       st.textContent = '.dmg.soul{color:#e4ffee;text-shadow:0 0 8px #22d86a,0 2px 0 #0a3a1e}.dmg.fire{color:#fff0d0;text-shadow:0 0 8px #ff9a30,0 2px 0 #4a2008}';
       document.head.appendChild(st);
       if (VAR.great) pickView(greatView());
-      const pl = Q.get('play');
-      if (pl) { Q.delete('play'); const s = Q.toString(); try { history.replaceState(null, '', location.pathname + (s ? '?' + s : '') + location.hash); } catch (e) { /* file pages may refuse */ } }
-      if (pl && VAR.great) setTimeout(() => { if (window.__bench && window.__bench.play) window.__bench.play(pl); }, 300);
     },
     onAction(ctx, a) {
       const m = ctx.subject.m, S = scaleOf(m), w = ctx.actors.witch;

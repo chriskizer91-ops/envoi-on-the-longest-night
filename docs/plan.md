@@ -46,7 +46,7 @@ Each model gets its page rebuilt and republished after its polish. Noctara's lis
 | Lunara | Done: heavier skirt chains with cross charms, and pointed ears |
 | Io | Done: her new spells' effects sized for the battle camera. Her look and motions are unchanged. |
 | Wisp | Done: a darker, fuller smoke tail with strands that part and curl; deeper tears in the hollow with pale lips; the frost variant checked in all nine actions |
-| Wraith and great wraith | A scythe head and hem closer to the sheet; switching to the great wraith without reloading the page |
+| Wraith and great wraith | Done: the scythe's ornate openwork head with burning slots, a hem of fewer, longer, wavier tails with the green climbing up them, and the great wraith switched in place |
 | Sol | Wispier hair, a rounder face, the cape over her shoulders, and smaller code (140 KB now) |
 | Envoi | A full ring round the foe in the strike; a dark splash when the ward takes a hit; the tail kept clear of Io; longer bipyramid lanterns |
 | Halcyon | Light-Drinker's streams and Black Noon's swirls as ribbons; the brief cut line in the retreat around u 0.65. Her face stays as it is. |

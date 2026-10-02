@@ -296,9 +296,9 @@
         lastTf = tf;
       }
     }
-    const subjectHeight = cfg.subject.frameHeight || 1.1;
+    // frameHeight and closeSpan are read every frame, so a stage can reframe a subject that changes size
     function frameShot() {
-      const sp = toPx(tmpV.set(sub.x, subjectHeight, sub.z));
+      const sp = toPx(tmpV.set(sub.x, cfg.subject.frameHeight || 1.1, sub.z));
       const wideAct = (cfg.wide && cfg.wide[sub.action]) || (cfg.stage && cfg.stage.wide && cfg.stage.wide(ctx));
       const wide = UI.view === 'full' || (UI.view === 'close' && wideAct);
       if (UI.view === 'square') { cam.tx = IW / 2; cam.ty = IH / 2; cam.ts = 0; return; }
