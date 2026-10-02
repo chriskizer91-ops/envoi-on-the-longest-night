@@ -375,10 +375,15 @@
       const t = cfg.subject.target || (cast[0] && cast[0].id); if (t) damage(t, swing(300));
     }
 
-    // a dash moves along the actor's facing, or, with dashAim, straight along the line to its target
+    // a dash moves along the actor's facing, or, with dashAim, straight along the line to its target, stopping at
+    // striking distance (dashStop meters, 0.9 by default) instead of running into it
     function dashStep(a, aimAt, d) {
       let dx = Math.sin(a.yaw), dz = Math.cos(a.yaw);
-      if (aimAt) { const ex = aimAt.x - a.x, ez = aimAt.z - a.z, r = Math.hypot(ex, ez); if (r > 1e-3) { dx = ex / r; dz = ez / r; } }
+      if (aimAt) {
+        const ex = aimAt.x - a.x, ez = aimAt.z - a.z, r = Math.hypot(ex, ez), stop = a.spec.dashStop || 0.9;
+        if (r > 1e-3) { dx = ex / r; dz = ez / r; }
+        if (d > 0) d = Math.min(d, Math.max(0, r - stop));
+      }
       a.x += dx * d; a.z += dz * d;
     }
     function stepCast(rdt, t) {

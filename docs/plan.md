@@ -47,7 +47,7 @@ Each model gets its page rebuilt and republished after its polish. Noctara's lis
 | Io | Done: her new spells' effects sized for the battle camera. Her look and motions are unchanged. |
 | Wisp | Done: a darker, fuller smoke tail with strands that part and curl; deeper tears in the hollow with pale lips; the frost variant checked in all nine actions |
 | Wraith and great wraith | Done: the scythe's ornate openwork head with burning slots, a hem of fewer, longer, wavier tails with the green climbing up them, and the great wraith switched in place |
-| Sol | Wispier hair, a rounder face, the cape over her shoulders, and smaller code (140 KB now) |
+| Sol | Done: wispier hair with a fringe across her forehead, a rounder face, the cape over her shoulders, and Ember Rush aimed at the wraith. Her 140 KB of code has no unused parts; the final build can minify it |
 | Envoi | A full ring round the foe in the strike; a dark splash when the ward takes a hit; the tail kept clear of Io; longer bipyramid lanterns |
 | Halcyon | Light-Drinker's streams and Black Noon's swirls as ribbons; the brief cut line in the retreat around u 0.65. Her face stays as it is. |
 
@@ -168,6 +168,7 @@ Around them:
 - **Bricks:** the code lives in small files (one per model, plus rules, battle, walking and airship), and a build step stitches each demo into its page, so later demos reuse earlier ones instead of copying them.
 - **Checked before it ships:** every page is rendered headless and screenshotted before Chris sees it.
 - **Images are compressed** to WebP at the size each view needs (`tools/compress.mjs`), and the originals stay in `../reference/art/`.
+- **The final build minifies the code** (models, effects, battle) to keep the single file inside its budget; the source stays readable.
 
 ## Size
 

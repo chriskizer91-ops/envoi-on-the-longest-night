@@ -240,7 +240,7 @@ function makeSol(opts) {
  }
  // the cape: outer side (left half) and lining (right half). u runs across her back, v down from the collar; the texture's
  // v is the drop from 1.46 m so its scale is the same in every column, and the gold hem follows the pointed hem.
- const CT = 1.36, CTOP = 1.46, CLEN = .93;
+ const CT = 1.58, CTOP = 1.46, CLEN = .93;
  const hem = (tp) => .53 + .23 * Math.pow(Math.min(1, Math.abs(tp) / CT), 1.1);
  function capeCanvas() {
   const c = cvs(1024, 512), g = c.getContext('2d'), gold = '#dfa844', goldHi = '#fbd987', goldD = '#8a5a18';
@@ -571,14 +571,14 @@ function makeSol(opts) {
 
  // ---------- head: a sculpted egg; X and Y (-1.1 to 1.1) are both its front view and the face texture ----------
  const HC = [0, 1.632, .008], HR = [.078, .12, .096];
- const xSq = (Y) => 1 - .19 * sm(-.05, -.95, Y) + .03 * G2(0, Y + .55, 1, .18); // a narrower lower face with a firm jaw
+ const xSq = (Y) => 1 - .1 * sm(-.05, -.95, Y) + .05 * G2(0, Y + .5, 1, .2); // a round face: the lower face kept full, the jaw soft
  function faceD(X, Y) {
   let d = 0;
   for (const s of [-1, 1]) {
    d -= .085 * G2(X - s * .37, Y - .04, .15, .1);       // eye sockets
    d += .04 * G2(X - s * .36, Y - .19, .22, .06);       // brow ridge
    d += .055 * G2(X - s * .55, Y + .12, .19, .13);      // cheekbones
-   d += .022 * G2(X - s * .45, Y + .3, .2, .15);        // full cheeks, lifted by her smile
+   d += .034 * G2(X - s * .45, Y + .3, .2, .15);        // full, round cheeks, lifted by her smile
    d += .03 * G2(X - s * .12, Y + .37, .055, .045);     // the wings of the nose
    d -= .012 * G2(X - s * .32, Y + .5, .05, .11);       // smile lines
    d -= .009 * G2(X - s * .31, Y + .515 - (s > 0 ? .024 : .008), .035, .032); // the corners of her half-smile, her left one higher
@@ -591,9 +591,9 @@ function makeSol(opts) {
   d += .06 * G2(X, Y + .82, .23, .1);                                            // chin
   return d;
  }
- // head point from a direction on the unit sphere, in head units; the jaw is shortened so her chin sits at Y = -.91
- const yJ = (Y0) => (Y0 < 0 ? Y0 * (1 - .09 * Y0 * Y0) : Y0);
- const yJinv = (Y) => { if (Y >= 0) return Y; let y = Y; for (let i = 0; i < 5; i++) y -= (y * (1 - .09 * y * y) - Y) / (1 - .27 * y * y); return y; };
+ // head point from a direction on the unit sphere, in head units; the jaw is shortened so her chin sits at Y = -.86
+ const yJ = (Y0) => (Y0 < 0 ? Y0 * (1 - .14 * Y0 * Y0) : Y0);
+ const yJinv = (Y) => { if (Y >= 0) return Y; let y = Y; for (let i = 0; i < 5; i++) y -= (y * (1 - .14 * y * y) - Y) / (1 - .42 * y * y); return y; };
  function headU(X0, Y0, Z0, o) {
   const Y = yJ(Y0), X = X0 * xSq(Y);
   let Z = Z0 > 0 ? Z0 * (1 - .08 * sm(-.05, -.95, Y)) : Z0 * 1.08;
@@ -741,18 +741,19 @@ function makeSol(opts) {
   const n = 7, pts = [];
   for (let i = 0; i <= n; i++) {
    const t = i / n, az = lerp(az0, az1, t) + (o.bend || 0) * Math.sin(PI * t), el = lerp(el0, el1, t) + (o.arc || 0) * Math.sin(PI * t);
-   pts.push(scalpPt(az, el, lerp(o.r0 === undefined ? -.003 : o.r0, o.r1 === undefined ? .025 : o.r1, t) + (o.bulge || 0) * Math.sin(PI * Math.min(1, t * 1.15))));
+   pts.push(scalpPt(az, el, lerp(o.r0 === undefined ? -.003 : o.r0, (o.r1 === undefined ? .025 : o.r1) * .7, t) + (o.bulge || 0) * .58 * Math.sin(PI * Math.min(1, t * 1.15))));
   }
   if (o.flick) { const f = o.flick; for (const [i, k] of [[n, .55], [n - 1, .22], [n - 2, .05]]) { pts[i][0] += f[0] * k; pts[i][1] += f[1] * k; pts[i][2] += f[2] * k; } }
-  const ns = Q(o.seg || 14, 7), nr = Q(o.rs || 8, 5), w0 = o.w || .038, tp = o.taper || .45;
-  const g = tube(pts, ns, nr, (t) => w0 * Math.pow(1 - t, tp) * (.8 + .2 * Math.sin(PI * Math.min(1, t * 2))) + .001, o.flat || .46, HUP);
+  // wispy: every lock is slimmer than its listed width and tapers to a fine point
+  const ns = Q(o.seg || 14, 7), nr = Q(o.rs || 6, 5), w0 = (o.w || .038) * .74, tp = o.taper || .62;
+  const g = tube(pts, ns, nr, (t) => w0 * Math.pow(1 - t, tp) * (.8 + .2 * Math.sin(PI * Math.min(1, t * 2))) + .0006, o.flat || .42, HUP);
   const tf = o.tuft === undefined ? -1 : o.tuft, amt = o.amt || .8;
   tinted(o.col || HAIRC[(rnd() * HAIRC.length) | 0], () => add(g, M.hair, tf < 0 ? BI.head : (x, y, z, i) => { const k = amt * sm(.12, 1, Math.floor(i / (nr + 1)) / ns); return [[BI.head, 1 - k], [BI[TUFT[tf]], k]]; }));
  }
  const out = (az, k, up) => [Math.sin(az) * k, up || 0, Math.cos(az) * k];
  // crown: three rings sweeping out and down, the side locks stopping above the ears, tips curling out
  const elEnd = (a) => a < 1.25 ? lerp(.46, .4, sm(.7, 1.25, a)) : a < 1.9 ? .4 : lerp(.3, -.32, sm(1.9, PI, a));
- [[16, 1.1, .03, .05, .044], [14, 1.32, .038, .05, .042], [7, 1.46, .05, .03, .038]].forEach(([N, el0, r1, bul, w], ring) => {
+ [[21, 1.1, .03, .05, .044], [18, 1.32, .038, .05, .042], [9, 1.46, .05, .03, .038]].forEach(([N, el0, r1, bul, w], ring) => {
   for (let k = 0; k < N; k++) {
    const az = -PI + (k + .5 + ring * .33) / N * TAU + (rnd() - .5) * .12, a = Math.abs(az);
    if (a < .75 && ring < 2) continue;
@@ -760,9 +761,9 @@ function makeSol(opts) {
   }
  });
  // the fringe: swept from the part over her right eye across her forehead toward her left temple
- for (let k = 0; k < 7; k++) {
-  const t = k / 6, az0 = lerp(-.52, -.28, t) + (rnd() - .5) * .05, el0 = lerp(.9, 1.24, t);
-  lock(az0, el0, az0 + lerp(.6, 1.1, t), lerp(.3, .48, t), { w: .036 + .006 * Math.sin(PI * t), r1: .013 + .012 * t, bulge: .022 + .012 * t, arc: .12, bend: .06, flick: [.006, -.002, .008], tuft: 2, amt: .55, flat: .42 });
+ for (let k = 0; k < 9; k++) {
+  const t = k / 8, az0 = lerp(-.52, -.28, t) + (rnd() - .5) * .05, el0 = lerp(.9, 1.24, t);
+  lock(az0, el0, az0 + lerp(.6, 1.1, t), lerp(.18, .38, t), { w: .036 + .006 * Math.sin(PI * t), r1: .013 + .012 * t, bulge: .022 + .012 * t, arc: .12, bend: .06, flick: [.006, -.002, .008], tuft: 2, amt: .55, flat: .42 });
  }
  // strands falling on the part side, by her right temple
  lock(-.58, .95, -.84, .32, { w: .03, r1: .016, bulge: .016, arc: .06, flick: [-.006, -.004, .008], tuft: 2, amt: .5 });
@@ -784,6 +785,12 @@ function makeSol(opts) {
  }
  // and shorter layers over them, loose at the nape behind her ears
  for (const sd of [-1, 1]) for (let k = 0; k < 3; k++) lock(sd * (1.95 + k * .3), .55 - k * .05, sd * (2.05 + k * .3), -.42 + k * .04, { w: .036, r1: .02, bulge: .02, flick: [sd * .012, -.006, -.012], tuft: 3, amt: .4 });
+ // fine stray wisps over the crown, the sides and the fringe, flicking out: what makes the cut read as tousled
+ for (let k = 0; k < 26; k++) {
+  const az = -PI + rnd() * TAU, a = Math.abs(az), el0 = .75 + rnd() * .7;
+  if (a > 2.3) continue;
+  lock(az, el0, az + (rnd() - .5) * .5, Math.max(elEnd(a) + .05, el0 - .35 - rnd() * .3), { w: .02 + rnd() * .008, r1: .03 + rnd() * .02, bulge: .02, flick: out(az, .02 + rnd() * .012, .006 + rnd() * .012), taper: .8, rs: 5, seg: 10, tuft: a > 2.2 ? 3 : a < .75 ? 2 : -1, amt: .5 });
+ }
 
  // ---------- the braid: chunky lobes, gold bands near its top and end, a spiral gold cord and a loose tuft ----------
  const BJ = braid.map(bw); BJ.push([BJ[5][0], BJ[5][1] - .096, BJ[5][2]]);
@@ -1053,14 +1060,16 @@ function makeSol(opts) {
 
  // ---------- cape: midnight blue edged in gold, a sun on the back, falling to a point behind her knees ----------
  function capePt(u, v, o) {
-  const tp = lerp(-CT, CT, u), s = Math.sin(tp), c = Math.pow(Math.abs(Math.cos(tp)), .35);
+  // past a right angle from the back, cos turns negative and the edge comes forward over the shoulder
+  const tp = lerp(-CT, CT, u), s = Math.sin(tp), ct = Math.cos(tp), c = Math.sign(ct) * Math.pow(Math.abs(ct), .35);
   if (v < .1) {
    const k = v / .1, kk = sm(0, 1, k);
-   o[0] = s * lerp(.1, .275, kk); o[2] = -c * lerp(.08, .14, kk); o[1] = lerp(1.458 - .035 * s * s, 1.405 - .03 * s * s, k) + .014 * Math.sin(PI * k);
+   // the top arches out over the shoulder caps (their tops are near 1.45 m), then the cape falls outside the arms
+   o[0] = s * lerp(.1, .275, kk); o[2] = -c * lerp(.08, .14, kk); o[1] = lerp(1.458 - .012 * s * s, 1.432 - .045 * s * s, k) + .036 * Math.sin(PI * k) * (.4 + .6 * s * s);
   } else {
    const k = (v - .1) / .9, yH = hem(tp), fold = (.016 * Math.sin(6.5 * tp + 1.0) + .007 * Math.sin(13 * tp + .3)) * Math.pow(k, 1.2);
    const rx = lerp(.275, .35, Math.pow(k, 1.1)) + fold, rz = lerp(.14, .235, Math.pow(k, .85)) + fold;
-   o[0] = s * rx; o[2] = -c * rz - .012 * Math.sin(PI * Math.min(1, k * 2.2)); o[1] = lerp(1.405 - .03 * s * s, yH, k);
+   o[0] = s * rx; o[2] = -c * rz - .012 * Math.sin(PI * Math.min(1, k * 2.2)); o[1] = lerp(1.432 - .045 * s * s, yH, k);
   }
   return o;
  }

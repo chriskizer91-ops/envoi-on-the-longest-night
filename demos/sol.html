@@ -25,7 +25,7 @@ Bench.start({
   subject: {
     id: 'sol', name: 'Sol', make: () => makeSol({}), before: () => makeSolOriginal({}),
     home: [650, 868], face: 'wraith', yawBias: -0.3, shadow: 0.6, target: 'wraith',
-    walkLabel: 'Walk', walkSpeed: 2.2, height: '1.78 m',
+    walkLabel: 'Walk', walkSpeed: 2.2, height: '1.78 m', dashAim: true,
   },
   cast: [
     { id: 'witch', name: 'Witch', kind: 'witch', make: () => makeWitchOriginal(), home: [560, 812], face: 'wraith', yawBias: -0.38, shadow: 0.62 },
