@@ -95,10 +95,12 @@ The low-level foe (lore answer 16): a soul starting to go hollow, the early form
 | Model | Sheets in hand | Missing |
 |---|---|---|
 | The Witch | Not needed | — |
-| Sol | None | Model and action sheets (art request 01) |
-| Envoi | `envoi-summon-scene-a.png`, `envoi-strike-scene-b.png` | Model and action sheets (art request 01) |
+| Sol | `sol-model.webp`, `sol-model-b.webp`, `sol-actions.webp`, `sol-actions-b.webp` | — |
+| Envoi | `envoi-model.webp`, `envoi-model-b.webp`, `envoi-actions.png`, `envoi-actions-b.png`, and the two Envoi scenes | — |
 | Noctara | `noctara-model-sheet-a.png`, `noctara-model-sheet-b.png` and four scenes | — |
 | Lunara | `lunara-pose-sheet.png` | — |
 | Shadow Wraith | `shadow-wraith-pose-sheet.png` (violet, out of date) | A soul-green sheet (optional), the great wraith sheet (art request 01) |
-| Halcyon | The Blackout scene | Model and action sheets in cold blue (art request 01) |
-| Wisp | None | Model and action sheets (art request 01) |
+| Halcyon | `halcyon-model.png`, `halcyon-model-b.png`, `halcyon-actions.png`, and the Blackout scene | — |
+| Wisp | `wisp-model.png`, `wisp-model-b.png`, `wisp-actions.png`, `wisp-actions-b.png` | — |
+
+The sheets for Sol, Envoi, the wisp and Halcyon arrived on October 2, 2026. Their file list is in `../reference/art/README.md`.

@@ -19,15 +19,15 @@ A model is finished when:
 | 2 | **Noctara** (done) | Face, sheer veil, sculpted collar, gold filigree, a star-filled lining, a fuller build with fewer draw calls (see `model-review.md`) | Nothing |
 | 3 | **Lunara** | Face, hair and gown from her sheet, less glare, the scale from the Envoi scenes, and the Embrace action | Nothing |
 | 4 | **Shadow Wraith** | Tattered robe, hands and scythe in soul-green, a pale moth rising on defeat, a tougher look at higher levels | Nothing; the optional green sheet helps |
-| 5 | **Great wraith** | The wraith at three times the size, with stolen lamplight inside | Its concept sheet |
-| 6 | **Halcyon** | Cold blue eyes and blade edge, a retreat into the dark, a moth rising at the very end | Nothing; her sheets help |
+| 5 | **Great wraith** | The wraith at three times the size, with stolen lamplight inside | Nothing; its concept sheet will refine it |
+| 6 | **Halcyon** | Cold blue eyes and blade edge, a retreat into the dark, a moth rising at the very end; then refined against her new sheets | Nothing |
 | 7 | **The Witch** | Technical only: the shared interface and fewer draw calls. Checked pixel for pixel so nothing visible changes | Nothing |
-| 8 | **Sol** | Face, bronze armor, the sun crest | Her sheets |
-| 9 | **Envoi** | Paper-lantern body, a bigger head and seal, the scale and low coil from the Envoi scenes | Its sheets |
-| 10 | **Wisp** | A new model, with its frost variant | Its sheets |
+| 8 | **Sol** | Face, bronze armor, the sun crest | Nothing (sheets in) |
+| 9 | **Envoi** | Paper-lantern body, a bigger head and seal, the scale and low coil from the Envoi scenes | Nothing (sheets in) |
+| 10 | **Wisp** | A new model, with its frost variant | Nothing (sheets in) |
 | 11 | **The cast** | Everyone together at true scale, every action playable | Steps 2 to 10 |
 
-The sheets are requested in `art-requests/01-model-sheets.md`. Steps 2, 3, 4, 6 and 7 can start now. The rest start when their sheets arrive.
+The sheets were requested in `art-requests/01-model-sheets.md`, and all but the great wraith's arrived on October 2, 2026. Every step can now run; the great wraith starts from the wraith and the lore, and its sheet refines it when it comes.
 
 ## Phase 2: battles
 
@@ -57,7 +57,7 @@ Like FF9: the world is walked on foot, and later flown over.
 
 ## Phase 4: the game
 
-The steps joined from title to ending: the story from the lore answers, saves, menus and music.
+The steps joined from title to ending: the story from the lore answers, saves, menus and music. Chris's key art (`../reference/art/key-art-advert.png`) can serve as a poster: a loading screen or the back of the title.
 
 ## Technical choices
 
