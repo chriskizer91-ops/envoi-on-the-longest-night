@@ -39,7 +39,7 @@ Rules live in data tables, with set damage and a random swing instead of dice, a
 | 13 | The party | Io and Sol against wisps and wraiths at a chosen level: Heat and Sunburn, Waxing Light and Moonsteel, Lunara. |
 | 14 | The ambush | Halcyon, unwinnable. Sol steps in front of Io, and Halcyon leaves. |
 | 15 | The great wraith | The Bogmire boss at about level 5. Winning leads to the refit and Moth Veil. |
-| 16 | Halcyon | The level 15 gate: Halcyon at level 20 against the party at 15 or more, with the Kestrel story command, ending in her retreat into the dark. Envoi is in the summon menu. Afterwards the fight stirs Sol's memory and she learns Kestrel Stoop. |
+| 16 | Halcyon | The level 15 gate, in the wilderness: Halcyon at level 20 against the party at 15 or more, with the Kestrel story command. It ends with Halcyon defeating the party, or, if they bring her down to 20% of her HP, with her retreat into the dark. Envoi is in the summon menu. Afterwards the fight stirs Sol's memory and she learns Kestrel Stoop. |
 | 17 | The final battle | Noctara with Halcyon at level 20, at the dead Moonwell in Misthollow: Blackout, Void Sphere, Frost Dust and Crown Shards, Moth Veil against the telegraphed hits, and Envoi's ward and strike. Tuned so a player who plays well at level 20 wins about half the time, and loses narrowly at 19. |
 
 ## Phase 3: travel
@@ -53,7 +53,7 @@ Like FF9: the world is walked on foot, and later flown over.
 
 **The two maps.** The flying map is the world from the air: one painting, or a few joined pieces, that shows all four stops. The walking maps are the ground up close, painted at the pixel Witch's scale: the wilderness around each stop, and the stops themselves.
 
-**The level bands.** Four bands, 1 to 5, 5 to 10, 10 to 15 and 15 to 20, opened by the Bogmire refit, the charge at Dawnroost's living node, and the upgrade after Halcyon. Sunstone gives the Magpie its lift, and Noctara's cold drains it. Which places sit in which band is the last open part (`questions/open.md`); the world map prompts get written once it is settled.
+**The level bands.** Four bands, 1 to 5, 5 to 10, 10 to 15 and 15 to 20, opened by the Bogmire refit, the charge at Dawnroost's living node, and the upgrade after Halcyon. Sunstone gives the Magpie its lift, and Noctara's cold drains it. The bands hold Wickhollow and Bogmire (1), Dawnroost (2), the wilderness where the party meets Halcyon (3), and Misthollow (4). With that settled, the world map prompts can be written.
 
 ## Phase 4: the game
 

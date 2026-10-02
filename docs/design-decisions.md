@@ -198,8 +198,19 @@ Chris's answers to the open questions. Where this round and an earlier one disag
 
 ### Halcyon at the level 15 gate
 
-- **The level 15 fight:** reaching level 15 opens the way to Halcyon, who is level 20. Io may have leveled past 15 by then. Chris expects the party to lose this fight.
+- **The third band is wilderness.** The way north from Dawnroost runs through wild country, and that is where the party crosses paths with Halcyon. There is no stop in this band.
+- **The level 15 fight:** reaching level 15 opens the way to Halcyon, who is level 20. Io may have leveled past 15 by then.
+- **It always ends one of two ways.** Either Halcyon defeats the party, or, if they have leveled enough to bring her down to 20% of her HP, she retreats into the dark. The story goes on either way.
 - **Kestrel Stoop:** after the fight, Sol learns it. The fight stirred a memory.
+
+### The places in each band
+
+| Band | Levels | Places | Gate out |
+|---|---|---|---|
+| 1 | 1 to 5 | Wickhollow, Bogmire | The great wraith, then the Bogmire refit |
+| 2 | 5 to 10 | Dawnroost | Envoi, and the charge from Dawnroost's living node |
+| 3 | 10 to 15 | The wilderness north of Dawnroost | Halcyon, then the final upgrade |
+| 4 | 15 to 20 | Misthollow and the dead Moonwell | The finale |
 
 ### Level 1 is the Night square demo
 
