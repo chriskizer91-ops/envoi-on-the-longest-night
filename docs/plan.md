@@ -98,6 +98,8 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 | 16 | Halcyon's ambush | The level 15 gate, on the way to the shipyard: Halcyon at level 20 against the party at 15 or more, overwhelming, with the Kestrel story command and Envoi in the summon menu. Sol recognizes her during the fight. It ends with the party falling, Sol stepping in front of Io and Halcyon leaving; or, if they bring her down to 20% of her HP, with her retreat into the dark. Afterwards Sol learns Kestrel Stoop. |
 | 17 | The final battle | Noctara with Halcyon at level 20, at the dead Moonwell in Misthollow: Blackout, Void Sphere, Frost Dust and Crown Shards, Moth Veil against the telegraphed hits, and Envoi's ward and strike. Tuned so a player who plays well at level 20 wins about half the time, and loses narrowly at 19. |
 
+**Step 12 is built (October 2):** `demos/first-fight.html`, on `src/battle/screen.js`. The engine decides every number and turn; the screen plays each turn's log with the finished models, the shared effects, the Night square demo's camera director, menus, music and sound, and a wide shot for Lunara. It ends with the experience, the shards and the level-up.
+
 ## Phase 3: the story's fights
 
 Every fight gets its place in the story before travel is built. It is drafted on paper first, then the simulator plays the whole chain in order, carrying HP, MP and herbs from fight to fight, to check that a player who goes straight through arrives at each gate at the right level.

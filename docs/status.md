@@ -2,7 +2,7 @@
 
 A handoff for the next session. Updated October 2, 2026, after the battle groundwork and the walking choices of the eleventh round.
 
-**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork:** the rules tables, a battle engine without graphics, and a balance simulator that meets all 25 targets. Next is the battle screen, starting with step 12, the first fight.
+**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Next is step 13, the party.
 
 ## Working from the second account
 
@@ -13,6 +13,7 @@ A handoff for the next session. Updated October 2, 2026, after the battle ground
 
 | Page | Link | State |
 |---|---|---|
+| The first fight | https://claude.ai/artifact/MkgkJSQVgGp3JEivcmN2KN | Step 12 (October 2): Io alone against the Night square wraith at level 1, played by the battle engine with the finished models; Lunara's Embrace and Silver Requiem; experience, shards and the level-up at the end. You can lose |
 | Battle balance | https://claude.ai/artifact/DruqrA8zAzZNpe4ahRXFwe | Phase 2 groundwork (October 2): all 25 balance targets with the simulator's results, any fight played turn by turn with its gauges, the level curve, experience and shards, and the new rules for Chris to approve |
 | The cast | https://claude.ai/artifact/Qk8apijsA3ZjVoK88XF4bJ | Step 11 (October 2): every model at true scale; pick an encounter, who acts and their target. Pixel 7a: 60 fps with five models, 39 with eight. Builds models when first needed |
 | Walking test | https://claude.ai/artifact/3YJkf77SD43iWJgo6pXmcf | The pixel Io (28 × 42) on all 13 ground-level maps at 768 wide with sharp pixels, 0.7× zoom, one walking speed and a mini-map; the talking portraits in a dialogue box. No walls yet |
@@ -84,11 +85,16 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 - `src/battle/sim.js`: the fights (the first fight, the wild packs of each band, the four gates, the finale), the three play styles, and the targets.
 - `node tools/balance.mjs --n 1000 --report docs/balance-report.md --results src/battle/balance-results.js` checks every target after any change (about 10 seconds) and refreshes the report and the balance page's results.
 
+## The battle screen
+
+- `src/battle/screen.js` with `screen.css` and `sound.js` (the Night square demo's synthesized music and sound, unchanged). The page holds the markup and a config: the fight's setup, the models to build, and the end texts.
+- Each turn, the engine resolves the action and returns its log. The screen splits the log at each move, plays that move's choreography with the model's own hit and cue times, and shows the engine's numbers as the blows land. What the player has been shown (HP, MP, Trance) catches up blow by blow, then matches the engine.
+- Test hooks on `window.__battle`: `begin()`, `skip()`, `pick(id)`, `auto = 'expert'` (a play style from `sim.js` chooses the commands), `turbo`, `weaken(n, who)`, `trace`.
+
 ## Next steps
 
-1. Step 12, the first fight: the 3D battle screen in the Night square playing the engine, with a camera director, menus, gauges, damage numbers, and experience at the end.
-2. Chris's answers on the new battle rules (`questions/open.md`), then rerun the balance check.
-3. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.
+1. Step 13, the party: Io and Sol against wisps and wraiths at a chosen level, with Sol's Heat and Sword Arts, Waxing Light and Moonsteel, target picking, and a level slider.
+2. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.
 
 Art in hand (`../reference/art/README.md`):
 
