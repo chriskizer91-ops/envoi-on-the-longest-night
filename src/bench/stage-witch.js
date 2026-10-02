@@ -5,8 +5,10 @@
 // Briars, Lunar Mend, the summon, Lunar Trance and Moonlight bring their spells; Defend raises her guard and the
 // shield while the wraith's Soul Bolts break on it. The original model has no ACTIONS, so this file keeps the same
 // times (TIMES) and fires from them for both models: the before/after switch plays identically.
-// Bench workarounds kept here: the bench passes walk phase 0, so gait() gives her a real stride from the distance
-// she moves (as the battle does); and battle-fx.js uses a page-level `tmpV` it does not declare, so init() makes one.
+// Her new Moonlore (src/fx/io-spells.js) plays on her existing motions: Waxing Light on mend, Moonsteel and Moth Veil
+// on cast. While one plays, its own effect, cue and hit times and name replace those of the motion. Moth Veil and the
+// wraith's Shadow Grasp go to the target picked under the Moonlore buttons (Sol or Io), so the veil can be tested.
+// The bench passes walk phase 0, so gait() gives her a real stride from the distance she moves (as the battle does).
 window.STAGES = window.STAGES || {};
 window.STAGES.witch = (function () {
   'use strict';
@@ -17,23 +19,33 @@ window.STAGES.witch = (function () {
     briar: { hits: [0.613], cues: [0.45] }, mend: { hits: [0.6] },
     moon: { hits: [0.407, 0.521, 0.636], cues: [0.3, 0.389] }, summon: { cues: [0.3, 0.569] }, transform: { cues: [0.55] },
   };
+  const DUR = { mend: 1.9, cast: 1.4 }; // the motions her new spells play (the same on both models)
+  const SPELL_OF = { waxing: 'waxing', moonsteel: 'moonsteel', mothveil: 'veil' }; // button id -> io-spells id
   const NONE = { hits: [], cues: [] };
   const TAU = Math.PI * 2;
   const rnd = (a, b) => a + Math.random() * (b - a);
-  let THREE = null, ctx = null, FX = null, flashEl = null, tranceBtn = null, WELL = null, HOME = null;
+  let THREE = null, ctx = null, FX = null, IO = null, flashEl = null, tranceBtn = null, WELL = null, HOME = null;
   const FL = { a: 0, dur: 1 }, TR = { on: false, vis: 0 }, SEEN = { act: '', p: -1 }, RISE = { pending: false, held: -1 };
+  const VEIL = { target: 'sol', veil: null }, HEAT = { v: 0, hold: 0 }, QUIET = { hurt: false };
   const timers = [];
-  let clock = 0, blades = null, ATK = null, DEF = null;
+  let clock = 0, blades = null, ATK = null, DEF = null, SPELL = null, GR = null, marked = null, wideTill = 0;
 
-  const W = () => ctx.subject, E = () => ctx.actors.wraith;
+  const W = () => ctx.subject, E = () => ctx.actors.wraith, SOL = () => ctx.actors.sol;
   const V = () => new THREE.Vector3();
   const posW = () => ({ x: W().x, z: W().z }), posE = () => ({ x: E().x, z: E().z });
+  const posOf = (id) => () => ({ x: ctx.actors[id].x, z: ctx.actors[id].z });
+  const chestOf = (id) => () => ctx.actors[id].chest(V());
   const chestW = () => W().chest(V()), chestE = () => E().chest(V());
-  const timesOf = (m, a) => (m.ACTIONS && m.ACTIONS[a]) || TIMES[a] || NONE;
+  const timesOf = (m, a) => (SPELL && SPELL.motion === a ? IO.SPELLS[SPELL.id] : (m.ACTIONS && m.ACTIONS[a]) || TIMES[a] || NONE);
   const later = (sec, fn) => timers.push({ at: clock + sec, fn });
   const hitE = (n) => ctx.damage('wraith', ctx.swing(n, 0.07));
   const tipW = () => { const m = W().m; return m.anchor ? m.anchor('hit', V()) : m.tip(V()); }; // the dagger tip, on either model
   const flameW = () => W().m.flamePos(V());
+  // a palm from her wrist bones, the same on both models (-1 her right, the dagger hand; 1 her left, the flame hand)
+  const palm = (sd) => () => { const b = W().m.bones.find((x) => x.name === 'wrist' + sd); b.updateWorldMatrix(true, false); return b.localToWorld(V().set(0, -0.03, 0.002)); };
+  // the line of Sol's blade, from near the guard to the tip (her anchors: 'blade' is mid-blade, 'hit' the tip)
+  const T1 = { v: null };
+  const solBlade = (A, B) => { const m = SOL().m; T1.v = T1.v || V(); m.anchor('blade', T1.v); m.anchor('hit', B); A.copy(T1.v).sub(B).multiplyScalar(0.8172).add(T1.v); };
   // where the rings mark a hit or a cue: blows at the dagger tip, spells where they land or leave from
   const HIT_AT = { combo: tipW, lunge: tipW, mend: chestW };
   const CUE_AT = { throw: flameW, summon: (i) => (i ? new THREE.Vector3(WELL.x, 1.1, WELL.z) : flameW()), crescent: chestW, transform: chestW, moon: chestE, briar: () => { const e = posE(); return new THREE.Vector3(e.x, 0.3, e.z); } };
@@ -57,8 +69,9 @@ window.STAGES.witch = (function () {
     if (a === 'mend') { FX.rise(posW, [0.6, 1, 0.75], 1.5, 40, 0.55); FX.sigil(posW(), 0xb8ffd0, 1.8, 1.8, 1.5); }
     else if (a === 'summon') FX.sigil(posW(), 0xd8c8ff, 1.9, 2.6, -2);
     else if (a === 'transform') { FX.sigil(posW(), 0xdfe9ff, 2.3, 3.0, 2.5); FX.beam(posW(), 0xe6eeff, 1.5, 12, 2.6); FX.spiral(chestW, [0.8, 0.9, 1], 1.5, 90); }
-    else if (a === 'hurt' && !DEF) { const p = chestW(); FX.slash(p, 0x5dff9d, rnd(2.4, 3.0), 1.5, 0.35); FX.burst(p, [0.3, 1, 0.55], 40, 3.6); FX.flashLight(p, 0x4dff90, 3, 0.3); ctx.damage(W().id, ctx.swing(190, 0.07)); }
+    else if (a === 'hurt' && !DEF && !QUIET.hurt) { const p = chestW(); FX.slash(p, 0x5dff9d, rnd(2.4, 3.0), 1.5, 0.35); FX.burst(p, [0.3, 1, 0.55], 40, 3.6); FX.flashLight(p, 0x4dff90, 3, 0.3); ctx.damage(W().id, ctx.swing(190, 0.07)); }
     else if (a === 'block' && !DEF) { FX.burst(chestW(), [0.3, 1, 0.55], 22, 2.6); ctx.damage(W().id, ctx.swing(95, 0.07)); }
+    QUIET.hurt = false;
   }
   function cue(a, i) {
     if (a === 'throw') {
@@ -102,6 +115,77 @@ window.STAGES.witch = (function () {
     FX.geyser(WELL, 2.6, [0.85, 0.9, 1]); FX.beam(WELL, 0xe6eeff, 2.4, 14, 2.4);
     for (const [dx, dz] of [[1.7, 1.0], [-1.7, 1.0], [1.7, -1.0], [-1.7, -1.0]]) FX.beam({ x: WELL.x + dx, z: WELL.z + dz }, 0xcfe0ff, 0.5, 10, 2.6);
     flash('#dfe8ff', 0.5, 0.5);
+  }
+
+  // ---------- her new Moonlore, on her existing motions (effects in src/fx/io-spells.js) ----------
+  function spellCue(id, i, u) {
+    const S = IO.SPELLS[id], dur = DUR[S.motion], left = (h) => Math.max(0.05, (h - u) * dur);
+    if (id === 'waxing' && i === 0) {
+      const w = W(), s = SOL();
+      IO.waxingLight({ sky: () => V().set((w.x + s.x) / 2, 2.55, (w.z + s.z) / 2), allies: [chestW, chestOf('sol')], landIn: left(S.hits[0]) });
+    } else if (id === 'moonsteel' && i === 0) {
+      IO.moonsteel({ palm: flameW, blade: solBlade, releaseIn: left(S.cues[1]), landIn: left(S.hits[0]), glowFor: S.glow });
+    } else if (id === 'veil') {
+      const t = SPELL.target, tall = t === 'sol' ? 2.0 : 2.3;
+      if (VEIL.veil) VEIL.veil.dismiss();
+      VEIL.veil = IO.mothVeil({ hands: [palm(-1), palm(1)], target: chestOf(t), feet: posOf(t), height: tall, radius: 0.72, spawnFor: left(S.spawnTo), landIn: left(S.hits[0]) });
+      VEIL.veil.on = t;
+    }
+  }
+  function spellHit(id) {
+    const S = IO.SPELLS[id];
+    if (id === 'waxing') { for (const t of ['witch', 'sol']) ctx.damage(t, Math.round(S.heal * rnd(0.95, 1.05)), 'heal'); }
+    else if (id === 'moonsteel') { tag('sol', '+' + S.heat + ' Heat', ''); HEAT.v = Math.min(1, HEAT.v + S.heat / 100); HEAT.hold = S.glow; wideTill = clock + S.glow; } // keep Sol's glowing blade in frame
+  }
+  const SPELL_RING = {
+    waxing: { cue: () => [flameW()], hit: () => [chestW(), chestOf('sol')()] },
+    moonsteel: { cue: () => [flameW()], hit: () => { const a = V(), b = V(); solBlade(a, b); return [a.lerp(b, 0.55)]; } },
+    veil: { cue: () => [palm(1)()], hit: () => [chestOf(SPELL.target)()] },
+  };
+  function castSpell(id) {
+    const m = W().m, S = IO.SPELLS[id];
+    if (down(m)) m.reset();
+    SPELL = { id, motion: S.motion, target: VEIL.target, shown: false };
+    m.play(S.motion, true);
+  }
+  // the button that shows as playing: the spell's, not the motion's
+  function markButton(label) {
+    if (marked === label) return;
+    for (const b of document.querySelectorAll('#panel .acts button')) {
+      const t = b.firstChild && b.firstChild.nodeValue;
+      if (label) { if (t === label) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); }
+      else if (t === marked) b.removeAttribute('aria-current');
+    }
+    marked = label;
+  }
+  function spellTicks(S) {
+    const bar = document.getElementById('bar'); if (!bar) return;
+    for (const i of bar.querySelectorAll('i')) i.remove();
+    for (const h of S.hits) { const i = document.createElement('i'); i.style.left = (h * 100).toFixed(1) + '%'; bar.appendChild(i); }
+    for (const h of S.cues) { const i = document.createElement('i'); i.className = 'c'; i.style.left = (h * 100).toFixed(1) + '%'; bar.appendChild(i); }
+  }
+
+  // ---------- the wraith's Shadow Grasp on the target: the veil takes it if one is up ----------
+  function grasp() {
+    const t = VEIL.target, e = E();
+    FX.sigil(posOf(t)(), 0x2dff7a, 2.0, 1.9, -2);
+    e.play('grasp', true);
+    GR = { t, stage: 0, at: 0 };
+  }
+  function stepGrasp(dt) {
+    const e = E(), t = GR.t, p = posOf(t)();
+    turn(e, GR.stage < 2 ? ctx.faceYaw(e, ctx.actors[t]) : e.home.yaw, dt); // the bench never turns a cast member, so the stage does
+    if (GR.stage === 0 && (e.action !== 'grasp' || e.progress >= 0.5)) {
+      FX.tendrils(p, 1.3); FX.burst(new THREE.Vector3(p.x, 0.2, p.z), [0.2, 0.9, 0.45], 50, 3, { up: 1 });
+      GR.stage = 1; GR.at = clock + 0.12;
+    } else if (GR.stage === 1 && clock >= GR.at) {
+      const c = chestOf(t)(), v = VEIL.veil;
+      FX.flashLight(c, 0x3cff8a, 3, 0.4);
+      if (v && v.up && v.on === t) { v.strike(e.chest(V())); tag(t, 'Absorbed', 'ice'); VEIL.veil = null; }
+      else if (t === 'sol') ctx.damage('sol', ctx.swing(250, 0.07));
+      else { QUIET.hurt = true; W().m.play('hurt', true); ctx.damage(W().id, ctx.swing(250, 0.07)); }
+      GR.stage = 2; GR.at = clock + 1.2;
+    } else if (GR.stage === 2 && clock >= GR.at) { GR = null; e.yaw = e.home.yaw; }
   }
 
   // ---------- Attack: run up to the wraith, three blows, run back (as the battle does). Lunge runs up too, ----------
@@ -174,7 +258,22 @@ window.STAGES.witch = (function () {
 
   function abort(snapHome) {
     if (ATK) { ATK = null; restoreHome(snapHome); }
-    stopDefend(); RISE.pending = false;
+    stopDefend(); RISE.pending = false; SPELL = null;
+  }
+
+  // the target of Moth Veil and of the wraith's Shadow Grasp, picked under the Moonlore buttons
+  function targetControl() {
+    const head = [...document.querySelectorAll('#panel h2')].find((h) => h.textContent === 'Moonlore');
+    if (!head || !head.nextElementSibling) return;
+    const cap = document.createElement('h2'); cap.textContent = 'Target of Moth Veil and Shadow Grasp';
+    const seg = document.createElement('div'); seg.className = 'seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', cap.textContent);
+    for (const [id, label] of [['sol', 'Sol'], ['witch', 'Io']]) {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.dataset.target = id;
+      b.setAttribute('aria-pressed', id === VEIL.target ? 'true' : 'false');
+      b.addEventListener('click', () => { VEIL.target = id; for (const q of seg.children) q.setAttribute('aria-pressed', q === b ? 'true' : 'false'); });
+      seg.appendChild(b);
+    }
+    head.nextElementSibling.after(cap, seg);
   }
 
   return {
@@ -195,21 +294,24 @@ window.STAGES.witch = (function () {
     },
     init(c) {
       ctx = c; THREE = c.THREE;
-      if (window.tmpV === undefined) window.tmpV = new THREE.Vector3(); // battle-fx.js expects the battle page's tmpV
       FX = makeBattleFX(); c.scene.add(FX.grp);
+      IO = makeIoSpells(FX);
       WELL = c.g(712, 725);
       flashEl = document.createElement('div');
       flashEl.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0';
       c.stage.appendChild(flashEl);
       tranceBtn = [...document.querySelectorAll('button.tog')].find((b) => b.textContent === 'Trance') || null;
+      targetControl();
     },
     onBuild(c) { if (!ctx) return; abort(true); SEEN.act = ''; SEEN.p = -1; },
     beforePlay(c, name) {
+      if (name === 'wraithGrasp') { if (!GR) grasp(); return; } // the wraith's turn: whatever Io is doing goes on
       abort(false);
       const m = W().m;
       if (name === 'attack') attack('combo', 1.2);
       else if (name === 'lungeAt') attack('lunge', 2.1);
       else if (name === 'defend') defend();
+      else if (SPELL_OF[name]) castSpell(SPELL_OF[name]);
       else if (name === 'rise') {
         const hasRise = !!(m.ACTIONS && m.ACTIONS.rise);
         if (m.action === 'rise') return; // already getting up
@@ -227,31 +329,51 @@ window.STAGES.witch = (function () {
       m.trance = TR.vis;
       if (tranceBtn) c.setPressed(tranceBtn, TR.on);
       const a = sub.action, p = sub.progress;
-      if (a !== SEEN.act || (a && p < SEEN.p - 1e-6)) { if (SEEN.act) end(SEEN.act); SEEN.act = a; SEEN.p = -1; if (a) start(a); }
+      if (SPELL && a !== SPELL.motion && SEEN.act === SPELL.motion) SPELL = null; // the spell's motion ended or was cut short
+      if (a !== SEEN.act || (a && p < SEEN.p - 1e-6)) { if (SEEN.act) end(SEEN.act); SEEN.act = a; SEEN.p = -1; if (a && !(SPELL && SPELL.motion === a)) start(a); }
       if (a) {
-        const d = timesOf(m, a);
-        (d.cues || []).forEach((h, i) => { if (SEEN.p < h && p >= h) { if (CUE_AT[a]) c.ring(CUE_AT[a](i), 'cue'); cue(a, i); } });
-        (d.hits || []).forEach((h, i) => { if (SEEN.p < h && p >= h) { c.ring((HIT_AT[a] || chestE)(), 'hit'); hit(a, i); } });
+        const d = timesOf(m, a), sp = SPELL && SPELL.motion === a ? SPELL : null;
+        (d.cues || []).forEach((h, i) => {
+          if (!(SEEN.p < h && p >= h)) return;
+          if (sp) { for (const q of SPELL_RING[sp.id].cue()) c.ring(q, 'cue'); spellCue(sp.id, i, p); }
+          else { if (CUE_AT[a]) c.ring(CUE_AT[a](i), 'cue'); cue(a, i); }
+        });
+        (d.hits || []).forEach((h, i) => {
+          if (!(SEEN.p < h && p >= h)) return;
+          if (sp) { for (const q of SPELL_RING[sp.id].hit()) c.ring(q, 'hit'); spellHit(sp.id, i); }
+          else { c.ring((HIT_AT[a] || chestE)(), 'hit'); hit(a, i); }
+        });
         SEEN.p = p;
       }
+      if (SPELL && !SPELL.shown && a === SPELL.motion) { SPELL.shown = true; spellTicks(IO.SPELLS[SPELL.id]); }
+      markButton(SPELL ? c.cfg.names[Object.keys(SPELL_OF).find((k) => SPELL_OF[k] === SPELL.id)] : null);
       if (ATK && c.UI.walk) abort(false);
       if (ATK) stepAttack(rdt);
       if (DEF) stepDefend();
+      if (GR) stepGrasp(rdt);
       stepRise();
+      // Sol's Heat from Moonsteel: held while her blade glows, then it cools so the bench can show it again
+      if (HEAT.hold > 0) HEAT.hold -= rdt; else HEAT.v = Math.max(0, HEAT.v - rdt * 0.08);
+      const sol = SOL(); if (sol && sol.m && sol.m.state) sol.m.state.heat = HEAT.v;
+      if (VEIL.veil && !VEIL.veil.alive) VEIL.veil = null;
       for (let i = timers.length - 1; i >= 0; i--) if (clock >= timers[i].at) { const f = timers[i].fn; timers.splice(i, 1); f(); }
       FX.update(rdt, t);
       if (FL.a > 0 || flashEl.style.opacity !== '0') { FL.a = Math.max(0, FL.a - rdt / FL.dur); flashEl.style.opacity = FL.a > 0 ? FL.a.toFixed(3) : '0'; }
     },
     // this stage marks and fires every hit itself (from the same table for both models), so the bench's default is off
     onHit() { return true; },
-    wide() { return !!ATK || !!DEF; },
+    wide() { return !!ATK || !!DEF || !!GR || !!SPELL || clock < wideTill || !!(VEIL.veil && VEIL.veil.on === 'sol'); },
     label(c) {
       if (ATK) return (ATK.act === 'lunge' ? 'Lunge' : 'Attack') + (ATK.phase === 'back' ? ': back to her place' : '');
       if (DEF) return 'Defend: Soul Bolts break on her guard';
+      const who = (id) => (id === 'sol' ? 'Sol' : 'Io');
+      if (SPELL) return IO.SPELLS[SPELL.id].name + (SPELL.id === 'veil' ? ' on ' + who(SPELL.target) : SPELL.id === 'moonsteel' ? ' on Sol' : '');
+      if (GR) return 'Shadow Grasp on ' + who(GR.t);
       if (RISE.pending) return 'Rise: she falls first';
       const a = c.subject.action;
       if (a === 'summon') return 'Summon: Io calls Lunara (Lunara is not on this bench)';
       if (a === 'kneel' && !c.subject.busy) return 'Kneel (KO). Press Rise to get up';
+      if (!a && VEIL.veil && VEIL.veil.up) return 'Moth Veil on ' + who(VEIL.veil.on) + '. Shadow Grasp tests it';
       if (!a && TR.vis > 0.5) return 'In Lunar Trance. Moonlight spends it';
       return null;
     },

@@ -21,7 +21,7 @@ A model is finished when:
 | 4 | **Shadow Wraith** (done) | Tattered robe, hands and scythe in soul-green, a pale moth rising on defeat, a tougher look at higher levels | Nothing; the optional green sheet helps |
 | 5 | **Great wraith** (done) | The wraith at three times the size, with stolen lamplight inside | Nothing (sheets in) |
 | 6 | **Halcyon** | Cold blue eyes and blade edge, a retreat into the dark, a moth rising at the very end; then refined against her new sheets | Nothing |
-| 7 | **Io, the Witch** (technical pass done; new spells next) | Technical only: the shared interface and fewer draw calls, checked pixel for pixel so nothing visible changes. Her four spells (Lunar Mend, Waxing Light, Moonsteel, Moth Veil) play on her existing motions, with their own effects | Nothing |
+| 7 | **Io, the Witch** (done) | Technical only: the shared interface and fewer draw calls, checked pixel for pixel so nothing visible changes. Her four spells (Lunar Mend, Waxing Light, Moonsteel, Moth Veil) play on her existing motions, with their own effects | Nothing |
 | 8 | **Sol** (done) | Face, bronze armor, the sun crest, and her new Kestrel Stoop: a turn hovering, then the biggest sword hit in the game | Nothing (sheets in) |
 | 9 | **Envoi** (done) | Paper-lantern body, a bigger head and seal, the scale and low coil from the Envoi scenes | Nothing (sheets in) |
 | 10 | **Wisp** (done) | A new model, with its frost variant | Nothing (sheets in) |

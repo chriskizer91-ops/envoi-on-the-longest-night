@@ -36,7 +36,12 @@ She looks and moves exactly as before.
 - **Draw calls:** every material is drawn once, skinned to her existing 51 bones, which takes her from 74 meshes drawn per frame to 39.
 - **Cost:** animation costs about 0.05 ms per frame, down from 0.06.
 - **Her page:** it plays all her commands from the Night square demo.
-- **Still to come:** her three new spells, Waxing Light, Moonsteel and Moth Veil, need their effects on her existing motions.
+- **Her new spells,** added the same day in `src/fx/io-spells.js`:
+  - **Waxing Light** (on her `mend` motion): a crescent waxes to a full moon over the party and heals both.
+  - **Moonsteel** (on `cast`): a silver crescent flies to Sol's sword and makes it glow, for +40 Heat.
+  - **Moth Veil** (on `cast`): moths settle into a shimmering dome that absorbs the next hit.
+
+  Her look and motions are untouched.
 
 ### The Witch: the plan (technical only)
 

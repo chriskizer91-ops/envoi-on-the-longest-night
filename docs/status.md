@@ -11,7 +11,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Noctara | https://claude.ai/artifact/4FzTFkD5JRPhci57H2ybvz | Done (October 1). Rebuild once every model is final: its supporting actors use working copies. |
 | Halcyon | https://claude.ai/artifact/7zPEx3g6VC4SFfdZ8zdHj8 | Done: refined against her new sheets on October 2. |
 | Lunara | https://claude.ai/artifact/XpsLozXGFgPCwLG5s5iUce | Done |
-| Io, the Witch | https://claude.ai/artifact/1mF6YFp3xg1KhGs5tZNYky | Technical pass done. Her three new spells are in progress (below). |
+| Io, the Witch | https://claude.ai/artifact/1mF6YFp3xg1KhGs5tZNYky | Done: technical pass, plus Waxing Light, Moonsteel and Moth Veil |
 | Sol | https://claude.ai/artifact/FpVoGvTKCwv8GWiuouJu7N | Done, with Kestrel Stoop |
 | Envoi | https://claude.ai/artifact/6W5ZvTmsusQwAEBEkP95hx | Done, with its summon, ward and strike |
 | Shadow Wraith and great wraith | https://claude.ai/artifact/HEn78AJYsTpGRs9B4zZ5SW | Done; the Great wraith toggle reloads the page |
@@ -23,7 +23,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 |---|---|---|
 | Noctara | Done | — |
 | Lunara | Done | The sheet's heavier skirt chains; her pointed ears |
-| Io, the Witch | Technical pass done | Her new spells (Waxing Light, Moonsteel, Moth Veil) as effects on her existing motions, in `src/fx/io-spells.js` |
+| Io, the Witch | Done, with her new spells in `src/fx/io-spells.js` | Scale the spell effects up for the battle camera; Moth Veil's 35% capacity and two turns, and Moonsteel's Moon-element hit, belong to the battle step |
 | Wisp | Done, polished | A darker, fuller smoke tail; stronger tears in the hollow; check the frost variant in every action |
 | Shadow Wraith and great wraith | Done | The great wraith's numbers; a scythe head and hem closer to the sheet; switching to the great wraith without a reload (a bench change) |
 | Sol | Done | Wispier hair, a rounder face, the cape over her shoulders, and compacting the code (140 KB) |
