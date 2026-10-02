@@ -70,7 +70,7 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 | **The level curve** | A basic hit of about 100 at level 1, 500 at level 10 and 3,200 at level 20. Foes grow the same way, so a fight at the party's level lasts as long at 20 as at 1. |
 | **Battle rules** | Turn gauges for up to two heroes and three foes; Trance; Heat and Sunburn; summons (Lunara from the start, Envoi from Dawnroost, with Sol at 70 Heat or more); herbs as items; elements (Moon against shadow foes, Sun against Halcyon); statuses (Bound, Sundered, Severed, Frost, Moth Veil, Folding Ward, Guard, Warden's Vow, Blackout). |
 | **The balance simulator** | A script that plays each fight thousands of times with three play styles (careless, sensible, expert) and reports win rates, fight length and close calls. It checks the targets below every time a number changes. |
-| **The battle screen** | Command menus as in the Night square demo, turn bars, HP and MP, Trance and Heat gauges, big damage numbers, a phone layout, experience and level-ups at the end. |
+| **The battle screen** | A camera director that pulls back to a wide shot for every summon (Lunara, Envoi) and big attack, so the whole creature is in frame; command menus as in the Night square demo, turn bars, HP and MP, Trance and Heat gauges, big damage numbers, a phone layout, experience and level-ups at the end. |
 | **Battle backdrops** | Any night painting with its own matched camera, walk area, cutouts and lamps (the format the Night square already uses). All eight from `art-requests/03-battle-backdrops.md` are in `art/backdrops/`; each needs its camera matched and its lamps traced. |
 
 ### The balance targets

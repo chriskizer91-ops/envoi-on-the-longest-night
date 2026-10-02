@@ -274,9 +274,11 @@ window.STAGES.envoi = (function () {
       if ((a === 'summon' || a === 'appear') && i === 1) ctx.ring(m.anchor('warded' in m ? 'ward' : 'chest', new THREE.Vector3()), 'cue');
     },
     wide(ctx) {
-      // Envoi is huge: on a narrow screen the Close view frames everyone, as the Full view does
+      // Envoi is huge: on a narrow screen the Close view frames everyone, as the Full view does; on any screen the camera
+      // pulls back whenever it is summoned, strikes, takes a blow on the ward or leaves, so the whole wyrm is in the shot
       if (ctx.stage.clientWidth < 600) return true;
-      return !!(S.seq || S.foe || S.gone >= 0 || mothT > -0.9);
+      const a = ctx.subject.action;
+      return !!(S.seq || S.foe || S.gone >= 0 || mothT > -0.9 || ['summon', 'appear', 'envoi', 'block', 'leave', 'die'].includes(a));
     },
     label(ctx) {
       const sub = ctx.subject, a = sub.action, p = sub.progress;

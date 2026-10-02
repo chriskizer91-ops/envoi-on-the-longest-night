@@ -341,3 +341,7 @@ This replaces the visible packs from Aethermoor that the plan first proposed.
 ### Art requests
 
 - **Future image requests come as Markdown files,** sent in the chat. The HTML page was too clunky.
+
+### The camera for summons
+
+- **Whenever Envoi is summoned, the camera pulls back to a wide shot** so the whole wyrm is in frame. It stays wide for its strike, a blow on its ward and its leaving. The battle's camera does the same for every summon.

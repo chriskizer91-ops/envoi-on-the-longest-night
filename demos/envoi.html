@@ -25,7 +25,8 @@ Bench.start({
   blurb: "The summon of Io, the Witch, in the Night square: her letters to the dead, folded into a dragon and lit by Sol's blade, facing a Shadow Wraith.",
   subject: {
     id: 'envoi', name: 'Envoi', make: () => makeEnvoi({}), before: () => makeEnvoiOriginal({}),
-    home: [720, 790], offset: [0.55, -0.3], face: 'wraith', yawBias: -0.5, // nudged away from Io, so its coils keep clear of her shadow: 1.6, shadowY: 0.6, target: 'wraith', tall: 9.5,
+    // offset nudges it away from Io, so its coils keep clear of her
+    home: [720, 790], offset: [0.55, -0.3], face: 'wraith', yawBias: -0.5, shadow: 1.6, shadowY: 0.6, target: 'wraith', tall: 9.5,
     walkLabel: 'Glide', walkSpeed: 0.9, loopR: 1.2, frameHeight: 2.9, closeSpan: 430,
     height: '6.4 m to the wing tops, about 9 m from snout to streamers',
   },
