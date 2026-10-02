@@ -139,3 +139,53 @@ The lore answers (`lore/lore-answers-2026-10-01.md`) settle the story, the world
 - **Foes scale the same way.** HP and damage both rise about 20% per level, so a fight against foes of the party's level lasts about as long at level 20 as at level 1; the numbers are just bigger. A party a few levels above its foes wins more easily, which is the reward for exploring.
 - **Moves keep their ratios as they grow.** A big Sword Art does several times a basic hit, a Trance attack more, and Envoi the most: about 100,000 for its whole strike at level 20.
 - **The 25% swing stays.** No 9,999 cap.
+
+## October 2, 2026, second round
+
+Chris's answers to the open questions. Where this round and an earlier one disagree, this round wins: it replaces the three level bands of October 1 and the rule that Envoi is the Witch's only new move.
+
+### Names
+
+- **The Witch is Io.** The io moth is a real moth, and Io is also a moon, so her name carries both halves of her lore.
+- **The Warden waystation is Dawnroost.** Wardens take bird names, so their home is where they roost, and "Dawn" matches Sol's Dawnbreaker trance. Only one bird is left to come home to it.
+
+### Level bands and the Magpie
+
+- **Four bands: 1 to 5, 5 to 10, 10 to 15 and 15 to 20.** Level 20 is the highest level.
+- **Why the ship can't go farther:** sunstone gives the Magpie its lift, and Noctara's cold drains it. The same cold is why the Ember Line is dimming.
+- **The Magpie's four levels:**
+  1. At the start, it flies the first band.
+  2. A refit at Bogmire after the great wraith opens the second band.
+  3. A charge from the living sunstone node at Dawnroost opens the third.
+  4. A final upgrade after the fight with Halcyon opens the fourth.
+
+### A reward at every gate
+
+| Level | Gate | Reward |
+|---|---|---|
+| 5 | The great wraith, then the Bogmire refit | Moth Veil, Io's barrier |
+| 10 | Dawnroost | Envoi |
+| 15 | The fight with Halcyon | Kestrel Stoop, Sol's new move |
+
+- **Moves can be added for balance.** Heroes or foes can get extra moves if the balancing needs them.
+
+### Io's spells
+
+1. **Lunar Mend** from the first fight.
+2. **Waxing Light** (heals both) and **Moonsteel** (gives Sol Heat) when Sol joins. They aren't level rewards; they only exist once Io has a partner.
+3. **Moth Veil,** a barrier, at the Bogmire refit. Chris chose it over a bigger heal: Lunar Mend already keeps pace with HP on the level curve, and a shield is the answer to telegraphed hits like Black Noon and Void Sphere.
+
+- **Revive and status cures** stay with herbs and Lunara's Embrace.
+
+### Sol's Kestrel Stoop
+
+- Halcyon named Sol "Kestrel" because she hovers before she strikes, and Sol learns this move from the fight with Halcyon.
+- **How it works:** Sol spends one turn hovering, then lands the biggest sword hit in the game. It should beat two turns of Ember Rush.
+
+### Halcyon and the finale
+
+- **Halcyon's winnable fight:** Halcyon at level 20 against the party at about 15. With the level curve, she alone may be enough. A wraith joins her only if the balancing calls for it.
+- **The finale is at level 20.**
+  - At level 20, a player who plays well wins about half the time, so they may need a couple of tries.
+  - At level 19 they have no real chance, but it's close enough that they may keep trying when they could just level once more.
+  - Below that, they all but certainly lose.

@@ -2,17 +2,23 @@
 
 Everything not yet decided, as of October 2, 2026. None of it blocks the model touch-ups.
 
-## Names
+The first set of questions here (the Witch's name, the waystation's name, the Magpie's limits, the final battle's level, the Witch's healing) was answered on October 2. The answers are in `design-decisions.md`, under "October 2, 2026, second round".
 
-1. **The Witch's name.** Candidates: Yarrow, Ione, Tansy. She stays "the Witch" until then.
-2. **The Warden waystation's name.**
+## Places
 
-## Level gates
+1. **Noctara's castle.** Chris's answers send the party to Noctara's castle for the finale, but lore answer 9 puts the final battle at the dead Moonwell in Misthollow. Is the castle at Misthollow, or is it a fifth place beyond it? Either way, which places sit in which band? A proposal:
 
-3. **Why the Magpie can't fly farther yet.** The world is split into level bands (1 to 10, 10 to 20, 20 to 30), and the ship can't leave its band until the party reaches the next one. One idea, after Thareia's ship refits: Noctara's cold thickens to the north, and the Magpie's sunstone loses its lift in deeper cold. A refit at Bogmire after the great wraith (level 10), then a charge from the living sunstone node at the waystation (level 20), lets it push on.
-4. **The final battle's level.** Chris, October 2: the game finishes at about level 20. Still to settle: does the final fight sit at 20 to 22, with the rest of the 20 to 30 band as optional extra levels for an easier finale, or does the third band end where the game does?
+   | Band | Levels | Places | Gate out |
+   |---|---|---|---|
+   | 1 | 1 to 5 | Wickhollow, Bogmire | The great wraith, then the Bogmire refit |
+   | 2 | 5 to 10 | Dawnroost | Envoi, and the node's charge |
+   | 3 | 10 to 15 | Misthollow and the road north | Halcyon, then the final upgrade |
+   | 4 | 15 to 20 | Noctara's castle | The finale |
+
+## Moves
+
+2. **When Sol learns Kestrel Stoop.** The answers say she learns it from the first fight with Halcyon, and also that it's the reward at level 15. The ambush happens early, so this assumes it comes from the level 15 fight, the first one the party can win. Is that right?
 
 ## Battle numbers
 
-5. **The Witch's healing spells.** Her only new move is Envoi, so whatever she heals with, she has from the first fight. Is that only Lunar Mend (the Night square kit), or also some of the bible's party spells, such as Waxing Light (heals both) and Moonsteel (gives Sol Heat)?
-6. **Stats** for Noctara, the wisps and the great wraith. The scale is set: big numbers that grow about 20% per level, about 100 per hit at level 1 and 3,200 at level 20 (`design-decisions.md`, October 2). The exact stats get set with the balance simulator during the battle steps.
+3. **Stats** for every foe and hero. The scale is set: big numbers that grow about 20% per level, about 100 per hit at level 1 and 3,200 at level 20, with 20 the highest level (`design-decisions.md`, October 2). The exact stats get set with the balance simulator during the battle steps.

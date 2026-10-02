@@ -99,8 +99,9 @@ The low-level foe (lore answer 16): a soul starting to go hollow, the early form
 | Envoi | `envoi-model.webp`, `envoi-model-b.webp`, `envoi-actions.png`, `envoi-actions-b.png`, and the two Envoi scenes | — |
 | Noctara | `noctara-model-sheet-a.png`, `noctara-model-sheet-b.png` and four scenes | — |
 | Lunara | `lunara-pose-sheet.png` | — |
-| Shadow Wraith | `shadow-wraith-pose-sheet.png` (violet, out of date) | A soul-green sheet (optional), the great wraith sheet (art request 01) |
-| Halcyon | `halcyon-model.png`, `halcyon-model-b.png`, `halcyon-actions.png`, and the Blackout scene | — |
+| Shadow Wraith | `wraith-model.webp`, `wraith-model-b.webp` (soul-green); the old violet `shadow-wraith-pose-sheet.png` | — |
+| Great wraith | `great-wraith.webp` (flames), `great-wraith-b.webp` (lanterns), `great-wraith-c.webp` (both) | — |
+| Halcyon | `halcyon-model.png`, `halcyon-model-b.png`, `halcyon-actions.png`, `halcyon-actions-b.webp`, and the Blackout scene | — |
 | Wisp | `wisp-model.png`, `wisp-model-b.png`, `wisp-actions.png`, `wisp-actions-b.png` | — |
 
-The sheets for Sol, Envoi, the wisp and Halcyon arrived on October 2, 2026. Their file list is in `../reference/art/README.md`.
+Every sheet from art request 01 arrived on October 2, 2026, including a second Halcyon action sheet. The file list is in `../reference/art/README.md`.

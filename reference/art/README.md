@@ -1,19 +1,21 @@
 # Reference Art
 
-Concept art from Chris. The model touch-ups match these. Most files are PNG; four arrived as WebP and are kept as they came. Where a sheet comes in an A and a B version, A is the main one and B covers what A leaves unclear.
+Concept art from Chris. The model touch-ups match these. Most files are PNG; the ones that arrived as WebP are kept as they came. Where a sheet comes in an A and a B version, A is the main one and B covers what A leaves unclear.
 
 ## Model and action sheets
 
-From art request 01 (`docs/art-requests/01-model-sheets.md`), received October 2, 2026.
+From art request 01 (`docs/art-requests/01-model-sheets.md`), all received October 2, 2026.
 
 | Model | Model sheet | Action sheet |
 |---|---|---|
 | Sol | `sol-model.webp` (A, with the 1.78 m ruler), `sol-model-b.webp` | `sol-actions.webp`, `sol-actions-b.webp` (12 poses) |
 | Envoi | `envoi-model.webp` (A), `envoi-model-b.webp`, with a 1.6 m figure for scale | `envoi-actions.png`, `envoi-actions-b.png` (8 panels: Unfolding to Rising Away) |
 | Wisp | `wisp-model.png`, `wisp-model-b.png` (views, three faces, the hollow, the frost variant) | `wisp-actions.png`, `wisp-actions-b.png` (8 poses) |
-| Halcyon | `halcyon-model.png` (A), `halcyon-model-b.png` | `halcyon-actions.png` (10 poses: High Guard to The Last Light) |
+| Halcyon | `halcyon-model.png` (A), `halcyon-model-b.png` | `halcyon-actions.png`, `halcyon-actions-b.webp` (10 poses: High Guard to The Last Light, or A Gentler Light in B) |
+| Shadow Wraith | `wraith-model.webp` (A, with the 2.2 m ruler), `wraith-model-b.webp`: soul-green, with the hood, hand, ribcage and scythe close up | — |
+| Great wraith | `great-wraith.webp` (A: stolen flames in its ribs and robe), `great-wraith-b.webp` (B: the stolen lights as lanterns), `great-wraith-c.webp` (C: flames, with lanterns on its neck chain), each with a 1.6 m figure | The same sheets: sweep, swallowing lamplight, breathing stolen fire, released |
 
-Still to come: the great wraith's concept sheet, and the optional soul-green Shadow Wraith sheet.
+Every sheet from the request is in.
 
 ## Earlier sheets and scenes
 

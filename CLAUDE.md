@@ -16,7 +16,7 @@
 - Working title: *Envoi on the Longest Night*.
 - Design context lives in `docs/game-context.md`; decisions in `docs/design-decisions.md`; the build order in `docs/plan.md`.
 - Canon order: `docs/design-decisions.md`, then `docs/lore/lore-answers-2026-10-01.md`, then the Noctara amendment, then the bible.
-- The main cast is all women: the Witch, Sol, Halcyon, Noctara and Lunara. Halcyon is "she" everywhere, including code comments.
+- The main cast is all women: Io the Witch, Sol, Halcyon, Noctara and Lunara. Halcyon is "she" everywhere, including code comments.
 - The Drowned Mother, Old Snuff and the mandrakes are retired. Never use them or their lore, even though the bible and prompt pack still describe them.
 - The Witch's 3D model must keep exactly how she looks and moves; changes to her are technical only.
 - Every step ends in a demo page Chris can open on his phone, before anything is put together.

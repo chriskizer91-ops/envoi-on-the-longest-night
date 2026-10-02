@@ -2,7 +2,7 @@
 
 For the model touch-ups. Each prompt is ready to paste. Generate each sheet two to four times and keep the one where the views agree best, then send it back with the file name given.
 
-**Status, October 2, 2026:** sheets 1 to 4 are in, two versions of most, saved in `reference/art/` (listed in its `README.md`). Still open: 5, the great wraith, and 6, the optional Shadow Wraith sheet.
+**Status, October 2, 2026:** every sheet is in, two or three versions of most, saved in `reference/art/` (listed in its `README.md`).
 
 ## Order
 
@@ -11,9 +11,9 @@ For the model touch-ups. Each prompt is ready to paste. Generate each sheet two 
 | 1 | Sol: model sheet and action sheet | Her touch-up has nothing to match yet | `sol-model.png`, `sol-actions.png` | Yes, A and B of each (WebP) |
 | 2 | Envoi: model sheet and action sheet | Same | `envoi-model.png`, `envoi-actions.png` | Yes, A and B of each (model sheets in WebP) |
 | 3 | Wisp: model sheet and action sheet | The new low-level foe; its model starts from these | `wisp-model.png`, `wisp-actions.png` | Yes, A and B of each |
-| 4 | Halcyon: model sheet and action sheet | Her new cold blue look, the retreat and the ending | `halcyon-model.png`, `halcyon-actions.png` | Yes, model sheet A and B, one action sheet |
-| 5 | Great wraith: one concept sheet | The Bogmire boss; it reuses the wraith model | `great-wraith.png` | Not yet |
-| 6 | Shadow Wraith: one model sheet (optional) | The old pose sheet is violet; the wraith is soul-green | `wraith-model.png` | Not yet |
+| 4 | Halcyon: model sheet and action sheet | Her new cold blue look, the retreat and the ending | `halcyon-model.png`, `halcyon-actions.png` | Yes, A and B of each (action sheet B in WebP) |
+| 5 | Great wraith: one concept sheet | The Bogmire boss; it reuses the wraith model | `great-wraith.png` | Yes, three versions (WebP) |
+| 6 | Shadow Wraith: one model sheet (optional) | The old pose sheet is violet; the wraith is soul-green | `wraith-model.png` | Yes, A and B (WebP) |
 
 Noctara, Lunara and the Witch need nothing new.
 
