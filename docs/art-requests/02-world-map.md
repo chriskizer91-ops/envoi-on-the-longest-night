@@ -2,6 +2,8 @@
 
 The flying map: the world as the party sees it from the Magpie (plan step 19). The ground-level walking maps are a separate request, later.
 
+Chris is now painting the maps himself, matched to this world but more detailed (see "Your own map images" at the end). The prompts below stay as the description of the world.
+
 The map has to show the four level bands as four regions, from the warm south to the frozen north, because the Magpie can only fly as far as its sunstone allows:
 
 | Band | Levels | Region | What's there |
@@ -64,3 +66,14 @@ Around the edges of the land, the Aether: a glowing sea of moonlit cloud that sh
 - The Magpie flies over the painting. A band the ship can't reach yet sits under a veil of cold mist, drawn in code, which lifts at each refit or charge.
 - The four stops get small markers and names in code, so the painting needs none.
 - If one painting is too coarse up close on a phone, a later request can add a close-up piece for each band.
+
+## Your own map images
+
+Chris is painting nine highly detailed images of the world, with night versions. What helps when they come in:
+
+- **Upload them full size,** PNG or WebP. They get compressed here: the far view from the Magpie scaled down, and the walking views kept sharp at the pixel Io's scale.
+- **Say how the nine fit together.** If they are a 3×3 grid of one world, a little overlap at the edges makes the joins clean.
+- **Keep one angle** across all nine, so the joins and the walking views match.
+- **Night, with no stars.** The whole game is at night, and the sky gets its stars back only at the ending.
+- **No labels or text.** The game adds the names in code.
+- **Clear ground for walking.** Roads, paths, bridges and doorways should read clearly up close, since the pixel Io walks on them.

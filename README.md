@@ -6,7 +6,7 @@ A game in early development.
 
 ## Status
 
-Phase 1, the model touch-ups (see `docs/plan.md`). Noctara is done.
+Phase 1, the models (see `docs/plan.md`): every model is touched up, and the polish round is next. `docs/status.md` is the handoff note.
 
 ## Layout
 

@@ -1,6 +1,6 @@
 # Game Context
 
-*Envoi on the Longest Night* is an FF9-style browser JRPG set in the Moonlight in the Aether world: painted backdrops, code-built three.js characters, and ATB battles with Trance and summons. The party is the Witch and Sol; the summons are Lunara and Envoi; the final boss is Noctara the Starless, with Halcyon at her side. Travel is a pixel-art Witch walking painted maps, or flying the Magpie between four stops: Wickhollow, Bogmire, the Warden waystation and Misthollow. The Drowned Mother, Old Snuff and the mandrakes are retired. The story is in the five lines at the top of the lore answers.
+*Envoi on the Longest Night* is an FF9-style browser JRPG set in the Moonlight in the Aether world: painted backdrops, code-built three.js characters, and ATB battles with Trance and summons. The party is the Witch and Sol; the summons are Lunara and Envoi; the final boss is Noctara the Starless, with Halcyon at her side. Travel is a pixel-art Witch walking painted maps, or flying the Magpie between four stops: Wickhollow, Bogmire, the Warden waystation and Misthollow. The whole game takes place at night. The Drowned Mother, Old Snuff and the mandrakes are retired. The story is in the five lines at the top of the lore answers.
 
 ## Where the canon lives
 

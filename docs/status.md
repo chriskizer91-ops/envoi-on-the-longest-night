@@ -1,14 +1,26 @@
 # Where Things Stand
 
-A handoff for the next session. Updated October 2, 2026, at a planned stopping point while Chris's weekly usage runs low. Every model is touched up, committed and published.
+A handoff for the next session. Updated October 2, 2026, after the move to Chris's second account. Every model is touched up and committed. Noctara's page has been rebuilt with the finished cast.
 
-We are in **phase 1, the models** (`plan.md`). Every model gets touched up against its sheets and shown on a battle bench page in the Night square, then published as a private page Chris can open on his phone.
+We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Every model gets touched up against its sheets and shown on a battle bench page in the Night square, then published as a private page Chris can open on his phone.
 
-## Published pages
+## Working from the second account
+
+- **Branch:** commit only to `second-account-work`. Never commit to `main` or any other branch, and never to the sibling repos.
+- **Publishing:** pages are published from the second account. They're private to it until Chris shares them. The first account's pages below stay as they are; this account can't update them, so a republished page gets a new link here.
+
+## Published from the second account
 
 | Page | Link | State |
 |---|---|---|
-| Noctara | https://claude.ai/artifact/4FzTFkD5JRPhci57H2ybvz | Done (October 1). Rebuild once every model is final: its supporting actors use working copies. |
+| Noctara | https://claude.ai/artifact/JWFwFUZTDum2CZjbGXotir | Rebuilt October 2 with the finished Io, Sol and Halcyon |
+| Art requests | https://claude.ai/artifact/MNozyJ4DQys2syLfyyv44c | The open prompts (requests 03 and 02) with copy buttons. Rebuild with `node tools/art-page.mjs` and republish `dist/art-requests.html` whenever a request changes. |
+
+## Published from the first account
+
+| Page | Link | State |
+|---|---|---|
+| Noctara | https://claude.ai/artifact/4FzTFkD5JRPhci57H2ybvz | Out of date: built with working copies of the supporting actors. Use the second account's link. |
 | Halcyon | https://claude.ai/artifact/7zPEx3g6VC4SFfdZ8zdHj8 | Done: refined against her new sheets on October 2. |
 | Lunara | https://claude.ai/artifact/XpsLozXGFgPCwLG5s5iUce | Done |
 | Io, the Witch | https://claude.ai/artifact/1mF6YFp3xg1KhGs5tZNYky | Done: technical pass, plus Waxing Light, Moonsteel and Moth Veil |
@@ -57,9 +69,10 @@ Make these once no agent is mid-pass, since every page shares these files:
 
 ## Next steps
 
-1. Make the bench and tool changes above. Every model pass has finished and is committed and published; no agent is running.
-2. Rebuild Noctara's page with the finished models.
-3. Build the cast page (step 11).
-4. Then phase 2, the battles. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
+1. The polish round (plan step 10b): the bench and tool changes above, then every model's "what's left" list, one model at a time, each page rebuilt and republished here.
+2. The cast page (step 11).
+3. Phase 2, the battles. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
 
-Art in hand: every sheet from art request 01 (`../reference/art/README.md`). The world map prompts are in `art-requests/02-world-map.md` for when Chris wants to generate them. Nothing is open in `questions/open.md` except the stats, which the battle steps settle.
+Art in hand: every sheet from art request 01 (`../reference/art/README.md`). The battle backdrop prompts are in `art-requests/03-battle-backdrops.md`. Chris is painting the world maps himself: nine detailed images with night versions. The questions for Chris, and the lore questions for his lore conversation, are in `questions/open.md`.
+
+`tools/check.mjs` needs `mkdir -p tools/.cache` on a fresh copy of the repo until the polish round fixes it.

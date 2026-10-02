@@ -240,3 +240,32 @@ The demo swings damage by 7% either way. The decided swing of up to 25% replaces
 ### The Ember Line
 
 - Confirmed: the sunstone veins that Noctara's cold is dimming are the Ember Line.
+
+## October 2, 2026, fourth round
+
+### Working from a second account
+
+- From here on the work happens on the `second-account-work` branch, and pages are published from Chris's second Claude account.
+- Publishing here doesn't touch the first account. Its pages and links stay as they are, and it can keep publishing. Pages published here are private to this account until Chris shares them from the page's Share menu.
+- The sibling repos stay read-only.
+
+### Polish everything
+
+- **Every item on each model's "what's left" list gets done.** The goal is a game as polished as it can be.
+- **Every main character's model and every attack visual gets finished,** and the level scaling and fight balance are worked out, before the story's fights are placed.
+
+### The order of work
+
+1. Rebuild Noctara's page with the finished models (done October 2).
+2. Finish every model's "what's left" list.
+3. The cast page.
+4. Phase 2, the battles.
+
+### The whole game at night
+
+- **The whole game takes place at night.** Walking maps, battle backdrops and the flying map are all night scenes. How the story explains it is a lore question (`questions/open.md`).
+
+### The world maps
+
+- Chris is painting the world maps himself, matched to the current world but more detailed: nine highly detailed images, with night versions.
+- The game compresses them so pages stay small. The far view from the Magpie doesn't need full detail; the closer aerial views are for walking.
