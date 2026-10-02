@@ -1,6 +1,6 @@
 # Where Things Stand
 
-A handoff for the next session. Updated October 2, 2026, at a planned stopping point while Chris's weekly usage runs low.
+A handoff for the next session. Updated October 2, 2026, at a planned stopping point while Chris's weekly usage runs low. Every model is touched up, committed and published.
 
 We are in **phase 1, the models** (`plan.md`). Every model gets touched up against its sheets and shown on a battle bench page in the Night square, then published as a private page Chris can open on his phone.
 
@@ -31,7 +31,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Halcyon | Done | Her face is still rounder than the sheets' gaunt one (kept as built); Light-Drinker's streams and Black Noon's swirls could be ribbons; a brief cut line in the retreat around u 0.65 |
 | The cast (step 11) | Not started | Every model together at true scale, after all of the above |
 
-Work an agent hadn't finished at the stopping point is listed under its model below, from its last report.
+"What's left" comes from each agent's last report. Every model step (2 to 10) is done; step 11, the cast, is next.
 
 ## Rules that bit us
 
@@ -57,10 +57,9 @@ Make these once no agent is mid-pass, since every page shares these files:
 
 ## Next steps
 
-1. Review and commit what the running agents report, and publish their pages.
-2. Make the bench and tool changes above.
-3. Rebuild Noctara's page with the finished models.
-4. Build the cast page (step 11).
-5. Then phase 2, the battles. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
+1. Make the bench and tool changes above. Every model pass has finished and is committed and published; no agent is running.
+2. Rebuild Noctara's page with the finished models.
+3. Build the cast page (step 11).
+4. Then phase 2, the battles. Every number decision so far is in `design-decisions.md`, under October 2: level 1 uses the Night square demo's numbers, everything grows about 20% per level, and 20 is the highest level.
 
 Art in hand: every sheet from art request 01 (`../reference/art/README.md`). The world map prompts are in `art-requests/02-world-map.md` for when Chris wants to generate them. Nothing is open in `questions/open.md` except the stats, which the battle steps settle.
