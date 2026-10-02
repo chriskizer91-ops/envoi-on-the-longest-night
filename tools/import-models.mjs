@@ -4,7 +4,7 @@
 //   src/models/originals/<id>.js  the untouched original, renamed make<Name>Original, for before/after
 //   src/stage/night-square.js     the painting's camera, layout and lamp data
 //   art/backdrops/night-square.webp
-// Run from the repo root: node tools/import-models.mjs
+// Run from the repo root: node tools/import-models.mjs (existing working copies are kept; --force overwrites them)
 import fs from 'fs';
 const R = new URL('..', import.meta.url).pathname;
 const read = (f) => fs.readFileSync(R + 'reference/demos/' + f, 'utf8').split('\n');
@@ -33,7 +33,8 @@ for (const [id, m] of Object.entries(models)) {
   while (m.lines.length && m.lines[m.lines.length - 1].trim() === '') m.lines.pop();
   const body = m.lines.join('\n') + '\n';
   if (!body.startsWith('function ' + m.name + '(')) throw new Error(id + ': unexpected start ' + body.slice(0, 40));
-  fs.writeFileSync(R + `src/models/${id}.js`, header(m.src) + body);
+  // never overwrite a working copy: touch-ups live there. Pass --force to start a model over from its original.
+  if (!fs.existsSync(R + `src/models/${id}.js`) || process.argv.includes('--force')) fs.writeFileSync(R + `src/models/${id}.js`, header(m.src) + body);
   fs.writeFileSync(R + `src/models/originals/${id}.js`, header(m.src) + body.replace('function ' + m.name + '(', 'function ' + m.name + 'Original('));
   console.log(id.padEnd(8), (body.length / 1024).toFixed(1) + ' KB');
 }
