@@ -569,3 +569,17 @@ Another session read every commit and replayed the simulator. What it found:
 - **Getting there means about double the experience per level from 16 on,** and a little more each level after the first few. That makes about 100 wild fights in all, instead of 55: roughly an hour more of fighting.
 - **The other way to get there** is to make the early bands quicker and keep the game near its current length. A question for Chris (`questions/open.md`, 9).
 
+## October 2, 2026, sixteenth round
+
+### How long the game is (question 9, answered)
+
+- **About 70 to 85 wild fights, with the last band holding about 40% of them.**
+- **The experience curve is set to match:**
+  - about 79 wild fights from level 2 to 20, 40% of them between 16 and 20;
+  - the first band (levels 1 to 5) levels 20% quicker;
+  - from level 3, each level asks 2% more than the curve;
+  - from 16 on, each level asks 2.7 times as much, so the last level alone takes about ten fights.
+
+  All 32 balance targets are met.
+- **Shards outrun the Magpie's prices now.** With wild foes at their band's levels and more fights, a player who skips nothing has about 10,200 shards by level 15, against 6,800 for all three upgrades. The prices are reset in phase 3, together with the shops.
+

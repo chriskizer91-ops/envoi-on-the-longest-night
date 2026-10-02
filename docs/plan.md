@@ -87,7 +87,7 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 | Halcyon's ambush | The level 15 gate: Halcyon at 20 against a party at 15 or more, overwhelming, the exception to "a little harder". It ends with the party falling, or with her retreat at 20% HP |
 | The finale | An expert at level 20 wins about half the time; at 19 a player loses, but narrowly; below that it can't be won |
 
-**Next, the progression pass (Chris, October 2):** foe levels set by area rather than by the party; an experience curve that gets a little harder after the first couple of levels; a third to half of the game's fights in the last five levels; and targets where the average (attentive) player loses sometimes, mostly at the gates, with no difficulty setting. An expert should be all but certain to win until about level 15.
+**The progression pass (Chris, October 2):** wild foes are a level in their band's range; the experience curve gives about 79 wild fights, 40% of them in the last band, a little harder after the first couple of levels; the average (attentive) player loses sometimes, mostly entering a band and at the gates, and rarely wins the finale; no difficulty setting. An expert is all but certain to win until about level 15. Still to do in phase 3: the shards' prices (the Magpie and the shops), and the whole chain of fights played in order.
 
 ### The battle demos
 
@@ -117,7 +117,7 @@ Every fight gets its place in the story before travel is built. It is drafted on
 - **Set fights** wait at fixed places: the gate fights and the story fights.
 - **Money is sunstone shards.** Fights give them. The Magpie's upgrades cost shards and need the party's level, so moving on to the next band takes both. Shops sell herbs for shards. The simulator balances shards too: what a player has earned by each gate.
 
-**About five hours:** the story, about 60 wild fights from level 1 to 20 against wisps, frost wisps, wraiths and the great wraith, and the set fights.
+**About five hours:** the story, about 79 wild fights from level 1 to 20 (40% of them in the last band) against wisps, frost wisps, wraiths and the great wraith, and the set fights.
 
 The first draft. The places are marked on `../reference/art/world-map/bands-and-stops.webp`, which Chris confirmed:
 

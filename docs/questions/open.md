@@ -1,6 +1,6 @@
 # Still Open
 
-Everything not yet decided, as of October 2, 2026, fifteenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
+Everything not yet decided, as of October 2, 2026, sixteenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
 
 Every earlier question has been answered; the answers are in `design-decisions.md`, under the October 2 rounds.
 
@@ -23,11 +23,14 @@ Every earlier question has been answered; the answers are in `design-decisions.m
 
 8. **Kestrel Stoop's hover.** While Sol hovers, the foes can still hit her. In FF9, Freya's Jump takes her out of reach until she lands. Should the hover do the same, with blows aimed at Sol going to Io instead? It would make Stoop stronger, and the Halcyon fight and the finale would be retuned to match.
 
-9. **How long the game is.** To put a third to half of the fights in the last band (16 to 20), the experience curve has to climb there. Two ways:
-   - **A longer game:** about 100 wild fights in all instead of 55, the extra ones mostly in the last band. At a minute or two each, that is roughly an hour more of fighting.
-   - **The same length:** about 60 wild fights, with the first three bands quicker to level through, so the last band still holds a third to half of them.
+9. Answered: about 70 to 85 wild fights, with the last band holding about 40% (`design-decisions.md`, sixteenth round).
 
-   The recommendation is somewhere between: about 75 to 80, so the early bands keep their pace and the last band holds about 40%.
+10. **What happens when the party loses a fight.** The average player is meant to lose sometimes, mostly at band entries and gates, so this decides how losing feels. Some ways it could go:
+    - **Wake at the last rest** (a town or a camp) with everything the party had: experience, shards and herbs kept, and the fight waits. Losing costs only the walk back.
+    - **Wake at the last rest, but lose something:** for example, the shards picked up since that rest.
+    - **Game over,** back to the last save, as in FF9.
+
+    The recommendation is the first: a loss sends the party back to try again, and no time is lost to a save screen. Halcyon's ambush is the exception, where losing goes on with the story.
 
 ## Lore questions
 

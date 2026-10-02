@@ -193,9 +193,10 @@
   };
 
   // ---------- experience and shards ----------
-  // to go from level L to L+1 : three or four wild fights a level, about 60 from 1 to 20; a gate is worth
-  // about one level, and the first fight takes Io straight to level 2
-  const xpNeed = (level) => Math.round(200 * Math.pow(CURVE, level - 1));
+  // to go from level L to L+1 (Chris, October 2): about 79 wild fights from level 2 to 20, with about 40% of them in the
+  // last band. The first band levels 20% quicker; from level 3 each level asks 2% more than the curve; from 16 on, each
+  // level asks 2.7 times as much. A gate is worth about a level early on, and the first fight takes Io straight to 2
+  const xpNeed = (level) => Math.round(200 * Math.pow(CURVE, level - 1) * (level <= 5 ? 0.8 : 1) * Math.pow(1.02, Math.max(0, level - 3)) * (level >= 16 ? 2.7 : 1));
   const grows = (n, level) => Math.round(n * Math.pow(CURVE, level - 1));
   // the Magpie's upgrades: the party's level and a price in shards (the story chain will check them)
   const MAGPIE = [
