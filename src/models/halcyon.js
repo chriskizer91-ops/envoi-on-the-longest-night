@@ -315,8 +315,11 @@ function makeHalcyon(opts) {
   m.onBeforeCompile = (s) => {
    s.uniforms.uClipY = clip;
    s.vertexShader = 'varying float vWY;\n' + s.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n vWY = ( modelMatrix * vec4( transformed, 1.0 ) ).y;');
-   s.fragmentShader = 'uniform float uClipY;\nvarying float vWY;\n' + s.fragmentShader.replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>\n if ( vWY < uClipY ) discard;')
-    .replace('#include <alphatest_fragment>', '#ifdef ALPHATEST\n if ( diffuseColor.a < ALPHATEST * opacity ) discard;\n#endif');
+   // while the dark rises (uClipY above the floor) the cut is ragged, not a clean line, and she darkens to black just
+   // above it, so she sinks into the smoke instead of being sliced
+   s.fragmentShader = 'uniform float uClipY;\nvarying float vWY;\n' + s.fragmentShader.replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>\n float swOn = step( 0.02, uClipY ), swD = vWY - uClipY;\n if ( swD < 0.0 ) discard;\n if ( swOn > 0.5 && swD < 0.1 * fract( sin( dot( floor( gl_FragCoord.xy * 0.5 ), vec2( 12.9898, 78.233 ) ) ) * 43758.5453 ) ) discard;')
+    .replace('#include <alphatest_fragment>', '#ifdef ALPHATEST\n if ( diffuseColor.a < ALPHATEST * opacity ) discard;\n#endif')
+    .replace('#include <dithering_fragment>', '#include <dithering_fragment>\n gl_FragColor.rgb *= mix( 1.0, smoothstep( 0.0, 0.32, swD ), swOn );');
   };
   m.customProgramCacheKey = () => 'halcyon-clip';
   return m;
