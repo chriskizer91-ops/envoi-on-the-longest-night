@@ -14,6 +14,7 @@ We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Ev
 | Page | Link | State |
 |---|---|---|
 | Noctara | https://claude.ai/artifact/JWFwFUZTDum2CZjbGXotir | Rebuilt October 2 with the finished Io, Sol and Halcyon |
+| Lunara | https://claude.ai/artifact/Y1hTureSoXGBnTer4tJNSX | Polished October 2: heavier skirt chains and pointed ears |
 | Art requests | https://claude.ai/artifact/MNozyJ4DQys2syLfyyv44c | The open prompts with copy buttons: the ground-level maps (request 04) and the night world tiles (request 02). Rebuild with `node tools/art-page.mjs` and republish `dist/art-requests.html` whenever a request changes. |
 
 ## Published from the first account
@@ -34,7 +35,7 @@ We are in **phase 1, the models** (`plan.md`), at step 10b, the polish round. Ev
 | Model | State | What's left |
 |---|---|---|
 | Noctara | Done | — |
-| Lunara | Done | The sheet's heavier skirt chains; her pointed ears |
+| Lunara | Done, polished | — (101.6k triangles, inside the 120k ceiling) |
 | Io, the Witch | Done, with her new spells in `src/fx/io-spells.js` | Scale the spell effects up for the battle camera; Moth Veil's 35% capacity and two turns, and Moonsteel's Moon-element hit, belong to the battle step |
 | Wisp | Done, polished | A darker, fuller smoke tail; stronger tears in the hollow; check the frost variant in every action |
 | Shadow Wraith and great wraith | Done | The great wraith's numbers; a scythe head and hem closer to the sheet; switching to the great wraith without a reload (a bench change) |

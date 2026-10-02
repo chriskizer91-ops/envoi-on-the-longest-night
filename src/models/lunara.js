@@ -675,6 +675,11 @@ function makeLunara(opts) {
   add(lockGeo(c, Q(40, 16), Q(12, 8), (t) => lerp(.05, .12, sm(0, .45, t)) * (1 - .6 * sm(.74, 1, t)), (t) => .022 * (1 - .4 * t), () => V3(1, 0, -s * .3).normalize(), .045, s * 1.3 + 1), M.hair, wChain(LOCKS[0].bones, LOCKS[0].P, head, .75));
  }
 
+ // pointed ears, as on her sheet: each comes out of the hair between the front and back side locks, up and back to a point
+ for (const s of [-1, 1]) {
+  const c = new THREE.CatmullRomCurve3([hb(s * .07, .094, .004), hb(s * .106, .1, -.003), hb(s * .142, .112, -.01), hb(s * .174, .13, -.018)].map((p) => V3(p[0], p[1], p[2])));
+  add(lockGeo(c, Q(14, 8), Q(10, 6), (t) => .0155 * (1 - Math.pow(t, 1.5)) * (.9 + .4 * Math.sin(PI * t * .6)), (t) => .0042 * (1 - .6 * t), () => V3(0, -.7, -.7), 0, 0), M.skin, BI.head);
+ }
  // ---------- gold and gems: the great halo ring, the circlet, the collar and chest piece, cuffs, belt, chains and pendants ----------
  {
   const ext = (shape, depth, bev) => { const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bev, bevelSize: bev, bevelSegments: 2, curveSegments: Q(40, 16) }); g.translate(0, 0, -depth / 2); return g; };
@@ -718,17 +723,26 @@ function makeLunara(opts) {
   for (const [y, gr, r] of [[1.078, .011, .0058], [1.062, .013, .0045]]) { const pts = []; for (let k = 0; k < 48; k++) { const th = (k / 48 - .5) * TAU, o = [0, 0, 0]; torsoPt(th, y, gr, o); pts.push(V3(o[0], o[1], o[2])); } add(tubeR(pts, Q(96, 40), 6, () => r, true), M.gold, wTorso); }
   add(ext(crescentShape(.034, .012, .03), .006, .0015), M.gold, BI.hips, [0, 1.064, .098], [0, 0, PI]);
   add(new THREE.SphereGeometry(.011, Q(12, 6), Q(10, 5)), M.gem, BI.hips, [0, 1.064, .103]);
-  // chains down the front of the skirt: a long centre chain to a four-pointed star, two side chains to small stars, and swags
-  { const o = [0, 0, 0];
-   for (let k = 0; k < 26; k++) { const v = .02 + k / 25 * .6; skirtPt(0, v, .012, o); bead(k % 3 === 0 ? .006 : .0042, wSkirt, [o[0], o[1], o[2]]); }
-   skirtPt(0, .64, .016, o); add(ext(star4(.032, .28), .005, .0012), M.gold, wSkirt, [o[0], o[1] - .03, o[2]]);
-   add(new THREE.SphereGeometry(.007, 8, 6), M.gem, wSkirt, [o[0], o[1] - .03, o[2] + .006]);
+  // heavy chains down the front of the skirt, as on her sheet: a long centre chain hung with two cross charms to a big
+  // four-pointed star, two side chains to smaller stars, and swags. Each is a gold line strung with beads, outside the sheer
+  // overskirt (which lies .012 + .03 v out), so the chains read at battle distance.
+  { const o = [0, 0, 0], out = (v) => .019 + .032 * v;
+   const chain = (thF, vF, n, rBig, rSmall) => {
+    const pts = [];
+    for (let k = 0; k <= n; k++) { const f = k / n, v = vF(f); skirtPt(thF(f), v, out(v), o); pts.push(V3(o[0], o[1], o[2])); bead(k % 3 === 0 ? rBig : rSmall, wSkirt, [o[0], o[1], o[2]]); }
+    add(tubeR(pts, Q(n * 3, n), 5, () => .0021), M.gold, wSkirt);
+    return pts;
+   };
+   const charm = (pt, r, k, gem, tilt) => { add(ext(star4(r, k), .005, .0013), M.gold, wSkirt, [pt.x, pt.y - r * .9, pt.z + .002], [0, tilt || 0, 0]); add(new THREE.SphereGeometry(gem, 8, 6), M.gem, wSkirt, [pt.x, pt.y - r * .9, pt.z + .0065]); };
+   const cen = chain(() => 0, (f) => lerp(.02, .62, f), 26, .0088, .0062);
+   charm(cen[9], .019, .42, .0045); charm(cen[18], .019, .42, .0045);
+   skirtPt(0, .645, out(.645), o); charm(V3(o[0], o[1], o[2]), .044, .28, .0095);
    for (const s of [-1, 1]) {
-    for (let k = 0; k < 17; k++) { const v = .03 + k / 16 * .4; skirtPt(s * .42, v, .013, o); bead(k % 3 === 0 ? .0052 : .0038, wSkirt, [o[0], o[1], o[2]]); }
-    skirtPt(s * .42, .445, .016, o); add(ext(star4(.021, .3), .004, .001), M.gold, wSkirt, [o[0], o[1] - .02, o[2]], [0, s * .42, 0]);
-    add(new THREE.SphereGeometry(.005, 8, 6), M.gem, wSkirt, [o[0], o[1] - .02, o[2] + .004]);
-    for (const [a0, a1, d] of [[.12, .95, .16], [.1, .4, .1]]) for (let k = 0; k < 14; k++) { const f = k / 13, th = s * lerp(a0, a1, f), v = .03 + d * Math.sin(PI * f); skirtPt(th, v, .014, o); bead(.0036, wSkirt, [o[0], o[1], o[2]]); }
-    for (const th of [.2, .62]) { skirtPt(s * th, .035, .014, o); pendant(wSkirt, [o[0], o[1] - .006, o[2]], 2, .009, .0055); }
+    const side = chain(() => s * .42, (f) => lerp(.03, .43, f), 17, .0076, .0054);
+    skirtPt(s * .42, .455, out(.455), o); charm(V3(o[0], o[1], o[2]), .028, .3, .0065, s * .42);
+    charm(side[8], .014, .42, .0035, s * .42);
+    for (const [a0, a1, d] of [[.12, .95, .16], [.1, .4, .1]]) chain((f) => s * lerp(a0, a1, f), (f) => .03 + d * Math.sin(PI * f), 13, .0058, .0046);
+    for (const th of [.2, .62]) { skirtPt(s * th, .035, out(.035), o); pendant(wSkirt, [o[0], o[1] - .006, o[2]], 3, .011, .0075); }
    }
   }
   // cuffs: a double band set with beads and a gem on each upper arm, with a dangle; a double cuff at each wrist
