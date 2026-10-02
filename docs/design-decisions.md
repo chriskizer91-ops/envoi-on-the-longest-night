@@ -189,3 +189,43 @@ Chris's answers to the open questions. Where this round and an earlier one disag
   - At level 20, a player who plays well wins about half the time, so they may need a couple of tries.
   - At level 19 they have no real chance, but it's close enough that they may keep trying when they could just level once more.
   - Below that, they all but certainly lose.
+
+## October 2, 2026, third round
+
+### The finale stays at Misthollow
+
+- **No castle.** "Noctara's castle" was a slip of the tongue. The finale is where the lore puts it: the dead Moonwell at Misthollow (lore answer 9). A castle only comes in if the lore ever needs one.
+
+### Halcyon at the level 15 gate
+
+- **The level 15 fight:** reaching level 15 opens the way to Halcyon, who is level 20. Io may have leveled past 15 by then. Chris expects the party to lose this fight.
+- **Kestrel Stoop:** after the fight, Sol learns it. The fight stirred a memory.
+
+### Level 1 is the Night square demo
+
+- **The first fight should feel like the Night square demo** (`reference/demos/night-square-shadow-wraith.html`), so its numbers are the level 1 baseline. They outrank the bible's level 1 numbers.
+- **Each move keeps its own size:**
+  - an ordinary hit from Io is about 100;
+  - her spells hit harder;
+  - Lunara, whom she can summon from level 1, hits for about 2,000.
+- **Everything grows about 20% per level from its level 1 number.** That is why Envoi hits so hard by level 20.
+
+The baseline, from the demo:
+
+| | Level 1 |
+|---|---|
+| Io | 1,400 HP, 120 MP |
+| Attack | 70, 75 and 120 |
+| Flame Bolt (12 MP) | 330 |
+| Nightbloom Briars (18 MP) | 260, and binds the foe |
+| Crescent Blades (24 MP) | a run of 88s |
+| Lunar Mend (16 MP) | heals 380 |
+| Trance, Moonlight | 420, 380 and 450 |
+| Lunara, once a battle | six beams of 150, then Moonfall for 1,150 |
+| Shadow Wraith | 4,200 HP; Sweep 190, Bolts several 70s, Grasp 250, Eclipse 480 once below 35% HP |
+
+The demo swings damage by 7% either way. The decided swing of up to 25% replaces it.
+
+### The Ember Line
+
+- Confirmed: the sunstone veins that Noctara's cold is dimming are the Ember Line.

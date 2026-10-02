@@ -35,12 +35,12 @@ Rules live in data tables, with set damage and a random swing instead of dice, a
 
 | # | Demo | What it shows |
 |---|---|---|
-| 12 | The first fight | Io alone against a Shadow Wraith in the Night square, at level 1. You can lose. Experience and a level-up at the end. |
+| 12 | The first fight | Io alone against a Shadow Wraith in the Night square, at level 1, with the Night square demo's numbers. You can lose. Experience and a level-up at the end. |
 | 13 | The party | Io and Sol against wisps and wraiths at a chosen level: Heat and Sunburn, Waxing Light and Moonsteel, Lunara. |
 | 14 | The ambush | Halcyon, unwinnable. Sol steps in front of Io, and Halcyon leaves. |
 | 15 | The great wraith | The Bogmire boss at about level 5. Winning leads to the refit and Moth Veil. |
-| 16 | Halcyon | The winnable fight: Halcyon at level 20 against the party at about 15, with the Kestrel story command, ending in her retreat. Envoi is in the summon menu; Sol learns Kestrel Stoop after. |
-| 17 | The final battle | Noctara with Halcyon at level 20: Blackout, Void Sphere, Frost Dust and Crown Shards, Moth Veil against the telegraphed hits, and Envoi's ward and strike. Tuned so a player who plays well at level 20 wins about half the time, and loses narrowly at 19. |
+| 16 | Halcyon | The level 15 gate: Halcyon at level 20 against the party at 15 or more, with the Kestrel story command, ending in her retreat into the dark. Envoi is in the summon menu. Afterwards the fight stirs Sol's memory and she learns Kestrel Stoop. |
+| 17 | The final battle | Noctara with Halcyon at level 20, at the dead Moonwell in Misthollow: Blackout, Void Sphere, Frost Dust and Crown Shards, Moth Veil against the telegraphed hits, and Envoi's ward and strike. Tuned so a player who plays well at level 20 wins about half the time, and loses narrowly at 19. |
 
 ## Phase 3: travel
 
