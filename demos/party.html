@@ -12,7 +12,10 @@
 <body>
 <header>
   <h1>The Party</h1>
-  <button type="button" class="hbtn" id="snd" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3Zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Zm-2.5-8.8v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6Z"/></svg><span>Sound on</span></button>
+  <div class="hbtns">
+    <button type="button" class="hbtn" id="fps"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4a9 9 0 0 0-9 9 8.9 8.9 0 0 0 1.8 5.4l1.6-1.2A7 7 0 1 1 19 13a6.9 6.9 0 0 1-1.4 4.2l1.6 1.2A8.9 8.9 0 0 0 21 13a9 9 0 0 0-9-9Zm4.2 4.4-5 4.1a1.6 1.6 0 1 0 2.2 2.2l4.1-5Z"/></svg><span>fps</span></button>
+    <button type="button" class="hbtn" id="snd" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3Zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Zm-2.5-8.8v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6Z"/></svg><span>Sound on</span></button>
+  </div>
 </header>
 <main id="stage" aria-label="Battle between Io and Sol and a pack of foes in the Night square">
   <canvas id="paint" aria-hidden="true"></canvas>
@@ -49,6 +52,7 @@
       <h2 id="endTitle">Victory!</h2>
       <p id="endText"></p>
       <div class="stats"><div><b id="stTime">0:00</b><span>Battle time</span></div><div><b id="stDmg">0</b><span>Damage dealt</span></div></div>
+      <p class="fpsline" id="stFps"></p>
       <div class="xp" id="xpBox" hidden>
         <div class="stats"><div><b id="xpGain">+0</b><span>Experience</span></div><div><b id="shardGain">+0</b><span>Sunstone shards</span></div></div>
         <div class="row"><span>Next level</span><b id="xpNext"></b></div>
@@ -70,6 +74,7 @@
 <script src="../src/models/wraith.js"></script>
 <script src="../src/models/wisp.js"></script>
 <script src="../src/models/lunara.js"></script>
+<script src="../src/models/envoi.js"></script>
 <script src="../src/fx/battle-fx.js"></script>
 <script src="../src/fx/io-spells.js"></script>
 <script src="../src/battle/rules.js"></script>
@@ -79,7 +84,8 @@
 <script src="../src/battle/screen.js"></script>
 <script>
 // Step 13: Io and Sol against wisps, frost wisps and wraiths at a chosen level. Sol's Heat, Sunburn, Sword Arts and
-// Dawnbreaker; Io's Waxing Light, Moonsteel and, from level 6, Moth Veil; Lunara; herbs; a target for every blow.
+// Dawnbreaker; Io's Waxing Light, Moonsteel and, from level 6, Moth Veil; Lunara, and from level 11 Envoi; herbs; a
+// target for every blow.
 const PACKS = [
   { name: 'Two wisps', foes: ['wisp', 'wisp'] },
   { name: 'A Shadow Wraith', foes: ['wraith'] },
@@ -105,13 +111,14 @@ BattleScreen.start({
   },
   makeFoe: (id, level, i) => (id === 'wraith' ? makeWraith({ level }) : makeWisp({ seed: i + 1, frost: id === 'frostWisp' })),
   makeLunara: () => makeLunara({}),
+  makeEnvoi: () => makeEnvoi({}),
   fight: (L, p) => ({
     party: [{ id: 'io', level: L }, { id: 'sol', level: L }],
     foes: PACKS[p].foes.map((id) => ({ id, level: L })),
-    flags: { party: true, veil: L > 5, stoop: L > 15 },
+    flags: { party: true, veil: L > 5, envoi: L > 10, stoop: L > 15 },
     herbs: { moonpetal: 2, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 },
   }),
-  pickNote: (L) => 'Foes at level ' + L + ', like the party. ' + (L > 5 ? 'Moth Veil is in Io’s Moonlore. ' : 'Moth Veil comes after the Bogmire refit (level 6 here). ') + (L > 15 ? 'Sol has Kestrel Stoop.' : 'Kestrel Stoop comes after Halcyon (level 16 here).') + ' Envoi joins at Dawnroost, in a later step.',
+  pickNote: (L) => 'Foes at level ' + L + ', like the party. ' + (L > 5 ? 'Moth Veil is in Io’s Moonlore. ' : 'Moth Veil comes after the Bogmire refit (level 6 here). ') + (L > 10 ? 'Envoi is in the Summon menu once Sol has 70 Heat. ' : 'Envoi joins after Dawnroost (level 11 here). ') + (L > 15 ? 'Sol has Kestrel Stoop.' : 'Kestrel Stoop comes after Halcyon (level 16 here).'),
   attackText: (fs) => (fs.length > 1 ? 'The foes close in!' : 'The ' + fs[0].name + ' attacks!'),
   winText: 'The souls go home as pale moths, and the square is quiet again.',
   loseText: 'The party falls. Keep both above half, let Sol’s Heat ride but heal her burns, and save Lunara for when you need her.',

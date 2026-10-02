@@ -497,3 +497,33 @@ The simulator plays three kinds of player (`../src/battle/sim.js`):
 
 - **The last five levels hold a third to half of the game's fights.** Perhaps half the game happens between 15 and 20, so the last quarter of the leveling takes half the game.
 - **How a wild foe's level is chosen** is a question for Chris (`questions/open.md`). For now the simulator gives each wild fight foes at the party's level.
+
+## October 2, 2026, fourteenth round
+
+### The frame rate
+
+- **Lunara's summon was choppy on Chris's phone.** He asked whether the battle could run at 45 or 30 frames a second on purpose, since the game leans retro.
+- **What causes it:** measured headless, no shader compiles and no large textures load during the summon. The stutter is the work in each frame: Lunara, her light and her effects drawn over the whole screen. A lower frame rate gives each frame two or three times as long.
+- **The battle screen has a frame-rate button** in its header. It cycles through the screen's own rate, then a cap of 60, 45 and 30. Frames are paced to the screen's refreshes, so 45 and 30 stay even on a 90 Hz phone, and 30 on a 60 Hz one. The choice is kept in the browser.
+- **The end card shows the fight's frame rate:** the average and the slowest second, with the cap.
+- **Chris picks the default** once he has tried the caps on his phone.
+
+### The observing session's findings
+
+Another session read every commit and replayed the simulator. What it found:
+
+- **Kestrel Stoop never landed its hit.** The engine played the hover and the dive but dealt no damage. Fixed: the dive hits for its 1,500 at level 1.
+- **With the hit, an expert won the finale 87% of the time,** against a target of 40% to 65%. To keep the approved target, the cold deepens faster: Noctara and Halcyon hit 7.5% harder with every turn they take, instead of 6%. An expert at 20 now wins 60%; at 19 none, with losses leaving 38% of the bosses' HP. All 25 targets are met.
+- **Moth Veil covers only one hero,** though both Void Sphere and Black Noon hit the whole party. A question for Chris (`questions/open.md`, 7).
+- **In the finale, Io's choices decide the fight** (Envoi, herbs, Lunara, Briars, Moonlight); Sol's barely matter. Something for the gates to teach, in the progression pass.
+- **Fight length:** the session found on-screen fights running longer than the simulator says. Measured at real speed, the screen matches the simulator's move times within a few percent. (It ran its own fights sped up and headless, where the models lag the clock.)
+
+### Envoi on the party page
+
+- **Envoi is in Io's Summon menu from level 11,** after Dawnroost, once Sol has 70 Heat. The party page didn't have it yet, which Chris noticed.
+- **It plays as on its bench:**
+  - Io's letters fold into the wyrm, and Sol's blade lights its heart lantern, spending all her Heat.
+  - The seal breaks, and it coils into the Folding Ward, which takes the next attack whole. The foes aim their blows at the ward, and it throws off their darkness.
+  - When Io's gauge next fills, it wraps the foe she chose, burns from tail to head as a ring of fire, and drops its heart for the Last Word. Io still takes her turn.
+  - If the fight ends first, it burns away quietly.
+

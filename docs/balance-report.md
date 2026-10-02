@@ -12,14 +12,14 @@ The play styles: **careless** picks moves almost at random and heals late; **att
 | Wild fights | 5 | careless | 100% | 85% to 100% | 1.1 min |  | Yes |
 | Wild fights | 8 | careless | 100% | 85% to 100% | 1.4 min | 8% of foe HP | Yes |
 | Wild fights | 12 | careless | 97% | 85% to 100% | 1.5 min | 16% of foe HP | Yes |
-| Wild fights | 16 | careless | 89% | 85% to 100% | 1.7 min | 22% of foe HP | Yes |
-| Wild fights | 20 | careless | 89% | 85% to 100% | 1.7 min | 22% of foe HP | Yes |
+| Wild fights | 16 | careless | 92% | 85% to 100% | 1.6 min | 19% of foe HP | Yes |
+| Wild fights | 20 | careless | 92% | 85% to 100% | 1.6 min | 19% of foe HP | Yes |
 | Wild fights | 2 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 0.8 min |  | Yes |
 | Wild fights | 5 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 0.8 min |  | Yes |
 | Wild fights | 8 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 1.1 min |  | Yes |
 | Wild fights | 12 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 1.2 min |  | Yes |
-| Wild fights | 16 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 2.0 min |  | Yes |
-| Wild fights | 20 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 2.0 min |  | Yes |
+| Wild fights | 16 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 1.4 min |  | Yes |
+| Wild fights | 20 | attentive | 100% | 97% to 100%, 0.7 to 2.2 min | 1.4 min |  | Yes |
 | The great wraith | 5 | careless | 36% | 20% to 60% | 2.0 min | 17% of foe HP | Yes |
 | The great wraith | 5 | attentive | 90% | 80% to 96% | 2.3 min | 14% of foe HP | Yes |
 | The great wraith | 5 | expert | 99% | 97% to 100% | 2.6 min | 13% of foe HP | Yes |
@@ -28,9 +28,9 @@ The play styles: **careless** picks moves almost at random and heals late; **att
 | Halcyon's ambush | 15 | expert | 0% | 0% to 10% | 2.2 min | 90% of foe HP | Yes |
 | Halcyon's ambush | 18 | expert | 68% (retreats) | 40% to 85% | 5.1 min | 38% of foe HP | Yes |
 | Halcyon's ambush | 20 | expert | 100% (retreats) | 80% to 100% | 3.0 min |  | Yes |
-| The finale | 20 | expert | 62% | 40% to 65% | 9.3 min | 17% of foe HP | Yes |
-| The finale | 19 | expert | 0% | 0% to 10%, losses leave under 40% | 8.6 min | 34% of foe HP | Yes |
-| The finale | 18 | expert | 0% | 0% to 2% | 6.4 min | 62% of foe HP | Yes |
+| The finale | 20 | expert | 60% | 40% to 65% | 8.0 min | 17% of foe HP | Yes |
+| The finale | 19 | expert | 0% | 0% to 10%, losses leave under 40% | 7.6 min | 38% of foe HP | Yes |
+| The finale | 18 | expert | 0% | 0% to 2% | 5.3 min | 66% of foe HP | Yes |
 
 ## Experience and shards
 

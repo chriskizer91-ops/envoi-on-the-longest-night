@@ -377,7 +377,7 @@
       if (h.id === 'sol' && d.heat && !h.inTrance) h.heat = Math.max(0, Math.min(HE.sol.heat.max, h.heat + (d.heat < 0 ? d.heat : 0)));
       switch (id) {
         case 'attack': case 'flame': case 'crescent': case 'briars': case 'moonlight':
-        case 'flareCut': case 'sunder': case 'emberRush': case 'daybreak': case 'highNoon':
+        case 'flareCut': case 'sunder': case 'emberRush': case 'daybreak': case 'highNoon': case 'stoop':
           strike(h, tgt, d);
           if (id === 'attack' && h.id === 'sol' && !h.inTrance) h.heat = Math.min(HE.sol.heat.max, h.heat + d.heat);
           break;

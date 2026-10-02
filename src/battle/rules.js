@@ -155,10 +155,11 @@
       },
     },
     // Noctara the Starless, fixed at level 20, with Halcyon beside her. The cold deepens as the fight goes on: every
-    // turn she takes makes her blows 6% harder (rage), so the finale is a race. Tuned so an expert at 20 wins a little
-    // over half the time, and at 19 falls with about a third of the two bosses' HP left
+    // turn she takes makes her blows 7.5% harder (rage), and Halcyon's too, so the finale is a race. Tuned so an expert
+    // at 20 wins a little over half the time, and at 19 falls with about a third of the two bosses' HP left. (It was 6%
+    // until Kestrel Stoop's hit, which never landed, was fixed on October 2; with the hit the expert won 87%.)
     noctara: {
-      name: 'Noctara', hp: 29000, atb: 2.8, fixedLevel: 20, boss: true, rage: 0.06, shards: 0, xp: 0,
+      name: 'Noctara', hp: 29000, atb: 2.8, fixedLevel: 20, boss: true, rage: 0.075, shards: 0, xp: 0,
       moves: {
         crownShards: { name: 'Crown Shards', weight: 0.35, hits: [52, 52, 52], target: 'random', time: 2.6 },
         // opens over the party a turn before it collapses: the time for Moth Veil, Defend, Lunara or Envoi's ward

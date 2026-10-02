@@ -1,6 +1,6 @@
 # Where Things Stand
 
-A handoff for the next session. Updated October 2, 2026, after the battle groundwork and the walking choices of the eleventh round.
+A handoff for the next session. Updated October 2, 2026, after the fourteenth round: the frame-rate button, Envoi on the party page, and the Kestrel Stoop fix.
 
 **Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Step 13, the party, is built too. Next is step 14, the great wraith.
 
@@ -13,7 +13,7 @@ A handoff for the next session. Updated October 2, 2026, after the battle ground
 
 | Page | Link | State |
 |---|---|---|
-| The party | https://claude.ai/artifact/5awxTd1H3htoFJbjinQwz1 | Step 13 (October 2): Io and Sol against nine packs of wisps, frost wisps and wraiths at any level from 1 to 20; Sol's Heat, Sword Arts and Dawnbreaker, Io's new Moonlore, Lunara across the pack, herbs, and a target for every blow |
+| The party | https://claude.ai/artifact/5awxTd1H3htoFJbjinQwz1 | Step 13 (October 2): Io and Sol against nine packs of wisps, frost wisps and wraiths at any level from 1 to 20; Sol's Heat, Sword Arts and Dawnbreaker, Io's new Moonlore, Lunara across the pack, Envoi from level 11, herbs, a target for every blow, and a frame-rate button |
 | The first fight | https://claude.ai/artifact/MkgkJSQVgGp3JEivcmN2KN | Step 12 (October 2): Io alone against the Night square wraith at level 1, played by the battle engine with the finished models; Lunara's Embrace and Silver Requiem; experience, shards and the level-up at the end. You can lose |
 | Battle balance | https://claude.ai/artifact/DruqrA8zAzZNpe4ahRXFwe | Phase 2 groundwork (October 2): all 25 balance targets with the simulator's results, any fight played turn by turn with its gauges, the level curve, experience and shards, and the new rules for Chris to approve |
 | The cast | https://claude.ai/artifact/Qk8apijsA3ZjVoK88XF4bJ | Step 11 (October 2): every model at true scale; pick an encounter, who acts and their target. Pixel 7a: 60 fps with five models, 39 with eight. Builds models when first needed |
@@ -91,8 +91,10 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 - `src/battle/screen.js` with `screen.css` and `sound.js` (the Night square demo's synthesized music and sound, unchanged). The page holds the markup and a config: the fight's setup, the models to build, and the end texts.
 - Each turn, the engine resolves the action and returns its log. The screen splits the log at each move, plays that move's choreography with the model's own hit and cue times, and shows the engine's numbers as the blows land. What the player has been shown (HP, MP, Trance) catches up blow by blow, then matches the engine.
 - One screen plays any party (Io alone, or Io and Sol) against up to three foes. The page's config names the heroes and their places, the foe slots, how each foe looks, and `fight(level, pack)`, which returns the engine's setup. A start card can offer a level and a pack (`levels`, `packs`).
+- **The frame rate:** a header button cycles through the screen's own rate and caps of 60, 45 and 30, paced to the screen's refreshes and kept in the browser (`envoi.fps`). The end card shows the fight's average and slowest second. Headless Chrome renders only a few frames a second here, so the pacing was checked with simulated 60, 90 and 120 Hz screens.
+- **Summons:** Lunara rises from the Moonwell; Envoi (when the page passes `makeEnvoi`) folds in between the party and the foes, takes the next blow on its Folding Ward (foes aim at the ward), and strikes on Io's next turn.
 - Every command with more than one target opens a target list (foes with their HP left, allies with their HP); an arrow marks the one pointed at, and the most hurt is pointed at first.
-- Test hooks on `window.__battle`: `begin()`, `skip()`, `pick(id)`, `auto = 'expert'` (a play style from `sim.js` chooses the commands), `turbo`, `setFight(level, pack)`, `weaken(n, who)`, `trace`. At high `turbo` the models' animations lag the clock (they cap their own step), so a sped-up test takes longer per action than its clock suggests.
+- Test hooks on `window.__battle`: `begin()`, `skip()`, `pick(id)`, `auto = 'expert'` (a play style from `sim.js` chooses the commands), `turbo`, `setFight(level, pack)`, `weaken(n, who)`, `trace`, `pace` (the frame-rate cap, the screen's measured rate and the fight's frame count). At high `turbo` the models' animations lag the clock (they cap their own step), so a sped-up test takes longer per action than its clock suggests.
 
 ## Next steps
 

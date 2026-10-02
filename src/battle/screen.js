@@ -41,6 +41,11 @@
     const IW = SC.width, IH = SC.height, A = IW / IH, FOV = SC.fov, PITCH = SC.pitch * Math.PI / 180, PXM = SC.ppm;
     const DIST = (IH / 2) / (PXM * Math.tan(FOV / 2 * Math.PI / 180));
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    // the frame rate: the screen's own (measured), or a cap of 60, 45 or 30 frames a second for phones that stutter in
+    // the busiest moments. Frames are paced to the screen's refreshes, so 45 and 30 stay even on a 90 Hz phone. The
+    // choice is kept in this browser; fps counts the fight's frames for the end card
+    const PACE = { cap: 0, due: 0, hz: 0, deltas: [], prev: 0, fps: { n: 0, t: 0, secN: 0, secT: 0, low: 0 } };
+    try { PACE.cap = +localStorage.getItem('envoi.fps') || 0; } catch (e) { /* storage blocked: the screen's own rate */ }
     const REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     const coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
     const stage = $('stage'), paintCv = $('paint'), paintCtx = paintCv.getContext('2d'), glCanvas = $('gl');
@@ -152,6 +157,7 @@
     const F = {};                 // fighter by the engine's unit key
     let heroes = [], foes = [];
     let LU = null;                // Lunara
+    let EN = null;                // Envoi, when the page has it (from Dawnroost on)
     let E = null;                 // the engine
     const D = {};                 // what the player has been shown so far, per unit
     const S = { trace: [], state: 'boot', acting: false, t0: 0, skip: false, auto: cfg.auto || null, rand: null, result: null, dealt: 0, guard: {}, veils: {}, rime: 0, rimeOn: false, choosing: null };
@@ -351,7 +357,7 @@
     // A move's events in order: show() brings on the next blow or heal (and whatever it caused), rest() the remainder
     function events(list) {
       let i = 0;
-      const isBlow = (e) => e.t === 'hit' || e.t === 'heal' || e.t === 'miss' || e.t === 'revive';
+      const isBlow = (e) => e.t === 'hit' || e.t === 'heal' || e.t === 'miss' || e.t === 'revive' || e.t === 'ward';
       return {
         has() { for (let k = i; k < list.length; k++) if (isBlow(list[k])) return true; return false; },
         peek() { for (let k = i; k < list.length; k++) if (isBlow(list[k])) return list[k]; return null; },
@@ -395,6 +401,7 @@
       } else if (e.t === 'revive') {
         D[e.who].hp = e.n; who.m.play('rise', true); UI.number(chest(who), nf(e.n), 'heal'); word(who, 'Back up', 'heal');
       } else if (e.t === 'miss') word(to, 'Miss');
+      else if (e.t === 'ward') wardHit();
       else if (e.t === 'tranceReady') {
         D[e.who].tr = 1; SND.sfx.chime(); FX.burst(chest(who), [1, 0.92, 1], 30, 2.5);
         UI.note(E.unit(e.who).name + '’s Trance gauge is full.');
@@ -570,6 +577,7 @@
         UI.vignette(0); if (!E.over) UI.cinematic(false);
       },
       lunara: (h, t, ev) => summonLunara(h, t, ev),
+      envoi: (h, t, ev) => summonEnvoi(h, t, ev),
     };
     // whoever a move heals, from its events
     const healed = (ev) => { const ks = new Set(ev.list.filter((e) => e.t === 'heal').map((e) => e.to)); const out = [...ks].map((k) => F[k]).filter(Boolean); return out.length ? out : [io()]; };
@@ -733,8 +741,162 @@
       UI.vignette(0); UI.tint(0); if (!E.over) UI.cinematic(false);
     }
 
+    // ---------- Envoi, the Letter Wyrm (from Dawnroost on), after its bench stage (src/bench/stage-envoi.js) ----------
+    // Io's letters fold into the wyrm, Sol's blade lights its heart lantern (spending all her Heat), the seal breaks and
+    // it coils into the Folding Ward, which takes the next enemy attack whole. When Io's gauge next fills it wraps its
+    // foe, burns from tail to head as a ring of fire and drops its heart for the Last Word; Io still takes her turn
+    const ENV = { beam: null, beamPos: null, glow: [], sparks: [], ink: [], ward: null, V1: null, V2: null, V3: null };
+    const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+    function initEnvoi() {
+      ENV.V1 = V(); ENV.V2 = V(); ENV.V3 = V();
+      // Sol's blade light: a soft amber streak from her blade tip to the heart lantern, with sparks running along it
+      const c = document.createElement('canvas'); c.width = 64; c.height = 8; const x = c.getContext('2d');
+      const gr = x.createLinearGradient(0, 0, 64, 0); gr.addColorStop(0, 'rgba(255,160,60,0)'); gr.addColorStop(0.32, 'rgba(255,190,100,0.55)'); gr.addColorStop(0.5, 'rgba(255,248,224,1)'); gr.addColorStop(0.68, 'rgba(255,190,100,0.55)'); gr.addColorStop(1, 'rgba(255,160,60,0)');
+      x.fillStyle = gr; x.fillRect(0, 0, 64, 8);
+      const geo = new THREE.BufferGeometry(); ENV.beamPos = new Float32Array(12);
+      geo.setAttribute('position', new THREE.BufferAttribute(ENV.beamPos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 0, 1, 1, 1], 2)); geo.setIndex([0, 2, 1, 1, 2, 3]);
+      ENV.beam = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), color: 0xffc070, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
+      ENV.beam.frustumCulled = false; ENV.beam.visible = false; ENV.beam.renderOrder = 4; scene.add(ENV.beam);
+      const amber = radialTex('rgba(255,244,214,1)', 'rgba(255,170,70,0.5)', 'rgba(255,120,30,0)');
+      const spr = (col) => { const q = new THREE.Sprite(new THREE.SpriteMaterial({ map: amber, color: col, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); q.visible = false; q.renderOrder = 5; scene.add(q); return q; };
+      ENV.glow = [spr(0xffd08a), spr(0xffe0a8)];
+      for (let i = 0; i < 7; i++) ENV.sparks.push(spr(0xffc070));
+      // the dark splash when a blow lands on the ward: drops of the foe's darkness thrown off the paper
+      const inkTex = radialTex('rgba(10,4,18,0.96)', 'rgba(26,10,40,0.6)', 'rgba(26,10,40,0)');
+      for (let i = 0; i < 40; i++) { const q = new THREE.Sprite(new THREE.SpriteMaterial({ map: inkTex, color: i % 5 ? 0xffffff : 0x9dffc0, transparent: true, depthWrite: false, depthTest: false })); q.visible = false; q.renderOrder = 6; scene.add(q); ENV.ink.push({ s: q, v: V(), life: 0, max: 1, r: 0.2 }); }
+      // where foes aim while the ward is up: the front of the coiled wall
+      ENV.ward = { key: 'envoi', pos: { x: 0, z: 0 }, tall: 3, m: { anchor: (n, o) => EN.m.anchor('ward', o || V()) } };
+    }
+    function envoiHome() { EN.pos = { x: EN.home.x, z: EN.home.z }; EN.yaw = EN.tyaw = faceYaw(EN.home, firstFoe().pos) - 0.5; }
+    function envoiHide() {
+      EN.on = false; EN.m.reset(); EN.m.root.visible = false; if (EN.m.fx) EN.m.fx.visible = false; EN.shadow.visible = false;
+      ENV.beam.visible = false; for (const q of ENV.glow.concat(ENV.sparks)) q.visible = false;
+    }
+    function stepEnvoi(dt, rdt) {
+      const M = EN.m;
+      if (EN.on || M.busy) {
+        stepActor(EN, dt);
+        M.root.position.set(EN.pos.x, 0, EN.pos.z); M.root.rotation.y = EN.yaw;
+        if (M.state) {
+          const t = EN.wrap && !EN.wrap.out ? EN.wrap : firstFoe();
+          if (t) { const c = chest(t); M.state.target = { x: c.x, y: c.y, z: c.z }; M.state.reach = Math.max(2, Math.hypot(t.pos.x - EN.pos.x, t.pos.z - EN.pos.z)); }
+        }
+        M.animate(0, 0, clock.t, dt);
+        EN.shadow.position.set(EN.pos.x, 0.006, EN.pos.z);
+        M.anchor('ward', ENV.V1); ENV.ward.pos.x = ENV.V1.x; ENV.ward.pos.z = ENV.V1.z;
+      }
+      // the blade light, while the heart is lit
+      const a = M.action, p = M.progress, s = F.sol;
+      const k = EN.on && a === 'summon' && s && !s.out ? smooth(0.405, 0.44, p) * (1 - smooth(0.49, 0.54, p)) : 0, on = k > 0.01;
+      ENV.beam.visible = on; for (const q of ENV.glow.concat(ENV.sparks)) q.visible = on;
+      if (on) {
+        const V1 = s.m.anchor('hit', ENV.V1), V2 = M.anchor('heart', ENV.V2), V3 = ENV.V3.subVectors(V2, V1);
+        const side = V().subVectors(camera.position, V1).cross(V3).normalize().multiplyScalar(0.11 + 0.05 * k), P = ENV.beamPos;
+        P[0] = V1.x - side.x; P[1] = V1.y - side.y; P[2] = V1.z - side.z; P[3] = V1.x + side.x; P[4] = V1.y + side.y; P[5] = V1.z + side.z;
+        P[6] = V2.x - side.x; P[7] = V2.y - side.y; P[8] = V2.z - side.z; P[9] = V2.x + side.x; P[10] = V2.y + side.y; P[11] = V2.z + side.z;
+        ENV.beam.geometry.attributes.position.needsUpdate = true; ENV.beam.material.opacity = k;
+        const t = clock.t;
+        ENV.glow[0].position.copy(V1); ENV.glow[0].scale.setScalar(0.7 + 0.15 * Math.sin(t * 23)); ENV.glow[0].material.opacity = k;
+        ENV.glow[1].position.copy(V2); ENV.glow[1].scale.setScalar(1.6 * k + 0.2 * Math.sin(t * 17)); ENV.glow[1].material.opacity = k;
+        ENV.sparks.forEach((q, i) => { const f = (t * 1.6 + i / ENV.sparks.length) % 1; q.position.copy(V1).addScaledVector(V3, f); q.position.y += Math.sin(f * Math.PI) * 0.25 * Math.sin(i * 2.1); q.scale.setScalar(0.22 + 0.1 * Math.sin(t * 31 + i)); q.material.opacity = k * Math.sin(f * Math.PI); });
+      }
+      // the splash's drops fall to the cobbles
+      for (const d of ENV.ink) {
+        if (!d.s.visible) continue;
+        d.life += rdt; if (d.life >= d.max) { d.s.visible = false; continue; }
+        d.v.y -= 7 * rdt; d.s.position.addScaledVector(d.v, rdt);
+        if (d.s.position.y < 0.03) { d.s.position.y = 0.03; d.v.set(0, 0, 0); }
+        const f = d.life / d.max; d.s.scale.setScalar(d.r * (1 + 1.4 * f)); d.s.material.opacity = 0.92 * (1 - f * f);
+      }
+      if (!EN.on && !M.busy && M.root.visible) envoiHide();
+    }
+    // a blow lands on the Folding Ward: it shudders, throws off the foe's darkness, and the party takes nothing
+    function wardHit() {
+      if (!EN || !EN.on) return;
+      const p = EN.m.anchor('ward', V()), c = camera.position, tx = c.x - p.x, tz = c.z - p.z, tl = Math.hypot(tx, tz) || 1;
+      EN.m.play('block', true);
+      FX.ring(p, 0xffd9a0, 0.2, 2.2, 0.5, 1); FX.flashLight(p, 0xffc070, 3, 0.4);
+      for (const d of ENV.ink) {
+        const a = Math.random() * TAU, sp = 1.2 + Math.random() * 2.4;
+        d.s.position.set(p.x + (Math.random() - 0.5) * 0.3, p.y + (Math.random() - 0.5) * 0.3, p.z + (Math.random() - 0.5) * 0.3);
+        d.v.set(Math.cos(a) * sp + tx / tl * 1.8, 0.6 + Math.random() * 2.6, Math.sin(a) * sp + tz / tl * 1.8);
+        d.life = 0; d.max = 0.7 + Math.random() * 0.6; d.r = 0.22 + Math.random() * 0.34; d.s.visible = true;
+      }
+      for (const h of living('hero')) word(h, 'Warded', 'ward');
+      SND.sfx.hit(1.0); addShake(8); hitStop(0.08);
+    }
+    const envoiShot = (extra, k) => shotFit(standing().map((f) => f.pos).concat([{ x: EN.pos.x, y: 6.4, z: EN.pos.z }, { x: EN.pos.x, y: 0, z: EN.pos.z }], extra || []), 1, k || 1);
+    async function summonEnvoi(h, t, ev) {
+      const M = EN.m, A = M.ACTIONS.summon, s = F.sol;
+      UI.banner('Summon: Envoi', 2.8);
+      UI.cinematic(true); UI.vignette(0.55); UI.tint(0.45);
+      envoiHome(); EN.wrap = t;
+      h.tyaw = faceYaw(h.pos, EN.pos); shotAt(h.pos, 1.7, 2.4);
+      h.m.play('summon', true); SND.sfx.chime();
+      FX.sigil(h.pos, 0xffd9a0, 1.9, 2.6, -2);
+      await untilP(h.m, h.m.ACTIONS.summon.cues[0]);
+      // the letters leave her hand and fold into the wyrm where it will stand
+      await FX.projectile({ from: h.m.flamePos(V()), to: () => new THREE.Vector3(EN.pos.x, 1.6, EN.pos.z), dur: 0.6, arc: 1.2, color: 0xfff1d8, halo: 0xffb45a, size: 0.24, trail: [1, 0.85, 0.6], light: 0xffc890, lightI: 3 });
+      M.root.visible = true; if (M.fx) M.fx.visible = true; EN.shadow.visible = true; EN.on = true;
+      M.play('summon', true); SND.sfx.fire();
+      envoiShot(null, 1.2);
+      UI.msg('Io’s letters to the dead fold into Envoi, the Letter Wyrm.', true);
+      // Sol cuts toward the heart lantern as it lights: her blade spends all her Heat
+      await untilP(M, 0.27);
+      if (s && !s.out) { s.tyaw = faceYaw(s.pos, EN.pos); s.m.play('flareCut', true); SND.sfx.swish(); }
+      await untilP(M, A.cues[0]);
+      UI.hideMsg();
+      const heat = Math.round(D.sol ? D.sol.heat : 0), u = E.unit('sol');
+      if (s && D.sol && !(u && u.inTrance)) { D.sol.heat = 0; if (heat > 0) word(s, '−' + heat + ' Heat', 'heat'); }
+      FX.ring(M.anchor('heart', V()), 0xffd08a, 0.2, 2.4, 0.6, 1); SND.sfx.boom(0.6); addShake(5);
+      UI.banner('Heart Lantern', 1.2);
+      await untilP(M, A.hits[0]);
+      FX.ring(M.anchor('seal', V()), 0xfff1c8, 0.2, 3, 0.7, 1); UI.flash('#fff1c8', 0.4, 0.35); SND.sfx.boom(1.0); addShake(9);
+      UI.banner('Seal Break', 1.2);
+      await untilP(M, A.cues[1]);
+      FX.ring(M.anchor('ward', V()), 0xffe0a8, 0.3, 3.6, 0.8, 0.9);
+      UI.banner('Folding Ward', 1.6);
+      UI.msg('The Folding Ward: Envoi will take the next attack whole.', true);
+      await until(() => !M.busy); await wait(0.6); UI.hideMsg();
+      ev.rest();
+      UI.vignette(0); UI.cinematic(false); UI.tint(0);
+      h.tyaw = h.home.yaw;
+      if (s && !s.out) await goHome(s);
+    }
+    // the strike: it wraps its foe, eight blows as the ring of fire catches from the tail up, then the Last Word
+    async function envoiStrike(ev) {
+      const M = EN.m, A = M.ACTIONS.envoi;
+      const hits = ev.list.filter((e) => e.t === 'hit'), tgt = F[(hits[0] || {}).to] || firstFoe();
+      EN.wrap = tgt;
+      UI.banner('Envoi', 2.4); UI.cinematic(true); UI.vignette(0.6); UI.tint(0.4);
+      envoiShot([{ x: tgt.pos.x, y: tgt.tall, z: tgt.pos.z }], 1.5);
+      io().m.play('cast', true);
+      M.play('envoi', true); SND.sfx.fire();
+      // the engine lists eight blows and then the Last Word; if the foes fell early, the list stops there
+      for (let k = 0; k < hits.length; k++) {
+        const last = k === hits.length - 1 && hits.length === A.hits.length;
+        await untilP(M, A.hits[last ? A.hits.length - 1 : Math.min(k, A.hits.length - 2)]);
+        const t = F[hits[k].to] || tgt, p = chest(t);
+        if (last) {
+          UI.banner('Last Word', 1.6); UI.flash('#fff1c8', 0.9, 0.7); SND.sfx.boom(1.5); SND.sfx.boom(1.0); addShake(20); hitStop(0.22);
+          FX.ring(t.pos, 0xffd08a, 0.3, 5.5, 0.9, 1); FX.burst(p, [1, 0.8, 0.5], 140, 6, { spread: 0.6 }); FX.flashLight(p, 0xffd0a0, 9, 0.8, 12);
+          ev.show({ big: true });
+        } else {
+          if (k === 0) UI.banner('Letting Go', 1.6);
+          FX.burst(p, [1, 0.75, 0.4], 26, 3); FX.flashLight(p, 0xffb060, 2.5, 0.25); SND.sfx.hit(0.8); addShake(5); hitStop(0.03);
+          ev.show();
+        }
+      }
+      ev.rest();
+      await until(() => M.progress < 0 || M.progress >= 1);
+      if (!E.over) UI.msg('Envoi has burned away, its letters sent.', true);
+      await wait(1.2); UI.hideMsg();
+      EN.on = false; EN.wrap = null; envoiHide();
+      UI.vignette(0); UI.tint(0); if (!E.over) UI.cinematic(false);
+    }
+
     // ---------- the foes ----------
-    const blowTarget = (ev) => (ev.peek() && F[ev.peek().to]) || living('hero')[0] || io();
+    const blowTarget = (ev) => (ev.peek() && F[ev.peek().to]) || (EN && EN.on && ev.list.some((e) => e.t === 'ward') ? ENV.ward : null) || living('hero')[0] || io();
     const WRAITH_MOVES = {
       async sweep(f, ev) {
         const t = blowTarget(ev), W = f.m, spot = toward(f.pos, t.pos, 1.75);
@@ -836,7 +998,7 @@
     // ---------- playing a turn's log ----------
     // The log splits into parts, each starting at a move, a strike, a Trance, a herb or a turn; each part plays its
     // own choreography, and the blows inside it are shown at that choreography's hit times
-    const OWN_BANNER = { defend: 1, guard: 1, lunara: 1 };
+    const OWN_BANNER = { defend: 1, guard: 1, lunara: 1, envoi: 1 };
     async function playLog(log) {
       const parts = [];
       for (const e of log) {
@@ -851,6 +1013,7 @@
           ev.rest();
         } else if (hd.t === 'trance') { await transform(F[hd.who]); ev.rest(); }
         else if (hd.t === 'strike' && hd.who === 'lunara') await lunaraStrike(ev);
+        else if (hd.t === 'strike' && hd.who === 'envoi' && EN) await envoiStrike(ev);
         else if (hd.t === 'herb') await useHerb(F[hd.who], hd, ev);
         else if (hd.t === 'move') {
           const f = F[hd.who], u = E.unit(hd.who), t = hd.target ? F[hd.target] : null;
@@ -1006,6 +1169,8 @@
       if (S.state === 'over') return;
       S.state = 'over'; S.acting = true; UI.waitMenu(); S.rimeOn = false;
       const r = E.result(); S.result = r;
+      // Envoi still warding when the fight ends: it burns away quietly
+      if (EN && EN.on) { EN.on = false; EN.m.play('leave', true); }
       const mark = (k) => S.trace.push([k, +clock.t.toFixed(2)]);
       mark('finish');
       if (r.outcome === 'win') {
@@ -1040,6 +1205,8 @@
       $('endText').textContent = win ? cfg.winText : cfg.loseText;
       const sec = (clock.t - S.t0), m = Math.floor(sec / 60), s = Math.floor(sec % 60);
       $('stTime').textContent = m + ':' + String(s).padStart(2, '0'); $('stDmg').textContent = nf(S.dealt);
+      const F = PACE.fps, fl = $('stFps');
+      if (fl) fl.textContent = F.t > 2000 ? 'Frame rate: ' + Math.round(F.n * 1000 / F.t) + ' a second on average, ' + Math.round(F.low || F.n * 1000 / F.t) + ' in the slowest second (' + (PACE.cap ? 'capped at ' + PACE.cap : 'no cap') + ').' : '';
       $('xpBox').hidden = !win; $('lvlBox').hidden = true;
       $('again').textContent = win ? 'Fight again' : 'Try again';
       if (win) {
@@ -1097,9 +1264,11 @@
       for (const k in S.veils) { const v = S.veils[k]; if (v && v.dismiss) v.dismiss(); }
       S.veils = {}; FX.shield(false); S.rimeOn = false;
       LU.m.reset(); LU.on = false; LU.m.root.visible = false; if (LU.m.fx) LU.m.fx.visible = false; LU.shadow.visible = false;
+      if (EN) { envoiHide(); EN.wrap = null; for (const d of ENV.ink) d.s.visible = false; }
     }
     async function begin(quick) {
       $('start').hidden = true; $('end').hidden = true;
+      PACE.fps = { n: 0, t: 0, secN: 0, secT: 0, low: 0, prev: 0 };
       UI.vignette(0); UI.cinematic(false); UI.tint(0); UI.showBattle(false);
       newEngine(); resetHeroes(); buildFoes();
       S.acting = false; S.state = 'intro';
@@ -1123,7 +1292,9 @@
     let last = 0, fxKids = -1, glowG = null, rimeEdge = null;
     const flameP = new THREE.Vector3();
     function frame(now) {
+      if (pace(now)) { requestAnimationFrame(frame); return; }
       const rdt = last ? Math.min(0.05, Math.max(0, (now - last) / 1000)) : 0.016; last = now;
+      countFrame(now);
       if (clock.slowT > 0) { clock.slowT -= rdt; if (clock.slowT <= 0) clock.scale = 1; }
       let dt = rdt;
       if (clock.stop > 0) { clock.stop -= rdt; dt = 0; } else dt *= clock.scale;
@@ -1158,6 +1329,7 @@
         LU.m.animate(0, 0, clock.t, dt);
       } else if (LU.m.root.visible && LU.m.gone) { LU.m.root.visible = false; if (LU.m.fx) LU.m.fx.visible = false; LU.shadow.visible = false; }
       LU.shadow.position.set(LU.pos.x, 0.006, LU.pos.z);
+      if (EN) stepEnvoi(dt, rdt);
       glowG.material.opacity += ((LU.on ? 0.55 : 0) - glowG.material.opacity) * Math.min(1, rdt * 2);
       stepRime(rdt);
 
@@ -1169,6 +1341,39 @@
       renderer.render(scene, camera);
       requestAnimationFrame(frame);
     }
+    // true when this refresh is skipped to hold the frame-rate cap; it also measures the screen's own rate
+    function pace(now) {
+      const d = PACE.prev ? now - PACE.prev : 0; PACE.prev = now;
+      if (d > 2 && d < 100) {
+        PACE.deltas.push(d); if (PACE.deltas.length > 90) PACE.deltas.shift();
+        if (PACE.deltas.length >= 30 && (PACE.deltas.length % 30 === 0 || !PACE.hz)) {
+          const a = PACE.deltas.slice().sort((x, y) => x - y), f = 1000 / a[a.length >> 1];
+          const hz = [30, 48, 50, 60, 72, 75, 90, 100, 120, 144, 165, 240].find((r) => Math.abs(r - f) < 3) || Math.round(f);
+          if (hz !== PACE.hz) { PACE.hz = hz; fpsLabel(); }
+        }
+      }
+      if (!PACE.cap || (PACE.hz && PACE.cap >= PACE.hz - 3)) { PACE.due = 0; return false; }
+      const iv = 1000 / PACE.cap;
+      if (PACE.due && now < PACE.due - 3) return true;
+      PACE.due = PACE.due && now - PACE.due < iv ? PACE.due + iv : now + iv;
+      return false;
+    }
+    function countFrame(now) {
+      const F = PACE.fps;
+      if (S.state !== 'intro' && S.state !== 'battle' && S.state !== 'over') { F.prev = 0; return; }
+      const d = F.prev ? now - F.prev : 0; F.prev = now;
+      if (!d || d > 250) return; // a hidden tab or a stall before the first frame
+      F.n++; F.t += d; F.secN++; F.secT += d;
+      if (F.secT >= 1000) { const f = F.secN * 1000 / F.secT; F.low = F.low ? Math.min(F.low, f) : f; F.secN = 0; F.secT = 0; }
+    }
+    function fpsOptions() { const o = [0]; if (!PACE.hz || PACE.hz > 66) o.push(60); o.push(45, 30); return o; }
+    function fpsLabel() {
+      const b = $('fps'); if (!b) return;
+      const n = PACE.cap && !(PACE.hz && PACE.cap >= PACE.hz - 3) ? PACE.cap : PACE.hz;
+      b.querySelector('span').textContent = n ? n + ' fps' : 'fps';
+      b.setAttribute('aria-label', 'Frame rate: ' + (PACE.cap ? 'capped at ' + PACE.cap : 'the screen’s own' + (PACE.hz ? ', ' + PACE.hz : '')) + ' frames a second. Tap to change.');
+    }
+
     // frost at the screen's edges while the party is slowed (Frost Breath), as the wisp's bench drew it
     function stepRime(rdt) {
       const ov = $('rime'); if (!ov) return;
@@ -1217,6 +1422,13 @@
       LU = fighter('lunara', addModel(cfg.makeLunara()), { kind: 'lunara', tall: 4.3 }, { x: LUN.x, z: LUN.z, yaw: 0.3 }); LU.on = false;
       LU.shadow = disc(0.9, shadowTex, 0xffffff, false, 1); LU.shadow.scale.set(1, 0.7, 1); LU.shadow.visible = false;
       glowG = disc(3.2, lightTex, 0xcfdcff, true, 2); glowG.position.set(WELL.x, 0.015, WELL.z); glowG.material.opacity = 0;
+      if (cfg.makeEnvoi) {
+        // as on its bench: between the party and the foes, nudged off Io so its coils keep clear of her
+        const ep = g(720, 790); ep.x += 0.55; ep.z -= 0.3; ep.yaw = 0;
+        EN = fighter('envoi', addModel(cfg.makeEnvoi()), { kind: 'envoi', tall: 6.4 }, ep); EN.on = false;
+        EN.shadow = disc(1.6, shadowTex, 0xffffff, false, 1); EN.shadow.scale.set(1, 0.6, 1); EN.shadow.position.set(ep.x, 0.006, ep.z);
+        initEnvoi();
+      }
       lightOnly(scene);
       newEngine(); buildFoes();
       layoutView(); shotAt(heroes[0].pos, 1.35, 50); applyCam(1);
@@ -1224,6 +1436,7 @@
       for (const f of foes) f.m.root.visible = true;
       renderer.compile(scene, camera);
       LU.m.root.visible = false; if (LU.m.fx) LU.m.fx.visible = false;
+      if (EN) envoiHide();
       for (const f of foes) f.m.root.visible = false;
       requestAnimationFrame(frame);
       buildPicker();
@@ -1238,6 +1451,15 @@
       $('again').addEventListener('click', () => { SND.init(); begin(true); });
       const change = $('change');
       if (change) { change.hidden = !cfg.packs; change.addEventListener('click', () => { $('end').hidden = true; $('start').hidden = false; UI.showBattle(false); S.state = 'boot'; }); }
+      const fpsB = $('fps');
+      if (fpsB) {
+        fpsLabel();
+        fpsB.addEventListener('click', () => {
+          const o = fpsOptions(), i = o.indexOf(PACE.cap);
+          PACE.cap = o[(i + 1) % o.length]; PACE.due = 0; fpsLabel();
+          try { localStorage.setItem('envoi.fps', String(PACE.cap)); } catch (e) { /* not kept */ }
+        });
+      }
       const snd = $('snd');
       snd.addEventListener('click', () => {
         SND.init(); const m = !SND.muted; SND.setMuted(m);
@@ -1252,7 +1474,7 @@
         get state() { return S.state; }, get engine() { return E; }, get shown() { return D; }, get menuOpen() { return UI.menuOpen; },
         get result() { return S.result; }, get acting() { return S.acting; }, get trace() { return S.trace; }, get pickState() { return PICK; },
         begin() { $('begin').click(); }, skip() { $('skipBtn').click(); }, pick(id) { return UI.pickId(id); }, again() { $('again').click(); },
-        set turbo(v) { clock.turbo = v; }, get t() { return clock.t; }, set auto(p) { S.auto = p; },
+        set turbo(v) { clock.turbo = v; }, get t() { return clock.t; }, set auto(p) { S.auto = p; }, get pace() { return { cap: PACE.cap, hz: PACE.hz, fps: PACE.fps }; },
         setFight(level, pack) { PICK.level = level; if (pack !== undefined) PICK.pack = pack; },
         // a test shortcut: a unit down to n HP, shown and real (the first foe by default)
         weaken(n, who) { const f = who ? E.unit(who) : E.foes[0]; f.hp = Math.min(f.hp, n); D[f.key].hp = f.hp; },

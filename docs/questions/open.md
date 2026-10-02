@@ -1,6 +1,6 @@
 # Still Open
 
-Everything not yet decided, as of October 2, 2026, thirteenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
+Everything not yet decided, as of October 2, 2026, fourteenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
 
 Every earlier question has been answered; the answers are in `design-decisions.md`, under the October 2 rounds.
 
@@ -17,6 +17,15 @@ Every earlier question has been answered; the answers are in `design-decisions.m
    - Each fight rolls a level in that range, most often the middle. Foes in one pack can differ by a level.
    - The party's own level doesn't change the foes. So pushing ahead under-leveled is dangerous, and coming back a few levels stronger makes an area easy: the reward for grinding and exploring that `design-decisions.md` asks for.
    - The experience curve then decides what level an average player has reached at each area. Together with the area levels, that sets how hard each stretch feels, including "a little harder after the first couple of levels" and half the game in the last five levels.
+
+7. **Moth Veil: one hero, or both?** It shields one hero for 35% of her max HP. The design calls it the answer to the telegraphed blows, Void Sphere and Black Noon, but both hit the whole party, so one veil covers half of the blow. Measured in the finale (expert, level 20, 1,000 fights each):
+   - one hero, as now: 60% of fights won;
+   - both heroes at 35%: 80%;
+   - both heroes at about 25% each: 69%.
+
+   The attentive player doesn't use it yet, so only the expert's numbers move. The recommendation is both heroes at about 25% each, with the finale retuned back to its target. Either way, the attentive player should learn Moth Veil in the progression pass.
+
+8. **Kestrel Stoop's hover.** While Sol hovers, the foes can still hit her. In FF9, Freya's Jump takes her out of reach until she lands. Should the hover do the same, with blows aimed at Sol going to Io instead? It would make Stoop stronger, and the Halcyon fight and the finale would be retuned to match.
 
 ## Lore questions
 

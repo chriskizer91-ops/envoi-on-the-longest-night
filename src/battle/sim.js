@@ -60,7 +60,7 @@
       // blows, and at full strength the two of them end the fight before it can become a race. The cold deepens for
       // both
       name: 'The finale', note: 'Noctara with Halcyon, both at 20, at the dead Moonwell; the cold deepens every turn', level: 20, levels: [17, 20],
-      setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'halcyon', hpMul: 0.4, dmgMul: 0.35, rage: 0.06 }, { id: 'noctara' }], flags: { party: true, veil: true, envoi: true, stoop: true }, herbs: BAGS.finale }),
+      setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'halcyon', hpMul: 0.4, dmgMul: 0.35, rage: G.BattleRules.FOES.noctara.rage }, { id: 'noctara' }], flags: { party: true, veil: true, envoi: true, stoop: true }, herbs: BAGS.finale }),
     },
   };
 
