@@ -98,7 +98,7 @@ vec3 deform(vec3 p, vec3 n, float push) {
   g.setIndex(idx); if (fill) fill(g); return g;
  }
 
- // ---------- the smoke tail: strands of grey-green smoke braided into one curling column (drawn first) ----------
+ // ---------- the smoke tail: separate strands of grey-green smoke that curl and fade (drawn first) ----------
  const TL = { S: Q(30, 12), R: Q(7, 5) };
  const tailGeo = (function () {
   const pos = [], aS = [], aA = [], aK = [], idx = [];
@@ -118,26 +118,19 @@ uniform vec3 uDrag;
 varying float vS; varying float vNd; varying float vK; varying vec3 vQ;
 vec3 scen(float s, float k) {
  float t = uTime + uSeed;
- // one S-curved column of smoke whose end curls into a hook
- vec3 C = vec3(.05 * (.25 + s) * sin(s * 4.2 - t * 1.4) + .02 * s * sin(s * 9. - t * 2.1), .345 - .35 * s, -.012 + .03 * s * cos(s * 3.1 - t * 1.05));
- float ck = smoothstep(.62, 1., s); C.x += ck * ck * .045; C.y += ck * ck * .035;
- vec3 c;
- if (k < 2.5) {
-  // three strands braid around it, drawing together as it goes down; the shorter two peel off as wisps
-  float lk = k < .5 ? 1. : (k < 1.5 ? .78 : .6);
-  float ss = s * lk;
-  vec3 Cs = vec3(.05 * (.25 + ss) * sin(ss * 4.2 - t * 1.4) + .02 * ss * sin(ss * 9. - t * 2.1), .345 - .35 * ss, -.012 + .03 * ss * cos(ss * 3.1 - t * 1.05));
-  float ck2 = smoothstep(.62, 1., ss); Cs.x += ck2 * ck2 * .045; Cs.y += ck2 * ck2 * .035;
-  float ang = k * 2.094 + ss * 7. - t * .8;
-  float pe = k > .5 ? smoothstep(.55, 1., s) : 0.;
-  float rad = .03 * (1. - .7 * ss) + .012 * pe;
-  c = Cs + vec3(cos(ang) * rad, .03 * pe * pe, sin(ang) * rad * .7);
- } else {
-  // two short curls of smoke off the sides of the hollow
-  float sd = k < 3.5 ? 1. : -1.;
-  float a = s * 2.6 - .2;
-  c = vec3(sd * (.075 + .06 * sin(a)), .43 - .13 * s + .02 * sin(s * 5. - t * 1.3), -.02 + .02 * cos(a + t * .7));
- }
+ // the strands leave the body together as one swaying column, then part in its lower half, each curling its own
+ // way and fading out at its own length: the long one down the middle, two shorter ones, and two faint wisps
+ float lk = 1., sx = 0., sz = 0., cu = -1., rise = .05, cw = .06, ph = 0.;
+ if (k > .5 && k < 1.5) { lk = .8; sx = .07; sz = -.02; cu = 1.; rise = .05; cw = .06; ph = 2.1; }
+ if (k > 1.5 && k < 2.5) { lk = .62; sx = -.065; sz = .02; cu = -1.; rise = .045; cw = .05; ph = 4.2; }
+ if (k > 2.5 && k < 3.5) { lk = .45; sx = .045; sz = .03; cu = 1.; rise = .03; cw = .04; ph = 1.1; }
+ if (k > 3.5) { lk = .4; sx = -.04; sz = -.035; cu = -1.; rise = .03; cw = .035; ph = 5.3; }
+ float ss = s * lk;
+ vec3 c = vec3(.045 * (.3 + ss) * sin(ss * 4.2 - t * 1.4) + .016 * ss * sin(ss * 9. - t * 2.1), .345 - .34 * ss, -.012 + .028 * ss * cos(ss * 3.1 - t * 1.05));
+ float part = pow(smoothstep(.25, 1., s), 1.4);
+ c += vec3(sx + .012 * sin(s * 6. - t * 1.7 + ph), 0., sz) * part;
+ float ck = smoothstep(.55, 1., s);
+ c.x += cu * cw * ck * ck; c.y += rise * ck * ck * ck;
  c += uDrag * s * s;
  if (uDis > 0.) { float a = uDis * (2. + 4. * s); c.xz = vec2(cos(a) * c.x - sin(a) * c.z, sin(a) * c.x + cos(a) * c.z) * (1. + 1.5 * uDis * s); c.y += uDis * (.25 + .35 * s); }
  return c;
@@ -149,8 +142,8 @@ void main() {
  vec3 rf = abs(T.z) < .9 ? vec3(0., 0., 1.) : vec3(1., 0., 0.);
  vec3 Nn = normalize(cross(T, rf)); vec3 Bn = cross(T, Nn);
  vec3 d = Nn * cos(aA) + Bn * sin(aA);
- float r0 = aK < .5 ? .056 : (aK < 1.5 ? .044 : (aK < 2.5 ? .04 : .022));
- float r = mix(r0, .004, pow(s, .7));
+ float r0 = aK < .5 ? .052 : (aK < 1.5 ? .041 : (aK < 2.5 ? .036 : (aK < 3.5 ? .02 : .018)));
+ float r = mix(r0, .003, pow(s, .75));
  vec3 p = c + d * r;
  vec4 mv = modelViewMatrix * vec4(p, 1.);
  vNd = abs(dot(normalize(normalMatrix * d), normalize(-mv.xyz)));
@@ -160,11 +153,12 @@ void main() {
 varying float vS; varying float vNd; varying float vK; varying vec3 vQ;
 void main() {
  float st = fb(vec3(vQ.x * 30., vQ.y * 7. + uTime * .55, vQ.z * 30.) + uSeed + vK * 3.1);
- vec3 cTop = pal(vec3(.36, .46, .39), vec3(.34, .41, .6));
- vec3 cBot = pal(vec3(.36, .4, .38), vec3(.34, .38, .5));
+ vec3 cTop = pal(vec3(.33, .42, .36), vec3(.31, .38, .56));
+ vec3 cBot = pal(vec3(.32, .36, .34), vec3(.3, .34, .46));
  vec3 c = mix(cTop, cBot, smoothstep(0., .7, vS)) * (.72 + .55 * st);
- float wisp = smoothstep(.25, .6, fb(vec3(vQ.x * 16., vQ.y * 34. + uTime * 1.1, vQ.z * 16.) + uSeed * .7 + vK));
- float a = smoothstep(0., .5, vNd) * (.35 + .65 * st) * (.45 + .55 * wisp) * (1. - smoothstep(.82, 1., vS)) * smoothstep(0., .08, vS) * .98;
+ float wisp = smoothstep(.3, .65, fb(vec3(vQ.x * 22., vQ.y * 40. + uTime * 1.1, vQ.z * 22.) + uSeed * .7 + vK * 2.3));
+ float fadeS = vK < .5 ? .7 : (vK < 2.5 ? .4 : .2);
+ float a = smoothstep(0., .75, vNd) * (.3 + .7 * st) * (.35 + .65 * wisp) * (1. - smoothstep(fadeS, 1., vS)) * smoothstep(0., .08, vS) * (vK < 2.5 ? .95 : .6);
  float dk = smoothstep(0., .4, uDis);
  vec3 light = pal(vec3(.3, .6, .36), vec3(.32, .45, .75)) * (.22 * (1. - .6 * vS) + 1.6 * dk * st * (1. - smoothstep(.5, 1., uDis))) * a;
  a *= 1. - dk;
@@ -259,28 +253,32 @@ void main() {
  vec2 er = vec2(ca * e.x + sa * e.y, -sa * e.x + ca * e.y);
  float de = sdE(er, uEyeP.zw);
  de = max(de, (er.y - uEyeP.w * (1. - 2. * uEyeQ.y) + uEyeQ.z * er.x) * .8);
- float aw = fwidth(de) * .75 + 1e-5;
+ float aw = fwidth(de) * .5 + 1e-5;
+ de -= aw * 1.4; // grow by a fraction of a screen pixel, so the eyes stay bold when the wisp is small on screen
  float eyeIn = (1. - smoothstep(-aw, aw, de)) * fm;
  float dep = clamp(-de / (min(uEyeP.z, uEyeP.w) * .9), 0., 1.);
  float vy = clamp(er.y / uEyeP.w, -1., 1.);
- vec3 eRim = pal(vec3(.4, .47, .43), vec3(.4, .45, .57));
- vec3 eyeCol = mix(eRim, vec3(.03, .04, .035), smoothstep(.02, .9, dep) * (.66 + .34 * smoothstep(-.7, .5, vy)));
+ // up close the eyes keep their soft grey depth; when they are only a few pixels across they turn solid and dark
+ float lodE = clamp(aw / (min(uEyeP.z, uEyeP.w) * .1), 0., 1.);
+ vec3 eRim = mix(pal(vec3(.4, .47, .43), vec3(.4, .45, .57)), pal(vec3(.2, .24, .22), vec3(.2, .23, .31)), lodE);
+ vec3 eyeCol = mix(eRim, vec3(.02, .03, .025), smoothstep(mix(.02, 0., lodE), mix(.9, .45, lodE), dep) * (.66 + .34 * smoothstep(-.7, .5, vy)));
  eyeCol += pal(vec3(.13, .17, .14), vec3(.13, .15, .21)) * smoothstep(-.15, -.9, vy) * (1. - smoothstep(.15, .55, dep));
- float sock = exp(-max(de, 0.) / .011) * (.3 + .3 * smoothstep(-.3, .7, vy)) * fm * (1. - eyeIn);
+ float sock = exp(-max(de, 0.) / .011) * (.22 + .24 * smoothstep(-.3, .7, vy)) * fm * (1. - eyeIn);
  // a brow shadow over each eye, sloping down to the outside
  vec2 eb = er - vec2(.12 * uEyeP.z, .48 * uEyeP.w);
  float cb = cos(.3 + uEyeQ.z * .4), sb = sin(.3 + uEyeQ.z * .4);
  float dB = sdE(vec2(cb * eb.x + sb * eb.y, -sb * eb.x + cb * eb.y), vec2(uEyeP.z * 1.22, uEyeP.w * .85));
- sock = max(sock, (1. - smoothstep(-.006, .008, dB)) * .5 * fm * (1. - eyeIn));
+ sock = max(sock, (1. - smoothstep(-.006, .008, dB)) * .38 * fm * (1. - eyeIn));
  // mouth: calm, a small rounded arch; hungry, wide with fangs; wailing, long and open; breath, a round O
- vec2 m = vec2(P.x, y - uMouP.x);
+ vec2 m = vec2(P.x, y - uMouP.x) / 1.18;
  float dC = .5 * (sdTri(vec2(m.x, .0145 - m.y), vec2(.02, .029)) - .005) + .5 * sdE(m + vec2(0., .006), vec2(.0175, .021));
  dC = max(dC, -(m.y + .0135 - .005 * (1. - min(1., m.x * m.x / .0004))));
  float dH = sdBox(m, vec2(.02, .0185), .008);
  float dW = sdE(m * vec2(1. + .22 * clamp(m.y / .045, -1., 1.), 1.), vec2(.02, .045));
  float dO = sdE(m, vec2(.0165, .025));
- float dm = (uMouP.y * dC + uMouP.z * dH + uMouP.w * dW + uMouQ.y * dO) / max(uMouP.y + uMouP.z + uMouP.w + uMouQ.y, 1e-3);
- float amw = fwidth(dm) * .75 + 1e-5;
+ float dm = 1.18 * (uMouP.y * dC + uMouP.z * dH + uMouP.w * dW + uMouQ.y * dO) / max(uMouP.y + uMouP.z + uMouP.w + uMouQ.y, 1e-3);
+ float amw = fwidth(dm) * .5 + 1e-5;
+ dm -= amw * 1.2;
  float mouIn = (1. - smoothstep(-amw, amw, dm)) * fm;
  float tw = 1. - abs(fract(m.x / .0135 + .5) * 2. - 1.), tb = 1. - abs(fract(m.x / .0135) * 2. - 1.);
  tw *= step(abs(m.x), .0165); tb *= step(abs(m.x), .011);
@@ -289,7 +287,8 @@ void main() {
  mouIn *= 1. - teeth * step(.01, fang);
  float mdep = clamp(-dm / .012, 0., 1.);
  float my = clamp(m.y / .02, -1., 1.);
- vec3 mouCol = mix(eRim, vec3(.02, .03, .025), smoothstep(0., .6, mdep) * (.75 + .25 * smoothstep(-.7, .3, my)));
+ float lodM = clamp(amw / .0016, 0., 1.);
+ vec3 mouCol = mix(eRim, vec3(.02, .03, .025), smoothstep(0., mix(.6, .4, lodM), mdep) * (.75 + .25 * smoothstep(-.7, .3, my)));
  mouCol += pal(vec3(.1, .13, .11), vec3(.1, .12, .17)) * smoothstep(-.2, -.9, my) * (1. - smoothstep(.2, .6, mdep));
  sock += .3 * exp(-max(dm, 0.) / .006) * fm * (1. - mouIn);
  col = mix(col, pal(vec3(.47, .6, .5), vec3(.47, .54, .72)), clamp(sock, 0., .7));
@@ -367,7 +366,8 @@ vec3 tc(float s) {
  vec3 o = vec3(sin(aT.x), 0., cos(aT.x));
  float t = uTime * (2.2 + aT.w * .3) + aT.w;
  float crown = step(.755, aB.y);
- vec3 c = aB + vec3(0., aT.y * s, 0.) + o * (aT.y * mix(.55 * s - .2 * s * s, .25 * s - .45 * s * s, crown));
+ float Lf = aT.y * (1. - .3 * uFrost);
+ vec3 c = aB + vec3(0., Lf * s, 0.) + o * (Lf * mix(.55 * s - .2 * s * s, .25 * s - .45 * s * s, crown));
  c += vec3(sin(t + s * 4.), 0., cos(t * .8 + s * 3.)) * .026 * s * s + o * .018 * sin(s * 6.5 + t * .7) * s;
  float top = smoothstep(.62, .9, c.y); float tk = top * top;
  c.x += tk * (.03 * sin(uTime * 2.3 + uSeed) + uSway.x); c.z += tk * (.018 * sin(uTime * 1.9 + uSeed * 1.7) + uSway.y);
@@ -380,7 +380,7 @@ void main() {
  vec4 m1 = modelViewMatrix * vec4(tc(max(s - .06, 0.)), 1.), m2 = modelViewMatrix * vec4(tc(min(s + .06, 1.)), 1.);
  vec2 dir = normalize(m2.xy - m1.xy + vec2(1e-6, 0.));
  float sc = length(modelViewMatrix[0].xyz);
- float w = aT.z * pow(1. - s, .85) * (.55 + .45 * smoothstep(0., .25, s)) * (1. + .6 * uTear);
+ float w = aT.z * pow(1. - s, mix(.85, .6, uFrost)) * (.55 + .45 * smoothstep(0., .25, s)) * (1. + .6 * uTear) * (1. + .45 * uFrost);
  mv.xy += vec2(-dir.y, dir.x) * w * aSd * sc;
  vec3 ov = normalize((modelViewMatrix * vec4(sin(aT.x), 0., cos(aT.x), 0.)).xyz);
  vF = 1. - smoothstep(.15, .85, ov.z);
@@ -390,7 +390,7 @@ void main() {
 varying float vS; varying float vX; varying float vF;
 void main() {
  float e = 1. - abs(vX);
- float a = smoothstep(0., 1., e) * (1. - smoothstep(.4, 1., vS)) * smoothstep(0., .12, vS) * .55 * (.25 + .75 * vF) * (1. - uDis);
+ float a = smoothstep(0., 1., e) * (1. - smoothstep(.4, 1., vS)) * smoothstep(0., .12, vS) * .55 * (.25 + .75 * vF) * (1. - uDis) * (1. - .35 * uFrost);
  vec3 c = mix(pal(vec3(.74, .9, .7), vec3(.74, .85, 1.)), pal(vec3(.5, .84, .54), vec3(.5, .68, .97)), vS);
  vec3 light = pal(vec3(.4, .85, .48), vec3(.46, .66, 1.)) * a * .45 * uGlow;
  gl_FragColor = vec4(c * a + light, a) * uFade;
@@ -416,58 +416,71 @@ void main() {
  if (r > 1.3) discard;
  float th = atan(vQ.y, vQ.x);
  float lv = uLevel, lr = log(max(r, .02));
- float n = vn(vec3(cos(th) * 2.4 + uSeed, sin(th) * 2.4, lr * 3. - uTime * .25));
- float n2 = vn(vec3(cos(th) * 6. + uSeed, sin(th) * 6., lr * 7. - uTime * .4));
- // a sawtooth spiral: each torn layer has a pale lip and darkens as it winds down into the hole
- float band = fract((th / 6.2832 * 1.6 + lr * .8 - uTime * .14) * 4. + n * 1.5 + n2 * .45);
- float lip = pow(1. - band, 2.6) * (.6 + .4 * n2);
- float rr = r + .22 * (n - .5);
- float R0 = mix(.36, .6, lv);
- float core = 1. - smoothstep(R0 * .6, R0 * 1.15, rr);
+ float n = vn(vec3(cos(th) * 2.2 + uSeed, sin(th) * 2.2, lr * 2.4 - uTime * .3));
+ float n2 = vn(vec3(cos(th) * 5. + uSeed, sin(th) * 5., lr * 5.5 - uTime * .45));
+ // three torn arms winding down into the dark (a log spiral): each a layer with a pale lip that darkens behind it
+ float band = fract(th / 6.2832 * 3. + lr * 2.4 + uTime * .3 + n * .55 + n2 * .2);
+ float lip = pow(1. - band, 2.4) * (.55 + .45 * n2);
+ float rr = r + .2 * (n - .5);
+ float R0 = mix(.34, .58, lv);
+ float core = 1. - smoothstep(R0 * .5, R0 * 1.2, rr);
+ float out_ = smoothstep(R0 * .7, 1., rr);
+ float lit = .6 + .4 * dot(vQ / max(r, .001), vec2(-.6, .8));
  vec3 cS = pal(vec3(.5, .57, .52), vec3(.47, .53, .66));
- float lit = .55 + .45 * dot(vQ / max(r, .001), vec2(-.6, .8));
- float out_ = smoothstep(R0 * .85, 1., rr);
- vec3 c = cS * (.22 + .78 * out_) * (.5 + .5 * lip) * (.72 + .38 * lit) * (1. - .45 * lv);
+ vec3 c = cS * (.2 + .8 * out_) * (.42 + .58 * lip) * (.75 + .35 * lit) * (1. - .45 * lv);
  c = mix(c, vec3(.008, .01, .009), core);
- float a = (1. - smoothstep(.68, 1.08, rr + .18 * (n2 - .5))) * mix(.92, 1., core) * (1. - smoothstep(0., .45, uDis));
- // green flame licks curling round the rim
- float stk = pow(max(0., 1. - abs(band - .1) * 7.), 3.) * smoothstep(.6, .85, r) * (1. - smoothstep(.9, 1.2, r)) * n2;
+ // torn: gaps between the arms near the rim let the body show through
+ float torn = smoothstep(.58, .78, n2) * smoothstep(.55, .95, rr);
+ float a = (1. - smoothstep(.66, 1.06, rr + .2 * (n2 - .5))) * mix(.92, 1., core) * (1. - .65 * torn) * (1. - smoothstep(0., .45, uDis));
+ // green flame licks curling round the rim along the arms
+ float stk = pow(max(0., 1. - abs(band - .06) * 8.), 3.) * smoothstep(.6, .85, r) * (1. - smoothstep(.9, 1.2, r)) * n2;
  vec3 light = pal(vec3(.45, .86, .5), vec3(.5, .7, 1.)) * stk * .5 * uGlow * (1. - uDis);
  gl_FragColor = vec4(c * a + light, a) * uFade;
 }`, HOL);
  const hollow = addMesh(new THREE.PlaneGeometry(1, 1), hollowMat);
 
- // ---------- the tendrils: two tubes of light whose centrelines are cubic curves set every frame ----------
- const TN = { S: Q(56, 20), R: Q(7, 5) };
+ // ---------- the tendrils: long thin tubes of light on six-point curves set every frame, with a soft glow along
+ // them and small flame licks rising off them; all three are kinds of one mesh ----------
+ const TN = { S: Q(64, 24), R: Q(7, 5), NO: 4, OS: Q(7, 4) };
  const tenGeo = (function () {
-  const pos = [], aS = [], aA = [], aSide = [], idx = [];
+  const pos = [], aS = [], aA = [], aSide = [], aKind = [], aX = [], idx = [];
+  const vtx = (s, a, side, kind, x0, x1, x2) => { pos.push(0, 0, 0); aS.push(s); aA.push(a); aSide.push(side); aKind.push(kind); aX.push(x0, x1, x2); };
   for (let k = 0; k < 2; k++) {
-   const b0 = pos.length / 3;
-   for (let j = 0; j <= TN.S; j++) for (let i = 0; i < TN.R; i++) { pos.push(0, 0, 0); aS.push(j / TN.S); aA.push(i / TN.R * TAU); aSide.push(k); }
+   // the core tube
+   let b0 = pos.length / 3;
+   for (let j = 0; j <= TN.S; j++) for (let i = 0; i < TN.R; i++) vtx(j / TN.S, i / TN.R * TAU, k, 0, 0, 0, 0);
    for (let j = 0; j < TN.S; j++) for (let i = 0; i < TN.R; i++) { const a = b0 + j * TN.R + i, b = b0 + j * TN.R + (i + 1) % TN.R; idx.push(a, b, a + TN.R, b, b + TN.R, a + TN.R); }
+   // the glow along it: a camera-facing ribbon (wound to face the camera)
+   b0 = pos.length / 3;
+   for (let j = 0; j <= TN.S; j++) for (const sd of [-1, 1]) vtx(j / TN.S, sd, k, 1, 0, 0, 0);
+   for (let j = 0; j < TN.S; j++) { const a = b0 + j * 2; idx.push(a + 1, a, a + 2, a + 1, a + 2, a + 3); }
+   // small flame licks rising off it
+   for (let o = 0; o < TN.NO; o++) {
+    const sAt = .26 + o * .17 + (rnd() - .5) * .06, L = .045 + rnd() * .03, ph = rnd() * TAU;
+    b0 = pos.length / 3;
+    for (let j = 0; j <= TN.OS; j++) for (const sd of [-1, 1]) vtx(j / TN.OS, sd, k, 2, sAt, L, ph);
+    for (let j = 0; j < TN.OS; j++) { const a = b0 + j * 2; idx.push(a + 1, a, a + 2, a + 1, a + 2, a + 3); }
+   }
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('aS', new THREE.Float32BufferAttribute(aS, 1));
-  g.setAttribute('aA', new THREE.Float32BufferAttribute(aA, 1)); g.setAttribute('aSide', new THREE.Float32BufferAttribute(aSide, 1)); g.setIndex(idx);
+  g.setAttribute('aA', new THREE.Float32BufferAttribute(aA, 1)); g.setAttribute('aSide', new THREE.Float32BufferAttribute(aSide, 1));
+  g.setAttribute('aKind', new THREE.Float32BufferAttribute(aKind, 1)); g.setAttribute('aX', new THREE.Float32BufferAttribute(aX, 3)); g.setIndex(idx);
   return g;
  })();
- const TU = {
-  uA0: { value: V3() }, uA1: { value: V3() }, uA2: { value: V3() }, uA3: { value: V3() },
-  uB0: { value: V3() }, uB1: { value: V3() }, uB2: { value: V3() }, uB3: { value: V3() },
-  uTW: { value: new THREE.Vector4(.018, 5, 0, 0) }, uCoil: { value: new THREE.Vector4(0, .9, 3, .2) },
-  uPulse: { value: new THREE.Vector4(0, 0, 0, 0) }, uTRad: { value: 1 },
- };
- const TA = [TU.uA0.value, TU.uA1.value, TU.uA2.value, TU.uA3.value], TB = [TU.uB0.value, TU.uB1.value, TU.uB2.value, TU.uB3.value];
+ const TU = { uTW: { value: new THREE.Vector4(.018, 5, 0, 0) }, uCoil: { value: new THREE.Vector4(0, .9, 3, .2) }, uPulse: { value: new THREE.Vector4(0, 0, 0, 0) }, uTRad: { value: 1 }, uTGlow: { value: new THREE.Vector2(1, 1) } };
+ const TA = [], TB = [];
+ for (let i = 0; i < 6; i++) { TU['uA' + i] = { value: V3() }; TU['uB' + i] = { value: V3() }; TA.push(TU['uA' + i].value); TB.push(TU['uB' + i].value); }
  const tenMat = PM(`
-attribute float aS; attribute float aA; attribute float aSide;
-uniform vec3 uA0; uniform vec3 uA1; uniform vec3 uA2; uniform vec3 uA3;
-uniform vec3 uB0; uniform vec3 uB1; uniform vec3 uB2; uniform vec3 uB3;
-uniform vec4 uTW; uniform vec4 uCoil; uniform float uTRad;
-varying float vS; varying float vNd; varying float vSide;
+attribute float aS; attribute float aA; attribute float aSide; attribute float aKind; attribute vec3 aX;
+uniform vec3 uA0; uniform vec3 uA1; uniform vec3 uA2; uniform vec3 uA3; uniform vec3 uA4; uniform vec3 uA5;
+uniform vec3 uB0; uniform vec3 uB1; uniform vec3 uB2; uniform vec3 uB3; uniform vec3 uB4; uniform vec3 uB5;
+uniform vec4 uTW; uniform vec4 uCoil; uniform float uTRad; uniform vec2 uTGlow;
+varying float vS; varying float vNd; varying float vSide; varying float vKind; varying float vX;
 vec3 tcen(float s, float side) {
- vec3 p0 = mix(uA0, uB0, side), p1 = mix(uA1, uB1, side), p2 = mix(uA2, uB2, side), p3 = mix(uA3, uB3, side);
- float u = 1. - s;
- vec3 c = u * u * u * p0 + 3. * u * u * s * p1 + 3. * u * s * s * p2 + s * s * s * p3;
+ float u = 1. - s, u2 = u * u, s2 = s * s;
+ vec3 c = u2 * u2 * u * mix(uA0, uB0, side) + 5. * s * u2 * u2 * mix(uA1, uB1, side) + 10. * s2 * u2 * u * mix(uA2, uB2, side)
+  + 10. * s2 * s * u2 * mix(uA3, uB3, side) + 5. * s2 * s2 * u * mix(uA4, uB4, side) + s2 * s2 * s * mix(uA5, uB5, side);
  float ph = side * 2.3 + uSeed;
  float w = uTW.x * s * (.35 + .65 * s);
  c += w * vec3(sin(s * 10. - uTime * uTW.y + ph), .8 * cos(s * 7.5 - uTime * uTW.y * .8 + ph * 1.3), .6 * sin(s * 6.5 - uTime * uTW.y * 1.1 + ph * .7));
@@ -481,29 +494,70 @@ vec3 tcen(float s, float side) {
  return c;
 }
 void main() {
- float s = aS;
- vec3 c = tcen(s, aSide);
- vec3 T = normalize(tcen(min(s + .012, 1.), aSide) - tcen(max(s - .012, 0.), aSide) + vec3(0., 1e-5, 0.));
- vec3 rf = abs(T.y) < .92 ? vec3(0., 1., 0.) : vec3(1., 0., 0.);
- vec3 Nn = normalize(cross(T, rf)); vec3 Bn = cross(T, Nn);
- vec3 d = Nn * cos(aA) + Bn * sin(aA);
- float r = mix(.017, .003, pow(s, .65)) * (1. - smoothstep(.9, 1., s) * .7) * uTRad * (.72 + .56 * vn(vec3(s * 9. - uTime * 3.2, aSide * 5., uSeed)));
- vec4 mv = modelViewMatrix * vec4(c + d * r, 1.);
- vNd = abs(dot(normalize(normalMatrix * d), normalize(-mv.xyz)));
- vS = s; vSide = aSide;
+ vSide = aSide; vKind = aKind; vX = aA; vNd = 1.;
+ float sc = length(modelViewMatrix[0].xyz);
+ if (aKind < .5) {
+  float s = aS;
+  vec3 c = tcen(s, aSide);
+  vec3 T = normalize(tcen(min(s + .012, 1.), aSide) - tcen(max(s - .012, 0.), aSide) + vec3(0., 1e-5, 0.));
+  vec3 rf = abs(T.y) < .92 ? vec3(0., 1., 0.) : vec3(1., 0., 0.);
+  vec3 Nn = normalize(cross(T, rf)); vec3 Bn = cross(T, Nn);
+  vec3 d = Nn * cos(aA) + Bn * sin(aA);
+  float r = mix(.012, .0025, pow(s, .6)) * (1. - smoothstep(.92, 1., s) * .6) * uTRad * (.75 + .5 * vn(vec3(s * 9. - uTime * 3.2, aSide * 5., uSeed)));
+  vec4 mv = modelViewMatrix * vec4(c + d * r, 1.);
+  vNd = abs(dot(normalize(normalMatrix * d), normalize(-mv.xyz)));
+  vS = s;
+  gl_Position = projectionMatrix * mv;
+  return;
+ }
+ vec3 c; vec4 m1, m2; float w;
+ if (aKind < 1.5) {
+  float s = aS;
+  c = tcen(s, aSide);
+  m1 = modelViewMatrix * vec4(tcen(max(s - .02, 0.), aSide), 1.); m2 = modelViewMatrix * vec4(tcen(min(s + .02, 1.), aSide), 1.);
+  w = mix(.036, .016, s) * uTGlow.x;
+  vS = s;
+ } else {
+  // a lick of flame rising off the tendril, up and away from the body
+  float s0 = aX.x, t = aS, tm = uTime * 3.4 + aX.z;
+  vec3 b = tcen(s0, aSide);
+  vec3 o = normalize(vec3(b.x, 0., b.z) + vec3(.001, 0., 0.));
+  vec3 lift = normalize(vec3(0., 1., 0.) + o * .55);
+  float L = aX.y * (.75 + .5 * sin(tm * .7)) * (1. - uDis) * (1. - .3 * uFrost);
+  c = b + lift * L * t + vec3(sin(tm + t * 5.), 0., cos(tm * .8 + t * 4.)) * .012 * t * t;
+  vec3 c1 = b + lift * L * max(t - .15, 0.), c2 = b + lift * L * min(t + .15, 1.);
+  m1 = modelViewMatrix * vec4(c1, 1.); m2 = modelViewMatrix * vec4(c2, 1.);
+  w = .013 * pow(1. - t, mix(.9, .6, uFrost)) * (.55 + .45 * smoothstep(0., .25, t)) * (1. + .35 * uFrost);
+  vS = t;
+ }
+ vec4 mv = modelViewMatrix * vec4(c, 1.);
+ vec2 dir = normalize(m2.xy - m1.xy + vec2(1e-6, 0.));
+ mv.xy += vec2(-dir.y, dir.x) * w * aA * sc;
  gl_Position = projectionMatrix * mv;
 }`, `
-uniform vec4 uPulse;
-varying float vS; varying float vNd; varying float vSide;
+uniform vec4 uPulse; uniform vec2 uTGlow;
+varying float vS; varying float vNd; varying float vSide; varying float vKind; varying float vX;
 void main() {
- float core = pow(vNd, 2.);
  vec3 cW = pal(vec3(.9, 1., .84), vec3(.92, .97, 1.));
  vec3 cG = pal(vec3(.44, .82, .48), vec3(.46, .64, .96));
- vec3 c = mix(cG, cW, core * (1. - .5 * smoothstep(.3, .9, vS)));
- float endK = 1. - smoothstep(.78, .97, vS);
- float a = smoothstep(.05, .55, vNd) * endK * .8 * (1. - uDis);
  float pp = mix(uPulse.x, uPulse.y, vSide), ps = mix(uPulse.z, uPulse.w, vSide);
  float pulse = ps * exp(-pow((vS - pp) / .07, 2.));
+ if (vKind > 1.5) {
+  float e = 1. - abs(vX);
+  float a = smoothstep(0., 1., e) * (1. - smoothstep(.35, 1., vS)) * .6 * (1. - uDis) * (1. - .45 * uFrost);
+  gl_FragColor = vec4(mix(cW, cG, vS) * a + cG * a * .5 * uGlow, a) * uFade;
+  return;
+ }
+ if (vKind > .5) {
+  float e = 1. - abs(vX);
+  float g = e * e * (1. - smoothstep(.8, 1., vS)) * (.45 + .55 * (1. - vS)) * (1. + 2.5 * pulse);
+  gl_FragColor = vec4(cG * g * .3 * uTGlow.y * uGlow * uFade, 0.);
+  return;
+ }
+ float core = pow(vNd, 2.);
+ vec3 c = mix(cG, cW, core * (1. - .5 * smoothstep(.3, .9, vS)));
+ float endK = 1. - smoothstep(.8, .98, vS);
+ float a = smoothstep(.05, .55, vNd) * endK * .75 * (1. - uDis);
  vec3 light = cG * (.3 + 1.6 * pulse + uDis) * smoothstep(0., .5, vNd) * (1. - .4 * vS) * uGlow * endK;
  gl_FragColor = vec4(c * a + light, a) * uFade;
 }`, TU);
@@ -800,55 +854,54 @@ void main() {
 
  // ---------- the face's three expressions ----------
  const EXP = {
-  calm: { ex: .04, ey: .58, ew: .0225, eh: .031, tilt: .4, cut: 0, slope: .3, my: .527, fang: 0 },
-  hungry: { ex: .041, ey: .577, ew: .0235, eh: .022, tilt: .2, cut: .22, slope: -.26, my: .525, fang: 1 },
-  wail: { ex: .041, ey: .59, ew: .0185, eh: .037, tilt: .62, cut: 0, slope: .45, my: .51, fang: .4 },
-  open: { my: .519 },
+  calm: { ex: .043, ey: .582, ew: .026, eh: .0355, tilt: .4, cut: 0, slope: .3, my: .523, fang: 0 },
+  hungry: { ex: .044, ey: .579, ew: .027, eh: .0255, tilt: .2, cut: .22, slope: -.26, my: .521, fang: 1 },
+  wail: { ex: .044, ey: .592, ew: .0215, eh: .0425, tilt: .62, cut: 0, slope: .45, my: .505, fang: .4 },
+  open: { my: .515 },
  };
  const XK = ['ex', 'ey', 'ew', 'eh', 'tilt', 'cut', 'slope', 'my', 'fang'], XP = {};
 
  // ---------- tendril poses (for the +X tendril; the -X one is mirrored) ----------
  const TP = {
-  rest: [[.08, .47, 0], [.19, .49, .035], [.31, .29, .05], [.265, .375, .065]],
-  raise: [[.08, .48, -.005], [.19, .52, -.01], [.33, .5, .01], [.33, .63, .04]],
-  tuck: [[.08, .46, .02], [.13, .42, .1], [.07, .345, .135], [-.025, .375, .125]],
-  flail: [[.08, .48, -.01], [.16, .54, -.07], [.25, .58, -.17], [.3, .49, -.23]],
-  back: [[.08, .47, -.005], [.15, .45, -.09], [.21, .43, -.17], [.17, .51, -.21]],
-  limp: [[.08, .45, .01], [.13, .4, .03], [.17, .26, .05], [.135, .19, .06]],
+  // out from the lower sides of the head, hanging down and out to about the bottom of the hollow, the tip curling up
+  rest: [[.085, .475, .005], [.15, .47, .02], [.235, .43, .035], [.28, .29, .045], [.268, .185, .05], [.205, .335, .06]],
+  raise: [[.085, .48, 0], [.16, .5, 0], [.25, .5, .01], [.32, .52, .02], [.355, .6, .03], [.31, .67, .04]],
+  tuck: [[.085, .47, .02], [.13, .44, .07], [.135, .38, .11], [.085, .33, .14], [0, .34, .15], [-.04, .38, .13]],
+  flail: [[.085, .48, -.01], [.15, .52, -.05], [.22, .56, -.12], [.28, .55, -.18], [.32, .49, -.22], [.33, .43, -.2]],
+  back: [[.085, .47, 0], [.14, .45, -.06], [.19, .41, -.13], [.21, .35, -.19], [.19, .31, -.23], [.15, .36, -.24]],
+  limp: [[.085, .46, .01], [.12, .42, .02], [.15, .33, .03], [.16, .24, .04], [.15, .17, .05], [.13, .13, .06]],
  };
  const _d = V3(), _n = V3(), _a = V3(), _b = V3(), _c = V3();
  let flingSide = 0;
  function tendrilPose(side, F, tm, tLoc) {
   const sg = side ? 1 : -1, P = side ? TB : TA, fl = side === flingSide;
-  for (let k = 0; k < 4; k++) {
+  for (let k = 0; k < 6; k++) {
    const r = TP.rest[k];
    let x = r[0], y = r[1], z = r[2];
-   if (k >= 2) { y += .018 * Math.sin(tm * 1.7 + side * 2 + k) * F.wave; x += .012 * Math.sin(tm * 1.3 + side + k * .7) * F.wave; }
+   if (k >= 3) { y += .02 * Math.sin(tm * 1.7 + side * 2 + k) * F.wave; x += .013 * Math.sin(tm * 1.3 + side + k * .7) * F.wave; }
    const add = (pose, w) => { if (w > 1e-4) { x += (pose[k][0] - r[0]) * w; y += (pose[k][1] - r[1]) * w; z += (pose[k][2] - r[2]) * w; } };
    add(TP.raise, F.tRaise); add(TP.tuck, F.tTuck); add(TP.flail, F.tFlail); add(TP.back, F.tBack + (fl ? 0 : F.tFling * .7)); add(TP.limp, F.tLimp);
-   if (F.tRaise > 0 && k >= 2) y += .02 * Math.sin(tm * 13 + side * 2) * F.tRaise * F.shake;
+   if (F.tRaise > 0 && k >= 3) y += .02 * Math.sin(tm * 13 + side * 2) * F.tRaise * F.shake;
    P[k].set(x * sg, y, z);
   }
   _d.set(tLoc.x, 0, tLoc.z); const dist = Math.max(.3, _d.length()); _d.multiplyScalar(1 / dist);
   if (fl && F.tFling > 1e-4) {
    const w = F.tFling;
-   _a.copy(P[0]).addScaledVector(_d, .12); _a.y += .03;
-   _b.set(0, .5, 0).addScaledVector(_d, .3); _b.x += sg * .03;
-   _c.set(0, .53, 0).addScaledVector(_d, .47);
-   P[1].lerp(_a, w); P[2].lerp(_b, w); P[3].lerp(_c, w);
+   for (let k = 1; k < 6; k++) { const f = k / 5; _a.set(0, .48 + .07 * f, 0).addScaledVector(_d, .07 + .43 * f); if (k === 1) _a.lerp(P[0], .5); _a.x += sg * .05 * Math.sin(PI * f); _a.y += .04 * Math.sin(PI * f); P[k].lerp(_a, w); }
   }
   if (F.tReach > 1e-4) {
    const w = F.tReach;
    _n.set(_d.z, 0, -_d.x).multiplyScalar(sg);
-   _a.copy(P[0]).addScaledVector(_d, .22 * dist).addScaledVector(_n, .3 + .12 * dist); _a.y += .35 + .08 * dist;
-   _b.copy(tLoc).addScaledVector(_d, -.28 * dist).addScaledVector(_n, -.18 - .08 * dist); _b.y += .3 + .1 * dist;
-   P[1].lerp(_a, Math.pow(w, 1.4)); P[2].lerp(_b, Math.pow(w, 1.1)); P[3].lerp(tLoc, Math.pow(w, .7));
+   const R = [[.14, .3 + .1 * dist, .32 + .06 * dist], [.38, .2 + .05 * dist, .42 + .1 * dist], [.65, -.15 - .06 * dist, .3 + .08 * dist], [.88, -.05, .14], [1, 0, 0]], E = [1.6, 1.3, 1.1, .85, .7];
+   for (let k = 1; k < 6; k++) { const q = R[k - 1]; _a.copy(P[0]).lerp(tLoc, q[0]).addScaledVector(_n, q[1]); _a.y += q[2]; P[k].lerp(_a, Math.pow(w, E[k - 1])); }
   }
  }
  // the same curve as the tendril shader, for anchors and for light that travels along it
  function tcen(side, s, out) {
-  const P = side ? TB : TA, u = 1 - s, b0 = u * u * u, b1 = 3 * u * u * s, b2 = 3 * u * s * s, b3 = s * s * s;
-  let x = b0 * P[0].x + b1 * P[1].x + b2 * P[2].x + b3 * P[3].x, y = b0 * P[0].y + b1 * P[1].y + b2 * P[2].y + b3 * P[3].y, z = b0 * P[0].z + b1 * P[1].z + b2 * P[2].z + b3 * P[3].z;
+  const P = side ? TB : TA, u = 1 - s, u2 = u * u, s2 = s * s;
+  const B = [u2 * u2 * u, 5 * s * u2 * u2, 10 * s2 * u2 * u, 10 * s2 * s * u2, 5 * s2 * s2 * u, s2 * s2 * s];
+  let x = 0, y = 0, z = 0;
+  for (let k = 0; k < 6; k++) { x += B[k] * P[k].x; y += B[k] * P[k].y; z += B[k] * P[k].z; }
   const W = TU.uTW.value, tm = U.uTime.value, ph = side * 2.3 + U.uSeed.value, w = W.x * s * (.35 + .65 * s);
   x += w * Math.sin(s * 10 - tm * W.y + ph); y += w * .8 * Math.cos(s * 7.5 - tm * W.y * .8 + ph * 1.3); z += w * .6 * Math.sin(s * 6.5 - tm * W.y * 1.1 + ph * .7);
   const coil = side ? W.w : W.z;
@@ -976,7 +1029,8 @@ void main() {
   tendrilPose(0, F, tm, _tl); tendrilPose(1, F, tm, _tl);
   TU.uTW.value.set(.018 * F.wave * (1 + .6 * F.tFlail) + .035 * F.tReach * (1 - .6 * F.tCoil) + .02 * F.tFling, 5 + 4 * F.tFlail + 3 * F.tReach, F.tCoil, F.tCoil);
   TU.uCoil.value.set(_tl.x, _tl.y - .05, _tl.z, .2);
-  TU.uTRad.value = 1 - .3 * F.tReach;
+  TU.uTRad.value = 1 - .25 * F.tReach;
+  TU.uTGlow.value.set(1 + 1.4 * F.tReach, 1 + .9 * F.tReach);
   let pa = 0, pb = 0, sa = 0, sb = 0;
   if (name === 'cling') for (const h of def.hits) { const k = (u - h) / .09; if (k >= 0 && k <= 1) { pa = pb = 1 - k; sa = sb = Math.sin(PI * k); } }
   TU.uPulse.value.set(pa, pb, sa, sb);

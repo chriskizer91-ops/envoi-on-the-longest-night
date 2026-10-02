@@ -12,7 +12,8 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Halcyon | https://claude.ai/artifact/7zPEx3g6VC4SFfdZ8zdHj8 | Done: refined against her new sheets on October 2. |
 | Lunara | https://claude.ai/artifact/XpsLozXGFgPCwLG5s5iUce | Done |
 | Io, the Witch | https://claude.ai/artifact/1mF6YFp3xg1KhGs5tZNYky | Technical pass done. Her three new spells are in progress (below). |
-| The wisp | https://claude.ai/artifact/TDbtEVzrdJFQ2cXevWFiVF | Done. A polish round is in progress (below). |
+| Sol | https://claude.ai/artifact/FpVoGvTKCwv8GWiuouJu7N | Done, with Kestrel Stoop |
+| The wisp | https://claude.ai/artifact/TDbtEVzrdJFQ2cXevWFiVF | Done, with its polish round |
 
 ## The models
 
@@ -21,7 +22,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Noctara | Done | — |
 | Lunara | Done | The sheet's heavier skirt chains; her pointed ears |
 | Io, the Witch | Technical pass done | Her new spells (Waxing Light, Moonsteel, Moth Veil) as effects on her existing motions, in `src/fx/io-spells.js` |
-| Wisp | Done | Polish: longer curling tendrils, a face that reads at Full view on a phone, a wispier tail, a spiral hollow |
+| Wisp | Done, polished | A darker, fuller smoke tail; stronger tears in the hollow; check the frost variant in every action |
 | Shadow Wraith and great wraith | In progress since October 1 | Match the soul-green sheets; the great wraith with stolen flames in its ribs and lanterns on its chain |
 | Sol | Done | Wispier hair, a rounder face, the cape over her shoulders, and compacting the code (140 KB) |
 | Envoi | In progress | The look from its sheets, the Envoi scenes' scale, and its bench page |
