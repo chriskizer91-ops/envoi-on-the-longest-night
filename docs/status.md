@@ -24,7 +24,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Lunara | Done | The sheet's heavier skirt chains; her pointed ears |
 | Io, the Witch | Technical pass done | Her new spells (Waxing Light, Moonsteel, Moth Veil) as effects on her existing motions, in `src/fx/io-spells.js` |
 | Wisp | Done, polished | A darker, fuller smoke tail; stronger tears in the hollow; check the frost variant in every action |
-| Shadow Wraith and great wraith | In progress since October 1 | Match the soul-green sheets; the great wraith with stolen flames in its ribs and lanterns on its chain |
+| Shadow Wraith and great wraith | Done | The great wraith's numbers; a scythe head and hem closer to the sheet; switching to the great wraith without a reload (a bench change) |
 | Sol | Done | Wispier hair, a rounder face, the cape over her shoulders, and compacting the code (140 KB) |
 | Envoi | Done | A full ring round the foe in the strike; a dark splash when the ward takes a hit; keep the tail clear of Io; longer bipyramid lanterns |
 | Halcyon | Done | Her face is still rounder than the sheets' gaunt one (kept as built); Light-Drinker's streams and Black Noon's swirls could be ribbons; a brief cut line in the retreat around u 0.65 |

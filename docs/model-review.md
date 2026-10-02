@@ -16,6 +16,7 @@ The spec's targets: 70k to 100k triangles (minimum 50k, ceiling 120k for bosses)
 | Noctara, touched up | `src/models/noctara.js` | 72k | 30 joints, hands skinned | 24 | Yes |
 | Noctara, original | `noctara-in-the-night-square.html` | 28k | none (rigid joints) | 88 | Mostly (no `setFade`; `block` is 0.6 s) |
 | Shadow Wraith | `night-square-shadow-wraith.html` | 55k | 32 | 35 | No (older interface) |
+| Shadow Wraith, touched up | `src/models/wraith.js` | 59k (great wraith 71k) | 54 | 11 + up to 7 effects (great 20 + 8) | Yes |
 | Lunara | `night-square-shadow-wraith.html` | 56k | none | 60 | No (its own interface) |
 | Lunara, touched up | `src/models/lunara.js` | 97k | 62 | 14 (+ up to 21 for effects) | Yes |
 | Envoi | `envoi-letter-wyrm-model-preview.html` | 83k (instanced) | 20 | 27 | Mostly (no skinning; `block` 0.6 s; `busy` is false during holds) |
@@ -129,7 +130,23 @@ She is 3.1 m tall, measured from the two Envoi scenes. Animation costs about 0.0
 - **Embrace:** the bible's Pale Mother's Embrace needs its own action: her wings close over the party, then open (her sheet, row 3, second pose).
 - Give her the spec interface.
 
-### Shadow Wraith: polish, release, and the great wraith
+### Shadow Wraith and great wraith: done October 2, 2026
+
+Rebuilt against the two soul-green sheets as one 54-bone skinned model.
+
+- **Wraith:** a torn hood framing a black void with slanted green eyes, a ribcage with a heart-shaped soul-light, skeletal hands, a layered torn robe with green edges, and the thorny scythe with its pale-green blade.
+- **Release:** the robe collapses, the bones crumble into motes and a pale moth rises.
+- **Level look:** levels 1 to 20 deepen the green and add glow, smoke and a little size.
+- **Great wraith (`opts.great`):** 2.8 times the size, default level 5, with stolen flames in its ribs, lamplight through its robe, and three lanterns on a neck chain. It also swallows lamplight to heal, breathes stolen fire, and releases the lights and a large moth.
+- **Bench page:** the Great wraith toggle reloads the page, carrying its options in session storage, because published pages get no query string.
+- **Still to improve:**
+  - The great wraith's damage numbers are placeholders.
+  - A simpler scythe head than the sheet's.
+  - A hem of torn strips rather than the sheet's flame-like tendrils.
+  - Neck lanterns that are hard to see from the battle camera.
+  - On a phone the great wraith opens in the Square view, because Close and Full cut it off.
+
+### Shadow Wraith: the plan
 
 - It already reads well: a dark hood, glowing green eyes and a ribcage. It stays soul-green (lore answer 18).
 - Replace the spotted robe texture with layered, tattered cloth, add skeletal hands, and bring in the ornate crescent scythe from the pose sheet, in green.

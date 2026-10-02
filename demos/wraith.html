@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Shadow Wraith</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/bench/bench.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/night-square.js"></script>
+<script src="../src/models/originals/witch.js"></script>
+<script src="../src/models/originals/sol.js"></script>
+<script src="../src/models/wraith.js"></script>
+<script src="../src/models/originals/wraith.js"></script>
+<script src="../src/fx/battle-fx.js"></script>
+<script src="../src/bench/bench.js"></script>
+<script src="../src/bench/stage-wraith.js"></script>
+<script>
+Bench.start({
+  title: 'The Shadow Wraith',
+  blurb: 'The common foe in the Night square: a soul that died without light, facing Io the Witch and Sol. Defeat sets it free.',
+  subject: {
+    id: 'wraith', name: 'Shadow Wraith', make: () => makeWraith(STAGES.wraith.opts()), before: () => STAGES.wraith.wrapOriginal(makeWraithOriginal()),
+    home: [860, 800], face: 'witch', yawBias: 0.75, shadow: 0.75, target: 'witch',
+    walkLabel: 'Glide', walkSpeed: 0.8, height: '2.0 m to the hood tip', frameHeight: STAGES.wraith.great ? 2.6 : 1.05, closeSpan: 130, tall: 2.4, aim: false,
+  },
+  cast: [
+    { id: 'witch', name: 'Io', kind: 'witch', make: () => makeWitchOriginal(), home: [560, 812], face: 'wraith', yawBias: -0.38, shadow: 0.62 },
+    { id: 'sol', name: 'Sol', make: () => makeSolOriginal({}), home: [650, 868], face: 'wraith', yawBias: -0.3, shadow: 0.6 },
+  ],
+  groups: [
+    { title: 'Attacks', acts: ['sweep', 'cast', 'grasp'] },
+    { title: 'Under 35% health', acts: ['eclipse'] },
+    { title: 'The great wraith', acts: ['swallow', 'breath'] },
+    { title: 'Arrival and release', acts: ['appear', 'die'] },
+    { title: 'Reactions', acts: ['hurt', 'block'] },
+  ],
+  names: { sweep: 'Soul Reaper', cast: 'Soul Bolts', grasp: 'Shadow Grasp', eclipse: 'Eclipse', swallow: 'Swallow Lamplight', breath: 'Stolen Fire', appear: 'Appear', die: 'Defeat', hurt: 'Hurt', block: 'Block' },
+  hints: { sweep: 'on Sol, who hit it last', cast: 'three, at random', grasp: 'on Io', eclipse: 'a black sun, on both', swallow: 'it heals', breath: 'on both', die: 'a pale moth rises' },
+  wide: { sweep: 1, cast: 1, grasp: 1, eclipse: 1, breath: 1 },
+  toggles: [{ label: 'Great wraith', value: STAGES.wraith.great, onToggle: (v, ctx) => STAGES.wraith.setGreat(v, ctx) }],
+  sliders: [{ label: 'Level', min: 1, max: 20, step: 1, value: STAGES.wraith.level, onInput: (v, ctx) => STAGES.wraith.setLevel(v, ctx) }],
+  stage: STAGES.wraith,
+  note: 'Gold rings mark hits; numbers show where damage lands. Soul Reaper swoops on Sol, Soul Bolts pick a target each, Shadow Grasp seizes Io, and Eclipse hits both under a black sun. Level (1 to 20) makes the wraith fiercer: a deeper green, a stronger glow, more smoke, blacker rags and a little more size. Great wraith is the Bogmire boss at about level 5: nearly three times the size, with stolen lamp-flames in its ribs and showing through its robe and lanterns on a chain round its neck; it alone swallows lamplight and breathes stolen fire, and on defeat the stolen lights stream out before a great moth rises (its numbers are placeholders). In defeat the robe falls empty and a pale moth rises: the soul going home. Before and After switch between the old model and the touched-up one.',
+});
+</script>
+</body>
+</html>
