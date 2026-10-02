@@ -103,6 +103,19 @@ She is 3.1 m tall, measured from the two Envoi scenes. Animation costs about 0.0
 - **The great wraith** (the Bogmire boss) reuses this model at about three times the size, with stolen lamplight glowing inside its ribs and robe (lore answer 17).
 - Give it the spec interface.
 
+### Halcyon: refined October 2, 2026
+
+Brought closer to her two model sheets and both action sheets. Her `ACTIONS` timing and damage numbers are unchanged.
+
+- **Tabard:** a teal tabard over her breastplate, with the clawed-out gold sun.
+- **Skirt and braid:** a skirt of ragged feather strips in charcoal, teal and grey-white; her braid runs down her back to mid-thigh.
+- **Helm:** pointed, with gold sun bosses and a fuller crest.
+- **Face:** three red scars and a deeper frown.
+- **Greatsword:** a sun-wheel guard and a faint blue lattice on the blade.
+- **Poses:** the sheets' poses, from the High Guard stance to the kneeling release, where the whole edge of the blade warms to gold.
+
+89k triangles, 21 draw calls, about 0.2 ms per frame.
+
 ### Halcyon: recolor and two new endings
 
 The strongest model of the set: the helm, feathers and braid all read. She stays a woman, with her face and body as built (lore answer 1).

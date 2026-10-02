@@ -1,8 +1,10 @@
-// Imported unchanged from reference/demos/halcyon-in-the-night-square.html. three.js r128 (global THREE).
+// From reference/demos/halcyon-in-the-night-square.html, touched up after her model and action sheets
+// (reference/art/halcyon-model.png, -model-b.png, -actions.png, -actions-b.webp). three.js r128 (global THREE).
 function makeHalcyon(opts) {
  'use strict';
  // Halcyon, the Gloam Knight. Code-built three.js r128 model for Moonlight in the Aether.
  // Units are meters, Y up, facing +Z, feet on y = 0. Her right side is -X. Same rig layout as Sol's.
+ // For model-sheet renders, state.pose = 'sheet' stands her in the sheets' A-pose with the blade hung at her side.
  opts = opts || {};
  const DET = Math.max(.5, Math.min(1, opts.detail === undefined ? 1 : +opts.detail));
  const Q = (n, m) => Math.max(m || 3, Math.round(n * DET));
@@ -31,17 +33,9 @@ function makeHalcyon(opts) {
   const gr = g.createRadialGradient(-r * .3, -r * .3, r * .1, 0, 0, r); gr.addColorStop(0, '#f6dc8e'); gr.addColorStop(.6, fill); gr.addColorStop(1, dark);
   g.fillStyle = gr; g.beginPath(); g.arc(0, 0, r, 0, TAU); g.fill(); g.restore();
  }
- // four deep gouges clawed through a crest
- function gouges(g, x, y, r) {
-  for (let k = 0; k < 4; k++) {
-   const o = (k - 1.5) * r * .32, a = [x - r * 1.2 + o, y - r * 1.25], b = [x + r * .9 + o, y + r * 1.3];
-   line(g, [a, [lerp(a[0], b[0], .5) + 2, lerp(a[1], b[1], .5)], b], r * .13, 'rgba(18,14,12,.95)');
-   line(g, [[a[0] + 2, a[1] + 1], [b[0] + 2, b[1] + 1]], r * .035, 'rgba(210,180,120,.55)');
-  }
- }
  function faceCanvas() {
   const W = 512, H = 256, c = cvs(W, H), g = c.getContext('2d');
-  g.fillStyle = '#c4aa9a'; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#c0ae9c'; g.fillRect(0, 0, W, H);
   const P = (az, y) => [(.25 + az / TAU) * W, (.124 - y) / .252 * H];
   speck(g, W, H, 3600, ['rgba(120,84,72,.06)', 'rgba(255,236,226,.05)', 'rgba(140,96,84,.05)'], 1, 3);
   const B = (az, y, r, col, sx) => { const p = P(az, y); blob(g, p[0], p[1], r, col, sx); };
@@ -62,11 +56,11 @@ function makeHalcyon(opts) {
   Ln([[-.05, .028], [-.045, .012]], 1.6, 'rgba(100,66,60,.5)'); Ln([[.05, .028], [.045, .012]], 1.6, 'rgba(100,66,60,.5)');
   B(0, -.046, 7, 'rgba(255,236,226,.24)'); B(0, -.064, 6, 'rgba(130,92,88,.22)', .7);
   B(0, -.11, 14, 'rgba(255,236,226,.12)', 1.4); B(0, -.126, 22, 'rgba(90,70,80,.26)', 2.6);
-  // old scars raked across her left cheek, under her left eye
+  // three red scars raked down her left cheek, from under the eye to the jaw, as on her sheets
   for (let k = 0; k < 3; k++) {
-   const a0 = .32 + k * .1, y0 = -.03 - k * .006;
-   Ln([[a0, y0], [a0 + .2, y0 - .045]], 4.2, 'rgba(150,92,90,.35)');
-   Ln([[a0, y0], [a0 + .2, y0 - .045]], 1.8, 'rgba(238,206,200,.85)');
+   const a = [.33 + k * .07, -.016 - k * .013], b = [.84 + k * .07, -.068 - k * .013];
+   Ln([a, b], 5.4, 'rgba(168,70,64,.34)'); Ln([a, b], 2, 'rgba(126,30,28,.92)');
+   for (let j = 1; j < 6; j++) { const m = [lerp(a[0], b[0], j / 6), lerp(a[1], b[1], j / 6)]; Ln([[m[0] - .02, m[1] - .009], [m[0] + .016, m[1] + .008]], 1, 'rgba(136,44,40,.55)'); }
   }
   return c;
  }
@@ -91,18 +85,6 @@ function makeHalcyon(opts) {
   cell(1, () => { g.fillStyle = dk; g.fillRect(-15, -3, 30, 7); g.fillStyle = tooth; g.fillRect(-13, -2.5, 26, 3); g.fillRect(-12, 1, 24, 2.5); line(g, [[-17, -3], [0, -5], [17, -3]], 2.5, lip); line(g, [[-17, 4], [0, 7], [17, 4]], 3, lip); });
   cell(2, () => { g.fillStyle = dk; g.beginPath(); g.ellipse(0, 3, 13, 12, 0, 0, TAU); g.fill(); g.fillStyle = tooth; g.fillRect(-9, -8, 18, 3.5); g.fillStyle = '#8a3a34'; g.beginPath(); g.ellipse(0, 11, 7, 3, 0, 0, TAU); g.fill(); g.strokeStyle = lip; g.lineWidth = 3; g.beginPath(); g.ellipse(0, 3, 14, 13, 0, 0, TAU); g.stroke(); });
   cell(3, () => { g.fillStyle = dk; g.beginPath(); g.moveTo(-17, 0); g.quadraticCurveTo(0, -7, 17, 0); g.quadraticCurveTo(0, 10, -17, 0); g.fill(); g.fillStyle = tooth; g.fillRect(-11, -4, 22, 3); g.fillRect(-10, 3, 20, 2.5); line(g, [[-18, 0], [0, -7], [18, 0]], 2.5, lip); line(g, [[-18, 1], [0, 9], [18, 1]], 3, lip); });
-  return c;
- }
- // a thick braid: interlocking lobes of white hair
- function hairCanvas() {
-  const W = 256, H = 128, c = cvs(W, H), g = c.getContext('2d');
-  g.fillStyle = '#b8b2aa'; g.fillRect(0, 0, W, H);
-  for (let i = 0; i < 8; i++) for (const s of [0, 1]) {
-   const x0 = i * 32 + s * 16, y0 = s ? H * .5 : 0;
-   const gr = g.createLinearGradient(x0, y0, x0 + 24, y0 + H * .5); gr.addColorStop(0, '#77716c'); gr.addColorStop(.45, '#ece8e0'); gr.addColorStop(1, '#8a847e');
-   g.fillStyle = gr; g.beginPath(); g.ellipse(x0 + 16, y0 + H * .25, 17, H * .29, .5, 0, TAU); g.fill();
-  }
-  for (let i = 0; i < 260; i++) { const x = rnd() * W, y = rnd() * H; line(g, [[x, y], [x + 10 + rnd() * 10, y + (rnd() - .5) * 8]], 1, rnd() < .5 ? 'rgba(255,255,250,.3)' : 'rgba(80,74,70,.25)'); }
   return c;
  }
  function heightCanvas(W, H, fn, str) {
@@ -161,55 +143,62 @@ function makeHalcyon(opts) {
    for (let k = 0; k < 3; k++) gl([[bx - sd * 10, 352 + k * 50], [bx - sd * 215, 342 + k * 50]], 3);
    for (let k = 0; k < 5; k++) { g.fillStyle = 'rgba(226,186,104,.95)'; g.beginPath(); g.arc(512 + sd * (236 - k * 3), 150 + k * 44, 4, 0, TAU); g.fill(); }
   }
-  gl([[512, 112], [512, 250]], 3); gl([[512, 300], [512, 506]], 3);
-  g.save(); g.translate(512, 196); g.scale(1, 1.25); sunGlyph(g, 0, 0, 27, 16, '#d8a848', '#7a5418'); claws(g, 0, 0, 52); g.restore();
   for (let i = 0; i < 26; i++) { const x = 300 + rnd() * 424, y = 30 + rnd() * 450, a = rnd() * PI, L = 10 + rnd() * 40; line(g, [[x, y], [x + Math.cos(a) * L, y + Math.sin(a) * L]], 1, 'rgba(214,196,168,.3)'); }
+  // chainmail at her sides, under the arms, between the breastplate and the backplate
+  const mp = g.createPattern(mailCanvas(), 'repeat');
+  for (const cx of [256, 768]) {
+   const o = [[cx - 54, 512], [cx - 54, 150], [cx - 32, 102], [cx, 88], [cx + 32, 102], [cx + 54, 150], [cx + 54, 512]];
+   g.save(); g.beginPath(); o.forEach((p, i) => (i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]))); g.closePath(); g.clip(); g.fillStyle = mp; g.fillRect(cx - 60, 80, 120, 440); g.restore(); gl(o, 4);
+  }
   g.fillStyle = '#1c1917'; g.fillRect(0, 0, 3, H);
   return c;
  }
- // tabard atlas. Row 1 (y 0-500): teal panels round the waist. Row 2 (y 512-884): the black feathered under-layer. Row 3 (y 896-1020): shoulder mantle.
- const TAB = { o: [0, 500], i: [512, 372], m: [896, 124] };
+ // tabard atlas, [x, y, w, h] per piece: the skirt's front panel (to the knee) and back panel (to the ankle), and the tabard
+ // over the breastplate, front and back. UVs map straight into these boxes; everything else is cut away.
+ const TA = { f: [8, 8, 288, 620], b: [320, 8, 336, 1008], cf: [680, 8, 336, 520], cb: [680, 548, 336, 468] };
+ const GOLD = 'rgba(206,164,84,.95)';
+ // a gold sun-wheel: rings, eight spokes and a star at the hub
+ function wheel(g, x, y, r, sy) {
+  g.save(); g.translate(x, y); g.scale(1, sy || 1); g.lineCap = 'round';
+  for (const [col, wk] of [['rgba(8,6,4,.5)', 1.8], [GOLD, 1]]) {
+   g.strokeStyle = col;
+   for (const [rr, lw] of [[r, .032], [r * .66, .024], [r * .2, .03]]) { g.lineWidth = r * lw * wk; g.beginPath(); g.arc(0, 0, rr, 0, TAU); g.stroke(); }
+   for (let i = 0; i < 8; i++) { const a = i / 8 * TAU, L = r * (i % 2 ? 1.06 : 1.28); g.lineWidth = r * (i % 2 ? .018 : .028) * wk; g.beginPath(); g.moveTo(Math.cos(a) * r * .2, Math.sin(a) * r * .2); g.lineTo(Math.cos(a) * L, Math.sin(a) * L); g.stroke(); }
+  }
+  g.fillStyle = GOLD; g.beginPath(); for (let i = 0; i < 8; i++) { const a = i / 8 * TAU - PI / 2, rr = r * (i % 2 ? .06 : .3); g.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } g.fill();
+  g.restore();
+ }
  function tabardCanvas() {
-  const W = 1024, c = cvs(W, W), g = c.getContext('2d');
-  const X = (a) => (a + PI) / TAU * W;
-  const mk = (x0, x1, yT, L, kind) => {
-   const w = x1 - x0, n = Math.max(1, Math.round(w / (kind ? 26 : 14))), pts = [[x1, yT + L * (.8 + rnd() * .08)]];
-   for (let i = n; i > 0; i--) { const d = rnd() < .3 ? .2 : .06; pts.push([x0 + w * (i - .35 - rnd() * .3) / n, yT + L * (.9 + rnd() * .1)]); pts.push([x0 + w * (i - 1) / n + (i > 1 ? (rnd() - .5) * 8 : 0), yT + L * (.84 - d * rnd())]); }
-   const fx = []; for (let i = 0; i < w * L / 900; i++) fx.push([x0 + rnd() * w, yT + rnd() * L, rnd(), rnd()]);
-   return { x0, x1, yT, L, kind, pts, fx };
-  };
-  const draw = (s, dx) => {
-   const { x0, x1, yT, L, kind, pts } = s, w = x1 - x0;
-   g.save(); g.translate(dx || 0, 0);
-   const path = () => { g.beginPath(); g.moveTo(x0, yT); g.lineTo(x1, yT); for (const p of pts) g.lineTo(p[0], p[1]); g.closePath(); };
-   path(); g.save(); g.clip();
-   const gr = g.createLinearGradient(0, yT, 0, yT + L);
-   if (kind) { gr.addColorStop(0, '#17474f'); gr.addColorStop(.3, '#1f6670'); gr.addColorStop(.7, '#184c56'); gr.addColorStop(1, '#0b2228'); }
-   else { gr.addColorStop(0, '#16282e'); gr.addColorStop(.5, '#0f1a20'); gr.addColorStop(1, '#090c10'); }
-   g.fillStyle = gr; g.fillRect(x0 - 2, yT, w + 4, L);
-   for (const f of s.fx) {
-    if (kind) { if (f[2] < .24) blob(g, f[0], f[1], 8 + f[3] * 24, f[3] < .62 ? 'rgba(4,12,16,.55)' : 'rgba(120,196,196,.15)'); else line(g, [[f[0], f[1]], [f[0] + (f[3] - .5) * 2, f[1] + 8 + f[3] * 18]], .8, 'rgba(6,20,24,.3)'); }
-    else if (f[2] < .5) line(g, [[f[0], f[1]], [f[0] + (f[3] - .5) * 9, f[1] + 7 + f[3] * 9]], .9, f[3] < .7 ? 'rgba(40,74,80,.5)' : 'rgba(0,0,0,.5)');
-   }
-   // gold leaf flaking off toward the hem
-   for (const f of s.fx) if (f[2] > (kind ? .5 : .93) && f[1] > yT + L * (kind ? .5 : .7)) { g.fillStyle = f[3] < .5 ? 'rgba(226,186,100,.9)' : 'rgba(170,124,52,.85)'; g.fillRect(f[0], f[1], 1.5 + f[3] * 4, 1.5 + f[2] * 3); }
+  const c = cvs(1024, 1024), g = c.getContext('2d');
+  // the weave: specks painted once into a tile and laid over every panel as a pattern
+  const wc = cvs(128, 128), wg = wc.getContext('2d');
+  for (let k = 0; k < 410; k++) { wg.fillStyle = rnd() < .55 ? 'rgba(0,0,0,.13)' : 'rgba(255,255,255,.05)'; wg.fillRect(rnd() * 128, rnd() * 128, 1 + rnd() * 2, 1 + rnd() * 3); }
+  const weave = g.createPattern(wc, 'repeat');
+  // a cloth panel: folds, weave and wear inside a frayed outline, pale linen torn along the hem and sides, a thin gold border
+  const panel = (r, cols, hemL, vee, edge) => {
+   const [x, y, w, h] = r, yb = (f) => y + h - hemL - vee * Math.abs(2 * f - 1), n = Math.round(w / 9), P = [[x + 1, y], [x + w - 1, y]];
+   for (let j = 1; j < 8; j++) P.push([x + w - rnd() * 3, lerp(y, yb(1), j / 8)]);
+   for (let i = n; i >= 0; i--) { const f = i / n, b = yb(f); P.push([x + w * Math.min(1, f + .45 / n), b + hemL * (.3 + .7 * rnd())]); P.push([x + w * f, b + hemL * .2 * rnd()]); }
+   for (let j = 7; j > 0; j--) P.push([x + rnd() * 3, lerp(y, yb(0), j / 8)]);
+   g.save(); g.beginPath(); P.forEach((p, i) => (i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]))); g.closePath(); g.clip();
+   const gr = g.createLinearGradient(0, y, 0, y + h); gr.addColorStop(0, cols[0]); gr.addColorStop(.45, cols[1]); gr.addColorStop(1, cols[2]); g.fillStyle = gr; g.fillRect(x, y, w, h);
+   for (let k = 0; k < 9; k++) { const fx = x + w * (k + .5 + (rnd() - .5) * .5) / 9, fw = 10 + rnd() * 14, lg = g.createLinearGradient(fx - fw, 0, fx + fw, 0); lg.addColorStop(0, 'rgba(0,0,0,0)'); lg.addColorStop(.5, rnd() < .7 ? 'rgba(0,0,0,.24)' : 'rgba(150,220,220,.08)'); lg.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = lg; g.fillRect(fx - fw, y, fw * 2, h); }
+   g.fillStyle = weave; g.fillRect(x, y, w, h);
+   for (let k = 0; k < w * h / 2500; k++) blob(g, x + rnd() * w, y + rnd() * h, 6 + rnd() * 20, rnd() < .8 ? 'rgba(2,6,8,.32)' : 'rgba(170,150,110,.12)');
+   if (hemL) for (let i = 0; i < w; i += 2) { const b = yb(i / w) - hemL * (.35 + .25 * rnd()); g.fillStyle = rnd() < .5 ? '#c9b994' : '#a8987a'; g.fillRect(x + i, b, 1.6, hemL * 2.2); }
+   if (edge) for (const sx of [x, x + w - edge]) for (let j = y; j < yb(sx > x ? 1 : 0); j += 2) { g.fillStyle = rnd() < .5 ? '#c4b48e' : '#9c8c6e'; g.fillRect(sx + rnd() * 2, j, edge * (.6 + .4 * rnd()), 2.1); }
    g.restore();
-   path(); g.strokeStyle = kind ? 'rgba(206,164,84,.95)' : 'rgba(44,70,74,.9)'; g.lineWidth = kind ? 3.2 : 1.6; g.lineJoin = 'round'; g.stroke();
-   if (!kind) line(g, [[(x0 + x1) / 2, yT], [(x0 + x1) / 2, pts[1][1] - 4]], 1, 'rgba(64,96,100,.55)');
-   g.restore();
+   const i0 = edge + 7, yl = (f) => yb(f) - hemL * .5 - 4, pts = [[x + i0, y + 3], [x + i0, yl(0)]];
+   for (let k = 1; k < 8; k++) pts.push([x + w * k / 8, yl(k / 8)]);
+   pts.push([x + w - i0, yl(1)], [x + w - i0, y + 3]);
+   line(g, pts.map((p) => [p[0], p[1] + 1.5]), 4.5, 'rgba(6,5,5,.45)'); line(g, pts, 2.6, GOLD);
   };
-  // row 2 first: narrow black feather strips, everywhere but the gaps over the thighs
-  const [yi, Li] = TAB.i;
-  { let x = 0; while (x < W) { const w = 20 + rnd() * 16, a = Math.abs((x + w / 2) / W * TAU - PI); if (a > .74 || a < .6) draw(mk(x, x + w, yi, Li * (.74 + rnd() * .26), 0)); x += w + 1; } }
-  // row 1: a centre panel, three strips on each hip, the back panel with the clawed sun
-  const [yo, Lo] = TAB.o;
-  draw(mk(X(-.37), X(.37), yo, Lo * .9, 1));
-  for (const sd of [-1, 1]) for (const [a0, a1, k] of [[.96, 1.34, .97], [1.37, 1.74, 1], [1.77, 2.06, .93], [2.14, 2.5, .9]]) draw(mk(X(sd < 0 ? -a1 : a0), X(sd < 0 ? -a0 : a1), yo, Lo * k, 1));
-  const back = mk(X(2.54), X(TAU - 2.54), yo, Lo * .97, 1); draw(back); draw(back, -W);
-  for (const x of [0, W]) { g.save(); g.translate(x, yo + Lo * .36); g.scale(.82, 1); sunGlyph(g, 0, 0, 30, 16, '#d0a044', '#6a4a14'); claws(g, 0, 0, 56); g.restore(); }
-  // row 3: the mantle's ragged teal strips
-  const [ym, Lm] = TAB.m;
-  { let x = 2; while (x < W - 30) { const w = 34 + rnd() * 26; draw(mk(x, Math.min(W - 2, x + w), ym, Lm * (.62 + rnd() * .38), 1)); x += w + 2; } }
+  const TEAL = ['#1a4e56', '#1f646d', '#133c44'];
+  panel(TA.f, TEAL, 30, 0, 10); wheel(g, TA.f[0] + TA.f[2] / 2, TA.f[1] + TA.f[3] * .73, 100);
+  panel(TA.b, ['#25272a', '#1e2023', '#131416'], 34, 70, 12); wheel(g, TA.b[0] + TA.b[2] / 2, TA.b[1] + TA.b[3] * .78, 118, 1.2);
+  panel(TA.cf, TEAL, 0, 0, 0);
+  { const [x, y, w] = TA.cf; g.save(); g.translate(x + w / 2, y + 196); sunGlyph(g, 0, 0, 40, 16, '#d8a848', '#7a5418'); claws(g, 0, 0, 74); g.restore(); }
+  panel(TA.cb, TEAL, 0, 0, 0);
   return c;
  }
  function mailCanvas() {
@@ -218,47 +207,62 @@ function makeHalcyon(opts) {
   for (let y = 0; y < S + 8; y += 6) for (let x = 0; x < S + 8; x += 8) { const ox = (y / 6) % 2 ? 4 : 0; g.strokeStyle = 'rgba(124,116,108,.75)'; g.lineWidth = 1.4; g.beginPath(); g.ellipse(x + ox, y, 3.6, 2.8, 0, PI * 1.05, PI * 2.95); g.stroke(); }
   return c;
  }
- // feathers: kingfisher teal, deep blue, slate, and white down; dark at the tip, pale at the quill
+ // feathers, a 4 x 2 atlas of 128 x 256 cells with the quill at the bottom: kingfisher teal, grey-white, charcoal, white down;
+ // then the skirt's long ragged strips: charcoal, teal, grey-white, and charcoal frayed pale at the tip
  function featherCanvas() {
-  const S = 256, c = cvs(S, S), g = c.getContext('2d'), h = S / 2;
-  const cols = [['#93a4a8', '#1d6670', '#081e26'], ['#8494a0', '#27506e', '#0a1626'], ['#4a565c', '#22343c', '#0a1014'], ['#f2f2ee', '#cfd4d4', '#88949a']];
-  cols.forEach((cc, i) => {
-   const ox = (i % 2) * h, oy = (i >> 1) * h; g.save(); g.translate(ox + h / 2, oy + h - 3);
-   const gr = g.createLinearGradient(0, 0, 0, -h + 6); gr.addColorStop(0, cc[0]); gr.addColorStop(.22, cc[1]); gr.addColorStop(.7, cc[1]); gr.addColorStop(1, cc[2]);
-   g.fillStyle = gr; g.beginPath(); g.moveTo(0, 0); g.bezierCurveTo(-h * .46, -h * .25, -h * .36, -h * .8, 0, -h + 6); g.bezierCurveTo(h * .36, -h * .8, h * .46, -h * .25, 0, 0); g.fill();
-   for (let k = 0; k < 46; k++) { const y = -h * (.1 + .85 * rnd()), sd = rnd() < .5 ? -1 : 1; line(g, [[0, y], [sd * h * .32, y - h * .09]], .7, i === 3 ? 'rgba(90,104,110,.3)' : 'rgba(4,10,14,.34)'); }
+  const W = 128, H = 256, c = cvs(W * 4, H * 2), g = c.getContext('2d');
+  const K = [[['#8a9c96', '#1a5650', '#0a2422'], 0], [['#e2ded4', '#b4b2aa', '#7e7f7a'], 0], [['#707276', '#383a40', '#16181b'], 0], [['#ffffff', '#ecece6', '#b4b8b8'], 2],
+   [['#4a4c50', '#222428', '#101114'], 1], [['#4a746c', '#164a46', '#08201e'], 1], [['#bdb6a6', '#8f8a7e', '#6a675e'], 1], [['#4c4e52', '#26282c', '#b4a688'], 1]];
+  K.forEach(([cc, k], i) => {
+   g.save(); g.beginPath(); g.rect((i % 4) * W, (i >> 2) * H, W, H); g.clip(); g.translate((i % 4) * W + W / 2, (i >> 2) * H + H - 2);
+   const L = H - 6, hw = W * (k === 2 ? .46 : k ? .36 : .42);
+   const gr = g.createLinearGradient(0, 0, 0, -L); gr.addColorStop(0, cc[0]); gr.addColorStop(.18, cc[1]); gr.addColorStop(.72, cc[1]); gr.addColorStop(1, cc[2]);
+   g.fillStyle = gr; g.beginPath(); g.moveTo(0, 0);
+   if (k === 1) { g.moveTo(-hw * .4, 0); g.quadraticCurveTo(-hw * 1.1, -L * .3, -hw * .9, -L * .55); g.quadraticCurveTo(-hw * .6, -L * .85, 0, -L); g.quadraticCurveTo(hw * .6, -L * .85, hw * .9, -L * .55); g.quadraticCurveTo(hw * 1.1, -L * .3, hw * .4, 0); }
+   else { g.bezierCurveTo(-hw * 1.15, -L * .2, -hw, -L * .78, 0, -L); g.bezierCurveTo(hw, -L * .78, hw * 1.15, -L * .2, 0, 0); }
+   g.fill();
+   // barbs, then splits through the vane and a frayed tip
+   for (let n = 0; n < 110; n++) { const y = -L * (.04 + .93 * rnd()), sd = rnd() < .5 ? -1 : 1; line(g, [[0, y], [sd * hw * (.4 + .6 * rnd()), y - L * .05]], .7, rnd() < .62 ? 'rgba(0,0,0,.24)' : 'rgba(255,255,255,.11)'); }
    g.globalCompositeOperation = 'destination-out';
-   for (let k = 0; k < 4; k++) { const y = -h * (.25 + k * .17), sd = k % 2 ? 1 : -1; line(g, [[sd * h * .12, y], [sd * h * .42, y - h * .06]], 1.4, '#000'); }
+   const ns = k === 1 ? 16 : k === 2 ? 16 : 6;
+   for (let n = 0; n < ns; n++) { const y = -L * (.15 + .8 * rnd()), sd = n % 2 ? 1 : -1; line(g, [[sd * hw * (k === 2 ? .15 : k ? .45 : .3), y], [sd * hw * 1.2, y - L * (k ? .07 : .05)]], k === 2 ? 2.2 : 1.7, '#000'); }
+   if (k === 1) for (let n = 0; n < 8; n++) { const x = (n / 7 - .5) * hw * 1.5; line(g, [[x, -L], [x * .9, -L * (.78 + .12 * rnd())]], 2.4, '#000'); }
    g.globalCompositeOperation = 'source-over';
-   line(g, [[0, 0], [0, -h + 8]], 1.5, i === 3 ? 'rgba(150,160,164,.7)' : 'rgba(214,226,226,.6)');
+   line(g, [[0, 0], [0, -L * .95]], 1.6, k === 2 ? 'rgba(196,200,200,.5)' : 'rgba(226,230,226,.5)');
    g.restore();
   });
   return c;
  }
- // gloamsteel: black glass with a thin cold blue edge (used as the emissive map)
+ // gloamsteel: black glass, a thin glowing edge each side, a faint diamond lattice and crackle on the flat. This is the emissive
+ // map; it is neutral so the emissive colour decides the glow: cold blue in battle, gold at the very end
  function bladeCanvas() {
   const W = 128, H = 512, c = cvs(W, H), g = c.getContext('2d');
   g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
-  for (const [x0, x1] of [[0, 22], [W, W - 22]]) { const gr = g.createLinearGradient(x0, 0, x1, 0); gr.addColorStop(0, 'rgba(226,242,255,1)'); gr.addColorStop(.35, 'rgba(120,184,255,.9)'); gr.addColorStop(1, 'rgba(40,96,220,0)'); g.fillStyle = gr; g.fillRect(Math.min(x0, x1), 0, 22, H); }
+  for (let k = -4; k < 16; k++) for (const s of [0, 1]) line(g, [[s * W, k * 36], [(1 - s) * W, k * 36 + 100]], 1.2, 'rgba(150,158,176,.4)');
+  for (let i = 0; i < 16; i++) { let x = 20 + rnd() * 88, y = rnd() * H; const p = [[x, y]]; for (let k = 0; k < 5; k++) { x += (rnd() - .5) * 26; y += 6 + rnd() * 14; p.push([x, y]); } line(g, p, .8, 'rgba(130,136,152,.3)'); }
+  for (const [x0, x1] of [[0, 22], [W, W - 22]]) { const gr = g.createLinearGradient(x0, 0, x1, 0); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.35, 'rgba(176,184,204,.9)'); gr.addColorStop(1, 'rgba(90,96,120,0)'); g.fillStyle = gr; g.fillRect(Math.min(x0, x1), 0, 22, H); }
   return c;
  }
  function softC(inner, mid, S) { S = S || 64; const c = cvs(S, S), g = c.getContext('2d'), m = S / 2, gr = g.createRadialGradient(m, m, 0, m, m, m); gr.addColorStop(0, inner); gr.addColorStop(.4, mid); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, S, S); return c; }
+ // the rim of the dark sun: dark inside, a thin cold blue ring hugging the black disc, and lightning leaping off it
  function coronaCanvas() {
   const S = 256, c = cvs(S, S), g = c.getContext('2d'), m = S / 2;
-  const gr = g.createRadialGradient(m, m, m * .3, m, m, m); gr.addColorStop(0, 'rgba(210,170,255,1)'); gr.addColorStop(.35, 'rgba(140,80,230,.7)'); gr.addColorStop(1, 'rgba(60,20,120,0)');
+  const gr = g.createRadialGradient(m, m, 0, m, m, m); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(.36, 'rgba(0,0,0,0)'); gr.addColorStop(.41, 'rgba(232,244,255,1)'); gr.addColorStop(.5, 'rgba(100,164,255,.6)'); gr.addColorStop(1, 'rgba(20,50,140,0)');
   g.fillStyle = gr; g.fillRect(0, 0, S, S);
-  for (let i = 0; i < 40; i++) { const a = rnd() * TAU, r0 = m * .32, r1 = m * (.6 + rnd() * .38); line(g, [[m + Math.cos(a) * r0, m + Math.sin(a) * r0], [m + Math.cos(a) * r1, m + Math.sin(a) * r1]], 1 + rnd() * 2, 'rgba(230,210,255,.5)'); }
+  for (let i = 0; i < 10; i++) { let a = rnd() * TAU, r = m * .42; const p = [[m + Math.cos(a) * r, m + Math.sin(a) * r]]; for (let k = 0; k < 6; k++) { a += (rnd() - .5) * .4; r += m * (.04 + .05 * rnd()); p.push([m + Math.cos(a) * r, m + Math.sin(a) * r]); } line(g, p, 1.2 + rnd(), 'rgba(196,224,255,.85)'); }
   return c;
  }
+ // a soft lumpy puff for the black smoke
+ function smokeCanvas() { const S = 64, c = cvs(S, S), g = c.getContext('2d'); for (let i = 0; i < 10; i++) blob(g, 32 + (rnd() - .5) * 22, 32 + (rnd() - .5) * 22, 9 + rnd() * 12, 'rgba(255,255,255,.5)'); return c; }
  function discCanvas() { const S = 128, c = cvs(S, S), g = c.getContext('2d'), m = S / 2; g.fillStyle = '#000'; g.beginPath(); g.arc(m, m, m - 3, 0, TAU); g.fill(); return c; }
 
  // deepen v1's face paint so it reads at battle distance: sockets, cheek hollows, nose, lips, weathering
  function faceV2() {
   const c = faceCanvas(), g = c.getContext('2d'), W = c.width, H = c.height;
   const P = (az, y) => [(.25 + az / TAU) * W, (.124 - y) / .252 * H], B = (az, y, r, col, sx) => { const p = P(az, y); blob(g, p[0], p[1], r, col, sx); };
-  g.globalCompositeOperation = 'multiply'; g.fillStyle = '#e6d2c6'; g.fillRect(0, 0, W, H); g.globalCompositeOperation = 'source-over';
+  g.globalCompositeOperation = 'multiply'; g.fillStyle = '#e8ded0'; g.fillRect(0, 0, W, H); g.globalCompositeOperation = 'source-over';
   for (const sd of [-1, 1]) {
-   B(sd * .4, .0, 20, 'rgba(58,36,44,.5)', 1.6); B(sd * .4, .014, 16, 'rgba(50,32,36,.4)', 1.9);
+   B(sd * .4, .0, 20, 'rgba(58,36,44,.5)', 1.6); B(sd * .4, .014, 16, 'rgba(50,32,36,.4)', 1.9); B(sd * .42, .004, 26, 'rgba(36,24,28,.42)', 1.6);
    B(sd * .7, -.072, 24, 'rgba(76,46,48,.36)', 1.1); B(sd * .14, -.03, 10, 'rgba(70,44,42,.42)', .7);
    B(sd * .58, -.03, 12, 'rgba(255,226,208,.2)', 1.4); B(sd * 1.0, -.03, 30, 'rgba(60,44,56,.3)', 1);
    line(g, [P(sd * .2, -.052), P(sd * .3, -.074), P(sd * .31, -.096)], 2.2, 'rgba(84,50,46,.5)');
@@ -274,39 +278,42 @@ function makeHalcyon(opts) {
  seed = 7741;
  const leatherN = tex(heightCanvas(128, 128, (x, y) => Math.sin(x * .7 + Math.sin(y * .31) * 2) * .3 + Math.sin(y * .9 + x * .13) * .25 + (rnd() - .5) * .5, 1.4), 3, 3);
  const dents = []; for (let i = 0; i < 26; i++) dents.push([rnd() * 128, rnd() * 128, 5 + rnd() * 10]);
- const hammerN = tex(heightCanvas(128, 128, (x, y) => { let v = 0; for (const d of dents) for (const ox of [-128, 0, 128]) for (const oy of [-128, 0, 128]) { const r = Math.hypot(x - d[0] - ox, y - d[1] - oy) / d[2]; if (r < 1) v -= (1 - r * r) * .6; } return v + (rnd() - .5) * .08; }, 1.8), 2, 2);
- const glowT = tex(softC('rgba(255,255,255,1)', 'rgba(255,255,255,.32)')), coronaT = tex(coronaCanvas()), discT = tex(discCanvas());
+ // hammer dents, each stamped over its own wrapped footprint (the same field as summing every dent at every pixel, far faster)
+ const dentH = new Float32Array(128 * 128);
+ for (const d of dents) for (let y = Math.floor(d[1] - d[2]); y <= d[1] + d[2]; y++) for (let x = Math.floor(d[0] - d[2]); x <= d[0] + d[2]; x++) { const r = Math.hypot(x - d[0], y - d[1]) / d[2]; if (r < 1) dentH[((y + 128) % 128) * 128 + (x + 128) % 128] -= (1 - r * r) * .6; }
+ const hammerN = tex(heightCanvas(128, 128, (x, y) => dentH[y * 128 + x] + (rnd() - .5) * .08, 1.8), 2, 2);
+ const glowT = tex(softC('rgba(255,255,255,1)', 'rgba(255,255,255,.32)')), coronaT = tex(coronaCanvas()), discT = tex(discCanvas()), smokeT = tex(smokeCanvas());
  const nv2 = (k) => new THREE.Vector2(k, k);
  const std = (c, r, x) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: r, metalness: 0 }, x || {}));
  const M = {
-  face: std(0xffffff, .62, { map: faceT, emissive: 0x1c100c }),
-  skin: std(0xc4aa9a, .64, { emissive: 0x1c100c }),
+  face: std(0xffffff, .66, { map: faceT, emissive: 0x0e0b0a }),
+  skin: std(0xac9886, .66, { emissive: 0x0e0b0a }),
   eyeW: std(0xf2ece6, .35, { emissive: 0x4a4440 }),
-  iris: std(0xffffff, .3, { map: irisT, emissive: 0x2c3034 }),
   irisG: std(0xffffff, .3, { map: irisT, emissiveMap: irisT, emissive: 0x8ec4ff, emissiveIntensity: .9 }),
   lid: std(0xffffff, .62, { vertexColors: true, emissive: 0x20120c }),
-  brow: std(0xa09a94, .75, { emissive: 0x161210 }),
+  brow: std(0x6a645f, .75, { emissive: 0x0e0c0b }),
   mouth: std(0xffffff, .6, { map: mouthT, transparent: true, depthWrite: false, emissive: 0x24120c, polygonOffset: true, polygonOffsetFactor: -2 }),
   mouth2: null,
   hair: std(0xf4f0ea, .58, { map: hairT, emissive: 0x24221f }),
   metal: std(0xffffff, .44, { metalness: .6, map: metalT, normalMap: hammerN, normalScale: nv2(.35), emissive: 0x0b0a0a }),
   cuir: std(0xffffff, .44, { metalness: .6, map: cuirT, normalMap: hammerN, normalScale: nv2(.3), emissive: 0x0b0a0a }),
   metalDk: std(0x8c8684, .5, { metalness: .55, map: metalT, emissive: 0x060606 }),
-  gold: std(0xd6a850, .3, { metalness: .66, emissive: 0x33230a }),
-  leather: std(0x5a3a28, .66, { normalMap: leatherN, normalScale: nv2(.6), emissive: 0x140b06 }),
+  gold: std(0xc89a4c, .36, { metalness: .66, emissive: 0x2a1d09 }),
+  leather: std(0x4a3123, .66, { normalMap: leatherN, normalScale: nv2(.6), emissive: 0x140b06 }),
   mail: std(0xffffff, .5, { metalness: .5, map: mailT, emissive: 0x060606 }),
   tabard: std(0xffffff, .82, { map: tabardT, alphaTest: .45, side: THREE.DoubleSide, emissive: 0x04100f }),
-  feather: std(0xffffff, .7, { map: featherT, alphaTest: .4, side: THREE.DoubleSide, emissive: 0x050c10 }),
-  edge: std(0x10141f, .12, { metalness: .75, emissiveMap: bladeT, emissive: 0x8ec4ff, emissiveIntensity: .9, side: THREE.DoubleSide }),
+  feather: std(0xffffff, .7, { map: featherT, alphaTest: .4, side: THREE.DoubleSide, emissive: 0x040605 }),
+  edge: std(0x10141f, .12, { metalness: .75, emissiveMap: bladeT, emissive: 0x6aa8ff, emissiveIntensity: .9, side: THREE.DoubleSide }),
   crack: std(0x000000, .4, { emissive: 0xffe2a0, emissiveIntensity: 0, transparent: true, opacity: 0, depthWrite: false }),
   grip: std(0x1e1614, .7, { normalMap: leatherN, normalScale: nv2(.8), emissive: 0x080504 })
  };
  M.mouth2 = M.mouth.clone(); M.mouth2.map = M.mouth.map.clone(); M.mouth2.map.needsUpdate = true;
- // every material: alpha cuts ignore fade opacity, and a shared world-height clip lets the black water take her
- const CLIP = { value: -100 };
- const patch = (m) => {
+ // every material: alpha cuts ignore fade opacity, and a shared world-height clip lets the dark take her from the feet up;
+ // the blade has its own clip, never below the ground, so a planted point sinks into the floor
+ const CLIP = { value: -100 }, BCLIP = { value: 0 };
+ const patch = (m, clip) => {
   m.onBeforeCompile = (s) => {
-   s.uniforms.uClipY = CLIP;
+   s.uniforms.uClipY = clip;
    s.vertexShader = 'varying float vWY;\n' + s.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n vWY = ( modelMatrix * vec4( transformed, 1.0 ) ).y;');
    s.fragmentShader = 'uniform float uClipY;\nvarying float vWY;\n' + s.fragmentShader.replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>\n if ( vWY < uClipY ) discard;')
     .replace('#include <alphatest_fragment>', '#ifdef ALPHATEST\n if ( diffuseColor.a < ALPHATEST * opacity ) discard;\n#endif');
@@ -314,7 +321,7 @@ function makeHalcyon(opts) {
   m.customProgramCacheKey = () => 'halcyon-clip';
   return m;
  };
- for (const k in M) { patch(M[k]); M[k].name = k; }
+ for (const k in M) { patch(M[k], k === 'edge' || k === 'crack' ? BCLIP : CLIP); M[k].name = k; }
 
  // ---------- geometry helpers ----------
  const _v = new THREE.Vector3(), _v2 = new THREE.Vector3(), _q = new THREE.Quaternion(), _m4 = new THREE.Matrix4(), _e = new THREE.Euler();
@@ -489,12 +496,12 @@ function makeHalcyon(opts) {
  const chest = bone('chest', spine, 0, .157, 0);
  const neck = bone('neck', chest, 0, .203, -.008);
  const head = bone('head', neck, 0, .1, .01);
- // world points of the braid: from the nape, over her right shoulder, down the front to the hip
- const BRP = [[-.045, 1.6, -.1], [-.1, 1.565, -.05], [-.122, 1.525, .04], [-.128, 1.4, .168], [-.124, 1.25, .186], [-.12, 1.1, .176], [-.116, .95, .168]];
+ // world points of the braid: from the nape under the helm, straight down her back to a gold cuff below the belts
+ const BRP = [[0, 1.6, -.096], [0, 1.53, -.14], [0, 1.42, -.153], [0, 1.3, -.157], [0, 1.18, -.153], [0, 1.08, -.163], [0, .99, -.19]];
  const braid = [];
  { let p = head, w = [0, 1.585, .002]; for (let i = 0; i < 6; i++) { p = bone('braid' + i, p, BRP[i][0] - w[0], BRP[i][1] - w[1], BRP[i][2] - w[2]); w = BRP[i]; braid.push(p); } }
- // six feather springs along the helm's ridge, front to back: x, y, z, then the way the feathers lean
- const CRP = [[0, 1.85, .058, 0, .95, .2], [0, 1.864, .028, 0, 1, -.12], [0, 1.868, -.006, 0, .95, -.42], [0, 1.86, -.042, 0, .8, -.68], [0, 1.84, -.074, 0, .55, -.9], [0, 1.806, -.1, 0, .22, -1]];
+ // six feather springs along the top of the helm behind its front plate, front to back: x, y, z, then the way the feathers lean
+ const CRP = [[0, 1.845, .028, 0, .82, -.57], [0, 1.85, -.006, 0, .64, -.77], [0, 1.842, -.038, 0, .45, -.89], [0, 1.822, -.068, 0, .22, -.97], [0, 1.79, -.092, 0, 0, -1], [0, 1.748, -.108, 0, -.3, -.95]];
  const crest = CRP.map((c, i) => bone('crest' + i, head, c[0], c[1] - 1.585, c[2] - .002));
  const arms = [], elbows = [], wrists = [], fing = [], thumb = [], mant = [];
  for (const sd of [-1, 1]) {
@@ -514,16 +521,15 @@ function makeHalcyon(opts) {
   const t = bone('toe' + sd, a, 0, -.063, .141);
   legs.push(h); knees.push(k); ankles.push(a); toes.push(t);
  }
- // tabard: 10 columns round the waist, two bones each, flaring to an ankle-length hem
- const TBN = 10, TBA = [-2.72, -2.08, -1.2, -.72, -.24, .24, .72, 1.2, 2.08, 2.72], tabU = [], tabL = [], tabTip = [];
+ // the skirt: 10 columns round the hips, two bones each. The front pair carries the knee-length front panel; the rest hang
+ // under the feathers, which flare wide at the sides and back and reach the shins, longest at the back.
+ const TBN = 10, TBA = [-2.62, -2.02, -1.46, -.96, -.2, .2, .96, 1.46, 2.02, 2.62], tabU = [], tabL = [], tabTip = [];
  const ell = (a, rx, rf, rb) => [Math.sin(a) * rx, Math.cos(a) * (Math.cos(a) > 0 ? rf : rb)];
- const TY0 = .985, TY1 = .56;
- const tabRing = (a, k) => {
-  const back = sm(.2, -.9, Math.cos(a));
-  if (k === 0) return [ell(a, .186, .15, .156), TY0];
-  if (k === 1) return [ell(a, .262, .186, .235), TY1];
-  return [ell(a, .345, .212, .31), .1 + .05 * back + .03 * sm(.5, 0, Math.abs(a))];
- };
+ const skirtR = (a, y) => { const d = Math.max(0, 1.02 - y); return ell(a, .178 + .46 * d, .152 + .18 * d, .162 + .34 * d); };
+ const skirtP = (a, y, off) => { const p = skirtR(a, y), k = 1 + (off || 0) / Math.hypot(p[0], p[1]); return [p[0] * k, y, p[1] * k]; };
+ const hemY = (a) => lerp(.3, .1, sm(.9, 2.7, Math.abs(a)));
+ const TY0 = 1.0, TY1 = .64;
+ const tabRing = (a, k) => { const y = k ? (k === 1 ? TY1 : hemY(a)) : TY0; return [skirtR(a, y), y]; };
  for (let k = 0; k < TBN; k++) {
   const a = TBA[k], [p0, y0] = tabRing(a, 0), [p1, y1] = tabRing(a, 1), [p2, y2] = tabRing(a, 2);
   const U = bone('tabU' + k, pelvis, p0[0], y0 - 1.01, p0[1]), L = bone('tabL' + k, U, p1[0] - p0[0], y1 - y0, p1[1] - p0[1]);
@@ -690,7 +696,7 @@ function makeHalcyon(opts) {
    const gs = [];
    for (const sd of [-1, 1]) {
     const pts = [hp(sd * (.12 + .01 * k), .0105 - .004 * k, .0026).p, hp(sd * .3, .0175 - .002 * k, .003).p, hp(sd * .5, .0195 + .001 * k, .003).p, hp(sd * .72, .0125, .0024).p];
-    gs.push(tube(pts.map((p) => [p[0] - HW[0], p[1] - HW[1], p[2] - HW[2]]), Q(12, 6), Q(5, 4), (t) => .0034 * Math.pow(1 - t * .85, .6) + .0007, .4, (c, n) => n.set(c.x - HC[0] + HW[0], c.y - HC[1] + HW[1], c.z - HC[2] + HW[2])));
+    gs.push(tube(pts.map((p) => [p[0] - HW[0], p[1] - HW[1], p[2] - HW[2]]), Q(12, 6), Q(5, 4), (t) => .0046 * Math.pow(1 - t * .8, .6) + .0008, .4, (c, n) => n.set(c.x - HC[0] + HW[0], c.y - HC[1] + HW[1], c.z - HC[2] + HW[2])));
    }
    return mergeGeos(gs);
   };
@@ -702,21 +708,21 @@ function makeHalcyon(opts) {
   const g = surf(Q(10, 6), Q(5, 3), (u, v, o) => { const s = hp(lerp(-.27, .27, u), lerp(-.07, -.094, v), .0011); o[0] = s.p[0] - HW[0]; o[1] = s.p[1] - HW[1]; o[2] = s.p[2] - HW[2]; });
   for (const mat of [M.mouth, M.mouth2]) { mat.map.repeat.set(.25, 1); const m = new THREE.Mesh(g, mat); m.renderOrder = 3; face.add(m); mouths.push(m); }
  }
- // white hair swept back from the brow, just showing under the helm
- // white hair: swept back under the helm's brow, and two loose locks beside the face
- add(surf(Q(28, 14), 4, (u, v, o) => { const s = hp(lerp(-1.25, 1.25, u), lerp(.062, .02 - .03 * sm(.75, 1.25, Math.abs(lerp(-1.25, 1.25, u))), v), .004 + .003 * (1 - v)); o[0] = s.p[0]; o[1] = s.p[1]; o[2] = s.p[2]; }), M.hair, BI.head);
- for (const sd of [-1, 1]) for (const [a0, a1, yE, r] of [[.78, .6, -.15, .0075], [.7, .66, -.11, .006], [.86, .8, -.1, .006]]) {
-  const pts = [hp(sd * a0, .03, .004).p, hp(sd * lerp(a0, a1, .3), -.03, .007).p, hp(sd * lerp(a0, a1, .7), lerp(-.03, yE, .6), .01).p, hp(sd * a1, yE, .016).p];
-  const g = tube(pts, Q(14, 8), Q(6, 4), (t) => r * (1 - .75 * t) + .0015, .7, (c, n) => n.set(c.x - HC[0], 0, c.z - HC[2]));
+ // white hair: swept back under the helm, showing at the temples beside its pointed brow, and loose strands down beside the face
+ add(surf(Q(28, 14), 4, (u, v, o) => { const a = lerp(-1.3, 1.3, u), s = hp(a, lerp(.1, .036 - .044 * sm(.25, 1.1, Math.abs(a)), v), .004 + .003 * (1 - v)); o[0] = s.p[0]; o[1] = s.p[1]; o[2] = s.p[2]; }), M.hair, BI.head);
+ for (const sd of [-1, 1]) for (const [a0, a1, yE, r] of [[.86, .76, -.2, .0062], [.78, .64, -.13, .005], [.95, .92, -.23, .006], [.7, .66, -.1, .0042], [1.02, 1.04, -.17, .0052]]) {
+  const p0 = hp(sd * a0, .055, .005).p, p1 = hp(sd * lerp(a0, a1, .4), -.01, .009).p, p2 = hp(sd * a1, -.075, .014).p;
+  const g = tube([p0, p1, p2, [HC[0] + (p2[0] - HC[0]) * 1.4, HC[1] + yE, HC[2] + (p2[2] - HC[2]) * .92]], Q(14, 8), Q(6, 4), (t) => r * (1 - .7 * t) + .0012, .7, (c, n) => n.set(c.x - HC[0], 0, c.z - HC[2]));
   add(g, M.hair, BI.head);
  }
 
- // ---------- the helm: an open-faced sallet with pointed cheek guards, a tall gold brow spike, sun bosses ----------
+ // ---------- the helm: open-faced and blackened, a pointed front plate from a peak above the crown down to a point at the brow,
+ // cheek guards that flare away from the face, a flared neck guard, and a gold sun boss over each ear ----------
  {
-  const yBot = (az) => { const a = Math.abs(az); return lerp(.04 + .01 * Math.cos(az * 3), -.125, sm(.64, 1.0, a)) + .05 * sm(1.15, 2.3, a); };
-  const off = (az, y, v) => .012 + .004 * Math.sin(PI * v) + .03 * sm(1.9, PI, Math.abs(az)) * sm(-.02, -.1, y) + .01 * sm(.8, 1.2, Math.abs(az)) * sm(0, -.1, y);
-  const hpt = (az, y, v, extra, o) => { const s = hp(az, Math.min(y, .12), off(az, y, v) + (extra || 0)); o[0] = s.p[0]; o[1] = s.p[1] + Math.max(0, y - .12) * .6 + .022 * Math.exp(-(az * az) / .02) * sm(.03, .11, y); o[2] = s.p[2]; return o; };
-  add(slab(Q(64, 32), Q(20, 10), (u, v, o) => { const az = lerp(-PI, PI, u), y = lerp(.128, yBot(az), v); return hpt(az, y, v, 0, o); }, .005), M.metal, BI.head);
+  const yBot = (az) => { const a = Math.abs(az); return a < .95 ? .034 + .052 * Math.pow(a / .95, 1.1) : a < 1.12 ? lerp(.086, -.08, sm(.95, 1.12, a)) : lerp(-.08, -.03, sm(1.12, 1.55, a)) - .055 * sm(1.7, 2.7, a); };
+  const off = (az, y, v) => { const a = Math.abs(az); return .012 + .004 * Math.sin(PI * v) + .03 * sm(1.9, PI, a) * sm(-.02, -.1, y) + .024 * sm(.9, 1.1, a) * (1 - sm(1.3, 1.6, a)) * sm(.03, -.08, y); };
+  const hpt = (az, y, v, extra, o) => { const s = hp(az, Math.min(y, .12), off(az, y, v) + (extra || 0)); o[0] = s.p[0]; o[1] = s.p[1] + Math.max(0, y - .12) * .6; o[2] = s.p[2]; return o; };
+  add(slab(Q(80, 40), Q(20, 10), (u, v, o) => { const az = lerp(-PI, PI, u), y = lerp(.128, yBot(az), v); return hpt(az, y, v, 0, o); }, .005), M.metal, BI.head);
   // close the crown of the helm, which otherwise shows her scalp when she bows her head
   {
    const P = [], U = [], I = [], ring = [], o = [0, 0, 0], c = [0, 0, 0];
@@ -728,63 +734,65 @@ function makeHalcyon(opts) {
    if (g.attributes.normal.getY(0) < 0) { const ix = g.index.array; for (let k = 0; k < ix.length; k += 3) { const t = ix[k + 1]; ix[k + 1] = ix[k + 2]; ix[k + 2] = t; } g.computeVertexNormals(); }
    add(g, M.metal, BI.head);
   }
-  const rim = []; for (let i = 0; i <= 72; i++) { const az = lerp(-PI, PI, i / 72); rim.push(hpt(az, yBot(az), 1, .006, [0, 0, 0])); }
-  add(tube(rim, Q(96, 48), Q(5, 4), () => .0045, 1, null), M.gold, BI.head);
-  // a second gold line above the brow, temple to temple
-  const band = []; for (let i = 0; i <= 20; i++) { const az = lerp(-1.5, 1.5, i / 20); band.push(hpt(az, .07 + .012 * Math.cos(az * 2), .4, .006, [0, 0, 0])); }
-  add(tube(band, Q(40, 20), Q(5, 4), () => .0028, 1, null), M.gold, BI.head);
-  // ridge comb over the crown, edged in gold
-  const ridge = [], ridgeG = []; for (let i = 0; i <= 14; i++) { const t = i / 14, az = t < .5 ? 0 : PI, yy = t < .5 ? lerp(.06, .13, t * 2) : lerp(.13, -.03, (t - .5) * 2); ridge.push(hpt(az, yy, .5, .008, [0, 0, 0])); ridgeG.push(hpt(az, yy, .5, .019, [0, 0, 0])); }
-  add(tube(ridge, Q(28, 14), Q(6, 4), (t) => .008 + .005 * Math.sin(PI * t), .5, null), M.metalDk, BI.head);
-  add(tube(ridgeG, Q(28, 14), Q(5, 4), () => .0028, 1, null), M.gold, BI.head);
-  // the brow spike: a tall flattened blade of gold on a small collar
-  const sp = hpt(0, .062, .5, .008, [0, 0, 0]);
-  add(new THREE.ConeGeometry(.017, .17, Q(8, 4)), M.gold, BI.head, [sp[0], sp[1] + .07, sp[2] + .012], [.1, 0, 0], [1, 1, .5]);
-  add(new THREE.OctahedronGeometry(.02, 0), M.gold, BI.head, [sp[0], sp[1] - .005, sp[2] + .004], [.1, 0, 0], [1.1, 1.3, .5]);
+  const rim = []; for (let i = 0; i <= 96; i++) { const az = lerp(-PI, PI, i / 96); rim.push(hpt(az, yBot(az), 1, .006, [0, 0, 0])); }
+  add(tube(rim, Q(128, 64), Q(5, 4), () => .0045, 1, null), M.gold, BI.head);
+  // the front plate: a pointed kite, ridged down the middle, rising free above the crown to a peak
+  const yV = (a) => .034 + .052 * Math.pow(Math.abs(a) / .95, 1.1), yT = (a) => .18 - .094 * Math.abs(a) / .95;
+  const fpt = (a, y, ex, o) => { hpt(a, Math.min(y, .1), .5, .004 + ex + .008 * Math.exp(-((a / .1) ** 2)), o); if (y > .1) { o[1] += y - .1; o[2] -= .3 * (y - .1); } return o; };
+  add(slab(Q(24, 12), Q(14, 8), (u, v, o) => { const a = lerp(-.95, .95, u); return fpt(a, lerp(yV(a), yT(a), v), 0, o); }, .005), M.metal, BI.head);
+  { const e = []; for (let i = 0; i <= 24; i++) { const a = lerp(-.95, .95, i / 24); e.push(fpt(a, yT(a), .003, [0, 0, 0])); } add(tube(e, Q(48, 24), Q(5, 4), () => .0042, 1, null), M.gold, BI.head); }
+  { const e = []; for (let i = 0; i <= 10; i++) e.push(fpt(0, lerp(.04, .175, i / 10), .004, [0, 0, 0])); add(tube(e, Q(20, 10), Q(5, 4), () => .0028, 1, null), M.gold, BI.head); }
+  // a ridge comb from the crown down the back, where the feathers rise, edged in gold
+  const ridge = [], ridgeG = []; for (let i = 0; i <= 10; i++) { const yy = lerp(.125, -.03, i / 10); ridge.push(hpt(PI, yy, .5, .008, [0, 0, 0])); ridgeG.push(hpt(PI, yy, .5, .019, [0, 0, 0])); }
+  add(tube(ridge, Q(20, 10), Q(6, 4), (t) => .008 + .005 * Math.sin(PI * t), .5, null), M.metalDk, BI.head);
+  add(tube(ridgeG, Q(20, 10), Q(5, 4), () => .0028, 1, null), M.gold, BI.head);
+  // the sun bosses: a dark disc in a gold ring, twelve gold rays and a gold dome
   for (const sd of [-1, 1]) {
-   const b = hpt(sd * 1.36, .005, .5, .008, [0, 0, 0]), q = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, sd * 1.36, 0));
-   add(new THREE.CylinderGeometry(.021, .024, .008, Q(16, 8)), M.gold, BI.head, b, null, null, q.clone().multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(PI / 2, 0, 0))));
-   for (let k = 0; k < 8; k++) { const a = k / 8 * TAU; const d = new THREE.Vector3(Math.cos(a), Math.sin(a), 0).applyQuaternion(q); add(new THREE.ConeGeometry(.0055, .022, 4), M.gold, BI.head, [b[0] + d.x * .03, b[1] + d.y * .03, b[2] + d.z * .03], null, null, new THREE.Quaternion().setFromUnitVectors(YA, d)); }
-   // a short swept fin behind each temple
-   const f = hpt(sd * 1.95, .03, .5, .01, [0, 0, 0]);
-   add(new THREE.ConeGeometry(.016, .09, Q(6, 4)), M.metalDk, BI.head, [f[0] + sd * .008, f[1] + .02, f[2] - .03], null, [.45, 1, 1], qY([sd * .25, .5, -.85]));
+   const b = hpt(sd * 1.3, .024, .5, .004, [0, 0, 0]), n = hp(sd * 1.3, .024, 0).n, q = new THREE.Quaternion().setFromUnitVectors(YA, n), at = (k, d, r) => [b[0] + n.x * k + d.x * r, b[1] + n.y * k + d.y * r, b[2] + n.z * k + d.z * r];
+   add(new THREE.CylinderGeometry(.034, .036, .01, Q(20, 10)), M.metalDk, BI.head, b, null, null, q);
+   add(new THREE.TorusGeometry(.034, .0045, Q(6, 4), Q(24, 12)), M.gold, BI.head, at(.005, n, 0), null, null, new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), n));
+   add(new THREE.SphereGeometry(.012, Q(10, 6), Q(8, 5)), M.gold, BI.head, at(.006, n, 0), null, [1, .55, 1], q);
+   const e1 = new THREE.Vector3(0, 1, 0).addScaledVector(n, -n.y).normalize(), e2 = new THREE.Vector3().crossVectors(n, e1);
+   for (let k = 0; k < 12; k++) { const a = k / 12 * TAU, d = e1.clone().multiplyScalar(Math.cos(a)).addScaledVector(e2, Math.sin(a)), L = k % 2 ? .011 : .018; add(new THREE.ConeGeometry(.0042, L, 4), M.gold, BI.head, at(.0065, d, .013 + L / 2), null, null, new THREE.Quaternion().setFromUnitVectors(YA, d)); }
   }
  }
- // ---------- feather crest: a mohawk of kingfisher feathers over white down, on six springs ----------
- function feather(L, W, cell, q, at) {
+ // ---------- feather crest: a tall mohawk of kingfisher-teal, grey-white and charcoal feathers over white down, on six springs ----------
+ // a feather card from the atlas, quill at `at`, turned by q; the tip bends back by `bend` and the vane cups
+ function feather(L, W, cell, q, at, bend, cup) {
   const g = new THREE.PlaneGeometry(W, L, 2, 4); g.translate(0, L / 2, 0);
-  const uv = g.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setXY(k, uv.getX(k) * .5 + (cell % 2) * .5, uv.getY(k) * .5 + (cell < 2 ? .5 : 0));
-  const p = g.attributes.position; for (let k = 0; k < p.count; k++) { const y = p.getY(k), x = p.getX(k); p.setZ(k, -.32 * (y / L) ** 2 * L + 1.6 * x * x / W); }
+  const uv = g.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setXY(k, (cell % 4 + uv.getX(k)) / 4, (cell < 4 ? .5 : 0) + uv.getY(k) * .5);
+  const p = g.attributes.position, bd = bend === undefined ? .32 : bend; for (let k = 0; k < p.count; k++) { const y = p.getY(k), x = p.getX(k); p.setZ(k, -bd * (y / L) ** 2 * L + (cup === undefined ? 1.6 : cup) * x * x / W); }
   g.computeVertexNormals(); g.applyMatrix4(_m4.makeRotationFromQuaternion(q)); g.translate(at[0], at[1], at[2]); return g;
  }
+ const qE = (x, y, z) => new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z, 'ZXY'));
  for (let i = 0; i < 6; i++) {
   const c = CRP[i], dir = new THREE.Vector3(c[3], c[4], c[5]).normalize(), gs = [], qd = new THREE.Quaternion().setFromUnitVectors(YA, dir);
-  const N = Q(11, 6);
+  const N = Q(15, 8);
   for (let f = 0; f < N; f++) {
-   const L = .19 + .07 * rnd() + i * .016, W = .075 + .03 * rnd(), cell = [0, 1, 0, 2, 1][(f + i) % 5];
-   const spread = (f / (N - 1) - .5) * .95 + (rnd() - .5) * .16, tilt = (rnd() - .5) * .4, tw = rnd() < .55 ? PI / 2 + (rnd() - .5) * .9 : rnd() * PI;
-   gs.push(feather(L, W, cell, qd.clone().multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(tilt, tw, spread))), c));
+   const L = .22 + .07 * rnd() + i * .025, W = .1 + .035 * rnd(), cell = [0, 1, 0, 2, 0, 1, 0][(f + i * 3) % 7];
+   const spread = (f / (N - 1) - .5) * (1.25 - .12 * i) + (rnd() - .5) * .2, tilt = (rnd() - .5) * .35, tw = (f % 2 ? PI / 2 : 0) + (rnd() - .5) * .8;
+   gs.push(feather(L, W, cell, qd.clone().multiply(qE(tilt, tw, spread)), c));
   }
-  for (let f = 0; f < 4; f++) gs.push(feather(.09 + .04 * rnd(), .06 + .02 * rnd(), 3, qd.clone().multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler((rnd() - .5) * .6, rnd() * PI, (f - 1.5) * .5))), c));
+  for (let f = 0; f < 4; f++) gs.push(feather(.1 + .04 * rnd(), .07 + .02 * rnd(), 3, qd.clone().multiply(qE((rnd() - .5) * .6, rnd() * PI, (f - 1.5) * .55)), c));
   add(mergeGeos(gs), M.feather, BI['crest' + i]);
  }
- // ---------- the braid: three thick white strands, over her right shoulder to the hip ----------
+ // ---------- the braid: three thick white strands down her back to a gold cuff, and a loose tuft below the belts ----------
  {
   const cv = new THREE.CatmullRomCurve3(BRP.map((p) => new THREE.Vector3(p[0], p[1], p[2])));
   const NS = 78, T = new THREE.Vector3(), N = new THREE.Vector3(1, 0, 0), B = new THREE.Vector3(), C = new THREE.Vector3(), st = [[], [], []];
   for (let i = 0; i <= NS; i++) {
    const t = i / NS; cv.getPointAt(t, C); cv.getTangentAt(t, T);
    N.addScaledVector(T, -N.dot(T)).normalize(); B.crossVectors(T, N);
-   const tap = (1 - .28 * t) * sm(-.02, .1, t), w = t * 13 * PI;
-   for (let k = 0; k < 3; k++) { const ph = w + k * TAU / 3, a = Math.sin(ph) * .019 * tap, b = Math.sin(2 * ph) * .009 * tap; st[k].push([C.x + N.x * a + B.x * b, C.y + N.y * a + B.y * b, C.z + N.z * a + B.z * b]); }
+   const tap = (1 - .3 * t) * sm(-.02, .1, t), w = t * 12 * PI;
+   for (let k = 0; k < 3; k++) { const ph = w + k * TAU / 3, a = Math.sin(ph) * .025 * tap, b = Math.sin(2 * ph) * .009 * tap; st[k].push([C.x + N.x * a + B.x * b, C.y + N.y * a + B.y * b, C.z + N.z * a + B.z * b]); }
   }
   const wB = wChain(BRP.slice(0, 6).map((_, i) => 'braid' + i), BRP, 'head', .9);
-  for (const s of st) { const g = tube(s, Q(120, 60), Q(8, 5), (t) => .0168 - .005 * t, 1, null); const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setX(i, uv.getX(i) * 5); add(g, M.hair, wB); }
+  for (const s of st) { const g = tube(s, Q(120, 60), Q(8, 5), (t) => .021 - .006 * t, 1, null); const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setX(i, uv.getX(i) * 4); add(g, M.hair, wB); }
   const e = BRP[6], d = [BRP[6][0] - BRP[5][0], BRP[6][1] - BRP[5][1], BRP[6][2] - BRP[5][2]];
-  const at = (k) => [e[0] + d[0] * k, e[1] + d[1] * k, e[2] + d[2] * k];
-  add(new THREE.CylinderGeometry(.024, .021, .04, Q(14, 7)), M.leather, BI.braid5, at(.04), null, null, qY(d));
-  for (const k of [-.08, .18]) add(new THREE.TorusGeometry(.024, .0035, Q(5, 4), Q(16, 8)), M.gold, BI.braid5, at(k), null, null, qY(d).multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(PI / 2, 0, 0))));
-  { const g = new THREE.ConeGeometry(.027, .15, Q(12, 6), 1, true); const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getY(i), uv.getX(i) * 3); add(g, M.hair, BI.braid5, at(.62), null, null, qY([-d[0], -d[1], -d[2]])); }
+  const at = (k) => [e[0] + d[0] * k, e[1] + d[1] * k, e[2] + d[2] * k], qR = qY(d).multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(PI / 2, 0, 0)));
+  add(new THREE.CylinderGeometry(.027, .024, .048, Q(14, 7)), M.gold, BI.braid5, at(-.12), null, null, qY(d));
+  for (const k of [-.42, .2]) add(new THREE.TorusGeometry(.025, .0035, Q(5, 4), Q(16, 8)), M.gold, BI.braid5, at(k), null, null, qR);
+  { const g = new THREE.ConeGeometry(.026, .17, Q(12, 6), 1, true); const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getY(i), uv.getX(i) * 3); add(g, M.hair, BI.braid5, at(.62), null, null, qY([-d[0], -d[1], -d[2]])); }
  }
 
  // ---------- armour shell profile: y, half-width, front depth, back depth ----------
@@ -800,70 +808,97 @@ function makeHalcyon(opts) {
  const loop = (fn, n) => { const p = []; for (let i = 0; i <= n; i++) p.push(fn(lerp(-PI, PI, i / n), [0, 0, 0])); return p; };
  const trim = (pts, w, r) => add(tube(pts, Q(pts.length * 2, pts.length), Q(5, 4), () => r || .0035, 1, null), M.gold, w);
 
- // ---------- cuirass (painted: the clawed sun, gold-edged plates), gorget, faulds, belts, mail ----------
+ // ---------- cuirass (gold-edged plates), the teal tabard over it, gorget, faulds, belts, mail ----------
  add(slab(Q(72, 36), Q(32, 16), (u, v, o) => armorPt(lerp(-PI, PI, u), lerp(1.462, 1.068, v), 0, o), .006), M.cuir, wTorso);
  trim(loop((a, o) => armorPt(a, 1.462, .006, o), 48), wTorso, .0045);
  trim(loop((a, o) => armorPt(a, 1.068, .007, o), 48), wTorso, .005);
+ // the tabard over the breastplate, front and back, just proud of the plate; the front carries her clawed-out sun
+ for (const [r, y0, a0] of [[TA.cf, 1.456, 0], [TA.cb, 1.43, PI]]) {
+  const g = surf(Q(24, 12), Q(20, 10), (u, v, o) => { const y = lerp(y0, 1.07, v), w = a0 ? .56 : lerp(.58, .72, sm(1.455, 1.33, y)) - .03 * sm(1.25, 1.08, y); return armorPt(a0 + lerp(-w, w, u), y, .0105, o); });
+  const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, (r[0] + uv.getX(i) * r[2]) / 1024, 1 - (r[1] + (1 - uv.getY(i)) * r[3]) / 1024);
+  add(g, M.tabard, wTorso);
+ }
  for (const [y0, y1, r0, r1] of [[1.465, 1.5, .1, .084], [1.493, 1.528, .086, .072], [1.52, 1.556, .074, .066]]) {
   add(slab(Q(32, 16), 3, (u, v, o) => { const a = lerp(-PI, PI, u), r = lerp(r0, r1, v); o[0] = Math.sin(a) * r * 1.06; o[1] = lerp(y0, y1, v); o[2] = Math.cos(a) * r * .94 - .006; return o; }, .004), M.metal, wNeck);
   trim(loop((a, o) => { o[0] = Math.sin(a) * r1 * 1.07; o[1] = y1; o[2] = Math.cos(a) * r1 * .95 - .006; return o; }, 32), wNeck, .003);
  }
- for (let i = 0; i < 3; i++) {
-  const y0 = 1.075 - i * .036, y1 = y0 - .048, off = .006 + i * .006;
-  add(slab(Q(56, 28), 3, (u, v, o) => armorPt(lerp(-PI, PI, u), lerp(y0, y1, v), off + .004 * v, o), .004), M.metal, wTorso);
-  trim(loop((a, o) => armorPt(a, y1, off + .008, o), 48), wTorso, .003);
+ // faulds over each hip, clear of the front and back panels
+ for (let i = 0; i < 3; i++) for (const sd of [-1, 1]) {
+  const y0 = 1.075 - i * .036, y1 = y0 - .048, off = .006 + i * .006, A = (u) => (sd < 0 ? lerp(-2.4, -.5, u) : lerp(.5, 2.4, u));
+  add(slab(Q(24, 12), 3, (u, v, o) => armorPt(A(u), lerp(y0, y1, v), off + .004 * v, o), .004), M.metal, wTorso);
+  const e = []; for (let k = 0; k <= 20; k++) e.push(armorPt(A(k / 20), y1, off + .008, [0, 0, 0])); trim(e, wTorso, .003);
  }
- // two leather belts, the lower one slung across the hips, with gold buckles and a hanging strap end
- for (const [yc, tilt, ab] of [[1.032, 0, -.35], [.982, .034, .42]]) {
-  add(slab(Q(48, 24), 2, (u, v, o) => { const a = lerp(-PI, PI, u), y = yc + tilt * Math.sin(a) + lerp(.02, -.02, v); return armorPt(a, y, .024, o); }, .006), M.leather, wTorso);
-  const p = armorPt(ab, yc + tilt * Math.sin(ab), .033, [0, 0, 0]), q = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, ab, 0));
-  add(new THREE.BoxGeometry(.058, .052, .009), M.gold, wTorso, p, null, null, q);
-  add(new THREE.BoxGeometry(.036, .03, .011), M.metalDk, wTorso, [p[0] + Math.sin(ab) * .003, p[1], p[2] + Math.cos(ab) * .003], null, null, q);
-  add(new THREE.BoxGeometry(.03, .1, .006), M.leather, wTorso, [p[0] + Math.cos(ab) * .04, p[1] - .06, p[2] - Math.sin(ab) * .04 + .004], null, null, q.clone().multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, .12))));
+ // three leather belts: a broad one with a square gold buckle, one with a gold ring and a hanging strap, one slung across the hips
+ for (const [yc, tilt, ab, hw, off, kind] of [[1.094, 0, 0, .024, .016, 0], [1.046, .018, .04, .019, .026, 1], [.997, -.03, -.66, .019, .034, 2]]) {
+  add(slab(Q(48, 24), 2, (u, v, o) => { const a = lerp(-PI, PI, u), y = yc + tilt * Math.sin(a) + lerp(hw, -hw, v); return armorPt(a, y, off, o); }, .006), M.leather, wTorso);
+  const p = armorPt(ab, yc + tilt * Math.sin(ab), off + .008, [0, 0, 0]), q = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, ab, 0)), at = (x, y, z) => [p[0] + Math.cos(ab) * x + Math.sin(ab) * z, p[1] + y, p[2] - Math.sin(ab) * x + Math.cos(ab) * z];
+  if (kind === 1) {
+   add(new THREE.TorusGeometry(.021, .0045, Q(6, 4), Q(18, 9)), M.gold, wTorso, at(0, -.004, .002), null, null, q);
+   add(new THREE.BoxGeometry(.03, .15, .006), M.leather, wTorso, at(0, -.09, .006), null, null, q);
+   add(new THREE.BoxGeometry(.034, .012, .008), M.gold, wTorso, at(0, -.155, .007), null, null, q);
+  } else {
+   add(new THREE.BoxGeometry(kind ? .05 : .066, kind ? .044 : .06, .009), M.gold, wTorso, p, null, null, q);
+   add(new THREE.BoxGeometry(kind ? .03 : .042, kind ? .024 : .034, .011), M.metalDk, wTorso, at(0, 0, .003), null, null, q);
+   add(new THREE.BoxGeometry(.03, .1, .006), M.leather, wTorso, at(.04, -.06, -.004), null, null, q.clone().multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, .12))));
+  }
  }
  const wSkirt = (x, y) => { const k = .7 * sm(.96, .7, y), sL = sm(-.05, .05, x); return [[BI.pelvis, 1 - k], [BI['hip-1'], k * (1 - sL)], [BI['hip1'], k * sL]]; };
  add(surf(Q(56, 28), Q(12, 6), (u, v, o) => { const a = lerp(-PI, PI, u), y = lerp(1.0, .62 + .03 * Math.cos(a), v); armorPt(a, Math.max(y, .9), .002 + .02 * v * v, o); o[1] = y; return o; }, true), M.mail, wSkirt);
 
- // ---------- tabard: ankle-length teal panels (centre, hips, back with the clawed sun) over black feathered cloth ----------
+ // ---------- the skirt: a teal front panel to the knee, a dark back panel to the ankle with its gold sun-wheel, and three tiers
+ // of ragged feather strips in charcoal, teal and grey-white, flaring round the sides and back to the shins ----------
  const tabCol = (a) => {
   if (a < TBA[0]) a += TAU;
   for (let j = 0; j < TBN - 1; j++) if (a <= TBA[j + 1]) return [j, j + 1, cl((a - TBA[j]) / (TBA[j + 1] - TBA[j]), 0, 1)];
   return [TBN - 1, 0, cl((a - TBA[TBN - 1]) / (TBA[0] + TAU - TBA[TBN - 1]), 0, 1)];
  };
- const wTab = (x, y, z) => {
-  const [j0, j1, t] = tabCol(Math.atan2(x, z)), hv = sm(.72, .5, y), top = sm(1.0, .94, y);
-  return [[BI.pelvis, 1 - top], [BI['tabU' + j0], (1 - t) * top * (1 - hv)], [BI['tabL' + j0], (1 - t) * top * hv], [BI['tabU' + j1], t * top * (1 - hv)], [BI['tabL' + j1], t * top * hv]];
- };
- const tabPt = (a, v, inner, o) => {
-  const k = v < .5 ? 0 : 1, f = v < .5 ? v * 2 : v * 2 - 1, [A, ya] = tabRing(a, k), [B, yb] = tabRing(a, k + 1);
-  const sh = (inner ? .95 : 1) * (1 + (.035 * Math.sin(a * 17) + .02 * Math.sin(a * 31 + 1)) * v);
-  o[0] = lerp(A[0], B[0], f) * sh; o[1] = lerp(ya, yb, f) - (inner && k ? .05 * f : 0); o[2] = lerp(A[1], B[1], f) * sh; return o;
- };
- for (const inner of [1, 0]) {
-  const row = inner ? TAB.i : TAB.o, g = surf(Q(120, 60), Q(16, 8), (u, v, o) => tabPt(lerp(-PI, PI, u), v, inner, o));
-  const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setY(i, 1 - (row[0] + (1 - uv.getY(i)) * row[1]) / 1024);
-  add(g, M.tabard, wTab);
+ const wCol = (j0, j1, t, y) => { const hv = sm(.8, .55, y), top = sm(1.04, .96, y); return [[BI.pelvis, 1 - top], [BI['tabU' + j0], (1 - t) * top * (1 - hv)], [BI['tabL' + j0], (1 - t) * top * hv], [BI['tabU' + j1], t * top * (1 - hv)], [BI['tabL' + j1], t * top * hv]]; };
+ const wTab = (x, y, z) => { const [j0, j1, t] = tabCol(Math.atan2(x, z)); return wCol(j0, j1, t, y); };
+ // the two panels hang flat from under the belts, each on its own pair of columns
+ for (const [r, sd, y1, w0, w1, j0, j1] of [[TA.f, 1, .44, .15, .168, 4, 5], [TA.b, -1, .1, .17, .2, 0, 9]]) {
+  const g = surf(Q(12, 6), Q(18, 9), (u, v, o) => {
+   const y = lerp(sd > 0 ? 1.04 : 1.02, y1, v), s = lerp(-1, 1, u), bow = .012 * (1 - s * s);
+   o[0] = s * lerp(w0, w1, v) * sd; o[1] = y; o[2] = sd > 0 ? .133 + .065 * sm(1.0, .45, y) + bow : -(.135 + .16 * Math.max(0, 1.0 - y) + bow); return o;
+  });
+  const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, (r[0] + uv.getX(i) * r[2]) / 1024, 1 - (r[1] + (1 - uv.getY(i)) * r[3]) / 1024);
+  add(g, M.tabard, (x, y) => wCol(j0, j1, sm(-.1, .1, x), y));
  }
- // ---------- mantle: ragged teal cloth hanging from under each pauldron, on its own spring ----------
+ // a quaternion turning +Y along y and +Z toward z, for cards hung along a direction
+ const _bX = new THREE.Vector3(), _bY = new THREE.Vector3(), _bZ = new THREE.Vector3(), _bM = new THREE.Matrix4();
+ const qBasis = (y, z) => { _bY.set(y[0], y[1], y[2]).normalize(); _bZ.set(z[0], z[1], z[2]).addScaledVector(_bY, -_bZ.dot(_bY)).normalize(); _bX.crossVectors(_bY, _bZ); return new THREE.Quaternion().setFromRotationMatrix(_bM.makeBasis(_bX, _bY, _bZ)); };
+ // tiers, long under-layer first: atlas cells, top height, length at the sides and toward the back, outward offset, splay.
+ // They stop at the back panel, which covers the middle of her back.
+ for (const [cells, y0, Ls, Lb, off, sp] of [[[4, 7, 4, 6, 7, 4, 5, 7], .965, .64, .86, 0, .03], [[7, 4, 6, 5, 4, 7], .98, .56, .72, .011, .05], [[5, 4, 2, 5, 4, 7, 2], .995, .46, .56, .022, .08], [[4, 2, 4, 5, 2, 4], 1.03, .28, .33, .042, .1]]) {
+  const gs = []; let n = 0;
+  for (let a = .9; a < 2.56; a += .062) for (const sd of [-1, 1]) {
+   const aa = sd * (a + (rnd() - .5) * .05), L = lerp(Ls, Lb, sm(.9, 2.8, Math.abs(aa))) * (.86 + .28 * rnd()), yt = y0 - .14 * (1 - sm(1.05, 1.45, Math.abs(aa))), P0 = skirtP(aa, yt, off), P1 = skirtP(aa, yt - L * .97, off + sp);
+   const tw = (n % 2 ? 1 : -1) * (.45 + .6 * rnd()) * sm(2.9, 2.2, Math.abs(aa)) + (rnd() - .5) * .4;
+   gs.push(feather(L, .095 + .035 * rnd(), cells[n++ % cells.length], qBasis([P1[0] - P0[0], P1[1] - P0[1], P1[2] - P0[2]], [-P0[0], 0, -P0[2]]).multiply(qE(0, tw, (rnd() - .5) * .16)), P0, .2, .45));
+  }
+  add(mergeGeos(gs), M.feather, wTab);
+ }
+ // ---------- mantle: feathers hanging from under each pauldron down the back of the shoulder and under the arm, on its own spring ----------
  for (const sd of [-1, 1]) {
-  const C = [sd * .205, 1.455, -.012], S = BI['shoulder' + sd], Mb = BI['mant' + sd];
-  const g = surf(Q(26, 13), Q(8, 4), (u, v, o) => { const ph = lerp(-1.05, PI + 1.05, u), r = .08 + .064 * v * v + .006 * Math.sin(ph * 6) * v; o[0] = C[0] + sd * Math.sin(ph) * r; o[1] = lerp(1.425, 1.14 + .035 * Math.cos(ph), v); o[2] = C[2] + Math.cos(ph) * r * 1.12; return o; }, false, sd < 0);
-  const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, (sd < 0 ? 0 : .5) + uv.getX(i) * .5, 1 - (TAB.m[0] + (1 - uv.getY(i)) * TAB.m[1]) / 1024);
-  add(g, M.tabard, (x, y) => { const k = sm(1.4, 1.25, y); return [[S, (1 - k) * .7], [BI.chest, (1 - k) * .3], [Mb, k]]; });
+  const C = [sd * .205, 1.43, -.012], S = BI['shoulder' + sd], Mb = BI['mant' + sd], gs = [];
+  for (let k = 0; k < 9; k++) {
+   const ph = lerp(2.0, 4.5, k / 8) + (rnd() - .5) * .15, out = [sd * Math.sin(ph), 0, Math.cos(ph)], P0 = [C[0] + out[0] * .095, C[1] + (rnd() - .5) * .02, C[2] + out[2] * .1];
+   gs.push(feather(.2 + .08 * rnd(), .065 + .02 * rnd(), [0, 2, 5, 0, 1, 2, 0, 5, 2][k], qBasis([out[0] * .3, -1, out[2] * .3], [-out[0], 0, -out[2]]).multiply(qE(0, (rnd() - .5) * .6, 0)), P0, .14));
+  }
+  add(mergeGeos(gs), M.feather, (x, y) => { const k = sm(1.4, 1.25, y); return [[S, (1 - k) * .7], [BI.chest, (1 - k) * .3], [Mb, k]]; });
  }
 
- // ---------- pauldrons (an upswept cap over three pointed lames), arms and gauntlets ----------
+ // ---------- pauldrons (an upswept cap over three broad pointed lames), arms and gauntlets ----------
  for (const sd of [-1, 1]) {
   const S = BI['shoulder' + sd], C = new THREE.Vector3(sd * .205, 1.458, -.012), A = new THREE.Vector3(sd * .32, .95, 0).normalize(), E1 = new THREE.Vector3(0, 0, 1), D = new THREE.Vector3(sd * .95, -.32, 0);
   const wCap = () => [[S, .62], [BI.chest, .38]];
   const cPt = (R, th, ph, o) => { const sT = Math.sin(th), d = _v.copy(A).multiplyScalar(Math.cos(th)).addScaledVector(E1, sT * Math.cos(ph)).addScaledVector(D, sT * Math.sin(ph)); o[0] = C.x + d.x * R; o[1] = C.y + d.y * R; o[2] = C.z + d.z * R * 1.1; return o; };
-  const capR = (v, ph) => .113 + .004 * Math.sin(PI * v) + (.012 + .014 * Math.exp(-(((ph - PI / 2) / .6) ** 2))) * sm(.74, 1, v);
+  const capR = (v, ph) => .119 + .004 * Math.sin(PI * v) + (.012 + .014 * Math.exp(-(((ph - PI / 2) / .6) ** 2))) * sm(.74, 1, v);
   add(slab(Q(24, 12), Q(10, 5), (u, v, o) => { const ph = lerp(-.9, PI + .9, u); return cPt(capR(v, ph), lerp(0, 1.42, v), ph, o); }, .006), M.metal, wCap);
   { const e = []; for (let i = 0; i <= 24; i++) { const ph = lerp(-.9, PI + .9, i / 24); e.push(cPt(capR(1, ph) + .004, 1.42, ph, [0, 0, 0])); } trim(e, wCap, .0045); }
-  { const e = []; for (let i = 0; i <= 16; i++) { const ph = lerp(-.9, PI + .9, i / 16); e.push(cPt(capR(.5, ph) + .005, .78, ph, [0, 0, 0])); } trim(e, wCap, .0028); }
+
   const tipK = (ph) => Math.exp(-(((ph - PI / 2) / .55) ** 2));
   const bandPt = (r, y0, y1, ph, v, o) => { const k = tipK(ph) * v * v; o[0] = C.x + sd * Math.sin(ph) * (r + .024 * k); o[1] = lerp(y0, y1, v) - .042 * k; o[2] = C.z + Math.cos(ph) * (r + .006 * k) * 1.06; return o; };
-  for (const [y0, y1, r0] of [[1.445, 1.372, .09], [1.398, 1.322, .097], [1.35, 1.27, .104]]) {
+  for (const [y0, y1, r0] of [[1.446, 1.358, .09], [1.39, 1.298, .096], [1.332, 1.238, .102]]) {
    add(slab(Q(20, 10), Q(5, 3), (u, v, o) => bandPt(r0 + .014 * v, y0, y1, lerp(-.75, PI + .75, u), v, o), .005), M.metal, wArm);
    const e = []; for (let i = 0; i <= 20; i++) e.push(bandPt(r0 + .018, y0, y1, lerp(-.75, PI + .75, i / 20), 1, [0, 0, 0])); trim(e, wArm, .0036);
   }
@@ -874,11 +909,9 @@ function makeHalcyon(opts) {
   const fd = [sd * .5, .86, 0], fb = cPt(.112, .2, PI / 2, [0, 0, 0]);
   add(new THREE.ConeGeometry(.03, .08, Q(8, 4)), M.metal, wCap, [fb[0] + fd[0] * .034, fb[1] + fd[1] * .034, fb[2]], null, [.45, 1, 1.9], qY(fd));
   add(new THREE.ConeGeometry(.012, .032, Q(6, 4)), M.gold, wCap, [fb[0] + fd[0] * .076, fb[1] + fd[1] * .076, fb[2]], null, [.5, 1, 1.9], qY(fd));
-  // mail sleeve, rerebrace, pointed couter with its fan, vambrace
+  // mail sleeve showing below the pauldron, pointed couter with its fan, vambrace
   const ax = sd * .205, az = -.012, ring = (y, r, w, rr) => trim(loop((a, o) => { o[0] = ax + Math.sin(a) * r; o[1] = y; o[2] = az + Math.cos(a) * r; return o; }, 20), w, rr || .003);
-  add(lathe([[.048, 1.4], [.046, 1.2], [.042, 1.1], [.038, .92]], Q(16, 8), { cx: ax, cz: az, sub: 3 }), M.mail, wArm);
-  add(lathe([[.058, 1.345], [.058, 1.28], [.054, 1.2]], Q(18, 10), { cx: ax, cz: az, sub: 2 }), M.metal, wArm);
-  ring(1.2, .056, wArm);
+  add(lathe([[.053, 1.4], [.052, 1.2], [.047, 1.1], [.04, .92]], Q(16, 8), { cx: ax, cz: az, sub: 3 }), M.mail, wArm);
   const wE = () => [[S, .45], [BI['elbow' + sd], .55]];
   add(new THREE.SphereGeometry(1, Q(16, 8), Q(12, 6)), M.metal, wE, [ax, 1.157, az - .022], null, [.054, .058, .054]);
   add(new THREE.ConeGeometry(.026, .07, Q(8, 4)), M.metal, wE, [ax, 1.15, az - .085], [-PI / 2 - .25, 0, 0], [.8, 1, 1]);
@@ -910,15 +943,15 @@ function makeHalcyon(opts) {
   const ring = (y, r, cz, rr) => trim(loop((a, o) => { o[0] = lx + Math.sin(a) * r; o[1] = y; o[2] = cz + Math.cos(a) * r * 1.06; return o; }, 20), wLeg, rr || .003);
   for (let r = 0; r < 2; r++) {
    const y0 = .975 - r * .075, L = .105;
-   add(slab(Q(8, 5), Q(5, 4), (u, v, o) => { const a = sd * lerp(.12, 1.05, u), y = y0 - v * L * (1 + .25 * Math.sin(PI * u)); armorPt(a, Math.max(y, .9), .032 + .03 * v + r * .012, o); o[1] = y; return o; }, .005), M.metal, wT);
-   const e = []; for (let i = 0; i <= 8; i++) { const u = i / 8, a = sd * lerp(.12, 1.05, u), o = armorPt(a, .9, .066 + r * .012, [0, 0, 0]); o[1] = y0 - L * (1 + .25 * Math.sin(PI * u)); e.push(o); } trim(e, wT, .003);
+   add(slab(Q(8, 5), Q(5, 4), (u, v, o) => { const a = sd * lerp(.62, 1.45, u), y = y0 - v * L * (1 + .25 * Math.sin(PI * u)); armorPt(a, Math.max(y, .9), .032 + .03 * v + r * .012, o); o[1] = y; return o; }, .005), M.metal, wT);
+   const e = []; for (let i = 0; i <= 8; i++) { const u = i / 8, a = sd * lerp(.62, 1.45, u), o = armorPt(a, .9, .066 + r * .012, [0, 0, 0]); o[1] = y0 - L * (1 + .25 * Math.sin(PI * u)); e.push(o); } trim(e, wT, .003);
   }
   add(lathe([[.086, .9], [.084, .78], [.074, .66], [.064, .565]], Q(20, 10), { cx: lx, cz: .004, sub: 3, sz: 1.06 }), M.metal, wLeg);
   ring(.585, .067, .004);
   { const p = []; for (let i = 0; i <= 6; i++) { const y = lerp(.87, .6, i / 6); p.push([lx, y, .004 + (crv([[.9, .086], [.78, .084], [.66, .074], [.565, .064]], 1, y) + .004) * 1.06]); } trim(p, wLeg, .003); }
-  add(new THREE.OctahedronGeometry(.022, 0), M.gold, wLeg, [lx + sd * .03, .76, .082], [0, sd * .35, 0], [1, 1.5, .3]);
   add(lathe([[.058, .6], [.056, .48]], Q(14, 8), { cx: lx, cz: .004 }), M.mail, wLeg);
   add(new THREE.SphereGeometry(1, Q(16, 8), Q(12, 6)), M.metal, wLeg, [lx, .52, .04], null, [.058, .064, .048]);
+  for (const k of [[.55, 1.9, .3], [1.9, .55, .3]]) add(new THREE.OctahedronGeometry(.016, 0), M.gold, wLeg, [lx, .525, .088], null, k);
   add(new THREE.ConeGeometry(.03, .075, Q(8, 4)), M.metal, wLeg, [lx, .575, .07], [.42, 0, 0], [1, 1, .55]);
   add(new THREE.CylinderGeometry(.044, .044, .006, Q(16, 8)), M.metal, wLeg, [lx + sd * .056, .52, .018], [0, 0, PI / 2], [1, 1, 1.2]);
   add(new THREE.TorusGeometry(.044, .0034, Q(4, 3), Q(18, 9)), M.gold, wLeg, [lx + sd * .06, .52, .018], [0, PI / 2, 0], [1.2, 1, 1]);
@@ -940,33 +973,38 @@ function makeHalcyon(opts) {
  const SWB = new THREE.Matrix4().multiplyMatrices(wrists[0].matrixWorld, GRIP);
  const swAdd = (geo, mat, p, r, s, q) => { let g = place(geo, p, r, s, q); if (g === geo) g = geo.clone(); g.applyMatrix4(SWB); add(g, mat, BI['wrist-1']); };
  const BL0 = .1, BL1 = 1.4;
- const bw2 = (y) => lerp(.044, .033, sm(BL0, 1.12, y)) * Math.sqrt(Math.max(0, 1 - sm(1.12, BL1, y) ** 1.25)) + .0004;
- const bth = (y) => lerp(.0085, .005, sm(BL0, BL1, y)) * (1 - .6 * sm(1.2, BL1, y));
+ const bw2 = (y) => lerp(.058, .043, sm(BL0, 1.12, y)) * Math.sqrt(Math.max(0, 1 - sm(1.12, BL1, y) ** 1.25)) + .0004;
+ const bth = (y) => lerp(.0095, .0055, sm(BL0, BL1, y)) * (1 - .6 * sm(1.2, BL1, y));
  for (const sd of [-1, 1]) {
   // black glass with a shallow fuller; the texture carries the cold blue edge
   swAdd(surf(Q(10, 6), Q(44, 22), (u, v, o) => { const y = lerp(BL0, BL1, v), zn = lerp(-1, 1, u), az = Math.abs(zn); o[0] = sd * bth(y) * ((1 - Math.pow(az, 1.2)) - .3 * Math.exp(-((zn / .28) ** 2)) * sm(1.25, 1.0, y)); o[1] = y; o[2] = zn * bw2(y); return o; }, false, sd < 0), M.edge);
   const pts = []; for (let i = 0; i <= 26; i++) { const y = lerp(.2, 1.28, i / 26); pts.push([sd * (bth(y) * .72 + .0006), y, (i % 2 ? 1 : -1) * .005 * (.5 + rnd()) + .004 * Math.sin(y * 9)]); }
   swAdd(tube(pts, Q(52, 26), 3, () => .0024, .2, (c, n) => n.set(sd, 0, 0)), M.crack);
  }
- // gold sun-wheel crossguard with flared quillons
- swAdd(new THREE.TorusGeometry(.046, .007, Q(6, 4), Q(28, 14)), M.gold, [0, .07, 0], [0, PI / 2, 0]);
- swAdd(new THREE.CylinderGeometry(.031, .031, .024, Q(20, 10)), M.metalDk, [0, .07, 0], [0, 0, PI / 2]);
- swAdd(new THREE.SphereGeometry(.016, Q(12, 6), Q(8, 5)), M.gold, [0, .07, 0], null, [1.5, 1, 1]);
+ // the crossguard: a blackened sun-wheel ringed and spoked in gold with short gold rays, and blackened quillons edged in gold
+ // that end in spikes; a gold langet on each flat where the blade begins
+ swAdd(new THREE.TorusGeometry(.05, .0065, Q(6, 4), Q(28, 14)), M.gold, [0, .07, 0], [0, PI / 2, 0]);
+ swAdd(new THREE.CylinderGeometry(.046, .046, .022, Q(20, 10)), M.metalDk, [0, .07, 0], [0, 0, PI / 2]);
+ swAdd(new THREE.SphereGeometry(.015, Q(12, 6), Q(8, 5)), M.gold, [0, .07, 0], null, [1.6, 1, 1]);
+ for (let k = 0; k < 8; k++) { const a = k / 8 * TAU; swAdd(new THREE.BoxGeometry(.026, .005, .036), M.gold, [0, .07 + Math.sin(a) * .03, Math.cos(a) * .03], [-a, 0, 0]); }
  for (let k = 0; k < 12; k++) {
-  const a = (k + .5) / 12 * TAU, dy = Math.sin(a), dz = Math.cos(a), L = k % 2 ? .02 : .032;
-  swAdd(new THREE.ConeGeometry(.0065, L, 4), M.gold, [0, .07 + dy * (.051 + L / 2), dz * (.051 + L / 2)], null, null, new THREE.Quaternion().setFromUnitVectors(YA, new THREE.Vector3(0, dy, dz)));
+  const a = (k + .5) / 12 * TAU, dy = Math.sin(a), dz = Math.cos(a), L = k % 2 ? .016 : .026;
+  swAdd(new THREE.ConeGeometry(.0055, L, 4), M.gold, [0, .07 + dy * (.055 + L / 2), dz * (.055 + L / 2)], null, null, new THREE.Quaternion().setFromUnitVectors(YA, new THREE.Vector3(0, dy, dz)));
  }
  for (const s of [-1, 1]) {
-  swAdd(new THREE.BoxGeometry(.018, .022, .12), M.gold, [0, .07, s * .11]);
-  swAdd(new THREE.ConeGeometry(.02, .06, Q(8, 4)), M.gold, [0, .07, s * .19], [s * PI / 2, 0, 0], [.6, 1, 1.1]);
-  swAdd(new THREE.SphereGeometry(.014, Q(8, 5), Q(6, 4)), M.metalDk, [0, .07, s * .165], null, [.8, 1.1, 1]);
+  swAdd(new THREE.BoxGeometry(.02, .024, .12), M.metalDk, [0, .07, s * .115]);
+  for (const e of [-1, 1]) swAdd(new THREE.BoxGeometry(.022, .004, .12), M.gold, [0, .07 + e * .012, s * .115]);
+  swAdd(new THREE.SphereGeometry(.016, Q(8, 5), Q(6, 4)), M.gold, [0, .07, s * .178], null, [.9, 1.1, .7]);
+  swAdd(new THREE.ConeGeometry(.017, .075, Q(8, 4)), M.metalDk, [0, .07, s * .222], [s * PI / 2, 0, 0], [.7, 1, 1]);
+  swAdd(new THREE.BoxGeometry(.004, .032, .05), M.gold, [s * .011, .1, 0]);
  }
- // long two-hand grip wrapped in black leather, gold collars, a flared sun pommel
+ // long two-hand grip wrapped in black leather, gold collars, a blackened spiked pommel
  swAdd(lathe([[.0175, .055], [.0185, .0], [.019, -.12], [.018, -.24]], Q(14, 8), { sub: 4 }), M.grip);
  for (let k = 0; k < 9; k++) swAdd(new THREE.TorusGeometry(.019, .0022, Q(4, 3), Q(12, 6)), M.grip, [0, .03 - k * .031, 0], [PI / 2 + .16, 0, 0]);
  for (const y of [.052, -.242]) swAdd(new THREE.TorusGeometry(.019, .0034, Q(5, 4), Q(16, 8)), M.gold, [0, y, 0], [PI / 2, 0, 0]);
- swAdd(lathe([[.012, -.245], [.03, -.262], [.034, -.28], [.02, -.296], [.001, -.3]], Q(16, 8), { sub: 2 }), M.gold, null, null, [.6, 1, 1]);
- swAdd(new THREE.SphereGeometry(.011, Q(10, 6), Q(8, 5)), M.metalDk, [0, -.275, 0], null, [2, 1, 1]);
+ swAdd(new THREE.OctahedronGeometry(.024, 0), M.metalDk, [0, -.27, 0], null, [1, 1.3, 1]);
+ swAdd(new THREE.TorusGeometry(.012, .003, Q(5, 4), Q(12, 6)), M.gold, [0, -.3, 0], [PI / 2, 0, 0]);
+ swAdd(new THREE.ConeGeometry(.011, .07, Q(8, 4)), M.metalDk, [0, -.336, 0], [PI, 0, 0]);
  const TIP = new THREE.Vector3(0, BL1, 0), MIDB = new THREE.Vector3(0, .78, 0), BASEB = new THREE.Vector3(0, .14, 0), UPB = new THREE.Vector3(0, 1.1, 0);
  const swM = new THREE.Matrix4();
  const swordMatrix = () => swM.multiplyMatrices(wrists[0].matrixWorld, GRIP);
@@ -976,8 +1014,8 @@ function makeHalcyon(opts) {
  const addB = (map, color, x) => Object.assign({ map, color, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }, x || {});
  const spr = (map, color, order, x) => { const s = new THREE.Sprite(new THREE.SpriteMaterial(addB(map, color, x))); s.renderOrder = order; fx.add(s); return s; };
  const eyeGlow = spr(glowT, 0x9cc8ff, 9), eyeGlow2 = spr(glowT, 0x9cc8ff, 9), edgeA = spr(glowT, 0x80b8ff, 6), edgeB = spr(glowT, 0x80b8ff, 6), crackGlow = spr(glowT, 0xffe2a0, 7);
- const sunDisc = spr(discT, 0x000000, 10, { blending: THREE.NormalBlending }), corona = spr(coronaT, 0xc8a0ff, 11);
- const pool = new THREE.Mesh(new THREE.CircleGeometry(1, 40), new THREE.MeshBasicMaterial({ color: 0x04060a, transparent: true, opacity: 0, depthWrite: false }));
+ const sunDisc = spr(discT, 0x000000, 10, { blending: THREE.NormalBlending }), corona = spr(coronaT, 0xa8d0ff, 11);
+ const pool = new THREE.Mesh(new THREE.CircleGeometry(1, 40), new THREE.MeshBasicMaterial({ color: 0x04060a, map: tex(softC('rgba(255,255,255,1)', 'rgba(255,255,255,.85)')), transparent: true, opacity: 0, depthWrite: false }));
  pool.rotation.x = -PI / 2; pool.renderOrder = 1; fx.add(pool);
  // the pale moth that rises out of her at the very end: her soul going home
  function mothCanvas() {
@@ -992,7 +1030,7 @@ function makeHalcyon(opts) {
  const mothMat = new THREE.MeshBasicMaterial({ map: mothT, color: 0xfff6e6, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
  const wingG = new THREE.PlaneGeometry(.3, .22); wingG.translate(.15, 0, 0);
  const mWingL = new THREE.Mesh(wingG, mothMat), mWingR = new THREE.Mesh(wingG, mothMat); mWingR.scale.x = -1; moth.add(mWingL); moth.add(mWingR);
- const mothGlow = spr(glowT, 0xfff0d0, 12);
+ const mothGlow = spr(glowT, 0xffe2a8, 12);
  function stepMoth(def, u, t, dt) {
   const on = def === ACTS.die && u > .5;
   moth.visible = on; mothGlow.visible = on;
@@ -1012,25 +1050,35 @@ function makeHalcyon(opts) {
  const trail = new THREE.Mesh(trGeo, new THREE.MeshBasicMaterial({ vertexColors: true, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
  trail.frustumCulled = false; trail.renderOrder = 6; trail.visible = false; fx.add(trail);
  const trTip = [], trMid = []; for (let i = 0; i < TRN; i++) { trTip.push(new THREE.Vector3()); trMid.push(new THREE.Vector3()); }
- // point particles; sizes are true world sizes in any perspective camera, including a narrow zoomed battle camera
- function particles(n, size) {
-  const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
-  const pm = new THREE.PointsMaterial({ size, map: glowT, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
-  pm.onBeforeCompile = (s) => { s.vertexShader = s.vertexShader.replace('gl_PointSize *= ( scale / - mvPosition.z );', 'gl_PointSize *= ( scale * projectionMatrix[1][1] / - mvPosition.z );'); };
+ // point particles, each with its own size and alpha; sizes are true world sizes in any perspective camera, including a narrow
+ // zoomed battle camera. Light adds; the black smoke blends normally, so it darkens whatever is behind it.
+ function particles(n, size, map, dark) {
+  const pos = new Float32Array(n * 3), col = new Float32Array(n * 4), ps = new Float32Array(n).fill(1), g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 4)); g.setAttribute('psize', new THREE.BufferAttribute(ps, 1));
+  const pm = new THREE.PointsMaterial({ size, map: map || glowT, vertexColors: true, transparent: true, depthWrite: false, blending: dark ? THREE.NormalBlending : THREE.AdditiveBlending });
+  pm.onBeforeCompile = (s) => { s.vertexShader = 'attribute float psize;\n' + s.vertexShader.replace('gl_PointSize = size;', 'gl_PointSize = size * psize;').replace('gl_PointSize *= ( scale / - mvPosition.z );', 'gl_PointSize *= ( scale * projectionMatrix[1][1] / - mvPosition.z );'); };
   pm.customProgramCacheKey = () => 'halcyon-pts';
-  const pts = new THREE.Points(g, pm); pts.frustumCulled = false; pts.renderOrder = 8; fx.add(pts);
-  return { pts, pos, col, g, n, vel: new Float32Array(n * 3), life: new Float32Array(n), max: new Float32Array(n).fill(1), tg: new Float32Array(n), next: 0 };
+  const pts = new THREE.Points(g, pm); pts.frustumCulled = false; pts.renderOrder = dark ? 5 : 8; fx.add(pts);
+  return { pts, pos, col, ps, g, n, dark, vel: new Float32Array(n * 3), life: new Float32Array(n), max: new Float32Array(n).fill(1), tg: new Float32Array(n), sz: new Float32Array(n).fill(1), off: new Float32Array(n * 3), next: 0, live: 0 };
  }
- const motes = particles(56, .05), sparks = particles(40, .04);
- function emit(P, x, y, z, vx, vy, vz, life) { const i = P.next; P.next = (i + 1) % P.n; P.pos.set([x, y, z], i * 3); P.vel.set([vx, vy, vz], i * 3); P.life[i] = life; P.max[i] = life; return i; }
+ // black diamond flakes: the shards that whirl round Black Noon and tear off the dark as she retreats
+ function shardCanvas() { const S = 32, c = cvs(S, S), g = c.getContext('2d'); g.fillStyle = '#07080c'; g.strokeStyle = 'rgba(120,170,255,.9)'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(16, 2); g.lineTo(23.5, 16); g.lineTo(16, 30); g.lineTo(8.5, 16); g.closePath(); g.fill(); g.stroke(); return c; }
+ const motes = particles(72, .075), sparks = particles(40, .04), smoke = particles(96, .5, smokeT, true), shards = particles(56, .1, tex(shardCanvas()), true);
+ const EBLUE = new THREE.Color(0x6aa8ff), EGOLD = new THREE.Color(0xffc458), EGLOW = new THREE.Color(0x80b8ff);
+ function emit(P, x, y, z, vx, vy, vz, life, sz) { const i = P.next; P.next = (i + 1) % P.n; P.pos.set([x, y, z], i * 3); P.vel.set([vx, vy, vz], i * 3); P.life[i] = life; P.max[i] = life; P.sz[i] = sz || 1; P.live++; return i; }
+ // steps live particles; a system with none alive costs nothing and uploads nothing (each one fades to nothing as it dies)
  function stepP(P, dt, fn, colr) {
+  P.pts.visible = P.live > 0;
+  if (!P.live) return;
+  let live = 0;
   for (let i = 0; i < P.n; i++) {
-   if (P.life[i] <= 0) { P.col[i * 3] = P.col[i * 3 + 1] = P.col[i * 3 + 2] = 0; continue; }
-   P.life[i] -= dt; const k = fn(i, dt, 1 - P.life[i] / P.max[i]);
-   P.col[i * 3] = colr[0] * k; P.col[i * 3 + 1] = colr[1] * k; P.col[i * 3 + 2] = colr[2] * k;
+   const c = i * 4;
+   if (P.life[i] <= 0) { P.col[c] = P.col[c + 1] = P.col[c + 2] = P.col[c + 3] = 0; continue; }
+   P.life[i] -= dt; const k = Math.max(0, fn(i, dt, 1 - P.life[i] / P.max[i])); live++;
+   if (P.dark) { P.col[c] = colr[0]; P.col[c + 1] = colr[1]; P.col[c + 2] = colr[2]; P.col[c + 3] = k; } else { P.col[c] = colr[0] * k; P.col[c + 1] = colr[1] * k; P.col[c + 2] = colr[2] * k; P.col[c + 3] = 1; }
   }
-  P.g.attributes.position.needsUpdate = true; P.g.attributes.color.needsUpdate = true;
+  P.live = live;
+  P.g.attributes.position.needsUpdate = true; P.g.attributes.color.needsUpdate = true; if (P.dark) P.g.attributes.psize.needsUpdate = true;
  }
 
  // ---------- motion: poses are flat objects of channels (Sol's layout, so their stances rhyme) ----------
@@ -1040,14 +1088,15 @@ function makeHalcyon(opts) {
  // effects: eye (the cold blue eyes blaze), drink (light streams), ch (dark sun), crack (warm light in the blade), fade,
  // sw (the dark swallowing her from the feet up as she retreats).
  const D3 = (x, y, z) => { const l = Math.hypot(x, y, z) || 1; return [x / l, y / l, z / l]; };
+ // her ready stance is the Warden's high guard: both hands on the grip beside her head, the point toward her foe
  const READY = {
-  y: -.05, x: 0, z: 0, pX: .05, pY: -.25, pZ: 0, sX: .02, sY: .05, sZ: 0, cX: .03, cY: .12, cZ: 0, nX: 0, nY: .04, hX: .03, hY: .08, hZ: 0,
-  rFx: -.16, rFy: 0, rFz: -.14, rFr: -.6, rFp: 0, lFx: .125, lFy: 0, lFz: .16, lFr: .12, lFp: 0,
-  gx: -.12, gy: 1.4, gz: .27, dx: -.06, dy: .9, dz: -.42, ex: 0, ey: .42, ez: .9,
-  rPx: -.35, rPy: -.9, rPz: .05,
-  two: 1, lik: 0, lbl: 0, ltx: .2, lty: .95, ltz: .1, lPx: .3, lPy: -.9, lPz: .05,
+  y: -.08, x: 0, z: 0, pX: .05, pY: -.25, pZ: 0, sX: .02, sY: .05, sZ: 0, cX: .03, cY: .12, cZ: 0, nX: 0, nY: .04, hX: .03, hY: .08, hZ: 0,
+  rFx: -.22, rFy: 0, rFz: -.2, rFr: -.6, rFp: 0, lFx: .19, lFy: 0, lFz: .2, lFr: .2, lFp: 0,
+  gx: -.2, gy: 1.62, gz: .1, dx: .2, dy: .62, dz: .76, ex: -.16, ey: .78, ez: -.6,
+  rPx: -.9, rPy: -.35, rPz: -.1,
+  two: 1, lik: 0, lbl: 0, ltx: .2, lty: .95, ltz: .1, lPx: .2, lPy: -.8, lPz: .5,
   lSX: -.1, lSY: 0, lSZ: .15, lE: -.3, lWX: 0, lWZ: 0,
-  fR: 1, fL: 1, br: .5, bl: .2, mo: 0,
+  fR: 1, fL: 1, br: .75, bl: .2, mo: 0,
   eye: .4, drink: 0, ch: 0, crack: 0, fade: 1, sw: 0
  };
  { const d = D3(READY.dx, READY.dy, READY.dz); READY.dx = d[0]; READY.dy = d[1]; READY.dz = d[2]; }
@@ -1061,6 +1110,8 @@ function makeHalcyon(opts) {
   gx: -.2, gy: 1.4, gz: .26, dx: .96, dy: .22, dz: .14, ex: 0, ey: .6, ez: .8, rPx: -.5, rPy: -.8, rPz: .1,
   lPx: .6, lPy: -.7, lPz: -.1, br: .8, mo: 1, eye: .6
  });
+ // the model sheet's A-pose, for turnaround renders (state.pose = 'sheet'): arms out from her sides, feet apart, blade hung down
+ const SHEET = Object.assign({}, READY, { y: 0, pX: 0, pY: 0, sX: 0, sY: 0, cX: 0, cY: 0, nY: 0, hX: 0, hY: 0, rFx: -.15, rFz: 0, rFr: -.1, lFx: .15, lFz: 0, lFr: .1, gx: -.4, gy: .96, gz: .04, dx: 0, dy: -1, dz: .02, ex: 0, ey: 0, ez: 1, rPx: -.4, rPy: 0, rPz: -1, two: 0, lSX: 0, lSZ: .4, lE: -.12, fL: .5 });
  function K(u, o, s) {
   const k = Object.assign({}, o || {});
   if (s) { k.gx = s[0]; k.gy = s[1]; k.gz = s[2]; const d = D3(s[3], s[4], s[5]); k.dx = d[0]; k.dy = d[1]; k.dz = d[2]; if (s.length > 6) { k.ex = s[6]; k.ey = s[7]; k.ez = s[8]; } }
@@ -1138,13 +1189,13 @@ function makeHalcyon(opts) {
  act('lightDrinker', 2.2, [K(0),
   K(.26, { y: -.06, pY: -.4, cY: -.15, hY: .25, br: 1, mo: 1, eye: .8 }, [-.24, 1.66, .04, -.35, .8, -.48, .0, .5, .86]),
   K(.4, { y: -.14, pX: .15, pY: .2, cY: .15, hY: -.05, mo: 2 }, [.16, 1.08, .36, .62, -.42, .66, .4, -.88, -.25]),
-  K(.52, { y: -.08, pX: .0, pY: -.15, cY: .05, cX: -.06, hX: -.04, hY: .1, mo: 1, eye: 1, drink: 1, rPx: -.6, rPy: -.6, rPz: -.2, lPx: .6, lPy: -.6, lPz: -.2 }, [-.02, 1.26, .3, .0, .94, .33, .0, -.33, .94]),
-  K(.75, { drink: 1, eye: 1, cX: -.08 }, [-.02, 1.3, .31, .0, .95, .3, .0, -.3, .95]),
-  K(.86, { drink: 0, eye: .6 }),
+  K(.52, { y: -.06, pX: -.04, pY: -.2, cY: .05, cX: -.12, nX: -.08, hX: -.28, hY: .12, mo: 1, eye: 1, drink: 1, two: 0, lik: 1, ltx: .14, lty: 2.02, ltz: .2, lPx: .7, lPy: -.3, lPz: -.4, fL: .1, rPx: -.7, rPy: -.6, rPz: .1 }, [-.24, 1.3, .2, -.04, 1, .1, 0, -.1, 1]),
+  K(.75, { drink: 1, eye: 1, cX: -.14, hX: -.32, lty: 2.05 }, [-.24, 1.32, .2, -.04, 1, .08, 0, -.08, 1]),
+  K(.86, { drink: 0, eye: .6, two: 1, lik: 0, fL: 1, nX: 0, hX: .0 }),
   K(1, READY)], { hits: [.4], span: [.4, .75], trail: [[.28, .44]] });
- // Warden's Vow: the counter stance, blade low, her eyes blazing; held until her next action
+ // Warden's Vow: the counter stance, low and wide, the blade held low across her body, her eyes blazing; held until her next action
  const VOW = Object.assign({}, READY, { y: -.15, pX: .1, pY: -.3, cX: .08, cY: .1, hX: .08, hY: .2, rFx: -.2, rFz: -.18, rFr: -.55, lFx: .16, lFz: .24, lFr: .2, br: 1, bl: .32, mo: 1, eye: 1, rPx: -.5, rPy: -.8, rPz: 0, lPx: .5, lPy: -.85, lPz: 0 });
- Object.assign(VOW, K(0, {}, [-.14, .98, .2, .05, -.55, .83, 0, -.83, -.55])[1]);
+ Object.assign(VOW, K(0, {}, [-.17, 1.0, .18, .62, -.42, .66, .29, .91, .31])[1]);
  act('vowStance', .8, [K(0), K(.3, { y: -.1, pX: .06, eye: .8, br: .8 }, [-.14, 1.2, .3, .03, .3, .95, 0, -.95, .3]), K(.65, VOW), K(1, VOW)], { hold: true });
  act('counter', .9, [K(0, VOW),
   K(.3, { y: -.2, pX: .15 }, V(2.1, [-.12, .9, .3])),
@@ -1152,7 +1203,7 @@ function makeHalcyon(opts) {
   K(.62, { y: -.04 }, V(-.1, [.05, 1.62, .2])),
   K(1, READY)], { hits: [.45], trail: [[.25, .55]], bi: .12, dash: (u) => 1.5 * sm(.25, .35, u) * (1 - sm(.42, .55, u)) });
  // Black Noon: the blade raised straight up while light bends into a dark sun, then the great cleave
- const NOON = Object.assign({}, READY, { y: -.02, pX: -.04, pY: -.05, sY: 0, cX: -.1, cY: .02, hX: -.16, hY: .04, rFx: -.15, rFz: -.12, lFx: .14, lFz: .16, br: 1, bl: .1, mo: 1, eye: 1, ch: .45, rPx: -.8, rPy: -.3, rPz: 0, lPx: .8, lPy: -.3, lPz: 0 });
+ const NOON = Object.assign({}, READY, { y: -.02, pX: -.04, pY: -.05, sY: 0, cX: -.1, cY: .02, nX: -.06, hX: -.22, hY: .04, rFx: -.15, rFz: -.12, lFx: .14, lFz: .16, br: 1, bl: .1, mo: 1, eye: 1, ch: .6, rPx: -.8, rPy: -.3, rPz: 0, lPx: .8, lPy: -.3, lPz: 0 });
  Object.assign(NOON, K(0, {}, [-.02, 1.98, .08, 0, 1, .02, 0, -.02, 1])[1]);
  act('blackNoonCharge', 1.2, [K(0), K(.7, NOON), K(1, NOON)], { hold: true });
  act('blackNoon', 2.6, [K(0, NOON),
@@ -1161,12 +1212,12 @@ function makeHalcyon(opts) {
   K(.62, Object.assign({ y: -.22, pX: .34, cX: .26, hX: .15, lFz: .36, rFz: -.24, ch: 0, eye: 1 }, POLE_LOW), V(2.15, [.0, .98, .55])),
   K(.78, { y: -.23, pX: .36 }, V(2.4, [.02, .84, .5])),
   K(1, READY)], { hits: [.62], trail: [[.5, .72]], bi: .1, dash: (u) => 1.6 * sm(.5, .6, u) * (1 - sm(.62, .74, u)) });
- // Kestrel: she loses her turn, the point drops, a hand goes to her helm
+ // "...Squire?": she loses her turn; the point drops into one hand, her head turns toward the voice and her free hand half reaches out
  act('stagger', 1.2, [K(0), K(.1, { pX: -.06, hX: -.08 }, [-.13, 1.22, .3, .04, .35, .94, 0, -.94, .35]),
   K(.25, { y: -.06, pX: -.12, cX: -.08, hX: -.15, hY: .2, rFz: -.26, lFz: .1, mo: 3, br: .2, bl: .4, eye: .3, rPx: -.5, rPy: -.8, rPz: 0 }, [-.14, 1.05, .25, .06, -.3, .95, 0, -.95, -.3]),
-  K(.45, { y: -.08, pX: -.15, cX: -.12, hX: -.2, hY: .3, hZ: .1, rFz: -.3, lFz: .08, two: 0, lik: 1, ltx: .02, lty: 1.62, ltz: .2, lPx: .6, lPy: -.6, lPz: .2, fL: .4, br: 0, bl: .5, eye: .1 }, [-.14, 1.0, .22, .08, -.55, .83, 0, -.83, -.55]),
-  K(.65, { y: -.12, pX: .12, cX: .15, hX: .3, hY: .15, hZ: .05, lty: 1.58, mo: 3, bl: .6 }, [-.12, .94, .24, .05, -.6, .8, 0, -.8, -.6]),
-  K(.85, { two: 1, lik: 0, fL: 1, hX: .1, eye: .4, mo: 0, br: .6, bl: .2 }, [-.13, 1.16, .28, .0, .3, .95, 0, -.95, .3]),
+  K(.45, { y: -.08, pX: -.1, cX: -.06, cY: .12, hX: -.05, hY: .48, hZ: .06, rFz: -.3, lFz: .08, two: 0, lik: 1, ltx: .4, lty: 1.22, ltz: .4, lPx: .7, lPy: -.5, lPz: -.3, fL: .25, br: 0, bl: .5, eye: .1 }, [-.24, 1.0, .2, .1, -.72, .68, .12, .7, .7]),
+  K(.65, { y: -.1, pX: .02, cX: .04, hX: .05, hY: .52, hZ: .05, ltx: .42, lty: 1.18, mo: 3, bl: .6 }, [-.22, .96, .22, .08, -.76, .64, .1, .66, .74]),
+  K(.85, { two: 1, lik: 0, fL: 1, hX: .1, hY: .1, eye: .4, mo: 0, br: .6, bl: .2 }, [-.13, 1.16, .28, .0, .3, .95, 0, -.95, .3]),
   K(1, READY)], { dash: (u) => -.8 * (1 - sm(0, .3, u)) * sm(0, .06, u) });
  // appear: she walks out of the dark, the blade on her shoulder, and settles into her guard
  const CARRY = { two: 0, lik: 0, lSX: .1, lSZ: .12, lE: -.25, fL: .6, rPx: -.3, rPy: -.9, rPz: -.2, pY: 0, sY: 0, cY: 0, nY: 0, hY: 0, rFr: -.08, lFr: .08, rFx: -.1, lFx: .1, eye: 1 };
@@ -1176,14 +1227,15 @@ function makeHalcyon(opts) {
   K(.3, { fade: 1, lFz: .0, lFy: .09, y: -.01 }), K(.4, { lFz: .22, lFy: 0, rFz: -.2, y: -.04 }),
   K(.5, { rFz: .0, rFy: .08, y: -.01 }), K(.6, { rFz: .16, rFy: 0, lFz: -.14, y: -.04 }),
   K(.82, Object.assign({}, READY, { eye: .7 })), K(1, READY)], { bi: .01, dash: (u) => 1.1 * (1 - sm(.5, .7, u)) });
- // defeat, the very end: Sol's kneel, sized up; the sword planted, the black blade warming with a thin line of light;
- // a pale moth rises out of her, and she goes home with it (lore answer 10)
- const KNEEL = Object.assign({}, READY, { y: -.45, pX: .26, pY: -.12, cX: .16, cY: .05, hX: .38, hY: 0, mo: 3, bl: .6, br: .2, rFx: -.13, rFz: -.42, rFy: 0, rFp: 1.3, rFr: -.15, lFx: .14, lFz: .36, lFr: .1, two: 0, lik: 1, ltx: .15, lty: .6, ltz: .32, lPx: .7, lPy: .1, lPz: -.6, fL: .6, rPx: -.6, rPy: -.6, rPz: -.2, gx: .03, gy: 1.0, gz: .3, dx: .0, dy: -.7, dz: .72, ex: 0, ey: -.72, ez: -.7, eye: .2 });
+ // defeat, the very end: she kneels on one knee with both hands on the hilt of her planted blade, and its whole edge warms
+ // from cold blue to a line of gold; a pale moth rises out of her, and she goes home with it (lore answer 10)
+ const KNEEL = Object.assign({}, READY, { y: -.45, pX: .26, pY: -.12, cX: .16, cY: .05, hX: .38, hY: 0, mo: 3, bl: .6, br: .2, rFx: -.13, rFz: -.42, rFy: 0, rFp: 1.3, rFr: -.15, lFx: .14, lFz: .36, lFr: .1, two: 1, lik: 0, rPx: -.8, rPy: -.5, rPz: .1, lPx: .8, lPy: -.5, lPz: .1, gx: -.07, gy: 1.08, gz: .36, dx: 0, dy: -1, dz: -.04, ex: 0, ey: -.04, ez: 1, eye: .2 });
  act('die', 5.2, [K(0), K(.15, { pX: -.12, y: -.12, mo: 3, bl: .5, br: .8, hX: -.2, eye: .8 }, [-.1, 1.2, .25, .1, -.3, .95, 0, -.95, -.3]), K(.25, { y: -.3, pX: .15 }, [-.02, 1.08, .3, .05, -.55, .83, 0, -.83, -.55]),
   K(.33, KNEEL), K(.45, { crack: 1, cX: .2, hX: .42, eye: .2 }), K(.56, { crack: 1, cX: .16, hX: .1, eye: .05, br: .1, bl: .3 }),
   K(.72, { crack: 1, hX: -.05, fade: .65, eye: 0 }), K(.94, { crack: 1, hX: -.1, fade: 0 }), K(1, { crack: 1, fade: 0 })], { hold: true, bi: .1 });
- // retreat, at the end of the level 20 fight: the blade back on her shoulder, she backs away, and the dark swallows her from the feet up
- act('retreat', 2.6, [K(0), K(.12, Object.assign({}, CARRY, { eye: .9, br: .9 }), CS),
+ // retreat, at the end of the level 20 fight: the blade held low in one hand, she backs away, and black smoke swallows her from the feet up
+ const LOW = { two: 0, lik: 0, lSX: -.06, lSZ: .2, lE: -.35, fL: .7, rPx: -.45, rPy: -.9, rPz: .2, pY: -.15, sY: 0, cY: .05, nY: 0, hY: .1, rFr: -.08, lFr: .08, rFx: -.1, lFx: .1, eye: .9, br: .9 };
+ act('retreat', 2.6, [K(0), K(.12, LOW, [-.25, 1.0, .16, .12, -.7, .7, .12, .7, .7]),
   K(.22, { rFz: -.24, rFy: .08, y: -.02 }), K(.32, { rFz: -.1, rFy: 0, lFz: .1, y: -.04 }),
   K(.42, { lFz: -.24, lFy: .08, y: -.02 }), K(.52, { lFz: -.1, lFy: 0, rFz: .1, y: -.04, sw: .12 }),
   K(.62, { rFz: -.24, rFy: .08, y: -.02, sw: .3 }), K(.74, { rFz: -.1, rFy: 0, lFz: .1, y: -.04, sw: .6 }),
@@ -1226,9 +1278,9 @@ function makeHalcyon(opts) {
   const offs = bs.slice(1).map((b) => b.position.clone()); offs.push(tip.clone());
   return Object.assign({ bs, offs, L: offs.map((v) => v.length()), p: offs.map(() => new THREE.Vector3()), v: offs.map(() => new THREE.Vector3()), T: offs.map(() => new THREE.Vector3()), K: 40, C: 5, gk: .4, gks: null, cols: [], m: .02, breeze: 0, gr: null, ph: rnd() * TAU, init: false }, o);
  }
- // the braid keeps its drape over the shoulder at the top and hangs at the end
- const chBraid = chain(braid, new THREE.Vector3(BRP[6][0] - BRP[5][0], BRP[6][1] - BRP[5][1], BRP[6][2] - BRP[5][2]), { K: 44, C: 4.8, gks: [.02, .05, .3, .6, .72, .8], cols: [0, 1, 2, 7, 9], m: .03, breeze: .004 });
- const chTab = tabU.map((U, k) => chain([U, tabL[k]], tabTip[k], { K: 32, C: 5.4, gks: [.3, .42], cols: [2, 3, 4, 5, 6], m: .045, breeze: .01, gr: .014, tab: true }));
+ // the braid lies down her back from under the helm and hangs free below the belts
+ const chBraid = chain(braid, new THREE.Vector3(BRP[6][0] - BRP[5][0], BRP[6][1] - BRP[5][1], BRP[6][2] - BRP[5][2]), { K: 44, C: 4.8, gks: [.02, .05, .3, .5, .62, .75], cols: [0, 1, 2, 7, 8, 9], m: .01, breeze: .004 });
+ const chTab = tabU.map((U, k) => chain([U, tabL[k]], tabTip[k], { K: 32, C: 5.4, gks: [.18, .3], cols: [2, 3, 4, 5, 6], m: .045, breeze: .01, gr: .014, tab: true }));
  const chCrest = crest.map((b, i) => { const c = CRP[i]; return chain([b], new THREE.Vector3(c[3], c[4], c[5]).normalize().multiplyScalar(.2), { K: 58, C: 4.4, gk: .05, breeze: .014 }); });
  const chMant = mant.map((b, i) => chain([b], new THREE.Vector3((i ? 1 : -1) * .03, -.2, 0), { K: 40, C: 5, gk: .72, cols: [0, 7 + i], m: .05, breeze: .008 }));
  const CHAINS = [chBraid, ...chTab, ...chCrest, ...chMant];
@@ -1357,8 +1409,8 @@ function makeHalcyon(opts) {
 
  // ---------- state, face, effects, interface ----------
  const state = { drink: 0, charge: 0, crack: 0, sink: 0 };
- const st = { init: false, px: 0, pz: 0, ph: 0, spd: 0 };
- let actv = null, gOn = false, gW = 0, dashV = 0, liftV = 0, fadeV = 1, fadeE = 1, prevU = 0, rbT = 0, trOn = 0, moteAcc = 0, sinkV = 0;
+ const st = { init: false, px: 0, pz: 0, ph: 0, spd: 0, q: new THREE.Quaternion() }, _rq = new THREE.Quaternion();
+ let actv = null, gOn = false, gW = 0, dashV = 0, liftV = 0, fadeV = 1, fadeE = 1, prevU = 0, rbT = 0, trOn = 0, moteAcc = 0, sinkV = 0, smokeAcc = 0, noonAcc = 0;
  let blinkIn = 2.5, blinkT = -1, lookT = 1.2, gzX = 0, gzY = 0, gzTX = 0, gzTY = 0, mCur = 0, mNext = 0, mK = 1;
  const _p1 = new THREE.Vector3(), _p2 = new THREE.Vector3(), _p3 = new THREE.Vector3(), _p4 = new THREE.Vector3(), _p5 = new THREE.Vector3();
  const EYEO = EYEL.clone().add(new THREE.Vector3(0, 0, .012)), EYEOR = new THREE.Vector3().setFromMatrixPosition(EF[0].m).add(new THREE.Vector3(0, 0, .012));
@@ -1366,12 +1418,15 @@ function makeHalcyon(opts) {
  function animate(phase, walk, t, dt) {
   dt = dt > 0 ? Math.min(dt, .05) : 0;
   root.updateMatrixWorld();
-  const rx = root.position.x, rz = root.position.z, jump = !st.init || Math.hypot(rx - st.px, rz - st.pz) > 1.2;
+  // a teleport or a sudden turn (a new battle, a turntable) restarts the springs instead of dragging cloth through her
+  root.getWorldQuaternion(_rq);
+  const rx = root.position.x, rz = root.position.z, jump = !st.init || Math.hypot(rx - st.px, rz - st.pz) > 1.2 || _rq.angleTo(st.q) > .6;
+  st.q.copy(_rq);
   if (dt > 0 && st.init) st.spd += (Math.abs(phase - st.ph) / 4.4 / dt - st.spd) * Math.min(1, dt * 6);
   st.px = rx; st.pz = rz; st.ph = phase; st.init = true;
   gW += ((gOn ? 1 : 0) - gW) * (1 - Math.exp(-(dt || .016) * 9));
   walk = cl(walk || 0, 0, 1);
-  idlePose(t, BP);
+  idlePose(t, BP); if (state.pose === 'sheet') cp(BP, SHEET);
   if (walk > .001) mix(BP, walkPose(phase, st.spd, WP), walk);
   if (gW > .001) { cp(GP2, GUARD); GP2.cX += .01 * Math.sin(t * 2.2); mix(BP, GP2, gW * (1 - .6 * walk)); }
   let u = 0, def = null, W = 0;
@@ -1384,7 +1439,7 @@ function makeHalcyon(opts) {
   dashV = def && def.dash ? def.dash(u) * W : 0;
   liftV = Math.max(0, FIN.y + .05);
   sinkV = cl(+state.sink || 0, 0, 1);
-  CLIP.value = FIN.sw > .001 ? FIN.sw * 2.35 - .04 : sinkV > .001 ? .0 : -100;
+  CLIP.value = FIN.sw > .001 ? FIN.sw * 2.35 - .04 : sinkV > .001 ? .0 : -100; BCLIP.value = Math.max(0, CLIP.value);
   applyPose(FIN, -2.1 * sinkV);
   physics(t, dt, walk, sinkV > .001, jump);
   // face: blinks, a fixed stare with small shifts, knotted brows, painted mouth shapes cross-faded
@@ -1409,16 +1464,17 @@ function makeHalcyon(opts) {
   swordMatrix();
   _p1.copy(TIP).applyMatrix4(swM); _p2.copy(MIDB).applyMatrix4(swM); _p3.copy(UPB).applyMatrix4(swM); _p4.copy(BASEB).applyMatrix4(swM);
   const drink = Math.max(cl(+state.drink || 0, 0, 1), FIN.drink), chg = Math.max(cl(+state.charge || 0, 0, 1), FIN.ch), crk = Math.max(cl(+state.crack || 0, 0, 1), FIN.crack), eye = cl(FIN.eye, 0, 1.2);
-  // the cold edge drinks light and brightens; the dark sun swallows it
-  M.edge.emissiveIntensity = Math.max(.05, (1.5 + 2.2 * drink + .25 * drink * Math.sin(t * 7)) * (1 - .85 * chg));
-  M.irisG.emissiveIntensity = .6 + 1.6 * eye;
+  // the cold edge drinks light and brightens; the dark sun swallows it; at the very end the whole edge warms to gold
+  M.edge.emissive.copy(EBLUE).lerp(EGOLD, crk);
+  M.edge.emissiveIntensity = Math.max(.05, (1.5 + 2.2 * drink + .25 * drink * Math.sin(t * 7)) * (1 - .85 * chg)) + 1.3 * crk;
+  M.irisG.emissiveIntensity = .5 + 1.3 * eye;
   head.localToWorld(eyeGlow.position.copy(EYEO)); head.localToWorld(eyeGlow2.position.copy(EYEOR));
   for (const s of [eyeGlow, eyeGlow2]) { s.scale.setScalar(.05 + .07 * eye); s.material.opacity = (.2 + .6 * eye) * fd; }
   edgeA.position.copy(_p2); edgeB.position.copy(_p3);
-  for (const s of [edgeA, edgeB]) { s.scale.setScalar(.3 + .25 * drink); s.material.opacity = (.06 + .42 * drink) * (1 - chg) * fd; }
-  _p5.copy(_p2).lerp(_p3, .3); sunDisc.position.copy(_p5); corona.position.copy(_p5); sunDisc.scale.setScalar(.04 + .5 * chg); corona.scale.setScalar(.1 + 1.3 * chg);
+  for (const s of [edgeA, edgeB]) { s.material.color.copy(EGLOW).lerp(EGOLD, crk); s.scale.setScalar(.3 + .25 * drink + .2 * crk); s.material.opacity = (.06 + .42 * drink + .34 * crk) * (1 - chg) * fd; }
+  _p5.copy(_p2).lerp(_p3, .3); sunDisc.position.copy(_p5); corona.position.copy(_p5); sunDisc.scale.setScalar(.04 + .85 * chg); corona.scale.setScalar(2.4 * (.04 + .85 * chg));
   sunDisc.material.opacity = sm(0, .15, chg) * fd; corona.material.opacity = chg * (.75 + .25 * Math.sin(t * 5)) * fd; corona.material.rotation += dt * .5;
-  M.crack.opacity = crk; M.crack.emissiveIntensity = 3.4 * crk;
+  M.crack.opacity = .55 * crk; M.crack.emissiveIntensity = 3.4 * crk;
   crackGlow.position.copy(_p2); crackGlow.scale.setScalar(.3 + .3 * crk); crackGlow.material.opacity = .75 * crk * (.85 + .15 * Math.sin(t * 9)) * fd; crackGlow.material.depthTest = crk < .01;
   // trail behind the blade
   const trK = def ? winK(def.trail, u) : 0, on = trK > .01;
@@ -1431,13 +1487,13 @@ function makeHalcyon(opts) {
   }
   // stolen light streaming into the edge
   if (dt > 0 && drink > .05) {
-   moteAcc += dt * 42 * drink;
+   moteAcc += dt * 58 * drink;
    while (moteAcc > 1) { moteAcc -= 1; const a = (rnd() - .5) * 2.4, r = .7 + rnd() * 1.0; _p5.set(Math.sin(a) * r, .5 + rnd() * 1.4, Math.cos(a) * r); root.localToWorld(_p5); const i = emit(motes, _p5.x, _p5.y, _p5.z, 0, 0, 0, 1.4); motes.tg[i] = .15 + .85 * rnd(); }
   }
   stepP(motes, dt, (i, h, a) => {
    const p = motes.pos, v = motes.vel; _p5.copy(_p4).lerp(_p1, motes.tg[i]); _cv.set(_p5.x - p[i * 3], _p5.y - p[i * 3 + 1], _p5.z - p[i * 3 + 2]);
    const d = _cv.length(); if (d < .04) { motes.life[i] = 0; return 0; }
-   _cv.multiplyScalar((1.3 + 3 * a) / d); const k = Math.min(1, h * 5);
+   _cv.multiplyScalar((1.3 + 3 * a) / d); const k = Math.min(1, h * 5), tx = -_cv.z * .9; _cv.z += _cv.x * .9; _cv.x += tx;
    v[i * 3] += (_cv.x * 2.5 - v[i * 3]) * k; v[i * 3 + 1] += (_cv.y * 2.5 - v[i * 3 + 1]) * k; v[i * 3 + 2] += (_cv.z * 2.5 - v[i * 3 + 2]) * k;
    p[i * 3] += v[i * 3] * h; p[i * 3 + 1] += v[i * 3 + 1] * h; p[i * 3 + 2] += v[i * 3 + 2] * h;
    return sm(0, .15, a) * Math.min(1, d * 4) * fd;
@@ -1447,8 +1503,37 @@ function makeHalcyon(opts) {
   stepP(sparks, dt, (i, h, a) => { const p = sparks.pos, v = sparks.vel; v[i * 3 + 1] -= 6 * h; p[i * 3] += v[i * 3] * h; p[i * 3 + 1] += v[i * 3 + 1] * h; p[i * 3 + 2] += v[i * 3 + 2] * h; return (1 - a) * fd; }, [.6, .8, 1]);
   // the dark at her feet as she retreats into it (and the old black water, kept for the game's sink state)
   const dk = Math.max(sinkV, cl(FIN.sw, 0, 1));
-  root.getWorldPosition(_p5); pool.position.set(_p5.x, .003, _p5.z); pool.scale.setScalar(.6 + .6 * dk); pool.material.opacity = .88 * sm(0, .12, dk) * fadeE * (FIN.sw > .001 ? sm(0, .45, FIN.fade) : 1);
+  root.getWorldPosition(_p5); pool.position.set(_p5.x, .003, _p5.z); pool.scale.setScalar(.6 + .6 * dk); pool.material.opacity = .75 * sm(0, .12, dk) * fadeE * (FIN.sw > .001 ? sm(0, .45, FIN.fade) : 1);
+  // black smoke boiling up round her as the dark takes her, with flakes torn off it; black shards and wisps whirling round the dark sun
+  const swk = cl(FIN.sw, 0, 1), top = Math.max(.1, swk * 2.35 - .04);
+  if (dt > 0 && swk > .01 && fd > .05) {
+   smokeAcc += dt * 95 * sm(0, .15, swk);
+   // most of it billows round the line the dark has reached, hiding it; the smoke goes with her, the flakes fly off
+   while (smokeAcc > 1) {
+    smokeAcc -= 1; const a = rnd() * TAU, r = .1 + .3 * rnd(), q = rnd() < .24, P = q ? shards : smoke;
+    const i = emit(P, _p5.x + Math.sin(a) * r, Math.max(.06, top + .16 - .45 * rnd() * rnd() - (rnd() < .35 ? top * rnd() : 0)), _p5.z + Math.cos(a) * r, Math.sin(a) * (q ? .9 : .2), q ? .8 + .9 * rnd() : .06 + .2 * rnd(), Math.cos(a) * (q ? .9 : .2), q ? .8 + .6 * rnd() : 1 + .7 * rnd(), q ? .7 + .6 * rnd() : 1.2 + .8 * rnd());
+    P.tg[i] = q ? -2 : -1; P.off[i * 3] = Math.sin(a) * r; P.off[i * 3 + 1] = P.pos[i * 3 + 1] - top; P.off[i * 3 + 2] = Math.cos(a) * r;
+   }
+  }
+  if (dt > 0 && chg > .05 && fd > .05) {
+   noonAcc += dt * 70 * chg;
+   while (noonAcc > 1) { noonAcc -= 1; const q = rnd() < .6, P = q ? shards : smoke, i = emit(P, _p5.x, .6 + 2 * rnd(), _p5.z, .55 + .7 * rnd(), (rnd() - .3) * .35, 1.8 + 1.6 * rnd(), 1.2 + .8 * rnd(), q ? 1.1 + .9 * rnd() : .55 + .45 * rnd()); P.tg[i] = rnd() * TAU; }
+  }
+  // a whirling particle keeps (radius, rise, spin) in its velocity and its angle in tg; smoke (tg -1) drifts round her where
+  // she goes and rises with the line the dark has reached; flakes (tg -2) fly off and slow
+  for (const P of [smoke, shards]) stepP(P, dt, (i, h, a) => {
+   const p = P.pos, v = P.vel, j = i * 3;
+   if (P.tg[i] >= 0) { P.tg[i] += v[j + 2] * h; v[j] = Math.max(.2, v[j] - .08 * h); p[j] = _p5.x + Math.sin(P.tg[i]) * v[j]; p[j + 1] += v[j + 1] * h; p[j + 2] = _p5.z + Math.cos(P.tg[i]) * v[j]; }
+   else {
+    const dr = 1 - Math.min(1, 1.4 * h); v[j] *= dr; v[j + 2] *= dr; p[j + 1] += v[j + 1] * h;
+    if (P.tg[i] < -1.5) { p[j] += v[j] * h; p[j + 2] += v[j + 2] * h; } else { P.off[j] += v[j] * h; P.off[j + 2] += v[j + 2] * h; p[j] = _p5.x + P.off[j]; p[j + 2] = _p5.z + P.off[j + 2]; p[j + 1] = Math.max(p[j + 1], top + P.off[j + 1]); }
+   }
+   P.ps[i] = P.sz[i] * (.6 + .9 * a);
+   return sm(0, .12, a) * (1 - sm(.55, 1, a)) * .9;
+  }, P === smoke ? [.02, .018, .03] : [1, 1, 1]);
   stepMoth(def, u, t, dt);
+  // effects that have faded out entirely skip their draw call
+  for (const o of [sunDisc, corona, crackGlow, edgeA, edgeB, pool]) o.visible = o.material.opacity > .002;
  }
  const ACTIONS = {};
  for (const n in ACTS) { const d = ACTS[n], e = { dur: d.dur, hits: d.hits.slice(), hold: d.hold, interrupt: d.interrupt }; if (d.span) e.span = d.span.slice(); ACTIONS[n] = Object.freeze(e); }
@@ -1460,7 +1545,7 @@ function makeHalcyon(opts) {
   cp(SNAP, gone ? BP : FIN); if (gone) for (const ch of CHAINS) ch.init = false;
   actv = { name, def, t: 0 }; prevU = 0; rbT = 0; return true;
  }
- const fadeMats = [...new Set(skinned.map((m) => m.material).concat([M.eyeW, M.iris, M.irisG, M.lid, M.brow]))].filter((m) => m !== M.crack), fadeT = fadeMats.map((m) => m.transparent);
+ const fadeMats = [...new Set(skinned.map((m) => m.material).concat([M.eyeW, M.irisG, M.lid, M.brow]))].filter((m) => m !== M.crack), fadeT = fadeMats.map((m) => m.transparent);
  function applyFade(f) {
   if (Math.abs(f - fadeV) < 1e-4) return;
   const was = fadeV < .999, now = f < .999; fadeV = f;

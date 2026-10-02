@@ -9,7 +9,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Page | Link | State |
 |---|---|---|
 | Noctara | https://claude.ai/artifact/4FzTFkD5JRPhci57H2ybvz | Done (October 1). Rebuild once every model is final: its supporting actors use working copies. |
-| Halcyon | https://claude.ai/artifact/7zPEx3g6VC4SFfdZ8zdHj8 | Cold blue pass (October 1). Her refinement against her new sheets is in progress (below). |
+| Halcyon | https://claude.ai/artifact/7zPEx3g6VC4SFfdZ8zdHj8 | Done: refined against her new sheets on October 2. |
 | Lunara | https://claude.ai/artifact/XpsLozXGFgPCwLG5s5iUce | Done |
 | Io, the Witch | https://claude.ai/artifact/1mF6YFp3xg1KhGs5tZNYky | Technical pass done. Her three new spells are in progress (below). |
 | The wisp | https://claude.ai/artifact/TDbtEVzrdJFQ2cXevWFiVF | Done. A polish round is in progress (below). |
@@ -25,7 +25,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Shadow Wraith and great wraith | In progress since October 1 | Match the soul-green sheets; the great wraith with stolen flames in its ribs and lanterns on its chain |
 | Sol | In progress | The look from her sheets, and Kestrel Stoop (`stoopRise`, then `stoop`) |
 | Envoi | In progress | The look from its sheets, the Envoi scenes' scale, and its bench page |
-| Halcyon | In progress | Refinement against her new sheets |
+| Halcyon | Done | Her face is still rounder than the sheets' gaunt one (kept as built); Light-Drinker's streams and Black Noon's swirls could be ribbons; a brief cut line in the retreat around u 0.65 |
 | The cast (step 11) | Not started | Every model together at true scale, after all of the above |
 
 Work an agent hadn't finished at the stopping point is listed under its model below, from its last report.

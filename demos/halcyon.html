@@ -13,7 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="../src/stage/night-square.js"></script>
 <script src="../src/models/originals/witch.js"></script>
-<script src="../src/models/sol.js"></script>
+<script src="../src/models/originals/sol.js"></script>
 <script src="../src/models/halcyon.js"></script>
 <script src="../src/models/originals/halcyon.js"></script>
 <script src="../src/bench/bench.js"></script>
@@ -25,11 +25,11 @@ Bench.start({
   subject: {
     id: 'halcyon', name: 'Halcyon', make: () => makeHalcyon({}), before: () => makeHalcyonOriginal({}),
     home: [860, 800], face: 'witch', yawBias: 0.15, shadow: 0.62, target: 'sol',
-    walkLabel: 'Walk', walkSpeed: 1.8, height: '1.88 m, 2.16 m with the crest',
+    walkLabel: 'Walk', walkSpeed: 1.8, height: '1.88 m, 2.11 m with the crest',
   },
   cast: [
     { id: 'witch', name: 'Witch', kind: 'witch', make: () => makeWitchOriginal(), home: [560, 812], face: 'halcyon', yawBias: -0.38, shadow: 0.62 },
-    { id: 'sol', name: 'Sol', make: () => makeSol({}), home: [650, 868], face: 'halcyon', yawBias: -0.3, shadow: 0.6 },
+    { id: 'sol', name: 'Sol', make: () => makeSolOriginal({}), home: [650, 868], face: 'halcyon', yawBias: -0.3, shadow: 0.6 },
   ],
   groups: [
     { title: 'Attacks', acts: ['gloamCleave', 'duskArc', 'severance', 'lightDrinker'] },
@@ -41,7 +41,7 @@ Bench.start({
   hints: { gloamCleave: 'Sol, 1,100', duskArc: 'both, 800', severance: 'the Witch, 900', lightDrinker: 'drains Sol', counter: 'Sol, 900', blackNoon: 'both, 2,400', stagger: 'Sol calls her name', retreat: 'end of the level 20 fight', die: 'the very end' },
   wide: { duskArc: 1, blackNoon: 1, blackNoonCharge: 1 },
   stage: STAGES.halcyon,
-  note: "Gold rings mark hits; numbers are the bible's level 20 damage. Warden's Vow and the Black Noon charge hold until the next press. Retreat is how the level 20 fight ends: she backs away and the dark takes her from the feet up. Release is the very end: her blade warms and a pale moth rises out of her. Before and After switch between the old model and the cold blue one.",
+  note: "Gold rings mark hits; numbers are the bible's level 20 damage. Warden's Vow and the Black Noon charge hold until the next press. Retreat is how the level 20 fight ends: she backs away and black smoke swallows her from the feet up. Release is the very end: she kneels on her planted blade, its edge warms to gold, and a pale moth rises out of her. Before and After switch between her first model and this one, touched up after her model and action sheets.",
 });
 </script>
 </body>
