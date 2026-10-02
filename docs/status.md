@@ -23,7 +23,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Io, the Witch | Technical pass done | Her new spells (Waxing Light, Moonsteel, Moth Veil) as effects on her existing motions, in `src/fx/io-spells.js` |
 | Wisp | Done | Polish: longer curling tendrils, a face that reads at Full view on a phone, a wispier tail, a spiral hollow |
 | Shadow Wraith and great wraith | In progress since October 1 | Match the soul-green sheets; the great wraith with stolen flames in its ribs and lanterns on its chain |
-| Sol | In progress | The look from her sheets, and Kestrel Stoop (`stoopRise`, then `stoop`) |
+| Sol | Done | Wispier hair, a rounder face, the cape over her shoulders, and compacting the code (140 KB) |
 | Envoi | In progress | The look from its sheets, the Envoi scenes' scale, and its bench page |
 | Halcyon | Done | Her face is still rounder than the sheets' gaunt one (kept as built); Light-Drinker's streams and Black Noon's swirls could be ribbons; a brief cut line in the retreat around u 0.65 |
 | The cast (step 11) | Not started | Every model together at true scale, after all of the above |

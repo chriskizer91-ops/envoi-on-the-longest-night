@@ -35,18 +35,19 @@ Bench.start({
     { title: 'Attack', acts: ['combo'] },
     { title: 'Sword Arts', acts: ['flareCut', 'sunder', 'emberRush', 'solarCrest'] },
     { title: 'Guard', acts: ['guardStep', 'block'] },
+    { title: 'Kestrel Stoop', acts: ['stoopRise', 'stoop'] },
     { title: 'Dawnbreaker trance', acts: ['transform', 'daybreak', 'highNoon'] },
     { title: 'Story and reactions', acts: ['kestrel', 'hurt', 'kneel', 'rise', 'victory'] },
   ],
-  names: { combo: 'Attack', flareCut: 'Flare Cut', sunder: 'Sunder', emberRush: 'Ember Rush', solarCrest: 'Solar Crest', guardStep: 'Guard Step', block: 'Block', transform: 'Transform', daybreak: 'Daybreak', highNoon: 'High Noon', kestrel: 'Kestrel!', hurt: 'Hurt', kneel: 'Kneel', rise: 'Rise', victory: 'Victory' },
-  hints: { combo: '+20 Heat', flareCut: '520', sunder: '280', emberRush: '4 × 170', solarCrest: '12 × Heat', daybreak: 'Trance attack', highNoon: 'ends the Trance' },
-  wide: { emberRush: 1, solarCrest: 1, highNoon: 1 },
+  names: { combo: 'Attack', flareCut: 'Flare Cut', sunder: 'Sunder', emberRush: 'Ember Rush', solarCrest: 'Solar Crest', stoopRise: 'Hover', stoop: 'Stoop', guardStep: 'Guard Step', block: 'Block', transform: 'Transform', daybreak: 'Daybreak', highNoon: 'High Noon', kestrel: 'Kestrel!', hurt: 'Hurt', kneel: 'Kneel', rise: 'Rise', victory: 'Victory' },
+  hints: { combo: '+20 Heat', flareCut: '520', sunder: '280', emberRush: '4 × 170', solarCrest: '12 × Heat', stoopRise: 'turn 1', stoop: '1,500', daybreak: 'Trance attack', highNoon: 'ends the Trance' },
+  wide: { emberRush: 1, solarCrest: 1, highNoon: 1, stoopRise: 1, stoop: 1 },
   sliders: [
     { label: 'Heat', min: 0, max: 100, step: 5, value: 0, onInput: (v, ctx) => STAGES.sol.setHeat(ctx, v) },
     { label: 'Trance', min: 0, max: 1, step: 0.1, value: 0, onInput: (v, ctx) => STAGES.sol.setTrance(ctx, v) },
   ],
   stage: STAGES.sol,
-  note: "Numbers are the bible's level 1 damage. At 70 Heat or more she is in Sunburn: her blade glows white-hot and every hit lands 35% harder. Her sheets for the touch-up are still to come, so Before and After show the same model for now.",
+  note: "Numbers are the bible's level 1 damage. At 70 Heat or more she is in Sunburn: her blade glows white-hot and every hit lands 35% harder. Kestrel Stoop takes two turns: Hover lifts her into the air, then Stoop dives onto the target for the biggest single hit in the game. After is her touch-up from her model sheets; Before is her old model, which has no Kestrel Stoop.",
 });
 </script>
 </body>

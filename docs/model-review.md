@@ -11,6 +11,7 @@ The spec's targets: 70k to 100k triangles (minimum 50k, ceiling 120k for bosses)
 | The Witch | `night-square-shadow-wraith.html` | 99k | 51 | 84 | No (older interface) |
 | Io (the Witch), technical pass | `src/models/witch.js` | 99k | 51 | 48 counted, 39 drawn at idle | Yes, with the old interface kept |
 | Sol | `sol-in-the-night-square.html` | 83k | 54 | 38 | Yes |
+| Sol, touched up | `src/models/sol.js` | 98k | 54 | 26 (16 body + 10 effects) | Yes |
 | Halcyon (v2) | `halcyon-in-the-night-square.html` | 88k | 63 | 31 | Yes |
 | Noctara, touched up | `src/models/noctara.js` | 72k | 30 joints, hands skinned | 24 | Yes |
 | Noctara, original | `noctara-in-the-night-square.html` | 28k | none (rigid joints) | 88 | Mostly (no `setFade`; `block` is 0.6 s) |
@@ -43,7 +44,23 @@ Chris loves how she looks and moves, so nothing visible changes.
 - Cut draw calls from 84 to under 60 by merging meshes that share a material.
 - Prove she is unchanged by rendering before and after and comparing the pixels.
 
-### Sol: visible upgrade
+### Sol: done October 2, 2026
+
+Brought toward her model sheet A. Every duration and hit time is kept.
+
+- **Face:** a new sculpt with sun-browned freckled skin, amber eyes with lids that blink, a half-smile and gold hoops.
+- **Hair:** deeper copper hair and a braid with gold bands.
+- **Armor:** worn brushed bronze with gold trim, the gold sun on her breastplate, and the feather pauldron with its glowing sunstone.
+- **Clothes:** cream sleeves, belts and pouches, the pointed sun tabard, and the midnight-blue cape with gold edging and the gold sun on its back.
+- **Sword and scar:** an amber-glowing sword with the spiky sun guard, and the burn scar above her right vambrace.
+- **Poses:** a wider, lower ready stance, and the sheet's Dawnbreaker and High Noon poses.
+- **Kestrel Stoop:**
+  - `stoopRise` (she springs about 3 m and hovers, cape spread like wings);
+  - `stoop` (she dives on the target for one 1,500 hit at level 1).
+- **Cost:** 98k triangles, 26 draw calls (from 38), about 0.17 ms per frame.
+- **Still to improve:** wispier hair, a rounder face, the cape over her shoulders, and the code compacted (140 KB).
+
+### Sol: the plan
 
 - **Face:** reads flat and doll-like: even pink skin, little shading, and a bulb where the nose meets the brow. Give it a better sculpt, warm sun-browned skin with soft shading, and freckles that read.
 - **Armor:** looks like smooth plastic gold. It should read as brushed bronze half-plate with worn edges.
