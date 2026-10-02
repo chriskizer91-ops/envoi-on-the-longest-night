@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lunara, the Pale Mother</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/bench/bench.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/night-square.js"></script>
+<script src="../src/models/originals/witch.js"></script>
+<script src="../src/models/originals/wraith.js"></script>
+<script src="../src/models/sol.js"></script>
+<script src="../src/models/lunara.js"></script>
+<script src="../src/models/originals/lunara.js"></script>
+<script src="../src/fx/battle-fx.js"></script>
+<script src="../src/bench/bench.js"></script>
+<script src="../src/bench/stage-lunara.js"></script>
+<script>
+Bench.start({
+  title: 'Lunara, the Pale Mother',
+  blurb: 'Io the Witch\'s summon rises behind the Night square\'s Moonwell, with Io and Sol in their places and the Shadow Wraith facing them.',
+  subject: {
+    id: 'lunara', name: 'Lunara', make: () => makeLunara({}), before: () => STAGES.lunara.before(),
+    home: [712, 704], face: 'wraith', shadow: 0.9, shadowY: 0.7, target: 'wraith',
+    walkLabel: 'Glide', walkSpeed: 0.5, loopR: 0.6, frameHeight: 2.6, closeSpan: 175, tall: 4.1,
+    height: '3.1 m to her hair, 3.4 m to the crescent, floating 0.55 m up',
+  },
+  cast: [
+    { id: 'witch', name: 'Io', kind: 'witch', make: () => makeWitchOriginal(), home: [560, 812], face: 'wraith', yawBias: -0.35, shadow: 0.62 },
+    { id: 'sol', name: 'Sol', make: () => makeSol({}), home: [650, 868], face: 'wraith', yawBias: -0.3, shadow: 0.6 },
+    { id: 'wraith', name: 'Shadow Wraith', kind: 'wraith', make: () => makeWraithOriginal(), home: [860, 800], face: 'witch', yawBias: 0.15, shadow: 0.7, tall: 2.6 },
+  ],
+  groups: [
+    { title: 'Summoned', acts: ['appear', 'embrace'] },
+    { title: 'Silver Requiem', acts: ['charge', 'release'] },
+    { title: 'Leaving', acts: ['leave'] },
+    { title: 'Reactions', acts: ['hurt', 'block'] },
+  ],
+  names: { appear: 'Rise', embrace: 'Pale Mother\'s Embrace', charge: 'Charge', release: 'Silver Requiem', leave: 'Leave', hurt: 'Hurt', block: 'Block' },
+  hints: { appear: 'from the Moonwell', embrace: 'heal and veil', charge: 'the moon overhead', release: 'six beams, Moonfall', leave: 'into sparkles' },
+  wide: { appear: 1, embrace: 1, charge: 1, release: 1, leave: 1 },
+  stage: STAGES.lunara,
+  note: 'Gold rings mark hits; green numbers are heals, white ones damage. Pale Mother\'s Embrace closes her wings, then opens them: Io and Sol heal 60% and are veiled (40% less damage until her strike). Silver Requiem throws the moon up, calls six moonbeams down on the wraith with the crescent wave from her hand, then Moonfall. Charge holds the moon overhead until you press Silver Requiem. Before shows the original model; it has no Embrace, hurt or block.',
+});
+</script>
+</body>
+</html>

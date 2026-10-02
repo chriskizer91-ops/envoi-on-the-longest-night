@@ -8,6 +8,7 @@ function makeBattleFX() {
   const lerp = (a, b, t) => a + (b - a) * t;
   const rnd = (a, b) => a + Math.random() * (b - a);
   const TAU = Math.PI * 2;
+  const tmpV = new THREE.Vector3(); // scratch vector for geyser, rise, spiral and converge (a page global in the Night square demo)
   function canvasTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); return t; }
   function radialTex(inner, mid, outer) {
     return canvasTex(128, 128, (x) => { const gr = x.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, inner); gr.addColorStop(0.45, mid); gr.addColorStop(1, outer || 'rgba(255,255,255,0)'); x.fillStyle = gr; x.fillRect(0, 0, 128, 128); });
