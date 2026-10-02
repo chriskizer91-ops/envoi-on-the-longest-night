@@ -15,7 +15,7 @@
   }
   const pct = (x) => Math.round(x * 100) + '%';
   const nf = (n) => Math.round(n).toLocaleString('en-US');
-  const STYLE = { careless: 'Careless', sensible: 'Sensible', expert: 'Expert' };
+  const STYLE = { careless: 'Careless', sensible: 'Attentive', expert: 'Expert' };
   const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ---------- the targets ----------

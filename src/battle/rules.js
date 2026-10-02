@@ -91,7 +91,9 @@
   // lowest (lowest HP), self. shards and xp are at level 1 and grow with the foe's level.
   const FOES = {
     wraith: {
-      name: 'Shadow Wraith', hp: 2600, hpSolo: 4200, atb: 3.2, weak: { moon: 1.5 }, resist: { shadow: 0.5 },
+      // alone against Io (the first fight) it has the Night square demo's 4,200 HP and hits 15% harder than the demo,
+      // so a careless player loses about two fights in five and an attentive one almost never (Chris, October 2)
+      name: 'Shadow Wraith', hp: 2600, hpSolo: 4200, dmgSolo: 1.15, atb: 3.2, weak: { moon: 1.5 }, resist: { shadow: 0.5 },
       shards: 30, xp: 40, xpSolo: 220, shardsSolo: 60,
       moves: {
         sweep: { name: 'Soul Reaper', weight: 0.4, hits: [190], target: 'lastAttacker', time: 2.6 },

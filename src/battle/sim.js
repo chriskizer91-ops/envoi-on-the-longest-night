@@ -3,9 +3,11 @@
 // the first fight, the wild fights of each band, the four gates and the finale. Runs in the browser (the balance demo)
 // and in Node (tools/balance.mjs). Needs rules.js and engine.js. Defines globalThis.BattleSim.
 //
-// The play styles:
-//   careless: picks moves almost at random, heals late and only sometimes, never plans ahead
-//   sensible: heals anyone under about half, saves MP for healing, uses its best damage otherwise, herbs when out of MP
+// The play styles (the players Chris describes, October 2):
+//   careless: picks moves almost at random, Attack most often; heals only in the red, and only half the time; never
+//             plans for a big blow
+//   sensible: the attentive player, the average one once they have learned the spells: heals anyone under about half,
+//             saves MP for healing, uses the spell the foe is weak to, herbs when out of MP, Lunara when the party is low
 //   expert:   heals before the next big hit could land, shields against a charged move it can see coming, keeps Sol in
 //             Sunburn, sunders bosses, binds them, uses each summon at the right moment
 (function (G) {
@@ -65,8 +67,8 @@
   // ---------- the balance targets (plan, phase 2) ----------
   // each: a fight at a level, a play style, and the range its win rate (or its fight length) must land in
   const TARGETS = [
-    { fight: 'first', level: 1, policy: 'careless', win: [0.6, 0.95], why: 'Winnable at level 1, but a player who chooses badly can lose' },
-    { fight: 'first', level: 1, policy: 'sensible', win: [0.95, 1], why: 'Winnable at level 1' },
+    { fight: 'first', level: 1, policy: 'careless', win: [0.45, 0.75], why: 'The first fight: a careless player loses it often' },
+    { fight: 'first', level: 1, policy: 'sensible', win: [0.99, 1], why: 'The first fight: a player who pays attention doesn’t lose it' },
     ...[2, 5, 8, 12, 16, 20].map((L) => ({ fight: 'wild', level: L, policy: 'careless', win: [0.85, 1], why: 'Wild fights: most are won even when playing carelessly' })),
     ...[2, 5, 8, 12, 16, 20].map((L) => ({ fight: 'wild', level: L, policy: 'sensible', win: [0.97, 1], minutes: [0.7, 2.2], why: 'Wild fights: about a minute or two at the party level' })),
     { fight: 'greatWraith', level: 5, policy: 'careless', win: [0.2, 0.6], why: 'The level 5 gate: a little harder than the wild fights' },
@@ -119,7 +121,7 @@
       const each = [];
       for (const f of foes) {
         let worst = 0;
-        const k = RL.scale(f.level) * f.dmgMul * (1 + f.rage * f.acted) * ((B.tune && B.tune.foeDmg && B.tune.foeDmg[f.id]) || 1);
+        const k = RL.scale(f.level) * f.dmgMul * ((f.solo && f.def.dmgSolo) || 1) * (1 + f.rage * f.acted) * ((B.tune && B.tune.foeDmg && B.tune.foeDmg[f.id]) || 1);
         for (const id in f.def.moves) {
           const m = f.def.moves[id];
           if (!m.hits) continue;

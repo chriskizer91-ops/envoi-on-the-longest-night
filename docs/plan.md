@@ -79,13 +79,15 @@ The battle is built from bricks: rules in data tables, a battle screen that read
 
 | Fight | Target |
 |---|---|
-| The first fight | Winnable at level 1, but a player who chooses badly can lose |
+| The first fight | A player who pays attention doesn't lose; a careless one often does (Chris, October 2) |
 | Wild fights | About a minute or two at the party's level; easier a few levels above |
 | Gate fights | A little harder than the wild fights around them |
 | The great wraith | The level 5 gate |
 | Dawnroost | The level 10 gate: the largest group of stronger wraiths so far |
 | Halcyon's ambush | The level 15 gate: Halcyon at 20 against a party at 15 or more, overwhelming, the exception to "a little harder". It ends with the party falling, or with her retreat at 20% HP |
 | The finale | An expert at level 20 wins about half the time; at 19 a player loses, but narrowly; below that it can't be won |
+
+**Next, the progression pass (Chris, October 2):** foe levels set by area rather than by the party; an experience curve that gets a little harder after the first couple of levels; a third to half of the game's fights in the last five levels; and targets where the average (attentive) player loses sometimes, mostly at the gates, with no difficulty setting. An expert should be all but certain to win until about level 15.
 
 ### The battle demos
 

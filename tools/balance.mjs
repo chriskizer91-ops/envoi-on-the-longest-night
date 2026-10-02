@@ -32,7 +32,7 @@ for (const t of S.TARGETS) {
   rows.push({ t, r, fails });
   const range = t.win ? `${pct(t.win[0])}-${pct(t.win[1])}` : '';
   console.log(
-    (fails.length ? 'MISS ' : 'ok   ') + S.FIGHTS[t.fight].name.padEnd(18) + ('L' + t.level).padEnd(4) + t.policy.padEnd(9) +
+    (fails.length ? 'MISS ' : 'ok   ') + S.FIGHTS[t.fight].name.padEnd(18) + ('L' + t.level).padEnd(4) + (t.policy === 'sensible' ? 'attentive' : t.policy).padEnd(10) +
     `win ${pct(r.winRate).padStart(4)} (want ${range})`.padEnd(28) + `median ${mins(r.minutes.median)} min` +
     (r.loseMargin != null ? `, losses leave ${pct(r.loseMargin)} of the foes' HP` : '') + (fails.length ? '  <- ' + fails.join(', ') : ''),
   );
@@ -43,10 +43,10 @@ if (report) {
   const L = [];
   L.push('# Balance report', '');
   L.push(`Written by \`tools/balance.mjs\` from the numbers in \`src/battle/rules.js\`. Each row is ${n} fights with fixed seeds, so the same numbers always give the same report. **${S.TARGETS.length - missed} of ${S.TARGETS.length} targets met.**`, '');
-  L.push('The play styles: **careless** picks moves almost at random and heals late; **sensible** heals anyone under about half and saves MP for healing; **expert** heals before the next big hit could land, shields against charged moves and uses each summon at the right moment. A fight\'s length includes 1.5 seconds of thinking for each menu.', '');
+  L.push('The play styles: **careless** picks moves almost at random and heals late; **attentive** (`sensible` in the code), the average player, heals anyone under about half and saves MP for healing; **expert** heals before the next big hit could land, shields against charged moves and uses each summon at the right moment. A fight\'s length includes 1.5 seconds of thinking for each menu.', '');
   L.push('| Fight | Level | Style | Wins | Target | Median length | Losses leave | Met |', '|---|---|---|---|---|---|---|---|');
   for (const { t, r, fails } of rows) {
-    L.push(`| ${S.FIGHTS[t.fight].name} | ${t.level} | ${t.policy} | ${pct(r.winRate)}${r.retreat ? ' (retreats)' : ''} | ${t.win ? pct(t.win[0]) + ' to ' + pct(t.win[1]) : ''}${t.minutes ? ', ' + t.minutes[0] + ' to ' + t.minutes[1] + ' min' : ''}${t.margin != null ? ', losses leave under ' + pct(t.margin) : ''} | ${mins(r.minutes.median)} min | ${r.loseMargin != null ? pct(r.loseMargin) + ' of foe HP' : ''} | ${fails.length ? 'No: ' + fails.join(', ') : 'Yes'} |`);
+    L.push(`| ${S.FIGHTS[t.fight].name} | ${t.level} | ${t.policy === 'sensible' ? 'attentive' : t.policy} | ${pct(r.winRate)}${r.retreat ? ' (retreats)' : ''} | ${t.win ? pct(t.win[0]) + ' to ' + pct(t.win[1]) : ''}${t.minutes ? ', ' + t.minutes[0] + ' to ' + t.minutes[1] + ' min' : ''}${t.margin != null ? ', losses leave under ' + pct(t.margin) : ''} | ${mins(r.minutes.median)} min | ${r.loseMargin != null ? pct(r.loseMargin) + ' of foe HP' : ''} | ${fails.length ? 'No: ' + fails.join(', ') : 'Yes'} |`);
   }
   L.push('', '## Experience and shards', '');
   L.push('An average wild fight at each level, and how many it takes to level up. A gate is worth about one level; the first fight takes Io straight to level 2.', '');

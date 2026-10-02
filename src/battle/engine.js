@@ -118,7 +118,7 @@
         if (s.guarding) { to = s; emit({ t: 'cover', who: s.key, from: h.key }); }
         else if (h.hp < h.maxHp * HE.sol.oath.below) { to = s; take = HE.sol.oath.take; emit({ t: 'oath', who: s.key, from: h.key }); }
       }
-      let n = base * RL.scale(f.level) * swing() * take * (o.mul || 1) * f.dmgMul * (1 + f.rage * f.acted) * ((tune.foeDmg && tune.foeDmg[f.id]) || 1);
+      let n = base * RL.scale(f.level) * swing() * take * (o.mul || 1) * f.dmgMul * ((f.solo && f.def.dmgSolo) || 1) * (1 + f.rage * f.acted) * ((tune.foeDmg && tune.foeDmg[f.id]) || 1);
       if (to.defending || to.guarding) n *= ST.defend;
       if (B.lunara === 1) n *= SU.lunara.cut;
       n = Math.max(1, Math.round(n));

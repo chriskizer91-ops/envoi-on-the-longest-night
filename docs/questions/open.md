@@ -1,6 +1,6 @@
 # Still Open
 
-Everything not yet decided, as of October 2, 2026, twelfth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
+Everything not yet decided, as of October 2, 2026, thirteenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
 
 Every earlier question has been answered; the answers are in `design-decisions.md`, under the October 2 rounds.
 
@@ -11,6 +11,12 @@ Every earlier question has been answered; the answers are in `design-decisions.m
 ## Design questions
 
 2. **Names from Aethermoor.** The map pack's notes name Willowmurk, Rotbridge and "Misthollow Ruins" in the southern wetlands. In this game Misthollow is the frozen town in the north. Do the pale flooded ruins in the wetlands get another name, or none?
+
+6. **How a wild foe's level is chosen.** In the simulator so far, every wild fight's foes are at the party's level, as a stand-in. A recommendation for the game:
+   - Each wild area has its own foe levels. In band 1, for example: the Thornwood 1 to 2, the road south 2 to 3, the wetlands 3 to 4, and Bogmire's wilds 4 to 5.
+   - Each fight rolls a level in that range, most often the middle. Foes in one pack can differ by a level.
+   - The party's own level doesn't change the foes. So pushing ahead under-leveled is dangerous, and coming back a few levels stronger makes an area easy: the reward for grinding and exploring that `design-decisions.md` asks for.
+   - The experience curve then decides what level an average player has reached at each area. Together with the area levels, that sets how hard each stretch feels, including "a little harder after the first couple of levels" and half the game in the last five levels.
 
 ## Lore questions
 

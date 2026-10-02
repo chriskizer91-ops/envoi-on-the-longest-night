@@ -474,3 +474,26 @@ Several rules and numbers are new, set while balancing. They wait for Chris's ap
 
   They are no longer "proposed".
 - **Step 12, the first fight, is next.**
+
+## October 2, 2026, thirteenth round
+
+### The players the balance is built for
+
+The simulator plays three kinds of player (`../src/battle/sim.js`):
+
+- **Careless:** picks commands almost at random, with Attack most often. Heals only when in the red (under a quarter of HP), and only half the time. Never plans for a big blow. Sol attacks and now and then tries a random Sword Art.
+- **Attentive:** the average player once they have learned the spells, which Chris expects in the first five to ten fights. Heals anyone under about half (both at once with Waxing Light). Keeps MP back for a heal and uses the spell the foe is weak to. Revives the fallen, drinks Silver Mugwort when out of MP, and calls Lunara when the party is low. Sol builds Heat and cashes it in with Solar Crest. This was called "sensible"; the code keeps that name.
+- **Expert:** plays perfectly. Heals before the next blow could land, counting every foe that can act first. Shields against charged attacks with Envoi's ward, Lunara or Moth Veil. Delays bosses with Briars, keeps Sol in Sunburn with Moonsteel and sunders bosses. Never hits into Warden's Vow.
+
+### Difficulty
+
+- **No difficulty setting.** The game should be beautiful, exciting and fun, and the player should feel invested in winning or losing. That means it can't be too easy or too hard.
+- **The average player should lose sometimes.**
+- **The first fight:** a player who pays attention doesn't lose it; a careless one often does. The lone wraith now hits 15% harder than the Night square demo. An attentive player wins every time, though about a third of their fights get close; a careless one wins about three in five.
+- **An expert is all but certain to win until about level 15.** The last band is where an expert is tested.
+- **Leveling should get a little harder after the first couple of levels** (for the progression pass, below).
+
+### The progression pass (noted, not built yet)
+
+- **The last five levels hold a third to half of the game's fights.** Perhaps half the game happens between 15 and 20, so the last quarter of the leveling takes half the game.
+- **How a wild foe's level is chosen** is a question for Chris (`questions/open.md`). For now the simulator gives each wild fight foes at the party's level.
