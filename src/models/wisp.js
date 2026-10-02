@@ -121,12 +121,12 @@ vec3 scen(float s, float k) {
  // the strands leave the body together as one swaying column, then part in its lower half, each curling its own
  // way and fading out at its own length: the long one down the middle, two shorter ones, and two faint wisps
  float lk = 1., sx = 0., sz = 0., cu = -1., rise = .05, cw = .06, ph = 0.;
- if (k > .5 && k < 1.5) { lk = .8; sx = .07; sz = -.02; cu = 1.; rise = .05; cw = .06; ph = 2.1; }
- if (k > 1.5 && k < 2.5) { lk = .62; sx = -.065; sz = .02; cu = -1.; rise = .045; cw = .05; ph = 4.2; }
- if (k > 2.5 && k < 3.5) { lk = .45; sx = .045; sz = .03; cu = 1.; rise = .03; cw = .04; ph = 1.1; }
- if (k > 3.5) { lk = .4; sx = -.04; sz = -.035; cu = -1.; rise = .03; cw = .035; ph = 5.3; }
+ if (k > .5 && k < 1.5) { lk = .8; sx = .09; sz = -.02; cu = 1.; rise = .05; cw = .08; ph = 2.1; }
+ if (k > 1.5 && k < 2.5) { lk = .62; sx = -.085; sz = .02; cu = -1.; rise = .045; cw = .07; ph = 4.2; }
+ if (k > 2.5 && k < 3.5) { lk = .45; sx = .06; sz = .03; cu = 1.; rise = .03; cw = .055; ph = 1.1; }
+ if (k > 3.5) { lk = .4; sx = -.055; sz = -.035; cu = -1.; rise = .03; cw = .05; ph = 5.3; }
  float ss = s * lk;
- vec3 c = vec3(.045 * (.3 + ss) * sin(ss * 4.2 - t * 1.4) + .016 * ss * sin(ss * 9. - t * 2.1), .345 - .34 * ss, -.012 + .028 * ss * cos(ss * 3.1 - t * 1.05));
+ vec3 c = vec3(.055 * (.3 + ss) * sin(ss * 4.2 - t * 1.4) + .016 * ss * sin(ss * 9. - t * 2.1), .345 - .34 * ss, -.012 + .028 * ss * cos(ss * 3.1 - t * 1.05));
  float part = pow(smoothstep(.25, 1., s), 1.4);
  c += vec3(sx + .012 * sin(s * 6. - t * 1.7 + ph), 0., sz) * part;
  float ck = smoothstep(.55, 1., s);
@@ -142,8 +142,9 @@ void main() {
  vec3 rf = abs(T.z) < .9 ? vec3(0., 0., 1.) : vec3(1., 0., 0.);
  vec3 Nn = normalize(cross(T, rf)); vec3 Bn = cross(T, Nn);
  vec3 d = Nn * cos(aA) + Bn * sin(aA);
- float r0 = aK < .5 ? .052 : (aK < 1.5 ? .041 : (aK < 2.5 ? .036 : (aK < 3.5 ? .02 : .018)));
- float r = mix(r0, .003, pow(s, .75));
+ // thick, slowly tapering strands: a full smoke body, as on the sheet
+ float r0 = aK < .5 ? .078 : (aK < 1.5 ? .062 : (aK < 2.5 ? .054 : (aK < 3.5 ? .032 : .028)));
+ float r = mix(r0, .006, pow(s, 1.15));
  vec3 p = c + d * r;
  vec4 mv = modelViewMatrix * vec4(p, 1.);
  vNd = abs(dot(normalize(normalMatrix * d), normalize(-mv.xyz)));
@@ -153,12 +154,12 @@ void main() {
 varying float vS; varying float vNd; varying float vK; varying vec3 vQ;
 void main() {
  float st = fb(vec3(vQ.x * 30., vQ.y * 7. + uTime * .55, vQ.z * 30.) + uSeed + vK * 3.1);
- vec3 cTop = pal(vec3(.33, .42, .36), vec3(.31, .38, .56));
- vec3 cBot = pal(vec3(.32, .36, .34), vec3(.3, .34, .46));
+ vec3 cTop = pal(vec3(.2, .25, .22), vec3(.25, .3, .44));  // dark grey-green smoke (frost: blue-grey)
+ vec3 cBot = pal(vec3(.15, .18, .17), vec3(.21, .25, .36));
  vec3 c = mix(cTop, cBot, smoothstep(0., .7, vS)) * (.72 + .55 * st);
  float wisp = smoothstep(.3, .65, fb(vec3(vQ.x * 22., vQ.y * 40. + uTime * 1.1, vQ.z * 22.) + uSeed * .7 + vK * 2.3));
- float fadeS = vK < .5 ? .7 : (vK < 2.5 ? .4 : .2);
- float a = smoothstep(0., .75, vNd) * (.3 + .7 * st) * (.35 + .65 * wisp) * (1. - smoothstep(fadeS, 1., vS)) * smoothstep(0., .08, vS) * (vK < 2.5 ? .95 : .6);
+ float fadeS = vK < .5 ? .8 : (vK < 2.5 ? .55 : .35);
+ float a = smoothstep(0., .75, vNd) * (.45 + .55 * st) * (.5 + .5 * wisp) * (1. - smoothstep(fadeS, 1., vS)) * smoothstep(0., .08, vS) * (vK < 2.5 ? 1. : .75);
  float dk = smoothstep(0., .4, uDis);
  vec3 light = pal(vec3(.3, .6, .36), vec3(.32, .45, .75)) * (.22 * (1. - .6 * vS) + 1.6 * dk * st * (1. - smoothstep(.5, 1., uDis))) * a;
  a *= 1. - dk;
@@ -423,15 +424,17 @@ void main() {
  float lip = pow(1. - band, 2.4) * (.55 + .45 * n2);
  float rr = r + .2 * (n - .5);
  float R0 = mix(.34, .58, lv);
- float core = 1. - smoothstep(R0 * .5, R0 * 1.2, rr);
+ float core = 1. - smoothstep(R0 * .55, R0 * 1.3, rr);
  float out_ = smoothstep(R0 * .7, 1., rr);
  float lit = .6 + .4 * dot(vQ / max(r, .001), vec2(-.6, .8));
  vec3 cS = pal(vec3(.5, .57, .52), vec3(.47, .53, .66));
  vec3 c = cS * (.2 + .8 * out_) * (.42 + .58 * lip) * (.75 + .35 * lit) * (1. - .45 * lv);
  c = mix(c, vec3(.008, .01, .009), core);
- // torn: gaps between the arms near the rim let the body show through
- float torn = smoothstep(.58, .78, n2) * smoothstep(.55, .95, rr);
- float a = (1. - smoothstep(.66, 1.06, rr + .2 * (n2 - .5))) * mix(.92, 1., core) * (1. - .65 * torn) * (1. - smoothstep(0., .45, uDis));
+ // torn: deep gaps between the arms near the rim let the body show through, each with a pale ragged lip
+ float torn = smoothstep(.5, .7, n2) * smoothstep(.48, .9, rr);
+ float tearLip = smoothstep(.38, .5, n2) * (1. - smoothstep(.5, .66, n2)) * smoothstep(.48, .9, rr) * (1. - core);
+ c += cS * .45 * tearLip;
+ float a = (1. - smoothstep(.66, 1.06, rr + .2 * (n2 - .5))) * mix(.92, 1., core) * (1. - .92 * torn) * (1. - smoothstep(0., .45, uDis));
  // green flame licks curling round the rim along the arms
  float stk = pow(max(0., 1. - abs(band - .06) * 8.), 3.) * smoothstep(.6, .85, r) * (1. - smoothstep(.9, 1.2, r)) * n2;
  vec3 light = pal(vec3(.45, .86, .5), vec3(.5, .7, 1.)) * stk * .5 * uGlow * (1. - uDis);

@@ -45,7 +45,7 @@ Each model gets its page rebuilt and republished after its polish. Noctara's lis
 | Shared files | `bench.css` miss style; in `bench.js`, a Before model of another actor kind, placing by meters, dashes aimed along the target line, and a real walk phase for Io; in `check.mjs`, a fix for a fresh copy of the repo, a wait before each screenshot, and shots of actions on original models; a choice of close-up anchor in `turnaround`; the lantern cutout that covers Lunara's skirt behind the well; a faint line across the painting in close view |
 | Lunara | Done: heavier skirt chains with cross charms, and pointed ears |
 | Io | Done: her new spells' effects sized for the battle camera. Her look and motions are unchanged. |
-| Wisp | A darker, fuller smoke tail; stronger tears in the hollow; the frost variant checked in every action |
+| Wisp | Done: a darker, fuller smoke tail with strands that part and curl; deeper tears in the hollow with pale lips; the frost variant checked in all nine actions |
 | Wraith and great wraith | A scythe head and hem closer to the sheet; switching to the great wraith without reloading the page |
 | Sol | Wispier hair, a rounder face, the cape over her shoulders, and smaller code (140 KB now) |
 | Envoi | A full ring round the foe in the strike; a dark splash when the ward takes a hit; the tail kept clear of Io; longer bipyramid lanterns |
