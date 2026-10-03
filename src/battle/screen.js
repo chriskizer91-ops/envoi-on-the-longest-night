@@ -37,7 +37,7 @@
 
   function start(cfg) {
     const RL = window.BattleRules, BE = window.BattleEngine;
-    const SC = window.SCENES['night-square'];
+    const SC = window.SCENES[cfg.scene || 'night-square'];
     const IW = SC.width, IH = SC.height, A = IW / IH, FOV = SC.fov, PITCH = SC.pitch * Math.PI / 180, PXM = SC.ppm;
     const DIST = (IH / 2) / (PXM * Math.tan(FOV / 2 * Math.PI / 180));
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -90,7 +90,8 @@
 
     // the wraith's route in from the bridge (the first fight), and the Moonwell, where Lunara rises
     const ROUTE = [[1185, 452], [1120, 520], [1000, 690], [860, 800]].map((p) => g(p[0], p[1]));
-    const WELL = g(712, 725), LUN = { x: WELL.x, z: WELL.z - 0.9 };
+    const WELL = g(...(SC.summon || [712, 725])), LUN = { x: WELL.x, z: WELL.z - 0.9 };
+    const SUMMON_FROM = SC.summonFrom || 'the Moonwell';
 
     // ---------- camera director: every shot is a point on the painting plus a zoom ----------
     const view = { w: 1, h: 1, uiH: 0 };
@@ -105,9 +106,16 @@
       paintCv.width = Math.round(view.w * DPR); paintCv.height = Math.round(view.h * DPR); lastTf = '';
     }
     function shot(cx, cy, s, k) { cam.follow = null; cam.tx = cx; cam.ty = cy; cam.ts = s; cam.k = k || 3; }
-    function shotAt(p, s, k, lift) { const q = toPx(tmpV.set(p.x, lift === undefined ? 1.1 : lift, p.z)); shot(q[0], q[1], s, k); }
+    // a giant foe (the great wraith) is framed by its whole height: close-ups on it aim higher and pull back
+    const bigAt = (p) => foes.find((f) => f.pos === p && f.tall > 3);
+    function shotAt(p, s, k, lift) {
+      const big = lift === undefined && bigAt(p);
+      if (big) { lift = big.tall * 0.45; s /= 1.7; }
+      const q = toPx(tmpV.set(p.x, lift === undefined ? 1.1 : lift, p.z)); shot(q[0], q[1], s, k);
+    }
     function followShot(getPos, s, k) { cam.follow = getPos; cam.fs = s; cam.k = k || 3; }
     function shotBoth(a, b, zoom, k) {
+      if (bigAt(a) || bigAt(b)) { const pts = []; for (const p of [a, b]) { const f = bigAt(p); pts.push({ x: p.x, y: 0, z: p.z }, { x: p.x, y: f ? f.tall : 2.2, z: p.z }); } shotFit(pts, Math.min(1, zoom), k); return; }
       const pa = toPx(tmpV.set(a.x, 1.1, a.z)), pb = toPx(tmpV.set(b.x, 1.1, b.z));
       const needW = Math.abs(pa[0] - pb[0]) + 175, needH = 250;
       const availH = Math.max(120, view.h - view.uiH - 50);
@@ -141,12 +149,36 @@
       ox = Math.round(ox * DPR) / DPR; oy = Math.round(oy * DPR) / DPR;
       camera.setViewOffset(IW * S2, IH * S2, ox, oy, view.w, view.h);
       // the painting is drawn into a canvas the size of the stage, only the part the camera shows (bench.js)
-      const tf = ox + ',' + oy + ',' + S2.toFixed(5) + ',' + view.w + ',' + view.h;
+      const tf = ox + ',' + oy + ',' + S2.toFixed(5) + ',' + view.w + ',' + view.h + ',' + TOWN.ver;
       if (tf !== lastTf && paintImg.complete && paintImg.naturalWidth) {
         paintCtx.imageSmoothingEnabled = true; paintCtx.imageSmoothingQuality = 'high';
         paintCtx.drawImage(paintImg, ox / S2, oy / S2, view.w / S2, view.h / S2, 0, 0, paintCv.width, paintCv.height);
+        drawTown(ox, oy, S2);
         lastTf = tf;
       }
+    }
+    // the painted windows that light again when a scene's stolen lamplight comes home (Bogmire): warm glows drawn over
+    // the painting, each fading in when its light arrives
+    const TOWN = { a: (SC.windows || []).map(() => 0), to: (SC.windows || []).map(() => 0), ver: 0 };
+    function stepTown(rdt) {
+      let changed = false;
+      for (let i = 0; i < TOWN.a.length; i++) { const d = TOWN.to[i] - TOWN.a[i]; if (Math.abs(d) > 0.004) { TOWN.a[i] += d * Math.min(1, rdt * 2.4); changed = true; } else if (d) { TOWN.a[i] = TOWN.to[i]; changed = true; } }
+      if (changed) TOWN.ver++;
+    }
+    function drawTown(ox, oy, S2) {
+      if (!TOWN.a.some((a) => a > 0.01)) return;
+      const c = paintCtx; c.save(); c.globalCompositeOperation = 'lighter';
+      SC.windows.forEach(([u, v], i) => {
+        const a = TOWN.a[i]; if (a <= 0.01) return;
+        const x = (u * S2 - ox) * DPR, y = (v * S2 - oy) * DPR, r = 13 * S2 * DPR;
+        let g = c.createRadialGradient(x, y, 0, x, y, r);
+        g.addColorStop(0, 'rgba(255,236,190,' + (0.95 * a).toFixed(3) + ')'); g.addColorStop(0.45, 'rgba(255,176,90,' + (0.6 * a).toFixed(3) + ')'); g.addColorStop(1, 'rgba(255,140,60,0)');
+        c.fillStyle = g; c.fillRect(x - r, y - r, r * 2, r * 2);
+        const R = r * 3.2; g = c.createRadialGradient(x, y, 0, x, y, R);
+        g.addColorStop(0, 'rgba(255,170,80,' + (0.22 * a).toFixed(3) + ')'); g.addColorStop(1, 'rgba(255,150,60,0)');
+        c.fillStyle = g; c.fillRect(x - R, y - R, R * 2, R * 2);
+      });
+      c.restore();
     }
     function toScreen(p) { tmpV.copy(p).project(camera); return [(tmpV.x + 1) / 2 * view.w, (1 - tmpV.y) / 2 * view.h, tmpV.z]; }
 
@@ -323,7 +355,7 @@
       // a model's own lunges and knockbacks move it; a lunge at a foe runs along the line to it and stops short of it
       if (a.m.busy && a.m.dash && dt > 0) {
         let d = a.m.dash * dt, dx = Math.sin(a.yaw), dz = Math.cos(a.yaw);
-        if (a.aim && d > 0) { const ex = a.aim.pos.x - a.pos.x, ez = a.aim.pos.z - a.pos.z, r = Math.hypot(ex, ez); if (r > 1e-3) { dx = ex / r; dz = ez / r; } d = Math.min(d, Math.max(0, r - a.stop)); }
+        if (a.aim && d > 0) { const ex = a.aim.pos.x - a.pos.x, ez = a.aim.pos.z - a.pos.z, r = Math.hypot(ex, ez); if (r > 1e-3) { dx = ex / r; dz = ez / r; } d = Math.min(d, Math.max(0, r - a.stop - ((a.aim.look && a.aim.look.reach) || 0))); }
         a.pos.x += dx * d; a.pos.z += dz * d;
       }
       if (a.spin > 0) { const s = Math.min(a.spin, dt * 9); a.yaw += s; a.spin -= s; }
@@ -338,7 +370,7 @@
     const firstFoe = () => living('foe')[0] || foes[0];
     function faceTo(a, b) { a.tyaw = faceYaw(a.pos, b.pos); }
     async function runUp(a, t, dist, speed) {
-      const spot = toward(a.pos, t.pos, dist);
+      const spot = toward(a.pos, t.pos, dist + ((t.look && t.look.reach) || 0));
       await moveTo(a, spot.x, spot.z, speed || 4.2);
       faceTo(a, t); await wait(0.12);
     }
@@ -445,7 +477,8 @@
       o = o || {};
       shotBoth(h.pos, t.pos, 1.12, 2.5);
       await runUp(h, t, dist);
-      shotAt(mid(h.pos, t.pos), o.zoom || 1.8, 3);
+      if (t.tall > 3) shotFit([{ x: h.pos.x, y: 0, z: h.pos.z }, { x: h.pos.x, y: 2.2, z: h.pos.z }, { x: t.pos.x, y: 0, z: t.pos.z }, { x: t.pos.x, y: t.tall * 0.75, z: t.pos.z }], 1.1, 3);
+      else shotAt(mid(h.pos, t.pos), o.zoom || 1.8, 3);
       h.aim = t; const m = h.m; m.play(act, true);
       const H = m.ACTIONS[act].hits;
       for (let k = 0; k < H.length; k++) {
@@ -684,7 +717,7 @@
       await untilP(L, L.ACTIONS.appear.cues[1]);
       FX.burst(L.anchor('head', V()), [0.75, 1, 0.88], 90, 4.5, { spread: 0.9 }); FX.ring(LUN, 0xdfffee, 0.4, 4.6, 0.9, 0.8);
       UI.flash('#ffffff', 0.45, 0.4); SND.sfx.chime(); SND.sfx.boom(0.5); addShake(5);
-      UI.msg('Lunara, the Pale Mother, rises from the Moonwell.', true);
+      UI.msg('Lunara, the Pale Mother, rises from ' + SUMMON_FROM + '.', true);
       await until(() => !L.busy);
       UI.hideMsg();
       // the Embrace: her wings close over the party, then open: the party heals, the fallen rise, and blows are softened
@@ -741,7 +774,7 @@
       ev.rest();
       await wait(1.0);
       L.play('leave', true); FX.burst(L.anchor('head', V()), [0.75, 1, 0.88], 70, 3, { spread: 1.0 });
-      if (!E.over) UI.msg('Lunara sinks back into the Moonwell.', true);
+      if (!E.over) UI.msg('Lunara sinks back into ' + SUMMON_FROM + '.', true);
       await wait(1.6); UI.hideMsg();
       LU.on = false;
       UI.vignette(0); UI.tint(0); if (!E.over) UI.cinematic(false);
@@ -905,17 +938,17 @@
     const blowTarget = (ev) => (ev.peek() && F[ev.peek().to]) || (EN && EN.on && ev.list.some((e) => e.t === 'ward') ? ENV.ward : null) || reach()[0] || living('hero')[0] || io();
     const WRAITH_MOVES = {
       async sweep(f, ev) {
-        const t = blowTarget(ev), W = f.m, spot = toward(f.pos, t.pos, 1.75);
+        const t = blowTarget(ev), W = f.m, spot = toward(f.pos, t.pos, f.look.near || 1.75), k = f.look.fxScale || 1;
         shotBoth(t.pos, f.pos, 1.1, 2.5);
         await moveTo(f, spot.x, spot.z, 3.4);
         faceTo(f, t); await wait(0.15);
-        shotAt(mid(t.pos, f.pos), 1.65, 3);
+        if (f.tall > 3) shotBoth(t.pos, f.pos, 1.1, 3); else shotAt(mid(t.pos, f.pos), 1.65, 3);
         W.play('sweep', true); SND.sfx.shriek(0.6);
         await untilP(W, W.ACTIONS.sweep.cues[0]); SND.sfx.swish();
         await untilP(W, W.ACTIONS.sweep.hits[0]);
         const p = chest(blowTarget(ev));
-        FX.slash(p, 0x5dff9d, rnd(2.4, 3.0), 1.5, 0.35); FX.burst(p, [0.3, 1, 0.55], 40, 3.6); FX.flashLight(p, 0x4dff90, 3, 0.3);
-        SND.sfx.hit(1.1); addShake(10); hitStop(0.09); ev.show();
+        FX.slash(p, 0x5dff9d, rnd(2.4, 3.0), 1.5 * Math.sqrt(k), 0.35); FX.burst(p, [0.3, 1, 0.55], 40, 3.6); FX.flashLight(p, 0x4dff90, 3, 0.3);
+        SND.sfx.hit(1.1); addShake(10 * k); hitStop(0.09); ev.show();
         await until(() => !W.busy); ev.rest();
         await goHome(f, 3.2);
       },
@@ -946,10 +979,10 @@
       async eclipse(f, ev) {
         UI.cinematic(true); UI.vignette(0.9);
         const t = blowTarget(ev); faceTo(f, t); shotAt(f.pos, 1.25, 2);
-        const W = f.m, EC = W.ACTIONS.eclipse; W.play('eclipse', true); SND.sfx.eclipse(); SND.sfx.shriek(1.4);
-        FX.blackSun(W.anchor('sun', V()), 2.4);
+        const W = f.m, EC = W.ACTIONS.eclipse, k = f.look.fxScale || 1; W.play('eclipse', true); SND.sfx.eclipse(); SND.sfx.shriek(1.4);
+        FX.blackSun(W.anchor('sun', V()), 2.4 * (EC.dur / 2.8), k > 1 ? k * 0.55 : 1);
         await untilP(W, EC.cues[1]); shotField(3);
-        FX.ring(f.pos, 0x2dff7a, 0.3, 6.5, 0.9, 1);
+        FX.ring(f.pos, 0x2dff7a, 0.3, 6.5 * k, 0.9, 1);
         await untilP(W, EC.hits[0]);
         for (const h of reach()) { const p = chest(h); FX.burst(p, [0.2, 1, 0.5], 80, 5); FX.flashLight(p, 0x3cff8a, 5, 0.5, 8); }
         UI.flash('#0b2a16', 0.7, 0.4); SND.sfx.boom(1.3); addShake(16); hitStop(0.14);
@@ -958,6 +991,34 @@
         UI.vignette(0); UI.cinematic(false);
       },
     };
+    // the great wraith's own two: the town's stolen fire breathed on the party, and the lamplight it drinks to heal
+    Object.assign(WRAITH_MOVES, {
+      async breath(f, ev) {
+        const W = f.m, A = W.ACTIONS.breath, tg = reach(), mid = centerOf((tg.length ? tg : living('hero')).map((h) => h.pos));
+        f.aimAt = { pos: mid, look: {}, m: { anchor: (n, o) => (o || V()).set(mid.x, 1.1, mid.z) } };
+        faceTo(f, { pos: mid }); shotField(2.5);
+        W.play('breath', true); SND.sfx.shriek(0.8);
+        await untilP(W, A.cues[0]); SND.sfx.fire(); addShake(5);
+        for (let k = 0; k < A.hits.length; k++) {
+          await untilP(W, A.hits[k]);
+          for (const h of reach()) { const p = chest(h); FX.burst(p, [1, 0.7, 0.3], k ? 18 : 30, 3); FX.flashLight(p, 0xffa040, 3, 0.4, 6); }
+          SND.sfx.fire(); addShake(k ? 5 : 9); hitStop(0.06);
+          if (k === 0) ev.showAll();
+        }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+      },
+      async swallow(f, ev) {
+        const W = f.m, A = W.ACTIONS.swallow;
+        shotAt(f.pos, 0.95, 2.4, f.tall * 0.55);
+        W.play('swallow', true); SND.sfx.grasp();
+        await untilP(W, A.cues[0]);
+        FX.converge(() => W.anchor('heart', V()), [1, 0.78, 0.4], 1.3, 90);
+        await untilP(W, A.hits[0]);
+        FX.burst(W.anchor('heart', V()), [1, 0.82, 0.45], 50, 3.4); FX.flashLight(W.anchor('heart', V()), 0xffb45a, 4, 0.6, 8); SND.sfx.heal();
+        ev.show();
+        await until(() => !W.busy); ev.rest();
+      },
+    });
     const WISP_MOVES = {
       async flicker(f, ev) {
         const t = blowTarget(ev); faceTo(f, t); shotBoth(t.pos, f.pos, 1.0, 2.6);
@@ -1152,8 +1213,10 @@
         $('skip').hidden = true;
         if (S.skip) { f.target = null; f.res = null; f.pos = { x: f.home.x, z: f.home.z }; W.reset(); }
       } else {
-        // the foes rise where they stand
+        // the foes rise where they stand, with a line of story before and after when the page has one
         for (const f of foes) { f.pos = { x: f.home.x, z: f.home.z }; f.yaw = f.tyaw = f.home.yaw; }
+        const told = cfg.introMsg && !quick;
+        if (told) { $('skip').hidden = false; shot(IW / 2, IH * 0.4, 0, 1.4); UI.msg(cfg.introMsg); await ws(2.6); }
         shotField(3);
         for (const f of foes) {
           f.m.root.visible = true; f.m.play('appear', true);
@@ -1162,6 +1225,8 @@
         }
         SND.sfx.shriek(1.0);
         await wait(0.6);
+        if (told && cfg.introAfter && !S.skip) { UI.msg(cfg.introAfter, true); await ws(2.6); }
+        UI.hideMsg(); $('skip').hidden = true;
       }
       for (const f of foes) { f.m.root.visible = true; f.tyaw = f.home.yaw; }
       for (const h of heroes) h.tyaw = h.home.yaw;
@@ -1170,6 +1235,20 @@
       io().m.play('cast'); UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic();
       await wait(1.4); UI.hideMsg();
       S.state = 'battle'; S.t0 = clock.t;
+    }
+    // the stolen lamplight flies home: a light from the beaten foe's heart to each dark window, which glows again
+    async function relightTown(from) {
+      const W = SC.windows; if (!W || !W.length) return;
+      shot(IW / 2, IH * 0.42, 0, 1.6);
+      UI.msg(cfg.winLightsText || 'The stolen lamplight flies home.', true);
+      const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -2.5), arrivals = [];
+      W.forEach(([u, v], i) => {
+        const to = new THREE.Vector3(); if (!rayAt(u, v).intersectPlane(plane, to)) return;
+        arrivals.push(wait(i * 0.16).then(() => FX.projectile({ from: from.clone(), to: () => to, dur: 0.85 + Math.random() * 0.35, arc: 1.2 + Math.random(), side: rnd(-0.3, 0.3), color: 0xffe2a8, halo: 0xff9a40, size: 0.2, trail: [1, 0.78, 0.4], light: 0xffb45a, lightI: 2 }))
+          .then(() => { TOWN.to[i] = 1; SND.sfx.chime(); }));
+      });
+      await Promise.all(arrivals);
+      await wait(1.6); UI.hideMsg();
     }
     async function finish() {
       if (S.state === 'over') return;
@@ -1184,13 +1263,15 @@
         await wait(0.3); clock.scale = 1; clock.slowT = 0;
         // the last foe to fall: the robe falls empty (or the flame goes out), and the soul goes home as a pale moth
         const lastF = foes.filter((f) => f.m.action === 'die').sort((a, b) => a.m.progress - b.m.progress)[0] || foes[0];
-        shotAt(lastF.pos, 1.35, 2, lastF.tall * 0.5);
+        shotAt(lastF.pos, lastF.tall > 3 ? 0.8 : 1.35, 2, lastF.tall * 0.5);
         for (let i = 0; i < 4; i++) { await wait(0.28); const p = chest(lastF); p.x += rnd(-0.3, 0.3); p.y += rnd(-0.4, 0.3); FX.burst(p, lastF.kind === 'wisp' ? [0.8, 0.6, 1] : [0.3, 1, 0.55], 26, 3); }
         SND.sfx.boom(0.9); mark('die');
         await until(() => lastF.m.progress >= 0.7 || lastF.m.progress < 0); mark('moth');
         UI.msg(cfg.winMoth || 'A pale moth rises and drifts down into the Moonwell: the soul has gone home.', true);
         await until(() => foes.every((f) => f.m.progress >= 0.99 || f.m.progress < 0 || f.m.action !== 'die'));
-        mark('released'); UI.hideMsg(); UI.cinematic(false); UI.hideEnemy(); SND.sfx.victory();
+        mark('released'); UI.hideMsg();
+        if (cfg.winLights) { const src = foes.find((f) => f.look.lights) || lastF; await relightTown(src.m.anchor('heart', V())); mark('relit'); }
+        UI.cinematic(false); UI.hideEnemy(); SND.sfx.victory();
         const up = living('hero');
         shotField(2);
         for (const h of up) { h.tyaw = 0.25; h.spin = TAU; h.m.play('victory', true); }
@@ -1269,6 +1350,7 @@
       }
       for (const k in S.veils) { const v = S.veils[k]; if (v && v.dismiss) v.dismiss(); }
       S.veils = {}; FX.shield(false); S.rimeOn = false;
+      for (let i = 0; i < TOWN.a.length; i++) TOWN.a[i] = TOWN.to[i] = 0; TOWN.ver++;
       LU.m.reset(); LU.on = false; LU.m.root.visible = false; if (LU.m.fx) LU.m.fx.visible = false; LU.shadow.visible = false;
       if (EN) { envoiHide(); EN.wrap = null; for (const d of ENV.ink) d.s.visible = false; }
     }
@@ -1290,6 +1372,7 @@
       lv.min = cfg.levels[0]; lv.max = cfg.levels[1]; lv.value = PICK.level; out.textContent = PICK.level;
       lv.addEventListener('input', () => { PICK.level = +lv.value; out.textContent = PICK.level; note(); });
       cfg.packs.forEach((p, i) => el('option', { value: String(i) }, sel, p.name));
+      if (cfg.packs.length < 2 && sel.closest('label')) sel.closest('label').hidden = true;
       sel.value = String(PICK.pack); sel.addEventListener('change', () => { PICK.pack = +sel.value; note(); });
       note();
     }
@@ -1338,6 +1421,7 @@
       if (EN) stepEnvoi(dt, rdt);
       glowG.material.opacity += ((LU.on ? 0.55 : 0) - glowG.material.opacity) * Math.min(1, rdt * 2);
       stepRime(rdt);
+      stepTown(rdt);
 
       FX.update(dt, clock.t);
       if (FX.grp.children.length !== fxKids) { lightOnly(FX.grp); fxKids = FX.grp.children.length; }

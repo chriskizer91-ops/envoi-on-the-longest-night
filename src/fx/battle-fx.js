@@ -196,9 +196,10 @@ function makeBattleFX() {
         for (const L of list) { const w = 1 + 0.25 * k; L.m.scale.set(w, Math.max(0.001, k * L.h * (1 + 0.06 * Math.sin(u * 30 + L.ph))), w); }
       }, () => grp.remove(gT));
     }
-    function blackSun(p, dur) {
-      const s = sprite(T.sun, 0xffffff, THREE.NormalBlending, 6); s.position.copy(p);
-      return anim(dur, (u) => { const k = u < 0.45 ? Math.sin(u / 0.45 * Math.PI / 2) : u > 0.85 ? 1 - (u - 0.85) / 0.15 : 1; s.scale.setScalar(0.2 + 1.7 * k); s.material.opacity = k; s.material.rotation = u * 1.5; }, () => drop(s));
+    // size scales it for a bigger caster (the great wraith); 1 by default
+    function blackSun(p, dur, size) {
+      const s = sprite(T.sun, 0xffffff, THREE.NormalBlending, 6), z = size || 1; s.position.copy(p);
+      return anim(dur, (u) => { const k = u < 0.45 ? Math.sin(u / 0.45 * Math.PI / 2) : u > 0.85 ? 1 - (u - 0.85) / 0.15 : 1; s.scale.setScalar((0.2 + 1.7 * k) * z); s.material.opacity = k; s.material.rotation = u * 1.5; }, () => drop(s));
     }
     let shieldM = null, shieldOn = 0, shieldFlash = 0;
     function shield(on, p, yaw) {
