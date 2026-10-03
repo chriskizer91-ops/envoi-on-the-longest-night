@@ -36,6 +36,8 @@
 
     // a pose blends in and out over its first and last 18% (Path Polish's gatherWeight)
     const weight = (p) => (Number.isFinite(p) ? ease(p / 0.18) * ease((1 - p) / 0.18) : 1);
+    // her frame is put together here before it goes on the map (see walkPose)
+    const buf = document.createElement('canvas'), bg = buf.getContext('2d');
 
     function walkPose(g, img, dir, frame, k, s, crouch) {
       const r = ROWS[dir] || ROWS.s, q = img.naturalWidth / SHEET_W; // sheet px per original px
@@ -44,19 +46,25 @@
       const breath = (s.moving ? Math.abs(Math.sin(phase)) * 0.25 : Math.sin(s.t * 2) * 0.35) * L * k;
       const hk = 1 - crouch * 0.035;
       const top = -(r.floor - r.y) * k * hk + breath, height = r.h * k * hk - breath;
-      const left = -CELL / 2 * k, width = CELL * k;
-      // the cape's middle ripples a little behind her; her face and her planted boots stay put. The sprite is drawn in
-      // bands, each clipped, so the ripple needs no resampling seams.
+      // the cape's middle ripples a little behind her; her face and her planted boots stay put. The ripple shifts bands
+      // of the frame sideways, put together on a canvas of her own at the sheet's size, the bands in whole pixel rows,
+      // and then drawn once. (Each band clipped straight onto the map would cover the row at its edge only in part, and
+      // the map would show through her in thin lines.)
+      const m = Math.ceil(2 * L * q); // room either side for the ripple, in sheet px
+      const bw = Math.ceil(sw) + 2 * m, bh = Math.ceil(sh);
+      if (buf.width !== bw || buf.height !== bh) { buf.width = bw; buf.height = bh; } else bg.clearRect(0, 0, bw, bh);
       const bands = 18;
       for (let b = 0; b < bands; b++) {
         const v = (b + 0.5) / bands;
         const cape = v > 0.36 && v < 0.85 ? Math.sin((v - 0.36) / 0.49 * Math.PI) : 0;
-        const ripple = cape * Math.sin((s.moving ? phase : s.t * 1.6) - v * 3) * (s.moving ? 0.4 : 0.15) * L * k;
-        const y0 = top + height * b / bands, y1 = top + height * (b + 1) / bands;
-        g.save(); g.beginPath(); g.rect(left - 2 * L * k, y0, width + 4 * L * k, y1 - y0); g.clip();
-        g.drawImage(img, sx, sy, sw, sh, left + ripple, top, width, height);
-        g.restore();
+        const ripple = cape * Math.sin((s.moving ? phase : s.t * 1.6) - v * 3) * (s.moving ? 0.4 : 0.15) * L * q;
+        const y0 = Math.round(sh * b / bands), y1 = Math.round(sh * (b + 1) / bands);
+        bg.save(); bg.beginPath(); bg.rect(0, y0, bw, y1 - y0); bg.clip();
+        bg.drawImage(img, sx, sy, sw, sh, m + ripple, 0, sw, sh);
+        bg.restore();
       }
+      const kx = k / q, ky = height / sh; // canvas px per sheet px, across and down (her breath and crouch are in ky)
+      g.drawImage(buf, 0, 0, bw, bh, -sw / 2 * kx - m * kx, top, bw * kx, bh * ky);
     }
     function poseImage(g, img, k) { g.drawImage(img, -192 * k, -317 * k, img.naturalWidth * k, img.naturalHeight * k); }
 
