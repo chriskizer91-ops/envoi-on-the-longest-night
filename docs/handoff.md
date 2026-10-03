@@ -4,11 +4,11 @@ October 3, 2026. The game plays from the title to the ending in one page (https:
 
 **Done since, in `../putting-it-all-together/` (October 3, later):** the Bramble Colossus in the game (section 2); living battlefields on every painted battle (section 3, the first way); three save slots, a save code, word speed, larger text and separate volumes (section 9); the offline build (size and delivery); and `tools/game-test.mjs` (technical notes). Each is marked below.
 
-**After Chris's first play (October 3, later still):** no footsteps; Io walks as Path Polish paints her; the walking maps retraced close, Wickhollow first, with walking behind lamp posts and trees (section 8); art request 08 for everyone else as paper dolls (section 4); his three songs saved; the published game split into a small page and its pictures (size and delivery). `design-decisions.md` has the details.
+**After Chris's first play (October 3, later still):** no footsteps; Io walks as Path Polish paints her, at Chris's settings; all thirteen walking maps retraced close, with walking behind lamp posts and trees (section 8), and squeezed to his "75% light"; art request 08 for everyone else as paper dolls (section 4); his three songs saved; the published game split into a small page and its pictures (size and delivery). `design-decisions.md` has the details.
 
 ## Waiting on Chris
 
-1. **Io on foot** (`demos/io-on-foot.html`): her height, how close the camera comes, her pace, and whether the footsteps stay off or one of the two new ideas goes in.
+1. **Io on foot** (`demos/io-on-foot.html`): Chris chose her height (52), the camera (15%) and her pace (1.7). Still open: whether the footsteps stay off, or one of the two new ideas goes in.
 2. **The lore conversation.** Every line of the script is a placeholder (`src/game/script.js`):
    - the townsfolk's words;
    - the twelve new townsfolk's names: Old Wenna, Tobb and Pell in Bogmire; Marta, Brann and Tamsin at Dawnroost; Pim, Tock and Old Gil at the shipyard; Sorrel, Ede and the watchwoman in Misthollow;
@@ -102,7 +102,7 @@ Today the party grows only by levels and the story's gifts (Harvest Moon, Envoi,
 
 ### 8. The field
 
-- **Walking behind things: built (October 3, later still).** Each map's fronts (`maps.js`) are pieces of the painting (lamp posts, trees, arches, the Moonwell's frame) drawn again over Io, or anyone, standing behind them. The walk areas themselves follow the painted ground: Wickhollow first, the other twelve maps in the same pass.
+- **Walking behind things: built (October 3, later still).** Each map's fronts (`maps.js`) are pieces of the painting (lamp posts, trees, arches, the Moonwell's frame) drawn again over Io, or anyone, standing behind them. The walk areas themselves now follow the painted ground on all thirteen maps.
 - Footsteps and doors in sound; a soft step-in when a map loads. **Footsteps were built and taken out** (Chris didn't like them). `demos/io-on-foot.html` has two other ideas to try by ear: Path Polish's soft steps, and a cloak's swish.
 - A run (hold the action button) for long walks. **Built differently:** the pace builds to a run after a moment of walking, so no button is needed.
 - An ambient loop per place (wind on the pass, frogs in the fen, the forge at Dawnroost). **Built** from the music library's own sounds, each coming back now and then.
@@ -124,18 +124,18 @@ The final deliverable is one HTML file of at most 30 MB (Chris, October 3), sent
 
 | Part | In the file |
 |---|---|
-| Today's file, with the 1152 px walking maps and Io's walk sheet | 18.3 MB |
+| Today's file, with the walking maps squeezed to Chris's "75% light" and Io's walk sheet | 15.0 MB |
 | Chris's songs (2.4 MB of files) | +3.2 MB |
 | Nineteen paper-doll sheets (art request 08, about 200 KB each) | +5 MB |
 | Sixteen portraits | +1.7 MB |
 | Nine story stills | +4.2 MB |
-| **Everything** | **about 32 MB** |
+| **Everything** | **about 29 MB** |
 
-That is about 2 MB over, so the last step squeezes the pictures: the paper dolls a little smaller (150 px tall instead of 170: about +3.8 MB), the stills a little harder (about +3 MB), and the battle backdrops squeezed again (about 1 MB back). That lands under 30 MB.
+That is just under 30 MB. For more room, the battle paintings (4.2 MB of files) and the world map (3.0 MB) can be squeezed to AVIF as the walking maps were, with a comparison page like Walking Map Resolution for Chris to choose from.
 
-**The published game** has outgrown a published page's 16 MB, so it is published split, as planned: a small page (1.1 MB) with its 41 pictures beside it as files, at the same link with the same save. Build it with `node tools/build.mjs --min --split putting-it-all-together/game.html`; `dist/game-split/files.json` lists the pictures to publish with the page. Only the published copy is split, never the file Chris keeps.
+**The published game** fits on one page again (14.3 MB) now that the walking maps are squeezed. When the songs and the art push it past a published page's 16 MB, it is published split, as planned: a small page with its pictures beside it as files, at the same link with the same save. Build that with `node tools/build.mjs --min --split putting-it-all-together/game.html`; `dist/game-split/files.json` lists the pictures to publish with the page. Only the published copy is split, never the file Chris keeps.
 
-**The file Chris keeps must work offline,** so its build embeds three.js and the two fonts instead of loading them from the web. **Built:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` (18.3 MB today, with three.js and the fonts inside). `node tools/game-test.mjs --offline` plays it with the internet blocked and checks that its fonts are inside.
+**The file Chris keeps must work offline,** so its build embeds three.js and the two fonts instead of loading them from the web. **Built:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` (15.0 MB today, with three.js and the fonts inside). `node tools/game-test.mjs --offline` plays it with the internet blocked and checks that its fonts are inside.
 
 **Mooncart** (`building-with-assets-`) builds this repository with `node tools/build.mjs` and takes every page in `dist/`. With nothing after it, the build now makes the game too (`dist/game.html`), so the game reaches Mooncart once this branch is on the repository's main branch.
 

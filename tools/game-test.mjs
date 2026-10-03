@@ -152,7 +152,8 @@ try {
       await talkThrough(30000);
       await shot(step + '-after');
     } else if (step === 'saves') {
-      // the Saves tab: save in slot 2, copy the save code, then load it back from the title
+      // the Saves tab: save in slot 2, copy the save code, then load it back from the title, to the map it was saved on
+      const savedMode = await page.evaluate(() => window.__game.mode);
       await page.evaluate(() => { window.__game.menu(); });
       await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');
       await page.click('.gmenu-tabs button:text-is("Saves")');
@@ -171,7 +172,7 @@ try {
       await page.click('.talk-choices button:text-is("Paste a save code")');
       await page.fill('textarea.code', code);
       await page.click('.gmenu-foot button:text-is("Load it")');
-      await waitFor(() => window.__game.mode === 'field' && !window.__game.busy, null, 30000, 'the loaded game');
+      await waitFor((m) => window.__game.mode === m && !window.__game.busy, savedMode, 30000, 'the loaded game');
       await shot('saves-loaded');
     } else if (step === 'scenes') {
       // the staged scenes: each one's people walk in on its map; a screenshot as they arrive, and at the scene's end

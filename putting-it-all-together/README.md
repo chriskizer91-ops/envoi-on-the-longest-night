@@ -12,8 +12,9 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | Piece | Where it comes from | State |
 |---|---|---|
 | The game, from the title to the ending | `game.html` here, built from `../src/` | In. It has been played through headless with no errors, and Chris has played it on his phone |
-| Io on foot, painted as in Path Polish: her walk sheet, the cape's ripple, the lean, the breath, kneeling at wells and casting at the Moonwell | `../src/walk/painted-io.js`, from Chris's `follow-me-down-witch-way` (`versions/path-polish/game`) | In, on the ground maps and the world map. The 3D model stays for the battles. Her own page: `../demos/io-on-foot.html` |
-| Where she can walk: every map traced close to the painted ground, with lamp posts, trees and the well's frame drawn over her when she walks behind them | `../src/game/maps.js` (check with `node tools/trace-overlay.mjs` and `node tools/check-maps.mjs`) | In for Wickhollow; the other twelve maps are being traced the same way |
+| Io on foot, painted as in Path Polish: her walk sheet, the cape's ripple, the lean, the breath, kneeling at wells and casting at the Moonwell | `../src/walk/painted-io.js`, from Chris's `follow-me-down-witch-way` (`versions/path-polish/game`) | In, on the ground maps and the world map, at Chris's settings: 52 map px tall, 15% of the screen, pace 1.7. The 3D model stays for the battles. Her own page: `../demos/io-on-foot.html` |
+| Where she can walk: every map traced close to the painted ground, with lamp posts, trees and the well's frame drawn over her when she walks behind them | `../src/game/maps.js` (check with `node tools/trace-overlay.mjs` and `node tools/check-maps.mjs`) | In, on all thirteen maps |
+| The walking maps, squeezed: Chris's pick "75% light" (1152 px, AVIF), 1.1 MB for all thirteen instead of 3.6 MB | `../art/walk/`, made from `../reference/art/walk/` with `node tools/compress.mjs --avif` | In |
 | Io, Sol, Lunara, Envoi, the wisps, the wraiths, Halcyon, Noctara | `../src/models/` | In, all polished |
 | The Bramble Horror, version 2 | `../3d-model-new-character-ideas/bramble-horror/` | In. The game's `../src/models/bramble.js` is the same model. It is a lone wild foe in all four bands |
 | The Bramble Colossus | `../3d-model-new-character-ideas/bramble-colossus/` | In: the last band's great wild foe, about one wild fight in twelve there, on the frozen road. Its fight on its own: `../demos/colossus.html` |
@@ -35,6 +36,8 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 |---|---|---|
 | The game, put together | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w | The whole game, title to ending, with everything in the table above that says In. Its saves are its own: a save code carries a game from the older link |
 | The Bramble Colossus | https://claude.ai/artifact/H2QTXhNnEi7W7Qbs6BXvA2 | Its fight on its own, at a level from 16 to 20 |
+| Io on Foot | https://claude.ai/artifact/G1B5cMkYzBq4RiausDAAQj | Io walking the game's maps, with sliders for her height, the camera and her pace, the walking areas shown, her poses, and two footstep ideas to try |
+| Walking Map Resolution | https://claude.ai/artifact/7F4pu4v3BQiKAZAtVJkC1i | The walking maps' compression choices, in the game at Chris's settings (he chose "75% light") |
 
 Both are private until Chris shares them from the page's Share menu.
 
@@ -63,7 +66,7 @@ A 48k copy of the battle song (1.2 MB), the size Chris once said it shouldn't go
 
 ## Size
 
-The file Chris keeps may be up to 30 MB. Today it is 18.3 MB. The songs, the paper dolls, the portraits and the stills would bring it to about 32 MB, so the pictures get squeezed a little more at the end (`../docs/handoff.md`, size and delivery, has the sums).
+The file Chris keeps may be up to 30 MB. Today it is 15.0 MB, with the walking maps squeezed to his "75% light". The songs, the paper dolls, the portraits and the stills would bring it to about 29 MB (`../docs/handoff.md`, size and delivery, has the sums). The battle paintings and the world map could be squeezed the same way if more room is needed.
 
 ## Building and checking
 
@@ -76,7 +79,7 @@ node tools/game-test.mjs                                      # plays it headles
 node tools/balance.mjs                                        # every fight's balance targets; must meet all of them
 ```
 
-The published game is a small page with its pictures as files beside it, since the whole game is over a published page's 16 MB:
+Once the game is over a published page's 16 MB (with the songs and the art), it is published as a small page with its pictures as files beside it. Today it fits on one page (14.3 MB), so `--split` waits:
 
 ```sh
 node tools/build.mjs --min --split putting-it-all-together/game.html   # dist/game-split/: the page, art/, files.json

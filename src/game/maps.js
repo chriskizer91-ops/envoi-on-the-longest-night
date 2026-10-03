@@ -24,6 +24,13 @@
   const lampBlocks = (ls) => ls.map((l) => l.block), lampFronts = (ls) => ls.map((l) => l.front);
   // Wickhollow's lamps: the four round the Moonwell, and the one by the west stairs
   const WICK_LAMPS = [lamp(659, 392, 310), lamp(904, 392, 310), lamp(640, 595, 509), lamp(914, 595, 509), lamp(260, 590, 525)];
+  // the frozen pass's one lamp, west of the road below the bridge (its lantern hangs out east on a bracket: a front of its own)
+  const PASS_LAMPS = [lamp(590, 683, 563)];
+  // Misthollow's lamps, each at the walk's edge: three up each side of the street (the middle one on the west side by
+  // the chapel yard), the two over the great stair, the two on the lower square's south wall, and the one on the lit
+  // landing of the west stairs
+  const MIST_LAMPS = [lamp(697, 118, 18), lamp(697, 333, 202), lamp(697, 598, 476), lamp(833, 118, 18), lamp(834, 330, 200), lamp(835, 598, 476),
+    lamp(598, 693, 637), lamp(925, 693, 637), lamp(560, 940, 889), lamp(971, 940, 889), lamp(283, 258, 187)];
   // Bogmire's lamps: two on the west dock's rail, one where the dock meets the west boardwalk, one at the square's
   // south-east corner, one where the east boardwalk turns south, and one on the south-east dock
   const BOG_LAMPS = [lamp(145, 482, 439), lamp(145, 620, 579), lamp(251, 462, 392), lamp(1007, 530, 481), lamp(1303, 432, 372), lamp(1460, 760, 724)];
@@ -40,7 +47,7 @@
   const JETTY_LAMPS = [lamp(678, 398, 342), lamp(858, 398, 342), lamp(672, 574, 492), lamp(858, 574, 492), lamp(672, 768, 686), lamp(857, 768, 684)];
   const MAPS = {
     wickhollow: {
-      name: 'Wickhollow', src: "art/walk/walk-wickhollow-square.webp", band: 1, kind: 'town', music: 'town',
+      name: 'Wickhollow', src: "art/walk/walk-wickhollow-square.avif", band: 1, kind: 'town', music: 'town',
       start: [777, 600],
       walk: [
         // the square: from the big house's front and Nettie's stall, past the chapel steps and the forge, over the
@@ -84,7 +91,7 @@
     },
     // Io's cottage, in the woods south of the square, with her garden: where the story starts
     cottage: {
-      name: "Io's cottage", src: "art/walk/walk-wickhollow-cottage.webp", band: 1, kind: 'town', music: 'home',
+      name: "Io's cottage", src: "art/walk/walk-wickhollow-cottage.avif", band: 1, kind: 'town', music: 'home',
       start: [838, 520],
       walk: [
         // the lane down from the square between its two lamp pillars, the nook behind the pear tree, the bend west under
@@ -141,7 +148,7 @@
     },
     // the jetty on the lake west of the square, where Quill moors his old skiff, the Magpie
     jetty: {
-      name: 'The jetty', src: "art/walk/walk-wickhollow-jetty.webp", band: 1, kind: 'town', music: 'town',
+      name: 'The jetty', src: "art/walk/walk-wickhollow-jetty.avif", band: 1, kind: 'town', music: 'town',
       start: [782, 60],
       walk: [
         // the lane down from the square, between its two lamp pillars, to the waterfront
@@ -175,7 +182,7 @@
     },
     // the Thornwood: the road east from Wickhollow's bridge over the stream, past the moon stone, on to Bogmire. Wild.
     thornwood: {
-      name: 'The Thornwood', src: "art/walk/walk-thornwood.webp", band: 1, kind: 'wild', music: 'wild',
+      name: 'The Thornwood', src: "art/walk/walk-thornwood.avif", band: 1, kind: 'wild', music: 'wild',
       start: [60, 456],
       walk: [
         // the road: in from the west, over the old bridge between its parapets, through the fork below the moon stone's
@@ -207,7 +214,7 @@
     },
     // Bogmire: the stilt town on the fen, its boardwalks round a market square. The great wraith has stolen its lamps.
     bogmire: {
-      name: 'Bogmire', src: "art/walk/walk-bogmire.webp", band: 1, kind: 'town', music: 'town',
+      name: 'Bogmire', src: "art/walk/walk-bogmire.avif", band: 1, kind: 'town', music: 'town',
       start: [70, 368],
       walk: [
         // the landing platform at the west edge, where the Thornwood road comes in, and the west dock running south from
@@ -276,7 +283,7 @@
     },
     // the fen's dark heart: the drowned square north of Bogmire, where the great wraith sits on the stolen lamps (the gate)
     'bogmire-heart': {
-      name: "The fen's dark heart", src: "art/walk/walk-bogmire-heart.webp", band: 1, kind: 'gate', music: 'dread',
+      name: "The fen's dark heart", src: "art/walk/walk-bogmire-heart.avif", band: 1, kind: 'gate', music: 'dread',
       start: [768, 980],
       walk: [
         [[727, 660], [810, 660], [810, 1024], [727, 1024]], // the long walk in from Bogmire
@@ -303,7 +310,7 @@
     },
     // Dawnroost, the Warden waystation: Sol's old home inside its walls, with the dock where the Magpie ties up
     dawnroost: {
-      name: 'Dawnroost', src: "art/walk/walk-dawnroost.webp", band: 2, kind: 'town', music: 'town',
+      name: 'Dawnroost', src: "art/walk/walk-dawnroost.avif", band: 2, kind: 'town', music: 'town',
       start: [645, 990],
       walk: [
         [[590, 0], [648, 0], [648, 196], [590, 196]], // out through the north gate, up to the living node
@@ -365,7 +372,7 @@
     },
     // Dawnroost's living node: the sunstone in its walled court above the town (the gate, and where Envoi is made)
     'dawnroost-node': {
-      name: "Dawnroost's living node", src: "art/walk/walk-dawnroost-node.webp", band: 2, kind: 'gate', music: 'dread',
+      name: "Dawnroost's living node", src: "art/walk/walk-dawnroost-node.avif", band: 2, kind: 'gate', music: 'dread',
       start: [768, 990],
       walk: [
         // the court: under the stairs, along the plant beds and benches, round the braziers and the sunstone's chained
@@ -412,7 +419,7 @@
     },
     // the northern crossroads: four old roads meet in a stone ring, with a well (Halcyon's ambush)
     crossroads: {
-      name: 'The northern crossroads', src: "art/walk/walk-northern-crossroads.webp", band: 3, kind: 'wild', music: 'wild',
+      name: 'The northern crossroads', src: "art/walk/walk-northern-crossroads.avif", band: 3, kind: 'wild', music: 'wild',
       start: [768, 990],
       walk: [
         // the stone ring, and the trodden earth between it and the well
@@ -446,7 +453,7 @@
     },
     // the shipyard: Ysmera Brightkeel's yard at the end of the long stone bridge, where the Magpie gets its last upgrade
     shipyard: {
-      name: 'The shipyard', src: "art/walk/walk-shipyard.webp", band: 3, kind: 'town', music: 'town',
+      name: 'The shipyard', src: "art/walk/walk-shipyard.avif", band: 3, kind: 'town', music: 'town',
       start: [760, 990],
       walk: [
         // the yard: from the bunkhouse's doors, past the crates on the battlement, the gatehouse and the slip's foot,
@@ -498,71 +505,126 @@
     },
     // the frozen pass: the snowbound road over the frozen river, up through the northeast peaks to Misthollow. Wild.
     'frozen-pass': {
-      name: 'The frozen pass', src: "art/walk/walk-frozen-pass.webp", band: 4, kind: 'wild', music: 'wild',
+      name: 'The frozen pass', src: "art/walk/walk-frozen-pass.avif", band: 4, kind: 'wild', music: 'wild',
       start: [790, 990],
       walk: [
-        [[712, 0], [842, 0], [845, 310], [700, 310]], // up to Misthollow
-        [[700, 300], [845, 300], [845, 505], [700, 505]], // the bridge over the frozen river
-        [[620, 495], [900, 495], [905, 1024], [680, 1024], [640, 760]],
-        [[565, 535], [640, 535], [650, 725], [575, 725]], // the lamp
+        // the road from the top edge down to the bridge: the cobbles and the trodden snow either side, between the rocks,
+        // the pines and the bare trees
+        [[684, 0], [864, 0], [862, 15], [868, 38], [884, 60], [898, 82], [912, 112], [924, 140], [926, 165], [937, 180], [940, 215], [936, 238], [928, 248], [900, 256], [886, 266], [884, 300], [885, 304], [849, 305], [849, 314], [699, 314], [699, 304], [693, 300], [688, 280], [700, 262], [716, 250], [713, 232], [712, 218], [745, 215], [757, 208], [756, 134], [724, 126], [722, 98], [705, 86], [701, 56], [689, 40]],
+        // the bridge deck between its parapets and the four pillars at its ends
+        [[699, 300], [849, 300], [849, 347], [857, 349], [857, 445], [849, 447], [849, 530], [694, 530], [694, 447], [690, 445], [690, 349], [699, 347]],
+        // the road south of the bridge to the bottom edge, with the lamp's lit nook west of it and the sled's clearing east
+        [[694, 520], [849, 520], [851, 548], [856, 575], [857, 592], [912, 592], [912, 640], [921, 651], [931, 659], [951, 667], [955, 690], [933, 706], [933, 734], [885, 734], [882, 800], [896, 820], [905, 850], [910, 880], [916, 905], [920, 928], [919, 946], [906, 962], [902, 985], [900, 1002], [902, 1024], [674, 1024], [674, 1010], [683, 1001], [683, 975], [689, 952], [697, 934], [697, 911], [672, 893], [665, 875], [645, 870], [645, 842], [658, 838], [658, 818], [642, 818], [641, 792], [616, 789], [608, 786], [606, 742], [598, 733], [580, 722], [577, 690], [578, 652], [586, 646], [586, 572], [590, 560], [600, 556], [650, 553], [690, 546], [692, 524]],
       ],
-      block: [[[588, 598], [616, 598], [616, 690], [588, 690]]],
+      block: [
+        ...lampBlocks(PASS_LAMPS),
+        [[826, 662], [838, 651], [852, 638], [872, 627], [877, 618], [877, 586], [912, 586], [912, 640], [921, 651], [931, 659], [951, 667], [955, 690], [933, 706], [927, 718], [904, 718], [872, 700], [846, 689], [828, 677]], // the sled and its crate
+        [[834, 604], [852, 604], [854, 621], [833, 621]], [[829, 719], [847, 719], [848, 739], [828, 739]], [[858, 737], [887, 737], [888, 770], [857, 770]], // rocks in the snow by the sled
+      ],
+      front: [
+        ...lampFronts(PASS_LAMPS),
+        { pts: [[595, 568], [607, 566], [607, 560], [612, 560], [612, 572], [616, 579], [621, 584], [621, 592], [618, 607], [611, 611], [605, 611], [599, 606], [597, 592], [598, 582]], base: 683 }, // the lamp's lantern, hung out east on its bracket
+        { pts: [[664, 304], [695, 304], [699, 318], [699, 348], [660, 348], [660, 318]], base: 347 }, { pts: [[853, 304], [881, 304], [886, 318], [886, 348], [848, 348], [848, 318]], base: 347 }, // the bridge's north pillars
+        { pts: [[659, 445], [690, 445], [694, 458], [694, 524], [654, 524], [654, 458]], base: 523 }, { pts: [[853, 447], [882, 447], [886, 460], [886, 522], [848, 522], [848, 460]], base: 521 }, // and its south pillars
+      ],
       exits: [
-        { rect: [712, 0, 842, 16], to: 'misthollow', at: [768, 985], label: 'Misthollow' },
-        { rect: [680, 1008, 905, 1024], to: 'world', at: 'frozenPass', label: 'The world' },
+        { rect: [684, 0, 864, 18], to: 'misthollow', at: [768, 985], label: 'Misthollow' },
+        { rect: [674, 1006, 902, 1024], to: 'world', at: 'frozenPass', label: 'The world' },
       ],
       people: [],
       spots: [
-        { kind: 'rest', at: [870, 590], label: 'The sled camp', note: 'Someone’s sled, left with a lamp burning. Camp here: HP and MP back, and the game is saved.' },
+        { kind: 'rest', at: [840, 672], label: 'The sled camp', note: 'Someone’s sled, left with a lamp burning. Camp here: HP and MP back, and the game is saved.' },
       ],
       wild: { band: 4, scene: 'frozen-road', rate: 1 },
     },
     // Misthollow: the town of pale towers on the peaks, whose Moonwell has gone dark
     misthollow: {
-      name: 'Misthollow', src: "art/walk/walk-misthollow.webp", band: 4, kind: 'town', music: 'town',
-      start: [768, 1000],
+      name: 'Misthollow', src: "art/walk/walk-misthollow.avif", band: 4, kind: 'town', music: 'town',
+      start: [768, 985],
       walk: [
-        [[700, 0], [836, 0], [860, 560], [680, 560]], // the street up to the Moonwell
-        [[680, 540], [860, 540], [860, 610], [680, 610]],
-        [[390, 600], [1010, 600], [1010, 715], [390, 715]], // the upper square
-        [[615, 700], [908, 700], [908, 790], [615, 790]], // the great stair
-        [[340, 780], [1210, 780], [1300, 965], [265, 965]], // the lower square
-        [[670, 960], [866, 960], [866, 1024], [670, 1024]],
+        [[708, 0], [822, 0], [822, 610], [708, 610]], // the street up to the Moonwell, between its lamps and gateposts
+        // the upper square: from the foot of the west stairs past the bench and Sorrel's shop, across the street's foot,
+        // to the Lantern House's door and its yard; south to the tops of the great stair's three flights
+        [[243, 588], [290, 588], [300, 586], [380, 586], [380, 612], [480, 612], [480, 616], [505, 616], [505, 612], [548, 612], [548, 614], [592, 614], [592, 602], [616, 602], [616, 596], [671, 596], [683, 600], [708, 606],
+          [822, 606], [849, 600], [861, 598], [914, 598], [914, 605], [930, 605], [930, 636], [945, 636], [945, 661], [982, 661], [982, 651], [1019, 651], [1019, 663], [1150, 663], [1161, 666], [1161, 700],
+          [1093, 700], [1093, 690], [1070, 690], [1070, 701], [1006, 701], [1006, 692], [984, 692], [984, 697], [941, 697], [941, 682], [909, 682], [909, 700], [614, 700], [612, 682], [585, 682], [585, 695], [542, 695], [542, 690], [524, 690], [524, 701], [454, 701], [454, 688], [432, 688], [432, 690], [391, 690], [391, 636], [366, 636], [366, 659], [303, 659], [303, 640], [296, 626], [284, 626], [280, 631], [243, 594]],
+        [[454, 695], [524, 695], [524, 790], [454, 790]], [[614, 695], [909, 695], [909, 790], [614, 790]], [[1006, 695], [1070, 695], [1070, 812], [1006, 812]], // the great stair's flights
+        // the lower square, from the west flight's foot round to the east corner, and the steps down to the landing yard
+        [[230, 942], [305, 908], [305, 902], [325, 902], [328, 888], [364, 888], [368, 880], [416, 880], [416, 812], [434, 796], [434, 792], [454, 792], [454, 785], [524, 785], [524, 792], [542, 792], [542, 786], [984, 786], [984, 820], [1006, 820], [1006, 810], [1070, 810], [1070, 831], [1093, 831], [1093, 846], [1115, 846], [1122, 862], [1139, 862], [1145, 876], [1166, 876], [1169, 886], [1205, 886], [1208, 906], [1232, 908], [1300, 945], [1302, 962], [1290, 970],
+          [990, 970], [990, 934], [953, 934], [953, 970], [878, 970], [878, 952], [862, 952], [862, 1024], [668, 1024], [668, 952], [652, 952], [652, 970], [578, 970], [578, 934], [542, 934], [542, 970], [250, 970], [248, 950], [230, 948]],
+        // the west stairs: up from the upper square, the snowy way between the pines and the house, the landings and the
+        // flights to the lit landing, the stair up to the tower door, and the balcony bridge west of the landing
+        [[243, 594], [243, 520], [240, 518], [240, 498], [277, 494], [277, 400], [282, 368], [290, 356], [290, 337], [270, 337], [262, 318], [245, 262], [245, 252], [107, 252], [107, 224], [241, 224], [241, 196], [282, 162], [290, 178], [300, 178], [300, 58], [338, 58], [338, 206], [299, 206], [299, 240], [291, 246], [291, 262], [307, 317], [320, 318], [320, 338], [314, 340], [312, 368], [310, 400], [307, 400], [307, 494], [300, 504], [290, 518], [290, 594]],
+        [[616, 600], [616, 505], [620, 470], [640, 466], [652, 482], [662, 500], [671, 506], [671, 600]], // the steps up between the pines west of the street
+        [[861, 598], [861, 540], [912, 540], [914, 598]], // and the steps east of it
+        // the yard east of the chapel, open to the street round the lamp post, and the ledge behind the balustrade to the chapel's steps
+        [[556, 298], [596, 298], [596, 320], [640, 320], [640, 258], [667, 258], [667, 215], [708, 215], [708, 326], [687, 326], [687, 345], [556, 345]],
       ],
       block: [
-        [[530, 775], [628, 775], [628, 824], [530, 824]], [[894, 782], [978, 782], [978, 831], [894, 831]], // barrels
-        [[475, 880], [503, 880], [503, 978], [475, 978]], [[1020, 880], [1047, 880], [1047, 978], [1020, 978]], // the banners
+        ...lampBlocks(MIST_LAMPS),
+        [[662, 338], [673, 338], [673, 348], [662, 348]], // the chapel yard banner's pole
+        [[326, 584], [372, 584], [372, 622], [326, 622]], [[378, 596], [401, 596], [401, 626], [378, 626]], // the bench and the barrel by the west stairs
+        [[528, 780], [630, 780], [630, 828], [528, 828]], [[894, 780], [994, 780], [994, 834], [894, 834]], // barrels, crates and the banners' feet under the great stair
+        [[514, 950], [540, 950], [540, 972], [514, 972]], [[991, 946], [1017, 946], [1017, 972], [991, 972]], // the barrels by the south lamps
+        [[486, 962], [499, 962], [499, 972], [486, 972]], [[1032, 962], [1045, 962], [1045, 972], [1032, 972]], // the south banners' feet
+      ],
+      front: [
+        ...lampFronts(MIST_LAMPS),
+        { pts: [[663, 254], [672, 254], [672, 266], [686, 266], [686, 276], [682, 276], [682, 332], [671, 341], [671, 348], [665, 348], [665, 341], [654, 332], [654, 276], [651, 276], [651, 266], [663, 266]], base: 346 }, // the chapel yard's banner
+        { pts: [[613, 328], [637, 328], [637, 385], [613, 385]], base: 346 }, // the balustrade's pillar on the chapel ledge
+        { pts: [[676, 106], [700, 104], [710, 116], [713, 150], [710, 190], [702, 214], [676, 214]], base: 212 }, // the bare tree west of the street
+        { pts: [[806, 122], [832, 110], [866, 116], [870, 292], [824, 292], [822, 200], [812, 160]], base: 290 }, // the pine east of it
+        { pts: [[578, 426], [620, 426], [625, 520], [618, 600], [578, 600]], base: 598 }, { pts: [[638, 368], [680, 368], [685, 440], [676, 504], [640, 504], [632, 470]], base: 502 }, // the pines by the west steps
+        { pts: [[906, 450], [954, 450], [958, 530], [950, 575], [906, 575]], base: 572 }, // the pine by the east steps
+        { pts: [[392, 658], [428, 658], [433, 700], [433, 790], [372, 790], [372, 740], [388, 700]], base: 790 }, { pts: [[1094, 666], [1140, 666], [1146, 720], [1142, 798], [1094, 798]], base: 796 }, // the pines either side of the great stair
+        { pts: [[432, 671], [455, 671], [455, 790], [432, 790]], base: 788 }, { pts: [[524, 688], [542, 688], [542, 790], [524, 790]], base: 788 }, // the gateposts of its side flights
+        { pts: [[984, 686], [1006, 686], [1006, 820], [984, 820]], base: 818 }, { pts: [[1070, 674], [1093, 674], [1093, 831], [1070, 831]], base: 829 },
+        { pts: [[489, 880], [499, 880], [499, 893], [511, 893], [511, 969], [497, 980], [488, 980], [473, 969], [473, 893], [489, 893]], base: 976 }, { pts: [[1033, 880], [1043, 880], [1043, 893], [1053, 893], [1053, 969], [1043, 980], [1034, 980], [1022, 969], [1022, 893], [1033, 893]], base: 976 }, // the south banners
+        { pts: [[217, 218], [248, 218], [248, 282], [217, 282]], base: 254 }, // the balcony bridge's pillar by the lit landing
+        { pts: [[218, 392], [282, 392], [284, 470], [277, 494], [240, 498], [238, 522], [218, 522]], base: 520 }, // the pine by the snowy way up the west stairs
       ],
       exits: [
-        { rect: [700, 0, 836, 16], to: 'moonwell', at: [775, 990], label: 'The dead Moonwell' },
-        { rect: [670, 1008, 866, 1024], to: 'frozen-pass', at: [777, 30], label: 'The frozen pass' },
+        { rect: [712, 0, 818, 18], to: 'moonwell', at: [775, 990], label: 'The dead Moonwell' },
+        { rect: [670, 1006, 860, 1024], to: 'frozen-pass', at: [777, 30], label: 'The frozen pass' },
       ],
       people: [
-        { id: 'sorrel', name: 'Sorrel', at: [524, 620], look: 'witch2', talk: 'sorrel', role: 'shop' },
-        { id: 'ede', name: 'Ede', at: [999, 640], look: 'elder', talk: 'ede', role: 'inn' },
-        { id: 'watch', name: 'The watchwoman', at: [700, 860], look: 'smith', talk: 'watch' },
+        { id: 'sorrel', name: 'Sorrel', at: [480, 630], look: 'witch2', talk: 'sorrel', role: 'shop' },
+        { id: 'ede', name: 'Ede', at: [962, 676], look: 'elder', talk: 'ede', role: 'inn' },
+        { id: 'watch', name: 'The watchwoman', at: [700, 802], look: 'smith', talk: 'watch' },
       ],
       spots: [
-        { kind: 'rest', at: [960, 650], label: 'The Lantern House', note: 'The last inn with a fire lit. Rest, and the game is saved.' },
-        { kind: 'well', id: 'mistwell', at: [380, 900], label: 'A frozen trough', note: 'Under the ice, a letter in a jar.' },
+        { kind: 'rest', at: [1000, 662], label: 'The Lantern House', note: 'The last inn with a fire lit. Rest, and the game is saved.' },
+        { kind: 'well', id: 'mistwell', at: [386, 890], label: 'A frozen trough', note: 'Under the ice, a letter in a jar.' },
       ],
     },
     // the dead Moonwell above Misthollow: the finale
     moonwell: {
-      name: 'The dead Moonwell', src: "art/walk/walk-misthollow-moonwell.webp", band: 4, kind: 'gate', music: 'dread',
+      name: 'The dead Moonwell', src: "art/walk/walk-misthollow-moonwell.avif", band: 4, kind: 'gate', music: 'dread',
       start: [775, 990],
       walk: [
-        [[420, 200], [1130, 200], [1150, 420], [1100, 560], [930, 620], [890, 700], [660, 700], [620, 620], [440, 560], [400, 420]], // the court
-        [[663, 690], [887, 690], [887, 1024], [663, 1024]], // the stair up from the town
-        [[720, 100], [815, 100], [815, 210], [720, 210]],
+        // the round court: from the west lane and its stair up to the arch, past the north-west tower's door, up the
+        // steps to the north door, past the north-east tower's door to the east lane and its stair; round the well on
+        // its dais; down between the braziers, the steps and the street to the town
+        [[226, 292], [230, 292], [230, 220], [293, 220], [293, 292], [310, 292], [310, 288], [340, 288], [348, 278], [381, 278], [381, 268], [453, 268], [453, 276], [499, 274], [500, 206], [707, 206], [707, 158], [830, 158], [830, 206], [995, 206], [995, 224], [1020, 224], [1020, 256], [1037, 262], [1037, 271], [1083, 271], [1083, 265], [1154, 265], [1154, 273], [1188, 273], [1190, 282], [1226, 282], [1226, 292], [1243, 292], [1243, 220], [1306, 220], [1306, 292], [1310, 292],
+          [1310, 401], [1272, 401], [1260, 412], [1222, 412], [1218, 432], [1160, 429], [1130, 440], [1108, 458], [1102, 490], [1102, 608], [1016, 608], [1016, 728], [963, 728], [963, 684], [912, 684], [912, 728], [868, 728], [868, 745], [850, 745], [850, 847], [877, 847], [877, 1024],
+          [658, 1024], [658, 847], [685, 847], [685, 745], [667, 745], [667, 728], [622, 728], [622, 684], [571, 684], [571, 728], [520, 728], [520, 608], [436, 608], [436, 490], [430, 455], [410, 437], [380, 429], [330, 431], [306, 436], [302, 414], [264, 414], [262, 401], [226, 401]],
       ],
-      block: [ring(768, 432, 140, 18)],
+      block: [
+        [[705, 326], [767, 320], [830, 326], [880, 342], [900, 372], [898, 420], [890, 465], [892, 490], [890, 518], [866, 520], [845, 536], [800, 546], [767, 548], [734, 546], [690, 536], [670, 520], [646, 518], [645, 490], [645, 465], [636, 420], [634, 372], [655, 342]], // the dead Moonwell, with its broken fittings round its foot
+        [[548, 718], [572, 718], [572, 730], [548, 730]], [[965, 718], [991, 718], [991, 730], [965, 730]], // the iron gateposts' feet
+      ],
+      front: [
+        { pts: [[664, 256], [700, 250], [752, 246], [756, 236], [776, 236], [780, 246], [830, 250], [873, 256], [873, 392], [851, 392], [851, 292], [820, 270], [780, 262], [776, 312], [755, 312], [755, 262], [715, 270], [686, 292], [686, 392], [664, 392]], base: 546 }, // the well's iron frame and its ring
+        { pts: [[626, 676], [664, 676], [664, 735], [626, 735]], base: 733 }, { pts: [[872, 676], [910, 676], [910, 735], [872, 735]], base: 733 }, // the braziers
+        { pts: [[545, 614], [575, 614], [575, 744], [545, 744]], base: 742 }, { pts: [[962, 614], [995, 614], [995, 744], [962, 744]], base: 742 }, // the iron gateposts
+        { pts: [[677, 118], [707, 118], [707, 206], [677, 206]], base: 204 }, { pts: [[830, 118], [860, 118], [860, 206], [830, 206]], base: 204 }, // the pillars by the north steps
+      ],
       exits: [
-        { rect: [663, 1008, 887, 1024], to: 'misthollow', at: [768, 30], label: 'Misthollow' },
+        { rect: [660, 1006, 876, 1024], to: 'misthollow', at: [768, 30], label: 'Misthollow' },
       ],
       people: [],
       spots: [
-        { kind: 'event', id: 'finale', rect: [560, 560, 980, 680], fight: 'finale', once: 'finale' },
+        { kind: 'event', id: 'finale', rect: [640, 690, 895, 765], fight: 'finale', once: 'finale' }, // the head of the steps, between the braziers: the only way into the court
       ],
     },
   };

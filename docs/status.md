@@ -14,9 +14,20 @@ Chris asked for everything to be brought together in a new folder, `../putting-i
   - **Living battlefields** on every painted battle (`src/fx/battlefield.js`): each painting's own air (mist, fireflies, snow, sparks), dust and turf where big blows land, birds and bats put up by roars, leaves shaken down, and a red storm for the Colossus's Wrath.
   - **New mobs play from their models:** a foe with no choreography of its own plays each move with its model's action and hit times (`anyMove` in `src/battle/screen.js`). The steps for a new mob are in the folder's README.
   - **Saves and settings:** three save slots, a save code to copy to another device or copy of the game, word speed, larger text, and separate music and effects volumes.
-  - **The file Chris keeps:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` puts three.js and the two fonts inside the page (15.4 MB), so it works with no internet.
-- **Published (October 3, from this session):** the game put together, https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w, and the Bramble Colossus on its own, https://claude.ai/artifact/H2QTXhNnEi7W7Qbs6BXvA2.
-- **Testing:** `node tools/game-test.mjs` plays the built game headless: the title, a new game, walking, the menu, the save slots and save code, the save, and with `--steps` a wild fight or the Colossus to its end.
+  - **The file Chris keeps:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` puts three.js and the two fonts inside the page (15.0 MB), so it works with no internet.
+- **After Chris's first play (October 3, later still):**
+  - **No footsteps.**
+  - **Io walks as Path Polish paints her:** 52 map px tall, 15% of the screen, pace 1.7 (Chris's settings).
+  - **All thirteen walking maps retraced** close to the painted ground, with walking behind lamp posts and trees.
+  - **Art request 08:** the paper dolls for everyone else.
+  - **Chris's songs saved** for the end.
+  - **The walking maps squeezed** to his pick, "75% light" (AVIF, 1.1 MB for all thirteen, from 3.6 MB). The game file dropped to 15.0 MB offline.
+- **Published (October 3, from this session):**
+  - the game put together, https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w;
+  - the Bramble Colossus on its own, https://claude.ai/artifact/H2QTXhNnEi7W7Qbs6BXvA2;
+  - Io on Foot, https://claude.ai/artifact/G1B5cMkYzBq4RiausDAAQj: her walk on the game's maps, with sliders and the footstep ideas;
+  - Walking Map Resolution, https://claude.ai/artifact/7F4pu4v3BQiKAZAtVJkC1i: the maps' compression choices, after Chris's Magpie Map Resolution page.
+- **Testing:** `node tools/game-test.mjs` plays the built game headless: the title, a new game, walking on a ground map and on the world map, the menu, the save slots and save code, the save, and with `--steps` the staged scenes, a wild fight or the Colossus to its end.
 
 ## Working from the second account
 

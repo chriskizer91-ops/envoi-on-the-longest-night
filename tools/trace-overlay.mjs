@@ -29,7 +29,7 @@ function plainPng(buf) {
   for (let o = 8; o + 12 <= buf.length;) { const len = buf.readUInt32BE(o), type = buf.toString('ascii', o + 4, o + 8); if (keep.has(type)) parts.push(buf.subarray(o, o + 12 + len)); o += 12 + len; }
   return Buffer.concat(parts);
 }
-const src = path.join(R, 'reference/art/walk', path.basename(M.src).replace('.webp', '.png'));
+const src = path.join(R, 'reference/art/walk', path.basename(M.src).replace(/\.[a-z]+$/, '.png'));
 const X = (x) => ((x - cx) * k).toFixed(1), Y = (y) => ((y - cy) * k).toFixed(1);
 const sw = Math.max(1.5, 3 * k * 0.6), fs1 = Math.max(12, Math.round(14 * Math.min(1.6, k)));
 const poly = (pts, fill, stroke, dash) => '<polygon points="' + pts.map((p) => X(p[0]) + ',' + Y(p[1])).join(' ') + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '"' + (dash ? ' stroke-dasharray="6 4"' : '') + '/>';

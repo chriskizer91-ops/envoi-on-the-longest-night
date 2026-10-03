@@ -954,16 +954,20 @@ Chris's notes after playing the put-together game: the footsteps don't sound goo
   - her speed eases into and out of a walk, as Path Polish's motion does;
   - two of its painted poses: she kneels at a well before its letter is read, and casts moonlight into a Moonwell when she rests there.
   - She walks the world map painted too. The pixel Io stays only as a stand-in while her art loads.
-- **The camera comes close enough to see her:** her height is 15% of the screen's shorter side (about 62 px on a Pixel 7a held sideways). She is still 42 map px tall, so she keeps her size beside the houses.
-- **The walking maps now ship 1152 px wide** (they were 768): up close, the paintings' pixels stay near the size Chris approved at the old 0.7 zoom.
-- **Her pace** is 1.9 of her own heights a second (80 map px; the pixel Io walked 110), so her painted steps keep Path Polish's rhythm. It builds to a run of 1.5 times that. Chris can try other heights, closeness and paces on the demo page.
-- **The walk areas follow the painted ground:** cobbles, paths, stairs, decks and bridges. Nothing walks over grass, gardens, trees, walls or water. Wickhollow is done first, as the standard; the other twelve maps follow in the same pass.
+- **The camera comes close enough to see her:** her height is 15% of the screen's shorter side (about 62 px on a Pixel 7a held sideways).
+- **Chris's settings, from the Io on Foot page:** she stands 52 map px tall (the pixel Io was 42), 15% of the screen, at a pace of 1.7 of her own heights a second (88 map px a second). It "looks way better and feels way better for movement and speed". The townsfolk keep her scale.
+- **The walking maps ship 1152 px wide** (they were 768), squeezed as AVIF. Chris compared seven versions on the Walking Map Resolution page (after his Magpie Map Resolution page) and chose "75% light": 1152 px at AVIF quality 30. That is 1.1 MB for all thirteen maps, from 3.6 MB as WebP, and about 70% of the paintings' detail kept. The game draws them with sharp pixels, so the squeeze shows as smoother texture, not blur.
+- **Her pace builds to a run** of 1.5 times her walk after a moment of walking, as before.
+- **The walk areas follow the painted ground on all thirteen maps:** cobbles, paths, stairs, decks and bridges. Nothing walks over grass, gardens, trees, walls or water. Wickhollow came first, as the standard.
+  - People and spots moved onto the paths beside what they stand for: a shopkeeper at her stall, the wells at their rims, the rests at the inn doors.
+  - Bogmire's Magpie moved to the landing platform at the west edge, since the old spot was on a railed-off punt finger. The shipyard's Magpie sits up in its cradle on the slip, which is walkable.
+  - The finale starts at the head of the Moonwell's stair, the only way into the court.
   - **Blocks** keep her off lamp posts' feet, wells, benches, stalls and barrels.
   - **Fronts** are pieces of the painting (lamp posts, trees, the Moonwell's iron frame) drawn again over Io, or anyone, standing behind them, so she walks behind things instead of over them.
   - Wickhollow's Moonwell ring is open to the south, so she can stand at the well itself.
 - **Everyone else becomes a paper doll:** art request 08 asks for one walk sheet for each of nineteen people, in Io's sheet's style and layout, with her sheet attached. Until the sheets come in, they stay as pixel figures.
 - **Scenes follow their walkers:** with the closer camera, a scene's camera follows the person walking in (`{ focus: { on: 'sol' } }`).
-- **Size:** the final file Chris keeps may be up to 30 MB (Chris, October 3). The published game outgrew a published page's 16 MB, so the game is now published as a small page with its pictures as files beside it (`node tools/build.mjs --min --split`). The file Chris keeps stays one file.
+- **Size:** the final file Chris keeps may be up to 30 MB (Chris, October 3); today it is 15.0 MB. With the maps squeezed, the published game fits on one page again (14.3 MB). Once the songs and the art push it past a published page's 16 MB, it is published as a small page with its pictures as files beside it (`node tools/build.mjs --min --split`). The file Chris keeps stays one file.
 - **The songs:**
   - towns: Moonlit Forest Path, Opus 24k stereo;
   - wilds: Herbal Decay, Opus 24k stereo;
