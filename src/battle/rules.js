@@ -157,13 +157,13 @@
       },
     },
     // Noctara the Starless, fixed at level 20, with Halcyon beside her. The cold deepens as the fight goes on: every
-    // turn she takes makes her blows 8.5% harder (rage), and Halcyon's too, so the finale is a race. Tuned so an expert
-    // at 20 wins a little over half the time and an attentive player about one time in twelve: you have to be locked
-    // in, but it isn't impossible (Chris, October 2). At 19 the party falls with a little over a third of the bosses'
-    // HP left. (It was 6% until Kestrel Stoop's hit, which never landed, was fixed; 8% until Kestrel's hover took Sol
-    // out of reach, which an expert uses to dodge Void Sphere and Black Noon.)
+    // turn she takes makes her blows 9% harder (rage), and Halcyon's too, so the finale is a race. Tuned so a perfect
+    // player at 20 wins about three times in four (one who plays well, about half) and an attentive one about one time
+    // in sixteen: you have to be locked in, but it isn't impossible (Chris, October 2). At 19 the party falls with
+    // about a third of the bosses' HP left. (It was 6% until Kestrel Stoop's hit, which never landed, was fixed; then
+    // 8.5% until the expert stopped spending turns on Guard in the race.)
     noctara: {
-      name: 'Noctara', hp: 29000, atb: 2.8, fixedLevel: 20, boss: true, rage: 0.085, shards: 0, xp: 0,
+      name: 'Noctara', hp: 29000, atb: 2.8, fixedLevel: 20, boss: true, rage: 0.09, shards: 0, xp: 0,
       moves: {
         crownShards: { name: 'Crown Shards', weight: 0.35, hits: [52, 52, 52], target: 'random', time: 2.6 },
         // opens over the party a turn before it collapses: the time for Moth Veil, Defend, Lunara or Envoi's ward

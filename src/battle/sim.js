@@ -85,8 +85,8 @@
     { fight: 'halcyon', level: 15, policy: 'expert', win: [0, 0.1], why: 'Halcyon at 15: overwhelming' },
     { fight: 'halcyon', level: 18, policy: 'expert', win: [0.4, 0.85], why: 'Halcyon: leveling past 15 is what makes her retreat' },
     { fight: 'halcyon', level: 20, policy: 'expert', win: [0.8, 1], why: 'Halcyon: leveling past 15 is what makes her retreat' },
-    { fight: 'finale', level: 20, policy: 'expert', win: [0.4, 0.65], why: 'The finale at 20: a player who is locked in wins about half the time' },
-    { fight: 'finale', level: 20, policy: 'sensible', win: [0.03, 0.1], why: 'The finale at 20: an attentive player rarely wins; it takes being locked in' },
+    { fight: 'finale', level: 20, policy: 'expert', win: [0.6, 0.85], why: 'The finale at 20: a perfect player wins about three times in four, so one who plays well wins about half the time' },
+    { fight: 'finale', level: 20, policy: 'sensible', win: [0.03, 0.1], why: 'The finale at 20: an attentive player rarely wins (about one time in sixteen); it takes being locked in' },
     { fight: 'finale', level: 19, policy: 'expert', win: [0, 0.1], margin: 0.45, why: 'The finale at 19: no real chance' },
     { fight: 'finale', level: 18, policy: 'expert', win: [0, 0.02], why: 'The finale below 19 cannot be won' },
   ];
@@ -257,7 +257,9 @@
       if (v.ok('highNoon') && (u.tranceLeft <= 1 || mainFoe.hp < mainFoe.maxHp * 0.08)) return ['highNoon', tgt];
       if (v.ok('daybreak') && !vowed(mainFoe)) return ['daybreak', tgt];
       if (v.fallen.length && v.ok('herb:nightrose')) return ['herb:nightrose', v.fallen[0].key];
-      if (v.io && B.alive(v.io) && v.io.hp < v.danger(v.io) && v.ok('guard')) return ['guard'];
+      // Guard covers Io, but in a race (the finale's deepening cold) a turn spent guarding loses more than it saves
+      const race = v.foes.some((f) => f.rage > 0);
+      if (!race && v.io && B.alive(v.io) && v.io.hp < v.danger(v.io) && v.ok('guard')) return ['guard'];
       // Io can't keep up (down, out of MP, or in danger herself): Sol uses the herbs
       if (atRisk.length && (!v.io || !B.alive(v.io) || v.io.mp < 16 || atRisk.length > 1)) {
         if (atRisk.length > 1 && v.ok('herb:lavender')) return ['herb:lavender'];

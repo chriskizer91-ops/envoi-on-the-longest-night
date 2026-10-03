@@ -453,7 +453,7 @@
       else if (e.t === 'burn') { D[e.to].hp = Math.max(1, D[e.to].hp - e.n); UI.number(chest(to), nf(e.n), 'burn'); }
       else if (e.t === 'veilBroken' || e.t === 'veilEnds') { const v = S.veils[e.who]; if (v && e.t === 'veilEnds') v.dismiss(); delete S.veils[e.who]; }
       else if (e.t === 'frost') { S.rimeOn = true; }
-      else if (e.t === 'frostEnds') S.rimeOn = false;
+      else if (e.t === 'frostEnds') { S.rimeOn = false; if (e.by === 'envoi') UI.note('Envoi’s fire burns the frost away.', 1.8); }
       else if (e.t === 'down') {
         const u = E.unit(e.who);
         if (u.side === 'foe') {

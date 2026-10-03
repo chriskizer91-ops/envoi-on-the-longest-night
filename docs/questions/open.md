@@ -1,6 +1,6 @@
 # Still Open
 
-Everything not yet decided, as of October 3, 2026, seventeenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
+Everything not yet decided, as of October 3, 2026, eighteenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
 
 Every earlier question has been answered; the answers are in `design-decisions.md`, under the October 2 rounds.
 
@@ -33,3 +33,4 @@ For the separate lore conversation.
 4. **Gnomes at the shipyard.** In the compendium, Aurosi elves design ships and Aurosi gnomes build them ("elven theory, gnomish application"). Should the shipyard have gnomish hands working under the elven shipmaster?
 5. **When the party learns Halcyon serves Noctara.** Sol recognizes Halcyon during the ambush. Does the party also learn then that she serves Noctara, or later, before Misthollow?
 11. **A name for the sunken ruins in the Gloomfen.** The D&D map calls them Misthollow Ruins, but in this game Misthollow is the frozen town in the north. For now they are "the Sunken Ruins". Do they get a name of their own?
+12. **Why Halcyon fights at a third of her strength in the finale.** At Noctara's side she hits and lasts far less than at the ambush, which the balance needs. The other session suggests she is holding back after Sol recognized her, which pays off when her blade warms at the end. Is that the reason, or is there another?

@@ -632,3 +632,37 @@ Another session read every commit and replayed the simulator. What it found:
 - **Every other name from the D&D map stays:** Rotbridge, Willowmurk, Mosswatch Tower, Eldergrove, Fawnrest Shrine, Frostmere Lake, Peak's Veil, Stormwatch, and the regions (the Gloamwood, the Gloomfen, the Verdant Wilds, the Ironspire Peaks). Hearthstone Keep and the eastern wastes (Dusthaven, Sandspire, Miragewell, the Scorchgate Ruins) are under mist all game. Mother's Hollow stays out: it belongs to the Drowned Mother's story.
 - **The town notes on the flying map** come from this game's lore, not from the other game.
 
+## October 3, 2026, eighteenth round
+
+### The observing session's earlier list
+
+Chris passed on the other session's first assessment, with each item's status against its later list (which hasn't arrived here yet). What was done with each:
+
+- **Two rules from lore answer 12 were missing.** While Envoi's ward is up, Noctara can't use Blackout. Envoi's strike clears the Frost Dust slow: its fire burns the frost away, with the blow that was waiting in it. Both are in now.
+- **Two rule quirks are fixed:**
+  - Sunburn counts as a move begins, so an Art that spends Sol's Heat below 70 still lands hot;
+  - Moonsteel's moon edge waits for a move with no element of its own, so a Sun Art no longer wastes it.
+- **Most players never saw the Kestrel command.** It waited for Halcyon at half her HP. At level 15, where most players meet her, that never happened; at 17 it came up in under half the expert's fights. The design says Sol recognizes her during the fight, so the command now comes from Halcyon's third turn, or at half her HP if that comes first.
+- **The expert wasn't quite perfect:**
+  - Without Guard it won the finale 75% instead of 59%, because a turn spent guarding loses more than it saves in a race. It no longer guards in the finale; nothing else changes.
+  - Moth Veil helps it now (without it the expert wins 33%), so that part of the old finding no longer holds.
+- **The finale, retuned for the better expert:** the cold deepens 9% a turn.
+  - a perfect player wins 74% at 20;
+  - an attentive one wins 6%, about one time in sixteen;
+  - at 19 a perfect player wins 3%, and losses leave 31% of the bosses' HP.
+
+  The design's "a player who plays well wins about half the time" now means someone between the two. At 10% a perfect player would win 60% and an attentive one about one time in fifty; Chris can choose that instead. All 32 targets are met.
+- **A stronger opening with a gentler climb** (Noctara hitting harder from the start, the cold growing slower) was measured. It keeps the same gap between the expert and the attentive player, so the climb stays.
+- **Kestrel Stoop's dive** lands about 1,510 at level 1, more than two Ember Rushes (1,360), as the design asks.
+
+### Noted for later steps
+
+- **Step 17, the finale:**
+  - Show the cold deepening on screen, so players know it's a race.
+  - When Halcyon falls in the finale she kneels, as a visible second phase, rather than leaving. Nobody dies on screen until the ending, where she goes home as a moth. At 19, Halcyon is already down in almost every loss, so the kneeling shows how close it was.
+- **Phase 3:**
+  - The finale leans on herbs: without them a perfect player wins far less. Herb prices and what a player can carry are set with the shops.
+  - Wild fights get tested in a row, carrying HP, MP and herbs, not each from a fresh start.
+  - The gate fights should teach what the finale asks for: Envoi's timing, Lunara, Briars, the Trance finishers, and now Kestrel Stoop's dodge.
+- **The simulator, optional:** a skilled human play style that doesn't read the hidden numbers, for tuning.
+

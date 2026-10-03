@@ -217,7 +217,7 @@
         if (f.last[0] === id && f.last[1] === id) return false;
         if (m.cooldown && f.cd[id] > 0) return false;
         if (m.hurt && f.hp > f.maxHp * m.hurt) return false;
-        if (m.blackout && !halcyonUp) return false;
+        if (m.blackout && (!halcyonUp || B.ward)) return false; // lore answer 12: no Blackout while Envoi's ward is up
         return true;
       });
       const total = opts.reduce((s, id) => s + M[id].weight, 0);
@@ -342,7 +342,8 @@
         if (knows(h, 'stoopRise')) { const ok = h.inTrance || h.heat >= 40; add('stoopRise', { heat: 40, ok, why: ok ? '' : 'Heat', targets: foes }); }
         const hal = B.foes.find((u) => u.id === 'halcyon' && alive(u));
         if (knows(h, 'kestrel') && hal && !B.kestrelUsed) {
-          const ok = hal.hp <= hal.maxHp * 0.5;
+          // Sol knows her once she has seen her fight: from Halcyon's third turn, or half her HP, whichever comes first
+          const ok = hal.acted >= 2 || hal.hp <= hal.maxHp * 0.5;
           add('kestrel', { ok, why: ok ? '' : 'not yet', targets: [hal.key] });
         }
         add('guard', {});
@@ -358,13 +359,16 @@
       return out;
     }
 
-    function strike(h, f, d, hits) {
+    // burn: whether Sol was in Sunburn as the move began (an Art that spends her Heat still lands hot).
+    // Moonsteel's moon edge waits for a move with no element of its own, so a Sun Art doesn't waste it
+    function strike(h, f, d, hits, burn) {
       if (!alive(f)) f = firstFoe();
       if (!f) return;
       if (f.evade && d.target === 'foe') { f.evade = 0; emit({ t: 'miss', from: h.key, to: f.key }); return; }
-      const el = d.element || (h.moonNext ? 'moon' : null), burn = sunburnOn(h);
+      const moon = h.moonNext && !d.element, el = d.element || (moon ? 'moon' : null);
+      if (burn === undefined) burn = sunburnOn(h);
       for (const base of hits || d.hits) { if (!alive(f)) break; hitFoe(h, f, base, el, burn); }
-      if (h.moonNext) h.moonNext = false;
+      if (moon) h.moonNext = false;
       if (d.physical && alive(f) && f.vow > 0 && alive(h)) { emit({ t: 'counter', who: f.key, to: h.key }); hitHero(f, h, f.vow, { counter: true }); }
       if (d.bind && alive(f)) { f.bound = true; f.atb = Math.max(0, f.atb - d.bind); emit({ t: 'bound', to: f.key }); }
       if (d.sunder && alive(f)) { f.sunder = d.sunder; emit({ t: 'sundered', to: f.key }); }
@@ -383,17 +387,18 @@
       const d = h.def.moves[id];
       emit({ t: 'move', who: h.key, move: id, name: d.name, target: tgt ? tgt.key : null });
       B.t += d.time || 2;
+      const hot = sunburnOn(h);
       const c = cost(h, d); if (c) h.mp -= c;
       if (h.id === 'sol' && d.heat && !h.inTrance) h.heat = Math.max(0, Math.min(HE.sol.heat.max, h.heat + (d.heat < 0 ? d.heat : 0)));
       switch (id) {
         case 'attack': case 'flame': case 'crescent': case 'briars': case 'moonlight':
         case 'flareCut': case 'sunder': case 'emberRush': case 'daybreak': case 'highNoon': case 'stoop':
-          strike(h, tgt, d);
+          strike(h, tgt, d, null, hot);
           if (id === 'attack' && h.id === 'sol' && !h.inTrance) h.heat = Math.min(HE.sol.heat.max, h.heat + d.heat);
           break;
         case 'solarCrest': {
           const spent = h.inTrance ? HE.sol.heat.max : h.heat;
-          strike(h, tgt, d, [d.crest * spent]);
+          strike(h, tgt, d, [d.crest * spent], hot);
           if (!h.inTrance) h.heat = 0;
           break;
         }
@@ -438,7 +443,11 @@
         const f = who === 'lunara' && i < last ? living('foe')[Math.floor(rand() * living('foe').length)] : pick();
         hitFoe(io, f, base, S.element, false);
       });
-      if (who === 'envoi') { B.envoi = 2; B.ward = false; } else B.lunara = 2;
+      if (who === 'envoi') {
+        B.envoi = 2; B.ward = false;
+        // lore answer 12: its fire burns the frost away, the slow and the blow waiting in it
+        if (B.frost > 0) { B.frost = 0; B.frostLate = null; emit({ t: 'frostEnds', by: 'envoi' }); }
+      } else B.lunara = 2;
       emit({ t: 'leave', who });
     }
     function heroTurnStart(h) {
