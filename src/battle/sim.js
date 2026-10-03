@@ -23,10 +23,11 @@
     3: [['wraith', 'wraith'], ['wraith', 'wisp', 'wisp'], ['frostWisp', 'frostWisp', 'wraith'], ['wraith', 'frostWisp']],
     4: [['frostWisp', 'frostWisp', 'wraith'], ['frostWisp', 'frostWisp', 'frostWisp'], ['wraith', 'wraith', 'frostWisp'], ['wraith', 'wraith']],
   };
+  // the party carries one of each herb (Chris, October 3); out in the wilds it has the common three
   const BAGS = {
-    wild: { moonpetal: 2, mugwort: 1, nightrose: 1 },
-    gate: { moonpetal: 4, lavender: 2, mugwort: 3, emberLily: 2, nightrose: 2 },
-    finale: { moonpetal: 6, lavender: 3, mugwort: 4, emberLily: 3, nightrose: 3 },
+    wild: { moonpetal: 1, mugwort: 1, nightrose: 1 },
+    gate: { moonpetal: 1, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 },
+    finale: { moonpetal: 1, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 },
   };
   const bandOf = (L) => (L <= 5 ? 1 : L <= 10 ? 2 : L <= 15 ? 3 : 4);
   // a wild foe's level: any level in its band's range, whatever the party's level (Chris, October 2). A band is
@@ -34,7 +35,7 @@
   const BAND_LEVELS = { 1: [1, 5], 2: [6, 10], 3: [11, 15], 4: [16, 20] };
   const wildLevel = (band, rand) => { const [lo, hi] = BAND_LEVELS[band]; return lo + Math.floor(rand() * (hi - lo + 1)); };
   // the story flags a party has at a level when it isn't in the gate fight that grants them
-  const flagsAt = (L) => ({ party: true, veil: L > 5, envoi: L > 10, stoop: L > 15 });
+  const flagsAt = (L) => ({ party: true, refit: L > 5, envoi: L > 10, stoop: L > 15 });
   const FIGHTS = {
     first: {
       name: 'The first fight', note: 'Io alone against the Night square wraith, as in the demo', level: 1, levels: [1, 3],
@@ -53,18 +54,18 @@
     },
     dawnroost: {
       name: 'Dawnroost', note: 'the level 10 gate: three level 12 wraiths at the living node, without Envoi', level: 10, levels: [8, 13],
-      setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }], flags: { party: true, veil: true }, herbs: BAGS.gate }),
+      setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }], flags: { party: true, refit: true }, herbs: BAGS.gate }),
     },
     halcyon: {
       name: "Halcyon's ambush", note: 'the level 15 gate: Halcyon at 20; it ends when the party falls, or when she is down to 20% and retreats', level: 15, levels: [15, 20],
-      setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'halcyon' }], flags: { party: true, veil: true, envoi: true, kestrel: true }, herbs: BAGS.gate, ends: { retreat: { foe: 'halcyon', below: 0.2 } } }),
+      setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'halcyon' }], flags: { party: true, refit: true, envoi: true, kestrel: true }, herbs: BAGS.gate, ends: { retreat: { foe: 'halcyon', below: 0.2 } } }),
     },
     finale: {
       // at Noctara's side Halcyon fights at a little over a third of her ambush strength: Blackout gives her extra
       // blows, and at full strength the two of them end the fight before it can become a race. The cold deepens for
       // both
       name: 'The finale', note: 'Noctara with Halcyon, both at 20, at the dead Moonwell; the cold deepens every turn', level: 20, levels: [17, 20],
-      setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'halcyon', hpMul: 0.4, dmgMul: 0.35, rage: G.BattleRules.FOES.noctara.rage }, { id: 'noctara' }], flags: { party: true, veil: true, envoi: true, stoop: true }, herbs: BAGS.finale }),
+      setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'halcyon', hpMul: 0.4, dmgMul: 0.35, rage: G.BattleRules.FOES.noctara.rage }, { id: 'noctara' }], flags: { party: true, refit: true, envoi: true, stoop: true }, herbs: BAGS.finale }),
     },
   };
 
@@ -143,7 +144,7 @@
       }
       each.sort((a, b) => b - a);
       const n = each.reduce((a, w, i) => a + (i ? w * 0.75 : w), 0) * (h.defending || h.guarding ? 0.5 : 1);
-      return Math.max(0, n - (h.veil || 0));
+      return n;
     };
     return { RL, u, ok, opts, foes, heroes, fallen, pct, io, sol, boss, lowestFoe, charging, danger };
   }
@@ -203,6 +204,7 @@
       if (v.fallen.length && v.ok('herb:nightrose')) return ['herb:nightrose', v.fallen[0].key];
       if (v.io && B.alive(v.io) && v.pct(v.io) < 0.25 && v.ok('guard')) return ['guard'];
       if (v.pct(u) < 0.3 && (!B.alive(v.io) || v.io.mp < 16) && v.ok('herb:moonpetal')) return ['herb:moonpetal', u.key];
+      if (v.boss && v.ok('herb:emberLily')) return ['herb:emberLily'];
       if (u.heat >= 100 && v.ok('solarCrest')) return ['solarCrest', tgt];
       if (v.ok('stoopRise') && u.heat >= 70) return ['stoopRise', tgt];
       return ['attack', tgt];
@@ -224,10 +226,6 @@
         if (v.charging) {
           if (v.ok('envoi') && !B.ward) return ['envoi', tgt];
           if (v.ok('lunara')) return ['lunara', tgt];
-          const bare = v.heroes.filter((h) => !(h.veil > 0)).sort((a, b) => v.pct(a) - v.pct(b));
-          // in a race (the finale) veiling one hero against a blow on both loses more than it saves
-          const race = v.foes.some((f) => f.rage > 0);
-          if (!race && bare.length && v.ok('mothveil') && bare[0].hp < v.danger(bare[0]) * 1.3) return ['mothveil', bare[0].key];
         }
         if (atRisk.length) {
           if (atRisk.length > 1 && v.ok('mend') && u.inTrance) return ['mend', atRisk[0].key];
@@ -235,7 +233,6 @@
           if (v.ok('mend')) return ['mend', atRisk[0].key];
           if (atRisk.length > 1 && v.ok('herb:lavender')) return ['herb:lavender'];
           if (v.ok('herb:moonpetal')) return ['herb:moonpetal', atRisk[0].key];
-          if (v.ok('mothveil') && !(atRisk[0].veil > 0)) return ['mothveil', atRisk[0].key];
         }
         if (v.ok('moonlight')) return ['moonlight', tgt];
         if (u.mp < 36 && v.ok('herb:mugwort')) return ['herb:mugwort', u.key];
@@ -243,7 +240,10 @@
         const avg = v.heroes.reduce((a, h) => a + v.pct(h), 0) / v.heroes.length;
         if (v.ok('lunara') && (avg < 0.5 || (!v.boss && v.foes.length > 2 && avg < 0.7))) return ['lunara', tgt];
         if (v.boss && v.ok('briars') && !v.boss.bound && v.boss.atb > 0.45 && u.mp >= 18 + 32) return ['briars', v.boss.key];
-        if (v.sol && B.alive(v.sol) && !v.sol.inTrance && v.sol.heat < 50 && v.ok('moonsteel') && u.mp > u.maxMp * 0.5) return ['moonsteel', v.sol.key];
+        // Heat for Sol: Harvest Moon when she is cold (or to light Envoi's heart), Moonsteel to top her up
+        const solCold = v.sol && B.alive(v.sol) && !v.sol.inTrance;
+        if (solCold && v.ok('harvest') && v.sol.heat < 30 && u.mp > u.maxMp * 0.5) return ['harvest', v.sol.key];
+        if (solCold && v.sol.heat < 50 && v.ok('moonsteel') && u.mp > u.maxMp * 0.5) return ['moonsteel', v.sol.key];
         const top = v.heroes.filter((h) => !h.severed && v.pct(h) < 0.6).sort((a, b) => v.pct(a) - v.pct(b));
         if (top.length && v.ok('mend')) return ['mend', top[0].key];
         return [ioDamage(v, mainFoe, 32), tgt];
@@ -267,7 +267,9 @@
         if (atRisk.length > 1 && v.ok('herb:lavender')) return ['herb:lavender'];
         if (v.ok('herb:moonpetal')) return ['herb:moonpetal', atRisk[0].key];
       }
-      if (vowed(mainFoe)) return v.ok('guard') && u.heat >= 40 ? ['guard'] : v.ok('herb:emberLily') && u.heat < 70 ? ['herb:emberLily', u.key] : ['attack', tgt];
+      // Ember-star Lily: early in a boss fight, or while there's nothing to hit but Warden's Vow
+      if (v.ok('herb:emberLily') && v.boss && (vowed(mainFoe) || v.boss.hp > v.boss.maxHp * 0.6)) return ['herb:emberLily'];
+      if (vowed(mainFoe)) return v.ok('guard') && u.heat >= 40 ? ['guard'] : ['attack', tgt];
       // keep 70 Heat for Envoi while it's still to come in a boss fight
       const hold = v.boss && v.io && B.alive(v.io) && B.envoi === 0 && B.flags.envoi ? 70 : 0;
       if (v.boss && mainFoe.sunder === 0 && v.ok('sunder') && u.heat - 20 >= hold) return ['sunder', tgt];

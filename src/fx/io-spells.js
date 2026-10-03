@@ -1,6 +1,6 @@
 // io-spells.js: the effects of Io's new healing spells (design decisions, October 2, 2026). Waxing Light heals both
-// allies, Moonsteel gives Sol Heat and a moonlit blade, and Moth Veil wraps one ally in a barrier; Lunar Mend keeps its
-// battle effect. Io's look and motions never change, so each spell plays one of her existing motions (SPELLS[id].motion)
+// allies, Moonsteel gives Sol Heat and a moonlit blade, and Harvest Moon pours a warm full moon into Sol (October 3:
+// it replaces Moth Veil in battle; the veil's effect stays here for Io's bench page); Lunar Mend keeps its battle effect. Io's look and motions never change, so each spell plays one of her existing motions (SPELLS[id].motion)
 // on the cue and hit times below, as her ACTIONS table does for her own moves: start the effect at the spell's first
 // cue, and show its numbers at its hit. Built on battle-fx.js: makeIoSpells(fx) takes what makeBattleFX() returns and
 // runs on its clock, sprites, particles and lights, so fx.update(dt, t) drives everything. Positions can be points or
@@ -25,6 +25,8 @@ function makeIoSpells(fx) {
     moonsteel: { name: 'Moonsteel', mp: 18, motion: 'cast', cues: [0.08, 0.42], hits: [0.67], heat: 40, moonHit: 1.5, glow: 4 },
     // moths leave her hands from 0.2 to 0.5; the veil is whole when the last one settles
     veil: { name: 'Moth Veil', mp: 22, motion: 'cast', cues: [0.2], hits: [0.93], absorb: 0.35, turns: 2, spawnTo: 0.5 },
+    // the moon forms over her palm as her hand rises, leaves at the top of the cast and sinks into Sol
+    harvest: { name: 'Harvest Moon', mp: 28, motion: 'cast', cues: [0.08, 0.42], hits: [0.72], heat: 70, glow: 4 },
   };
 
   // ---------- Waxing Light: a thin crescent above the party waxes to a full moon, then soft light falls on both ----------
@@ -152,6 +154,49 @@ function makeIoSpells(fx) {
         o.blade(A, B); to.lerpVectors(A, B, 0.55);
         fx.burst(to, [0.85, 0.92, 1], 24, 2.2); fx.flashLight(to, 0xcfe0ff, 2.5, 0.35, 4);
         bladeGlow(o.blade, o.glowFor || SPELLS.moonsteel.glow);
+        arrive();
+      });
+    });
+  }
+
+  // ---------- Harvest Moon: a low, warm full moon swells over Io's palm, drifts to Sol and sinks into her ----------
+  // o: { palm: where it forms, chest: Sol's chest, feet: her feet, blade(outBase, outTip), releaseIn, landIn, glowFor }
+  // Resolves when the moon sinks into her; her blade then glows amber for glowFor seconds.
+  function harvestMoon(o) {
+    const rel = Math.max(0.1, o.releaseIn || 0.5), land = Math.max(rel + 0.2, o.landIn || rel + 0.5);
+    const c = cvs(128, 128), tex = new THREE.CanvasTexture(c);
+    drawMoon(c, 1); tex.needsUpdate = true;
+    const moon = fx.sprite(tex, 0xffb35c, THREE.AdditiveBlending, 7), halo = fx.sprite(fx.T.soft, 0xff8a30, THREE.AdditiveBlending, 6);
+    const from = V3(), to = V3(), mid = V3(), p = V3(), A = V3(), B = V3();
+    let el = 0, launched = false;
+    moon.scale.setScalar(0.001); halo.scale.setScalar(0.001);
+    return new Promise((arrive) => {
+      fx.anim(land, (u, dt) => {
+        el += dt || 0;
+        if (el < rel) { // swelling over her palm, rising a little as it fills
+          pt(o.palm, p); const k = sm(0, rel * 0.9, el);
+          p.y += 0.25 * k;
+          moon.position.copy(p); moon.scale.setScalar(0.08 + 0.5 * k); moon.material.opacity = k;
+          halo.position.copy(p); halo.scale.setScalar(0.2 + 1.1 * k); halo.material.opacity = 0.45 * k;
+          if (Math.random() < 0.5) fx.embers.emit(V3().set(p.x + rnd(-0.2, 0.2), p.y - 0.15, p.z + rnd(-0.2, 0.2)), [1, 0.7, 0.35], 1, { speed: 0.2, life: 0.6, grav: -0.4, drag: 2 });
+        } else { // a slow, low arc to Sol's chest, shedding warm light
+          if (!launched) { launched = true; from.copy(moon.position); }
+          const e = sm(rel, land, el);
+          pt(o.chest, to);
+          mid.copy(from).lerp(to, 0.5); mid.y += 0.5;
+          const k0 = (1 - e) * (1 - e), k1 = 2 * (1 - e) * e, k2 = e * e;
+          p.set(from.x * k0 + mid.x * k1 + to.x * k2, from.y * k0 + mid.y * k1 + to.y * k2, from.z * k0 + mid.z * k1 + to.z * k2);
+          const shrink = 1 - 0.55 * sm(0.6, 1, e);
+          moon.position.copy(p); moon.scale.setScalar(0.58 * shrink); moon.material.opacity = 1;
+          halo.position.copy(p); halo.scale.setScalar(1.3 * shrink); halo.material.opacity = 0.45;
+          fx.embers.emit(p, [1, 0.68, 0.3], 3, { speed: 0.3, life: 0.55, grav: -0.2, drag: 3 });
+        }
+      }, () => {
+        fx.drop(moon); fx.drop(halo); tex.dispose();
+        pt(o.chest, to);
+        fx.burst(to, [1, 0.72, 0.35], 40, 2.6, { up: 1 }); fx.flashLight(to, 0xffa040, 4, 0.5, 6);
+        if (o.feet) { const f = pt(o.feet); fx.ring({ x: f.x, z: f.z }, 0xffb050, 0.25, 1.4, 0.7, 0.85); }
+        if (o.blade) bladeGlow(o.blade, o.glowFor || SPELLS.harvest.glow, 0xffa850);
         arrive();
       });
     });
@@ -324,5 +369,5 @@ function makeIoSpells(fx) {
     return veil;
   }
 
-  return { SPELLS, waxingLight, moonsteel, bladeGlow, mothVeil };
+  return { SPELLS, waxingLight, moonsteel, bladeGlow, harvestMoon, mothVeil };
 }

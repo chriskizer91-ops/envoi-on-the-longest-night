@@ -14,7 +14,7 @@
 
   // ---------- the party ----------
   // atb: seconds for the turn gauge to fill. A move's hits are level 1 numbers. need: a story flag the move waits for
-  // (party: Sol has joined; veil: the Bogmire refit; envoi: Dawnroost; stoop: after Halcyon). time: about how long it
+  // (party: Sol has joined; refit: the Bogmire refit; envoi: Dawnroost; stoop: after Halcyon). time: about how long it
   // plays on screen, for the fight's length.
   const HEROES = {
     io: {
@@ -29,8 +29,9 @@
         // Waxing Light and Moonsteel exist only once Io has a partner; Waxing Light keeps the bible's ratio to Mend
         waxing: { name: 'Waxing Light', kind: 'moonlore', mp: 24, heal: 270, target: 'allies', need: 'party', time: 2.6 },
         moonsteel: { name: 'Moonsteel', kind: 'moonlore', mp: 18, heat: 40, moonNext: true, target: 'sol', need: 'party', time: 1.8 },
-        // a barrier that soaks up to 35% of the ally's max HP, for 2 enemy turns
-        mothveil: { name: 'Moth Veil', kind: 'moonlore', mp: 22, veil: 0.35, veilTurns: 2, target: 'ally', need: 'veil', time: 2 },
+        // the Bogmire refit's spell (Chris, October 3: it replaces Moth Veil): a low, warm moon that pours 70 Heat into
+        // Sol, enough for Sunburn and for Envoi's heart from nothing. Moonsteel stays the cheap one, with its moon edge
+        harvest: { name: 'Harvest Moon', kind: 'moonlore', mp: 28, heat: 70, target: 'sol', need: 'refit', time: 2 },
         defend: { name: 'Defend', kind: 'defend', target: 'self', time: 0.8 },
         moonlight: { name: 'Moonlight', kind: 'trance', hits: [420, 380, 450], element: 'moon', target: 'foe', ends: true, time: 4 },
         // a summon's arrival, as long as it plays on the battle screen (measured October 2)
@@ -61,7 +62,7 @@
         // and Halcyon loses her next turn
         kestrel: { name: 'Kestrel', kind: 'story', need: 'kestrel', target: 'halcyon', time: 2.4 },
       },
-      // Heat runs 0 to 100: +20 per Attack, +10 each time she's hit, +40 from Moonsteel. At 70 or more she is in
+      // Heat runs 0 to 100: +20 per Attack, +10 each time she's hit, +40 from Moonsteel, +70 from Harvest Moon. At 70 or more she is in
       // Sunburn: every hit deals 35% more, and after each of her actions she loses 6% of her max HP
       heat: { max: 100, perHit: 10 },
       sunburn: { at: 70, damage: 1.35, burn: 0.06 },
@@ -157,16 +158,16 @@
       },
     },
     // Noctara the Starless, fixed at level 20, with Halcyon beside her. The cold deepens as the fight goes on: every
-    // turn she takes makes her blows 10% harder (rage), and Halcyon's too, so the finale is a race. Tuned so a perfect
+    // turn she takes makes her blows 11.5% harder (rage), and Halcyon's too, so the finale is a race. Tuned so a perfect
     // player at 20 wins about three times in four, at 19 has a very slight chance, and an attentive player seldom
     // wins: you have to be locked in, but it isn't impossible (Chris, October 3). (It was 6% until Kestrel Stoop's hit,
-    // which never landed, was fixed; it rose as the expert stopped spending turns on Guard and on Moth Veil in the race,
-    // and as the dive began to land hot.)
+    // which never landed, was fixed; it rose to 10% as the expert stopped spending turns on Guard and Moth Veil in the
+    // race and the dive began to land hot, and to 11.5% with Harvest Moon and the Ember-star Lily's 10%.)
     noctara: {
-      name: 'Noctara', hp: 29000, atb: 2.8, fixedLevel: 20, boss: true, rage: 0.1, shards: 0, xp: 0,
+      name: 'Noctara', hp: 29000, atb: 2.8, fixedLevel: 20, boss: true, rage: 0.115, shards: 0, xp: 0,
       moves: {
         crownShards: { name: 'Crown Shards', weight: 0.35, hits: [52, 52, 52], target: 'random', time: 2.6 },
-        // opens over the party a turn before it collapses: the time for Moth Veil, Defend, Lunara or Envoi's ward
+        // opens over the party a turn before it collapses: the time for Defend, Kestrel Stoop, Lunara or Envoi's ward
         voidSphere: { name: 'Void Sphere', weight: 0.25, charge: true, hits: [280], target: 'all', time: 4.6 },
         // only the party slows, for 10 seconds of gauge time; the damage lands as it speeds back up
         frostDust: { name: 'Frost Dust', weight: 0.2, hits: [56], frost: 10, late: true, target: 'all', time: 2.8 },
@@ -184,12 +185,16 @@
   };
 
   // ---------- herbs, the items (bible); the map lists them by place, shops sell them for sunstone shards ----------
-  // heal and revive grow with the user's level; prices are level 1 shards and grow with the shop's band
+  // The party carries one of each (CARRY), so a herb is a special healing, stronger than Io's own: Moonpetal heals 20%
+  // more than Lunar Mend, Lavender 20% more than Waxing Light. Ember-star Lily makes every blow the party lands 10%
+  // harder for the rest of the fight (Chris, October 3). Heal and revive grow with the user's level; prices are level 1
+  // shards and grow with the shop's band
+  const CARRY = 1;
   const HERBS = {
-    moonpetal: { name: 'Moonpetal', heal: 500, target: 'ally', price: 40 },
-    lavender: { name: 'Lavender', heal: 200, target: 'allies', price: 60 },
+    moonpetal: { name: 'Moonpetal', heal: Math.round(HEROES.io.moves.mend.heal * 1.2), target: 'ally', price: 40 },
+    lavender: { name: 'Lavender', heal: Math.round(HEROES.io.moves.waxing.heal * 1.2), target: 'allies', price: 60 },
     mugwort: { name: 'Silver Mugwort', mp: 40, target: 'io', price: 50 },
-    emberLily: { name: 'Ember-star Lily', heat: 30, target: 'sol', price: 30 },
+    emberLily: { name: 'Ember-star Lily', might: 0.1, target: 'party', price: 30 },
     nightrose: { name: 'Nightrose', revive: 0.25, target: 'fallen', price: 120 },
   };
 
@@ -206,5 +211,5 @@
     { level: 15, name: 'The final upgrade at the shipyard', shards: 4500 },
   ];
 
-  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, xpNeed, grows, MAGPIE };
+  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, xpNeed, grows, MAGPIE };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

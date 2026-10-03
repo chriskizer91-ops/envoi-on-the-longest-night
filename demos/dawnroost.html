@@ -83,7 +83,7 @@
 <script src="../src/battle/screen.js"></script>
 <script>
 // Step 15: Dawnroost's living node, the gate out of band 2. Io and Sol at a level from 8 to 13 (the gate is at 10)
-// against three level 12 wraiths, the largest group of stronger wraiths so far, without Envoi. Io has Moth Veil from
+// against three level 12 wraiths, the largest group of stronger wraiths so far, without Envoi. Io has Harvest Moon from
 // the Bogmire refit. Win, and Envoi is made at the node: Io's letters fold into the wyrm and Sol lights its heart.
 BattleScreen.start({
   scene: 'dawnroost-node',
@@ -97,8 +97,8 @@ BattleScreen.start({
   makeFoe: (id, level) => makeWraith({ level }),
   makeLunara: () => makeLunara({}),
   makeEnvoi: () => makeEnvoi({}),
-  fight: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }], flags: { party: true, veil: true }, herbs: Object.assign({}, BattleSim.BAGS.gate) }),
-  pickNote: (L) => 'The wraiths are level 12' + (L < 10 ? ': the party is well behind them. ' : L >= 12 ? ': the party has caught up with them. ' : ', two levels above the party. ') + 'Io has Moth Veil. Herbs for a gate fight: 4 Moonpetal, 2 Lavender, 3 Silver Mugwort, 2 Ember-star Lily and 2 Nightrose.',
+  fight: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }], flags: { party: true, refit: true }, herbs: Object.assign({}, BattleSim.BAGS.gate) }),
+  pickNote: (L) => 'The wraiths are level 12' + (L < 10 ? ': the party is well behind them. ' : L >= 12 ? ': the party has caught up with them. ' : ', two levels above the party. ') + 'Io has Harvest Moon. The party carries one of each herb: Moonpetal, Lavender, Silver Mugwort, Ember-star Lily and Nightrose.',
   introMsg: 'Dawnroost’s living node still burns, and its light has drawn the wraiths.',
   introAfter: 'Three wraiths, stronger than any the party has met, rise around the node.',
   attackText: () => 'The wraiths close in!',
@@ -110,7 +110,7 @@ BattleScreen.start({
     'Envoi is made. It folds away until Io calls it.',
   ],
   winText: 'Envoi is made. From now on Io can call it once a battle, while Sol stands with 70 Heat or more: it takes the next blow whole on its Folding Ward, then wraps a foe in fire.',
-  loseText: 'The party falls in the courtyard. They wake at the last rest with everything they had, and the wraiths still circle the node. Keep Moth Veil on whoever they are striking, slow the fastest with Briars, and keep something back for their Eclipses.',
+  loseText: 'The party falls in the courtyard. They wake at the last rest with everything they had, and the wraiths still circle the node. Heal before the blows land, slow the fastest with Briars, and keep something back for their Eclipses.',
 });
 </script>
 </body>

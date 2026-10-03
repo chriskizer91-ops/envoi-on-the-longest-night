@@ -194,7 +194,7 @@
     let EN = null;                // Envoi, when the page has it (from Dawnroost on)
     let E = null;                 // the engine
     const D = {};                 // what the player has been shown so far, per unit
-    const S = { trace: [], state: 'boot', acting: false, t0: 0, skip: false, auto: cfg.auto || null, rand: null, result: null, dealt: 0, guard: {}, veils: {}, rime: 0, rimeOn: false, choosing: null };
+    const S = { trace: [], state: 'boot', acting: false, t0: 0, skip: false, auto: cfg.auto || null, rand: null, result: null, dealt: 0, guard: {}, rime: 0, rimeOn: false, choosing: null };
     const standing = () => heroes.concat(foes).filter((f) => !f.out && f.m.root.visible);
     const living = (side) => (side === 'hero' ? heroes : foes).filter((f) => D[f.key] && D[f.key].hp > 0 && !f.out);
     // the heroes the foes can reach: Sol is out of reach while she hovers for Kestrel Stoop
@@ -416,7 +416,6 @@
         const from = E.unit(e.from), d = D[e.to], u = E.unit(e.to);
         d.hp = Math.max(0, d.hp - e.n);
         const big = o.big || e.n >= 300 * RL.scale(from ? from.level : 1);
-        if (e.soak) { word(to, 'Veil −' + nf(e.soak), 'veil'); const v = S.veils[e.to]; if (v && v.strike) v.strike(chest(F[e.from] || to)); }
         if (u.side === 'foe') {
           S.dealt += e.n;
           UI.number(chest(to), nf(e.n), big ? 'big' : '');
@@ -424,7 +423,7 @@
           const df = D[e.from]; if (df && !df.inTrance && from && from.side === 'hero') df.tr = Math.min(0.99, df.tr + RL.TRANCE.dealt);
         } else {
           if (E.lunara === 1) FX.burst(chest(to), [0.8, 0.88, 1], 18, 2.2);
-          if (e.n > 0 || !e.soak) UI.number(chest(to), nf(e.n), e.guard ? 'small' : '');
+          UI.number(chest(to), nf(e.n), e.guard ? 'small' : '');
           if (d.hp <= 0) to.m.play('kneel', true); else to.m.play(e.guard ? 'block' : 'hurt', true);
           if (e.guard && to.key === 'io') FX.shieldHit();
           if (to.key === 'sol' && !d.inTrance) d.heat = Math.min(100, d.heat + 10);
@@ -451,7 +450,7 @@
       else if (e.t === 'heat') { D[e.to].heat = Math.min(100, D[e.to].heat + e.n); word(to, '+' + e.n + ' Heat', 'heat'); }
       else if (e.t === 'mp') { D[e.to].mp = Math.min(E.unit(e.to).maxMp, D[e.to].mp + e.n); word(to, '+' + e.n + ' MP', 'heal'); }
       else if (e.t === 'burn') { D[e.to].hp = Math.max(1, D[e.to].hp - e.n); UI.number(chest(to), nf(e.n), 'burn'); }
-      else if (e.t === 'veilBroken' || e.t === 'veilEnds') { const v = S.veils[e.who]; if (v && e.t === 'veilEnds') v.dismiss(); delete S.veils[e.who]; }
+      else if (e.t === 'might') { for (const f of living('hero')) word(f, 'Blows +' + Math.round(e.n * 100) + '%', 'heat'); UI.note('Every blow the party lands is ' + Math.round(e.n * 100) + '% harder for the rest of the fight.', 2.2); }
       else if (e.t === 'frost') { S.rimeOn = true; }
       else if (e.t === 'frostEnds') { S.rimeOn = false; if (e.by === 'envoi') UI.note('Envoi’s fire ends the frost’s slow.', 1.8); }
       else if (e.t === 'down') {
@@ -577,15 +576,16 @@
         SND.sfx.blade(); ev.rest();
         await until(() => !m.busy);
       },
-      async mothveil(h, t, ev) {
-        const M2 = IOS.SPELLS.veil, m = h.m, dur = m.ACTIONS.cast.dur;
-        faceTo(h, t); if (t !== h) shotBoth(h.pos, t.pos, 1.05, 2.5); else shotAt(h.pos, 1.7, 2.5);
-        m.play('cast', true); SND.sfx.guard();
+      // Harvest Moon: a warm full moon swells over her palm and sinks into Sol; her blade glows amber
+      async harvest(h, t, ev) {
+        const M2 = IOS.SPELLS.harvest, m = h.m, dur = m.ACTIONS.cast.dur;
+        faceTo(h, t); shotBoth(h.pos, t.pos, 1.05, 2.5);
+        m.play('cast', true); SND.sfx.chime();
         await untilP(m, M2.cues[0]);
-        const old = S.veils[t.key]; if (old) old.dismiss();
-        S.veils[t.key] = IOS.mothVeil({ hands: [() => h.m.anchor('handR', V()), () => h.m.anchor('handL', V())], target: () => chest(t), feet: () => t.pos, height: t.key === 'sol' ? 2.0 : 2.3, radius: 0.72, spawnFor: (M2.spawnTo - M2.cues[0]) * dur, landIn: (M2.hits[0] - M2.cues[0]) * dur });
+        const T1 = V(), blade = (A2, B2) => { t.m.anchor('blade', T1); t.m.anchor('hit', B2); A2.copy(T1).sub(B2).multiplyScalar(0.8172).add(T1); };
+        IOS.harvestMoon({ palm: () => h.m.flamePos(V()), chest: () => chest(t), feet: () => t.pos, blade, releaseIn: (M2.cues[1] - M2.cues[0]) * dur, landIn: (M2.hits[0] - M2.cues[0]) * dur, glowFor: M2.glow });
         await untilP(m, M2.hits[0]);
-        word(t, 'Moth Veil', 'veil'); ev.rest();
+        SND.sfx.fire(); ev.rest();
         await until(() => !m.busy);
       },
       async defend(h, t, ev) {
@@ -662,10 +662,12 @@
     // ---------- herbs, for either hero ----------
     async function useHerb(h, hd, ev) {
       UI.banner(hd.name);
-      const tg = ev.list.map((e) => F[e.to || e.who]).filter((f) => f && f.side === 'hero');
+      // Ember-star Lily warms the whole party; the others glow green on whoever they're for
+      const warm = hd.herb === 'emberLily';
+      const tg = warm ? living('hero') : ev.list.map((e) => F[e.to || e.who]).filter((f) => f && f.side === 'hero');
       if (h.key === 'io') h.m.play('cast', true);
       await wait(0.45);
-      for (const t of tg.length ? [...new Set(tg)] : [h]) { FX.rise(() => t.pos, [0.75, 1, 0.8], 0.9, 30, 0.5); FX.sigil(t.pos, 0xd8ffe0, 1.4, 1.2, 1.2); }
+      for (const t of tg.length ? [...new Set(tg)] : [h]) { FX.rise(() => t.pos, warm ? [1, 0.7, 0.35] : [0.75, 1, 0.8], 0.9, 30, 0.5); FX.sigil(t.pos, warm ? 0xffc070 : 0xd8ffe0, 1.4, 1.2, 1.2); }
       SND.sfx.heal(); await wait(0.4);
       ev.rest(); await wait(0.5);
     }
@@ -1167,7 +1169,7 @@
       const back = { id: 'back', label: 'Back' };
       const item = (id) => { const o = s.options.find((x) => x.id === id); return o ? { id, label: o.name, tag: tagOf(o), disabled: !o.ok } : null; };
       if (which === 'witchcraft') return ['flame', 'crescent', 'briars'].map(item).filter(Boolean).concat([back]);
-      if (which === 'moonlore') return ['mend', 'waxing', 'moonsteel', 'mothveil'].map(item).filter(Boolean).concat([back]);
+      if (which === 'moonlore') return ['mend', 'waxing', 'moonsteel', 'harvest'].map(item).filter(Boolean).concat([back]);
       if (which === 'summon') return ['lunara', 'envoi'].map((id) => { const o = s.options.find((x) => x.id === id); return o ? { id, label: o.name, tag: o.ok ? 'Once' : o.why, disabled: !o.ok } : null; }).filter(Boolean).concat([back]);
       if (which === 'arts') return ['flareCut', 'sunder', 'emberRush', 'solarCrest', 'stoopRise'].map(item).filter(Boolean).concat([back]);
       if (which === 'item') return s.options.filter((o) => o.herb).map((o) => ({ id: o.id, label: o.name, disabled: !o.ok })).concat([back]);
@@ -1395,8 +1397,7 @@
         h.m.guard(false); h.pos = { x: h.home.x, z: h.home.z }; h.yaw = h.tyaw = h.home.yaw; h.target = null; h.res = null; h.spin = 0; h.aim = null; h.aimAt = null; h.trance = 0; h.out = false;
         if (h.m.state) { h.m.state.heat = 0; h.m.state.sunburn = 0; h.m.state.trance = 0; }
       }
-      for (const k in S.veils) { const v = S.veils[k]; if (v && v.dismiss) v.dismiss(); }
-      S.veils = {}; FX.shield(false); S.rimeOn = false;
+      FX.shield(false); S.rimeOn = false;
       for (let i = 0; i < TOWN.a.length; i++) TOWN.a[i] = TOWN.to[i] = 0; TOWN.ver++;
       for (const f of foes) f.charged = false;
       LU.m.reset(); LU.on = false; LU.m.root.visible = false; if (LU.m.fx) LU.m.fx.visible = false; LU.shadow.visible = false;

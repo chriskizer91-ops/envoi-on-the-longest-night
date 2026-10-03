@@ -97,7 +97,7 @@
         if (u.inTrance) tags.push(u.id === 'io' ? 'Twin Moons' : 'Dawnbreaker');
         if (u.id === 'sol' && !u.inTrance && u.heat >= 70) tags.push('Sunburn');
         if (u.defending) tags.push('Defending'); if (u.guarding) tags.push('Guarding');
-        if (u.veil > 0) tags.push('Moth Veil ' + nf(u.veil)); if (u.severed) tags.push('Severed');
+        if (u.severed) tags.push('Severed');
         if (u.hovering) tags.push('Hovering');
       } else {
         if (u.bound) tags.push('Bound'); if (u.sunder > 0) tags.push('Sundered');
@@ -127,7 +127,7 @@
         case 'hit': {
           if (!hits) hits = { order: [], by: {} };
           if (!hits.by[e.to]) { hits.by[e.to] = []; hits.order.push(e.to); }
-          hits.by[e.to].push('−' + nf(e.n) + (e.soak ? ' (veil took ' + nf(e.soak) + ')' : '') + (e.guard ? ' (halved)' : ''));
+          hits.by[e.to].push('−' + nf(e.n) + (e.guard ? ' (halved)' : ''));
           break;
         }
         case 'heal': flush(); parts.push(['heal', ' ' + nameOf(B, e.to) + ' +' + nf(e.n)]); break;
@@ -136,8 +136,7 @@
         case 'sundered': flush(); parts.push(['note', ' ' + nameOf(B, e.to) + ' is Sundered.']); break;
         case 'sever': flush(); parts.push(['note', ' ' + nameOf(B, e.to) + ' is Severed.']); break;
         case 'severed': flush(); parts.push(['note', ' ' + nameOf(B, e.to) + ' is Severed and can\'t be healed.']); break;
-        case 'veil': flush(); parts.push(['note', ' A Moth Veil of ' + nf(e.n) + ' on ' + nameOf(B, e.to) + '.']); break;
-        case 'veilBroken': case 'veilEnds': flush(); parts.push(['note', ' ' + nameOf(B, e.who) + "'s Moth Veil is gone."]); break;
+        case 'might': flush(); parts.push(['note', ' Every blow the party lands is ' + Math.round(e.n * 100) + '% harder from now on.']); break;
         case 'cover': flush(); parts.push(['note', ' Sol guards Io.']); break;
         case 'oath': flush(); parts.push(['note', " Warden's Oath: Sol steps in front of Io."]); break;
         case 'counter': flush(); parts.push(['note', ' ' + nameOf(B, e.who) + ' counters.']); break;

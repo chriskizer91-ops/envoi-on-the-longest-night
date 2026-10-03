@@ -84,7 +84,7 @@
 <script src="../src/battle/screen.js"></script>
 <script>
 // Step 13: Io and Sol against wisps, frost wisps and wraiths at a chosen level. Sol's Heat, Sunburn, Sword Arts and
-// Dawnbreaker; Io's Waxing Light, Moonsteel and, from level 6, Moth Veil; Lunara, and from level 11 Envoi; herbs; a
+// Dawnbreaker; Io's Waxing Light, Moonsteel and, from level 6, Harvest Moon; Lunara, and from level 11 Envoi; herbs; a
 // target for every blow.
 const PACKS = [
   { name: 'Two wisps', foes: ['wisp', 'wisp'] },
@@ -116,10 +116,11 @@ BattleScreen.start({
     party: [{ id: 'io', level: L }, { id: 'sol', level: L }],
     // each foe rolls a level in the band's range, as wild foes do (1 to 5, 6 to 10, 11 to 15, 16 to 20)
     foes: PACKS[p].foes.map((id) => ({ id, level: BattleSim.wildLevel(BattleSim.bandOf(L), Math.random) })),
-    flags: { party: true, veil: L > 5, envoi: L > 10, stoop: L > 15 },
-    herbs: { moonpetal: 2, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 },
+    flags: { party: true, refit: L > 5, envoi: L > 10, stoop: L > 15 },
+    // one of each herb: the party can't carry more (Chris, October 3)
+    herbs: { moonpetal: 1, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 },
   }),
-  pickNote: (L) => { const [lo, hi] = BattleSim.BAND_LEVELS[BattleSim.bandOf(L)]; return 'Each foe is a level from ' + lo + ' to ' + hi + ', the band’s range, rolled every fight; stronger foes give more experience. ' + (L > 5 ? 'Moth Veil is in Io’s Moonlore. ' : 'Moth Veil comes after the Bogmire refit (level 6 here). ') + (L > 10 ? 'Envoi is in the Summon menu once Sol has 70 Heat. ' : 'Envoi joins after Dawnroost (level 11 here). ') + (L > 15 ? 'Sol has Kestrel Stoop.' : 'Kestrel Stoop comes after Halcyon (level 16 here).'); },
+  pickNote: (L) => { const [lo, hi] = BattleSim.BAND_LEVELS[BattleSim.bandOf(L)]; return 'Each foe is a level from ' + lo + ' to ' + hi + ', the band’s range, rolled every fight; stronger foes give more experience. ' + (L > 5 ? 'Harvest Moon is in Io’s Moonlore: 70 Heat for Sol. ' : 'Harvest Moon comes after the Bogmire refit (level 6 here). ') + (L > 10 ? 'Envoi is in the Summon menu once Sol has 70 Heat. ' : 'Envoi joins after Dawnroost (level 11 here). ') + (L > 15 ? 'Sol has Kestrel Stoop.' : 'Kestrel Stoop comes after Halcyon (level 16 here).'); },
   attackText: (fs) => (fs.length > 1 ? 'The foes close in!' : 'The ' + fs[0].name + ' attacks!'),
   winText: 'The souls go home as pale moths, and the square is quiet again.',
   loseText: 'The party falls. Keep both above half, let Sol’s Heat ride but heal her burns, and save Lunara for when you need her.',

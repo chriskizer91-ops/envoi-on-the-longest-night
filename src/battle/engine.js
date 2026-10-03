@@ -29,7 +29,7 @@
     const B = {
       t: 0, gaugeT: 0, turns: 0, units: [], heroes: [], foes: [], queue: [], over: null, cur: null, log: [],
       herbs: Object.assign({}, setup.herbs || {}), flags: Object.assign({}, setup.flags || {}), ends: setup.ends || {},
-      lunara: 0, envoi: 0, ward: false, frost: 0, frostLate: null, kestrelUsed: false, rand, tune,
+      lunara: 0, envoi: 0, ward: false, frost: 0, frostLate: null, kestrelUsed: false, might: 0, rand, tune,
       stats: { dealt: 0, taken: 0, healed: 0, low: 1, downs: 0, herbsUsed: 0, summons: [] },
     };
     const solo = setup.party.length === 1;
@@ -41,7 +41,7 @@
         side: 'hero', id: s.id, key: s.id, name: d.name, def: d, level: L, fill: d.atb,
         maxHp: Math.round(d.hp * k), maxMp: Math.round(d.mp * RL.mpScale(L)),
         atb: s.atb || 0, heat: s.heat || 0, trance: s.trance || 0, tranceReady: false, inTrance: false, tranceLeft: 0, heatBefore: 0,
-        defending: false, guarding: false, severed: false, veil: 0, veilTurns: 0, moonNext: false, hovering: null,
+        defending: false, guarding: false, severed: false, moonNext: false, hovering: null,
       };
       u.hp = s.hp != null ? Math.min(s.hp, u.maxHp) : u.maxHp;
       u.mp = s.mp != null ? Math.min(s.mp, u.maxMp) : u.maxMp;
@@ -80,7 +80,7 @@
       const i = B.queue.indexOf(u); if (i >= 0) B.queue.splice(i, 1);
       if (u.side === 'hero') {
         B.stats.downs++;
-        Object.assign(u, { trance: 0, tranceReady: false, inTrance: false, defending: false, guarding: false, veil: 0, veilTurns: 0, hovering: null, severed: false });
+        Object.assign(u, { trance: 0, tranceReady: false, inTrance: false, defending: false, guarding: false, hovering: null, severed: false });
         if (u.id === 'sol') u.heat = 0;
       } else { u.charging = null; }
       emit({ t: 'down', who: u.key });
@@ -101,6 +101,7 @@
       if (el && r && r[el]) n *= r[el];
       if (burn) n *= HE.sol.sunburn.damage;
       if (f.sunder > 0) n *= ST.sunder;
+      if (a.side === 'hero') n *= 1 + B.might; // Ember-star Lily
       n = Math.max(1, Math.round(n * (tune.heroDmg || 1)));
       f.hp = Math.max(0, f.hp - n); B.stats.dealt += n; f.lastAttacker = a.side === 'hero' ? a.key : (hero('io') || a).key;
       emit({ t: 'hit', from: a.key, to: f.key, n, el: el || null });
@@ -109,7 +110,7 @@
       return n;
     }
     // a foe's blow on a hero: Guard and the Warden's Oath can pull a single hit off Io onto Sol; Defend and Guard halve
-    // it, Lunara's Embrace takes 40% off, and a Moth Veil soaks what's left first
+    // it, and Lunara's Embrace takes 40% off
     function hitHero(f, h, base, o) {
       o = o || {};
       let to = h, take = 1;
@@ -122,13 +123,8 @@
       if (to.defending || to.guarding) n *= ST.defend;
       if (B.lunara === 1) n *= SU.lunara.cut;
       n = Math.max(1, Math.round(n));
-      let soak = 0;
-      if (to.veil > 0) {
-        soak = Math.min(to.veil, n); to.veil -= soak; n -= soak;
-        if (to.veil <= 0) { to.veil = 0; to.veilTurns = 0; emit({ t: 'veilBroken', who: to.key }); }
-      }
       to.hp = Math.max(0, to.hp - n); B.stats.taken += n;
-      emit({ t: 'hit', from: f.key, to: to.key, n, soak, guard: !!(to.defending || to.guarding) });
+      emit({ t: 'hit', from: f.key, to: to.key, n, guard: !!(to.defending || to.guarding) });
       if (to.id === 'sol' && !to.inTrance) to.heat = Math.min(HE.sol.heat.max, to.heat + HE.sol.heat.perHit);
       if (to.hp > 0 && !to.inTrance && !to.tranceReady) {
         to.trance = Math.min(1, to.trance + n / to.maxHp * TR.taken);
@@ -301,7 +297,6 @@
       if (f.sunder > 0) f.sunder--;
       f.acted++;
       for (const k in f.cd) if (f.cd[k] > 0) f.cd[k]--;
-      for (const h of B.heroes) if (h.veilTurns > 0 && --h.veilTurns === 0 && h.veil > 0) { h.veil = 0; emit({ t: 'veilEnds', who: h.key }); }
       B.turns++;
       checkEnd();
     }
@@ -318,7 +313,7 @@
       if (h.id === 'io') {
         if (h.inTrance) add('moonlight', { targets: foes });
         add('attack', { targets: foes });
-        for (const id of ['flame', 'crescent', 'briars', 'mend', 'waxing', 'moonsteel', 'mothveil']) {
+        for (const id of ['flame', 'crescent', 'briars', 'mend', 'waxing', 'moonsteel', 'harvest']) {
           if (!knows(h, id)) continue;
           const d = h.def.moves[id], c = cost(h, d);
           const o = { mp: c, ok: h.mp >= c, why: h.mp >= c ? '' : 'MP' };
@@ -352,9 +347,9 @@
         if (!(B.herbs[id] > 0)) continue;
         const d = RL.HERBS[id];
         let t = d.target === 'ally' || d.target === 'allies' ? allies : d.target === 'fallen' ? fallen : d.target === 'io' ? allies.filter((k) => k === 'io') : allies.filter((k) => k === 'sol');
-        if (d.target === 'allies') t = [];
-        const ok = d.target === 'fallen' ? fallen.length > 0 : d.target === 'allies' || t.length > 0;
-        out.push({ id: 'herb:' + id, herb: id, name: d.name + ' (' + B.herbs[id] + ')', kind: 'item', ok, why: ok ? '' : 'nobody to use it on', targets: t });
+        if (d.target === 'allies' || d.target === 'party') t = [];
+        const ok = d.target === 'fallen' ? fallen.length > 0 : d.target === 'party' ? !B.might : d.target === 'allies' || t.length > 0;
+        out.push({ id: 'herb:' + id, herb: id, name: d.name + ' (' + B.herbs[id] + ')', kind: 'item', ok, why: ok ? '' : d.target === 'party' ? 'already used' : 'nobody to use it on', targets: t });
       }
       return out;
     }
@@ -381,6 +376,7 @@
       if (d.heal) { if (d.target === 'allies') for (const a of living('hero')) heal(h, a, d.heal); else heal(h, tgt, d.heal); return; }
       if (d.mp && tgt) { const n = Math.round(d.mp * RL.mpScale(tgt.level)); tgt.mp = Math.min(tgt.maxMp, tgt.mp + n); emit({ t: 'mp', to: tgt.key, n }); }
       if (d.heat && tgt && !tgt.inTrance) { tgt.heat = Math.min(HE.sol.heat.max, tgt.heat + d.heat); emit({ t: 'heat', to: tgt.key, n: d.heat }); }
+      if (d.might) { B.might = d.might; emit({ t: 'might', n: d.might }); }
     }
     function heroAct(h, id, tgt, herb) {
       if (herb) { B.t += 1.8; useHerb(h, herb, tgt); return; }
@@ -415,8 +411,8 @@
         case 'moonsteel':
           if (alive(tgt)) { if (!tgt.inTrance) tgt.heat = Math.min(HE.sol.heat.max, tgt.heat + d.heat); tgt.moonNext = true; emit({ t: 'heat', to: tgt.key, n: d.heat }); }
           break;
-        case 'mothveil':
-          if (alive(tgt)) { tgt.veil = Math.round(tgt.maxHp * d.veil); tgt.veilTurns = d.veilTurns; emit({ t: 'veil', to: tgt.key, n: tgt.veil }); }
+        case 'harvest':
+          if (alive(tgt)) { if (!tgt.inTrance) tgt.heat = Math.min(HE.sol.heat.max, tgt.heat + d.heat); emit({ t: 'heat', to: tgt.key, n: d.heat }); }
           break;
         case 'lunara': {
           const L = SU.lunara; B.lunara = 1; B.lunaraAt = tgt ? tgt.key : null; B.stats.summons.push('lunara');

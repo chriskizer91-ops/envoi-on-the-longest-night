@@ -163,7 +163,7 @@ Chris's answers to the open questions. Where this round and an earlier one disag
 
 | Level | Gate | Reward |
 |---|---|---|
-| 5 | The great wraith, then the Bogmire refit | Moth Veil, Io's barrier |
+| 5 | The great wraith, then the Bogmire refit | Harvest Moon, Heat for Sol (it replaced Moth Veil, October 3) |
 | 10 | Dawnroost | Envoi |
 | 15 | The fight with Halcyon | Kestrel Stoop, Sol's new move |
 
@@ -173,7 +173,7 @@ Chris's answers to the open questions. Where this round and an earlier one disag
 
 1. **Lunar Mend** from the first fight.
 2. **Waxing Light** (heals both) and **Moonsteel** (gives Sol Heat) when Sol joins. They aren't level rewards; they only exist once Io has a partner.
-3. **Moth Veil,** a barrier, at the Bogmire refit. Chris chose it over a bigger heal: Lunar Mend already keeps pace with HP on the level curve, and a shield is the answer to telegraphed hits like Black Noon and Void Sphere.
+3. **Moth Veil,** a barrier, at the Bogmire refit. Chris chose it over a bigger heal: Lunar Mend already keeps pace with HP on the level curve, and a shield is the answer to telegraphed hits like Black Noon and Void Sphere. (Replaced on October 3 by **Harvest Moon**, which gives Sol Heat: see the twentieth round.)
 
 - **Revive and status cures** stay with herbs and Lunara's Embrace.
 
@@ -696,3 +696,23 @@ Two more findings, for later:
 
   The fix is a zoom that lands on whole pixels (0.762 on the Pixel 7a) and a camera snapped to whole pixels.
 
+
+## October 3, 2026, twentieth round
+
+- **Moth Veil is gone** (Chris; question 15). The simulator's best play hardly used it. At the Bogmire refit Io now learns **Harvest Moon**: 28 MP for 70 Heat on Sol. That is enough for Sunburn and for Envoi's heart from nothing. Moonsteel stays the cheap one: 18 MP for 40 Heat and a moon edge on her next blow.
+  - On screen a low, warm full moon swells over Io's palm, drifts to Sol and sinks into her, and her blade glows amber.
+  - The name is a placeholder that fits Io's Moonlore; Chris can rename it.
+- **Herbs** (Chris; question 14):
+  - The party carries one of each herb: Moonpetal, Lavender, Silver Mugwort, Ember-star Lily and Nightrose.
+  - Moonpetal heals 20% more than Lunar Mend, Io's strongest heal. Lavender heals both 20% more than Waxing Light, to match.
+  - Ember-star Lily no longer gives Heat, since Io has two Heat spells now. It makes every blow the party lands 10% harder for the rest of the fight, the summons' included.
+  - Silver Mugwort and Nightrose stay as they were.
+- **The finale, retuned:** the cold deepens 11.5% a turn.
+  - The single pouch made the finale harder, but Harvest Moon and the Lily made it easier on balance. With 10% a turn a perfect player won 88%.
+  - The Lily alone is worth about 12 points to a perfect player, because in a race every blow counts.
+  - At 11.5%:
+    - a perfect player wins about 76% at 20;
+    - an attentive one wins 4%;
+    - at 19 a perfect player has a 5% chance.
+
+  All 32 targets are met.

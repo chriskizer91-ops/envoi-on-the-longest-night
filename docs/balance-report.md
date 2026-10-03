@@ -23,21 +23,21 @@ The play styles: **careless** picks moves almost at random and heals late; **att
 | Wild fights | 13 | attentive | 100% | 97% to 100%, 0.6 to 2.2 min | 1.2 min |  | Yes |
 | Wild fights | 18 | attentive | 100% | 97% to 100%, 0.6 to 2.2 min | 1.5 min |  | Yes |
 | Wild fights | 20 | attentive | 100% | 97% to 100%, 0.6 to 2.2 min | 1.0 min |  | Yes |
-| Wild fights | 6 | attentive | 99% | 90% to 100%, 0.6 to 2.5 min | 1.6 min | 34% of foe HP | Yes |
+| Wild fights | 6 | attentive | 98% | 90% to 100%, 0.6 to 2.5 min | 1.6 min | 35% of foe HP | Yes |
 | Wild fights | 11 | attentive | 97% | 90% to 100%, 0.6 to 2.5 min | 1.8 min | 51% of foe HP | Yes |
 | Wild fights | 16 | attentive | 92% | 90% to 100%, 0.6 to 2.5 min | 2.1 min | 52% of foe HP | Yes |
 | The great wraith | 5 | careless | 37% | 20% to 60% | 2.2 min | 17% of foe HP | Yes |
-| The great wraith | 5 | attentive | 90% | 80% to 96% | 2.4 min | 14% of foe HP | Yes |
-| The great wraith | 5 | expert | 99% | 97% to 100% | 2.7 min | 13% of foe HP | Yes |
-| Dawnroost | 10 | attentive | 91% | 80% to 96% | 3.1 min | 55% of foe HP | Yes |
-| Dawnroost | 10 | expert | 98% | 93% to 100% | 3.9 min | 43% of foe HP | Yes |
-| Halcyon's ambush | 15 | expert | 0% | 0% to 10% | 2.7 min | 88% of foe HP | Yes |
-| Halcyon's ambush | 18 | expert | 62% (retreats) | 40% to 85% | 5.4 min | 34% of foe HP | Yes |
-| Halcyon's ambush | 20 | expert | 100% (retreats) | 80% to 100% | 3.2 min | 24% of foe HP | Yes |
-| The finale | 20 | expert | 78% | 60% to 85% | 8.2 min | 15% of foe HP | Yes |
-| The finale | 20 | attentive | 3% | 2% to 10% | 5.7 min | 35% of foe HP | Yes |
-| The finale | 19 | expert | 5% | 0% to 10%, losses leave under 45% | 7.9 min | 31% of foe HP | Yes |
-| The finale | 18 | expert | 0% | 0% to 2% | 5.4 min | 60% of foe HP | Yes |
+| The great wraith | 5 | attentive | 93% | 80% to 96% | 2.4 min | 12% of foe HP | Yes |
+| The great wraith | 5 | expert | 100% | 97% to 100% | 2.6 min | 10% of foe HP | Yes |
+| Dawnroost | 10 | attentive | 89% | 80% to 96% | 3.1 min | 51% of foe HP | Yes |
+| Dawnroost | 10 | expert | 97% | 93% to 100% | 3.9 min | 46% of foe HP | Yes |
+| Halcyon's ambush | 15 | expert | 0% | 0% to 10% | 2.5 min | 88% of foe HP | Yes |
+| Halcyon's ambush | 18 | expert | 53% (retreats) | 40% to 85% | 4.7 min | 35% of foe HP | Yes |
+| Halcyon's ambush | 20 | expert | 99% (retreats) | 80% to 100% | 2.9 min | 25% of foe HP | Yes |
+| The finale | 20 | expert | 76% | 60% to 85% | 7.1 min | 17% of foe HP | Yes |
+| The finale | 20 | attentive | 4% | 2% to 10% | 5.1 min | 38% of foe HP | Yes |
+| The finale | 19 | expert | 5% | 0% to 10%, losses leave under 45% | 6.9 min | 31% of foe HP | Yes |
+| The finale | 18 | expert | 0% | 0% to 2% | 4.9 min | 59% of foe HP | Yes |
 
 ## Experience and shards
 
