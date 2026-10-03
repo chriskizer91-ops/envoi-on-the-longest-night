@@ -41,7 +41,7 @@
         side: 'hero', id: s.id, key: s.id, name: d.name, def: d, level: L, fill: d.atb,
         maxHp: Math.round(d.hp * k), maxMp: Math.round(d.mp * RL.mpScale(L)),
         atb: s.atb || 0, heat: s.heat || 0, trance: s.trance || 0, tranceReady: false, inTrance: false, tranceLeft: 0, heatBefore: 0,
-        defending: false, guarding: false, severed: false, moonNext: false, hovering: null, lured: null,
+        defending: false, guarding: false, severed: false, moonNext: false, hovering: null, lured: null, charmed: null, charm: 1,
       };
       u.hp = s.hp != null ? Math.min(s.hp, u.maxHp) : u.maxHp;
       u.mp = s.mp != null ? Math.min(s.mp, u.maxMp) : u.maxMp;
@@ -63,6 +63,8 @@
         atb: s.atb != null ? s.atb : d.ambush ? 1 : rand() * 0.25, last: [], used: {}, cd: {},
         bound: false, sunder: 0, evade: 0, vow: 0, charging: null, chargeAt: null, stagger: false, lastAttacker: null,
         dmgMul: (s.dmgMul || 1) * (d.dmg || 1), rage: s.rage != null ? s.rage : d.rage || 0, acted: 0, canes: d.canes || 0, scorchAt: -1,
+        // the Bramble Colossus: its bud open (its heart bare, every blow on it doubled), and its Wrath come
+        open: false, wrath: false,
       };
       u.hp = u.maxHp;
       B.units.push(u); B.foes.push(u);
@@ -79,8 +81,16 @@
 
     // the Bramble Horror lets its lured prey go (the lure broke, the Grab fell, or it is gone)
     function unlure(f) { for (const h of B.heroes) if (h.lured === f.key) { h.lured = null; emit({ t: 'unlured', to: h.key }); } }
+    // the Bramble Colossus's Siren Bloom lets the party go (it broke, the Devour came, or it is gone)
+    function uncharm(f) { for (const h of B.heroes) if (h.charmed === f.key) { h.charmed = null; h.charm = 1; emit({ t: 'uncharmed', to: h.key }); } }
+    // a charged move that fire (or a big blow to the Colossus's bare heart) breaks: the lure or the bloom ends, the bud shuts
+    function breakCharge(f, heart) {
+      f.charging = null; f.chargeAt = null; f.open = false;
+      emit({ t: 'scorch', who: f.key, broke: true, heart: !!heart });
+      unlure(f); uncharm(f);
+    }
     function down(u) {
-      if (u.side === 'foe') unlure(u);
+      if (u.side === 'foe') { unlure(u); uncharm(u); u.open = false; }
       u.hp = 0; u.atb = 0;
       const i = B.queue.indexOf(u); if (i >= 0) B.queue.splice(i, 1);
       if (u.side === 'hero') {
@@ -107,19 +117,24 @@
       if (burn) n *= HE.sol.sunburn.damage;
       if (f.sunder > 0) n *= ST.sunder;
       if (a.side === 'hero') n *= 1 + B.might; // Ember-star Lily
+      // the Bramble Colossus's heart: while its bud is open, every blow on it lands double
+      const weak = !!(f.open && f.def.heart && a.side === 'hero');
+      if (weak) n *= f.def.heart;
       n = Math.max(1, Math.round(n * (tune.heroDmg || 1)));
       f.hp = Math.max(0, f.hp - n); B.stats.dealt += n; f.lastAttacker = a.side === 'hero' ? a.key : (hero('io') || a).key;
       // a foe who retreats (Halcyon in the ambush) never falls: she leaves first
       if (f.hp <= 0 && B.ends.retreat && B.ends.retreat.foe === f.id) f.hp = 1;
-      emit({ t: 'hit', from: a.key, to: f.key, n, el: el || null });
+      emit(weak ? { t: 'hit', from: a.key, to: f.key, n, el: el || null, weak: true } : { t: 'hit', from: a.key, to: f.key, n, el: el || null });
       if (a.side === 'hero' && !a.inTrance && !a.tranceReady) a.trance = Math.min(0.99, a.trance + TR.dealt);
       if (f.hp <= 0) down(f);
       // the Bramble Horror fears fire: once an action, flame makes it recoil (its gauge drops) or breaks its Lure
       else if ((el === 'fire' || el === 'sun') && f.def.fearsFire && f.scorchAt !== B.act) {
         f.scorchAt = B.act;
-        if (f.charging) { f.charging = null; f.chargeAt = null; emit({ t: 'scorch', who: f.key, broke: true }); unlure(f); }
+        if (f.charging) breakCharge(f);
         else { f.atb = Math.max(0, f.atb - f.def.fearsFire); emit({ t: 'scorch', who: f.key }); }
       }
+      // a big blow on the Colossus's bare heart while it blooms makes it shut, and the bloom breaks
+      else if (weak && f.charging && f.def.moves[f.charging].charm && base >= RL.BIG_BLOW && f.scorchAt !== B.act) { f.scorchAt = B.act; breakCharge(f, true); }
       return n;
     }
     // every cane the Bramble Horror has lost takes 8% off its blows
@@ -139,7 +154,7 @@
       if (B.lunara === 1) n *= SU.lunara.cut;
       n = Math.max(1, Math.round(n));
       to.hp = Math.max(0, to.hp - n); B.stats.taken += n;
-      emit({ t: 'hit', from: f.key, to: to.key, n, guard: !!(to.defending || to.guarding) });
+      emit(o.wave != null ? { t: 'hit', from: f.key, to: to.key, n, guard: !!(to.defending || to.guarding), wave: o.wave } : { t: 'hit', from: f.key, to: to.key, n, guard: !!(to.defending || to.guarding) });
       if (to.id === 'sol' && !to.inTrance) to.heat = Math.min(HE.sol.heat.max, to.heat + HE.sol.heat.perHit);
       if (to.hp > 0 && !to.inTrance && !to.tranceReady) {
         to.trance = Math.min(1, to.trance + n / to.maxHp * TR.taken);
@@ -172,6 +187,7 @@
       if (u.side === 'foe' && u.bound) r *= ST.bindSlow;
       if (u.side === 'hero' && B.frost > 0) r *= ST.frostSlow;
       if (u.lured) r = 0; // drawn to the Bramble Horror's fruit, her gauge stops
+      if (u.charmed) r *= u.charm; // charmed by the Colossus's Siren Bloom, it fills slower
       return r;
     }
     // run the gauges for up to `limit` seconds, stopping as soon as anyone's gauge is full
@@ -222,9 +238,11 @@
         if (m.below && !f.used[id] && f.hp < f.maxHp * m.below) { f.used[id] = true; return id; }
       }
       const halcyonUp = B.foes.some((u) => u.id === 'halcyon' && alive(u));
+      // in its Wrath the Bramble Colossus leans on other moves (wrathWeight); a move of weight 0 only follows another
+      const wt = (id) => (f.wrath && M[id].wrathWeight != null ? M[id].wrathWeight : M[id].weight);
       const opts = ids.filter((id) => {
         const m = M[id];
-        if (m.below) return false;
+        if (m.below || !wt(id)) return false;
         if (m.noRepeat && f.last[0] === id) return false;
         if (f.last[0] === id && f.last[1] === id) return false;
         if (m.cooldown && f.cd[id] > 0) return false;
@@ -233,9 +251,9 @@
         if (m.blackout && (!halcyonUp || B.ward)) return false; // lore answer 12: no Blackout while Envoi's ward is up
         return true;
       });
-      const total = opts.reduce((s, id) => s + M[id].weight, 0);
+      const total = opts.reduce((s, id) => s + wt(id), 0);
       let r = rand() * total, pick = opts[0];
-      for (const id of opts) { r -= M[id].weight; if (r <= 0) { pick = id; break; } }
+      for (const id of opts) { r -= wt(id); if (r <= 0) { pick = id; break; } }
       f.last = [pick, f.last[0]];
       if (M[pick].cooldown) f.cd[pick] = M[pick].cooldown + 1;
       return pick;
@@ -257,12 +275,17 @@
       }
     }
     function useFoeMove(f, id, released) {
-      const m = f.def.moves[id];
+      let m = f.def.moves[id];
+      // a bloom's end (the Colossus): the party is let go, and the move it leads to falls on the one it chose
+      if (released && m.then) { uncharm(f); f.open = false; id = m.then; m = f.def.moves[id]; }
       emit({ t: 'move', who: f.key, move: id, name: m.name, released: !!released });
       B.t += m.time || 2;
       if (m.target === 'self') {
         if (m.evade) f.evade = m.evade;
         if (m.vow) { f.vow = m.vow; f.vowed = true; }
+        // the Colossus's Wrath: quicker and harder for the rest of the fight
+        if (m.wrath) { f.wrath = true; f.fill *= m.wrath.haste; f.dmgMul *= m.wrath.fury; emit({ t: 'wrath', who: f.key }); }
+        if (m.opens) { f.open = true; emit({ t: 'open', who: f.key }); }
         if (m.healPct) {
           const n = Math.round(f.maxHp * m.healPct); f.hp = Math.min(f.maxHp, f.hp + n);
           emit({ t: 'heal', from: f.key, to: f.key, n });
@@ -281,17 +304,22 @@
       }
       if (m.frost) { B.frost = Math.max(B.frost, m.frost); emit({ t: 'frost', who: f.key, s: m.frost }); if (m.late) { B.frostLate = { f, m }; return; } }
       if (m.target === 'all') {
-        for (const h of reach()) for (const base of hits) if (alive(h)) hitHero(f, h, base, { single: false });
+        // wave by wave (the Colossus's Maelstrom and Thorn Volley): every hero takes a wave's blow before the next wave
+        hits.forEach((base, i) => { for (const h of reach()) if (alive(h)) hitHero(f, h, base, { single: false, wave: hits.length > 1 ? i : undefined }); });
         outOfReach(f);
         return;
       }
       let first = null, took = null;
+      // Devour's seizing blow, before the gulps: it heals nothing, and whoever it lands on is the prey
+      if (m.seize) { const tgt = targetFor(f, m); if (tgt) { const r = hitHero(f, tgt, m.seize, { single: true }); first = tgt; took = r.to; } }
       for (const base of hits) {
         if (!living('hero').length) break;
+        // Devour holds one prey in its flower: if she falls, the gulps stop
+        if (m.prey && took && !alive(took)) break;
         const pool = reach();
         if (!pool.length) { outOfReach(f); break; }
-        const tgt = m.target === 'random' ? pool[Math.floor(rand() * pool.length)] : (first && alive(first) ? first : targetFor(f, m));
-        const r = hitHero(f, tgt, base, { single: true });
+        const tgt = m.target === 'random' ? pool[Math.floor(rand() * pool.length)] : m.prey && took ? took : (first && alive(first) ? first : targetFor(f, m));
+        const r = hitHero(f, tgt, base, { single: !m.prey });
         if (!first) first = tgt;
         if (!took) took = r.to; // whoever the blow actually landed on (Sol's Guard can take it for Io)
         if (m.drain && alive(f)) { f.hp = Math.min(f.maxHp, f.hp + r.n); emit({ t: 'heal', from: f.key, to: f.key, n: r.n }); }
@@ -303,6 +331,10 @@
         }
         if (m.sever && alive(r.to)) { r.to.severed = true; emit({ t: 'sever', to: r.to.key }); }
       }
+      // Hammerfall's shockwave runs out over the whole party after the club falls
+      if (m.shock && alive(f)) { for (const h of reach()) for (const base of m.shock) if (alive(h)) hitHero(f, h, base, { single: false }); outOfReach(f); }
+      // Devour ends with the bud bursting open, its heart bare until its next turn
+      if (m.opens && alive(f)) { f.open = true; emit({ t: 'open', who: f.key }); }
       // the Grab drags its prey to the root crown: her turn gauge empties, and the lure lets go
       if (m.held && took && alive(took)) { took.atb = 0; const i = B.queue.indexOf(took); if (i >= 0) B.queue.splice(i, 1); emit({ t: 'held', to: took.key }); }
       if (m.held) unlure(f);
@@ -310,6 +342,8 @@
     function foeTurn(f) {
       f.atb = 0; f.bound = false; f.vow = 0;
       emit({ t: 'turn', who: f.key });
+      // the Colossus's bud shuts as its next turn comes (a bloom's charge keeps it open until the Devour)
+      if (f.open && !f.charging) { f.open = false; emit({ t: 'shut', who: f.key }); }
       if (f.stagger) { f.stagger = false; emit({ t: 'stagger', who: f.key }); }
       else if (f.charging) { const id = f.charging; f.charging = null; useFoeMove(f, id, true); }
       else {
@@ -321,6 +355,8 @@
           emit({ t: 'charge', who: f.key, move: id, name: m.chargeName || m.name, to: f.chargeAt });
           // the Lure: its prey walks toward the fruit, and her gauge stops until the Grab or until flame breaks the lure
           if (m.held && tg) { tg.lured = f.key; const i = B.queue.indexOf(tg); if (i >= 0) B.queue.splice(i, 1); emit({ t: 'lured', to: tg.key }); }
+          // Siren Bloom: the flower opens on its heart, and everyone it can reach is charmed until it Devours the one it chose
+          if (m.charm) { f.open = true; emit({ t: 'open', who: f.key }); for (const h of reach()) { h.charmed = f.key; h.charm = m.charm; emit({ t: 'charmed', to: h.key }); } }
         }
         else useFoeMove(f, id);
       }
@@ -399,8 +435,9 @@
       for (const base of hits || d.hits) {
         if (!alive(f)) break;
         hitFoe(h, f, base, el, burn);
-        // a heavy blade blow severs one of the Bramble Horror's canes (it keeps at least three)
-        if (!cut && d.physical && f.def.canes && base >= 300 && f.canes > 3 && alive(f)) { cut = true; f.canes--; emit({ t: 'cane', who: f.key, left: f.canes }); }
+        // a heavy blade blow severs one of the Bramble Horror's canes (it keeps at least three), or one of the Colossus's
+        // four great canes (it keeps two)
+        if (!cut && d.physical && f.def.canes && base >= 300 && f.canes > (f.def.minCanes || 3) && alive(f)) { cut = true; f.canes--; emit({ t: 'cane', who: f.key, left: f.canes }); }
       }
       if (moon) h.moonNext = false;
       if (d.physical && alive(f) && f.vow > 0 && alive(h)) { emit({ t: 'counter', who: f.key, to: h.key }); hitHero(f, h, f.vow, { counter: true }); }

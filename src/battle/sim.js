@@ -13,6 +13,9 @@
 (function (G) {
   'use strict';
   const THINK = 1.5; // seconds a player spends on each menu, added to the fight's length
+  // an attentive player walks away from the Bramble Colossus once a fallen hero can't be brought back, or when every
+  // hero is under this share of her HP
+  let FLEE_LOW = 0.42;
 
   // ---------- the fights ----------
   // each band's wild packs: about a minute to a minute and a half for a sensible player, and a careless one still wins
@@ -32,6 +35,14 @@
     4: ['brambleTowering', 'brambleAncient'],
   };
   const formOf = (id, band, rand) => (id === 'bramble?' ? BRAMBLE_FORMS[band][Math.floor(rand() * BRAMBLE_FORMS[band].length)] : id);
+  // the Bramble Colossus, the last band's great wild foe: about one wild fight in twelve there, never in the first three
+  // after the party reaches the band, always alone (handoff, October 3)
+  const COLOSSUS = { band: 4, chance: 1 / 12, after: 3 };
+  // a wild fight's pack: the Colossus when it comes (seen: how many of the band's wild fights the party has had already)
+  function wildPack(band, rand, seen) {
+    if (band === COLOSSUS.band && (seen == null || seen >= COLOSSUS.after) && rand() < COLOSSUS.chance) return ['colossus'];
+    const packs = BAND_PACKS[band]; return packs[Math.floor(rand() * packs.length)];
+  }
   // the party carries one of each herb (Chris, October 3); out in the wilds it has the common three
   const BAGS = {
     wild: { moonpetal: 1, mugwort: 1, nightrose: 1 },
@@ -53,7 +64,7 @@
     wild: {
       name: 'Wild fights', note: "a random pack from the party's band, each foe at a level in the band's range", level: 3, levels: [2, 20],
       setup: (L, rand) => {
-        const b = bandOf(L), packs = BAND_PACKS[b], pack = packs[Math.floor(rand() * packs.length)];
+        const b = bandOf(L), pack = wildPack(b, rand);
         return { party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: pack.map((id) => ({ id: formOf(id, b, rand), level: wildLevel(b, rand) })), flags: flagsAt(L), herbs: BAGS.wild };
       },
     },
@@ -74,6 +85,11 @@
     bramble: {
       name: 'Bramble Horror', note: 'the Classic Horror alone, at the party’s level', level: 9, levels: [1, 20],
       setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'bramble', level: L }], flags: flagsAt(L), herbs: BAGS.wild }),
+    },
+    // the Bramble Colossus alone, at the party's level, where the party can flee (it is rooted, so fleeing always works)
+    colossus: {
+      name: 'Bramble Colossus', note: 'the Bramble Colossus alone, at the party’s level; the party can flee', level: 19, levels: [16, 20],
+      setup: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'colossus', level: L }], flags: flagsAt(L), herbs: BAGS.wild, ends: { canFlee: true } }),
     },
     brambleAncient: {
       name: 'Ancient Crown', note: 'the Ancient Crown alone, at the party’s level', level: 14, levels: [11, 20],
@@ -124,6 +140,10 @@
     ...[4, 9, 14].map((L) => ({ fight: 'bramble', level: L, policy: 'expert', win: [0.92, 1], why: 'The Bramble Horror alone: a good player wins' })),
     ...[14, 19].map((L) => ({ fight: 'brambleAncient', level: L, policy: 'sensible', win: [0.2, 0.5], why: 'The Ancient Crown at the party’s level: the worst thing in the wilds; an attentive player wins about one time in three' })),
     ...[14, 19].map((L) => ({ fight: 'brambleAncient', level: L, policy: 'expert', win: [0.45, 0.8], why: 'The Ancient Crown at the party’s level: even a perfect player wins only a little more than half the time' })),
+    // the Bramble Colossus at the party's level, from 18 to 20 (handoff, October 3): an expert wins about two times in three;
+    // an attentive player about one time in four, and flees when it goes badly, so seldom loses
+    ...[18, 19, 20].map((L) => ({ fight: 'colossus', level: L, policy: 'expert', win: [0.55, 0.8], why: 'The Bramble Colossus at the party’s level: an expert wins about two times in three' })),
+    ...[18, 19, 20].map((L) => ({ fight: 'colossus', level: L, policy: 'sensible', win: [0.15, 0.4], lose: [0, 0.15], why: 'The Bramble Colossus at the party’s level: an attentive player wins about one time in four, and flees otherwise' })),
     { fight: 'greatWraith', level: 5, policy: 'careless', win: [0.2, 0.6], why: 'The level 5 gate: a little harder than the wild fights' },
     { fight: 'greatWraith', level: 5, policy: 'sensible', win: [0.8, 0.96], why: 'The level 5 gate: a little harder than the wild fights' },
     { fight: 'greatWraith', level: 5, policy: 'expert', win: [0.97, 1], why: 'The level 5 gate: a good player wins' },
@@ -140,6 +160,7 @@
   function check(t, r) {
     const fails = [];
     if (t.win && (r.winRate < t.win[0] || r.winRate > t.win[1])) fails.push('win rate');
+    if (t.lose && (r.loseRate < t.lose[0] || r.loseRate > t.lose[1])) fails.push('loss rate');
     if (t.minutes && (r.minutes.median < t.minutes[0] || r.minutes.median > t.minutes[1])) fails.push('length');
     if (t.margin != null && r.loseMargin != null && r.loseMargin > t.margin) fails.push('margin');
     return fails;
@@ -158,6 +179,11 @@
         for (const f of forms) { xp += RL.grows(RL.FOES[f].xp, lv) / forms.length; sh += RL.grows(RL.FOES[f].shards, lv) / forms.length; }
       }
       xp /= n; sh /= n;
+      // the Bramble Colossus comes in one wild fight in twelve in its band, at a level in the band's range
+      if (b === COLOSSUS.band) {
+        let cx = 0, cs = 0; for (let lv = lo; lv <= hi; lv++) { cx += RL.grows(RL.FOES.colossus.xp, lv); cs += RL.grows(RL.FOES.colossus.shards, lv); }
+        const c = COLOSSUS.chance; xp = xp * (1 - c) + c * cx / (hi - lo + 1); sh = sh * (1 - c) + c * cs / (hi - lo + 1);
+      }
       rows.push({ level: L, need: RL.xpNeed(L), xp: Math.round(xp), shards: Math.round(sh), fights: RL.xpNeed(L) / xp });
     }
     return rows;
@@ -185,8 +211,10 @@
           if (!m.hits) continue;
           if (m.below && (f.used[id] || f.hp > f.maxHp * m.below) && f.charging !== id) continue;
           if (m.minLevel && f.level < m.minLevel && !f.def.allMoves) continue;
+          // a move that only follows another (the Colossus's Devour after its Siren Bloom) counts only while that one gathers
+          if (m.weight === 0 && !(f.charging && f.def.moves[f.charging].then === id)) continue;
           const hits = (f.solo && m.hitsSolo) || m.hits;
-          let n = hits.reduce((a, b) => a + b, 0) * k * 1.25 * (B.lunara === 1 ? 0.6 : 1);
+          let n = (hits.reduce((a, b) => a + b, 0) + (m.seize || 0) + (m.shock ? m.shock.reduce((a, b) => a + b, 0) : 0)) * k * 1.25 * (B.lunara === 1 ? 0.6 : 1);
           if (m.blackout) n = 300 * 1.25 * k * 1.25;
           worst = Math.max(worst, n);
         }
@@ -234,6 +262,12 @@
       const v = look(B, s), u = v.u, tgt = (v.boss || v.lowestFoe).key;
       // a Bramble Horror above the party's level: walk away from it (it can't follow)
       if (v.ok('flee') && v.foes.some((f) => f.def.alone && f.level > u.level)) return ['flee'];
+      // the Bramble Colossus: an attentive player tries it, and walks away when it goes badly, while it is still strong
+      const col = v.foes.find((f) => f.def.heart);
+      if (col && v.ok('flee') && col.hp > col.maxHp * 0.25) {
+        const noRevive = v.fallen.length && !v.ok('lunara') && !v.ok('herb:nightrose');
+        if (noRevive || v.heroes.every((h) => v.pct(h) < FLEE_LOW)) return ['flee'];
+      }
       if (u.id === 'io') {
         const low = v.heroes.filter((h) => v.pct(h) < 0.45 && !h.severed).sort((a, b) => v.pct(a) - v.pct(b));
         if (v.ok('moonlight')) return low.length && v.ok('mend') ? ['mend', low[0].key] : ['moonlight', tgt];
@@ -264,7 +298,7 @@
     },
 
     expert(B, s, rand) {
-      const v = look(B, s), u = v.u, RL = v.RL;
+      const v = look(B, s), u = v.u, RL = v.RL, col = v.foes.find((f) => f.def.heart);
       // a Bramble Horror two levels up, or an Ancient Crown above the party: walk away from it
       if (v.ok('flee') && v.foes.some((f) => f.def.alone && (f.level > u.level + 1 || (f.id === 'brambleAncient' && f.level > u.level)))) return ['flee'];
       // in a pack, finish the weakest; against a boss, the boss (but never hit into Warden's Vow if there's a choice)
@@ -292,6 +326,8 @@
           if (v.ok('herb:moonpetal')) return ['herb:moonpetal', atRisk[0].key];
         }
         if (v.ok('moonlight')) return ['moonlight', tgt];
+        // the Bramble Colossus's heart is bare: Flame Bolt lands on it double, and the fire makes it recoil
+        if (col && col.open && !col.charging && v.ok('flame') && u.mp >= 12 + 16) return ['flame', col.key];
         if (u.mp < 36 && v.ok('herb:mugwort')) return ['herb:mugwort', u.key];
         if (v.ok('envoi') && v.boss && v.foes.reduce((a, f) => a + f.hp, 0) > 3240 * RL.scale(u.level)) return ['envoi', tgt];
         const avg = v.heroes.reduce((a, h) => a + v.pct(h), 0) / v.heroes.length;
@@ -315,6 +351,12 @@
       }
       // a Bramble Horror's Lure holds Io: a sun blade breaks it
       if (v.charging && v.charging.def.fearsFire && v.io && v.io.lured) { if (v.ok('highNoon')) return ['highNoon', v.charging.key]; if (v.ok('flareCut')) return ['flareCut', v.charging.key]; }
+      // the Bramble Colossus: a sun blade breaks its Siren Bloom; while its heart is bare, her biggest blow lands double
+      if (col && col.open) {
+        if (v.ok('highNoon')) return ['highNoon', col.key];
+        if (u.heat >= 100 && v.ok('solarCrest')) return ['solarCrest', col.key];
+        if (v.ok('flareCut')) return ['flareCut', col.key];
+      }
       if (v.ok('highNoon') && (u.tranceLeft <= 1 || mainFoe.hp < mainFoe.maxHp * 0.08)) return ['highNoon', tgt];
       if (v.ok('daybreak') && !vowed(mainFoe)) return ['daybreak', tgt];
       if (v.fallen.length && v.ok('herb:nightrose')) return ['herb:nightrose', v.fallen[0].key];
@@ -356,7 +398,7 @@
   }
   function run(fight, level, policy, n, opts) {
     opts = opts || {};
-    const out = { fight, level, policy, n, win: 0, retreat: 0, lose: 0, stalemate: 0, times: [], close: 0, downs: 0, herbs: 0, foeLeftLose: [] };
+    const out = { fight, level, policy, n, win: 0, retreat: 0, lose: 0, fled: 0, stalemate: 0, times: [], close: 0, downs: 0, herbs: 0, foeLeftLose: [] };
     for (let i = 0; i < n; i++) {
       const r = playOne(fight, level, policy, (opts.seed || 1) + i, opts.tune);
       out[r.outcome]++;
@@ -367,7 +409,7 @@
     }
     out.times.sort((a, b) => a - b);
     const q = (p) => out.times[Math.min(n - 1, Math.floor(p * n))];
-    out.winRate = (out.win + out.retreat) / n;
+    out.winRate = (out.win + out.retreat) / n; out.loseRate = out.lose / n; out.fledRate = out.fled / n;
     out.minutes = { p10: q(0.1) / 60, median: q(0.5) / 60, p90: q(0.9) / 60 };
     out.closeRate = out.close / n;
     out.loseMargin = out.foeLeftLose.length ? out.foeLeftLose.reduce((a, b) => a + b, 0) / out.foeLeftLose.length : null;
@@ -375,5 +417,5 @@
     return out;
   }
 
-  G.BattleSim = { FIGHTS, POLICIES, BAND_PACKS, BRAMBLE_FORMS, formOf, BAND_LEVELS, wildLevel, BAGS, TARGETS, check, economy, playOne, run, bandOf, THINK };
+  G.BattleSim = { setFleeLow: (x) => { FLEE_LOW = x; }, FIGHTS, POLICIES, BAND_PACKS, BRAMBLE_FORMS, COLOSSUS, wildPack, formOf, BAND_LEVELS, wildLevel, BAGS, TARGETS, check, economy, playOne, run, bandOf, THINK };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

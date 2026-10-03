@@ -1,3 +1,4 @@
+// From 3d-model-new-character-ideas/bramble-colossus/colossus.js (October 3, 2026), the same file: keep the two alike.
 // colossus.js: the Bramble Colossus, the Bramble Horror grown into a boss. three.js r128 (global THREE).
 // Defines makeBrambleColossus(opts) only. The same creature as bramble.js (a blackberry thicket that hunts, of the
 // Wildlands of the Southern Isles) grown as big as a house: a mound of twisted roots, a spire of three canes braided round

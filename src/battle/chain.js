@@ -68,8 +68,10 @@
       return !worn;
     }
     function goRest() { restore(); }
+    // the band's wild fights so far: the Bramble Colossus never comes in the first few after the party reaches its band
+    const seen = {};
     function wildSetup(band) {
-      const packs = S.BAND_PACKS[band], pack = packs[Math.floor(rand() * packs.length)];
+      const pack = S.wildPack(band, rand, seen[band] || 0); seen[band] = (seen[band] || 0) + 1;
       return { party: party(), foes: pack.map((id) => ({ id: S.formOf(id, band, rand), level: S.wildLevel(band, rand) })), flags: Object.assign({}, P.flags), herbs: Object.assign({}, P.herbs), ends: { canFlee: true }, reward: RL.WILD_REWARD };
     }
     // one random encounter in a band's wilds; a loss wakes the party at its last rest

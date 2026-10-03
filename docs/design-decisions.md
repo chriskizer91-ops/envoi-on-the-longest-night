@@ -897,3 +897,36 @@ Chris asked for every decision to be made here (October 3). These are the ones p
   - The shipyard: Pim, Tock and Old Gil.
   - Misthollow: Sorrel, Ede and the watchwoman.
 - **Portraits and stills:** the townsfolk speak with pixel portraits until their paintings come (`art-requests/06-townsfolk-portraits.md`). The story's scenes play over the map or a battle painting until the stills come (`art-requests/07-story-stills.md`).
+
+## October 3, 2026, putting it all together
+
+Chris asked for everything to be brought together in a new folder, `putting-it-all-together/` (its README lists every piece). He is making at least two more mobs, and his three songs go in last, once the whole build is finished. The work so far is on one branch, `ccr-9e19f4e2-29pyn6`: the game from `second-account-work` and the creature ideas from `claude/sleepy-dirac-t4ftx0`.
+
+### The Bramble Colossus joins the game
+
+The plan in `handoff.md` (section 2), built:
+
+- **Where:** the last band only. About one wild fight in twelve there, never in the band's first three wild fights. It stands beside the frozen road (`src/stage/frozen-road.js`), and its level is rolled in the band's range like any wild foe's.
+- **Always alone, and rooted,** so Flee always works.
+- **Its moves** are its bench's: Thorn Lance, Hammerfall (a club on one hero, then a shockwave on the whole party), Maelstrom (four blows on everyone), Thorn Volley (three waves of thorns on everyone) and Thornwood (shoots round one hero, two blows).
+- **Siren Bloom and Devour are one move in two turns,** as the Bramble Horror's Lure and Grab are:
+  - Siren Bloom opens the flower on its heart and charms the party: their turn gauges fill at half speed.
+  - On its next turn it Devours the one it chose: a seizing blow, then three gulps, each healing it by what it takes.
+  - Fire breaks the bloom, as fire breaks a lure, and so does a big blow to its bare heart: one hit of 450 or more at level 1 (`rules.js` `BIG_BLOW`), such as Flare Cut, Kestrel Stoop or High Noon.
+  - The handoff had fire or a big blow make it spit its prey out. A battle turn can't stop halfway through the model's Devour, so the counter comes before it instead.
+- **The weak point:** while its bud is open, every blow on its heart lands double ("Weak point!"). The bud is open during Siren Bloom, after Devour and after its Wrath, until its next turn. The model holds the bud open meanwhile (`state.open`, a technical addition to `colossus.js`).
+- **Its Wrath** comes once, at half its HP. It turns 20% quicker and hits 20% harder, its veins burn ember-red, and its bare heart opens. It favours Hammerfall, Maelstrom and Thornwood after that.
+- **Fire and canes, as the Bramble Horror's:**
+  - fire makes it recoil, and its next turn comes later;
+  - a heavy blade blow severs one of its four great canes (it keeps two), and each cane lost takes 8% off its blows.
+- **Its numbers:** 20,000 HP at level 1's scale, a turn gauge of 2.3 seconds. Worth three times an average wild fight in its band (270 experience and 195 shards at level 1), and wild fights' 1.75 on top.
+- **How hard it is,** at the party's level from 18 to 20, 1,000 fights each (`tools/balance.mjs`):
+  - an expert wins 63%;
+  - an attentive player wins 25%, flees about 68% of the time and loses 6%. They walk away once a fallen hero can't be brought back, or when both heroes are under 42% of their HP;
+  - a careless one wins about 3%.
+- **The journey** (`tools/chain.mjs`, medians of 40): the attentive player's 28 wild fights and 25 more walking for levels, and the expert's 27 and 22, are as before. Every gate is reached at its level.
+- **The battle screen:**
+  - a boss bar with a mark at half its HP, its phase ("Wrath"), and a "Heart bare" line while blows land double;
+  - Devour carries its prey in its arms and hides her inside its shut flower;
+  - charmed heroes walk a few steps toward the flower.
+- **The demo** is `demos/colossus.html`: Io and Sol at a level from 16 to 20 against it, on the frozen road.

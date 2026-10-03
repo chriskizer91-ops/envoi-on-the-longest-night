@@ -1,7 +1,9 @@
 // thareia-audio.js: Chris's sound library and music from the 20-min repo (vendor/thareia-sfx/sounds.js and music.js,
 // read-only), joined unchanged into one plain script for the game: 100 sound effects and nine pieces of music, all
 // made in code with Web Audio. Only the module wrapping changed (no import or export).
-// Defines window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC }.
+// Defines window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, setVolume }.
+// One addition for the game (October 3, 2026): setVolume(music, effects), the game's two volume settings (0 to 1; 0.75 is
+// the library's own level).
 (function () {
 'use strict';
 /* ---------- sounds.js ---------- */
@@ -19,6 +21,7 @@ const hz = f => {
 const rnd = (a, b) => a + Math.random() * (b - a);
 
 let AC = null, OUT = null, REV = null, NOISE = null, BUS = null, BUSREV = null, ECHO = null;
+const VOL = { music: 1, sfx: 1 }; // the game's volume settings (setVolume)
 function sfxInit(given) {
   if (AC && !given) { if (AC.state === 'suspended') AC.resume(); return AC; }
   AC = given || new (window.AudioContext || window.webkitAudioContext)();
@@ -347,7 +350,7 @@ const sfxNodes = () => ({ AC, OUT, REV });
 function playSfx(sound, t) {
   const e = typeof sound === 'string' ? S.find(x => x.id === sound) : sound;
   if (!e || !AC) return;
-  const k = LEVEL[e.id] ?? 1;
+  const k = (LEVEL[e.id] ?? 1) * VOL.sfx;
   BUS = AC.createGain(); BUS.gain.value = k; BUS.connect(OUT);
   BUSREV = AC.createGain(); BUSREV.gain.value = k; BUSREV.connect(REV);
   try { e.play(t ?? AC.currentTime + .02); } finally { BUS = null; BUSREV = null; }
@@ -592,8 +595,8 @@ function musicPlay(id, o = {}) {
   musicStop(.6);
   const AC = o.ctx ? sfxInit(o.ctx) : sfxInit(), { OUT, REV } = sfxNodes();
   const P = PIECES.find(p => p.id === id); if (!P) return;
-  const bus = AC.createGain(); bus.gain.value = .9; bus.connect(OUT);
-  const rev = AC.createGain(); rev.gain.value = .9; rev.connect(REV);
+  const bus = AC.createGain(); bus.gain.value = .9 * VOL.music; bus.connect(OUT);
+  const rev = AC.createGain(); rev.gain.value = .9 * VOL.music; rev.connect(REV);
   // a tempo-synced echo (three sixteenths), fed back softly and darkened
   const beat = 60 / P.bpm, echoIn = AC.createGain(), dl = AC.createDelay(2), fb = AC.createGain(), dark = AC.createBiquadFilter();
   dl.delayTime.value = beat * .75; fb.gain.value = .38; dark.type = 'lowpass'; dark.frequency.value = 2600;
@@ -622,5 +625,11 @@ function musicPlay(id, o = {}) {
   cur.timer = setInterval(() => pump(AC.currentTime + .3), 60);
 }
 
-window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, sfxContext };
+// the game's volumes: the music now playing follows at once
+function setVolume(music, effects) {
+  VOL.music = music / .75; VOL.sfx = effects / .75;
+  if (cur && AC) { cur.bus.gain.setTargetAtTime(.9 * VOL.music, AC.currentTime, .05); cur.rev.gain.setTargetAtTime(.9 * VOL.music, AC.currentTime, .05); }
+}
+
+window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, sfxContext, setVolume };
 })();

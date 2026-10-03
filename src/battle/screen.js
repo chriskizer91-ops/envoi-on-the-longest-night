@@ -142,7 +142,7 @@
       }
       if (pts.length) shotFit(pts, 1, k || 2);
     }
-    function addShake(px) { if (!REDUCED) shake.amp = Math.max(shake.amp, px); }
+    function addShake(px) { if (!REDUCED) shake.amp = Math.max(shake.amp, px); if (BF) BF.shake(px); }
     function applyCam(rdt) {
       if (cam.follow) { const p = cam.follow(); const q = toPx(tmpV.set(p.x, 1.1, p.z)); cam.tx = q[0]; cam.ty = q[1]; cam.ts = cam.fs; }
       const k = REDUCED ? 1 : 1 - Math.exp(-rdt * cam.k);
@@ -163,6 +163,23 @@
         drawTown(ox, oy, S2);
         lastTf = tf;
       }
+    }
+    // the red storm over the painting's sky in a boss's second phase (the Colossus's Wrath): a red wash down to the
+    // painting's skyline, wherever the camera is, and red lightning now and then
+    const SKY = { v: 0, to: 0, bolt: 0 };
+    const skyTo = (v) => { SKY.to = v; };
+    function lightning(k) {
+      if (SKY.v < 0.3) return;
+      SKY.bolt = k; UI.flash('#ff7a5a', 0.28 * k, 0.3); addShake(5 * k);
+      setTimeout(() => SND.sfx.boom(0.5 + 0.5 * k), 350 + Math.random() * 500);
+    }
+    function stepSky(rdt) {
+      SKY.v += (SKY.to - SKY.v) * Math.min(1, rdt * 0.6); SKY.bolt = Math.max(0, SKY.bolt - rdt * 3);
+      const el2 = $('sky'); if (!el2) return;
+      const a = Math.min(1, SKY.v * 0.85 + SKY.bolt * 0.5);
+      el2.style.opacity = a > 0.003 ? a.toFixed(3) : '0';
+      // the painting's skyline on screen: its row, through the camera as it stands
+      if (a > 0.003) { const q = g(IW / 2, (BF && BF.air.sky) || 190), y = toScreen(tmpV.set(q.x, 0, q.z))[1]; el2.style.setProperty('--skyline', Math.max(40, y + 50).toFixed(0) + 'px'); }
     }
     // the painted windows that light again when a scene's stolen lamplight comes home (Bogmire): warm glows drawn over
     // the painting, each fading in when its light arrives
@@ -216,6 +233,7 @@
     let heroes = [], foes = [];
     let LU = null;                // Lunara
     let EN = null;                // Envoi, when the page has it (from Dawnroost on)
+    let BF = null;                // the living battlefield (battlefield.js): the painting's air, and how it answers the fight
     let E = null;                 // the engine
     const D = {};                 // what the player has been shown so far, per unit
     const S = { trace: [], state: 'boot', acting: false, t0: 0, skip: false, auto: cfg.auto || null, rand: null, result: null, dealt: 0, guard: {}, rime: 0, rimeOn: false, choosing: null, known: false };
@@ -308,8 +326,12 @@
           const u = E.unit(f.key), r = el('div', { class: 'foe' }, en);
           const nm = el('div', { class: 'ename' }, r), label = el('span', null, nm, shownName(u)); el('small', null, nm, 'Level ' + u.level);
           const cold = u.def.rage ? el('small', { class: 'cold' }, nm, '') : null;
+          // a boss with a second phase (the Colossus's Wrath at half its HP): a mark on its bar, and its phase and heart
+          const two = !!u.def.moves.enrage, phase = two ? el('small', { class: 'phase' }, nm, '') : null;
           const ga = el('div', { class: 'gauge' }, r), i = el('i', { class: 'ehp' }, ga);
-          rows[f.key] = { r, i, label, cold, last: {} };
+          if (two) { el('b', { class: 'wmark', 'aria-hidden': 'true' }, ga); r.classList.add('boss'); }
+          const heart = u.def.heart ? el('div', { class: 'heart', hidden: '' }, r, 'Heart bare: blows land double') : null;
+          rows[f.key] = { r, i, label, cold, phase, heart, last: {} };
         }
       }
       const set = (row, k, v, fn) => { if (row.last[k] !== v) { row.last[k] = v; fn(v); } };
@@ -332,6 +354,8 @@
           const u = E.unit(f.key), d = D[f.key], R = rows[f.key]; if (!R || !u) continue;
           set(R, 'hp', Math.round(d.hp / u.maxHp * 400), () => { R.i.style.width = (d.hp / u.maxHp * 100).toFixed(1) + '%'; R.r.classList.toggle('down', d.hp <= 0); });
           // the finale's deepening cold: how much harder her blows (and Halcyon's) land now
+          if (R.phase) set(R, 'wrath', !!f.wrathShown, (v) => { R.phase.textContent = v ? 'Wrath' : ''; R.r.classList.toggle('wrath', v); });
+          if (R.heart) set(R, 'heart', !!f.openShown && d.hp > 0, (v) => { R.heart.hidden = !v; });
           if (R.cold) set(R, 'cold', u.acted, (v) => { R.cold.textContent = v ? 'Cold +' + Math.round(u.rage * v * 100) + '%' : ''; const c = $('cold'); if (c) c.style.opacity = String(Math.min(0.95, 0.07 * v)); });
         }
       }
@@ -448,7 +472,12 @@
         const big = o.big || e.n >= 300 * RL.scale(from ? from.level : 1);
         if (u.side === 'foe') {
           S.dealt += e.n;
-          UI.number(chest(to), nf(e.n), big ? 'big' : '');
+          // the Colossus's bare heart: the blow lands there, double
+          if (e.weak) {
+            const hp = to.m.anchor('heart', V()); UI.number(hp, nf(e.n), 'big weak'); word(to, 'Weak point!', 'weak');
+            FX.ring(hp, 0xff7aa8, 0.1, 1.2, 0.35, 1); FX.flashLight(hp, 0xff5a8a, 3, 0.25);
+            if (!S.heartSeen) { S.heartSeen = true; UI.note('Its heart is bare: every blow lands double while its flower is open.', 2.6); }
+          } else UI.number(chest(to), nf(e.n), big ? 'big' : '');
           if (d.hp > 0 && !(u.vow > 0) && !u.charging) to.m.play('hurt');
           const df = D[e.from]; if (df && !df.inTrance && from && from.side === 'hero') df.tr = Math.min(0.99, df.tr + RL.TRANCE.dealt);
         } else {
@@ -478,8 +507,9 @@
       else if (e.t === 'cover') word(who, 'Guard');
       else if (e.t === 'counter') word(who, 'Counter');
       else if (e.t === 'scorch') {
-        who.m.play('burn', true);
-        if (e.broke) { who.charged = false; word(who, 'Lure broken'); UI.note('The flame breaks the lure. Its prey is free.', 2); }
+        who.m.play(e.heart ? 'hurt' : 'burn', true);
+        if (e.broke && who.kind === 'colossus') { who.charged = false; who.openShown = false; word(who, 'Bloom broken'); UI.note(e.heart ? 'A great blow to its bare heart: it shuts its flower, and the bloom is broken.' : 'The fire makes it recoil and shut its flower: the bloom is broken.', 2.4); }
+        else if (e.broke) { who.charged = false; word(who, 'Lure broken'); UI.note('The flame breaks the lure. Its prey is free.', 2); }
         else { word(who, 'Recoils'); if (!S.scorchSeen) { S.scorchSeen = true; UI.note('It fears fire: the flame makes it recoil, and its next turn comes later.', 2.4); } }
       } else if (e.t === 'cane') {
         if (who.m.sever) who.m.sever();
@@ -491,6 +521,10 @@
         else { D[e.to].mp = Math.max(0, D[e.to].mp - e.n); if (e.n) word(to, '−' + e.n + ' MP'); }
       }
       else if (e.t === 'oath') word(who, 'Warden’s Oath');
+      else if (e.t === 'open') { who.openShown = true; }
+      else if (e.t === 'shut') { who.openShown = false; }
+      else if (e.t === 'charmed') word(to, 'Charmed');
+      else if (e.t === 'wrath') { who.wrathShown = true; if (who.m.state) who.m.state.wrath = 1; if (BF) { BF.storm(1); BF.roar(1.2); } skyTo(1); }
       else if (e.t === 'heat') { D[e.to].heat = Math.min(100, D[e.to].heat + e.n); word(to, '+' + e.n + ' Heat', 'heat'); }
       else if (e.t === 'mp') { D[e.to].mp = Math.min(E.unit(e.to).maxMp, D[e.to].mp + e.n); word(to, '+' + e.n + ' MP', 'heal'); }
       else if (e.t === 'burn') { D[e.to].hp = Math.max(1, D[e.to].hp - e.n); UI.number(chest(to), nf(e.n), 'burn'); }
@@ -515,6 +549,7 @@
       const p = chest(t);
       FX.slash(p, color || 0xffffff, rot === undefined ? rnd(-0.6, 2.6) : rot, big ? 1.3 : 1.05, 0.3); FX.burst(p, [1, 0.95, 0.8], big ? 40 : 26, big ? 4 : 3.2); FX.flashLight(p, 0xfff1d0, big ? 3 : 2, 0.2);
       SND.sfx.hit(big ? 1.2 : 0.9); addShake(big ? 9 : 5); hitStop(big ? 0.11 : 0.06);
+      if (big && BF && t.pos) BF.impact(t.pos, 0.55);
     }
     // a hero's move that runs up to its foe, plays its motion, lands each blow at the motion's hit times, and runs back
     async function melee(h, t, ev, act, dist, o) {
@@ -1403,6 +1438,173 @@
       await until(() => !W.busy); await wait(0.4); ev.rest();
     }
 
+    // ---------- the Bramble Colossus (3d-model-new-character-ideas/bramble-colossus): the last band's great wild foe ----------
+    // Rooted, and as big as a house. Its canes reach for their prey (state.target, from aimAt); its own model draws the
+    // shockwaves, the split ground, the flung thorns, Thornwood's shoots and the life it drinks. In Devour its prey is
+    // carried in its arms (heldBy, as in the Bramble Horror's Grab) and hidden while she is inside its shut bud. Between its
+    // turns the engine says whether its bud is open, its heart bare to blows that land double, and the model holds it open
+    // (state.open)
+    function quake(p, k) {
+      FX.ring(p, 0xffd9c8, 0.3, 3.4 * k, 0.8, 0.8);
+      FX.burst(new THREE.Vector3(p.x, 0.15, p.z), [0.5, 0.42, 0.36], Math.round(44 * k), 3.2, { up: 1 });
+      addShake(12 * k); SND.sfx.boom(0.6 + 0.4 * k);
+      if (BF) BF.impact(p, k);
+    }
+    // the party's middle, for the moves that fall on everyone
+    function partyAim() {
+      const tg = reach(), c = centerOf((tg.length ? tg : living('hero')).map((h) => h.pos));
+      return { pos: c, look: {}, m: { anchor: (n, o) => (o || V()).set(c.x, 1.1, c.z) } };
+    }
+    // a wave of blows on everyone: the engine tags each hero's blow with its wave
+    function showWave(ev, i, o) { while (ev.peek() && (ev.peek().wave === i || ev.peek().t !== 'hit')) ev.show(o); }
+    const COLOSSUS_MOVES = {
+      // the lead arm draws back high and spears down through its prey into the ground
+      async lance(f, ev) {
+        const t = blowTarget(ev), W = f.m, A = W.ACTIONS.lance; f.aimAt = t;
+        shotBoth(t.pos, f.pos, 1, 2.4);
+        W.play('lance', true); SND.sfx.grasp();
+        await untilP(W, A.cues[0]); SND.sfx.swish();
+        await untilP(W, A.hits[0]);
+        if (ev.has()) { const tt = blowTarget(ev); thornFx(tt, true); quake(tt.pos, 0.7); hitStop(0.12); ev.show({ big: true }); }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+      },
+      // Hammerfall: both arms twine into one club and hang while the heart blazes, then fall on the prey; the ground splits
+      // and a shockwave runs out over the whole party
+      async slam(f, ev) {
+        const t = blowTarget(ev), W = f.m, A = W.ACTIONS.slam; f.aimAt = t;
+        shotBoth(t.pos, f.pos, 0.95, 2.2);
+        W.play('slam', true); SND.sfx.grasp();
+        await untilP(W, A.cues[0]); FX.converge(() => W.anchor('heart', V()), [1, 0.35, 0.5], 0.7, 70); SND.sfx.eclipse();
+        await untilP(W, A.hits[0]);
+        if (ev.has()) { const tt = blowTarget(ev); thornFx(tt, true); quake(tt.pos, 1.25); UI.flash('#ffd8c8', 0.35, 0.3); hitStop(0.12); ev.show({ big: true }); }
+        await untilP(W, A.hits[1]);
+        if (ev.has()) { shotField(3); for (const h of reach()) FX.burst(chest(h), [0.7, 0.58, 0.48], 26, 2.8); addShake(10); SND.sfx.hit(0.9); ev.showAll(); }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+      },
+      // Maelstrom: it winds round, then every cane whirls round it twice at three heights, four blows on the whole party
+      async whirl(f, ev) {
+        const W = f.m, A = W.ACTIONS.whirl; f.aimAt = partyAim();
+        shotField(2.2);
+        W.play('whirl', true); SND.sfx.grasp();
+        await untilP(W, A.cues[0]); SND.sfx.swish();
+        for (let k = 0; k < A.hits.length; k++) {
+          await untilP(W, A.hits[k]);
+          if (!ev.has()) continue;
+          if (warded(ev)) { thornFx(ENV.ward, true); ev.show(); continue; }
+          for (const h of reach()) thornFx(h, k === A.hits.length - 1);
+          SND.sfx.swish(); addShake(7 + 2 * k); showWave(ev, k);
+        }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+      },
+      // Thorn Volley: two whip-cracks fling its thorns high, and they rain on the party in three waves
+      async volley(f, ev) {
+        const W = f.m, A = W.ACTIONS.volley; f.aimAt = partyAim();
+        shotField(2.4);
+        W.play('volley', true); SND.sfx.swish();
+        for (const c of A.cues) { await untilP(W, c); SND.sfx.swish(); addShake(4); }
+        for (let k = 0; k < A.hits.length; k++) {
+          await untilP(W, A.hits[k]);
+          if (!ev.has()) continue;
+          if (warded(ev)) { thornFx(ENV.ward, true); ev.show(); continue; }
+          for (const h of reach()) { thornFx(h, false); FX.burst(new THREE.Vector3(h.pos.x + rnd(-0.8, 0.8), 0.1, h.pos.z + rnd(-0.8, 0.8)), [0.55, 0.45, 0.38], 16, 2, { up: 1 }); }
+          showWave(ev, k);
+        }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+      },
+      // Thornwood: its canes stab the soil, the ground splits toward the prey, and shoots as tall as young trees burst up
+      // round her and squeeze
+      async briar(f, ev) {
+        const t = blowTarget(ev), W = f.m, A = W.ACTIONS.briar; f.aimAt = t;
+        shotBoth(t.pos, f.pos, 1, 2.4);
+        W.play('briar', true); SND.sfx.grasp();
+        await untilP(W, A.cues[0]); quake(t.pos, 0.6); hitStop(0.05);
+        if (!warded(ev)) FX.briars(t.pos, 2.4);
+        for (let k = 0; k < A.hits.length; k++) {
+          await untilP(W, A.hits[k]);
+          if (ev.has()) { const tt = blowTarget(ev); thornFx(tt, true); FX.burst(new THREE.Vector3(tt.pos.x, 0.25, tt.pos.z), [0.6, 0.3, 0.35], 40, 3, { up: 1 }); ev.show({ big: k === A.hits.length - 1 }); }
+        }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+      },
+      // Devour, the bloom's end: its arms seize the charmed hero and lift her into the flower, which shuts; three gulps,
+      // each a blow and then a heal, while ribbons of stolen life spiral down the spire; then it bursts open and sets her
+      // back where she stood
+      async devour(f, ev) {
+        const t = blowTarget(ev), W = f.m, A = W.ACTIONS.devour, real = !!F[t.key] && t.side === 'hero';
+        f.aimAt = t; shotBoth(t.pos, f.pos, 0.95, 2.2);
+        if (real) { t.chestH = chest(t).y - (t.y || 0); t.heldBy = f; }
+        W.play('devour', true); SND.sfx.grasp();
+        await untilP(W, A.hits[0]);
+        if (ev.has()) { thornFx(blowTarget(ev), true); ev.show(); }
+        followShot(() => W.anchor('bud', V()), 1.1, 2.4);
+        for (let k = 1; k < A.hits.length; k++) {
+          await untilP(W, A.hits[k]);
+          if (ev.peek() && ev.peek().t !== 'heal') { const p = W.anchor('bloom', V()); FX.burst(p, [0.95, 0.3, 0.55], 26, 2.4); FX.flashLight(p, 0xff3d8a, 3, 0.3); SND.sfx.hit(0.85); addShake(6); ev.show(); }
+          await untilP(W, A.cues[k - 1]);
+          if (ev.peek() && ev.peek().t === 'heal') { FX.burst(W.anchor('heart', V()), [1, 0.35, 0.6], 22, 2); SND.sfx.heal(); ev.show(); }
+        }
+        await untilP(W, A.cues[A.cues.length - 1]); shotBoth(t.pos, f.pos, 0.95, 2.4); SND.sfx.boom(0.6);
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+        if (real) { await until(() => !t.heldBy && !(t.y > 0.01)); if (D[t.key].hp > 0) await goHome(t, 3); }
+      },
+      // Wrath, its second phase at half its HP: it curls in on itself, then bursts open in a ring of red light
+      async enrage(f, ev) {
+        const W = f.m, A = W.ACTIONS.enrage;
+        UI.cinematic(true); shotAt(f.pos, 0.85, 2.2, f.tall * 0.55);
+        W.play('enrage', true); SND.sfx.grasp();
+        await untilP(W, A.cues[0]);
+        W.state.wrath = 1; f.wrathShown = true;
+        FX.ring(f.pos, 0xff4a2a, 0.5, 7.5, 1.1, 1); FX.flashLight(W.anchor('heart', V()), 0xff4a2a, 5, 0.8, 14);
+        UI.flash('#ff5a3a', 0.45, 0.6); SND.sfx.eclipse(); SND.sfx.shriek(1.3); addShake(16); hitStop(0.1);
+        UI.note('Its Wrath: it is quicker and hits harder now. Its flower has burst open, and its heart is bare.', 3);
+        await until(() => !W.busy); ev.rest();
+        UI.cinematic(false);
+      },
+    };
+    // Siren Bloom: the flower opens wide on its heart and pours pollen over the party, who step toward it, charmed. On its
+    // next turn it Devours the one it chose. Fire, or a big blow to the bare heart, breaks the bloom
+    async function bloomTurn(f, hd, ev) {
+      const W = f.m, A = W.ACTIONS.bloom, t = hd.to ? F[hd.to] : null;
+      UI.banner(hd.name, 2.4); f.aimAt = partyAim(); shotBoth(t ? t.pos : f.aimAt.pos, f.pos, 0.95, 2.2);
+      W.play('bloom', true); SND.sfx.chime(); f.charged = true;
+      await untilP(W, A.cues[0]);
+      FX.converge(() => W.anchor('bloom', V()), [1, 0.7, 0.85], 1, 60);
+      await untilP(W, A.hits[0]);
+      const fl = W.anchor('bloom', V());
+      for (const h of reach()) { FX.burst(chest(h), [1, 0.75, 0.9], 20, 1.6); const p = { x: h.pos.x + (fl.x - h.pos.x) * 0.22, z: h.pos.z + (fl.z - h.pos.z) * 0.22 }; moveTo(h, p.x, p.z, 0.8); }
+      ev.rest();
+      if (t) f.aimAt = t;
+      UI.note('Its pollen charms the party: their turns come at half speed. It will Devour ' + (t ? E.unit(t.key).name : 'one of them') + ' on its next turn. Fire, or a big blow to its bare heart, breaks the bloom.', 3.6);
+      await until(() => !W.busy); await wait(0.3);
+    }
+
+    // ---------- any foe's move, from its model's own motion: how a new mob plays before it has choreography of its own ----------
+    // The move's `act` in rules.js names the model's action (the move's own name by default). The foe walks up to its prey
+    // first if its look says how near it strikes from (`near`), plays the action, and the engine's blows land at the
+    // action's hit times, in its look's colors (`hitColor`, `hitRGB`). A move on the whole party lands wave by wave
+    async function anyMove(f, hd, ev) {
+      const W = f.m, u = E.unit(f.key), m = u.def.moves[hd.move] || {}, act = m.act || hd.move, A = W.ACTIONS && W.ACTIONS[act];
+      if (!A) { await wait(0.8); ev.rest(); return; }
+      const k = f.look.fxScale || 1, color = f.look.hitColor || 0xfff1d0, rgb = f.look.hitRGB || [1, 0.9, 0.75];
+      const all = m.target === 'all', self = m.target === 'self', t = all || self ? null : blowTarget(ev);
+      const fx = (h, big) => { const p = chest(h); FX.slash(p, color, rnd(-0.6, 2.6), (big ? 1.35 : 1.1) * Math.sqrt(k), 0.3); FX.burst(p, rgb, big ? 40 : 26, big ? 3.8 : 3); FX.flashLight(p, color, big ? 3 : 2, 0.3); SND.sfx.hit(big ? 1.2 : 0.9); addShake((big ? 10 : 6) * k); hitStop(big ? 0.1 : 0.05); };
+      const walks = !!(f.look.near && t && t.pos);
+      if (walks) { const spot = toward(f.pos, t.pos, f.look.near); shotBoth(t.pos, f.pos, 1.1, 2.5); await moveTo(f, spot.x, spot.z, f.look.speed || 3.4); faceTo(f, t); await wait(0.1); }
+      if (all) { f.aimAt = partyAim(); shotField(2.4); } else if (self) shotAt(f.pos, 1.2, 2.4); else { f.aimAt = t; shotBoth(t.pos, f.pos, 1.05, 2.5); }
+      W.play(act, true); if (!self) SND.sfx.swish();
+      const H = A.hits && A.hits.length ? A.hits : [0.5];
+      for (let i = 0; i < H.length; i++) {
+        await untilP(W, H[i]);
+        if (!ev.has()) continue;
+        const last = i === H.length - 1;
+        if (warded(ev)) { fx(ENV.ward, true); ev.show(); continue; }
+        if (self) { const p = chest(f); FX.burst(p, rgb, 30, 2.6); if (ev.peek().t === 'heal') SND.sfx.heal(); ev.show(); continue; }
+        if (all) { for (const h of reach()) fx(h, last); if (H.length > 1) showWave(ev, i); else ev.showAll(); continue; }
+        fx(blowTarget(ev), last && H.length > 1); ev.show({ big: last && H.length > 1 });
+      }
+      await until(() => !W.busy); f.aimAt = null; ev.rest();
+      if (walks && D[f.key].hp > 0) await goHome(f, f.look.speed || 3.2);
+    }
+
     // her lost turn after Kestrel: she hesitates, and the moment passes
     async function hesitate(f, ev) {
       UI.banner('Hesitates', 1.6); shotAt(f.pos, 1.5, 2.4);
@@ -1443,7 +1645,7 @@
         else if (hd.t === 'strike' && hd.who === 'lunara') await lunaraStrike(ev);
         else if (hd.t === 'strike' && hd.who === 'envoi' && EN) await envoiStrike(ev);
         else if (hd.t === 'herb') await useHerb(F[hd.who], hd, ev);
-        else if (hd.t === 'charge') await (F[hd.who] && F[hd.who].kind === 'bramble' ? lureTurn(F[hd.who], hd, ev) : chargeTurn(F[hd.who], hd, ev));
+        else if (hd.t === 'charge') await (F[hd.who] && F[hd.who].kind === 'bramble' ? lureTurn(F[hd.who], hd, ev) : F[hd.who] && F[hd.who].kind === 'colossus' ? bloomTurn(F[hd.who], hd, ev) : chargeTurn(F[hd.who], hd, ev));
         else if (hd.t === 'stagger') await hesitate(F[hd.who], ev);
         else if (hd.t === 'move') {
           const f = F[hd.who], u = E.unit(hd.who), t = hd.target ? F[hd.target] : null;
@@ -1456,8 +1658,8 @@
           } else {
             if (hd.released) f.charged = false;
             UI.banner(hd.name, hd.move === 'eclipse' ? 2.4 : 1.4);
-            const fn = (f.kind === 'wisp' ? WISP_MOVES : f.kind === 'halcyon' ? HALCYON_MOVES : f.kind === 'bramble' ? BRAMBLE_MOVES : f.kind === 'noctara' ? NOCTARA_MOVES : WRAITH_MOVES)[hd.move];
-            if (fn) await fn(f, ev); else { await wait(0.8); ev.rest(); }
+            const fn = (f.kind === 'wisp' ? WISP_MOVES : f.kind === 'halcyon' ? HALCYON_MOVES : f.kind === 'bramble' ? BRAMBLE_MOVES : f.kind === 'colossus' ? COLOSSUS_MOVES : f.kind === 'noctara' ? NOCTARA_MOVES : WRAITH_MOVES)[hd.move];
+            if (fn) await fn(f, ev); else await anyMove(f, hd, ev);
           }
         } else if (hd.t === 'frostEnds' && ev.has()) await thaw(hd, ev);
         else { apply(hd); ev.rest(); } // anything between turns, such as the frost wearing off
@@ -1548,7 +1750,7 @@
       } else await playLog(s.log);
       if (E.over) return finish();
       // anyone knocked out of place walks back (not a fallen hero, and not Sol hanging in the air)
-      await Promise.all(standing().filter((f) => D[f.key].hp > 0 && f.m.action !== 'stoopRise' && !(E.unit(f.key) && E.unit(f.key).lured)).map((f) => goHome(f, 2.2)));
+      await Promise.all(standing().filter((f) => D[f.key].hp > 0 && f.m.action !== 'stoopRise' && !(E.unit(f.key) && (E.unit(f.key).lured || E.unit(f.key).charmed))).map((f) => goHome(f, 2.2)));
       shotField(2);
       S.acting = false;
     }
@@ -1593,7 +1795,7 @@
           FX.burst(new THREE.Vector3(f.pos.x, f.tall * 0.6, f.pos.z), f.look.appearColor || (f.kind === 'wisp' ? [0.8, 0.6, 1] : [0.3, 1, 0.55]), 40, 2.6);
           await wait(0.25);
         }
-        SND.sfx.shriek(1.0);
+        SND.sfx.shriek(1.0); if (BF) BF.roar(foes.some((f) => f.tall > 3) ? 1.2 : 0.6);
         await wait(0.6);
         if (told && cfg.introAfter && !S.skip) { UI.msg(said(cfg.introAfter), true); await ws(2.6); }
         UI.hideMsg(); $('skip').hidden = true;
@@ -1856,9 +2058,11 @@
       for (const h of heroes) {
         if (h.m.reset) h.m.reset();
         h.m.guard(false); h.pos = { x: h.home.x, z: h.home.z }; h.yaw = h.tyaw = h.home.yaw; h.target = null; h.res = null; h.spin = 0; h.aim = null; h.aimAt = null; h.trance = 0; h.out = false; h.heldBy = null; h.y = 0; h.vy = 0;
+        if (h.inside) { h.inside = false; h.m.root.visible = true; if (h.m.fx) h.m.fx.visible = true; }
         if (h.m.state) { h.m.state.heat = 0; h.m.state.sunburn = 0; h.m.state.trance = 0; }
       }
       FX.shield(false); S.rimeOn = false;
+      if (BF) BF.storm(0); skyTo(0); SKY.v = 0;
       for (let i = 0; i < TOWN.a.length; i++) TOWN.a[i] = TOWN.to[i] = 0; TOWN.stars = TOWN.starsTo = 0; TOWN.ver++;
       darkTo(0, 0.1); { const c = $('cold'); if (c) c.style.opacity = '0'; }
       for (const f of foes) f.charged = false;
@@ -1914,7 +2118,11 @@
           else if (!f.heldBy.m.busy) f.heldBy = null;
         }
         if (!f.heldBy && f.y > 0) { f.vy = (f.vy || 0) - 9.8 * dt; f.y = Math.max(0, f.y + f.vy * dt); if (!f.y) f.vy = 0; }
-        if (f.kind === 'bramble' && f.m.state && E) { const u = E.unit(f.key); if (u) f.m.state.wilt = 1 - D[f.key].hp / u.maxHp; }
+        if ((f.kind === 'bramble' || f.kind === 'colossus') && f.m.state && E) { const u = E.unit(f.key); if (u) f.m.state.wilt = 1 - D[f.key].hp / u.maxHp; }
+        // the Colossus holds its bud open while its heart is bare
+        if (f.kind === 'colossus' && f.m.state) f.m.state.open += ((f.openShown && !f.out ? 1 : 0) - f.m.state.open) * Math.min(1, dt * 3);
+        // inside the Colossus's shut bud, its prey is out of sight
+        if (f.side === 'hero') { const inside = !!(f.heldBy && f.heldBy.m.inside > 0.5); if (inside !== !!f.inside) { f.inside = inside; f.m.root.visible = !inside; if (f.m.fx) f.m.fx.visible = !inside; } }
         f.phase += mv * 4.2; f.wb += ((mv > 1e-4 ? 1 : 0) - f.wb) * Math.min(1, dt * 10);
         const d = D[f.key];
         f.trance += (((d && d.inTrance) ? 1 : 0) - f.trance) * Math.min(1, dt * 3);
@@ -1928,7 +2136,7 @@
         f.m.animate(f.phase, f.wb, clock.t, dt);
         const dying = f.m.action === 'die' && f.m.progress >= 0, fade = dying ? 1 - f.m.progress : f.m.root.visible ? 1 : 0;
         f.shadow.position.set(f.pos.x, 0.006, f.pos.z); f.shadow.material.opacity = 0.7 * fade;
-        if (f.key === 'io') { f.m.flamePos(flameP); f.glow.position.set(flameP.x, 0.012, flameP.z); f.glow.material.opacity = (0.14 + f.m.flameLight.intensity * 0.1) * (1 - (f.m.moon || 0)) * (d && d.hp > 0 ? 1 : 0.3); }
+        if (f.key === 'io') { f.m.flamePos(flameP); f.glow.position.set(flameP.x, 0.012, flameP.z); f.glow.material.opacity = (0.14 + f.m.flameLight.intensity * 0.1) * (1 - (f.m.moon || 0)) * (d && d.hp > 0 ? 1 : 0.3) * (f.inside ? 0 : 1); }
         else if (f.glow) { f.glow.position.set(f.pos.x, 0.012, f.pos.z); f.glow.material.opacity = (f.charged ? 0.45 + 0.35 * Math.sin(clock.t * 5) : 0.32) * fade; }
       }
       // Lunara, while she is up
@@ -1945,6 +2153,8 @@
       stepTown(rdt);
 
       FX.update(dt, clock.t);
+      if (BF) BF.update(dt, clock.t);
+      stepSky(rdt);
       if (FX.grp.children.length !== fxKids) { lightOnly(FX.grp); fxKids = FX.grp.children.length; }
       applyCam(rdt);
       UI.status();
@@ -2010,6 +2220,7 @@
 
     function init() {
       for (const id of ['cold', 'dark']) if (!$(id)) { const d = el('div', { id, class: 'fill', 'aria-hidden': 'true' }); stage.insertBefore(d, $('flash')); }
+      if (!$('sky')) stage.insertBefore(el('div', { id: 'sky', class: 'fill', 'aria-hidden': 'true' }), glCanvas);
       renderer = new THREE.WebGLRenderer({ canvas: glCanvas, alpha: true, antialias: true });
       renderer.setPixelRatio(DPR); renderer.setClearColor(0x000000, 0);
       scene = new THREE.Scene();
@@ -2022,6 +2233,7 @@
       const depthMat = new THREE.MeshBasicMaterial({ colorWrite: false, side: THREE.DoubleSide });
       for (const o of SC.layout.occ) for (const poly of o.polys) { const m = new THREE.Mesh(cutout(poly, o.base), depthMat); m.renderOrder = -1; scene.add(m); }
       scene.add(FX.grp);
+      if (window.makeBattlefield) { BF = makeBattlefield({ id: SC.id, g, IW, IH, onLightning: lightning }); scene.add(BF.grp); }
       // the heroes, in their places
       for (const hc of cfg.heroes) {
         const p = g(hc.home[0], hc.home[1]); p.yaw = 0;
@@ -2101,6 +2313,7 @@
     }, 30);
     // the game's teardown: the loop stops, the listeners come off, and the GPU and the models are let go
     function stop() {
+      if (BF) { BF.dispose(); BF = null; }
       S.dead = true; SND.stopMusic(0.3);
       for (const [t, ty, fn] of offs) t.removeEventListener(ty, fn);
       if (ro) ro.disconnect();

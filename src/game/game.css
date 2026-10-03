@@ -113,3 +113,12 @@
 .fly-hint{position:absolute;left:16px;right:16px;top:42%;margin:0;text-align:center;font-size:15px;color:#f1e6c8;text-shadow:0 2px 6px #000;pointer-events:none}
 .fly-hint[hidden]{display:none}
 .title-help{margin:6px 0 0;max-width:340px;text-align:center;font-size:13px;line-height:1.4;color:#cfd4f4}
+/* larger text (the menu's Text size) */
+.game.big-text .talk-said{font-size:19.5px;line-height:1.38}
+.game.big-text .talk-who{font-size:22px}
+.game.big-text .gm-top,.game.big-text .gm-item span,.game.big-text .gm-row{font-size:17px}
+.game.big-text .gm-item small,.game.big-text .gm-note{font-size:14.5px}
+.game.big-text .field-act{font-size:17.5px}
+.game.big-text .talk-choices .go{font-size:17px}
+/* a save code to copy, or to paste in */
+.gmenu-card textarea.code{display:block;width:100%;box-sizing:border-box;margin:2px 0 4px;font:13px/1.35 ui-monospace,Menlo,Consolas,monospace;color:#f4f6ff;background:rgba(0,0,0,.4);border:1px solid rgba(214,222,255,.4);border-radius:7px;padding:8px;resize:vertical;word-break:break-all}

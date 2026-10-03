@@ -103,6 +103,31 @@
   };
   const bramble = (form, o) => Object.assign({ name: 'Bramble Horror', form, moves: BRAMBLE_MOVES, weak: { fire: 1.5, sun: 1.25 }, fearsFire: 0.3, canes: 6, alone: true }, o);
 
+  // the Bramble Colossus's kit (3d-model-new-character-ideas/bramble-colossus, its bench's moves). Every move plays the
+  // model's own motion. wrathWeight: how often it is picked once the Wrath has come (the bench's second phase: Hammerfall,
+  // Maelstrom and Thornwood more, Siren Bloom less)
+  const COLOSSUS_MOVES = {
+    // a single heavy blow: the lead arm spears down through whoever hurt it last
+    lance: { name: 'Thorn Lance', weight: 0.22, wrathWeight: 0.17, hits: [560], target: 'lastAttacker', time: 2.4 },
+    // both arms twined into one club on one hero, then the shockwave over the whole party
+    slam: { name: 'Hammerfall', weight: 0.16, wrathWeight: 0.22, hits: [455], shock: [165], target: 'one', time: 3.6 },
+    // every cane whirls round it twice: four blows on the whole party
+    whirl: { name: 'Maelstrom', weight: 0.12, wrathWeight: 0.2, hits: [105, 105, 105, 105], target: 'all', time: 4.2 },
+    // thorns flung high, raining on the whole party in three waves
+    volley: { name: 'Thorn Volley', weight: 0.16, wrathWeight: 0.15, hits: [130, 130, 130], target: 'all', time: 3.8 },
+    // shoots as tall as young trees burst up round one hero and squeeze
+    briar: { name: 'Thornwood', weight: 0.14, wrathWeight: 0.2, hits: [290, 375], target: 'one', time: 4.4 },
+    // its lure: the flower opens wide on its heart and pours pollen over the party, who are charmed (their gauges fill
+    // at half speed) and step toward it. On its next turn it Devours the one it chose. Fire, or a big blow to the bare
+    // heart, makes it recoil and shut, and breaks the bloom
+    bloom: { name: 'Siren Bloom', weight: 0.2, wrathWeight: 0.06, charge: true, charm: 0.5, then: 'devour', target: 'one', time: 3.6 },
+    // the bloom's end: its arms lift the charmed hero into the flower, which shuts; a seizing blow, then three gulps, each
+    // healing it by what it takes; then it bursts open and sets her back where she stood, its heart bare until its next turn
+    devour: { name: 'Devour', weight: 0, seize: 175, hits: [200, 200, 200], drain: true, prey: true, opens: true, target: 'one', time: 5.6 },
+    // its second phase, once, at half its HP: faster and harder, its veins burning ember-red; it bursts open, heart bare
+    enrage: { name: 'Wrath', below: 0.5, once: true, wrath: { haste: 0.8, fury: 1.2 }, opens: true, target: 'self', time: 3.6 },
+  };
+
   // ---------- foes ----------
   // A regular foe takes a level, so it can meet the party anywhere; Halcyon and Noctara are fixed at 20.
   // A move's weight is how often it's picked; "below" and "once" make a desperation move; "charge" spends one turn
@@ -170,6 +195,14 @@
     brambleAmbush: bramble('Low Ambush', { hp: 9000, atb: 1.9, ambush: true, xp: 70, shards: 38 }),
     brambleTowering: bramble('Towering Reach', { hp: 9000, atb: 1.7, dmg: 1.1, xp: 80, shards: 45 }),
     brambleAncient: bramble('Ancient Crown', { hp: 15000, atb: 2.0, dmg: 1.25, canes: 7, allMoves: true, xp: 150, shards: 90 }),
+    // ---------- the Bramble Colossus (made from Chris's Bramble Horror as he asked, October 3) ----------
+    // The Bramble Horror grown as big as a house: the last band's great wild foe, met rarely and always alone, and rooted,
+    // so the party can always flee from it. Two phases: at half its HP comes its Wrath. Its heart is its weak point: while
+    // the bud is open (Siren Bloom, after Devour, after Wrath) every blow on it lands double. It fears fire like the
+    // Bramble Horror, and a heavy blade blow severs one of its four great canes (it keeps two). Worth three times an
+    // average wild fight in its band (xp and shards). Set with the simulator (tools/balance.mjs): at the party's level from
+    // 18 to 20 an expert wins about two times in three; an attentive player about one time in four, fleeing otherwise
+    colossus: { name: 'Bramble Colossus', moves: COLOSSUS_MOVES, hp: 20000, atb: 2.3, weak: { fire: 1.5, sun: 1.25 }, fearsFire: 0.3, canes: 4, minCanes: 2, heart: 2, alone: true, boss: true, xp: 270, shards: 195 },
     // Halcyon, the Gloam Knight, fixed at level 20: the bible's kit on this game's curve. Weak to Sun (the blade
     // remembers), resists Shadow. Tuned for the ambush: a party at 15 falls in about two minutes; an expert at 18
     // brings her to 20% (and her retreat) about half the time, and at 20 almost always
@@ -248,5 +281,8 @@
   // (design decisions, twenty-third round)
   const WILD_REWARD = 1.75;
 
-  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, xpNeed, grows, herbPrice, MAGPIE, WILD_REWARD };
+  // a big blow: a single hit this strong at level 1 (or stronger) on the Colossus's bare heart breaks its Siren Bloom
+  const BIG_BLOW = 450;
+
+  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, xpNeed, grows, herbPrice, MAGPIE, WILD_REWARD, BIG_BLOW };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

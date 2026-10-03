@@ -1,6 +1,8 @@
 // Builds each demo shell in demos/ into one self-contained page in dist/: local scripts and
 // stylesheets are inlined, and image paths under art/ inside them become data URIs. three.js
-// stays a cdnjs <script> tag. Usage: node tools/build.mjs [--min] [demos/name.html ...]  (default: all)
+// stays a cdnjs <script> tag, and the fonts come from Google Fonts, unless --offline puts them inside
+// the page too (the file Chris keeps, which must work with no internet).
+// Usage: node tools/build.mjs [--min] [--offline] [demos/name.html ...]  (default: all)
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
@@ -14,8 +16,27 @@ function inlineArt(code) {
   });
 }
 // --min minifies each script with esbuild (the game's build, to stay inside a page's size); the source stays readable
-const MIN = process.argv.includes('--min');
-const args = process.argv.slice(2).filter((a) => a !== '--min');
+const MIN = process.argv.includes('--min'), OFFLINE = process.argv.includes('--offline');
+const args = process.argv.slice(2).filter((a) => a !== '--min' && a !== '--offline');
+const NM = path.join(R, 'tools/node_modules');
+// --offline: three.js r128 and the two fonts (IM Fell English, Atkinson Hyperlegible) from npm, inside the page
+function offline(html) {
+  const three = fs.readFileSync(path.join(NM, 'three/build/three.min.js'), 'utf8');
+  html = html.replace(/<script src="https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/three\.js\/r128\/three\.min\.js"><\/script>/, () => '<script>\n/* three.js r128 */\n' + three.replace(/<\/script/gi, '<\\/script') + '\n</script>');
+  const face = (family, file, weight, style) => '@font-face{font-family:"' + family + '";font-style:' + style + ';font-weight:' + weight + ';font-display:swap;src:url(data:font/woff2;base64,' +
+    fs.readFileSync(path.join(NM, '@fontsource', file)).toString('base64') + ') format("woff2")}';
+  const fonts = [
+    face('IM Fell English', 'im-fell-english/files/im-fell-english-latin-400-normal.woff2', 400, 'normal'),
+    face('IM Fell English', 'im-fell-english/files/im-fell-english-latin-400-italic.woff2', 400, 'italic'),
+    face('Atkinson Hyperlegible', 'atkinson-hyperlegible/files/atkinson-hyperlegible-latin-400-normal.woff2', 400, 'normal'),
+    face('Atkinson Hyperlegible', 'atkinson-hyperlegible/files/atkinson-hyperlegible-latin-700-normal.woff2', 700, 'normal'),
+  ].join('\n');
+  html = html.replace(/<link rel="preconnect"[^>]*>\n?/g, '').replace(/<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^"]*">/, () => '<style>\n' + fonts + '\n</style>');
+  // anything still fetched from the web (the w3.org names are namespaces, not addresses)
+  const left = html.replace(/data:[^"')]+/g, '').match(/https?:\/\/(?!www\.w3\.org)[^\s"'<>)]+/g);
+  if (left) console.log('  note: the page still names ' + left.length + ' web addresses, such as ' + left[0]);
+  return html;
+}
 const esbuild = MIN ? createRequire(import.meta.url)(path.join(R, 'tools/node_modules/esbuild')) : null;
 const files = args.length ? args : fs.readdirSync(path.join(R, 'demos')).filter((f) => f.endsWith('.html')).map((f) => 'demos/' + f);
 fs.mkdirSync(path.join(R, 'dist'), { recursive: true });
@@ -28,6 +49,7 @@ for (const rel of files) {
     return '<script>\n/* ' + path.relative(R, path.resolve(dir, p)) + ' */\n' + code.replace(/<\/script/gi, '<\\/script') + '\n</script>';
   });
   html = html.replace(/<link rel="stylesheet" href="(\.\.?\/[^"]+\.css)">/g, (m, p) => '<style>\n' + fs.readFileSync(path.resolve(dir, p), 'utf8') + '\n</style>');
+  if (OFFLINE) html = offline(html);
   const out = path.join(R, 'dist', path.basename(src));
   fs.writeFileSync(out, html);
   console.log(path.relative(R, out), (fs.statSync(out).size / 1048576).toFixed(2) + ' MB');

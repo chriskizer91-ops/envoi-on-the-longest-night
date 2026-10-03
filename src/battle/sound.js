@@ -64,10 +64,19 @@ function makeBattleSound() {
     }
   }
   let musicOff = false;
-  function startMusic() { if (!ctx || musOn || musicOff) return; clearTimeout(fadeTO); clearInterval(timer); musOn = true; nextT = ctx.currentTime + 0.05; step = 0; musBus.gain.cancelScheduledValues(ctx.currentTime); musBus.gain.setValueAtTime(0.3, ctx.currentTime); timer = setInterval(schedule, 25); }
+  function startMusic() { if (!ctx || musOn || musicOff) return; clearTimeout(fadeTO); clearInterval(timer); musOn = true; nextT = ctx.currentTime + 0.05; step = 0; musBus.gain.cancelScheduledValues(ctx.currentTime); musBus.gain.setValueAtTime(0.3 * musVol, ctx.currentTime); timer = setInterval(schedule, 25); }
   function stopMusic(fade) { if (!ctx || !musOn) return; musOn = false; const t = ctx.currentTime; musBus.gain.setValueAtTime(musBus.gain.value, t); musBus.gain.linearRampToValueAtTime(0.0001, t + (fade || 0.8)); fadeTO = setTimeout(() => { clearInterval(timer); }, (fade || 0.8) * 1000 + 50); }
   function setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : 0.6, ctx.currentTime, 0.05); }
   // the game's sound setting can keep the battle theme quiet while the effects play
   function setMusicOff(m) { musicOff = m; if (m) stopMusic(0.3); }
-  return { init, sfx, startMusic, stopMusic, setMuted, setMusicOff, get muted() { return muted; } };
+  // the game's volumes, 0 to 1 each (the game's Music and Effects settings; 0.75 is where they started)
+  let musVol = 1;
+  function setVolumes(music, effects) {
+    musVol = music / 0.75; vols = [music, effects];
+    if (!ctx) return;
+    sfxBus.gain.setTargetAtTime(0.9 * effects / 0.75, ctx.currentTime, 0.05);
+    if (musOn) musBus.gain.setTargetAtTime(0.3 * musVol, ctx.currentTime, 0.05);
+  }
+  let vols = null;
+  return { init() { init(); if (vols) setVolumes(vols[0], vols[1]); }, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes, get muted() { return muted; } };
 }

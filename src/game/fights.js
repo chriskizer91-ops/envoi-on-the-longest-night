@@ -1,11 +1,11 @@
 // fights.js: every fight in the game as a battle screen config (src/battle/screen.js, in its game mode). The story's set
 // fights carry the words and settings of their demo pages (first-fight, great-wraith, dawnroost, halcyon-ambush,
-// finale); wild fights roll a pack from the band (BattleSim.BAND_PACKS, the Bramble Horror among them) at levels in the
-// band's range and play on the band's painting. The party comes in as it stands: its level, HP, MP, herbs and the story's
+// finale); wild fights roll a pack from the band (BattleSim.wildPack: the band's packs, the Bramble Horror among them,
+// and in the last band, now and then, the Bramble Colossus) at levels in the band's range and play on the band's painting. The party comes in as it stands: its level, HP, MP, herbs and the story's
 // flags. GameFights.config(kind, party, opts) -> the cfg for BattleScreen.start, without `game` (the game adds it).
 //   kind: 'first' | 'wild' | 'greatWraith' | 'dawnroost' | 'halcyon' | 'finale'
 //   party: { level, xp, hp: { io, sol }, mp, herbs, flags } (hp and mp null mean full)
-//   opts: { band, scene } for a wild fight
+//   opts: { band, scene, seen, pack } for a wild fight (seen: the band's wild fights so far; pack: a set pack, for tests)
 // Needs rules.js, sim.js, the models and the stage scenes. Defines window.GameFights.
 (function () {
   'use strict';
@@ -32,12 +32,18 @@
     greatWraith: { kind: 'wraith', shadow: 1.9, tall: 7.4, yawBias: 0.3, glow: [3.6, 0xffa24a], reach: 1.6, near: 3.6, fxScale: 2.8, lights: true },
     halcyon: { kind: 'halcyon', shadow: 0.62, tall: 2.11, yawBias: 0.15, glow: [1.4, 0x6f9cff], appearColor: [0.45, 0.55, 0.95], stop: 0.95 },
     noctara: { kind: 'noctara', shadow: 0.8, tall: 2.5, yawBias: 0.25, glow: [1.7, 0x8a5cff], appearColor: [0.65, 0.5, 1], downAct: 'none' },
+    // the Bramble Colossus: about 8 m tall and 11 m across; the heroes stop well short of its mound, and the camera frames
+    // it by its width
+    colossus: { kind: 'colossus', tall: 7.8, reach: 3.2, shadow: 3.6, halfW: 5.4, yawBias: 0, glow: [3.8, 0xff3d8a], appearColor: [0.95, 0.35, 0.5], fxScale: 2.2 },
   };
+  // where the party stands against the Colossus on each painting: about 8.5 m from it, as on its bench (its arms reach 9 m)
+  const COLOSSUS_AT = { 'frozen-road': { io: [638, 704], sol: [712, 738], slot: [974, 557] } };
   function makeFoe(id, level, i) {
     if (id === 'wraith') return makeWraith({ level });
     if (id === 'greatWraith') return makeWraith({ level, great: true });
     if (id === 'wisp' || id === 'frostWisp') return makeWisp({ seed: i + 1, frost: id === 'frostWisp' });
     if (VARIANT[id]) return makeBramble({ variant: VARIANT[id], level });
+    if (id === 'colossus') return makeBrambleColossus({ level });
     if (id === 'halcyon') return makeHalcyon({});
     if (id === 'noctara') return makeNoctara({});
     throw new Error('no foe ' + id);
@@ -65,9 +71,11 @@
     opts = opts || {};
     const S = SIM();
     if (kind === 'wild') {
-      const band = opts.band || 1, rand = Math.random, packs = S.BAND_PACKS[band];
-      const pack = opts.pack || packs[Math.floor(rand() * packs.length)];
+      // opts.seen: how many of the band's wild fights the party has had (the Colossus never comes in the first few)
+      const band = opts.band || 1, rand = Math.random;
+      const pack = opts.pack || S.wildPack(band, rand, opts.seen);
       const foes = pack.map((id) => ({ id: S.formOf(id, band, rand), level: S.wildLevel(band, rand) }));
+      if (foes[0].id === 'colossus') return colossus(P, foes, opts);
       const scene = foes[0].id.startsWith('bramble') && band === 1 ? 'thornwood-bridge' : (opts.scene || 'gloamwood-road');
       const c = base(scene, P);
       const lone = foes[0].id.startsWith('bramble');
@@ -180,6 +188,22 @@
       });
     }
     throw new Error('no fight ' + kind);
+  }
+  // the Bramble Colossus, the last band's great wild foe: always alone, rooted (the party can always flee), and worth three
+  // times a wild fight. Its lines are placeholders for the lore conversation
+  function colossus(P, foes, opts) {
+    const scene = COLOSSUS_AT[opts.scene] ? opts.scene : 'frozen-road', at = COLOSSUS_AT[scene], c = base(scene, P);
+    c.heroes[0].home = at.io; if (c.heroes[1]) c.heroes[1].home = at.sol; c.slots = [at.slot];
+    return Object.assign(c, {
+      fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), herbs: herbsOf(P), ends: { canFlee: true }, reward: window.BattleRules.WILD_REWARD }),
+      introMsg: 'Beside the frozen road stands a thicket as big as a house, green where nothing else is. The snow round it has melted.',
+      introAfter: 'The ground splits. It heaves itself up out of the earth, and a great thorned bud opens on a glowing heart: a Bramble Colossus.',
+      attackText: () => 'The Bramble Colossus attacks!',
+      winMoth: 'Its spire cracks at the foot and topples like a tree. Its heart beats once more, and goes dark.',
+      winText: 'The Bramble Colossus is felled. Where it stood, its fallen fruit is melting the snow.',
+      loseText: 'The party falls among its thorns. They wake at the last rest with everything they had.',
+      endTexts: { fled: 'The party backs away down the road. It can’t follow: it is rooted.' },
+    });
   }
   // the painting each band's wild fights play on: the Thornwood's own map has its bridge
   const WILD_SCENE = { 1: 'gloamwood-road', 2: 'warm-road', 3: 'northern-crossroads', 4: 'frozen-road' };

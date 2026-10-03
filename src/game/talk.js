@@ -2,7 +2,7 @@
 // Sol and Ysmera have painted portraits (art request 05); everyone else shows a pixel portrait, their walking sprite's
 // head and shoulders blown up, until their paintings come. Words appear a few letters at a time; a tap, Enter or Space
 // shows the rest, then goes on. A line with no speaker is narration. Choices are buttons under the words.
-// Talk.create(host, { portraits: { id: { name, src } }, people: (id) -> { name, look } | null, src(path) })
+// Talk.create(host, { portraits: { id: { name, src } }, people: (id) -> { name, look } | null, src(path), speed() -> 0 to 2 })
 //   -> { say(lines) -> Promise, ask(who, text, choices) -> Promise<index>, busy }
 //   a line is [who, text] or a string (narration)
 // Needs makeFolk (sprites.js). Defines window.Talk.
@@ -38,11 +38,12 @@
       }
       faceWrap.hidden = true; who.textContent = id && opts.people && !p ? id : '';
     }
+    // the words come a few letters at a time, as fast as the game's setting says (opts.speed: 0 for all at once)
     function show(text) {
-      clearInterval(typing); said.textContent = '';
-      if (REDUCED) { said.textContent = text; return; }
-      let i = 0; typing = setInterval(() => { i += 2; said.textContent = text.slice(0, i); if (i >= text.length) { clearInterval(typing); typing = null; } }, 18);
-      show.full = text;
+      clearInterval(typing); said.textContent = ''; show.full = text;
+      const sp = opts.speed ? opts.speed() : 1;
+      if (REDUCED || !sp) { said.textContent = text; return; }
+      let i = 0; typing = setInterval(() => { i += 2 * sp; said.textContent = text.slice(0, Math.floor(i)); if (i >= text.length) { clearInterval(typing); typing = null; } }, 18);
     }
     function tap() {
       if (typing) { clearInterval(typing); typing = null; said.textContent = show.full; return; }

@@ -61,8 +61,11 @@
     const root = el('div', { class: 'game' }, host);
     const fieldHost = el('div', { class: 'layer' }, root), worldHost = el('div', { class: 'layer' }, root);
     let st = opts.state || GS.fresh();
-    const settings = { rate: 1, light: 1, sound: 'on' };
+    // music and effects: 0 (off) to 1; text: how fast the words come (0 for all at once); big: larger text
+    const settings = { rate: 1, light: 1, music: 0.75, sfx: 0.75, text: 1, big: false };
     try { Object.assign(settings, JSON.parse(localStorage.getItem('envoi.settings') || '{}')); } catch (e) { /* defaults */ }
+    if (settings.sound) { if (settings.sound === 'off') settings.music = settings.sfx = 0; else if (settings.sound === 'music') settings.music = 0; delete settings.sound; }
+    root.classList.toggle('big-text', !!settings.big);
     const keepSettings = () => { try { localStorage.setItem('envoi.settings', JSON.stringify(settings)); } catch (e) { /* not kept */ } };
     let mode = 'title', busy = 0;
 
@@ -70,16 +73,21 @@
     let audioOn = false, curMusic = null;
     const SND = window.makeBattleSound();
     function audioInit() { if (audioOn) return; audioOn = true; try { AUD.sfxInit(); SND.init(); applySound(); } catch (e) { /* no audio */ } }
-    // the sound setting: everything, the effects without the music, or nothing
-    function applySound() { try { SND.setMuted(settings.sound === 'off'); SND.setMusicOff(settings.sound !== 'on'); if (settings.sound !== 'on') AUD.musicStop(0.4); } catch (e) { /* no audio */ } }
-    function music(id) { if (!audioOn || settings.sound !== 'on') { curMusic = id; return; } if (curMusic === id && AUD.musicPlaying() === id) return; curMusic = id; try { if (id) AUD.musicPlay(id); else AUD.musicStop(0.6); } catch (e) { /* no audio */ } }
-    function sfx(id) { if (!audioOn || settings.sound === 'off') return; try { AUD.playSfx(id); } catch (e) { /* no audio */ } }
+    // the music's and the effects' volumes, each from off to loud, in the map's sounds and the battles' alike
+    function applySound() {
+      try {
+        AUD.setVolume(settings.music, settings.sfx); SND.setVolumes(settings.music, settings.sfx);
+        SND.setMuted(!settings.music && !settings.sfx); SND.setMusicOff(!settings.music); if (!settings.music) AUD.musicStop(0.4);
+      } catch (e) { /* no audio */ }
+    }
+    function music(id) { if (!audioOn || !settings.music) { curMusic = id; return; } if (curMusic === id && AUD.musicPlaying() === id) return; curMusic = id; try { if (id) AUD.musicPlay(id); else AUD.musicStop(0.6); } catch (e) { /* no audio */ } }
+    function sfx(id) { if (!audioOn || !settings.sfx) return; try { AUD.playSfx(id); } catch (e) { /* no audio */ } }
 
     // ---------- the people's portraits and the dialogue box ----------
     const talk = Talk.create(root, {
       portraits: Object.assign({ io: { name: 'Io', src: "art/portraits/portrait-io.webp" }, sol: { name: 'Sol', src: "art/portraits/portrait-sol.webp" }, shipmaster: { name: 'Ysmera Brightkeel', src: "art/portraits/portrait-shipmaster-a.webp" } },
         Object.fromEntries(Object.entries(window.PORTRAITS || {}).map(([id, p]) => [id, { name: S.cast[id] ? S.cast[id].name : id, src: p }]))),
-      people: (id) => S.cast[id] || null, src,
+      people: (id) => S.cast[id] || null, src, speed: () => settings.text,
     });
     const toast = el('div', { class: 'toast win', hidden: '' }, root);
     let toastT = 0;
@@ -340,8 +348,11 @@
       save();
       return r;
     }
+    // a random fight: st.wilds counts each band's, since the Bramble Colossus never comes in the last band's first few
     async function wild(band, sceneId) {
-      const r = await battle('wild', { band, scene: sceneId });
+      st.wilds = st.wilds || {};
+      const seen = st.wilds[band] || 0; st.wilds[band] = seen + 1;
+      const r = await battle('wild', { band, scene: sceneId, seen });
       if (r.outcome === 'lose') await wake();
     }
 
@@ -382,11 +393,11 @@
         const card = el('div', { class: 'gmenu-card win' }, ov);
         const tabs = el('div', { class: 'gmenu-tabs', role: 'tablist' }, card), body = el('div', { class: 'gmenu-body' }, card);
         const close = () => { ov.remove(); menuOpen = null; done(); };
-        const T = { Party: party, Herbs: herbs, Moonlore: lore, Settings: setup };
+        const T = { Party: party, Herbs: herbs, Moonlore: lore, Saves: saves, Settings: setup };
         let cur = 'Party';
         const btns = Object.keys(T).map((k) => { const b = el('button', { type: 'button', role: 'tab', class: 'tab' }, tabs, k); b.addEventListener('click', () => { cur = k; draw(); }); return b; });
         const foot = el('div', { class: 'gmenu-foot' }, card);
-        const saveB = el('button', { type: 'button', class: 'go alt' }, foot, 'Save'); saveB.addEventListener('click', () => { save(); note('Saved.'); sfx('ui-save'); });
+        const saveB = el('button', { type: 'button', class: 'go alt' }, foot, 'Save'); saveB.addEventListener('click', () => { save(); note('Saved in slot ' + GS.slot() + '.'); sfx('ui-save'); });
         const titleB = el('button', { type: 'button', class: 'go alt' }, foot, 'Title'); titleB.addEventListener('click', () => { save(); close(); showTitle(); });
         const closeB = el('button', { type: 'button', class: 'go' }, foot, 'Close'); closeB.addEventListener('click', close);
         ov.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
@@ -433,14 +444,60 @@
       }
     }
     function setup(b, redraw) {
-      const row = (label, opts2, key) => { const r = el('div', { class: 'gm-item' }, b); el('span', null, r, label); const g = el('div', { class: 'gm-pick' }, r); for (const [t, v] of opts2) { const x = el('button', { type: 'button', class: 'go small' + (settings[key] === v ? '' : ' alt'), 'aria-pressed': String(settings[key] === v) }, g, t); x.addEventListener('click', () => { settings[key] = v; keepSettings(); if (key === 'sound') { applySound(); if (v === 'on') { const m = curMusic; curMusic = null; music(m); } } redraw(); }); } };
+      const row = (label, opts2, key) => { const r = el('div', { class: 'gm-item' }, b); el('span', null, r, label); const g = el('div', { class: 'gm-pick' }, r); for (const [t, v] of opts2) { const x = el('button', { type: 'button', class: 'go small' + (settings[key] === v ? '' : ' alt'), 'aria-pressed': String(settings[key] === v) }, g, t); x.addEventListener('click', () => { const was = settings[key]; settings[key] = v; keepSettings(); if (key === 'music' || key === 'sfx') { applySound(); if (key === 'music' && v && !was) { const m = curMusic; curMusic = null; music(m); } else if (key === 'sfx' && v) sfx('ui-confirm'); } if (key === 'big') root.classList.toggle('big-text', !!v); redraw(); }); } };
       row('Random fights', [['Fewer', 0.6], ['Normal', 1], ['More', 1.5]], 'rate');
       row('Map light', [['Dim', 0.85], ['Normal', 1], ['Bright', 1.2]], 'light');
-      row('Sound', [['On', 'on'], ['No music', 'music'], ['Off', 'off']], 'sound');
+      row('Music', [['Off', 0], ['Soft', 0.4], ['Normal', 0.75], ['Loud', 1]], 'music');
+      row('Effects', [['Off', 0], ['Soft', 0.4], ['Normal', 0.75], ['Loud', 1]], 'sfx');
+      row('Words', [['Slow', 0.5], ['Normal', 1], ['Fast', 2], ['All at once', 0]], 'text');
+      row('Text size', [['Normal', false], ['Large', true]], 'big');
       // the battles' frame rate, kept where the battle screen reads it (30 by default, Chris)
       let fps = 30; try { const v = localStorage.getItem('envoi.fps'); if (v !== null) fps = +v; } catch (e) { /* default */ }
       const r = el('div', { class: 'gm-item' }, b); el('span', null, r, 'Battle frame rate'); const gp = el('div', { class: 'gm-pick' }, r);
       for (const [t, v] of [['30', 30], ['45', 45], ['60', 60], ['Screen', 0]]) { const x = el('button', { type: 'button', class: 'go small' + (fps === v ? '' : ' alt'), 'aria-pressed': String(fps === v) }, gp, t); x.addEventListener('click', () => { try { localStorage.setItem('envoi.fps', String(v)); } catch (e) { /* not kept */ } redraw(); }); }
+    }
+
+    // ---------- the saves: three slots, and a save code to carry a game to another device or copy of the game ----------
+    function whereOf(sv) { const W = sv.where || {}; return W.mode === 'world' ? 'the world map' : (MAPS[W.map] && MAPS[W.map].name) || 'Wickhollow'; }
+    const saveLine = (sv) => 'Level ' + sv.level + ' · ' + clock(sv.time) + ' played · ' + whereOf(sv);
+    function saves(b, redraw) {
+      el('p', { class: 'gm-top' }, b, 'The game saves itself in the slot in use (slot ' + GS.slot() + ') at every rest and every change of place. Save in another slot to keep this moment as it is.');
+      for (const { slot: n, st: sv } of GS.list()) {
+        const r = el('div', { class: 'gm-item' }, b), t = el('span', null, r, 'Slot ' + n + (n === GS.slot() ? ' (in use)' : ''));
+        el('small', null, t, sv ? saveLine(sv) : 'Empty');
+        const x = el('button', { type: 'button', class: 'go small' + (n === GS.slot() ? '' : ' alt') }, r, 'Save here');
+        x.addEventListener('click', async () => {
+          if (sv && n !== GS.slot()) { const k = await ask(null, 'Save over slot ' + n + '? ' + saveLine(sv) + ' will be lost.', ['Save over it', 'Keep it']); if (k) return; }
+          GS.use(n); save(); sfx('ui-save'); note('Saved in slot ' + n + '.'); redraw();
+        });
+      }
+      const r = el('div', { class: 'gm-item' }, b), t = el('span', null, r, 'Save code'); el('small', null, t, 'The game as text: copy it, and paste it into the title’s Load on another device or another copy of the game.');
+      const c = el('button', { type: 'button', class: 'go small alt' }, r, 'Copy');
+      c.addEventListener('click', () => { save(); showCode(GS.code(st)); });
+    }
+    // the save code in a box to copy (the clipboard where the browser allows it)
+    function showCode(text) {
+      const ov = el('div', { class: 'gmenu', role: 'dialog', 'aria-label': 'Save code' }, root), card = el('div', { class: 'gmenu-card win' }, ov);
+      el('h2', null, card, 'Save code');
+      el('p', { class: 'gm-top' }, card, 'This is the whole game as it stands. Keep it somewhere safe, or paste it into Load on the title of another copy of the game.');
+      const ta = el('textarea', { class: 'code', readonly: '', rows: '5', 'aria-label': 'Save code' }, card); ta.value = text;
+      const foot = el('div', { class: 'gmenu-foot' }, card), cp = el('button', { type: 'button', class: 'go alt' }, foot, 'Copy'), x = el('button', { type: 'button', class: 'go' }, foot, 'Done');
+      cp.addEventListener('click', async () => { ta.select(); let ok = false; try { await navigator.clipboard.writeText(text); ok = true; } catch (e) { try { ok = document.execCommand('copy'); } catch (e2) { /* select it by hand */ } } note(ok ? 'Copied.' : 'Select the code and copy it.'); });
+      x.addEventListener('click', () => ov.remove());
+      setTimeout(() => { ta.focus({ preventScroll: true }); ta.select(); }, 30);
+    }
+    // a pasted save code: a game to load into a slot
+    function pasteCode() {
+      return new Promise((done) => {
+        const ov = el('div', { class: 'gmenu', role: 'dialog', 'aria-label': 'Load a save code' }, root), card = el('div', { class: 'gmenu-card win' }, ov);
+        el('h2', null, card, 'Load a save code');
+        el('p', { class: 'gm-top' }, card, 'Paste a save code from another copy of the game. It goes into the slot in use.');
+        const ta = el('textarea', { class: 'code', rows: '5', 'aria-label': 'Save code', placeholder: 'ENVOI1:…' }, card), msg = el('p', { class: 'gm-note' }, card, '');
+        const foot = el('div', { class: 'gmenu-foot' }, card), ok = el('button', { type: 'button', class: 'go' }, foot, 'Load it'), no = el('button', { type: 'button', class: 'go alt' }, foot, 'Back');
+        ok.addEventListener('click', () => { const sv = GS.fromCode(ta.value); if (!sv) { msg.textContent = 'That isn’t a whole save code. Copy it again, all of it.'; return; } ov.remove(); done(sv); });
+        no.addEventListener('click', () => { ov.remove(); done(null); });
+        setTimeout(() => ta.focus({ preventScroll: true }), 30);
+      });
     }
 
     // ---------- the herb shop ----------
@@ -477,10 +534,31 @@
       const img = el('img', { class: 'title-art', alt: '' }, titleEl); img.src = src("art/title/key-art.webp");
       const box = el('div', { class: 'title-box' }, titleEl);
       el('h1', null, box, 'Envoi on the Longest Night');
-      const saved = GS.load();
-      if (saved) { const c = el('button', { type: 'button', class: 'go' }, box, 'Continue'); c.addEventListener('click', () => { audioInit(); st = saved; begin(false); }); el('p', { class: 'title-save' }, box, 'Level ' + saved.level + ' · ' + clock(saved.time) + ' played'); }
-      const n = el('button', { type: 'button', class: 'go' + (saved ? ' alt' : '') }, box, 'New game');
-      n.addEventListener('click', async () => { audioInit(); if (saved) { titleEl.hidden = true; const k = await ask(null, 'Start a new game? The saved one will be lost.', ['New game', 'Keep it']); titleEl.hidden = false; if (k) return; } st = GS.fresh(); begin(true); });
+      const last = GS.latest();
+      if (last) { const c = el('button', { type: 'button', class: 'go' }, box, 'Continue'); c.addEventListener('click', () => { audioInit(); GS.use(last.slot); st = last.st; begin(false); }); el('p', { class: 'title-save' }, box, 'Slot ' + last.slot + ' · ' + saveLine(last.st)); }
+      const n = el('button', { type: 'button', class: 'go' + (last ? ' alt' : '') }, box, 'New game');
+      n.addEventListener('click', async () => {
+        audioInit();
+        const all = GS.list();
+        if (all.some((x) => x.st)) {
+          // which slot to start it in: an empty one first; a full one is only lost if the player says so
+          titleEl.hidden = true;
+          const k = await ask(null, 'Start the new game in which slot?', all.map((x) => 'Slot ' + x.slot + ': ' + (x.st ? 'level ' + x.st.level : 'empty')).concat(['Back']));
+          if (k < all.length && all[k].st) { const y = await ask(null, 'Slot ' + all[k].slot + ' holds a game: ' + saveLine(all[k].st) + '. Start over it?', ['Start over it', 'Back']); if (y) { titleEl.hidden = false; return; } }
+          titleEl.hidden = false; if (k >= all.length) return;
+          GS.use(all[k].slot);
+        } else GS.use(1);
+        st = GS.fresh(); begin(true);
+      });
+      const L = el('button', { type: 'button', class: 'go alt' }, box, 'Load');
+      L.addEventListener('click', async () => {
+        audioInit(); titleEl.hidden = true;
+        const all = GS.list(), opts2 = all.filter((x) => x.st);
+        const k = await ask(null, opts2.length ? 'Load which game?' : 'There are no saved games here yet. A save code from another copy of the game can be pasted.', opts2.map((x) => 'Slot ' + x.slot + ': level ' + x.st.level + ', ' + clock(x.st.time)).concat(['Paste a save code', 'Back']));
+        if (k < opts2.length) { GS.use(opts2[k].slot); st = opts2[k].st; titleEl.hidden = false; begin(false); return; }
+        if (k === opts2.length) { const sv = await pasteCode(); if (sv) { st = sv; GS.save(st); titleEl.hidden = false; begin(false); return; } }
+        titleEl.hidden = false;
+      });
       el('p', { class: 'title-help' }, box, 'Tap the map to walk, or use the arrows. Tap people and glowing things to talk to them or use them. Sound on.');
       if (audioOn) music('title');
       setTimeout(() => (box.querySelector('button') || n).focus({ preventScroll: true }), 50);

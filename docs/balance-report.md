@@ -1,6 +1,6 @@
 # Balance report
 
-Written by `tools/balance.mjs` from the numbers in `src/battle/rules.js`. Each row is 1000 fights with fixed seeds, so the same numbers always give the same report. **52 of 52 targets met.**
+Written by `tools/balance.mjs` from the numbers in `src/battle/rules.js`. Each row is 1000 fights with fixed seeds, so the same numbers always give the same report. **58 of 58 targets met.**
 
 The play styles: **careless** picks moves almost at random and heals late; **attentive** (`sensible` in the code), the average player, heals anyone under about half and saves MP for healing; **expert** heals before the next big hit could land, shields against charged moves and uses each summon at the right moment. A fight's length includes 1.5 seconds of thinking for each menu.
 
@@ -46,6 +46,12 @@ The play styles: **careless** picks moves almost at random and heals late; **att
 | Ancient Crown | 19 | attentive | 37% | 20% to 50% | 2.9 min | 53% of foe HP | Yes |
 | Ancient Crown | 14 | expert | 59% | 45% to 80% | 4.6 min | 35% of foe HP | Yes |
 | Ancient Crown | 19 | expert | 64% | 45% to 80% | 4.5 min | 39% of foe HP | Yes |
+| Bramble Colossus | 18 | expert | 63% | 55% to 80% | 4.3 min | 19% of foe HP | Yes |
+| Bramble Colossus | 19 | expert | 63% | 55% to 80% | 4.3 min | 19% of foe HP | Yes |
+| Bramble Colossus | 20 | expert | 63% | 55% to 80% | 4.3 min | 19% of foe HP | Yes |
+| Bramble Colossus | 18 | attentive | 26% | 15% to 40% | 2.1 min | 13% of foe HP | Yes |
+| Bramble Colossus | 19 | attentive | 26% | 15% to 40% | 2.1 min | 13% of foe HP | Yes |
+| Bramble Colossus | 20 | attentive | 25% | 15% to 40% | 2.1 min | 13% of foe HP | Yes |
 | The great wraith | 5 | careless | 37% | 20% to 60% | 2.2 min | 17% of foe HP | Yes |
 | The great wraith | 5 | attentive | 93% | 80% to 96% | 2.4 min | 12% of foe HP | Yes |
 | The great wraith | 5 | expert | 100% | 97% to 100% | 2.6 min | 10% of foe HP | Yes |
@@ -80,12 +86,12 @@ An average wild fight at each level, and how many it takes to level up. A gate i
 | 13 | 2,174 | 744 | 2.9 | 535 |
 | 14 | 2,661 | 744 | 3.6 | 535 |
 | 15 | 3,257 | 744 | 4.4 | 535 |
-| 16 | 10,763 | 2,050 | 5.2 | 1,493 |
-| 17 | 13,173 | 2,050 | 6.4 | 1,493 |
-| 18 | 16,124 | 2,050 | 7.9 | 1,493 |
-| 19 | 19,736 | 2,050 | 9.6 | 1,493 |
+| 16 | 10,763 | 2,395 | 4.5 | 1,741 |
+| 17 | 13,173 | 2,395 | 5.5 | 1,741 |
+| 18 | 16,124 | 2,395 | 6.7 | 1,741 |
+| 19 | 19,736 | 2,395 | 8.2 | 1,741 |
 
-About 74 wild fights from level 2 to 20 for a player who skips nothing, before the gates' experience is counted.
+About 70 wild fights from level 2 to 20 for a player who skips nothing, before the gates' experience is counted.
 
 ## The Magpie
 

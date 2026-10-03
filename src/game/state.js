@@ -1,12 +1,17 @@
-// state.js: the game's state and its save (plan phase 5: "saves kept in the browser"). One save, in localStorage, written
-// at every rest, at every change of map and from the menu. The state is the party (level, experience, each hero's HP,
-// Io's MP), the shards, the herbs carried, the story's flags, what has been done once (events, wells), the highest band
-// the Magpie can reach, where Io is, where she last rested, and the time played. HP or MP of null means full.
-// Defines window.GameState = { fresh, load, save, has, clear, maxHp, maxMp, hpOf, mpOf, gain, restore, applyBattle,
-// healOutside, useHerb }. Needs rules.js.
+// state.js: the game's state and its saves (plan phase 5: "saves kept in the browser"). Three save slots in localStorage;
+// the one in use is written at every rest, at every change of map and from the menu. A save code carries a save as text,
+// to another device or another copy of the game (handoff, section 9). The state is the party (level, experience, each
+// hero's HP, Io's MP), the shards, the herbs carried, the story's flags, what has been done once (events, wells), the
+// highest band the Magpie can reach, where Io is, where she last rested, and the time played. HP or MP of null means full.
+// Defines window.GameState = { fresh, load, save, has, clear, slot, use, list, latest, code, fromCode, SLOTS, maxHp,
+// maxMp, hpOf, mpOf, gain, restore, applyBattle, healOutside, useHerb }. Needs rules.js.
 (function () {
   'use strict';
-  const KEY = 'envoi.save.v1';
+  // slot 1 keeps the name the single save had, so a game saved before the slots came is in slot 1
+  const KEY = 'envoi.save.v1', SLOTS = 3;
+  const keyOf = (n) => (n > 1 ? KEY + '.' + n : KEY);
+  let SLOT = 1;
+  try { SLOT = Math.min(SLOTS, Math.max(1, Math.round(+localStorage.getItem('envoi.slot')) || 1)); } catch (e) { /* storage blocked: slot 1 */ }
   const RL = () => window.BattleRules;
   function fresh() {
     return {
@@ -15,10 +20,24 @@
       landings: { wickhollow: true }, time: 0, fights: 0, wins: 0,
     };
   }
-  function load() { try { const s = localStorage.getItem(KEY); if (!s) return null; const st = JSON.parse(s); return st && st.v === 1 ? st : null; } catch (e) { return null; } }
-  function save(st) { try { localStorage.setItem(KEY, JSON.stringify(st)); return true; } catch (e) { return false; } }
-  const has = () => !!load();
-  function clear() { try { localStorage.removeItem(KEY); } catch (e) { /* blocked */ } }
+  function load(n) { try { const s = localStorage.getItem(keyOf(n || SLOT)); if (!s) return null; const st = JSON.parse(s); return st && st.v === 1 ? st : null; } catch (e) { return null; } }
+  function save(st, n) { try { st.saved = Date.now(); localStorage.setItem(keyOf(n || SLOT), JSON.stringify(st)); return true; } catch (e) { return false; } }
+  // the slot in use from now on (kept, so the next visit continues in it)
+  function use(n) { SLOT = Math.min(SLOTS, Math.max(1, n | 0)); try { localStorage.setItem('envoi.slot', String(SLOT)); } catch (e) { /* not kept */ } }
+  const slot = () => SLOT;
+  // every slot with its save, or null where it is empty; and the one saved last, for Continue
+  const list = () => Array.from({ length: SLOTS }, (_, i) => ({ slot: i + 1, st: load(i + 1) }));
+  function latest() { let b = null; for (const s of list()) if (s.st && (!b || (s.st.saved || 0) > (b.st.saved || 0))) b = s; return b; }
+  const has = () => !!latest();
+  function clear(n) { try { localStorage.removeItem(keyOf(n || SLOT)); } catch (e) { /* blocked */ } }
+  // a save code: the save as text, with a check so a code that was cut short or mistyped is refused
+  const sum = (t) => { let h = 7; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) >>> 0; return h.toString(36); };
+  function code(st) { const b = btoa(unescape(encodeURIComponent(JSON.stringify(st)))); return 'ENVOI1:' + b + ':' + sum(b); }
+  function fromCode(text) {
+    const m = /ENVOI1:([A-Za-z0-9+/=]+):([0-9a-z]+)/.exec(String(text || '').replace(/\s+/g, ''));
+    if (!m || sum(m[1]) !== m[2]) return null;
+    try { const st = JSON.parse(decodeURIComponent(escape(atob(m[1])))); return st && st.v === 1 && st.flags && st.where ? st : null; } catch (e) { return null; }
+  }
   const maxHp = (st, id) => Math.round(RL().HEROES[id].hp * RL().scale(st.level));
   const maxMp = (st) => Math.round(RL().HEROES.io.mp * RL().mpScale(st.level));
   const hpOf = (st, id) => (st.hp[id] == null ? maxHp(st, id) : st.hp[id]);
@@ -76,5 +95,5 @@
     st.herbs[id]--;
     return null;
   }
-  window.GameState = { fresh, load, save, has, clear, maxHp, maxMp, hpOf, mpOf, gain, restore, applyBattle, healOutside, useHerb };
+  window.GameState = { fresh, load, save, has, clear, slot, use, list, latest, code, fromCode, SLOTS, maxHp, maxMp, hpOf, mpOf, gain, restore, applyBattle, healOutside, useHerb };
 })();

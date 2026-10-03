@@ -4,6 +4,8 @@ The Bramble Horror grown into a boss: the same hunting blackberry thicket, as bi
 
 "Bramble Colossus" is a working name. Nothing here is canon until Chris places it (`docs/questions/open.md`, question 3).
 
+**In the game (October 3, 2026):** as `docs/handoff.md` proposed, it is the last band's great wild foe: about one wild fight in twelve there, on the frozen road, always alone. Its fight is `demos/colossus.html`, and its rules are in `docs/design-decisions.md` ("putting it all together"). Chris can still move it, rename it or change its moves. The game's copy of the model is `src/models/colossus.js`; keep the two files alike.
+
 **The page:** https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q (private; it works on a phone). `Bramble_Colossus_Bench.html` in this folder is the same page as one file. It opens at sunset in the wild meadow, with the colossus rising out of the earth.
 
 ![Its moves](renders/moves.jpg)
@@ -76,7 +78,8 @@ Height: 7.5 m (8.3 m at level 20); 11 m across at rest, its arms reach 9 m
 Triangles: 102k to 106k (40k at detail .5)   Bones: 201   Draw calls: 8 + up to 13 for effects   Textures: 8 (13 MB)
 Anchors: chest (the spire's front), head or bud (the bud's top), hit (the lead arm's tip), heart (its weak point), bloom (over
   the open flower), crown, grasp (between the arms' tips), held, snare or impact (the prey's feet), feet, cane0 to cane9
-State fields: target ({x, y, z}: the prey's chest), wilt (0 to 1), glow (0 to 1: the fruit's gleam), wrath (0 to 1: the second phase)
+State fields: target ({x, y, z}: the prey's chest), wilt (0 to 1), glow (0 to 1: the fruit's gleam), wrath (0 to 1: the second phase),
+  open (0 to 1: holds the bud open, heart bare, between its turns; added for the game)
 Actions: appear 4.6 s cues .04 .62 | alert 1.8 s | bloom 3.4 s hit .55 (a charm) | lance 1.8 s hit .44 |
   slam 3.0 s hits .5 .6 (the second on everyone) | whirl 3.6 s hits .36 .48 .6 .72 (everyone) | volley 3.2 s hits .58 .68 .78 (everyone) |
   devour 5.2 s hits .2 .58 .68 .78, heals at .62 .72 .82 | briar 3.8 s hits .46 .66 | enrage 3.2 s cue .42 |
