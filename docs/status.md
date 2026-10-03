@@ -17,6 +17,14 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 | Shadow Wraith and great wraith | https://claude.ai/artifact/HEn78AJYsTpGRs9B4zZ5SW | Done; the Great wraith toggle reloads the page |
 | The wisp | https://claude.ai/artifact/TDbtEVzrdJFQ2cXevWFiVF | Done, with its polish round |
 
+## New character ideas
+
+Added October 3, 2026: `../3d-model-new-character-ideas/` holds creatures Chris brings as ideas, polished one folder each and kept apart from the cast until he places them.
+
+| Idea | Link | State |
+|---|---|---|
+| Bramble Horror | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Polished: thorns, veins and a feeding hollow, Undergrowth and Scorch, a wild glade bench with Io as its prey. Where it lives is asked in `questions/open.md`. |
+
 ## The models
 
 | Model | State | What's left |

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bramble Horror Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="./bench.css">
+</head>
+<body>
+<header>
+ <h1>Bramble Horror</h1>
+ <span class="sub">Wildlands of the Southern Isles · model bench</span>
+ <div class="hseg" role="group" aria-label="Model version">
+  <button class="hbtn" id="vBefore" type="button" aria-pressed="false" title="The Bramble as it came from its sheets">Before</button>
+  <button class="hbtn" id="vAfter" type="button" aria-pressed="true" title="The polished Bramble">After</button>
+ </div>
+ <button class="hbtn" id="resetView" type="button">Reset view</button>
+</header>
+<div id="app">
+ <div id="stage">
+  <canvas id="gl"></canvas>
+  <div id="flash" aria-hidden="true"></div>
+  <div id="vignette" aria-hidden="true"></div>
+  <div id="pops" aria-hidden="true"></div>
+  <div id="tag" class="win">
+   <div class="nm" id="tagName">Growing the thicket…</div>
+   <div class="ds" id="tagDesc">Building the model.</div>
+   <div class="hp"><span class="lbl">HP</span><span class="hpbar"><i id="hpFill"></i></span><span class="val" id="hpVal">—</span></div>
+  </div>
+  <div id="hint">Drag to turn · scroll or pinch to zoom</div>
+  <div id="tl" class="win">
+   <div class="row"><span class="an" id="actName">Idle</span><span class="meta" id="actMeta">Rooted. Patient. Hungry.</span></div>
+   <div class="track" id="track"><div class="fill" id="fill"></div></div>
+   <div class="cap" id="actCap">Canes arched out like legs, fruit hanging. Pick a move to play it; red marks are where a blow lands, gold marks are cues for the battle screen.</div>
+  </div>
+ </div>
+ <aside id="panel" class="win" aria-label="Controls">
+  <section class="sec"><h2>Form</h2><div class="forms" id="forms"></div></section>
+  <section class="sec"><h2>Moves</h2><div class="moves" id="moves"></div>
+   <div class="legend"><span><i style="background:var(--berry)"></i>hit</span><span><i style="background:var(--gold)"></i>cue</span><span><b class="newtag">new</b> not on the sheets</span></div></section>
+  <section class="sec"><h2>Stance</h2><div class="toggles" id="toggles"></div>
+   <div class="segrow" role="group" aria-label="Prey" id="preySeg"><span class="lbl">Prey</span></div></section>
+  <section class="sec"><h2>Fight it</h2>
+   <div class="row2"><button class="wbtn" id="hitSword" type="button"><span class="t">Sword</span><small id="swordNote">a heavy blow</small></button><button class="wbtn" id="hitFire" type="button"><span class="t">Fire</span><small id="fireNote">it fears flame</small></button></div>
+   <div class="row2"><button class="wbtn" id="sever" type="button"><span class="t">Sever a cane</span><small id="caneCount">6 of 6 canes</small></button><button class="wbtn" id="regrow" type="button"><span class="t">Regrow</span><small>canes and HP</small></button></div>
+   <label class="slider" for="wilt"><span>Wilt</span><input id="wilt" type="range" min="0" max="100" value="0"><output id="wiltOut" for="wilt">0%</output></label>
+   <p class="note">Blows take its HP, and wilt follows HP: the leaves thin and brown as it weakens. At no HP it falls; any move grows it back.</p>
+  </section>
+  <section class="sec"><h2>Light and place</h2>
+   <div class="row2"><button class="wbtn" id="lightNight" type="button" aria-pressed="true"><span class="t">Night square</span><small>the battle's light</small></button><button class="wbtn" id="lightDay" type="button" aria-pressed="false"><span class="t">Daylight</span><small>overcast</small></button></div>
+   <div class="row2"><button class="wbtn" id="scenery" type="button" aria-pressed="true"><span class="t">Wild glade</span><small>trees, mist, fireflies</small></button><button class="wbtn" id="rings" type="button" aria-pressed="true"><span class="t">Metre rings</span><small>to judge its size</small></button></div>
+   <label class="slider" for="level"><span>Level</span><input id="level" type="range" min="1" max="20" value="1"><output id="levelOut" for="level">1</output></label>
+  </section>
+  <section class="sec"><h2>Model</h2><div class="stats" id="stats"></div>
+   <p class="note" id="numNote">Damage numbers are placeholders until the battle steps: level 1 is the Night square's scale, and they grow 20% a level with a 25% swing.</p></section>
+ </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../../src/models/originals/witch.js"></script>
+<script src="./original/bramble.js"></script>
+<script src="./bramble.js"></script>
+<script src="./glade.js"></script>
+<script src="./bench.js"></script>
+</body>
+</html>
