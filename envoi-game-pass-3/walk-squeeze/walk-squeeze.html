@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wilderness Walk Squeeze</title>
+<!-- How small the wilderness walking scenes can be squeezed: Io walks Chris's example scene (a painted dirt path through a
+     meadow) exactly as she walks in the game, and the painting under her swaps live between its squeezed versions.
+     Build: node tools/build.mjs envoi-game-pass-3/walk-squeeze/walk-squeeze.html (writes dist/walk-squeeze.html and
+     dist/walk-squeeze.artifact.html). The versions and their numbers: make-versions.mjs. -->
+<link rel="stylesheet" href="../../src/game/game.css">
+<link rel="stylesheet" href="./fonts.css">
+<link rel="stylesheet" href="./walk-squeeze.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>Wilderness walk</h1>
+    <p>Io on the wild path you sent, walking as she walks in the game, at your settings: <b>52 px tall</b>, <b>close 15%</b>,
+      <b>pace 1.7</b>. She keeps to the dirt paths: the main one, top to bottom, and its branch to the oak. Pick a version
+      to swap the painting under her feet, press <b>Closer</b> to see it twice as big, and press and hold <b>Show the
+      original</b> to flick back to the painting as you sent it.</p>
+  </header>
+  <section class="stage" aria-label="Io on the wild path">
+    <div class="bar">
+      <div class="seg" id="vseg" role="group" aria-label="Painting version"></div>
+      <div class="tools">
+        <button type="button" class="tool" id="closer" aria-pressed="false">Closer</button>
+        <button type="button" class="tool hold" id="hold" title="Press and hold to compare">Show the original</button>
+      </div>
+    </div>
+    <p class="turn">Turn your phone sideways to see the path as the game shows it.</p>
+    <figure class="viewer" id="viewer">
+      <div class="field-host" id="field-host"></div>
+      <div class="now-label" id="label"></div>
+    </figure>
+  </section>
+  <p class="keys"><span class="mouse">Arrows or WASD walk her · click to send her there, or hold to steer · 1–9 pick a version · C closer ·
+    hold Space for the original</span><span class="touch">Tap where she should go, hold to steer her, or use the arrows at the bottom right ·
+    press and hold Show the original to compare</span></p>
+  <div class="options" id="options" role="group" aria-label="The versions in detail"></div>
+  <div class="notes">
+    <p><b>What changes.</b> The painting keeps its place in the world, so the path and Io stay where they are. A smaller
+      version has fewer pixels to stretch over it, so its pixels show bigger. The game draws them sharp, as you chose, so a
+      small version looks blockier, not blurrier. A <b>light</b> version is squeezed harder at the same size (quality 30
+      instead of 45), so fine detail (grass, pebbles, petals) smooths out; <b>extra light</b> (20) smooths it more.</p>
+    <p><b>Detail kept</b> is measured against your painting as you sent it (SSIM, in four close-ups: the path, the oak, the
+      stone wall and the flowers, each version scaled back up smoothly). <b>12 scenes</b> is twelve wilderness scenes like
+      this one at that setting. Inside the single game file each takes about a third more. <b>Memory</b> is the painting on
+      the phone once it's opened. The original is the WebP you sent; the others are AVIF, like the town maps.</p>
+    <p><b>What the numbers say.</b> Weight for weight, keeping every pixel and squeezing harder keeps more of this painting
+      than making it smaller. 100% light weighs about what 75% does (198 KB against 193 KB) and keeps 93% of the detail
+      against 77%. <b>My pick: 100% extra light.</b> On a phone it looks almost like the original at under a third of the
+      weight. Twelve scenes come to 1.58 MB, about 0.3 MB more than with the town maps' 75% light, which keeps 72%.</p>
+  </div>
+</main>
+<script src="../../src/walk/pixel-io.js"></script>
+<script src="../../src/walk/painted-io.js"></script>
+<script src="../../src/game/sprites.js"></script>
+<script src="../../src/game/field.js"></script>
+<script src="./versions.js"></script>
+<script src="./walk-squeeze.js"></script>
+</body>
+</html>

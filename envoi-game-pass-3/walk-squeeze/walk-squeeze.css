@@ -1,0 +1,105 @@
+/* walk-squeeze.css: the Wilderness Walk Squeeze page. The town maps' resolution page's look, night only on purpose (the
+   game's plum panels, cream edges and gold for names, so it reads the same on any host theme), with Io walking live in
+   place of its still pictures. The walk's own pieces (its canvas, the d-pad) keep the game's styles from game.css.
+   Layout: one walk the shape of a phone held sideways, under a bar of versions; the versions in detail and the notes
+   below. On a phone held sideways the bar and the walk fill one screen. */
+:root {
+  color-scheme: dark;
+  --night: #0b0710; --panel: #1a0f22; --plum: #3a1631; --cream: #ecdcb8; --gold: #e2bd67; --dim: #b6a7c2; --deep: #05030a;
+  --line: rgba(236, 220, 184, 0.24); --track: rgba(236, 220, 184, 0.12); --shade: rgba(11, 7, 16, 0.82); --hover: rgba(226, 189, 103, 0.6);
+  --display: 'Jacquard 12', 'Georgia', serif;
+  --body: 'Pixelify Sans', 'Trebuchet MS', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--night); color: var(--cream); font: 15px/1.5 var(--body); }
+main { max-width: 1180px; margin: 0 auto; padding-block: 22px 40px; display: grid; gap: 18px;
+  padding-left: max(16px, 3vw, env(safe-area-inset-left, 0px)); padding-right: max(16px, 3vw, env(safe-area-inset-right, 0px)); }
+header { display: grid; gap: 6px; }
+h1 { margin: 0; font: 400 clamp(36px, 6vw, 58px)/0.95 var(--display); color: var(--cream); text-wrap: balance; }
+header p { margin: 0; max-width: 74ch; color: var(--dim); }
+header p b { color: var(--gold); font-weight: 600; }
+
+/* ---------- the bar: the versions, Closer, and the button to hold ---------- */
+.stage { display: grid; gap: 10px; min-width: 0; }
+.bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; min-width: 0; }
+.seg { display: inline-flex; flex-wrap: wrap; padding: 3px; gap: 3px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+.seg button, .tool { font: 600 14px var(--body); color: var(--cream); background: none; border: 0; border-radius: 6px; padding: 7px 11px;
+  cursor: pointer; white-space: nowrap; }
+.seg button[aria-pressed='true'], .tool[aria-pressed='true'] { background: var(--plum); color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.tools { display: flex; gap: 8px; }
+.tool { border: 1px solid var(--line); background: var(--panel); }
+.hold { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none; }
+.hold:active, .hold.on { border-color: var(--gold); color: var(--gold); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.turn { display: none; margin: 0; color: var(--dim); font-size: 13px; }
+
+/* ---------- the walk ---------- */
+.viewer { position: relative; isolation: isolate; margin: 0; aspect-ratio: 20 / 9; max-width: 100%; overflow: hidden; border: 2px solid var(--cream);
+  border-radius: 8px; box-shadow: inset 0 0 0 3px var(--plum), 0 14px 40px rgba(0, 0, 0, 0.55); background: var(--deep); }
+.viewer.peek { border-color: var(--gold); }
+.field-host { position: absolute; inset: 0; }
+/* the game's corner pieces that have no job here: the place's name, the menu and the mini-map */
+.viewer .field-plate, .viewer .field-menu, .viewer .mini { display: none; }
+.now-label { position: absolute; left: 10px; top: 10px; z-index: 5; max-width: calc(100% - 20px); padding: 4px 10px; border-radius: 6px;
+  background: var(--shade); border: 1px solid var(--line); font-size: 14px; font-variant-numeric: tabular-nums; pointer-events: none; }
+.now-label b { color: var(--gold); font-weight: 600; }
+.viewer.peek .now-label { border-color: var(--gold); }
+.keys { margin: -6px 0 0; color: var(--dim); font-size: 13px; }
+.keys .touch { display: none; }
+@media (hover: none) and (pointer: coarse) { .keys .mouse { display: none; } .keys .touch { display: inline; } }
+
+/* ---------- the versions in detail: the original on its own, every squeezed version beside it ---------- */
+.options { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.opt { position: relative; display: grid; gap: 2px; align-content: start; text-align: left; padding: 10px 12px 12px; border-radius: 8px; cursor: pointer; min-width: 0;
+  background: var(--panel); border: 1px solid var(--line); color: var(--cream); font: 14px/1.35 var(--body); font-variant-numeric: tabular-nums; }
+.opt:hover { border-color: var(--hover); }
+.opt[aria-pressed='true'] { background: linear-gradient(180deg, rgba(58, 22, 49, 0.95), rgba(26, 15, 34, 0.95)); border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.opt .head, .opt .nums { display: grid; gap: 2px; align-content: start; min-width: 0; }
+.opt .name { font: 400 26px/1 var(--display); color: var(--gold); }
+/* a card's tag sits on its top edge, so a long name never pushes that card's numbers out of line with its neighbours' */
+.opt .tag { position: absolute; top: -9px; right: 10px; font: 600 10px/1 var(--body); letter-spacing: 0.08em; text-transform: uppercase; color: var(--night);
+  background: var(--gold); padding: 3px 6px; border-radius: 4px; box-shadow: 0 0 0 2px var(--night); }
+.opt .px { color: var(--dim); font-size: 12.5px; }
+.opt .kb { font-size: 20px; font-weight: 600; margin-top: 4px; }
+.opt .about { color: var(--dim); font-size: 12.5px; margin-top: 6px; }
+.meter { height: 5px; border-radius: 3px; background: var(--track); overflow: hidden; margin: 2px 0 4px; }
+.meter i { display: block; height: 100%; background: var(--gold); border-radius: 3px; }
+.meter.detail i { background: var(--cream); }
+.opt .row { display: flex; justify-content: space-between; gap: 6px; color: var(--dim); font-size: 12.5px; }
+.opt .row span:last-child { color: var(--cream); }
+.opt.ref { grid-row: span 2; align-content: space-between; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 28px; color: var(--dim); font-size: 14px; }
+.notes p { margin: 0; max-width: 62ch; }
+.notes b { color: var(--cream); font-weight: 600; }
+
+@media (max-width: 1060px) {
+  .options { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .opt.ref { grid-row: auto; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); column-gap: 28px; align-content: start; }
+}
+@media (max-width: 560px) {
+  .options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .opt.ref { grid-template-columns: minmax(0, 1fr); }
+  .opt .name { font-size: 22px; }
+  .keys { display: none; }
+}
+@media (orientation: portrait) and (max-width: 560px) { .turn { display: block; } }
+/* a phone held sideways: the versions in one row (it scrolls sideways if it must) and the walk below them, filling one
+   screen; Closer and Show the original sit over the walk's bottom left corner, under the left thumb, as the d-pad sits
+   under the right */
+@media (orientation: landscape) and (max-height: 520px) {
+  main { padding-block: 12px 28px; gap: 12px; }
+  h1 { font-size: 36px; }
+  header p { font-size: 13.5px; line-height: 1.45; }
+  .stage { position: relative; height: calc(100vh - 16px); height: calc(100svh - 16px); grid-template-rows: auto minmax(0, 1fr); gap: 6px; }
+  .bar { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .bar::-webkit-scrollbar { display: none; }
+  .seg { flex-wrap: nowrap; flex: 0 0 auto; }
+  .tools { position: absolute; left: 10px; bottom: 10px; z-index: 6; }
+  .tools .tool { background: var(--shade); padding: 9px 12px; }
+  .tools .tool[aria-pressed='true'] { background: var(--plum); }
+  .seg button, .tool { padding: 6px 9px; font-size: 13px; }
+  .viewer { aspect-ratio: auto; height: 100%; min-height: 0; }
+  .now-label { font-size: 12.5px; padding: 3px 8px; left: 8px; top: 8px; }
+  .keys { display: none; }
+}

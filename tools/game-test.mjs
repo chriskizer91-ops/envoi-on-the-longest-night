@@ -1,6 +1,7 @@
 // game-test.mjs: plays the built game headless (Chromium + SwiftShader, as tools/check.mjs does) and reports any error.
 // Build the page first: node tools/build.mjs --min putting-it-all-together/game.html
-// Usage: node tools/game-test.mjs [dist/game.html] [--steps title,new,walk,world,menu,saves,save,wild,colossus,chapters] [--band 4]
+// Usage: node tools/game-test.mjs [dist/game.html] [--steps title,new,walk,controls,world,menu,saves,save,wild,colossus,chapters]
+//        [--band 4]
 //        [--level 18] [--out <dir>] [--size 960x540] [--turbo 8] [--offline]
 //   title:    the title screen comes up
 //   new:      a new game starts, the prologue plays, and Io stands in her cottage
@@ -115,6 +116,34 @@ try {
       const p1 = await page.evaluate(() => [window.__game.field.P.x, window.__game.field.P.y]);
       if (Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) < 20) throw new Error('Io did not walk: ' + p0 + ' to ' + p1);
       await shot('walk');
+    } else if (step === 'controls') {
+      // the three ways to move her by pointer: hold on the map to steer toward it, a quick tap to walk there, and one
+      // thumb on the pad (here a mouse), held toward the top
+      await page.evaluate(() => { window.__game.goField('wickhollow', [780, 940]); });
+      await waitFor(() => window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 30000, 'the square');
+      await sleep(400);
+      const at = () => page.evaluate(() => [window.__game.field.P.x, window.__game.field.P.y]);
+      const box = await page.$eval('.field-cv', (c) => { const r = c.getBoundingClientRect(); return [r.left, r.top, r.width, r.height]; });
+      let p0 = await at();
+      await page.mouse.move(box[0] + box[2] / 2, box[1] + box[3] * 0.12); await page.mouse.down(); await sleep(1300); await page.mouse.up();
+      let p1 = await at();
+      if (p0[1] - p1[1] < 20) throw new Error('holding the map did not steer her north: ' + p0 + ' to ' + p1);
+      log('  held on the map: ' + Math.round(p0[1] - p1[1]) + ' px north');
+      await sleep(300); p0 = await at();
+      await page.mouse.click(box[0] + box[2] / 2, box[1] + box[3] * 0.8); await sleep(1500);
+      p1 = await at();
+      if (p1[1] - p0[1] < 15) throw new Error('a tap below her did not walk her there: ' + p0 + ' to ' + p1);
+      log('  tapped below her: ' + Math.round(p1[1] - p0[1]) + ' px south');
+      await sleep(300); p0 = await at();
+      const pad = await page.$eval('.pad', (c) => { const r = c.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2, r.width]; });
+      await page.mouse.move(pad[0], pad[1] - pad[2] * 0.4); await page.mouse.down(); await sleep(1000);
+      const lit = await page.$$eval('.pad .lit', (b) => b.map((x) => x.className).join(' '));
+      await page.mouse.move(pad[0] + pad[2] * 0.4, pad[1] - pad[2] * 0.4); await sleep(200);
+      const lit2 = await page.$$eval('.pad .lit', (b) => b.map((x) => x.className).join(' '));
+      await page.mouse.up(); p1 = await at();
+      if (p0[1] - p1[1] < 15 || !/pad-n/.test(lit) || !(/pad-n/.test(lit2) && /pad-e/.test(lit2))) throw new Error('the pad: ' + p0 + ' to ' + p1 + ', lit ' + lit + ' then ' + lit2);
+      log('  the pad: ' + Math.round(p0[1] - p1[1]) + ' px north, rolling to ' + lit2.replace(/pad-/g, ''));
+      await shot('controls');
     } else if (step === 'world') {
       await page.evaluate(() => { window.__game.goWorld(1348, 1900); });
       await waitFor(() => window.__game.mode === 'world' && !window.__game.busy, null, 30000, 'the world map');

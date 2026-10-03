@@ -2,7 +2,9 @@
    d-pad and buttons over them, the dialogue box, the menus and the shop, the title, the prologue, the flight, the
    transitions and the ending. Everything fills the window; the night stays dark whatever the device's theme. */
 .game{position:fixed;inset:0;overflow:hidden;background:#05030c;color:#f4f6ff;font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
-.game .layer{position:absolute;inset:0}
+/* the field and the world map each fill the screen, one over the other: only what is showing in a layer takes taps */
+.game .layer{position:absolute;inset:0;pointer-events:none}
+.game .layer>*{pointer-events:auto}
 .field{position:absolute;inset:0}
 .field[hidden]{display:none}
 .field-cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}

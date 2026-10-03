@@ -1,14 +1,16 @@
 // field.js: walking a ground-level map (plan step 18). Io walks one of the traced paintings (src/game/maps.js), painted
 // as Path Polish paints her (src/walk/painted-io.js), with its easing into and out of a walk; the pixel Io stands in
 // until her art loads, or when no painted Io is given:
-// the d-pad, the arrow keys or a tap (a tap walks her there round the walls, by a path found on a coarse grid of the
-// walk areas). The townsfolk stand in their places (sprites.js) and turn to her when she talks to them. The action
+// the arrow keys, the d-pad (one thumb rolls round it to any of eight ways, as on Witch Way's pad) or the map itself:
+// press and hold to steer her toward the finger or the mouse, or tap or click to walk her there round the walls, by a
+// path found on a coarse grid of the walk areas and straightened (Chris: directing her and tapping to walk are one).
+// Walking into a corner, she slips sideways round it, as Witch Way's walker does. The townsfolk stand in their places (sprites.js) and turn to her when she talks to them. The action
 // button names what is in reach: a person to talk to, a well, a rest, something to look at, the Magpie. Exits take her
 // to the next map, event areas start a story beat or a set fight once, and in the wilds every step fills a hidden
 // counter that starts a random fight when it passes a threshold, so fights come evenly: never two back to back.
 // The camera follows her; the mini-map in the corner shows the whole map, the view, the exits and the people.
 // Map coordinates are the paintings' own 1536 x 1024 pixels whatever size they ship at.
-// Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw(), stage }
+// Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw(), stage, setPicture(url) }
 //   stage: the story's actors, walking on the map while a scene plays (handoff, section 5): add(id, look, [x, y], dir),
 //   walk(id, path, speed) -> Promise (path: points to walk through), face(id, dir), remove(id), clear(), io(path, speed)
 //   -> Promise (Io walks it, even while the field is paused for the scene), ioFace(dir), focus([x, y], an actor's id, or
@@ -36,6 +38,7 @@
   const inExit = (r, x, y) => x >= r[0] - 8 && x <= r[2] + 8 && y >= r[1] - 8 && y <= r[3] + 8;
   const MW = 1536, MH = 1024, CELL = 12, GW = Math.ceil(MW / CELL), GH = Math.ceil(MH / CELL);
   const REACH = 58; // how close Io must stand to talk or use something (map px)
+  const SLIP = 14; // how far sideways she looks for a way round a corner she walks into (map px; about a quarter of her height)
 
   function create(host, opts) {
     const DPR = Math.min(window.devicePixelRatio || 1, 3);
@@ -50,14 +53,24 @@
     menuBtn.addEventListener('click', () => { if (!paused && opts.onMenu) opts.onMenu(); });
     const act = el('button', { type: 'button', class: 'field-act', hidden: '' }, root);
     act.addEventListener('click', () => { if (!paused) useNear(); });
-    // the d-pad, over the bottom right
+    // the d-pad, over the bottom right: one thumb steers it, rolling round to any of eight ways without lifting (Witch
+    // Way's pad, follow-me-down-witch-way game/src/input.js); padDirs holds its ways, held the keys'
     const pad = el('div', { class: 'pad', role: 'group', 'aria-label': 'Walk' }, root);
-    const held = new Set();
-    for (const [d, label, glyph] of [['n', 'Up', '▲'], ['w', 'Left', '◀'], ['e', 'Right', '▶'], ['s', 'Down', '▼']]) {
-      const b = el('button', { type: 'button', class: 'pad-' + d, 'aria-label': label }, pad, glyph);
-      const on = (e) => { e.preventDefault(); held.add(d); route = null; }, off = () => held.delete(d);
-      b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointerleave', off); b.addEventListener('pointercancel', off);
+    const held = new Set(), padDirs = new Set(), padBtns = {};
+    for (const [d, label, glyph] of [['n', 'Up', '▲'], ['w', 'Left', '◀'], ['e', 'Right', '▶'], ['s', 'Down', '▼']]) padBtns[d] = el('button', { type: 'button', class: 'pad-' + d, 'aria-label': label }, pad, glyph);
+    const OCTANT = [['e'], ['e', 's'], ['s'], ['s', 'w'], ['w'], ['w', 'n'], ['n'], ['n', 'e']];
+    let padId = null;
+    function padAim(e) {
+      const r = pad.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+      padDirs.clear();
+      if (Math.hypot(dx, dy) > r.width * 0.12) for (const d of OCTANT[(Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) + 8) % 8]) padDirs.add(d);
+      for (const d in padBtns) padBtns[d].classList.toggle('lit', padDirs.has(d));
+      route = null; target = null;
     }
+    const padEnd = (e) => { if (e.pointerId !== padId) return; padId = null; padDirs.clear(); for (const d in padBtns) padBtns[d].classList.remove('lit'); };
+    pad.addEventListener('pointerdown', (e) => { e.preventDefault(); if (padId !== null) return; padId = e.pointerId; if (pad.setPointerCapture) pad.setPointerCapture(e.pointerId); padAim(e); });
+    pad.addEventListener('pointermove', (e) => { if (e.pointerId === padId) padAim(e); });
+    for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) pad.addEventListener(ev, padEnd);
     const KEYS = { ArrowUp: 'n', ArrowDown: 's', ArrowLeft: 'w', ArrowRight: 'e', w: 'n', s: 's', a: 'w', d: 'e', W: 'n', S: 's', A: 'w', D: 'e' };
     const onKey = (e) => {
       if (paused || !root.isConnected || root.hidden) return;
@@ -129,16 +142,48 @@
       const cells = []; for (let c = goal; c !== start; c = prev[c]) cells.push(c); cells.reverse();
       const pts = cells.map((c) => [(c % GW) * CELL + CELL / 2, Math.floor(c / GW) * CELL + CELL / 2]);
       if (pts.length) pts[pts.length - 1] = [tx, ty];
-      return pts;
+      return straighten(pts);
+    }
+    // a straight line she can walk all the way along
+    function clearLine(x0, y0, x1, y1) {
+      const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 6);
+      for (let i = 1; i <= n; i++) if (!canStand(x0 + (x1 - x0) * i / n, y0 + (y1 - y0) * i / n)) return false;
+      return true;
+    }
+    // the grid's path, pulled straight: from where she stands, she heads for the farthest point of it she can reach in a
+    // straight line, so a tapped walk goes as a person would rather than from cell to cell
+    function straighten(pts) {
+      const out = []; let x = P.x, y = P.y, i = 0;
+      while (i < pts.length) {
+        let j = i; while (j + 1 < pts.length && clearLine(x, y, pts[j + 1][0], pts[j + 1][1])) j++;
+        out.push(pts[j]); [x, y] = pts[j]; i = j + 1;
+      }
+      return out;
     }
 
+    // the map itself: a press that is held, or that moves, steers her toward the finger or the mouse until it lifts; a
+    // quick tap walks her to the spot, and a tap on a person or a spot walks to them and then talks or uses it
+    const press = { id: null, x: 0, y: 0, x0: 0, y0: 0, t0: 0, steer: false };
+    const toMap = (cx, cy) => { const r = cv.getBoundingClientRect(); return [cam.x + (cx - r.left) / cam.z, cam.y + (cy - r.top) / cam.z]; };
     cv.addEventListener('pointerdown', (e) => {
-      if (paused || !map) return;
-      const r = cv.getBoundingClientRect(), x = cam.x + (e.clientX - r.left) / cam.z, y = cam.y + (e.clientY - r.top) / cam.z;
-      // a tap on a person or a spot walks to them and then talks or uses it
+      if (paused || !map || press.id !== null) return;
+      Object.assign(press, { id: e.pointerId, x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, t0: performance.now(), steer: false });
+      if (cv.setPointerCapture) cv.setPointerCapture(e.pointerId);
+    });
+    cv.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== press.id) return;
+      press.x = e.clientX; press.y = e.clientY;
+      if (!press.steer && Math.hypot(press.x - press.x0, press.y - press.y0) > 12) { press.steer = true; route = null; target = null; }
+    });
+    const pressEnd = (e) => {
+      if (e.pointerId !== press.id) return;
+      const tap = !press.steer && e.type === 'pointerup'; press.id = null; press.steer = false;
+      if (!tap || paused || !map) return;
+      const [x, y] = toMap(e.clientX, e.clientY);
       const hit = things().find((t) => Math.hypot(t.x - x, t.y - 20 - y) < 30 || Math.hypot(t.x - x, t.y - y) < 26);
       route = findRoute(x, y); target = hit || null;
-    });
+    };
+    for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) cv.addEventListener(ev, pressEnd);
     let target = null;
 
     // ---------- what is in reach ----------
@@ -160,7 +205,7 @@
     }
     function useNear() {
       const t = near(); if (!t) return;
-      held.clear(); route = null; target = null;
+      held.clear(); padDirs.clear(); press.steer = false; route = null; target = null;
       // she turns to face it, and a person turns to face her
       const dx = t.x - P.x, dy = t.y - P.y; P.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : (dy > 0 ? 's' : 'n');
       if (t.kind === 'person') { t.ref.face = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'w' : 'e') : (dy > 0 ? 'n' : 's'); if (opts.onTalk) opts.onTalk(t.ref); }
@@ -170,7 +215,7 @@
     // ---------- loading a map ----------
     function load(id, at, dir) {
       const m = opts.maps[id]; if (!m) throw new Error('no map ' + id);
-      map = m; m.id = id; route = null; target = null; held.clear(); lastExit = null; flash = 1; actors.length = 0; look.on = false; look.focus = null;
+      map = m; m.id = id; route = null; target = null; held.clear(); padDirs.clear(); press.id = null; press.steer = false; lastExit = null; flash = 1; actors.length = 0; look.on = false; look.focus = null;
       P.x = (at || m.start)[0]; P.y = (at || m.start)[1]; P.dir = dir || 's'; P.walkT = 0; P.vx = P.vy = 0; P.lean = P.turn = 0;
       for (const n of m.people || []) n.face = n.face0 || 's';
       buildGrid();
@@ -204,7 +249,15 @@
     function step(dt) {
       if (P.pose) { P.vx = P.vy = 0; P.moving = false; return; } // a pose holds her still
       let dx = 0, dy = 0, last = false;
-      if (held.size) { if (held.has('e')) dx++; if (held.has('w')) dx--; if (held.has('s')) dy++; if (held.has('n')) dy--; }
+      // a press held on the map that has turned into steering, once it has been held a moment
+      if (press.id !== null && !press.steer && performance.now() - press.t0 > 220) { press.steer = true; route = null; target = null; }
+      const steering = press.id !== null && press.steer, dirs = held.size ? held : padDirs;
+      if (dirs.size) { if (dirs.has('e')) dx++; if (dirs.has('w')) dx--; if (dirs.has('s')) dy++; if (dirs.has('n')) dy--; }
+      else if (steering) {
+        // toward the finger or the mouse, eased to a stop as she comes under it
+        const [tx, ty] = toMap(press.x, press.y); dx = tx - P.x; dy = ty - P.y;
+        const d = Math.hypot(dx, dy); if (d < 10) { dx = dy = 0; } else if (d < 40) { dx *= d / 40; dy *= d / 40; }
+      }
       else if (route && route.length) {
         let [wx, wy] = route[0]; dx = wx - P.x; dy = wy - P.y;
         if (Math.hypot(dx, dy) < 3) {
@@ -229,9 +282,14 @@
         if (canStand(P.x + mx, P.y + my)) { P.x += mx; P.y += my; }
         else if (mx && canStand(P.x + mx, P.y)) { P.x += mx; P.vy = 0; }
         else if (my && canStand(P.x, P.y + my)) { P.y += my; P.vx = 0; }
-        else if (held.size) { // round a corner: try a small sidestep
-          const sp = top * dt;
-          for (const s of [1, -1]) { if (my && canStand(P.x + s * sp, P.y + my * 0.5)) { P.x += s * sp * 0.6; break; } if (mx && canStand(P.x + mx * 0.5, P.y + s * sp)) { P.y += s * sp * 0.6; break; } }
+        else if (dirs.size || steering) {
+          // walking straight into a corner: she slips sideways round it, toward the nearer opening within a few pixels,
+          // at her own pace (Witch Way's walker.js, slide)
+          const sp = top * dt, L2 = Math.hypot(mx, my) || 1, ux = mx / L2, uy = my / L2;
+          slip: for (let off = 2; off <= SLIP; off += 2) for (const sg of [1, -1]) {
+            const ox = -uy * sg, oy = ux * sg;
+            if (canStand(P.x + ox * off + mx, P.y + oy * off + my) && canStand(P.x + ox * sp, P.y + oy * sp)) { P.x += ox * sp; P.y += oy * sp; break slip; }
+          }
         }
       }
       const moved = Math.hypot(P.x - x0, P.y - y0);
@@ -424,6 +482,8 @@
       resume() { paused = false; last = performance.now(); },
       show(on) { root.hidden = !on; if (on) { layout(); last = performance.now(); } },
       walkTo(x, y) { route = findRoute(x, y); },
+      // a new picture for the map she is on, in place, with no fade and no jump (a page comparing squeezes of one painting)
+      setPicture(url) { const next = new Image(); next.onload = () => { if (map) img = next; }; next.src = url; },
       pose(name, secs) { if (P.poseRes) P.poseRes(); return new Promise((res) => { P.pose = name; P.poseT = 0; P.poseDur = secs || 1.4; P.poseRes = res; held.clear(); route = null; }); },
       setCounter(v) { P.counter = v; },
       stop() { stopped = true; ro.disconnect(); window.removeEventListener('keydown', onKey); window.removeEventListener('keyup', onKeyUp); },

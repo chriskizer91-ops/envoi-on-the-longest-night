@@ -668,7 +668,7 @@
         if (k === opts2.length) { const sv = await pasteCode(); if (sv) { st = sv; GS.save(st); titleEl.hidden = false; begin(false); return; } }
         titleEl.hidden = false;
       });
-      el('p', { class: 'title-help' }, box, 'Tap the map to walk, or use the arrows. Tap people and glowing things to talk to them or use them. Sound on.');
+      el('p', { class: 'title-help' }, box, 'Tap where Io should go, or hold to steer her, or use the arrows. Tap people and glowing things to talk to them or use them. Sound on.');
       if (audioOn) music('title');
       setTimeout(() => (box.querySelector('button') || n).focus({ preventScroll: true }), 50);
     }
