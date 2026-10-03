@@ -47,6 +47,14 @@
     <ol class="log" id="log" aria-label="What happened, turn by turn"></ol>
   </section>
 
+  <section class="win" aria-labelledby="h-journey">
+    <h2 id="h-journey">The whole journey</h2>
+    <p>The story’s fights in order, from the Night square to the dead Moonwell (<code>src/game/story.js</code>), played start to finish: every walk’s wild fights, the rests and herb shops, the gates and the Magpie’s upgrades, with HP, MP and herbs carried from fight to fight. Out of battle Io heals while her MP lasts; a worn-down party walks back to its last rest. Where a gate asks for a level, or an upgrade for shards, the player walks the wilds until they have it. A lost fight wakes the party at its last rest; a lost gate is tried again.</p>
+    <div class="row"><div class="seg" id="jStyle" role="group" aria-label="Play style"></div><button type="button" class="btn go" id="jRun">Play 20 more journeys here</button></div>
+    <div class="scroll"><table class="curve"><thead><tr><th>Step</th><th class="num">Level</th><th class="num">Shards</th><th class="num">Wild fights</th><th class="num">Walking the wilds for levels or shards</th><th class="num">Fights lost</th><th class="num">Hours fighting</th></tr></thead><tbody id="journey"></tbody></table></div>
+    <p id="jNote"></p>
+  </section>
+
   <section class="win" aria-labelledby="h-curve">
     <h2 id="h-curve">The level curve</h2>
     <p>Every number grows about 20% a level from its level 1 value, for the party and the foes alike, so a fight at the party’s level lasts about as long at 20 as at 1. MP grows more slowly, so spells stay worth thinking about.</p>
@@ -95,7 +103,10 @@
 <script src="../src/battle/rules.js"></script>
 <script src="../src/battle/engine.js"></script>
 <script src="../src/battle/sim.js"></script>
+<script src="../src/game/story.js"></script>
+<script src="../src/battle/chain.js"></script>
 <script src="../src/battle/balance-results.js"></script>
+<script src="../src/battle/chain-results.js"></script>
 <script src="../src/battle/balance-page.js"></script>
 </body>
 </html>

@@ -789,3 +789,52 @@ Chris brought the Bramble Horror, a carnivorous blackberry thicket from the book
 - **The wild-fight targets** now measure the packs, the other four fights in five, and hold as before. The Bramble has its own targets. All 52 are met.
 - **Experience:** about 1.6 times an average pack, and the Ancient Crown about 3.2 times. The game is about 74 wild fights from level 2 to 20 (79 before), with the last band holding 39%, inside Chris's 70 to 85.
 - **The demo** is `demos/bramble.html`: the Thornwood bridge, any level, any form, at the party's own level. On screen, its canes take aim at their prey, and a grabbed hero is carried in the canes. Flame makes it rear away from the fire, and a severed cane drops.
+
+## October 3, 2026, twenty-second round: deciding the rest
+
+Chris: keep going step by step until the game is finished, and decide everything. The open questions are answered here, each with the reason.
+
+- **Where "half the time at equal level" applies (13):** the gates and bosses keep the tuning Chris approved: an attentive player wins about nine times in ten at the gate's level, since a gate stops the story until it's won. The rule lives in the wilds: the Bramble Horror follows it, and a band's wild packs at their rolled levels lean the same way.
+- **The ambush's lines (16)** and **Harvest Moon's name (17)** stay as written.
+- **The Bramble Horror at band entries (18):** the party can **Flee** from wild fights.
+  - Against a Bramble Horror it always works, since a rooted thing can't chase.
+  - Against a pack it works one try in two, and a failed try costs the turn.
+  - A fled fight gives no experience or shards.
+  - The attentive play style walks away from any bramble above its level; the expert walks away from one two levels up, or an Ancient Crown above it.
+  - Gates and story fights can't be fled.
+- **Where the Bramble Horror lives (19):** in all four bands, with the Ancient Crown from the third: old enough to outlast the cold.
+- **The Aurosi and the living Moon (lore 3):** the game says only "the moon's people". They live on the sleeping Moon's surface, and how is a story for another game.
+- **Gnomes at the shipyard (lore 4):** yes. Aurosi gnomes work the slips under Ysmera, as townsfolk to talk to.
+- **When the party learns Halcyon serves Noctara (lore 5):** at the shipyard, after the ambush. Ysmera has seen the black-sun mark on the knight's blade before: the Starless's sign. The finale's opening shows them together.
+- **The Sunken Ruins (lore 11):** not in the story; the name stays.
+- **Why Halcyon fights at a third of her strength in the finale (lore 12):** she is holding back since Sol called her Kestrel. It pays off when her blade warms at the end.
+
+### Phase 3: the story's fights, in order
+
+- **The journey is data:** `src/game/story.js` lists every step, and the game and the simulator both read it.
+  - Steps: the places, walks with their encounter counts, rests (inns, and a camp at each band's entry), herb shops, gates, story fights and the Magpie's upgrades.
+  - The order: Wickhollow (the Night square wraith, then Sol joins and Quill's skiff), the Thornwood, Bogmire and the great wraith, the refit.
+  - Then the Warm Roads, Dawnroost's three wraiths and Envoi, the node's charge.
+  - Then the northern wilds, Halcyon's ambush at the crossroads (Kestrel Stoop) and the shipyard's upgrade.
+  - Then the frozen pass, Misthollow, and the finale at the dead Moonwell.
+- **The whole-journey simulator** (`src/battle/chain.js`, `tools/chain.mjs`) plays all of it, carrying HP, MP and herbs from fight to fight:
+  - Out of battle Io heals with Lunar Mend and Waxing Light, keeping a third of her MP back.
+  - A worn-down party walks back to its last rest, meeting two more encounters on the way.
+  - Walks camp every seven encounters.
+  - A player short of a gate's level, or an upgrade's shards, walks the wilds until they have it.
+  - A lost gate is tried again, with one more level after every second loss.
+- **Walks:** 10 encounters through the Thornwood, 10 along the Warm Roads, 9 through the northern wilds and 22 up the frozen pass. A player arrives at each gate about at its level: 5–6, 10–11 and 15, and 19 at Misthollow with one level to climb.
+- **Prices:**
+  - The Magpie's upgrades cost what a player has on arrival: 650, 2,300 and 4,500 shards.
+  - Herbs cost their level 1 price grown to the band's middle level: a Moonpetal is about 58 shards in the first band and 890 in the last.
+- **The journey, medians of 40:**
+
+  | Player | Wild fights | Walking for levels or shards | Fled | Lost | Hours fighting | Finale tries |
+  |---|---|---|---|---|---|---|
+  | Attentive | 73 | 21 | 5 | 23 | 3.5 | 15 (one in ten needs 60 or more) |
+  | Expert | 70 | 16 | 3 | 7 | 2.6 | 1 |
+
+  With walking, talking and the scenes that is the plan's five hours.
+  - The attentive player loses most of their fights at the finale itself, which is as Chris wants it: locked in, but not impossible.
+  - A real player learns between tries, so they won't stay at the attentive play style's 4%.
+- **The balance page** shows the journey step by step for both play styles, and can play it again.

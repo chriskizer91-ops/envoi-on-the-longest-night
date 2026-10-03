@@ -279,6 +279,39 @@
       RL.MAGPIE.map((m) => m.name.replace(/^The /, 'the ') + ' at level ' + m.level + ' for ' + nf(m.shards) + ' shards').join('; ') + '.';
   }
 
+  // ---------- the whole journey (src/battle/chain.js), as tools/chain.mjs left it, or played again here ----------
+  const J = { policy: 'sensible', res: window.CHAIN_RESULTS || {} };
+  const STEP = (w) => {
+    const [k, a, b] = w.split(':');
+    if (k === 'walk') return 'Walking ' + (window.STORY.PLACES[a] ? window.STORY.PLACES[a].name.replace(/^The /, 'the ') : a);
+    if (k === 'upgrade') return a;
+    if (k === 'fight') return ({ first: 'The first fight', greatWraith: 'The great wraith', dawnroost: 'Dawnroost', halcyon: 'Halcyon’s ambush', finale: 'The finale' })[a] + (b === 'win' ? ', won' : b === 'retreat' ? ': she retreats' : b === 'lose' ? ': lost' : '');
+    return w;
+  };
+  function renderJourney() {
+    const r = J.res[J.policy], tb = $('journey'); tb.textContent = '';
+    if (!r) { $('jNote').textContent = 'Not played yet.'; return; }
+    for (const s of r.steps) {
+      const tr = el('tr', null, tb);
+      el('td', null, tr, STEP(s.what)); el('td', { class: 'num' }, tr, String(s.level)); el('td', { class: 'num' }, tr, nf(s.shards));
+      el('td', { class: 'num' }, tr, String(s.wild)); el('td', { class: 'num' }, tr, String(s.grind)); el('td', { class: 'num' }, tr, String(s.losses)); el('td', { class: 'num' }, tr, (s.time / 3600).toFixed(1));
+    }
+    const fin = r.tries.finale;
+    $('jNote').textContent = 'Medians of ' + r.n + ' journeys. In all: ' + r.wild + ' wild fights on the way, ' + r.grind + ' more walking the wilds for levels or shards, ' + r.fled + ' fled, ' + r.losses + ' lost, and about ' + r.hours.toFixed(1) + ' hours of fighting. The finale took ' + fin.median + (fin.median === 1 ? ' try' : ' tries') + ' (one journey in ten took ' + fin.p90 + (fin.p90 >= 60 ? ' or more' : '') + ').';
+  }
+  function setupJourney() {
+    const seg = $('jStyle');
+    for (const p of ['sensible', 'expert']) {
+      const b = el('button', { type: 'button', 'aria-pressed': String(p === J.policy) }, seg, STYLE[p]);
+      b.addEventListener('click', () => { J.policy = p; for (const q of seg.children) q.setAttribute('aria-pressed', String(q === b)); renderJourney(); });
+    }
+    $('jRun').addEventListener('click', () => {
+      $('jNote').textContent = 'Playing…';
+      setTimeout(() => { J.res[J.policy] = window.BattleChain.runMany(J.policy, 20); renderJourney(); }, 30);
+    });
+    renderJourney();
+  }
+  setupJourney();
   renderTargets(window.BALANCE_RESULTS);
   $('runBtn').addEventListener('click', playAgain);
   setupWatch();

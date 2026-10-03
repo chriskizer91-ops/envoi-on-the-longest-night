@@ -24,6 +24,10 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 #tint{background:#0a1140;mix-blend-mode:multiply;opacity:0;transition:opacity .9s}
 #vignette{background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,0) 30%,rgba(4,10,6,.92) 100%);opacity:0;transition:opacity .6s}
 #flash{background:#fff;opacity:0}
+/* the finale: Blackout's darkness over everything, and the deepening cold at the screen's edges */
+#dark{background:#03020a;opacity:0;z-index:3}
+#cold{background:radial-gradient(ellipse at 50% 42%,rgba(150,190,255,0) 38%,rgba(150,190,255,.22) 72%,rgba(220,236,255,.5) 100%);opacity:0;transition:opacity 1.2s;z-index:2}
+.ename .cold{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:12px;color:#bfe0ff}
 .bar{position:absolute;left:0;right:0;height:0;background:#000;transition:height .5s ease;pointer-events:none;z-index:3}
 #barT{top:0}#barB{bottom:0}
 .cine #barT,.cine #barB{height:9%}

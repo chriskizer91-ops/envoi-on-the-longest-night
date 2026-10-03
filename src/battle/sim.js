@@ -232,6 +232,8 @@
 
     sensible(B, s, rand) {
       const v = look(B, s), u = v.u, tgt = (v.boss || v.lowestFoe).key;
+      // a Bramble Horror above the party's level: walk away from it (it can't follow)
+      if (v.ok('flee') && v.foes.some((f) => f.def.alone && f.level > u.level)) return ['flee'];
       if (u.id === 'io') {
         const low = v.heroes.filter((h) => v.pct(h) < 0.45 && !h.severed).sort((a, b) => v.pct(a) - v.pct(b));
         if (v.ok('moonlight')) return low.length && v.ok('mend') ? ['mend', low[0].key] : ['moonlight', tgt];
@@ -263,6 +265,8 @@
 
     expert(B, s, rand) {
       const v = look(B, s), u = v.u, RL = v.RL;
+      // a Bramble Horror two levels up, or an Ancient Crown above the party: walk away from it
+      if (v.ok('flee') && v.foes.some((f) => f.def.alone && (f.level > u.level + 1 || (f.id === 'brambleAncient' && f.level > u.level)))) return ['flee'];
       // in a pack, finish the weakest; against a boss, the boss (but never hit into Warden's Vow if there's a choice)
       const vowed = (f) => f.vow > 0;
       const mainFoe = v.boss && v.foes.length > 1 ? v.foes.filter((f) => !vowed(f)).sort((a, b) => a.hp - b.hp)[0] || v.boss : v.boss || v.lowestFoe;

@@ -357,6 +357,7 @@
           add('envoi', { ok, why: B.envoi ? 'once a battle' : ok ? '' : 'Sol needs 70 Heat', targets: foes });
         }
         add('defend', {});
+        if (B.ends.canFlee) add('flee', {});
       } else if (h.id === 'sol') {
         if (h.inTrance) { add('highNoon', { targets: foes }); add('daybreak', { targets: foes }); }
         else add('attack', { targets: foes });
@@ -373,6 +374,7 @@
           add('kestrel', { ok, why: ok ? '' : 'not yet', targets: [hal.key] });
         }
         add('guard', {});
+        if (B.ends.canFlee) add('flee', {});
       }
       for (const id in B.herbs) {
         if (!(B.herbs[id] > 0)) continue;
@@ -441,6 +443,12 @@
         case 'stoopRise': h.hovering = tgt ? tgt.key : null; h.stoopHot = hot; emit({ t: 'hover', who: h.key }); break;
         case 'kestrel': B.kestrelUsed = true; tgt.stagger = true; emit({ t: 'kestrel', who: h.key, to: tgt.key }); break;
         case 'defend': h.defending = true; break;
+        case 'flee': {
+          const ok = living('foe').every((f) => f.def.alone) || rand() < 0.5;
+          emit({ t: 'flee', who: h.key, ok });
+          if (ok) { B.over = 'fled'; emit({ t: 'end', result: 'fled' }); }
+          break;
+        }
         case 'guard': h.guarding = true; break;
         case 'mend':
           if (h.inTrance) for (const a of living('hero')) heal(h, a, d.heal); else heal(h, tgt, d.heal);

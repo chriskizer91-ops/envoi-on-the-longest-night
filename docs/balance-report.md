@@ -91,6 +91,6 @@ About 74 wild fights from level 2 to 20 for a player who skips nothing, before t
 
 | Upgrade | Level | Shards |
 |---|---|---|
-| The Bogmire refit | 5 | 500 |
-| The charge at Dawnroost's living node | 10 | 1,800 |
+| The Bogmire refit | 5 | 650 |
+| The charge at Dawnroost's living node | 10 | 2,300 |
 | The final upgrade at the shipyard | 15 | 4,500 |

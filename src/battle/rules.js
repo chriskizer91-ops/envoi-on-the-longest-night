@@ -33,6 +33,8 @@
         // Sol, enough for Sunburn and for Envoi's heart from nothing. Moonsteel stays the cheap one, with its moon edge
         harvest: { name: 'Harvest Moon', kind: 'moonlore', mp: 28, heat: 70, target: 'sol', need: 'refit', time: 2 },
         defend: { name: 'Defend', kind: 'defend', target: 'self', time: 0.8 },
+        // in the wilds the party can run: always from the rooted Bramble Horror, which can't chase; from a pack, one try in two
+        flee: { name: 'Flee', kind: 'flee', target: 'self', time: 1.5 },
         moonlight: { name: 'Moonlight', kind: 'trance', hits: [420, 380, 450], element: 'moon', target: 'foe', ends: true, time: 4 },
         // a summon's arrival, as long as it plays on the battle screen (measured October 2)
         lunara: { name: 'Lunara', kind: 'summon', target: 'party', time: 9.8 },
@@ -51,6 +53,7 @@
         solarCrest: { name: 'Solar Crest', kind: 'art', heatAll: 50, crest: 12, physical: true, target: 'foe', time: 3.2 },
         // halves what she takes, and takes any single hit aimed at Io, until her next turn
         guard: { name: 'Guard', kind: 'defend', heat: -40, target: 'self', time: 0.8 },
+        flee: { name: 'Flee', kind: 'flee', target: 'self', time: 1.5 },
         // Kestrel Stoop: a turn hovering, then on her next turn the biggest sword hit in the game. It costs what one
         // Ember Rush does and beats two of them. While she hovers she is out of reach (Chris, October 3)
         stoopRise: { name: 'Kestrel Stoop', kind: 'art', heat: -40, need: 'stoop', target: 'foe', time: 1.6 },
@@ -231,12 +234,14 @@
   // level asks 2.7 times as much. A gate is worth about a level early on, and the first fight takes Io straight to 2
   const xpNeed = (level) => Math.round(200 * Math.pow(CURVE, level - 1) * (level <= 5 ? 0.8 : 1) * Math.pow(1.02, Math.max(0, level - 3)) * (level >= 16 ? 2.7 : 1));
   const grows = (n, level) => Math.round(n * Math.pow(CURVE, level - 1));
+  // a herb's price in a band's shops: its level 1 price grown to the band's middle level (3, 8, 13 and 18)
+  const herbPrice = (id, band) => grows(HERBS[id].price, (band - 1) * 5 + 3);
   // the Magpie's upgrades: the party's level and a price in shards (the story chain will check them)
   const MAGPIE = [
-    { level: 5, name: 'The Bogmire refit', shards: 500 },
-    { level: 10, name: "The charge at Dawnroost's living node", shards: 1800 },
+    { level: 5, name: 'The Bogmire refit', shards: 650 },
+    { level: 10, name: "The charge at Dawnroost's living node", shards: 2300 },
     { level: 15, name: 'The final upgrade at the shipyard', shards: 4500 },
   ];
 
-  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, xpNeed, grows, MAGPIE };
+  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, xpNeed, grows, herbPrice, MAGPIE };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

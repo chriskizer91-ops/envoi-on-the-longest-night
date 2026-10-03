@@ -113,6 +113,7 @@ BattleScreen.start({
     foes: [{ id: FORMS[p].foes[0], level: L }],
     flags: { party: true, refit: L > 5, envoi: L > 10, stoop: L > 15 },
     herbs: Object.assign({}, BattleSim.BAGS.wild),
+    ends: { canFlee: true },
   }),
   pickNote: (L) => 'It comes at the party’s level. At its own level a careful player beats the Classic Horror about four times in five and the Ancient Crown about one time in three; a perfect player beats the Ancient Crown a little more than half the time. In the wilds it is one fight in five, at a level rolled in the band’s range.' + (L < 8 ? ' Below level 8 it has no Undergrowth.' : '') + (L > 10 ? ' Envoi is in the Summon menu once Sol has 70 Heat.' : ''),
   introMsg: (fs) => (fs[0].id === 'brambleAmbush' ? 'By the Thornwood bridge a low blackberry thicket grows over the stones, heavy with fruit.' : 'By the Thornwood bridge stands a blackberry thicket, lusher than any the party has seen, and heavy with fruit.'),

@@ -1268,6 +1268,10 @@ function makeHalcyon(opts) {
  act('die', 5.2, [K(0), K(.15, { pX: -.12, y: -.12, mo: 3, bl: .5, br: .8, hX: -.2, eye: .8 }, [-.1, 1.2, .25, .1, -.3, .95, 0, -.95, -.3]), K(.25, { y: -.3, pX: .15 }, [-.02, 1.08, .3, .05, -.55, .83, 0, -.83, -.55]),
   K(.33, KNEEL), K(.45, { crack: 1, cX: .2, hX: .42, eye: .2 }), K(.56, { crack: 1, cX: .16, hX: .1, eye: .05, br: .1, bl: .3 }),
   K(.72, { crack: 1, hX: -.05, fade: .65, eye: 0 }), K(.94, { crack: 1, hX: -.1, fade: 0 }), K(1, { crack: 1, fade: 0 })], { hold: true, bi: .1 });
+ // kneel: the first third of the release, held: brought down at Noctara's side in the finale, she kneels on her planted
+ // blade and stays there, cold, until the very end (plan step 17). A technical addition; no new pose
+ act('kneel', 1.7, [K(0), K(.45, { pX: -.12, y: -.12, mo: 3, bl: .5, br: .8, hX: -.2, eye: .8 }, [-.1, 1.2, .25, .1, -.3, .95, 0, -.95, -.3]), K(.76, { y: -.3, pX: .15 }, [-.02, 1.08, .3, .05, -.55, .83, 0, -.83, -.55]),
+  K(1, KNEEL)], { hold: true, bi: .1 });
  // retreat, at the end of the level 20 fight: the blade held low in one hand, she backs away, and black smoke swallows her from the feet up
  const LOW = { two: 0, lik: 0, lSX: -.06, lSZ: .2, lE: -.35, fL: .7, rPx: -.45, rPy: -.9, rPz: .2, pY: -.15, sY: 0, cY: .05, nY: 0, hY: .1, rFr: -.08, lFr: .08, rFx: -.1, lFx: .1, eye: .9, br: .9 };
  act('retreat', 2.6, [K(0), K(.12, LOW, [-.25, 1.0, .16, .12, -.7, .7, .12, .7, .7]),

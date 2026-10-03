@@ -1,8 +1,8 @@
 # Where Things Stand
 
-A handoff for the next session. Updated October 3, 2026, after the twenty-first round: Harvest Moon replaces Moth Veil, the party carries one of each herb, step 16 (Halcyon's ambush) is built, and Chris's Bramble Horror is in the wilds.
+A handoff for the next session. Updated October 3, 2026, after the twenty-second round: Chris asked for the rest of the game to be built with every decision made here. Step 17 (the finale) is built and published, phase 3 (the story's fights in order) is done, and phase 4 (walking and flying) is under way.
 
-**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Steps 13 to 16, the party, the great wraith, Dawnroost and Halcyon's ambush, are built too. Next is step 17, the finale.
+**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Steps 13 to 17, the party, the great wraith, Dawnroost, Halcyon's ambush and the finale, are built too. **Phase 3 is done:** the whole journey plays in order in the simulator (`src/game/story.js`, `src/battle/chain.js`). **Phase 4 is under way:** every ground-level map is traced, and the field engine, the world map, the townsfolk, the dialogue box and the game's fights are written.
 
 ## Working from the second account
 
@@ -13,6 +13,7 @@ A handoff for the next session. Updated October 3, 2026, after the twenty-first 
 
 | Page | Link | State |
 |---|---|---|
+| The finale | https://claude.ai/artifact/UWft3rdQxCrMV3qnb1fMST | Step 17 (October 3): Io and Sol at level 17 to 20 against Noctara and Halcyon at the dead Moonwell. Crown Shards, Void Sphere, Frost Dust and Blackout; the cold deepens 11.5% a turn and shows by Noctara's name and at the screen's edges; Halcyon kneels when she falls; the ending (lore answer 10) with the stars coming back |
 | Bramble Horror | https://claude.ai/artifact/DzNK9CukB2rMsbcEhTSGGV | October 3: Chris's Bramble Horror as a lone wild foe at the Thornwood bridge, any of its four forms at any level from 1 to 20 (at the party's level): Lure then Grab, Consume, Thorn Sweep, Strike, Undergrowth; fire makes it recoil and breaks a lure, a heavy blade severs a cane |
 | Halcyon's ambush | https://claude.ai/artifact/9DkTvwCiXQcS1vJa2WSsUA | Step 16 (October 3): Io and Sol at level 15 to 20 against Halcyon at 20 at the northern crossroads, the gate out of band 3. She is the Gloam Knight until Sol knows her stance; Kestrel, Warden's Vow and its counter, Black Noon charged a turn ahead; her retreat at 20%, or the party falls and she spares them; either way Sol learns Kestrel Stoop |
 | Dawnroost | https://claude.ai/artifact/JuoPFYrjc9rGZKpuBGF3Jn | Step 15 (October 3): Io and Sol at level 8 to 13 against three level 12 wraiths at Dawnroost's living node, the gate out of band 2; win, and Envoi is made at the node |
@@ -123,10 +124,9 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 ## Next steps
 
-1. Step 17, the finale: Noctara with Halcyon at level 20, at the dead Moonwell (`battle-dead-moonwell.webp`). Noctara's moves on the battle screen (Crown Shards, Void Sphere, Frost Dust, Blackout), the cold deepening shown on screen, and Halcyon kneeling when she falls.
-2. Phase 3: reset the shards' prices (the Magpie and the shops) for the new experience curve, and play the whole chain of fights in order. The curve itself is set (about 79 wild fights, 40% in the last band).
-3. Step 19, the Magpie, builds on Chris's world travel demo (`reference/demos/the-magpie-over-aethermoor.html`).
-4. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.
+1. **Phase 4, walking (step 18):** the field engine (`src/game/field.js`) on the traced maps (`src/game/maps.js`), the townsfolk (`sprites.js`), the dialogue box (`talk.js`), the world map (`world.js`, with its land mask from `tools/world-mask.mjs`) and the game's fights (`fights.js`, the battle screen's game mode). Next: the game director that joins them, menus, shops and saves, then the step 18 demo.
+2. **Step 19, the Magpie,** built from Chris's world travel demo (`reference/demos/the-magpie-over-aethermoor.html`).
+3. **Phase 5:** the title, the story scenes and the script, band by band, and the single-file build.
 
 Art in hand (`../reference/art/README.md`):
 

@@ -6,7 +6,10 @@
 // numbers rising as each blow lands. The windows, menus, intro, Trance, Lunara and the ending follow the demo; Lunara
 // has her Embrace and Silver Requiem from her finished model, Sol her Heat, Sword Arts and Dawnbreaker, and the ending
 // adds experience, sunstone shards and the level-up. The page holds the markup and the fight's config
-// (demos/first-fight.html, demos/party.html). three.js r128 (global THREE). Defines window.BattleScreen = { start(cfg) }.
+// (demos/first-fight.html, demos/party.html). three.js r128 (global THREE). Defines window.BattleScreen = { start(cfg), markup() }.
+// In the game (cfg.game = { onEnd(result) }) the fight begins as soon as its painting loads, the end card's button says
+// Continue and hands the result back, and start() returns { stop() }, which shuts the fight down (its loop, listeners,
+// renderer and models) so the next fight can start on the same page; markup() gives the stage's inner markup to build it.
 (function () {
   'use strict';
   const TAU = Math.PI * 2;
@@ -163,13 +166,27 @@
     }
     // the painted windows that light again when a scene's stolen lamplight comes home (Bogmire): warm glows drawn over
     // the painting, each fading in when its light arrives
-    const TOWN = { a: (SC.windows || []).map(() => 0), to: (SC.windows || []).map(() => 0), ver: 0 };
+    const TOWN = { a: (SC.windows || []).map(() => 0), to: (SC.windows || []).map(() => 0), ver: 0, stars: 0, starsTo: 0, field: null };
     function stepTown(rdt) {
       let changed = false;
+      if (Math.abs(TOWN.starsTo - TOWN.stars) > 0.003) { TOWN.stars += (TOWN.starsTo - TOWN.stars) * Math.min(1, rdt * 0.8); changed = true; }
       for (let i = 0; i < TOWN.a.length; i++) { const d = TOWN.to[i] - TOWN.a[i]; if (Math.abs(d) > 0.004) { TOWN.a[i] += d * Math.min(1, rdt * 2.4); changed = true; } else if (d) { TOWN.a[i] = TOWN.to[i]; changed = true; } }
       if (changed) TOWN.ver++;
     }
+    // the stars coming back over the painted sky at the end (the scene's `sky` box), brighter ones with a soft glow
+    function drawStars(ox, oy, S2) {
+      const sk = SC.sky; if (!sk || TOWN.stars < 0.01) return;
+      if (!TOWN.field) { TOWN.field = []; for (let i = 0; i < 260; i++) TOWN.field.push([sk[0] + Math.random() * (sk[2] - sk[0]), sk[1] + Math.pow(Math.random(), 1.3) * (sk[3] - sk[1]), Math.random()]); }
+      const c = paintCtx; c.save(); c.globalCompositeOperation = 'lighter';
+      for (const [u, v, b] of TOWN.field) {
+        const x = (u * S2 - ox) * DPR, y = (v * S2 - oy) * DPR, a = TOWN.stars * (0.35 + 0.65 * b), r = (0.6 + 1.6 * b * b) * DPR * Math.max(1, S2 * 0.8);
+        if (b > 0.8) { const g = c.createRadialGradient(x, y, 0, x, y, r * 5); g.addColorStop(0, 'rgba(220,230,255,' + (0.35 * a).toFixed(3) + ')'); g.addColorStop(1, 'rgba(220,230,255,0)'); c.fillStyle = g; c.fillRect(x - r * 5, y - r * 5, r * 10, r * 10); }
+        c.fillStyle = 'rgba(245,248,255,' + a.toFixed(3) + ')'; c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill();
+      }
+      c.restore();
+    }
     function drawTown(ox, oy, S2) {
+      drawStars(ox, oy, S2);
       if (!TOWN.a.some((a) => a > 0.01)) return;
       const c = paintCtx; c.save(); c.globalCompositeOperation = 'lighter';
       SC.windows.forEach(([u, v], i) => {
@@ -189,7 +206,10 @@
     // ---------- effects and sound ----------
     const FX = window.makeBattleFX();
     const IOS = window.makeIoSpells ? window.makeIoSpells(FX) : null;
-    const SND = window.makeBattleSound();
+    const SND = cfg.sound || window.makeBattleSound();
+    // listeners on the window, kept so stop() can take them off again
+    const offs = []; let ro = null;
+    const on = (t, ty, fn) => { t.addEventListener(ty, fn); offs.push([t, ty, fn]); };
 
     // ---------- the fighters and the battle's state ----------
     const F = {};                 // fighter by the engine's unit key
@@ -237,7 +257,7 @@
       function pick(i) { const it = items[i]; if (!it || it.disabled || !cb) return; const f = cb; SND.sfx.select(); f(it.id); }
       function open(list, title, fn, selFn) { cb = fn; onSel = selFn || null; render(list, title); }
       function waitMenu() { cb = null; onSel = null; items = []; cmdEl.innerHTML = '<div class="wait">Waiting…</div>'; mark(null); }
-      window.addEventListener('keydown', (e) => {
+      on(window, 'keydown', (e) => {
         if (!cb) return;
         if (e.key === 'ArrowDown') { move(1); e.preventDefault(); }
         else if (e.key === 'ArrowUp') { move(-1); e.preventDefault(); }
@@ -287,8 +307,9 @@
         for (const f of foes) {
           const u = E.unit(f.key), r = el('div', { class: 'foe' }, en);
           const nm = el('div', { class: 'ename' }, r), label = el('span', null, nm, shownName(u)); el('small', null, nm, 'Level ' + u.level);
+          const cold = u.def.rage ? el('small', { class: 'cold' }, nm, '') : null;
           const ga = el('div', { class: 'gauge' }, r), i = el('i', { class: 'ehp' }, ga);
-          rows[f.key] = { r, i, label, last: {} };
+          rows[f.key] = { r, i, label, cold, last: {} };
         }
       }
       const set = (row, k, v, fn) => { if (row.last[k] !== v) { row.last[k] = v; fn(v); } };
@@ -310,6 +331,8 @@
         for (const f of foes) {
           const u = E.unit(f.key), d = D[f.key], R = rows[f.key]; if (!R || !u) continue;
           set(R, 'hp', Math.round(d.hp / u.maxHp * 400), () => { R.i.style.width = (d.hp / u.maxHp * 100).toFixed(1) + '%'; R.r.classList.toggle('down', d.hp <= 0); });
+          // the finale's deepening cold: how much harder her blows (and Halcyon's) land now
+          if (R.cold) set(R, 'cold', u.acted, (v) => { R.cold.textContent = v ? 'Cold +' + Math.round(u.rage * v * 100) + '%' : ''; const c = $('cold'); if (c) c.style.opacity = String(Math.min(0.95, 0.07 * v)); });
         }
       }
       function update(rdt) {
@@ -477,7 +500,8 @@
       else if (e.t === 'down') {
         const u = E.unit(e.who);
         if (u.side === 'foe') {
-          D[e.who].hp = 0; who.out = true; who.m.play('die', true); SND.sfx.shriek(0.9);
+          D[e.who].hp = 0; who.out = true; const da = who.look.downAct || 'die'; if (da !== 'none') who.m.play(da, true); SND.sfx.shriek(0.9);
+          if (who.look.downNote) UI.note(who.look.downNote, 2.6);
           if (!living('foe').length) { clock.scale = 0.25; clock.slowT = 1.2; UI.cinematic(true); }
         } else { D[e.who].hp = 0; D[e.who].inTrance = false; D[e.who].tr = 0; who.trance = 0; if (who.m.action !== 'kneel') who.m.play('kneel', true); }
       } else if (e.t === 'tranceEnds') {
@@ -655,6 +679,7 @@
       },
       lunara: (h, t, ev) => summonLunara(h, t, ev),
       envoi: (h, t, ev) => summonEnvoi(h, t, ev),
+      flee: (h, t, ev) => flee(h, t, ev),
     };
     // whoever a move heals, from its events
     const healed = (ev) => { const ks = new Set(ev.list.filter((e) => e.t === 'heal').map((e) => e.to)); const out = [...ks].map((k) => F[k]).filter(Boolean); return out.length ? out : [io()]; };
@@ -673,6 +698,7 @@
         UI.flash('#fff3d0', 0.6, 0.5);
         UI.vignette(0); if (!E.over) UI.cinematic(false);
       },
+      flee: (h, t, ev) => flee(h, t, ev),
       async guard(h, t, ev) {
         UI.banner('Guard'); SND.sfx.guard();
         const f = firstFoe(); if (f) faceTo(h, f);
@@ -713,6 +739,18 @@
         UI.vignette(0); UI.cinematic(false);
       },
     };
+
+    // ---------- Flee: the party turns and runs; from a pack it can fail ----------
+    async function flee(h, t, ev) {
+      const e = ev.list.find((x) => x.t === 'flee'), ok = !!(e && e.ok);
+      shotField(2); SND.sfx.swish();
+      const runners = living('hero');
+      for (const f of runners) { const away = { x: f.pos.x + (f.pos.x - firstFoe().pos.x) * 0.25, z: f.pos.z + (f.pos.z - firstFoe().pos.z) * 0.25 }; moveTo(f, away.x, away.z, ok ? 4.5 : 2.5); }
+      await wait(ok ? 1.1 : 0.9);
+      if (ok) UI.msg('The party gets away.', true);
+      else { UI.note('Couldn’t get away!', 1.6); await Promise.all(runners.map((f) => goHome(f, 3))); }
+      ev.rest();
+    }
 
     // ---------- herbs, for either hero ----------
     async function useHerb(h, hd, ev) {
@@ -1224,6 +1262,66 @@
         await goHome(f, 3.6);
       },
     };
+    // ---------- Noctara the Starless (the finale, plan step 17), after her bench stage (src/bench/stage-noctara.js) ----------
+    // Her model carries its own effects (the crown's shards, the void orb, the frost dust, the light leaving). The screen
+    // aims them, darkens the world for Blackout while Halcyon strikes unseen, and lets Frost Dust's blow land as it thaws
+    const darkTo = (v, sec) => { const d = $('dark'); if (!d) return; d.style.transition = 'opacity ' + (sec || 0.4) + 's'; d.style.opacity = String(v); };
+    const NOCTARA_MOVES = {
+      async crownShards(f, ev) {
+        const W = f.m, A = W.ACTIONS.crownShards, aims = ev.list.filter((e) => e.t === 'hit').map((e) => F[e.to]);
+        f.aimAt = aims[0] || blowTarget(ev); shotField(2.5);
+        W.play('crownShards', true); SND.sfx.chime();
+        for (let k = 0; k < A.hits.length; k++) {
+          f.aimAt = aims[k] || f.aimAt;
+          await untilP(W, A.hits[k]);
+          if (ev.has()) { const p = chest(blowTarget(ev)); FX.burst(p, [0.8, 0.7, 1], 26, 3); FX.flashLight(p, 0xb69cff, 2.5, 0.3); SND.sfx.hit(0.8); addShake(6); hitStop(0.04); ev.show(); }
+        }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+      },
+      // the void orb, gathered a turn ahead: it opens over the party and collapses on everyone
+      async voidSphere(f, ev) {
+        const W = f.m, A = W.ACTIONS.voidSphere;
+        UI.cinematic(true); UI.vignette(0.7); shotField(2.2);
+        W.play('voidSphere', true); SND.sfx.eclipse();
+        await untilP(W, A.hits[0]);
+        for (const h of warded(ev) ? [ENV.ward] : reach()) { const p = chest(h); FX.burst(p, [0.7, 0.5, 1], 70, 4.6); FX.flashLight(p, 0x9a6cff, 5, 0.5, 8); }
+        UI.flash('#1a0830', 0.85, 0.5); SND.sfx.boom(1.5); addShake(20); hitStop(0.16);
+        ev.showAll({ big: true });
+        await until(() => !W.busy); ev.rest();
+        UI.vignette(0); if (!E.over) UI.cinematic(false);
+      },
+      // the party slows; the blow waits in the frost and lands as it thaws
+      async frostDust(f, ev) {
+        const W = f.m; shotField(2.5);
+        W.play('frostDust', true); SND.sfx.chime();
+        await untilP(W, 0.45); ev.rest();
+        UI.note('Frost Dust: the party slows. Its blow lands as the frost thaws.', 2.6);
+        await until(() => !W.busy);
+      },
+      // the light leaves; Halcyon strikes out of the dark; the damage shows as the light comes back
+      async blackout(f, ev) {
+        const W = f.m, bo = ev.list.find((e) => e.t === 'blackout'), h = bo ? F[bo.by] : null, t = blowTarget(ev);
+        shotField(2.5); W.play('blackout', true); SND.sfx.eclipse();
+        await untilP(W, 0.17); darkTo(0.95, 0.5); UI.tint(0.8);
+        await untilP(W, 0.36);
+        if (h && t && F[t.key] && D[h.key].hp > 0) { const s2 = toward(h.pos, t.pos, 1.4); h.pos = { x: s2.x, z: s2.z }; faceTo(h, t); h.aim = t; h.m.play('severance', true); }
+        await untilP(W, 0.6);
+        UI.flash('#9cc4ff', 0.3, 0.25); SND.sfx.swish(); SND.sfx.hit(1.3); addShake(14); hitStop(0.1);
+        await untilP(W, 0.8); darkTo(0, 0.6); UI.tint(0);
+        if (t && F[t.key]) halHitFx(t, true);
+        ev.showAll({ big: true });
+        if (h) { h.aim = null; if (h.m.reset) h.m.reset(); h.pos = { x: h.home.x, z: h.home.z }; h.yaw = h.tyaw = h.home.yaw; }
+        await until(() => !W.busy); ev.rest();
+      },
+    };
+    // Frost Dust's blow, landing as the frost thaws
+    async function thaw(hd, ev) {
+      apply(hd); shotField(2.5);
+      for (const h of warded(ev) ? [ENV.ward] : reach()) { const p = chest(h); FX.burst(p, [0.8, 0.92, 1], 40, 3.6); FX.flashLight(p, 0xbfe0ff, 3, 0.4, 6); }
+      UI.flash('#e6f4ff', 0.45, 0.35); SND.sfx.hit(1.1); addShake(10); hitStop(0.08);
+      ev.showAll(); await wait(0.8); ev.rest();
+    }
+
     // ---------- the Bramble Horror (Chris's bench, reference/demos/bramble-horror-bench.html) ----------
     // Rooted: it never moves. Its canes orient on its prey (state.target, from aimAt), lash out, hook and drag; its own model
     // carries the sap, the berry juice, the leaves and the feeding glow. Its prey is carried in its canes while it holds her
@@ -1358,10 +1456,11 @@
           } else {
             if (hd.released) f.charged = false;
             UI.banner(hd.name, hd.move === 'eclipse' ? 2.4 : 1.4);
-            const fn = (f.kind === 'wisp' ? WISP_MOVES : f.kind === 'halcyon' ? HALCYON_MOVES : f.kind === 'bramble' ? BRAMBLE_MOVES : WRAITH_MOVES)[hd.move];
+            const fn = (f.kind === 'wisp' ? WISP_MOVES : f.kind === 'halcyon' ? HALCYON_MOVES : f.kind === 'bramble' ? BRAMBLE_MOVES : f.kind === 'noctara' ? NOCTARA_MOVES : WRAITH_MOVES)[hd.move];
             if (fn) await fn(f, ev); else { await wait(0.8); ev.rest(); }
           }
-        } else { apply(hd); ev.rest(); } // anything between turns, such as the frost wearing off
+        } else if (hd.t === 'frostEnds' && ev.has()) await thaw(hd, ev);
+        else { apply(hd); ev.rest(); } // anything between turns, such as the frost wearing off
         if (E.over === 'lose' && !living('hero').length) break;
       }
       sync();
@@ -1384,6 +1483,7 @@
       }
       if (s.options.some((o) => o.herb)) list.push({ id: 'item', label: 'Item', disabled: !s.options.some((o) => o.herb && o.ok) });
       list.push(h.id === 'io' ? { id: 'defend', label: 'Defend' } : { id: 'guard', label: 'Guard' });
+      if (has('flee')) list.push({ id: 'flee', label: 'Flee' });
       return list;
     }
     const tagOf = (o) => (o.mp ? o.mp + ' MP' : o.heat ? (o.id === 'solarCrest' ? 'All' : '−' + o.heat) + ' Heat' : '');
@@ -1530,7 +1630,8 @@
       if (LU && LU.on) { LU.on = false; LU.m.play('leave', true); }
       const mark = (k) => S.trace.push([k, +clock.t.toFixed(2)]);
       mark('finish');
-      if (r.outcome === 'win') {
+      if (r.outcome === 'win' && cfg.finale) await finaleEnding(mark);
+      else if (r.outcome === 'win') {
         UI.cinematic(true); SND.stopMusic(1.2);
         await wait(0.3); clock.scale = 1; clock.slowT = 0;
         // the last foe to fall: the robe falls empty (or the flame goes out), and the soul goes home as a pale moth
@@ -1551,6 +1652,7 @@
         await until(() => up.every((h) => h.m.action !== 'victory' || h.m.progress >= 1));
         mark('victory'); await wait(0.9);
       } else if (r.outcome === 'retreat') await retreatEnding(mark);
+      else if (r.outcome === 'fled') { SND.stopMusic(1.0); await wait(1.2); UI.hideMsg(); }
       else if (cfg.spared) await sparedEnding(mark);
       else {
         SND.stopMusic(1.0); SND.sfx.defeat();
@@ -1559,6 +1661,61 @@
         await wait(2.0);
       }
       mark('card'); showEnd(r);
+    }
+
+    // ---------- the ending (lore answer 10): Envoi's last strike is the real sending. The letters burn for good and their
+    // light rises; the stars come back; Noctara is not killed but becomes night with stars in it; Halcyon's blade warms,
+    // and she goes home as a moth rising ----------
+    async function finaleEnding(mark) {
+      const L = cfg.endingLines || [], io = F.io, s = F.sol;
+      const noc = foes.find((f) => E.unit(f.key).id === 'noctara'), hal = foes.find((f) => E.unit(f.key).id === 'halcyon');
+      UI.cinematic(true); UI.hideEnemy(); SND.stopMusic(2);
+      await wait(0.4); clock.scale = 1; clock.slowT = 0; darkTo(0, 0.4); UI.tint(0); S.rimeOn = false;
+      for (const h of heroes) if (D[h.key].hp <= 0) { h.m.play('rise', true); D[h.key].hp = 1; }
+      if (noc) { noc.m.play('hurt', true); shotAt(noc.pos, 1.0, 1.6); }
+      if (L[0]) { UI.msg(L[0], true); await wait(3.2); }
+      // Io calls Envoi one last time, and it wraps the Starless
+      if (EN && noc) {
+        const M = EN.m;
+        EN.pos = { x: EN.home.x, z: EN.home.z }; EN.yaw = EN.tyaw = faceYaw(EN.home, noc.pos) - 0.5; EN.wrap = noc;
+        io.tyaw = faceYaw(io.pos, EN.pos); io.m.play('summon', true); SND.sfx.chime();
+        await untilP(io.m, io.m.ACTIONS.summon.cues[0]);
+        await FX.projectile({ from: io.m.flamePos(V()), to: () => new THREE.Vector3(EN.pos.x, 1.6, EN.pos.z), dur: 0.7, arc: 1.2, color: 0xfff1d8, halo: 0xffb45a, size: 0.26, trail: [1, 0.85, 0.6], light: 0xffc890, lightI: 3 });
+        M.root.visible = true; if (M.fx) M.fx.visible = true; EN.shadow.visible = true; EN.on = true;
+        M.play('summon', true); SND.sfx.fire(); envoiShot([{ x: noc.pos.x, y: noc.tall, z: noc.pos.z }], 1.2);
+        await untilP(M, 0.27); if (s && D.sol.hp > 0) { s.m.play('flareCut', true); SND.sfx.swish(); }
+        await until(() => !M.busy);
+        if (L[1]) UI.msg(L[1], true);
+        M.play('envoi', true); SND.sfx.fire();
+        const A = M.ACTIONS.envoi;
+        for (let k = 0; k < A.hits.length; k++) {
+          await untilP(M, A.hits[k]);
+          const p = chest(noc), last = k === A.hits.length - 1;
+          FX.burst(p, [1, 0.8, 0.5], last ? 140 : 26, last ? 6 : 3); FX.flashLight(p, 0xffd0a0, last ? 9 : 2.5, last ? 0.8 : 0.25, last ? 12 : 6);
+          if (last) { UI.flash('#fff1c8', 0.95, 0.9); SND.sfx.boom(1.5); addShake(20); } else { SND.sfx.hit(0.7); addShake(4); }
+        }
+        // the letters' light rises into the sky, and the stars come back
+        for (let i = 0; i < 18; i++) { const a = rnd(0, TAU), r = rnd(0.2, 2.2); FX.beam({ x: noc.pos.x + Math.cos(a) * r, z: noc.pos.z + Math.sin(a) * r }, 0xfff0c8, 0.25, 16, 2.4 + rnd(0, 1.2)); }
+        FX.rise(() => noc.pos, [1, 0.9, 0.7], 3.2, 90, 2.4);
+        await until(() => M.progress < 0 || M.progress >= 1);
+        EN.on = false; EN.wrap = null; envoiHide();
+      }
+      mark('sending');
+      TOWN.starsTo = 1; shot(IW / 2, IH * 0.3, 0, 0.9);
+      if (L[2]) { UI.msg(L[2], true); await wait(3.6); }
+      // Noctara becomes night with stars in it
+      if (noc) { shotAt(noc.pos, 0.9, 1.4); noc.m.play('die', true); SND.sfx.moon(); }
+      if (L[3]) { UI.msg(L[3], true); await wait(4.2); }
+      mark('night');
+      // Halcyon's blade warms, and she goes home as a moth rising
+      if (hal) { shotAt(hal.pos, 1.3, 1.4); hal.m.play('die', true); SND.sfx.chime(); }
+      if (L[4]) { UI.msg(L[4], true); await wait(5.2); }
+      mark('home');
+      UI.hideMsg(); SND.sfx.victory();
+      const up = living('hero'); shotField(1.5);
+      for (const h of up) { h.tyaw = 0.25; h.m.play('victory', true); }
+      if (L[5]) { UI.msg(L[5], true); await wait(3.4); UI.hideMsg(); }
+      UI.cinematic(false);
     }
 
     // ---------- Halcyon's ambush: Sol knows her; she retreats, or spares them; Sol learns Kestrel Stoop ----------
@@ -1641,14 +1798,14 @@
     // the end card: the battle time and damage dealt; on a win, the experience, the shards and the level-up
     function showEnd(r) {
       const win = r.outcome === 'win' || r.outcome === 'retreat', T = cfg.endTitles || {}, X = cfg.endTexts || {};
-      $('endTitle').textContent = T[r.outcome] || (win ? 'Victory!' : 'Defeated');
-      $('endText').textContent = X[r.outcome] || (win ? cfg.winText : cfg.loseText);
+      $('endTitle').textContent = T[r.outcome] || (win ? 'Victory!' : r.outcome === 'fled' ? 'Got away' : 'Defeated');
+      $('endText').textContent = X[r.outcome] || (win ? cfg.winText : r.outcome === 'fled' ? 'The party slips away. A fight that is fled gives nothing.' : cfg.loseText);
       const sec = (clock.t - S.t0), m = Math.floor(sec / 60), s = Math.floor(sec % 60);
       $('stTime').textContent = m + ':' + String(s).padStart(2, '0'); $('stDmg').textContent = nf(S.dealt);
       const F = PACE.fps, fl = $('stFps');
       if (fl) fl.textContent = F.t > 2000 ? 'Frame rate: ' + Math.round(F.n * 1000 / F.t) + ' a second on average, ' + Math.round(F.low || F.n * 1000 / F.t) + ' in the slowest second (' + (PACE.cap ? 'capped at ' + PACE.cap : 'no cap') + ').' : '';
       $('xpBox').hidden = !win; $('lvlBox').hidden = true;
-      $('again').textContent = win ? 'Fight again' : 'Try again';
+      $('again').textContent = cfg.game ? 'Continue' : win || r.outcome === 'fled' ? 'Fight again' : 'Try again';
       if (win) {
         const lead = E.unit(heroes[0].key);
         let lv = lead.level, xp = (cfg.xp || 0) + r.xp, ups = 0;
@@ -1702,7 +1859,8 @@
         if (h.m.state) { h.m.state.heat = 0; h.m.state.sunburn = 0; h.m.state.trance = 0; }
       }
       FX.shield(false); S.rimeOn = false;
-      for (let i = 0; i < TOWN.a.length; i++) TOWN.a[i] = TOWN.to[i] = 0; TOWN.ver++;
+      for (let i = 0; i < TOWN.a.length; i++) TOWN.a[i] = TOWN.to[i] = 0; TOWN.stars = TOWN.starsTo = 0; TOWN.ver++;
+      darkTo(0, 0.1); { const c = $('cold'); if (c) c.style.opacity = '0'; }
       for (const f of foes) f.charged = false;
       LU.m.reset(); LU.on = false; LU.m.root.visible = false; if (LU.m.fx) LU.m.fx.visible = false; LU.shadow.visible = false;
       if (EN) { envoiHide(); EN.wrap = null; for (const d of ENV.ink) d.s.visible = false; }
@@ -1735,6 +1893,7 @@
     const heldV = new THREE.Vector3();
     const flameP = new THREE.Vector3();
     function frame(now) {
+      if (S.dead) return;
       if (pace(now)) { requestAnimationFrame(frame); return; }
       const rdt = last ? Math.min(0.05, Math.max(0, (now - last) / 1000)) : 0.016; last = now;
       countFrame(now);
@@ -1850,6 +2009,7 @@
     }
 
     function init() {
+      for (const id of ['cold', 'dark']) if (!$(id)) { const d = el('div', { id, class: 'fill', 'aria-hidden': 'true' }); stage.insertBefore(d, $('flash')); }
       renderer = new THREE.WebGLRenderer({ canvas: glCanvas, alpha: true, antialias: true });
       renderer.setPixelRatio(DPR); renderer.setClearColor(0x000000, 0);
       scene = new THREE.Scene();
@@ -1894,13 +2054,15 @@
       buildPicker();
 
       const beginBtn = $('begin');
-      const ready = () => { beginBtn.disabled = false; beginBtn.textContent = 'Begin the battle'; if (!coarse) beginBtn.focus({ preventScroll: true }); };
+      const ready = () => {
+        if (cfg.game) { $('start').hidden = true; SND.init(); begin(!!cfg.quickIntro); return; }
+        beginBtn.disabled = false; beginBtn.textContent = 'Begin the battle'; if (!coarse) beginBtn.focus({ preventScroll: true }); };
       paintImg.onload = () => { lastTf = ''; ready(); };
       paintImg.onerror = () => { beginBtn.textContent = 'The painting didn’t load. Reload to try again.'; };
       paintImg.src = SC.image.startsWith('data:') ? SC.image : '../' + SC.image;
       beginBtn.addEventListener('click', () => { SND.init(); begin(!!cfg.quickIntro); });
       $('skipBtn').addEventListener('click', () => { S.skip = true; if (skipRes) skipRes(); });
-      $('again').addEventListener('click', () => { SND.init(); begin(true); });
+      $('again').addEventListener('click', () => { if (cfg.game) { cfg.game.onEnd(S.result); return; } SND.init(); begin(true); });
       const change = $('change');
       if (change) { change.hidden = !cfg.packs; change.addEventListener('click', () => { $('end').hidden = true; $('start').hidden = false; UI.showBattle(false); S.state = 'boot'; }); }
       const fpsB = $('fps');
@@ -1913,13 +2075,13 @@
         });
       }
       const snd = $('snd');
-      snd.addEventListener('click', () => {
+      if (snd) snd.addEventListener('click', () => {
         SND.init(); const m = !SND.muted; SND.setMuted(m);
         snd.setAttribute('aria-pressed', String(!m)); snd.querySelector('span').textContent = m ? 'Sound off' : 'Sound on';
       });
       let tmr = 0;
       const onResize = () => { clearTimeout(tmr); tmr = setTimeout(layoutView, 100); };
-      if (window.ResizeObserver) new ResizeObserver(onResize).observe(stage); else window.addEventListener('resize', onResize);
+      if (window.ResizeObserver) { ro = new ResizeObserver(onResize); ro.observe(stage); } else on(window, 'resize', onResize);
 
       // test hooks for headless checks
       window.__battle = {
@@ -1933,10 +2095,40 @@
       };
     }
     setTimeout(() => {
+      if (S.dead) return;
       try { init(); }
-      catch (err) { console.error(err); const b = $('begin'); b.textContent = 'This battle needs WebGL, which isn’t available in this browser.'; }
+      catch (err) { console.error(err); const b = $('begin'); b.textContent = 'This battle needs WebGL, which isn’t available in this browser.'; if (cfg.game && cfg.game.onError) cfg.game.onError(err); }
     }, 30);
+    // the game's teardown: the loop stops, the listeners come off, and the GPU and the models are let go
+    function stop() {
+      S.dead = true; SND.stopMusic(0.3);
+      for (const [t, ty, fn] of offs) t.removeEventListener(ty, fn);
+      if (ro) ro.disconnect();
+      for (const f of heroes.concat(foes)) dispose(f.m);
+      if (LU) dispose(LU.m); if (EN) dispose(EN.m);
+      if (renderer) { renderer.dispose(); renderer.forceContextLoss(); renderer = null; }
+      if (window.__battle && window.__battle.engine === E) window.__battle = null;
+    }
+    return { stop };
   }
 
-  window.BattleScreen = { start };
+  // the stage's inner markup, as the demo pages write it, for the game to build a battle in (cfg.game)
+  function markup() {
+    return '<canvas id="paint" aria-hidden="true"></canvas><div id="tint" class="fill"></div><canvas id="gl" aria-hidden="true"></canvas>' +
+      '<canvas id="rime" aria-hidden="true"></canvas><div id="vignette" class="fill"></div><div id="flash" class="fill"></div>' +
+      '<div id="barT" class="bar"></div><div id="barB" class="bar"></div><div id="enemy" class="win" hidden></div>' +
+      '<div id="banner" class="win" aria-live="polite"></div><div id="msg" class="win" role="status"></div><div id="nums" aria-hidden="true"></div>' +
+      '<div id="marker" aria-hidden="true" hidden><svg viewBox="0 0 22 18"><path d="M2 2h18L11 16Z" fill="currentColor" stroke="#2c3160" stroke-width="1.6" stroke-linejoin="round"/></svg></div>' +
+      '<div id="ui" hidden><div id="cmd" class="win" role="menu" aria-label="Commands"></div><div id="status" class="win" aria-label="The party"></div></div>' +
+      '<div id="skip" hidden><button type="button" class="skipb" id="skipBtn">Skip intro</button></div>' +
+      '<div id="start" class="overlay"><div class="card win"><button type="button" class="go" id="begin" disabled>Setting the scene…</button></div></div>' +
+      '<div id="end" class="overlay" hidden><div class="card win"><h2 id="endTitle">Victory!</h2><p id="endText"></p>' +
+      '<div class="stats"><div><b id="stTime">0:00</b><span>Battle time</span></div><div><b id="stDmg">0</b><span>Damage dealt</span></div></div>' +
+      '<div class="xp" id="xpBox" hidden><div class="stats"><div><b id="xpGain">+0</b><span>Experience</span></div><div><b id="shardGain">+0</b><span>Sunstone shards</span></div></div>' +
+      '<div class="row"><span>Next level</span><b id="xpNext"></b></div><div class="gauge"><i id="xpBar"></i></div></div>' +
+      '<div class="lvl" id="lvlBox" hidden><h3 id="lvlTitle">Level up!</h3><dl id="lvlList"></dl><p>Every move hits and heals about 20% harder.</p></div>' +
+      '<div class="btns"><button type="button" class="go" id="again">Continue</button></div></div></div>';
+  }
+
+  window.BattleScreen = { start, markup };
 })();

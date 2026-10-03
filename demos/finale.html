@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>The Party</title>
+<title>The Longest Night</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
@@ -11,13 +11,13 @@
 </head>
 <body>
 <header>
-  <h1>The Party</h1>
+  <h1>The Longest Night</h1>
   <div class="hbtns">
     <button type="button" class="hbtn" id="fps"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4a9 9 0 0 0-9 9 8.9 8.9 0 0 0 1.8 5.4l1.6-1.2A7 7 0 1 1 19 13a6.9 6.9 0 0 1-1.4 4.2l1.6 1.2A8.9 8.9 0 0 0 21 13a9 9 0 0 0-9-9Zm4.2 4.4-5 4.1a1.6 1.6 0 1 0 2.2 2.2l4.1-5Z"/></svg><span>fps</span></button>
     <button type="button" class="hbtn" id="snd" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3Zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Zm-2.5-8.8v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6Z"/></svg><span>Sound on</span></button>
   </div>
 </header>
-<main id="stage" aria-label="Battle between Io and Sol and a pack of foes in the Night square">
+<main id="stage" aria-label="The final battle: Io and Sol against Noctara and Halcyon at the dead Moonwell">
   <canvas id="paint" aria-hidden="true"></canvas>
   <div id="tint" class="fill"></div>
   <canvas id="gl" aria-hidden="true"></canvas>
@@ -37,8 +37,8 @@
   <div id="skip" hidden><button type="button" class="skipb" id="skipBtn">Skip intro</button></div>
   <div id="start" class="overlay">
     <div class="card win">
-      <h2>Io and Sol</h2>
-      <p>The witch and the last Ember Warden fight side by side. Sol builds Heat with every blow and burns hotter above 70; Io keeps her standing and spends Moonsteel to stoke her. Pick the party’s level and the foes, then pick a target for every blow.</p>
+      <h2>The Longest Night</h2>
+      <p>Misthollow’s Moonwell is dead, and the moon is going out. Noctara the Starless waits there with Halcyon at her side. Her cold deepens every turn she takes, so this is a race: it takes playing at your best, at level 20, to win. Pick the party’s level.</p>
       <div class="pickr" id="picker" hidden>
         <label for="pickLevel"><span>Party level</span><input type="range" id="pickLevel" min="1" max="20" step="1" value="3"><output id="pickLevelOut" for="pickLevel">3</output></label>
         <label for="pickPack"><span>Foes</span><select id="pickPack"></select></label>
@@ -68,11 +68,11 @@
   </div>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="../src/stage/night-square.js"></script>
+<script src="../src/stage/dead-moonwell.js"></script>
 <script src="../src/models/witch.js"></script>
 <script src="../src/models/sol.js"></script>
-<script src="../src/models/wraith.js"></script>
-<script src="../src/models/wisp.js"></script>
+<script src="../src/models/halcyon.js"></script>
+<script src="../src/models/noctara.js"></script>
 <script src="../src/models/lunara.js"></script>
 <script src="../src/models/envoi.js"></script>
 <script src="../src/fx/battle-fx.js"></script>
@@ -83,48 +83,51 @@
 <script src="../src/battle/sound.js"></script>
 <script src="../src/battle/screen.js"></script>
 <script>
-// Step 13: Io and Sol against wisps, frost wisps and wraiths at a chosen level. Sol's Heat, Sunburn, Sword Arts and
-// Dawnbreaker; Io's Waxing Light, Moonsteel and, from level 6, Harvest Moon; Lunara, and from level 11 Envoi; herbs; a
-// target for every blow.
-const PACKS = [
-  { name: 'Two wisps', foes: ['wisp', 'wisp'] },
-  { name: 'A Shadow Wraith', foes: ['wraith'] },
-  { name: 'A wisp and a wraith', foes: ['wisp', 'wraith'] },
-  { name: 'Three wisps', foes: ['wisp', 'wisp', 'wisp'] },
-  { name: 'Two wraiths', foes: ['wraith', 'wraith'] },
-  { name: 'A wraith and two wisps', foes: ['wraith', 'wisp', 'wisp'] },
-  { name: 'Two frost wisps and a wraith', foes: ['frostWisp', 'frostWisp', 'wraith'] },
-  { name: 'Three frost wisps', foes: ['frostWisp', 'frostWisp', 'frostWisp'] },
-  { name: 'Two wraiths and a frost wisp', foes: ['wraith', 'wraith', 'frostWisp'] },
-];
+// Step 17: the final battle at Misthollow's dead Moonwell. Io and Sol at a level from 17 to 20 against Noctara and Halcyon,
+// both at 20; the fight is the simulator's own (BattleSim.FIGHTS.finale). Noctara: Crown Shards, Void Sphere gathered a turn
+// ahead, Frost Dust (the party slows and the blow lands as it thaws), and Blackout (the world goes dark and Halcyon strikes
+// unseen). Her cold deepens 11.5% with every turn she takes, for her blows and Halcyon's, and it shows by her name and at
+// the screen's edges. Halcyon kneels on her planted blade when she falls. The ending is lore answer 10: Envoi's last strike
+// sends the letters, the stars come back, Noctara becomes night with stars in it, and Halcyon goes home as a moth.
 BattleScreen.start({
-  level: 3, pack: 2, levels: [1, 20], packs: PACKS,
+  scene: 'dead-moonwell',
+  level: 20, pack: 0, levels: [17, 20], packs: [{ name: 'Noctara and Halcyon, at level 20', foes: ['halcyon', 'noctara'] }],
   heroes: [
-    { id: 'io', make: () => makeWitch({}), home: [560, 812], yawBias: -0.38, shadow: 0.62, tall: 2.1, kind: 'io' },
-    { id: 'sol', make: () => makeSol({}), home: [650, 868], yawBias: -0.3, shadow: 0.6, tall: 1.9, kind: 'sol', stop: 0.9 },
+    { id: 'io', make: () => makeWitch({}), home: [560, 762], yawBias: -0.38, shadow: 0.62, tall: 2.1, kind: 'io' },
+    { id: 'sol', make: () => makeSol({}), home: [630, 812], yawBias: -0.3, shadow: 0.6, tall: 1.9, kind: 'sol', stop: 0.9 },
   ],
-  slots: [[860, 805], [950, 765], [925, 885]],
+  slots: [[750, 690], [828, 642]],
   foeLook: {
-    wraith: { kind: 'wraith', shadow: 0.75, tall: 2.3, yawBias: 0.45, glow: [1.6, 0x2cff7a] },
-    wisp: { kind: 'wisp', shadow: 0.3, tall: 1.0, yawBias: 0.9, glow: [0.9, 0xb070ff], state: (u) => ({ level: u.level }) },
-    frostWisp: { kind: 'wisp', shadow: 0.3, tall: 1.0, yawBias: 0.9, glow: [0.9, 0x9fd8ff], state: (u) => ({ level: u.level }) },
+    halcyon: { kind: 'halcyon', shadow: 0.62, tall: 2.11, yawBias: 0.15, glow: [1.4, 0x6f9cff], appearColor: [0.45, 0.55, 0.95], stop: 0.95, downAct: 'kneel', downNote: 'Halcyon falls to one knee on her planted blade, and stays there.' },
+    noctara: { kind: 'noctara', shadow: 0.8, tall: 2.5, yawBias: 0.25, glow: [1.7, 0x8a5cff], appearColor: [0.65, 0.5, 1], downAct: 'none' },
   },
-  makeFoe: (id, level, i) => (id === 'wraith' ? makeWraith({ level }) : makeWisp({ seed: i + 1, frost: id === 'frostWisp' })),
+  makeFoe: (id) => (id === 'noctara' ? makeNoctara({}) : makeHalcyon({})),
   makeLunara: () => makeLunara({}),
   makeEnvoi: () => makeEnvoi({}),
-  fight: (L, p) => ({
-    party: [{ id: 'io', level: L }, { id: 'sol', level: L }],
-    // each foe rolls a level in the band's range, as wild foes do (1 to 5, 6 to 10, 11 to 15, 16 to 20)
-    foes: PACKS[p].foes.map((id) => ({ id, level: BattleSim.wildLevel(BattleSim.bandOf(L), Math.random) })),
-    flags: { party: true, refit: L > 5, envoi: L > 10, stoop: L > 15 },
-    // one of each herb: the party can't carry more (Chris, October 3)
-    herbs: { moonpetal: 1, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 },
-    ends: { canFlee: true },
-  }),
-  pickNote: (L) => { const [lo, hi] = BattleSim.BAND_LEVELS[BattleSim.bandOf(L)]; return 'Each foe is a level from ' + lo + ' to ' + hi + ', the band’s range, rolled every fight; stronger foes give more experience. ' + (L > 5 ? 'Harvest Moon is in Io’s Moonlore: 70 Heat for Sol. ' : 'Harvest Moon comes after the Bogmire refit (level 6 here). ') + (L > 10 ? 'Envoi is in the Summon menu once Sol has 70 Heat. ' : 'Envoi joins after Dawnroost (level 11 here). ') + (L > 15 ? 'Sol has Kestrel Stoop.' : 'Kestrel Stoop comes after Halcyon (level 16 here).'); },
-  attackText: (fs) => (fs.length > 1 ? 'The foes close in!' : 'The ' + fs[0].name + ' attacks!'),
-  winText: 'The souls go home as pale moths, and the square is quiet again.',
-  loseText: 'The party falls. Keep both above half, let Sol’s Heat ride but heal her burns, and save Lunara for when you need her.',
+  fight: (L) => BattleSim.FIGHTS.finale.setup(L),
+  pickNote: (L) => ({
+    17: 'At 17 the cold wins long before Noctara falls.',
+    18: 'At 18 the party can bring Halcyon down, but not Noctara.',
+    19: 'At 19 even perfect play wins about one time in twenty, and the losses are close.',
+    20: 'At 20 a perfect player wins about three times in four, and an attentive one about one time in twenty-five. It takes being locked in.',
+  })[L] + ' The party carries one of each herb; Envoi, Lunara and Kestrel Stoop are all ready.',
+  finale: true,
+  introMsg: 'Misthollow. The dead Moonwell gives no light at all, and the moon is going out.',
+  introAfter: 'Noctara the Starless waits at the well, and Halcyon stands at her side.',
+  attackText: () => 'The longest night begins!',
+  endingLines: [
+    'Noctara staggers. Io takes out the last of her letters.',
+    'Envoi’s last strike is the real sending: the letters burn for good, and their light rises.',
+    'The stars come back.',
+    'Noctara is not killed. She becomes night, and there are stars in it.',
+    'Halcyon’s blade warms. She goes home, a pale moth rising.',
+    'The longest night is over.',
+  ],
+  endTitles: { win: 'The longest night ends' },
+  endTexts: {
+    win: 'The stars are back. Io’s letters are sent at last, Noctara is night with stars in it, and Halcyon has gone home.',
+    lose: 'The party falls before the dead Moonwell. They wake at the last rest with everything they had, and the night waits. It is a race: the cold deepens every turn, so strike hard and early, and keep Envoi’s ward and Lunara for Void Sphere.',
+  },
 });
 </script>
 </body>
