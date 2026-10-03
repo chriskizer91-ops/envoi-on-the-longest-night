@@ -19,3 +19,9 @@ The first set of questions here (the Witch's name, the waystation's name, the Ma
    - What is it called?
    - Its moves were all made up for it: Awakening, Siren Bloom, Thorn Lance, Hammerfall, Maelstrom, Thorn Volley, Devour, Thornwood, Wrath and Felled. Which stay?
    - Its Wrath is a second phase at half its HP. Do battles have phases like that?
+
+## The wild meadow
+
+4. **The wild meadow** (`../../3d-model-new-character-ideas/bramble-horror/meadow.js`), the living place made for the creature benches, with its own hours and weather. On October 3 Chris said it should be in the game.
+   - Where does it go: behind the fights in the wilderness between stops, or one place in particular?
+   - Battles are set in front of painted backdrops (`design-decisions.md`, October 1). Is the meadow, a 3D place that answers the fight, an exception for the wilds?
