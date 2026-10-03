@@ -1,6 +1,6 @@
 // game-test.mjs: plays the built game headless (Chromium + SwiftShader, as tools/check.mjs does) and reports any error.
 // Build the page first: node tools/build.mjs --min putting-it-all-together/game.html
-// Usage: node tools/game-test.mjs [dist/game.html] [--steps title,new,walk,world,menu,saves,save,wild,colossus] [--band 4]
+// Usage: node tools/game-test.mjs [dist/game.html] [--steps title,new,walk,world,menu,saves,save,wild,colossus,chapters] [--band 4]
 //        [--level 18] [--out <dir>] [--size 960x540] [--turbo 8] [--offline]
 //   title:    the title screen comes up
 //   new:      a new game starts, the prologue plays, and Io stands in her cottage
@@ -151,6 +151,22 @@ try {
       log('  after the fight: ' + JSON.stringify(r));
       await talkThrough(30000);
       await shot(step + '-after');
+    } else if (step === 'chapters') {
+      // each gate's chapter from the title: Io on the gate's map at its entrance, the party at the gate's level, saved
+      const want = [null, ['bogmire-heart', 5], ['dawnroost-node', 10], ['crossroads', 15], ['moonwell', 20]];
+      for (let k = 1; k < want.length; k++) {
+        await page.evaluate(() => { try { localStorage.clear(); } catch (e) { /* none */ } });
+        await page.reload();
+        await waitFor(() => !!document.querySelector('.title h1'), null, 30000, 'the title');
+        await page.click('.title-box button:text-is("Chapters")');
+        await waitFor(() => document.querySelectorAll('.talk-choices button').length > 0, null, 10000, 'the chapters');
+        await page.click('.talk-choices button:nth-child(' + (k + 1) + ')');
+        await waitFor((m) => window.__game && window.__game.mode === 'field' && window.__game.field.map && window.__game.field.map.id === m && !window.__game.busy, want[k][0], 30000, 'chapter ' + k);
+        const st = await page.evaluate(() => ({ level: window.__game.state.level, band: window.__game.state.band, flags: Object.keys(window.__game.state.flags).join(' '), saved: !!localStorage.getItem('envoi.save.v1') }));
+        if (st.level !== want[k][1] || !st.saved) throw new Error('chapter ' + k + ': ' + JSON.stringify(st));
+        log('  ' + want[k][0] + ': level ' + st.level + ', band ' + st.band + ', flags ' + st.flags);
+        await sleep(500); await shot('chapter-' + k);
+      }
     } else if (step === 'saves') {
       // the Saves tab: save in slot 2, copy the save code, then load it back from the title, to the map it was saved on
       const savedMode = await page.evaluate(() => window.__game.mode);

@@ -41,6 +41,39 @@
     shipyard: { name: 'The shipyard', band: 3, field: ['shipyard', [764, 290]], need: (st) => st.done['visit:shipyard'], sky: [2097, 580] },
     frozenCamp: { name: 'The northeast peaks', band: 4, world: 'frozenCamp', sky: [2760, 1090] },
   };
+  // the chapters: the start, and each gate with the party as the story leaves it there (story.js's path), for trying a
+  // later part without playing up to it (Chris, October 3). Each starts on the gate's map at its entrance, a few steps
+  // from the fight, with one of each herb and the shards for the band's Magpie upgrade; losing wakes the party at the
+  // nearest rest.
+  const BEEN = ['first', 'visit:bogmire'];
+  const CHAPTERS = [
+    { name: 'The start' },
+    { name: 'Gate 5: the great wraith', level: 5, band: 1, magpie: 'wickhollow', flags: ['party', 'magpie'], done: BEEN,
+      where: ['bogmire-heart', [768, 980]], rest: ['bogmire', [1208, 281]], shards: 650 },
+    { name: 'Gate 10: Dawnroost', level: 10, band: 2, magpie: 'dawnroost', flags: ['party', 'magpie', 'lights', 'refit'],
+      done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp'), landings: ['bogmire', 'warmCamp', 'dawnroost'],
+      where: ['dawnroost-node', [768, 990]], rest: ['dawnroost', [340, 447]], shards: 2300 },
+    { name: 'Gate 15: Halcyon', level: 15, band: 3, magpie: 'northCamp', flags: ['party', 'magpie', 'lights', 'refit', 'envoi', 'charge'],
+      done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp', 'dawnroost', 'camp:northCamp'), landings: ['bogmire', 'warmCamp', 'dawnroost', 'northCamp'],
+      where: ['crossroads', [768, 990]], rest: ['crossroads', [768, 990]], shards: 4500 },
+    { name: 'The finale', level: 20, band: 4, magpie: 'frozenCamp', flags: ['party', 'magpie', 'lights', 'refit', 'envoi', 'charge', 'stoop', 'shipyard', 'upgrade2'],
+      done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp', 'dawnroost', 'camp:northCamp', 'halcyon', 'visit:shipyard', 'camp:frozenCamp', 'visit:frozen-pass', 'visit:misthollow'),
+      landings: ['bogmire', 'warmCamp', 'dawnroost', 'northCamp', 'shipyard', 'frozenCamp'], wilds: { 4: 5 },
+      where: ['moonwell', [775, 990]], rest: ['misthollow', [1000, 662]], shards: 300 },
+  ];
+  function chapterState(c) {
+    const st = GameState.fresh();
+    if (!c.level) return st;
+    st.level = c.level; st.band = c.band; st.magpie = c.magpie; st.shards = c.shards;
+    for (const f of c.flags) st.flags[f] = true;
+    for (const d of c.done) st.done[d] = true;
+    for (const l of c.landings || []) st.landings[l] = true;
+    if (c.wilds) st.wilds = Object.assign({}, c.wilds);
+    st.herbs = { moonpetal: 1, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 };
+    st.where = { mode: 'field', map: c.where[0], at: c.where[1], dir: 'n' };
+    st.rest = { mode: 'field', map: c.rest[0], at: c.rest[1] };
+    return st;
+  }
   // the Magpie's upgrades (rules.js MAGPIE), who makes them, and the story flag each sets
   const UPGRADES = [
     { flag: 'refit', who: 'quill', after: 'lights', scene: 'refit' },
@@ -612,17 +645,19 @@
       if (last) { const c = el('button', { type: 'button', class: 'go' }, box, 'Continue'); c.addEventListener('click', () => { audioInit(); GS.use(last.slot); st = last.st; begin(false); }); el('p', { class: 'title-save' }, box, 'Slot ' + last.slot + ' · ' + saveLine(last.st)); }
       const n = el('button', { type: 'button', class: 'go' + (last ? ' alt' : '') }, box, 'New game');
       n.addEventListener('click', async () => {
-        audioInit();
-        const all = GS.list();
-        if (all.some((x) => x.st)) {
-          // which slot to start it in: an empty one first; a full one is only lost if the player says so
-          titleEl.hidden = true;
-          const k = await ask(null, 'Start the new game in which slot?', all.map((x) => 'Slot ' + x.slot + ': ' + (x.st ? 'level ' + x.st.level : 'empty')).concat(['Back']));
-          if (k < all.length && all[k].st) { const y = await ask(null, 'Slot ' + all[k].slot + ' holds a game: ' + saveLine(all[k].st) + '. Start over it?', ['Start over it', 'Back']); if (y) { titleEl.hidden = false; return; } }
-          titleEl.hidden = false; if (k >= all.length) return;
-          GS.use(all[k].slot);
-        } else GS.use(1);
-        st = GS.fresh(); begin(true);
+        audioInit(); titleEl.hidden = true;
+        const slot = await pickSlot('Start the new game in which slot?');
+        titleEl.hidden = false; if (!slot) return;
+        GS.use(slot); st = GS.fresh(); begin(true);
+      });
+      const C = el('button', { type: 'button', class: 'go alt' }, box, 'Chapters');
+      C.addEventListener('click', async () => {
+        audioInit(); titleEl.hidden = true;
+        const k = await ask(null, 'Start from where? The party comes as the story leaves it there.', CHAPTERS.map((c) => c.name).concat(['Back']));
+        if (k >= CHAPTERS.length) { titleEl.hidden = false; return; }
+        const slot = await pickSlot('Play it in which slot?');
+        titleEl.hidden = false; if (!slot) return;
+        GS.use(slot); st = chapterState(CHAPTERS[k]); if (k) GS.save(st); begin(!k);
       });
       const L = el('button', { type: 'button', class: 'go alt' }, box, 'Load');
       L.addEventListener('click', async () => {
@@ -636,6 +671,16 @@
       el('p', { class: 'title-help' }, box, 'Tap the map to walk, or use the arrows. Tap people and glowing things to talk to them or use them. Sound on.');
       if (audioOn) music('title');
       setTimeout(() => (box.querySelector('button') || n).focus({ preventScroll: true }), 50);
+    }
+    // which slot a new game or a chapter goes in: an empty one first; a full one is only lost if the player says so.
+    // Resolves the slot's number, or 0 for Back
+    async function pickSlot(question) {
+      const all = GS.list();
+      if (!all.some((x) => x.st)) return 1;
+      const k = await ask(null, question, all.map((x) => 'Slot ' + x.slot + ': ' + (x.st ? 'level ' + x.st.level : 'empty')).concat(['Back']));
+      if (k >= all.length) return 0;
+      if (all[k].st) { const y = await ask(null, 'Slot ' + all[k].slot + ' holds a game: ' + saveLine(all[k].st) + '. Start over it?', ['Start over it', 'Back']); if (y) return 0; }
+      return all[k].slot;
     }
     async function begin(isNew) {
       titleEl.remove(); titleEl = null; busy++;
@@ -654,7 +699,7 @@
     // time played
     setInterval(() => { if (mode !== 'title' && !document.hidden) st.time += 1; }, 1000);
     if (opts.skipTitle) { audioOn = false; begin(!opts.state); } else showTitle();
-    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit };
+    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit };
     window.__game = api;
     return api;
   }
