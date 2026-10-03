@@ -125,6 +125,9 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 ## Next steps
 
+Everything Claude would add or improve, and what is waiting on Chris, is in `handoff.md`.
+
+
 1. **The game is joined in one page** (`demos/game.html`, `src/game/game.js`): title, prologue, the field and world maps, the Magpie's flight, every set fight in order, shops, inns, camps, wells, the menu, the save and the ending. Every part has been played headless with no errors. Build it with `node tools/build.mjs --min demos/game.html`.
 2. **Art to come:** the townsfolk's portraits (`art-requests/06-townsfolk-portraits.md`) and the story stills (`art-requests/07-story-stills.md`). When they arrive the page passes 16 MB, so its paintings move to separate files beside it.
 3. **The script** is Claude's placeholder throughout (`src/game/script.js`), for the lore conversation to replace.
