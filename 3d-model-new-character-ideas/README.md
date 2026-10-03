@@ -6,6 +6,8 @@ Creatures and characters Chris brings to the project as ideas, each with its cod
 |---|---|---|---|
 | Bramble Horror | `bramble-horror/` | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Version 2, October 3, 2026 |
 | Bramble Colossus, the Bramble Horror grown into a boss | `bramble-colossus/` | https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q | Version 1, October 3, 2026 |
+| Emberback, a giant salamander of the buried sunstone | `emberback/` | — | Chris's sheets in, October 3, 2026; the model is next |
+| Gloamwing, a great night-flier that hunts the souls' moths | `gloamwing/` | — | Chris's sheets in, October 3, 2026; the model is next |
 
 The Bramble Colossus has no `original/`: it was made here from the Bramble Horror, as Chris asked, and its bench shares the Bramble Horror's `bench.css` and its two places, `glade.js` and `meadow.js`.
 
