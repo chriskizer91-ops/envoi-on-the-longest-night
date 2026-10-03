@@ -34,7 +34,7 @@
   // (sky: where she docks on the flying map, in atlas pixels; Wickhollow's and Bogmire's are the world travel demo's)
   const LANDINGS = {
     wickhollow: { name: 'Wickhollow', band: 1, field: ['jetty', [768, 700]], sky: [1446, 1806] },
-    bogmire: { name: 'Bogmire', band: 1, field: ['bogmire', [190, 612]], need: (st) => st.flags.lights, sky: [1886, 2462] },
+    bogmire: { name: 'Bogmire', band: 1, field: ['bogmire', [100, 372]], need: (st) => st.flags.lights, sky: [1886, 2462] },
     warmCamp: { name: 'The Warm Roads', band: 2, world: 'warmCamp', sky: [820, 1530] },
     dawnroost: { name: 'Dawnroost', band: 2, field: ['dawnroost', [1400, 330]], need: (st) => st.done['visit:dawnroost'], sky: [1365, 1085] },
     northCamp: { name: 'The northern wilds', band: 3, world: 'northCamp', sky: [1150, 590] },
@@ -153,7 +153,7 @@
     // the people who come and go with the story, and the Magpie where it's moored
     function setupMaps() {
       const extra = {
-        bogmire: { people: [{ id: 'quill', name: 'Quill', at: [190, 560], look: 'sailor', when: () => st.flags.lights }], spots: [{ kind: 'magpie', at: [95, 600], label: 'The Magpie', note: 'Tied up at the west dock.' }] },
+        bogmire: { people: [{ id: 'quill', name: 'Quill', at: [190, 560], look: 'sailor', when: () => st.flags.lights }], spots: [{ kind: 'magpie', at: [84, 352], label: 'The Magpie', note: 'Tied up at the west dock.' }] },
         wickhollow: { spots: [{ kind: 'event', id: 'first', rect: [560, 450, 1075, 690], once: 'first' }] },
       };
       for (const id in extra) { const m = MAPS[id]; if (m._extra) continue; m._extra = true; m.people = (m.people || []).concat(extra[id].people || []); m.spots = (m.spots || []).concat(extra[id].spots || []); }
@@ -270,7 +270,7 @@
       if (id === 'greatWraith') {
         await scene('greatWraith');
         const r = await battle('greatWraith');
-        if (r.outcome === 'win') { st.done.greatWraith = true; st.flags.lights = true; await goField('bogmire', [1150, 300], 's'); await scene('lights'); save(); }
+        if (r.outcome === 'win') { st.done.greatWraith = true; st.flags.lights = true; await goField('bogmire', [1212, 296], 's'); await scene('lights'); save(); }
         else await wake();
         return;
       }

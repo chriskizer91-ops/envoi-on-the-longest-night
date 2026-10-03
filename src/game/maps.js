@@ -24,6 +24,14 @@
   const lampBlocks = (ls) => ls.map((l) => l.block), lampFronts = (ls) => ls.map((l) => l.front);
   // Wickhollow's lamps: the four round the Moonwell, and the one by the west stairs
   const WICK_LAMPS = [lamp(659, 392, 310), lamp(904, 392, 310), lamp(640, 595, 509), lamp(914, 595, 509), lamp(260, 590, 525)];
+  // Bogmire's lamps: two on the west dock's rail, one where the dock meets the west boardwalk, one at the square's
+  // south-east corner, one where the east boardwalk turns south, and one on the south-east dock
+  const BOG_LAMPS = [lamp(145, 482, 439), lamp(145, 620, 579), lamp(251, 462, 392), lamp(1007, 530, 481), lamp(1303, 432, 372), lamp(1460, 760, 724)];
+  // the two lanterns still burning at the near corners of the fen's dark heart
+  const HEART_LAMPS = [lamp(540, 688, 616), lamp(995, 690, 612)];
+  // Dawnroost's lamps: the two inside the north gate, one either side of the road by the well and the Warden hall, the
+  // one on the dock by the gateway, and the two on the dock's east rail
+  const DAWN_LAMPS = [lamp(546, 278, 197), lamp(692, 278, 197), lamp(551, 524, 444), lamp(706, 507, 422), lamp(1314, 366, 318), lamp(1504, 276, 237), lamp(1504, 381, 331)];
   // the living node's lamps: one on each wall walk, at the top of its stairs
   const NODE_LAMPS = [lamp(158, 108, 64), lamp(1381, 109, 64)];
   // the shipyard's lamps: in the yard, on the battlement's corners and pillars, on the quays and by the stairs
@@ -202,45 +210,68 @@
       name: 'Bogmire', src: "art/walk/walk-bogmire.webp", band: 1, kind: 'town', music: 'town',
       start: [70, 368],
       walk: [
-        [[30, 338], [255, 338], [255, 402], [30, 402]], // the west dock
-        [[140, 338], [238, 338], [238, 645], [140, 645]], // down the west dock
-        [[30, 456], [150, 456], [150, 484], [30, 484]], [[30, 522], [150, 522], [150, 553], [30, 553]], [[30, 587], [150, 587], [150, 618], [30, 618]], // its fingers
-        [[235, 402], [530, 402], [530, 446], [235, 446]], // the west boardwalk into the square
-        [[326, 228], [372, 228], [372, 405], [326, 405]], // the stair up to the north-west houses
-        [[250, 205], [698, 205], [698, 246], [250, 246]],
-        [[524, 330], [1028, 330], [1028, 540], [524, 540]], // the market square
-        [[765, 0], [815, 0], [815, 335], [765, 335]], // the long walk north, to the fen's dark heart
-        [[736, 100], [845, 100], [845, 152], [736, 152]],
-        [[815, 205], [1024, 205], [1024, 246], [815, 246]],
-        [[1020, 408], [1305, 408], [1305, 462], [1020, 462]], // the east boardwalk
-        [[1192, 296], [1240, 296], [1240, 410], [1192, 410]], // the inn's stair
-        [[1075, 244], [1380, 244], [1380, 302], [1075, 302]], // the inn's porch
-        [[1255, 405], [1308, 405], [1308, 708], [1255, 708]], // south on the east side
-        [[1305, 562], [1480, 562], [1480, 604], [1305, 604]],
-        [[1300, 704], [1485, 704], [1485, 765], [1300, 765]],
-        [[751, 535], [810, 535], [810, 815], [751, 815]], // south from the square
-        [[715, 810], [824, 810], [824, 878], [715, 878]],
-        [[373, 742], [751, 742], [751, 797], [373, 797]], [[634, 703], [751, 703], [751, 754], [634, 754]], // the south-west houses
-        [[300, 725], [380, 725], [380, 768], [300, 768]],
-        [[809, 756], [1310, 756], [1310, 800], [809, 800]], // the south-east houses
+        // the landing platform at the west edge, where the Thornwood road comes in, and the west dock running south from
+        // it (its three fingers for the punts are railed off)
+        [[34, 341], [245, 341], [245, 391], [34, 391]],
+        [[151, 385], [233, 385], [233, 638], [151, 638]],
+        [[230, 389], [372, 389], [376, 413], [526, 413], [526, 450], [258, 450], [258, 432], [230, 432]], // the west boardwalk into the square
+        [[331, 236], [368, 236], [368, 392], [331, 392]], // the stair up to the north-west house
+        [[326, 218], [388, 218], [388, 212], [486, 212], [486, 216], [550, 216], [550, 211], [688, 211], [688, 245], [326, 247]], // its porch, and the bridge along to the next house's door
+        [[524, 413], [527, 386], [548, 352], [596, 334], [948, 334], [990, 352], [1020, 382], [1024, 410], [1024, 536], [532, 536], [532, 452], [524, 450]], // the market square
+        [[765, 0], [814, 0], [814, 338], [765, 338]], [[741, 119], [838, 119], [838, 146], [741, 146]], // the long walk north, to the fen's dark heart
+        [[812, 205], [1012, 205], [1012, 234], [812, 234]], // the north-east house's porch
+        [[1022, 410], [1302, 410], [1302, 450], [1022, 450]], // the east boardwalk
+        [[1197, 298], [1231, 298], [1231, 413], [1197, 413]], [[1176, 292], [1190, 292], [1190, 281], [1240, 281], [1240, 302], [1176, 302]], // up the inn's stair to its door
+        [[1259, 448], [1305, 448], [1305, 690], [1269, 690], [1269, 628], [1259, 628]], // south on the east side
+        [[1266, 688], [1336, 688], [1336, 766], [1302, 766], [1302, 806], [1266, 806]], [[1334, 723], [1478, 723], [1478, 761], [1334, 761]], // the south-east dock
+        [[856, 772], [1300, 772], [1300, 806], [856, 806]], [[1061, 726], [1090, 726], [1090, 774], [1061, 774]], // along the south-east houses
+        [[757, 534], [812, 534], [812, 736], [790, 736], [790, 822], [757, 822]], [[722, 820], [823, 820], [823, 879], [722, 879]], // south from the square to the water stair
+        [[638, 716], [722, 716], [722, 711], [758, 711], [758, 757], [638, 757]], // the bridge west
+        [[609, 692], [643, 692], [643, 802], [609, 802]], [[370, 773], [643, 773], [643, 801], [370, 801]], [[370, 690], [402, 690], [402, 801], [370, 801]], // round the south-west house
+        [[302, 727], [372, 727], [372, 772], [302, 772]], // the little dock
       ],
       block: [
-        [[589, 330], [727, 330], [727, 446], [589, 446]], // the herb stall
-        [[834, 330], [976, 330], [976, 456], [834, 456]], // the market stall
-        [[750, 362], [802, 362], [802, 514], [750, 514]], // the lamp and its planter
+        [[116, 339], [133, 339], [133, 351], [116, 351]], [[150, 347], [167, 347], [167, 361], [150, 361]], // the mooring post, and the mooring crane's foot
+        [[172, 336], [207, 336], [207, 357], [172, 357]], [[219, 336], [247, 336], [247, 383], [229, 383], [229, 358], [219, 358]], [[243, 380], [260, 380], [260, 392], [243, 392]], // barrels and posts on the landing
+        [[152, 614], [175, 614], [175, 645], [152, 645]], // the barrel at the dock's south end
+        [[387, 210], [411, 210], [411, 228], [387, 228]], [[576, 205], [592, 205], [592, 219], [576, 219]], [[628, 205], [690, 205], [690, 225], [628, 225]], // a barrel, a planter and a bench on the porches
+        [[966, 196], [993, 196], [993, 218], [966, 218]], // barrels on the north-east porch
+        [[578, 334], [724, 334], [724, 460], [578, 460]], [[833, 334], [976, 334], [976, 458], [833, 458]], // the herb stall and the trader's stall
+        [[756, 444], [806, 444], [806, 490], [793, 490], [793, 514], [758, 514], [758, 490], [756, 490]], // the lamp's planter and the notice board
+        [[525, 472], [538, 472], [538, 485], [525, 485]], // the bollard where the boardwalk meets the square
+        [[548, 528], [563, 528], [563, 540], [548, 540]], [[566, 531], [584, 531], [584, 545], [566, 545]], [[970, 527], [986, 527], [986, 540], [970, 540]], // the dark lanterns
+        [[597, 503], [693, 503], [693, 540], [597, 540]], [[869, 502], [943, 502], [943, 540], [869, 540]], [[986, 522], [1024, 522], [1024, 540], [986, 540]], // two covered carts, a tub and crates
+        [[1264, 404], [1298, 404], [1298, 431], [1264, 431]], // a barrel and a sack at the corner
+        [[1300, 775], [1318, 775], [1318, 806], [1300, 806]], // a barrel by the south-east dock
+        [[420, 762], [442, 762], [442, 780], [420, 780]], [[462, 762], [482, 762], [482, 780], [462, 780]], // planters by the south-west house
+        [[1114, 762], [1164, 762], [1164, 783], [1114, 783]], // barrels by the south-east house
+        [[856, 765], [891, 765], [891, 780], [856, 780]], [[895, 765], [916, 765], [916, 780], [895, 780]], [[966, 765], [988, 765], [988, 780], [966, 780]], [[988, 765], [1022, 765], [1022, 778], [988, 778]], // tables and planters by the south house
+        [[735, 852], [780, 852], [780, 880], [735, 880]], [[712, 834], [725, 834], [725, 846], [712, 846]], // crates and a barrel on the water stair, and its lamp
+        ...lampBlocks(BOG_LAMPS),
+      ],
+      front: [
+        ...lampFronts(BOG_LAMPS),
+        { pts: [[744, 358], [799, 358], [799, 401], [776, 403], [776, 424], [806, 432], [806, 492], [756, 492], [756, 432], [766, 424], [766, 403], [744, 401]], base: 490 }, // the lamp in the square, in its planter
+        { pts: [[757, 470], [794, 470], [794, 515], [757, 515]], base: 513 }, // the notice board
+        { pts: [[525, 428], [538, 428], [538, 485], [525, 485]], base: 483 }, // the bollard
+        { pts: [[547, 495], [563, 495], [563, 541], [547, 541]], base: 539 }, { pts: [[565, 496], [584, 496], [584, 545], [565, 545]], base: 543 }, { pts: [[969, 495], [987, 495], [987, 540], [969, 540]], base: 537 }, // the dark lanterns
+        { pts: [[150, 292], [168, 292], [168, 362], [150, 362]], base: 360 }, // the mooring crane's post
+        { pts: [[710, 38], [744, 38], [744, 148], [729, 148], [729, 76], [710, 76]], base: 147 }, // the lamp pole by the long walk
+        { pts: [[688, 814], [714, 814], [714, 796], [725, 796], [725, 846], [712, 846], [712, 842], [688, 842]], base: 844 }, // the lamp on the water stair
+        { pts: [[735, 828], [780, 828], [780, 880], [735, 880]], base: 879 }, // crates and a barrel on the water stair
       ],
       exits: [
-        { rect: [30, 338, 46, 402], to: 'thornwood', at: [1500, 532], label: 'The Thornwood' },
-        { rect: [765, 0, 815, 16], to: 'bogmire-heart', at: [768, 980], label: "The fen's dark heart" },
+        { rect: [34, 341, 52, 391], to: 'thornwood', at: [1500, 532], label: 'The Thornwood' },
+        { rect: [765, 0, 814, 18], to: 'bogmire-heart', at: [768, 980], label: "The fen's dark heart" },
       ],
       people: [
-        { id: 'wenna', name: 'Old Wenna', at: [655, 470], look: 'elder', talk: 'wenna', role: 'shop' },
-        { id: 'tobb', name: 'Tobb', at: [1230, 270], look: 'smith', talk: 'tobb', role: 'inn' },
-        { id: 'pell', name: 'Pell', at: [1000, 420], look: 'child', talk: 'pell' },
+        { id: 'wenna', name: 'Old Wenna', at: [652, 470], look: 'elder', talk: 'wenna', role: 'shop' },
+        { id: 'tobb', name: 'Tobb', at: [1184, 296], look: 'smith', talk: 'tobb', role: 'inn', face0: 'e' },
+        { id: 'pell', name: 'Pell', at: [744, 354], look: 'child', talk: 'pell', face0: 'n' },
       ],
       spots: [
-        { kind: 'rest', at: [1150, 270], label: 'The Lanternless Inn', note: 'Tobb keeps a bed for anyone who brings light. Rest, and the game is saved.' },
-        { kind: 'well', id: 'bogwell', at: [780, 860], label: 'The water stair', note: 'A bucket on a rope, and something wrapped in oilcloth tied to it.' },
+        { kind: 'rest', at: [1208, 281], label: 'The Lanternless Inn', note: 'Tobb keeps a bed for anyone who brings light. Rest, and the game is saved.' },
+        { kind: 'well', id: 'bogwell', at: [711, 866], label: 'The water stair', note: 'A bucket on a rope, and something wrapped in oilcloth tied to it.' },
       ],
     },
     // the fen's dark heart: the drowned square north of Bogmire, where the great wraith sits on the stolen lamps (the gate)
@@ -248,14 +279,22 @@
       name: "The fen's dark heart", src: "art/walk/walk-bogmire-heart.webp", band: 1, kind: 'gate', music: 'dread',
       start: [768, 980],
       walk: [
-        [[726, 676], [817, 676], [817, 1024], [726, 1024]], // the long walk in from Bogmire
-        [[500, 300], [1045, 300], [1045, 684], [500, 684]], // the square
-        [[733, 180], [803, 180], [803, 305], [733, 305]], // up to the drowned hall
-        [[600, 168], [936, 168], [936, 206], [600, 206]],
+        [[727, 660], [810, 660], [810, 1024], [727, 1024]], // the long walk in from Bogmire
+        // the square, its broken corners and boards left out
+        [[548, 308], [940, 308], [1035, 350], [1035, 668], [550, 668], [503, 618], [503, 342]],
+        [[440, 428], [484, 428], [484, 450], [503, 450], [503, 505], [440, 505]], [[1053, 425], [1097, 425], [1097, 505], [1035, 505], [1035, 452], [1053, 452]], // the side decks
+        [[735, 179], [801, 179], [801, 312], [735, 312]], // up to the drowned hall's door
       ],
-      block: [],
+      block: [
+        [[500, 360], [541, 360], [541, 379], [500, 379]], [[500, 504], [541, 504], [541, 519], [500, 519]], [[500, 598], [531, 598], [531, 623], [500, 623]], [[549, 354], [566, 354], [566, 366], [549, 366]], [[549, 394], [566, 394], [566, 403], [549, 403]], // broken boards by the west rail
+        [[1005, 405], [1040, 405], [1040, 428], [1005, 428]], [[1013, 448], [1040, 448], [1040, 458], [1013, 458]], [[999, 494], [1040, 494], [1040, 518], [999, 518]], // and by the east rail
+        [[613, 647], [642, 647], [642, 670], [613, 670]], [[878, 647], [927, 647], [927, 670], [878, 670]], // and by the south rail
+        [[690, 176], [741, 176], [741, 205], [690, 205]], [[795, 176], [813, 176], [813, 205], [795, 205]], // barrels at the hall's door
+        ...lampBlocks(HEART_LAMPS),
+      ],
+      front: [...lampFronts(HEART_LAMPS)],
       exits: [
-        { rect: [726, 1006, 817, 1024], to: 'bogmire', at: [790, 30], label: 'Bogmire' },
+        { rect: [727, 1006, 810, 1024], to: 'bogmire', at: [790, 30], label: 'Bogmire' },
       ],
       people: [],
       spots: [
@@ -267,29 +306,60 @@
       name: 'Dawnroost', src: "art/walk/walk-dawnroost.webp", band: 2, kind: 'town', music: 'town',
       start: [645, 990],
       walk: [
-        [[592, 0], [662, 0], [662, 205], [592, 205]], // out through the north gate, up to the living node
-        [[85, 440], [525, 440], [525, 470], [595, 470], [595, 200], [700, 200], [700, 448], [1110, 448], [1110, 205], [1240, 205], [1240, 330], [1300, 330], [1300, 388], [1272, 388], [1272, 708], [700, 708], [700, 1024], [595, 1024], [595, 710], [254, 710], [85, 575]],
-        [[1285, 210], [1520, 210], [1520, 405], [1285, 405]], // the dock
+        [[590, 0], [648, 0], [648, 196], [590, 196]], // out through the north gate, up to the living node
+        [[520, 192], [756, 192], [756, 232], [520, 232]], // the forecourt inside the gate
+        [[108, 205], [540, 205], [540, 232], [528, 243], [140, 243], [140, 226], [108, 226]], // the lane behind the Warden hall
+        [[580, 230], [662, 230], [662, 380], [678, 386], [678, 456], [566, 456], [566, 420], [580, 420]], // the road down from the gate
+        // the yard in front of the Warden hall, from the hall's door down to the weapon racks and the chained posts, and
+        // the way east to the road, behind the two trees over the cottage
+        [[140, 470], [224, 470], [224, 471], [251, 471], [251, 468], [273, 468], [273, 460], [291, 460], [291, 450], [319, 450], [319, 446], [361, 446], [361, 450], [385, 450], [385, 464], [407, 464], [407, 450], [424, 450], [424, 474], [566, 474], [566, 456], [584, 456], [584, 516], [484, 516], [484, 505], [355, 505], [355, 516], [327, 516], [327, 548], [316, 548], [316, 572], [150, 572], [150, 540], [140, 540]],
+        [[584, 456], [684, 456], [684, 500], [680, 560], [690, 628], [584, 628]], // the road past the well
+        // the yard east of the road: past the paddock fence, round the well, to the forge
+        [[662, 406], [762, 406], [762, 456], [1244, 456], [1244, 490], [1196, 490], [1196, 470], [1156, 470], [1156, 528], [1116, 528], [1116, 520], [1086, 520], [1086, 506], [1028, 506], [1028, 518], [990, 518], [990, 532], [982, 548], [948, 560], [948, 652], [684, 652], [684, 470], [662, 470]],
+        [[584, 626], [690, 626], [690, 640], [948, 640], [948, 652], [840, 656], [840, 682], [776, 684], [764, 698], [584, 698]], // south of the well
+        [[880, 640], [948, 640], [948, 646], [966, 646], [966, 667], [1164, 667], [1164, 720], [1022, 720], [1022, 709], [943, 709], [943, 692], [930, 690], [930, 664], [880, 662]], // between the pines to the forge's open front
+        [[600, 696], [692, 696], [692, 848], [600, 848]], [[588, 840], [700, 840], [692, 900], [690, 1024], [592, 1024], [588, 900]], // out through the main gate, and the hill road
+        // the lane east of the stables, round to the gateway in the east wall, and the dock
+        [[1080, 254], [1198, 254], [1206, 300], [1252, 304], [1252, 358], [1194, 358], [1194, 470], [1152, 470], [1152, 340], [1080, 340]],
+        [[1236, 288], [1302, 288], [1302, 356], [1236, 356]],
+        [[1296, 204], [1424, 204], [1500, 258], [1500, 402], [1296, 402]],
       ],
       block: [
-        [[95, 460], [215, 460], [215, 595], [95, 595]], // the weapon racks
-        [[225, 482], [325, 482], [325, 578], [225, 578]], // the posts and chains
-        [[340, 520], [515, 520], [515, 678], [340, 678]], [[275, 600], [345, 600], [345, 668], [275, 668]], // the cottage and its crates
-        ring(780, 538, 62), // the well
-        [[975, 530], [1272, 530], [1272, 688], [975, 688]], // the forge
+        ...lampBlocks(DAWN_LAMPS),
+        [[126, 202], [174, 202], [174, 236], [126, 236]], // barrels behind the hall
+        [[140, 470], [212, 470], [212, 540], [140, 540]], [[221, 482], [266, 482], [266, 528], [221, 528]], [[313, 486], [329, 486], [329, 548], [313, 548]], // the weapon rack, the chained posts and the tall post
+        // the well among its flower beds, with its bench, a barrel and a crate
+        [[682, 498], [744, 494], [744, 516], [822, 516], [826, 506], [840, 512], [868, 522], [872, 562], [866, 612], [826, 620], [770, 626], [724, 630], [690, 612], [680, 560]],
+        [[966, 648], [984, 648], [984, 684], [966, 684]], [[984, 664], [992, 664], [992, 680], [984, 680]], [[1028, 664], [1042, 664], [1042, 674], [1028, 674]], [[1075, 664], [1089, 664], [1089, 678], [1075, 678]], // a barrel and the forge's posts
+        [[1015, 668], [1059, 668], [1059, 695], [1015, 695]], [[1110, 672], [1147, 672], [1147, 702], [1110, 702]], [[1164, 668], [1202, 668], [1202, 720], [1164, 720]], // the anvils and the grindstone
+        [[1224, 285], [1254, 285], [1254, 309], [1224, 309]], // a barrel by the gateway
+        [[1340, 195], [1450, 195], [1450, 272], [1374, 272], [1374, 248], [1340, 248]], // the dock's crane and crates
+        [[1328, 374], [1354, 374], [1354, 402], [1328, 402]], [[1353, 368], [1373, 368], [1373, 402], [1353, 402]], [[1437, 368], [1457, 368], [1457, 402], [1437, 402]], // a barrel and the mooring posts
+      ],
+      front: [
+        ...lampFronts(DAWN_LAMPS),
+        { pts: [[540, 40], [702, 40], [702, 194], [654, 194], [654, 128], [646, 116], [634, 110], [619, 107], [604, 110], [592, 116], [586, 128], [586, 194], [540, 194]], base: 192 }, // the north gate's arch
+        { pts: [[578, 722], [602, 722], [602, 846], [578, 846]], base: 844 }, { pts: [[690, 722], [713, 722], [713, 846], [690, 846]], base: 844 }, // the main gate's open doors
+        { pts: [[720, 646], [745, 646], [745, 702], [720, 702]], base: 700 }, // the lamp on the gate tower
+        { pts: [[741, 475], [825, 475], [825, 522], [741, 522]], base: 520 }, // the well's roof
+        { pts: [[1116, 482], [1156, 482], [1156, 536], [1116, 536]], base: 534 }, // the forge's chimney
+        ...[214, 305, 382, 470].map((x) => ({ pts: [[x, 218], [x + 23, 218], [x + 23, 250], [x, 250]], base: 245 })), // the hall's chimneys
+        { pts: [[366, 472], [414, 472], [428, 486], [430, 518], [352, 518], [352, 486]], base: 518 }, { pts: [[450, 480], [478, 480], [488, 494], [488, 520], [440, 520], [440, 494]], base: 518 }, // the trees over the cottage
+        { pts: [[150, 542], [221, 542], [221, 554], [249, 554], [249, 544], [265, 544], [265, 554], [302, 554], [302, 544], [316, 544], [316, 590], [302, 590], [302, 576], [265, 576], [265, 590], [249, 590], [249, 576], [221, 576], [221, 596], [150, 596]], base: 590 }, // the second rack and its chained posts
+        { pts: [[1351, 364], [1375, 364], [1375, 406], [1351, 406]], base: 403 }, { pts: [[1435, 364], [1459, 364], [1459, 406], [1435, 406]], base: 403 }, // the mooring posts
       ],
       exits: [
-        { rect: [592, 0, 662, 16], to: 'dawnroost-node', at: [768, 990], label: 'The living node' },
-        { rect: [595, 1006, 700, 1024], to: 'world', at: 'dawnroost', label: 'The world' },
+        { rect: [590, 0, 648, 18], to: 'dawnroost-node', at: [768, 990], label: 'The living node' },
+        { rect: [592, 1006, 690, 1024], to: 'world', at: 'dawnroost', label: 'The world' },
       ],
       people: [
-        { id: 'marta', name: 'Marta', at: [338, 462], look: 'elder', talk: 'marta', role: 'inn' },
-        { id: 'brann', name: 'Brann', at: [1120, 712], look: 'smith', talk: 'brann', role: 'shop' },
-        { id: 'tamsin', name: 'Tamsin', at: [880, 475], look: 'child', talk: 'tamsin' },
+        { id: 'marta', name: 'Marta', at: [376, 462], look: 'elder', talk: 'marta', role: 'inn' },
+        { id: 'brann', name: 'Brann', at: [1084, 690], look: 'smith', talk: 'brann', role: 'shop' },
+        { id: 'tamsin', name: 'Tamsin', at: [880, 478], look: 'child', talk: 'tamsin' },
       ],
       spots: [
-        { kind: 'rest', at: [300, 455], label: 'The Warden hall', note: 'The long hall where the Wardens slept. Rest, and the game is saved.' },
-        { kind: 'well', id: 'dawnwell', at: [780, 615], label: 'The yard well', note: 'Tied to the windlass, a letter in a hand Sol knows.' },
+        { kind: 'rest', at: [340, 447], label: 'The Warden hall', note: 'The long hall where the Wardens slept. Rest, and the game is saved.' },
+        { kind: 'well', id: 'dawnwell', at: [788, 634], label: 'The yard well', note: 'Tied to the windlass, a letter in a hand Sol knows.' },
         { kind: 'magpie', at: [1400, 300], label: 'The Magpie', note: 'Moored at the Warden dock.' },
       ],
     },

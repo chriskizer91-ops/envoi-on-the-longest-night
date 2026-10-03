@@ -177,7 +177,7 @@
       // Ysmera comes down from the slip to meet them on the bridge
       { map: 'shipyard', person: 'ysmera' }, { add: 'ysmera', look: 'aurosi', at: [765, 500], dir: 's' }, { focus: { on: 'ysmera' } },
       { walk: 'ysmera', path: [[763, 600], [762, 690]], speed: 95, wait: false }, { io: [[760, 760]], speed: 100 }, { until: 'ysmera' },
-      { face: 'io', dir: 'n' }, { face: 'ysmera', dir: 's' },
+      { face: 'io', dir: 'n' }, { face: 'ysmera', dir: 's' }, { focus: { near: 'io', dy: -40 } }, // both of them above the words
       ['shipmaster', 'A witch and the last of the Wardens, at my yard. Your little ship will need more than courage to fly north.'],
       ['shipmaster', 'You met a knight on the road. Dark armor, a black blade, a black sun on the hilt?'],
       ['sol', 'Yes.'],
