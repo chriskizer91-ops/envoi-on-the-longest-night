@@ -4,7 +4,7 @@ Creatures and characters Chris brings to the project as ideas, each with its cod
 
 | Idea | Folder | Page | State |
 |---|---|---|---|
-| Bramble Horror | `bramble-horror/` | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Polished October 3, 2026 |
+| Bramble Horror | `bramble-horror/` | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Version 2, October 3, 2026 |
 
 ## What goes in an idea's folder
 

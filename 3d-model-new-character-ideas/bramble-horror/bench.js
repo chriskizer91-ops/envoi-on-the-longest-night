@@ -21,8 +21,8 @@
   { id: 'alert', name: 'Alert', cap: 'Senses prey. Canes rise and orient toward the target.' },
   { id: 'lure', name: 'Lure', cap: 'Presents ripe fruit to attract prey. One berry-laden cane extends and remains invitingly still while its fruit swells and gleams. The fruit is real. The danger is not.' },
   { id: 'strike', name: 'Strike', cap: 'Rapid cane lunge. Recurved thorns catch and hold, making escape difficult.' },
-  { id: 'grab', name: 'Grab / Pull In', cap: 'Multiple canes work together to immobilize, lift and drag prey to the root crown.' },
-  { id: 'consume', name: 'Consume', cap: 'The canes cage the root crown and it pulses as it feeds through the roots, its veins flaring: each pulse a blow, then a heal.' },
+  { id: 'grab', name: 'Grab / Pull In', cap: 'Multiple canes lash out together, coil round the prey, yank it in, lift it on each squeeze and drag it to the root crown.' },
+  { id: 'consume', name: 'Consume', cap: 'The canes cage the root crown and ribbons of life twist out of the prey into its hollow; it pulses as it feeds, its veins flaring: each pulse a blow, then a heal.' },
   { id: 'sweep', name: 'Thorn Sweep', cap: 'Winds round and sweeps its canes flat across the front. Not on the sheets: a blow on the whole party.' },
   { id: 'undergrowth', name: 'Undergrowth', isNew: true, cap: 'Stabs its canes into the soil; a pulse runs out along its roots, the ground splits, and thorned shoots burst up round the prey, close over it and squeeze. Not on the sheets: a big move for the higher levels.' },
   { id: 'hurt', name: 'Hurt', cap: 'Recoils from fire or heavy damage, then regroups.' },
@@ -323,7 +323,7 @@
   for (const t of track.querySelectorAll('.tick')) t.remove();
   for (const b of $('moves').children) b.classList.toggle('on', b.dataset.id === id);
   shown = id || null;
-  if (!mv || !m.ACTIONS[id]) { $('actName').textContent = opts.walk ? 'Creeping' : opts.guard ? 'Guard' : 'Idle'; $('actMeta').textContent = 'Rooted. Patient. Hungry.'; $('actCap').textContent = 'Canes arched out like legs, fruit hanging; now and then one lifts and tastes the air. Pick a move to play it; red marks are where a blow lands, gold marks are cues for the battle screen.'; $('fill').style.width = '0'; shown = null; return; }
+  if (!mv || !m.ACTIONS[id]) { $('actName').textContent = opts.walk ? 'Creeping' : opts.guard ? 'Guard' : 'Idle'; $('actMeta').textContent = 'Rooted. Patient. Hungry.'; $('actCap').textContent = 'Canes arched out like legs, fruit hanging, a slow heartbeat in its roots; now and then a cane lifts and tastes the air. Pick a move to play it; red marks are where a blow lands, gold marks are cues for the battle screen.'; $('fill').style.width = '0'; shown = null; return; }
   const A = m.ACTIONS[id];
   $('actName').textContent = mv.name; $('actCap').textContent = mv.cap;
   $('actMeta').textContent = A.dur.toFixed(2) + ' s' + (A.hits.length ? ' · hits ' + A.hits.map(fmt).join(', ') : '') + (A.cues.length ? ' · cues ' + A.cues.map(fmt).join(', ') : '');

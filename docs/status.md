@@ -23,7 +23,7 @@ Added October 3, 2026: `../3d-model-new-character-ideas/` holds creatures Chris 
 
 | Idea | Link | State |
 |---|---|---|
-| Bramble Horror | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Polished: thorns, veins and a feeding hollow, Undergrowth and Scorch, a wild glade bench with Io as its prey. Where it lives is asked in `questions/open.md`. |
+| Bramble Horror | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Version 2: thorns, veins and a feeding hollow, whip-sprung canes that coil round the prey, Undergrowth and Scorch, a wild glade bench with Io as its prey. Where it lives is asked in `questions/open.md`. |
 
 ## The models
 

@@ -147,7 +147,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
   <div id="tl" class="win">
    <div class="row"><span class="an" id="actName">Idle</span><span class="meta" id="actMeta">Rooted. Patient. Hungry.</span></div>
    <div class="track" id="track"><div class="fill" id="fill"></div></div>
-   <div class="cap" id="actCap">Canes arched out like legs, fruit hanging, a slow heartbeat in its roots; now and then a cane lifts and tastes the air. Pick a move to play it; red marks are where a blow lands, gold marks are cues for the battle screen.</div>
+   <div class="cap" id="actCap">Canes arched out like legs, fruit hanging. Pick a move to play it; red marks are where a blow lands, gold marks are cues for the battle screen.</div>
   </div>
  </div>
  <aside id="panel" class="win" aria-label="Controls">
@@ -2508,9 +2508,6 @@ function makeBrambleOriginal(opts) {
 // berry-magenta as it feeds, fruit that swells as it lures, idle canes that taste the air, sap and berry juice, a held prey
 // (anchor 'held', holding), fruit that drops when it dies, and two moves that are not on the sheets: Undergrowth (shoots burst
 // up round the prey and close) and Scorch (its recoil from fire, leaves charring).
-// Its second pass (the same day) adds: canes on springs that lag, whip and overshoot; tips that coil sideways round the
-// prey and stretch to reach it, and a Grab that yanks its prey in; ribbons of stolen life in Consume; a heartbeat through
-// the roots once it has shown itself; and growing up out of the soil as it appears.
 // opts: { detail .5 to 1, level 1 to 20 (bigger, darker, more fruit, longer thorns, veins that glow at rest), variant:
 //         'classic' | 'ambush' | 'towering' | 'ancient', size (an extra overall scale, 1 = the sheets: about 3.8 m across
 //         with the canes spread, 3-5 m by variant) }
@@ -3277,11 +3274,6 @@ function makeBramble(opts) {
    ' float a = max(max(t.r, t.b * .7), t.g * uGlow) * o; if (a < .01) discard; gl_FragColor = vec4(c, a); }',
   transparent: true, depthWrite: false, side: THREE.DoubleSide }));
  crack.frustumCulled = false; crack.visible = false; crack.renderOrder = 6; fx.add(crack);
- // the drain: three ribbons of stolen life twisting from the prey down into the hollow while it feeds (Consume)
- const DRN = 3, DRS = 22, drPos = new Float32Array(DRN * (DRS + 1) * 6), drCol = new Float32Array(DRN * (DRS + 1) * 6), drIdx = [];
- for (let r = 0; r < DRN; r++) for (let i = 0; i < DRS; i++) { const a = (r * (DRS + 1) + i) * 2; drIdx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
- const drG = new THREE.BufferGeometry(); drG.setAttribute('position', new THREE.BufferAttribute(drPos, 3).setUsage(THREE.DynamicDrawUsage)); drG.setAttribute('color', new THREE.BufferAttribute(drCol, 3).setUsage(THREE.DynamicDrawUsage)); drG.setIndex(drIdx);
- const drain = new THREE.Mesh(drG, new THREE.MeshBasicMaterial(Object.assign({ vertexColors: true, side: THREE.DoubleSide }, ADD))); drain.frustumCulled = false; drain.visible = false; drain.renderOrder = 8; fx.add(drain);
 
  // ---------- poses and actions ----------
  // body: y crown lift, lean (forward +), tw twist, rl roll, sq squash, sw swirl (every cane turns the same way), coil (every
@@ -3293,12 +3285,12 @@ function makeBramble(opts) {
  //   reach point back to the crown
  // look: glow (the berries gleam), lure (sweet motes), fade (1 solid, 0 gone), trail (whip trails), rust (leaves rustle),
  //   wither, dust, drain (a stream from the prey into the crown), shed (falling leaves), feed (the root veins glow), fire
- //   (flames along it, leaves charring), gr (its growth, as it comes up out of the soil)
+ //   (flames along it, leaves charring)
  const G4 = ['L', 'F', 'S', 'B'];
  function cg(g, l, c, t, y, w, k) { const o = {}, gs = g === '*' ? G4 : g.split(''); for (const q of gs) { if (l !== undefined) o[q + 'l'] = l; if (c !== undefined) o[q + 'c'] = c; if (t !== undefined) o[q + 't'] = t; if (y !== undefined) o[q + 'y'] = y; if (w !== undefined) o[q + 'w'] = w; if (k !== undefined) o[q + 'k'] = k; } return o; }
  const K = (...a) => Object.assign({}, ...a);
  // battle idle, as the sheet's in-game strip: canes arched out like legs, tips on the ground, fruit hanging
- const BASE = K({ y: 0, lean: 0, tw: 0, rl: 0, sq: 0, sw: 0, coil: 0, pulse: 1, gr: 1, ikd: 1, ikh: 0, wrap: 0, pull: 0, glow: 0, lure: 0, fade: 1, trail: 0, rust: 1, wither: 0, dust: 0, drain: 0, shed: 0, feed: 0, fire: 0 },
+ const BASE = K({ y: 0, lean: 0, tw: 0, rl: 0, sq: 0, sw: 0, coil: 0, pulse: 1, ikd: 1, ikh: 0, wrap: 0, pull: 0, glow: 0, lure: 0, fade: 1, trail: 0, rust: 1, wither: 0, dust: 0, drain: 0, shed: 0, feed: 0, fire: 0 },
   cg('L', 1.42, 1.5, 1.35, .2, 1, 0), cg('F', 1.3, 2.4, .6, .12, 1, 0), cg('S', 1.16, 2.8, .4, 0, 1, 0), cg('B', 1.1, 2.8, .45, -.1, 1, 0));
  const KEYS = Object.keys(BASE);
  // resting / disguised: a low, ordinary (if unusually lush) thicket, canes draped on the ground
@@ -3324,7 +3316,7 @@ function makeBramble(opts) {
   for (const k of KEYS) out[k] = lerp(Pk[i][k], Pk[i + 1][k], f);
  }
  // 1 (the encounter) it grows up out of the soil as an ordinary thicket, keeps still, then reveals itself
- act('appear', 2.4, [[0, K(REST, { fade: 0, gr: .3 })], [.26, { fade: 1, gr: 1 }, 'o'], [.42, {}], [.66, K(ALERT, { dust: .9, rust: 2.4, shed: .3, feed: .8 }), 'o'], [.82, K(ALERT, { dust: 0, shed: 0 })], [1, BASE]],
+ act('appear', 2.4, [[0, K(REST, { fade: 0 })], [.26, { fade: 1 }], [.42, {}], [.66, K(ALERT, { dust: .9, rust: 2.4, shed: .3, feed: .8 }), 'o'], [.82, K(ALERT, { dust: 0, shed: 0 })], [1, BASE]],
   { snap: KEYS, cues: [.42], rate: 9 });
  // 2 Alert: senses prey; canes rise and orient toward it
  act('alert', 1.6, [[0, {}], [.28, ALERT, 'o'], [.7, K(ALERT, cg('*', undefined, undefined, undefined, undefined, .25))], [1, BASE]], { cues: [.2], rate: 9 });
@@ -3343,7 +3335,7 @@ function makeBramble(opts) {
  act('grab', 2.8, [[0, {}],
   [.16, K(cg('LF', 1.65, 1.5, 1.3, .35, .4), cg('S', 1.55, 1.6, 1.2, .55, .4), { lean: -.1, y: .05, sq: -.05, rust: 1.8 }), 'o'],
   [.32, K(cg('LFS', undefined, undefined, undefined, undefined, undefined, 1), { ikd: 1, wrap: 2.6, lean: .12, trail: .7, rust: 2.4 }), 'i'],
-  [.4, { trail: 0, pull: .24 }], [.5, { pull: .34, sq: .05, ikh: .24 }], [.6, { pull: .26, sq: -.03, ikh: .08 }], [.72, { pull: .46, sq: .06, ikh: .3 }],
+  [.4, { trail: 0 }], [.5, { pull: .14, sq: .05, ikh: .24 }], [.6, { pull: .03, sq: -.03, ikh: .08 }], [.72, { pull: .3, sq: .06, ikh: .3 }],
   [.88, K(cg('LF', undefined, undefined, undefined, undefined, undefined, .75), { Sk: .7, pull: .9, wrap: 2.2, lean: -.06, dust: .8, ikh: .05 }), 'o'], [1, BASE]],
   { hits: [.35, .54, .74], cues: [.27], rate: 16 });
  // 6 Consume: the canes arch back over the crown into a cage and press down; the root mass pulses as it feeds,
@@ -3397,7 +3389,7 @@ function makeBramble(opts) {
  // the polish's runtime: the idle cane that tastes the air (TW), the pulse running out along the roots (VW), the char fire
  // leaves, where a held prey belongs and how firmly it is held, and how idle it is (the twitches fade out in any move)
  const TW = { k: -1, t: 0, dur: 2, wait: 2.2, e: 0 }, VW = { t: 9, s: 0 }, held = V3();
- let charV = 0, holdV = 0, idleW = 1, playN = 0, curN = 0, lastN = 0, HB = 0;
+ let charV = 0, holdV = 0, idleW = 1, playN = 0, curN = 0, lastN = 0;
  function play(name, force) {
   let def = ACTS[name]; if (!def) return false;
   const gone = FIN.fade < .02 && (!actv || actv.name === 'die');
@@ -3406,7 +3398,7 @@ function makeBramble(opts) {
    if (actv.name === 'die' && name !== 'appear') return false;
    if (!def.interrupt && !(actv.def.hold && actv.t >= actv.def.dur - 1e-6)) return false;
   }
-  if (def.snap) { for (const k of def.snap) FIN[k] = def.p[0][k]; for (const C of CANES) C.sp = null; }
+  if (def.snap) for (const k of def.snap) FIN[k] = def.p[0][k];
   if (name === 'appear') { regrow(); fxS.reveal = false; charV = 0; }
   actv = { name, def, t: 0, n: ++playN };
   return true;
@@ -3416,17 +3408,13 @@ function makeBramble(opts) {
  const _a = V3(), _b = V3(), _c = V3(), _d = V3(), _tg = V3(), _sd = V3(), _cf = V3(), _up = V3(), _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion();
  const lerpA = (a, b, t) => a + Math.atan2(Math.sin(b - a), Math.cos(b - a)) * t;
  const TIPW = new Float32Array(NS + 1); TIPW[NS - 3] = .2; TIPW[NS - 2] = .35; TIPW[NS - 1] = .45;
- // follow-through: each cane joint chases its pose on a spring, stiff near the crown and softer toward the tip (slightly
- // underdamped), so the canes lag, whip and overshoot instead of moving as one stiff piece
- const SPK = Float32Array.from({ length: NS + 1 }, (_, i) => 1150 * (1 - .62 * i / NS)), SPD = SPK.map((k) => 2 * .42 * Math.sqrt(k));
  // where each group's canes take hold round the prey: sideways (toward their own side) and up, in meters
  const HOLD = { L: [.02, .05], F: [.2, -.22], S: [.24, .4], B: [.16, .58] };
- const IK = { yaw: 0, phi: 0, kap: 0, s: 0 };
- // a constant-curvature arc from the cane's base whose point at s* passes through the target (in the crown's space); a far
- // target makes the cane stretch, moving s* out toward the tip, and what is left past s* coils round the prey
+ const IK = { yaw: 0, phi: 0, kap: 0 };
+ // a constant-curvature arc from the cane's base whose point at s* passes through the target (in the crown's space)
  function solveReach(C, T) {
   _a.copy(T); crown.worldToLocal(_a);
-  const B = C.chain[0].position, dx = _a.x - B.x, dy = _a.y - B.y, dz = _a.z - B.z, d = Math.hypot(dx, dz), c = Math.hypot(d, dy), s = IK.s = cl(c, C.len * .74, C.len * .9);
+  const B = C.chain[0].position, dx = _a.x - B.x, dy = _a.y - B.y, dz = _a.z - B.z, d = Math.hypot(dx, dz), c = Math.hypot(d, dy), s = C.len * .8;
   IK.yaw = Math.atan2(dx, dz);
   let kap = 0;
   if (c < s * .999) { let lo = 0, hi = TAU / s * .98; for (let i = 0; i < 18; i++) { const m = (lo + hi) / 2; if (2 * Math.sin(m * s / 2) / m - c > 0) lo = m; else hi = m; } kap = (lo + hi) / 2; }
@@ -3459,11 +3447,11 @@ function makeBramble(opts) {
   const breath = .5 + .5 * Math.sin(tt * 1.15), ps = .03 * P.pulse * (breath - .5);
   crown.position.set(0, P.y + walkS * .035 * Math.abs(Math.sin(phase)) + .008 * breath * P.pulse, 0);
   crown.rotation.set(P.lean + walkS * .05 + .015 * Math.sin(tt * .7) * P.pulse, P.tw + .02 * Math.sin(tt * .5) * P.pulse, P.rl + .012 * Math.sin(tt * .63) * P.pulse);
-  mass.scale.set(1 + P.sq * .5 + ps, 1 - P.sq + ps * 1.4, 1 + P.sq * .5 + ps); crown.scale.setScalar(P.gr);
+  mass.scale.set(1 + P.sq * .5 + ps, 1 - P.sq + ps * 1.4, 1 + P.sq * .5 + ps);
   root.updateMatrixWorld(true);
   // the crown's own motion, for the springs
   const rx = root.position.x, rz = root.position.z, yawR = root.rotation.y;
-  if (!st.init || Math.hypot(rx - st.px, rz - st.pz) > 1.5 * SZ) { st.px = rx; st.pz = rz; st.vx = st.vz = st.ax = st.az = 0; st.init = true; for (const Bq of BERRIES) Bq.init = false; for (const C of CANES) C.sp = null; }
+  if (!st.init || Math.hypot(rx - st.px, rz - st.pz) > 1.5 * SZ) { st.px = rx; st.pz = rz; st.vx = st.vz = st.ax = st.az = 0; st.init = true; for (const Bq of BERRIES) Bq.init = false; }
   if (dt > 0) {
    const kv = 1 - Math.exp(-dt / .1), ka = 1 - Math.exp(-dt / .08), nvx = st.vx + ((rx - st.px) / dt - st.vx) * kv, nvz = st.vz + ((rz - st.pz) / dt - st.vz) * kv;
    st.ax += ((nvx - st.vx) / dt - st.ax) * ka; st.az += ((nvz - st.vz) / dt - st.az) * ka; st.vx = nvx; st.vz = nvz;
@@ -3485,10 +3473,6 @@ function makeBramble(opts) {
    else { TW.t += dt; if (TW.t >= TW.dur) { TW.k = -1; TW.wait = r2(1.2, 3.6); } }
   }
   TW.e = TW.k < 0 ? 0 : Math.pow(Math.sin(PI * cl(TW.t / TW.dur, 0, 1)), 2) * idleW * (1 - walkS);
-  // a slow heartbeat through the roots once it has shown itself (not while it rests, disguised)
-  if (dt > 0 && !actv && P.fade > .9) { HB += dt; if (HB > 1.7) { HB = 0; pulse(.35 + .4 * TIER); } }
-  // the physics substeps this frame, for the canes' springs, the shoots and the fruit
-  const nSteps = Math.min(8, Math.floor((st.acc + dt) / PH)); st.acc = nSteps === 8 ? 0 : st.acc + dt - nSteps * PH;
   // ---------- canes ----------
   for (const C of CANES) {
    const g = C.g, nJ = C.cutJ >= 0 ? C.cutJ : NS + 1;
@@ -3506,20 +3490,10 @@ function makeBramble(opts) {
     _c.copy(_tg).addScaledVector(_sd, H[0] * C.sgn).add(_d.set(0, H[1], 0));
     _c.sub(_b).multiplyScalar(P.ikd).add(_b); _c.y += P.ikh; _c.lerp(_cf, P.pull);
     solveReach(C, _c);
-    const jr = Math.round(IK.s / C.seg);
+    const jr = Math.round(C.len * .8 / C.seg);
     yaw = lerpA(yaw, IK.yaw, k); th0 = lerp(th0, IK.phi - IK.kap * C.seg * .5, k);
-    // past the reach point the tip coils round the prey: mostly sideways, round its body, a little downward
-    const cw = Math.min(1.3, P.wrap / Math.max(1, NS - jr));
-    for (let i = 1; i < NS; i++) { C.bend[i] = lerp(C.bend[i], i < jr ? IK.kap * C.seg : cw * .4, k); C.yawW[i] = lerp(C.yawW[i], i < jr ? C.yawW[i] * .15 : -C.sgn * cw * .95, k); }
+    for (let i = 1; i < NS; i++) { C.bend[i] = lerp(C.bend[i], i < jr ? IK.kap * C.seg : P.wrap / Math.max(1, NS - jr), k); C.yawW[i] *= 1 - .85 * k; }
    }
-   const SP = C.sp || (C.sp = { b: Float32Array.from(C.bend), bv: new Float32Array(NS + 1), y: Float32Array.from(C.yawW), yv: new Float32Array(NS + 1) });
-   // a cane reaching for its prey stiffens, so it lands on the beat of its hit and still whips a little past it
-   const sk = 1 + 3 * k, sd = Math.sqrt(sk);
-   for (let n = 0; n < nSteps; n++) for (let i = 1; i < NS; i++) {
-    SP.bv[i] += (SPK[i] * sk * (C.bend[i] - SP.b[i]) - SPD[i] * sd * SP.bv[i]) * PH; SP.b[i] += SP.bv[i] * PH;
-    SP.yv[i] += (SPK[i] * sk * (C.yawW[i] - SP.y[i]) - SPD[i] * sd * SP.yv[i]) * PH; SP.y[i] += SP.yv[i] * PH;
-   }
-   for (let i = 1; i < NS; i++) { C.bend[i] = SP.b[i]; C.yawW[i] = SP.y[i]; }
    // keep it out of the ground: a joint that would sink is laid along the soil instead
    C.chain[0].getWorldPosition(_b); const by = (_b.y - root.position.y) / SZ, dl = Math.sin(yaw) * _up.x + Math.cos(yaw) * _up.z;
    let th = th0, y = 0;
@@ -3539,6 +3513,7 @@ function makeBramble(opts) {
    C.swing = walkS > 1e-3 ? Math.sin(phase + (C.k % 2) * PI) : -1;
   }
   // ---------- shoots and horns ----------
+  const nSteps = Math.min(8, Math.floor((st.acc + dt) / PH)); st.acc = nSteps === 8 ? 0 : st.acc + dt - nSteps * PH;
   for (const S of SHOOTS) {
    for (let n = 0; n < nSteps; n++) { spring(S.k[0], cl(-alz * .012 - P.lean * .6, -.6, .6), PH, 30, 2.4); spring(S.k[1], cl(alx * .012 + P.tw * .3, -.6, .6), PH, 30, 2.4); }
    const r = .6 + .4 * P.rust;
@@ -3664,23 +3639,6 @@ function makeBramble(opts) {
   while (fxS.acc.spark >= 1 && bun.length) { fxS.acc.spark -= 1; bun[(rnd() * bun.length) | 0].getWorldPosition(_a); emit(MO, _a.x + (rnd() - .5) * .14 * SZ, _a.y - rr(.04, .2) * SZ, _a.z + (rnd() - .5) * .14 * SZ, 0, 0, 0, .3, SWEET[2], .9, .08 * SZ, 0, 0); }
   fxS.acc.drain += dt * P.drain * 90 * fk;
   while (fxS.acc.drain >= 1) { fxS.acc.drain -= 1; mass.localToWorld(_b.set(0, CH * .55, 0)); _a.copy(_tg).add(_c.set((rnd() - .5) * .45, (rnd() - .5) * .6, (rnd() - .5) * .45)); const tm = .55 + rnd() * .2; emit(MO, _a.x, _a.y, _a.z, (_b.x - _a.x) / tm, (_b.y - _a.y) / tm + .6, (_b.z - _a.z) / tm, tm, DRAINC, .8, .07 * SZ, .03 * SZ, 0, -1.6); }
-  // the drain's ribbons: from the prey's chest they arc up and spiral down into the hollow, bright knots of life running along them
-  const dk = cl(P.drain, 0, 1) * fk; drain.visible = dk > .01;
-  if (drain.visible) {
-   mass.localToWorld(_b.set(0, CH - HOL * .7, 0)); _d.subVectors(_b, _tg); const L = _d.length() || 1; _d.multiplyScalar(1 / L);
-   _sd.set(_d.z, 0, -_d.x); if (_sd.lengthSq() < 1e-6) _sd.set(1, 0, 0); _sd.normalize(); _up.crossVectors(_sd, _d).normalize();
-   for (let r = 0, o = 0; r < DRN; r++) {
-    const ph = r * TAU / DRN;
-    for (let i = 0; i <= DRS; i++, o += 6) {
-     const s = i / DRS, arc = Math.sin(PI * s) * (.5 + .14 * r) * SZ, th = s * TAU * 1.6 + t * 5 + ph, rad = (.08 + .16 * Math.sin(PI * s)) * SZ, w = (.075 - .035 * s) * SZ;
-     _a.copy(_tg).lerp(_b, s); _a.y += arc; _a.addScaledVector(_sd, Math.cos(th) * rad).addScaledVector(_up, Math.sin(th) * rad);
-     drPos[o] = _a.x - _sd.x * w; drPos[o + 1] = _a.y - _sd.y * w; drPos[o + 2] = _a.z - _sd.z * w; drPos[o + 3] = _a.x + _sd.x * w; drPos[o + 4] = _a.y + _sd.y * w; drPos[o + 5] = _a.z + _sd.z * w;
-     const k = 1.3 * dk * sm(0, .1, s) * sm(1, .86, s) * (.25 + .75 * Math.pow(Math.max(0, Math.sin(s * 13 - t * 9 + ph * 2)), 2));
-     drCol[o] = drCol[o + 3] = DRAINC.r * k; drCol[o + 1] = drCol[o + 4] = DRAINC.g * k; drCol[o + 2] = drCol[o + 5] = DRAINC.b * k * .8;
-    }
-   }
-   drG.attributes.position.needsUpdate = true; drG.attributes.color.needsUpdate = true;
-  }
   // fire: flames licking up along the canes and off the crown, with smoke and embers
   fxS.acc.fire += dt * P.fire * 120 * fk;
   while (fxS.acc.fire >= 1) {
@@ -3727,11 +3685,7 @@ function makeBramble(opts) {
   if (crossed(name, u, 'strike', ACTS.strike.hits[0]) && LEAD.cutJ < 0) { tipW(LEAD, _a); chips(_a, 24, 3); leafBurst(_a, 8, .2 * SZ, 0); juice(_a, 14, 2.4); if (_a.y < .4) puff(_a, 6, .7); }
   if (crossed(name, u, 'strike', .64) && LEAD.cutJ < 0) { tipW(LEAD, _a); chips(_a, 10, 2); juice(_a, 6, 1.6); }
   for (const h of ACTS.grab.hits) if (crossed(name, u, 'grab', h)) for (const C of CANES) if (C.g !== 'B' && C.cutJ < 0) { tipW(C, _a); chips(_a, 7, 2); leafBurst(_a, 3, .15 * SZ, 0); }
-  if (crossed(name, u, 'sweep', ACTS.sweep.hits[0])) {
-   for (const C of CANES) if (C.g !== 'B') { canePt(C, rr(.5, .95), _a); leafBurst(_a, 5, .3 * SZ, 0); if (rnd() < .5) puff(_a, 3, .7); }
-   // the canes scrape the ground in an arc across the front
-   for (let i = 0; i < 14; i++) { const a = rr(-1.1, 1.1), r = (CR + rr(1.1, 1.9)) * SZ; root.localToWorld(_a.set(Math.sin(a) * r / SZ, 0, Math.cos(a) * r / SZ)); _a.y = root.position.y + .05; puff(_a, 1, .8); if (rnd() < .5) clods(_a, 2, .9, 1.4); }
-  }
+  if (crossed(name, u, 'sweep', ACTS.sweep.hits[0])) for (const C of CANES) if (C.g !== 'B') { canePt(C, rr(.5, .95), _a); leafBurst(_a, 5, .3 * SZ, 0); if (rnd() < .5) puff(_a, 3, .7); }
   for (const h of ACTS.consume.hits) if (crossed(name, u, 'consume', h)) { ring(6, CR * .7, CR * 1.3, .8); mass.localToWorld(_a.set(0, CH * .5, 0)); for (let i = 0; i < 18; i++) emit(MO, _a.x, _a.y, _a.z, (rnd() - .5) * 1.5, rnd() * 1.2, (rnd() - .5) * 1.5, .5, DRAINC, .8, .08 * SZ, .01 * SZ, 3); pulse(1.3); }
   if (name === 'hurt' && fresh) { mass.localToWorld(_a.set(0, CH * .8, 0)); leafBurst(_a, 16, CR * SZ, state.wilt * .5); chips(_a, 12, 2.6); juice(_a, 8, 2); }
   if (name === 'burn' && fresh) { mass.localToWorld(_a.set(0, CH * .9, 0)); for (let i = 0; i < 26; i++) emit(FL, _a.x + (rnd() - .5) * CR * SZ, _a.y + rnd() * .3, _a.z + (rnd() - .5) * CR * SZ, (rnd() - .5) * 1.2, 1 + rnd(), (rnd() - .5) * 1.2, .5 + rnd() * .3, FLAMEC, 1, (.3 + .2 * rnd()) * SZ, .08 * SZ, 1.5, 1.5); leafBurst(_a, 12, CR * SZ, .7); }
@@ -3791,7 +3745,7 @@ function makeBramble(opts) {
  return {
   root, fx, animate, play, ACTIONS, anchor, sever, regrow,
   guard(on) { gOn = !!on; },
-  reset() { actv = null; gOn = false; gW = 0; Object.assign(FIN, BASE); regrow(); state.wilt = 0; charV = 0; VW.t = 9; HB = 0; for (const C of CANES) C.sp = null; },
+  reset() { actv = null; gOn = false; gW = 0; Object.assign(FIN, BASE); regrow(); state.wilt = 0; charV = 0; VW.t = 9; },
   get busy() { return !!actv && !(actv.def.hold && actv.t >= actv.def.dur - 1e-6); },
   get action() { return actv ? actv.name : ''; },
   get progress() { return actv ? Math.min(1, actv.t / actv.def.dur) : -1; },
@@ -4111,8 +4065,8 @@ function makeGlade(opts) {
   { id: 'alert', name: 'Alert', cap: 'Senses prey. Canes rise and orient toward the target.' },
   { id: 'lure', name: 'Lure', cap: 'Presents ripe fruit to attract prey. One berry-laden cane extends and remains invitingly still while its fruit swells and gleams. The fruit is real. The danger is not.' },
   { id: 'strike', name: 'Strike', cap: 'Rapid cane lunge. Recurved thorns catch and hold, making escape difficult.' },
-  { id: 'grab', name: 'Grab / Pull In', cap: 'Multiple canes lash out together, coil round the prey, yank it in, lift it on each squeeze and drag it to the root crown.' },
-  { id: 'consume', name: 'Consume', cap: 'The canes cage the root crown and ribbons of life twist out of the prey into its hollow; it pulses as it feeds, its veins flaring: each pulse a blow, then a heal.' },
+  { id: 'grab', name: 'Grab / Pull In', cap: 'Multiple canes work together to immobilize, lift and drag prey to the root crown.' },
+  { id: 'consume', name: 'Consume', cap: 'The canes cage the root crown and it pulses as it feeds through the roots, its veins flaring: each pulse a blow, then a heal.' },
   { id: 'sweep', name: 'Thorn Sweep', cap: 'Winds round and sweeps its canes flat across the front. Not on the sheets: a blow on the whole party.' },
   { id: 'undergrowth', name: 'Undergrowth', isNew: true, cap: 'Stabs its canes into the soil; a pulse runs out along its roots, the ground splits, and thorned shoots burst up round the prey, close over it and squeeze. Not on the sheets: a big move for the higher levels.' },
   { id: 'hurt', name: 'Hurt', cap: 'Recoils from fire or heavy damage, then regroups.' },
@@ -4413,7 +4367,7 @@ function makeGlade(opts) {
   for (const t of track.querySelectorAll('.tick')) t.remove();
   for (const b of $('moves').children) b.classList.toggle('on', b.dataset.id === id);
   shown = id || null;
-  if (!mv || !m.ACTIONS[id]) { $('actName').textContent = opts.walk ? 'Creeping' : opts.guard ? 'Guard' : 'Idle'; $('actMeta').textContent = 'Rooted. Patient. Hungry.'; $('actCap').textContent = 'Canes arched out like legs, fruit hanging, a slow heartbeat in its roots; now and then a cane lifts and tastes the air. Pick a move to play it; red marks are where a blow lands, gold marks are cues for the battle screen.'; $('fill').style.width = '0'; shown = null; return; }
+  if (!mv || !m.ACTIONS[id]) { $('actName').textContent = opts.walk ? 'Creeping' : opts.guard ? 'Guard' : 'Idle'; $('actMeta').textContent = 'Rooted. Patient. Hungry.'; $('actCap').textContent = 'Canes arched out like legs, fruit hanging; now and then one lifts and tastes the air. Pick a move to play it; red marks are where a blow lands, gold marks are cues for the battle screen.'; $('fill').style.width = '0'; shown = null; return; }
   const A = m.ACTIONS[id];
   $('actName').textContent = mv.name; $('actCap').textContent = mv.cap;
   $('actMeta').textContent = A.dur.toFixed(2) + ' s' + (A.hits.length ? ' · hits ' + A.hits.map(fmt).join(', ') : '') + (A.cues.length ? ' · cues ' + A.cues.map(fmt).join(', ') : '');
