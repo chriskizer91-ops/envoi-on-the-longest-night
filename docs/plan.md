@@ -160,6 +160,15 @@ As in FF9: the world is walked on foot, and later flown over. All of it at night
 
 **The level bands.** Four bands, 1 to 5, 5 to 10, 10 to 15 and 15 to 20, opened by the Bogmire refit, the charge at Dawnroost's living node, and the upgrade after Halcyon. Sunstone gives the Magpie its lift, and Noctara's cold drains it. A band the ship can't reach yet sits under cold mist on the flying map. The central island capital, the east and the southeast are under mist all game: they aren't in the story.
 
+**Where phase 4 stands (October 3):**
+
+- **Every ground-level map is traced** (`src/game/maps.js`): walk areas, blocks, exits, people, rests, wells, set-fight areas and wild settings. `tools/check-maps.mjs` walks each map's grid and reports anything Io can't reach; `tools/trace-overlay.mjs` draws a map's tracing over its painting.
+- **The field engine** (`src/game/field.js`): walls, tap-to-walk round them, exits, set fights, talking and using things, random fights by distance walked, the mini-map.
+- **The townsfolk** are pixel walkers drawn in code in the pixel Io's manner (`src/game/sprites.js`). They speak with pixel portraits until their paintings come (`art-requests/06-townsfolk-portraits.md`).
+- **The world map** (`src/game/world.js`): the night atlas in nine tiles, land only (`tools/world-mask.mjs` makes the mask from the day atlas), the bands under cold mist until the Magpie can reach them, the places, camps and Ember Line nodes.
+- **Step 19, the Magpie** (`src/game/fly.js`): rebuilt on r128 from Chris's world travel demo. It uses his skiff model, ported (`src/models/magpie.js`), the demo's camera over a far view of the atlas, his clouds, banners for the stops and landing.
+- **Battles in the game:** the battle screen's game mode, with every fight built from the party as it stands (`src/game/fights.js`). Three new battle paintings are matched: the Gloamwood road, the Warm Road and the frozen road.
+
 ## Phase 5: the game
 
 The pieces joined from title to ending, one band at a time.
@@ -167,6 +176,15 @@ The pieces joined from title to ending, one band at a time.
 1. **Band 1 first, as a playable slice:** the title, the Night square, Sol joining, the Magpie, the wilds, Bogmire and the great wraith, ending at the refit. This is where pacing and balance are checked in real play before the rest is built.
 2. **Bands 2, 3 and 4,** each playable when finished.
 3. **The ending:** Envoi's last strike, the letters burning, the stars coming back.
+
+**Where phase 5 stands (October 3):** the whole game is joined in one page (`demos/game.html`, `src/game/game.js`):
+
+- the title, the prologue, the story's scenes and words (`src/game/script.js`), and every set fight in order;
+- shops, inns and camps, the menu and the save (`src/game/state.js`);
+- Chris's music library from 20-min (`src/game/thareia-audio.js`);
+- the ending.
+
+Band 1 has been played through headless from the title to the refit.
 
 Around them:
 

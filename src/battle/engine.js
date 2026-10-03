@@ -570,8 +570,9 @@
         herbsUsed: B.stats.herbsUsed, summons: B.stats.summons.slice(), herbs: Object.assign({}, B.herbs),
         heroes: B.heroes.map((h) => ({ id: h.id, hp: h.hp, maxHp: h.maxHp, mp: h.mp, maxMp: h.maxMp })),
         foes: B.foes.map((f) => ({ key: f.key, hp: f.hp, maxHp: f.maxHp })),
-        xp: B.over === 'win' || B.over === 'retreat' ? B.foes.reduce((s, f) => s + RL.grows((f.solo && f.def.xpSolo) || f.def.xp, f.level), 0) : 0,
-        shards: B.over === 'win' || B.over === 'retreat' ? B.foes.reduce((s, f) => s + RL.grows((f.solo && f.def.shardsSolo) || f.def.shards, f.level), 0) : 0,
+        // setup.reward scales a fight's experience and shards (a wild fight in the game: rules.js WILD_REWARD)
+        xp: B.over === 'win' || B.over === 'retreat' ? Math.round(B.foes.reduce((s, f) => s + RL.grows((f.solo && f.def.xpSolo) || f.def.xp, f.level), 0) * (setup.reward || 1)) : 0,
+        shards: B.over === 'win' || B.over === 'retreat' ? Math.round(B.foes.reduce((s, f) => s + RL.grows((f.solo && f.def.shardsSolo) || f.def.shards, f.level), 0) * (setup.reward || 1)) : 0,
       };
     };
     return B;

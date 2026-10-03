@@ -29,7 +29,7 @@
       ],
       block: [ring(773, 440, 108)],
       exits: [
-        { rect: [1512, 332, 1536, 424], to: 'thornwood', at: [60, 520], label: 'The Thornwood' },
+        { rect: [1512, 332, 1536, 424], to: 'thornwood', at: [60, 456], label: 'The Thornwood' },
         { rect: [740, 1004, 835, 1024], to: 'cottage', at: [567, 40], label: "Io's cottage" },
         { rect: [0, 702, 18, 778], to: 'jetty', at: [782, 50], label: 'The jetty' },
       ],
@@ -47,11 +47,13 @@
       name: "Io's cottage", src: "art/walk/walk-wickhollow-cottage.webp", band: 1, kind: 'town', music: 'home',
       start: [838, 520],
       walk: [
-        [[515, 0], [620, 0], [620, 345], [515, 345]], // up to the square
+        [[515, 0], [620, 0], [620, 362], [515, 362]], // up to the square
         [[251, 349], [726, 349], [726, 478], [251, 478]], // the yard west of the cottage
         [[1019, 391], [1536, 391], [1536, 470], [1019, 470]], // the path east into the woods
-        [[0, 380], [260, 380], [260, 460], [0, 460]], // the footbridge over the stream
+        [[0, 380], [272, 380], [272, 460], [0, 460]], // the footbridge over the stream
         [[782, 455], [893, 455], [893, 500], [782, 500]], // the porch
+        [[700, 452], [800, 452], [800, 497], [700, 497]], // from the yard to the porch
+        [[880, 452], [1030, 452], [1030, 500], [880, 500]], // from the porch to the path east
         [[803, 480], [873, 480], [873, 670], [803, 670]], // the garden path
         [[747, 650], [840, 650], [840, 1024], [747, 1024]], // the gate and the way south
         [[279, 461], [372, 461], [372, 800], [279, 800]], // down the west side of the garden
@@ -68,7 +70,7 @@
       people: [],
       spots: [
         { kind: 'rest', at: [838, 470], label: 'Home', note: "Io's own bed. Rest, and the game is saved." },
-        { kind: 'look', at: [592, 450], label: 'The letters', note: 'A bundle of letters to the dead, tied with ribbon. Every year Io means to burn them on the longest night, and every year she doesn’t.' },
+        { kind: 'look', at: [592, 428], label: 'The letters', note: 'A bundle of letters to the dead, tied with ribbon. Every year Io means to burn them on the longest night, and every year she doesn’t.' },
       ],
     },
     // the jetty on the lake west of the square, where Quill moors his old skiff, the Magpie
@@ -156,9 +158,9 @@
         { rect: [765, 0, 815, 16], to: 'bogmire-heart', at: [768, 980], label: "The fen's dark heart" },
       ],
       people: [
-        { id: 'marsh', name: 'Old Wenna', at: [655, 470], look: 'elder', talk: 'wenna', role: 'shop' },
-        { id: 'innkeep', name: 'Tobb', at: [1230, 270], look: 'smith', talk: 'tobb', role: 'inn' },
-        { id: 'girl', name: 'Pell', at: [1000, 420], look: 'child', talk: 'pell' },
+        { id: 'wenna', name: 'Old Wenna', at: [655, 470], look: 'elder', talk: 'wenna', role: 'shop' },
+        { id: 'tobb', name: 'Tobb', at: [1230, 270], look: 'smith', talk: 'tobb', role: 'inn' },
+        { id: 'pell', name: 'Pell', at: [1000, 420], look: 'child', talk: 'pell' },
       ],
       spots: [
         { kind: 'rest', at: [1150, 270], label: 'The Lanternless Inn', note: 'Tobb keeps a bed for anyone who brings light. Rest, and the game is saved.' },
@@ -181,7 +183,7 @@
       ],
       people: [],
       spots: [
-        { kind: 'event', id: 'greatWraith', rect: [560, 330, 990, 560], fight: 'greatWraith', once: 'greatWraith' },
+        { kind: 'event', id: 'greatWraith', rect: [500, 300, 1045, 620], fight: 'greatWraith', once: 'greatWraith' },
       ],
     },
     // Dawnroost, the Warden waystation: Sol's old home inside its walls, with the dock where the Magpie ties up
@@ -233,7 +235,7 @@
       ],
       people: [],
       spots: [
-        { kind: 'event', id: 'dawnroost', rect: [620, 380, 920, 560], fight: 'dawnroost', once: 'dawnroost' },
+        { kind: 'event', id: 'dawnroost', rect: [100, 230, 1440, 600], fight: 'dawnroost', once: 'dawnroost' },
       ],
     },
     // the northern crossroads: four old roads meet in a stone ring, with a well (Halcyon's ambush)
@@ -258,7 +260,7 @@
       people: [],
       spots: [
         { kind: 'well', id: 'crosswell', at: [520, 650], label: 'The crossroads well', note: 'A lantern on a post, and a letter weighted under a stone on the well’s rim.' },
-        { kind: 'event', id: 'halcyon', rect: [640, 380, 900, 560], fight: 'halcyon', once: 'halcyon' },
+        { kind: 'event', id: 'halcyon', rect: [575, 355, 965, 585], fight: 'halcyon', once: 'halcyon' },
       ],
       wild: { band: 3, scene: 'northern-crossroads', rate: 1 },
     },
@@ -286,7 +288,7 @@
         { id: 'ysmera', name: 'Ysmera Brightkeel', at: [765, 500], look: 'aurosi', talk: 'ysmera', portrait: 'shipmaster' },
         { id: 'pim', name: 'Pim', at: [1189, 532], look: 'gnome', talk: 'pim', role: 'shop' },
         { id: 'tock', name: 'Tock', at: [1000, 400], look: 'gnome', talk: 'tock' },
-        { id: 'hearth', name: 'Old Gil', at: [432, 478], look: 'elder', talk: 'gil', role: 'inn' },
+        { id: 'gil', name: 'Old Gil', at: [432, 478], look: 'elder', talk: 'gil', role: 'inn' },
       ],
       spots: [
         { kind: 'rest', at: [380, 478], label: 'The bunkhouse', note: 'Bunks for the yard’s hands, and two to spare. Rest, and the game is saved.' },
@@ -305,7 +307,7 @@
       ],
       block: [[[588, 598], [616, 598], [616, 690], [588, 690]]],
       exits: [
-        { rect: [712, 0, 842, 16], to: 'misthollow', at: [768, 1000], label: 'Misthollow' },
+        { rect: [712, 0, 842, 16], to: 'misthollow', at: [768, 985], label: 'Misthollow' },
         { rect: [680, 1008, 905, 1024], to: 'world', at: 'frozenPass', label: 'The world' },
       ],
       people: [],
@@ -336,7 +338,7 @@
       ],
       people: [
         { id: 'sorrel', name: 'Sorrel', at: [524, 620], look: 'witch2', talk: 'sorrel', role: 'shop' },
-        { id: 'aldric', name: 'Ede', at: [999, 640], look: 'elder', talk: 'ede', role: 'inn' },
+        { id: 'ede', name: 'Ede', at: [999, 640], look: 'elder', talk: 'ede', role: 'inn' },
         { id: 'watch', name: 'The watchwoman', at: [700, 860], look: 'smith', talk: 'watch' },
       ],
       spots: [

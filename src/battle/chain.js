@@ -70,7 +70,7 @@
     function goRest() { restore(); }
     function wildSetup(band) {
       const packs = S.BAND_PACKS[band], pack = packs[Math.floor(rand() * packs.length)];
-      return { party: party(), foes: pack.map((id) => ({ id: S.formOf(id, band, rand), level: S.wildLevel(band, rand) })), flags: Object.assign({}, P.flags), herbs: Object.assign({}, P.herbs), ends: { canFlee: true } };
+      return { party: party(), foes: pack.map((id) => ({ id: S.formOf(id, band, rand), level: S.wildLevel(band, rand) })), flags: Object.assign({}, P.flags), herbs: Object.assign({}, P.herbs), ends: { canFlee: true }, reward: RL.WILD_REWARD };
     }
     // one random encounter in a band's wilds; a loss wakes the party at its last rest
     function encounter(band, kind) {

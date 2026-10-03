@@ -838,3 +838,62 @@ Chris: keep going step by step until the game is finished, and decide everything
   - The attentive player loses most of their fights at the finale itself, which is as Chris wants it: locked in, but not impossible.
   - A real player learns between tries, so they won't stay at the attentive play style's 4%.
 - **The balance page** shows the journey step by step for both play styles, and can play it again.
+
+### Step 17, the finale (built)
+
+- `demos/finale.html`, on Misthollow's dead Moonwell. A test at level 20 played the whole ending, Envoi's last strike to Halcyon going home, with no errors.
+
+### Phase 4: travel, decided
+
+Chris asked for every decision to be made here (October 3). These are the ones phase 4 needed.
+
+- **How the world is travelled:**
+  - Towns, the gate places and three wild places (the Thornwood, the northern crossroads, the frozen pass) are ground-level maps.
+  - The world map is walked between them, on land only, in the four bands; a band the Magpie can't reach yet lies under cold mist and can't be walked into.
+  - The Magpie flies between landings: the docks at Wickhollow's jetty, Bogmire, Dawnroost and the shipyard, and a camp in each of bands 2, 3 and 4.
+- **The Magpie in band 1:** Quill gives Io his skiff once Sol has joined. She flies, but nobody can land in the fen while Bogmire's lamps are out, so the way to Bogmire is the Thornwood on foot. Once the lights come home, Quill flies her over to Bogmire's west dock.
+- **Who makes the upgrades:** Quill does the refit at Bogmire, Brann the smith fits the node's charge at Dawnroost, and Ysmera's gnomes rig the moon-sail at the shipyard. Each costs its shards and needs its level (`rules.js` `MAGPIE`).
+- **The wilds between stops** (lore answer 14):
+  - Three dark Ember Line nodes in band 2 that Sol relights, for 300 shards each.
+  - Five letters left at small wells, each with a gift: the moon stone in the Thornwood, Bogmire's water stair, Dawnroost's yard well, the crossroads well and a frozen trough in Misthollow. Io keeps every letter to send with hers, and the end card counts them.
+- **Camps:** the Warm Roads camp, the northern camp and the frozen camp on the world map, and a sled camp in the frozen pass. A camp is a rest and a landing.
+- **Random fights** come by the distance walked in wild country, never near a place:
+  - on a wild ground map about every 7 seconds of walking (770 map pixels, never under 440);
+  - on the world map about as often (330 atlas pixels at Io's world pace of 45 a second).
+
+  The menu can make them fewer or more.
+- **Wild fights are worth 1.75 times their table's experience and shards** (`rules.js` `WILD_REWARD`, applied by the engine, so the end card shows it).
+  - A straight walk between stops on the game's own maps meets about 3 fights in band 1, 5 in band 2, 6 in band 3 and 5 in band 4, against the simulator's first 10, 10, 9 and 22.
+  - At the old rewards that left an attentive player about 66 fights of walking the wilds to keep up, and nearly six hours of fighting.
+  - At 1.75 times, the journey's numbers are back where the design put them (`story.js` now uses the measured walks; medians of 40):
+
+    | Player | Wild fights | Walking for levels or shards | Lost | Hours fighting | Finale tries |
+    |---|---|---|---|---|---|
+    | Attentive | 28 | 26 | 20 | 2.6 | 14 |
+    | Expert | 27 | 23 | 3 | 1.7 | 1 |
+
+  - Every gate is reached at its level (2, 6, 11, 15 and 20), and every upgrade can be paid for on arrival.
+  - The fights' own targets don't change: all 52 are still met.
+- **Losing** wakes the party at the last rest with everything it had before the fight, HP and MP full. A hero who falls in a fight the party wins gets back up with a tenth of her HP.
+- **One save in the browser,** written at every rest, at every change of map and from the menu.
+- **The menu:** the party's levels, HP and MP, herbs and Io's healing Moonlore out of battle, and settings for random fights, the map's light, music and the battles' frame rate.
+- **The flying map:** rebuilt on three.js r128 from Chris's world travel demo:
+  - Chris's skiff model from 20-min, ported to r128 (`src/models/magpie.js`);
+  - the demo's camera (52° pitch, 12 atlas pixels a meter) over a 3072 × 2048 far view of the night atlas (830 KB);
+  - Chris's painted night clouds;
+  - banners for the stops, a landing card when she's close, cold mist she turns back from, and a mini-map.
+- **Music:** Chris's library from 20-min (`src/game/thareia-audio.js`):
+  - the main theme on the title, in Io's cottage and at the end;
+  - "Market Day" in the bright towns;
+  - "Gloomfen Drift" in Bogmire;
+  - "Beneath the Stone" at the gates and in Misthollow;
+  - "Over the Wilds" in the wilds and on the world map;
+  - "Sunstone Wind" in the air.
+
+  The battles keep the Night square's theme.
+- **The new townsfolk** (Claude's placeholders, for the lore conversation):
+  - Bogmire: Old Wenna, Tobb and Pell.
+  - Dawnroost: Marta, Brann and Tamsin.
+  - The shipyard: Pim, Tock and Old Gil.
+  - Misthollow: Sorrel, Ede and the watchwoman.
+- **Portraits and stills:** the townsfolk speak with pixel portraits until their paintings come (`art-requests/06-townsfolk-portraits.md`). The story's scenes play over the map or a battle painting until the stills come (`art-requests/07-story-stills.md`).

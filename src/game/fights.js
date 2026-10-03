@@ -73,7 +73,7 @@
       const lone = foes[0].id.startsWith('bramble');
       if (lone) { const at = PLACES[scene]; c.heroes[0].home = [at.io[0] + 40, at.io[1] - 50]; if (c.heroes[1]) c.heroes[1].home = [at.sol[0] + 40, at.sol[1] - 50]; c.slots = [at.slots[0]]; }
       return Object.assign(c, {
-        fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), herbs: herbsOf(P), ends: { canFlee: true } }),
+        fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), herbs: herbsOf(P), ends: { canFlee: true }, reward: window.BattleRules.WILD_REWARD }),
         introMsg: lone ? (fs) => (fs[0].id === 'brambleAmbush' ? 'A low blackberry thicket grows over the road, heavy with fruit.' : 'A blackberry thicket stands by the road, lusher than it should be, and heavy with fruit.') : undefined,
         introAfter: lone ? (fs) => (fs[0].id === 'brambleAmbush' ? 'It was never a thicket. It strikes before anyone can move.' : fs[0].id === 'brambleAncient' ? 'The ground heaves. Old woody horns rise out of its crown: an Ancient Crown.' : 'The ground heaves, its roots flare, and its canes rise toward the party.') : undefined,
         quickIntro: !lone,

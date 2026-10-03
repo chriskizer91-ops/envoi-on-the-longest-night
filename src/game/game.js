@@ -1,0 +1,492 @@
+// game.js: the game itself (plan phase 5), joining the pieces: the title, the ground maps (field.js), the world map
+// (world.js), the dialogue box (talk.js), the battles (the battle screen in its game mode, with fights.js), the story's
+// beats and words (script.js), the menus, the herb shops, the rests and the save (state.js), and the music (Chris's
+// library from 20-min, thareia-audio.js; the battles keep the Night square's own theme).
+// The story runs on flags in the save: party (Sol has joined), magpie (Quill's skiff is Io's), lights (Bogmire's lamps
+// are back), refit, envoi, charge, stoop, shipyard, upgrade2, ending. The highest band the Magpie can reach (st.band)
+// opens the world map's bands; the rest lie under cold mist.
+// Until the flying demo (plan step 19) is joined in, boarding the Magpie picks a landing and the flight is a short
+// crossing of the night sky.
+// Game.start({ host, src(path) -> URL, skipTitle, state }) -> the game. Defines window.Game.
+(function () {
+  'use strict';
+  function el(tag, attrs, parent, text) { const e = document.createElement(tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; if (parent) parent.appendChild(e); return e; }
+  const nf = (n) => Math.round(n).toLocaleString('en-US');
+  const wait = (s) => new Promise((r) => setTimeout(r, s * 1000));
+  // the world map's places: where each lies on the atlas, its band, where walking onto it leads, and where Io comes out
+  const PLACES = {
+    wickhollow: { name: 'Wickhollow', at: [1348, 1838], band: 1, map: 'cottage', arrive: [790, 990], out: [1348, 1880] },
+    thornwood: { name: 'The Thornwood', at: [1530, 2160], band: 1, map: 'thornwood', arrive: [60, 456], dir: 'e', out: [1530, 2200] },
+    bogmire: { name: 'Bogmire', at: [1752, 2512], band: 1, map: 'bogmire', arrive: [70, 368], dir: 'e', out: [1752, 2550] },
+    warmCamp: { name: 'The Warm Roads camp', at: [820, 1560], band: 2, kind: 'camp', label: 'Camp' },
+    node1: { name: 'An Ember Line node', at: [960, 1420], band: 2, kind: 'node', label: 'The node' },
+    node2: { name: 'An Ember Line node', at: [1180, 1330], band: 2, kind: 'node', label: 'The node' },
+    node3: { name: 'An Ember Line node', at: [760, 1250], band: 2, kind: 'node', label: 'The node' },
+    dawnroost: { name: 'Dawnroost', at: [1325, 1098], band: 2, map: 'dawnroost', arrive: [645, 990], out: [1325, 1140] },
+    northCamp: { name: 'The northern camp', at: [1150, 620], band: 3, kind: 'camp', label: 'Camp' },
+    crossroads: { name: 'The northern crossroads', at: [1960, 820], band: 3, map: 'crossroads', arrive: [768, 990], out: [1960, 860] },
+    shipyard: { name: 'The shipyard', at: [2097, 599], band: 3, map: 'shipyard', arrive: [760, 990], out: [2097, 640], need: (st) => st.flags.stoop },
+    frozenCamp: { name: 'The frozen camp', at: [2760, 1120], band: 4, kind: 'camp', label: 'Camp' },
+    frozenPass: { name: 'The frozen pass', at: [3270, 980], band: 4, map: 'frozen-pass', arrive: [790, 990], out: [3270, 1020] },
+    misthollow: { name: 'Misthollow', at: [3500, 735], band: 4, map: 'misthollow', arrive: [768, 985], out: [3500, 780] },
+  };
+  // where the Magpie can land: a dock on a ground map, or a camp on the world map
+  // (sky: where she docks on the flying map, in atlas pixels; Wickhollow's and Bogmire's are the world travel demo's)
+  const LANDINGS = {
+    wickhollow: { name: 'Wickhollow', band: 1, field: ['jetty', [768, 700]], sky: [1446, 1806] },
+    bogmire: { name: 'Bogmire', band: 1, field: ['bogmire', [190, 612]], need: (st) => st.flags.lights, sky: [1886, 2462] },
+    warmCamp: { name: 'The Warm Roads', band: 2, world: 'warmCamp', sky: [820, 1530] },
+    dawnroost: { name: 'Dawnroost', band: 2, field: ['dawnroost', [1400, 330]], need: (st) => st.done['visit:dawnroost'], sky: [1365, 1085] },
+    northCamp: { name: 'The northern wilds', band: 3, world: 'northCamp', sky: [1150, 590] },
+    shipyard: { name: 'The shipyard', band: 3, field: ['shipyard', [700, 520]], need: (st) => st.done['visit:shipyard'], sky: [2097, 580] },
+    frozenCamp: { name: 'The northeast peaks', band: 4, world: 'frozenCamp', sky: [2760, 1090] },
+  };
+  // the Magpie's upgrades (rules.js MAGPIE), who makes them, and the story flag each sets
+  const UPGRADES = [
+    { flag: 'refit', who: 'quill', after: 'lights', scene: 'refit' },
+    { flag: 'charge', who: 'brann', after: 'envoi', scene: 'charge' },
+    { flag: 'upgrade2', who: 'ysmera', after: 'shipyard', scene: 'upgrade2' },
+  ];
+  const MUSIC = { cottage: 'title', wickhollow: 'town', jetty: 'town', thornwood: 'travel', bogmire: 'marsh', 'bogmire-heart': 'ruins', dawnroost: 'town', 'dawnroost-node': 'ruins', crossroads: 'travel', shipyard: 'town', 'frozen-pass': 'travel', misthollow: 'ruins', moonwell: 'ruins' };
+  // the night atlas in nine tiles (the build inlines each path)
+  const TILES = { '00': "art/world/night-00.webp", '01': "art/world/night-01.webp", '02': "art/world/night-02.webp", '10': "art/world/night-10.webp", '11': "art/world/night-11.webp", '12': "art/world/night-12.webp", '20': "art/world/night-20.webp", '21': "art/world/night-21.webp", '22': "art/world/night-22.webp" };
+  // the regions' names on Chris's D&D map (design decisions, place names)
+  const REGION = { 2: 'The Verdant Wilds', 3: 'The northern wilds', 4: 'The Ironspire Peaks' };
+
+  function start(opts) {
+    opts = opts || {};
+    const src = opts.src || ((p) => p);
+    const RL = window.BattleRules, GS = window.GameState, S = window.SCRIPT, MAPS = window.MAPS, AUD = window.ThareiaAudio;
+    const host = opts.host || document.body;
+    const root = el('div', { class: 'game' }, host);
+    const fieldHost = el('div', { class: 'layer' }, root), worldHost = el('div', { class: 'layer' }, root);
+    let st = opts.state || GS.fresh();
+    const settings = { rate: 1, light: 1, music: true };
+    try { Object.assign(settings, JSON.parse(localStorage.getItem('envoi.settings') || '{}')); } catch (e) { /* defaults */ }
+    const keepSettings = () => { try { localStorage.setItem('envoi.settings', JSON.stringify(settings)); } catch (e) { /* not kept */ } };
+    let mode = 'title', busy = 0;
+
+    // ---------- sound ----------
+    let audioOn = false, curMusic = null;
+    const SND = window.makeBattleSound();
+    function audioInit() { if (audioOn) return; audioOn = true; try { AUD.sfxInit(); SND.init(); } catch (e) { /* no audio */ } }
+    function music(id) { if (!audioOn || !settings.music) { curMusic = id; return; } if (curMusic === id && AUD.musicPlaying() === id) return; curMusic = id; try { if (id) AUD.musicPlay(id); else AUD.musicStop(0.6); } catch (e) { /* no audio */ } }
+    function sfx(id) { if (!audioOn) return; try { AUD.playSfx(id); } catch (e) { /* no audio */ } }
+
+    // ---------- the people's portraits and the dialogue box ----------
+    const talk = Talk.create(root, {
+      portraits: { io: { name: 'Io', src: "art/portraits/portrait-io.webp" }, sol: { name: 'Sol', src: "art/portraits/portrait-sol.webp" }, shipmaster: { name: 'Ysmera Brightkeel', src: "art/portraits/portrait-shipmaster-a.webp" } },
+      people: (id) => S.cast[id] || null, src,
+    });
+    const toast = el('div', { class: 'toast win', hidden: '' }, root);
+    let toastT = 0;
+    function note(text) { toast.textContent = text; toast.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { toast.hidden = true; }, 2600); }
+    const fade = el('div', { class: 'fade' }, root);
+    async function fadeTo(on, s) { fade.style.transition = 'opacity ' + (s || 0.35) + 's'; fade.classList.toggle('on', on); await wait(s || 0.35); }
+
+    // ---------- the ground maps ----------
+    const field = Field.create(fieldHost, {
+      maps: MAPS, src, speed: 110, zoom: 0.7, ioH: 42,
+      encounter: { get mean() { return 770 / settings.rate; }, get min() { return 440 / settings.rate; } },
+      light: (m) => settings.light * (m.id === 'bogmire' && !st.flags.lights ? 0.55 : m.id === 'bogmire-heart' && !st.flags.lights ? 0.8 : 1),
+      isDone: (k) => !!st.done[k],
+      onExit: (ex) => act(() => onExit(ex)), onEvent: (s) => act(() => onEvent(s)), onTalk: (p) => act(() => onTalk(p)),
+      onSpot: (s) => act(() => onSpot(s)), onEncounter: (m) => act(() => wild(m.wild.band, m.wild.scene)), onMenu: () => act(menu),
+    });
+    // ---------- the world map ----------
+    const world = World.create(worldHost, {
+      tiles: (r, c) => src(TILES[r + '' + c]), speed: 45, zoom: 2,
+      encounter: { get mean() { return 330 / settings.rate; }, get min() { return 190 / settings.rate; } },
+      places: Object.fromEntries(Object.entries(PLACES).map(([id, p]) => [id, Object.assign({}, p, { hidden: () => (p.need && !p.need(st)) || (p.kind === 'node' && st.done[id]) })])),
+      open: (b) => b <= st.band,
+      magpie: () => { const L = st.magpie && LANDINGS[st.magpie]; return L && L.world ? PLACES[L.world].at.map((v, i) => v + (i ? -26 : 34)) : null; },
+      regionName: (x, y, b) => (b === 1 ? (x < 1600 && y < 2250 ? 'The Gloamwood' : 'The Gloomfen') : REGION[b] || 'Aethermoor'),
+      onEnter: (id) => act(() => enterPlace(id)), onEncounter: (b) => act(() => wild(b, GameFights.WILD_SCENE[b])),
+      onMagpie: () => act(board), onMenu: () => act(menu),
+    });
+    // the people who come and go with the story, and the Magpie where it's moored
+    function setupMaps() {
+      const extra = {
+        bogmire: { people: [{ id: 'quill', name: 'Quill', at: [190, 560], look: 'sailor', when: () => st.flags.lights }], spots: [{ kind: 'magpie', at: [95, 600], label: 'The Magpie', note: 'Tied up at the west dock.' }] },
+        wickhollow: { spots: [{ kind: 'event', id: 'first', rect: [560, 450, 1075, 690], once: 'first' }] },
+      };
+      for (const id in extra) { const m = MAPS[id]; if (m._extra) continue; m._extra = true; m.people = (m.people || []).concat(extra[id].people || []); m.spots = (m.spots || []).concat(extra[id].spots || []); }
+      for (const id in MAPS) { const m = MAPS[id]; m.people0 = m.people0 || m.people || []; for (const s of m.spots || []) if (s.kind === 'magpie') s.hide = () => !(st.magpie && LANDINGS[st.magpie].field && LANDINGS[st.magpie].field[0] === id); }
+      MAPS.jetty.people0.forEach((p) => { if (p.id === 'quill') p.when = () => !st.flags.lights; });
+    }
+    setupMaps();
+    const peopleFor = (m) => m.people0.filter((p) => !p.when || p.when());
+
+    // ---------- running one thing at a time ----------
+    function pauseAll() { field.pause(); world.pause(); }
+    function resumeAll() { if (busy) return; if (mode === 'field') field.resume(); else if (mode === 'world') world.resume(); }
+    async function act(fn) {
+      if (busy && fn !== menu) return; busy++; pauseAll();
+      try { await fn(); } catch (e) { console.error(e); } finally { busy--; resumeAll(); }
+    }
+    const say = (lines) => (lines && lines.length ? talk.say(lines) : Promise.resolve());
+    const scene = (id) => say(S.scenes[id]);
+    async function ask(who, text, choices) { return talk.ask(who, text, choices); }
+    function save() { st.where = mode === 'world' ? { mode: 'world', at: [Math.round(world.P.x), Math.round(world.P.y)], dir: world.P.dir } : { mode: 'field', map: field.map && field.map.id, at: [Math.round(field.P.x), Math.round(field.P.y)], dir: field.P.dir }; GS.save(st); }
+
+    // ---------- moving between maps ----------
+    async function goField(id, at, dir, quiet) {
+      if (!quiet) await fadeTo(true, 0.3);
+      mode = 'field'; world.show(false); field.show(true);
+      const m = MAPS[id]; m.people = peopleFor(m);
+      await field.load(id, at, dir);
+      music(MUSIC[id] || 'travel'); save();
+      await fadeTo(false, 0.3);
+      await arrive(id);
+    }
+    async function goWorld(x, y, dir) {
+      await fadeTo(true, 0.3);
+      mode = 'world'; field.show(false); world.show(true); world.place(x, y, dir || 's');
+      music('travel'); save();
+      await fadeTo(false, 0.3);
+    }
+    // a scene the first time a place is reached
+    async function arrive(id) {
+      const first = !st.done['visit:' + id]; st.done['visit:' + id] = true;
+      if (!first) return;
+      if (id === 'bogmire' && !st.flags.lights) await scene('bogmireDark');
+      else if (id === 'dawnroost') await scene('dawnroostHome');
+      else if (id === 'frozen-pass') await scene('frozen');
+      else if (id === 'misthollow') await scene('misthollow');
+      else if (id === 'shipyard') { await say(SCRIPT.people.ysmera(st)); await scene('shipyard'); st.flags.shipyard = true; }
+      save();
+    }
+    async function onExit(ex) {
+      if (ex.to === 'thornwood' && field.map.id === 'wickhollow' && !st.flags.party) { await scene('thornwoodShut'); stepBack(ex); return; }
+      if (ex.to === 'world' && !st.flags.party) { await say([['io', 'Something is wrong up in the square. I should go and see first.']]); stepBack(ex); return; }
+      if (ex.to === 'world') { const p = PLACES[ex.at]; await goWorld(p.out[0], p.out[1], 's'); return; }
+      await goField(ex.to, ex.at);
+    }
+    function stepBack(ex) { const r = ex.rect, cx = (r[0] + r[2]) / 2, cy = (r[1] + r[3]) / 2; const dx = 768 - cx, dy = 512 - cy, L = Math.hypot(dx, dy) || 1; field.P.x += dx / L * 30; field.P.y += dy / L * 30; }
+    async function enterPlace(id) {
+      const p = PLACES[id];
+      if (p.kind === 'camp') { await camp(id); return; }
+      if (p.kind === 'node') { if (!st.done[id]) { await scene('node'); st.done[id] = true; const sh = 150 * p.band; st.shards += sh; sfx('node-wake'); await say(['The node’s warmth gives back a little sunstone: ' + sh + ' shards.']); save(); } return; }
+      await goField(p.map, p.arrive, p.dir || 'n');
+    }
+
+    // ---------- the story's events and set fights ----------
+    async function onEvent(s) {
+      const id = s.id;
+      if (id === 'first') {
+        await scene('firstFight');
+        const r = await battle('first');
+        if (r.outcome === 'win') { st.done.first = true; await scene('sol'); st.flags.party = true; save(); }
+        else { await wake('firstLost'); }
+        return;
+      }
+      if (id === 'greatWraith') {
+        await scene('greatWraith');
+        const r = await battle('greatWraith');
+        if (r.outcome === 'win') { st.done.greatWraith = true; st.flags.lights = true; await goField('bogmire', [1150, 300], 's'); await scene('lights'); save(); }
+        else await wake();
+        return;
+      }
+      if (id === 'dawnroost') {
+        await scene('dawnroost');
+        const r = await battle('dawnroost');
+        if (r.outcome === 'win') { st.done.dawnroost = true; st.flags.envoi = true; save(); await say([['sol', 'Brann will know how to bring the node’s light down to the Magpie. He’s in the forge, below.']]); }
+        else await wake();
+        return;
+      }
+      if (id === 'halcyon') {
+        const r = await battle('halcyon');
+        st.done.halcyon = true; st.flags.stoop = true; await scene('kestrel'); save();
+        return;
+      }
+      if (id === 'finale') {
+        const r = await battle('finale');
+        if (r.outcome === 'win') { st.done.finale = true; st.flags.ending = true; save(); await ending(); }
+        else await wake();
+      }
+    }
+    // a lost fight: the party wakes at its last rest with everything it had before the fight
+    async function wake(sceneId) {
+      GS.restore(st); st.herbs = Object.assign({}, preHerbs);
+      const R = st.rest;
+      if (R.mode === 'world') await goWorld(R.at[0], R.at[1]); else await goField(R.map, R.at, 's');
+      if (sceneId) await scene(sceneId); else await say(['The party wakes at the last place it rested, with everything it had.']);
+      save();
+    }
+
+    // ---------- talking and using things ----------
+    async function onTalk(p) {
+      const lines = (S.people[p.id] || (() => [[p.id, '…']]))(st);
+      // Quill gives Io the Magpie once Sol has joined
+      if (p.id === 'quill' && st.flags.party && !st.flags.magpie) { await scene('magpie'); st.flags.magpie = true; st.magpie = 'wickhollow'; save(); return; }
+      await say(lines);
+      for (const U of UPGRADES) if (U.who === p.id && st.flags[U.after] && !st.flags[U.flag]) { await upgrade(U); break; }
+      if (p.role === 'shop') await shop(p);
+      else if (p.role === 'inn') await rest(p.name);
+    }
+    async function onSpot(s) {
+      if (s.kind === 'rest') { await say([s.note]); await rest(s.label); return; }
+      if (s.kind === 'look') { await say([s.note]); return; }
+      if (s.kind === 'magpie') { await board(); return; }
+      if (s.kind === 'well') {
+        const W = S.wells[s.id];
+        if (st.done['well:' + s.id] || !W) { await say(['The water lies still and dark.']); return; }
+        await say(W.letter.concat(W.sol ? [['sol', W.sol]] : []));
+        st.done['well:' + s.id] = true;
+        const g = W.gift;
+        if (g.herb) {
+          const H = RL.HERBS[g.herb];
+          if ((st.herbs[g.herb] || 0) < RL.CARRY) { st.herbs[g.herb] = (st.herbs[g.herb] || 0) + 1; sfx('chest'); await say(['Left with it: a ' + H.name + '. Io takes it, and keeps the letter to send with hers.']); }
+          else { const sh = RL.herbPrice(g.herb, bandHere()); st.shards += sh; sfx('coins'); await say(['Left with it: a ' + H.name + ', but Io carries one already. She trades it on for ' + sh + ' shards, and keeps the letter to send with hers.']); }
+        } else if (g.shards) { st.shards += g.shards; sfx('coins'); await say(['Left with it: ' + g.shards + ' sunstone shards. Io keeps the letter to send with hers.']); }
+        st.letters = (st.letters || 0) + 1; save();
+      }
+    }
+    const bandHere = () => (mode === 'world' ? world.bandAt(world.P.x, world.P.y) || 1 : (field.map && field.map.band) || 1);
+    async function rest(name) {
+      const i = await ask(null, 'Rest here? HP and MP come back, and the game is saved.', ['Rest', 'Not now']);
+      if (i) return;
+      await fadeTo(true, 0.6); sfx('hearthfire'); GS.restore(st);
+      st.rest = mode === 'world' ? { mode: 'world', at: [Math.round(world.P.x), Math.round(world.P.y)] } : { mode: 'field', map: field.map.id, at: [Math.round(field.P.x), Math.round(field.P.y)] };
+      save(); await wait(0.6); await fadeTo(false, 0.6);
+      note('Rested at ' + name + '. The game is saved.');
+    }
+    async function camp(id) {
+      const first = !st.done['camp:' + id]; st.done['camp:' + id] = true;
+      if (first) await scene(id === 'warmCamp' ? 'warmRoads' : id === 'northCamp' ? 'northern' : 'frozen');
+      await rest(PLACES[id].name);
+    }
+    async function upgrade(U) {
+      const i = UPGRADES.indexOf(U), M = RL.MAGPIE[i];
+      if (st.level < M.level) { await say([[U.who === 'ysmera' ? 'shipmaster' : U.who, M.name + ' needs a stronger crew than this: come back at level ' + M.level + '.']]); return; }
+      if (st.shards < M.shards) { await say([[U.who === 'ysmera' ? 'shipmaster' : U.who, M.name + ' takes ' + nf(M.shards) + ' shards of sunstone. You have ' + nf(st.shards) + '.']]); return; }
+      const k = await ask(U.who === 'ysmera' ? 'shipmaster' : U.who, M.name + ': ' + nf(M.shards) + ' shards. You have ' + nf(st.shards) + '.', ['Pay', 'Not yet']);
+      if (k) return;
+      st.shards -= M.shards; st.flags[U.flag] = true; st.band = Math.max(st.band, i + 2); sfx('upgrade');
+      await scene(U.scene); save();
+    }
+
+    // ---------- the Magpie ----------
+    async function board() {
+      if (!st.flags.magpie) { await say(['Quill’s old skiff, the Magpie. Her lantern is cold.']); return; }
+      const here = st.magpie, list = Object.entries(LANDINGS).filter(([id, L]) => id !== here && L.band <= st.band && (!L.need || L.need(st)));
+      if (!list.length) { await say(S.scenes.bogmireLanding); return; }
+      const k = await ask(null, 'Take the Magpie up?', ['Fly', 'Not now']);
+      if (k) return;
+      const id = await flyNow(here);
+      if (!id || id === here) { const L0 = LANDINGS[here]; if (L0.world) { const p = PLACES[L0.world].at; await goWorld(p[0], p[1] + 30); } else await goField(L0.field[0], L0.field[1], 's'); return; }
+      const L = LANDINGS[id];
+      st.magpie = id;
+      if (L.world) { const p = PLACES[L.world].at; await goWorld(p[0], p[1] + 30); if (!st.done['camp:' + L.world]) await camp(L.world); }
+      else await goField(L.field[0], L.field[1], 's');
+      save();
+    }
+    // the flying map (fly.js): the Magpie over the far view, landing at any stop she can reach
+    let flyer = null;
+    async function flyNow(from) {
+      if (!flyer) flyer = Fly.create(root, {
+        image: src("art/world/far-view.webp"), clouds: src("art/world/night-clouds.webp"), mask: window.WORLD_MASK,
+        landings: Object.fromEntries(Object.entries(LANDINGS).map(([id, L]) => [id, { name: L.name, at: L.sky, band: L.band, need: L.need ? () => L.need(st) : null }])),
+        open: (b) => b <= st.band, bandAt: (x, y) => World.bandAt(x, y), music, sfx,
+        regionName: (x, y) => { const b = World.bandAt(x, y); return b === 1 ? (x < 1600 && y < 2250 ? 'Over the Gloamwood' : 'Over the Gloomfen') : b ? 'Over ' + REGION[b].replace('The ', 'the ') : 'Over the open sea'; },
+      });
+      await fadeTo(true, 0.3); field.show(false); world.show(false); mode = 'fly';
+      const p = flyer.fly(from); await fadeTo(false, 0.3);
+      const id = await p;
+      await fadeTo(true, 0.3);
+      return id;
+    }
+    // the crossing: the night sky, the moon, and the clouds going by
+    async function flight(to) {
+      const sky = el('div', { class: 'flight' }, root); el('div', { class: 'flight-moon' }, sky); for (let i = 0; i < 5; i++) el('div', { class: 'flight-cloud c' + i }, sky);
+      el('p', { class: 'flight-text' }, sky, 'The Magpie lifts into the night… to ' + to + '.');
+      music('flight'); sfx('ship-takeoff');
+      await wait(3.2); sfx('ship-land'); sky.classList.add('out'); await wait(0.5); sky.remove();
+    }
+
+    // ---------- battles ----------
+    let preHerbs = {};
+    async function swirl() {
+      const sw = el('div', { class: 'swirl' }, root); sfx('boss');
+      await wait(0.85); return sw;
+    }
+    async function battle(kind, o) {
+      preHerbs = Object.assign({}, st.herbs);
+      AUD && music(null); const sw = await swirl();
+      const layer = el('div', { class: 'battle-layer' }, root), stage = el('main', { id: 'stage', 'aria-label': 'Battle' }, layer);
+      stage.innerHTML = BattleScreen.markup();
+      sw.remove();
+      const cfg = GameFights.config(kind, st, o);
+      const r = await new Promise((res) => { cfg.game = { onEnd: res, onError: () => res({ outcome: 'error' }) }; cfg.sound = SND; layer.ctl = BattleScreen.start(cfg); });
+      layer.ctl.stop(); layer.remove();
+      if (r.outcome !== 'error') GS.applyBattle(st, r);
+      if (mode === 'field') music(MUSIC[field.map.id] || 'travel'); else if (mode === 'world') music('travel');
+      save();
+      return r;
+    }
+    async function wild(band, sceneId) {
+      const r = await battle('wild', { band, scene: sceneId });
+      if (r.outcome === 'lose') await wake();
+    }
+
+    // ---------- the ending ----------
+    async function ending() {
+      await fadeTo(true, 1.2);
+      const card = el('div', { class: 'ending' }, root);
+      const sky = el('canvas', { class: 'ending-sky', 'aria-hidden': 'true' }, card);
+      drawStars(sky);
+      const box = el('div', { class: 'ending-box' }, card);
+      music('title'); await fadeTo(false, 1.2);
+      for (const ln of S.scenes.ending) {
+        if (typeof ln === 'string' && ln === 'THE END') break;
+        await say([ln]);
+      }
+      el('h2', null, box, 'The End');
+      el('p', null, box, 'Envoi on the Longest Night. Made for Chris, from his story, his art and his world.');
+      el('p', null, box, 'Letters sent: ' + (1 + (st.letters || 0)) + '. Fights: ' + st.fights + '. Time: ' + clock(st.time) + '.');
+      const b = el('button', { type: 'button', class: 'go' }, box, 'Back to the title');
+      await new Promise((r) => b.addEventListener('click', r));
+      card.remove(); showTitle();
+    }
+    function drawStars(cv) {
+      const w = cv.width = 900, h = cv.height = 600, g = cv.getContext('2d');
+      const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#05030f'); gr.addColorStop(1, '#1b1440'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      for (let i = 0; i < 420; i++) { const x = Math.random() * w, y = Math.random() * h * 0.9, r = Math.random() < 0.08 ? 1.6 : 0.8; g.fillStyle = 'rgba(255,250,235,' + (0.4 + Math.random() * 0.6).toFixed(2) + ')'; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+      const m = g.createRadialGradient(w * 0.72, h * 0.25, 0, w * 0.72, h * 0.25, 70); m.addColorStop(0, '#fffbe8'); m.addColorStop(0.5, 'rgba(255,248,220,0.9)'); m.addColorStop(0.55, 'rgba(255,240,200,0.25)'); m.addColorStop(1, 'rgba(255,240,200,0)');
+      g.fillStyle = m; g.beginPath(); g.arc(w * 0.72, h * 0.25, 70, 0, Math.PI * 2); g.fill();
+    }
+    const clock = (s) => { const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60; return h + ':' + String(m).padStart(2, '0'); };
+
+    // ---------- the menu ----------
+    let menuOpen = null;
+    function menu() {
+      return new Promise((done) => {
+        const ov = el('div', { class: 'gmenu', role: 'dialog', 'aria-label': 'Menu' }, root); menuOpen = ov;
+        const card = el('div', { class: 'gmenu-card win' }, ov);
+        const tabs = el('div', { class: 'gmenu-tabs', role: 'tablist' }, card), body = el('div', { class: 'gmenu-body' }, card);
+        const close = () => { ov.remove(); menuOpen = null; done(); };
+        const T = { Party: party, Herbs: herbs, Moonlore: lore, Settings: setup };
+        let cur = 'Party';
+        const btns = Object.keys(T).map((k) => { const b = el('button', { type: 'button', role: 'tab', class: 'tab' }, tabs, k); b.addEventListener('click', () => { cur = k; draw(); }); return b; });
+        const foot = el('div', { class: 'gmenu-foot' }, card);
+        const saveB = el('button', { type: 'button', class: 'go alt' }, foot, 'Save'); saveB.addEventListener('click', () => { save(); note('Saved.'); sfx('ui-save'); });
+        const titleB = el('button', { type: 'button', class: 'go alt' }, foot, 'Title'); titleB.addEventListener('click', () => { save(); close(); showTitle(); });
+        const closeB = el('button', { type: 'button', class: 'go' }, foot, 'Close'); closeB.addEventListener('click', close);
+        ov.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
+        function draw() { btns.forEach((b, i) => b.setAttribute('aria-selected', String(Object.keys(T)[i] === cur))); body.textContent = ''; T[cur](body, draw); }
+        draw(); setTimeout(() => closeB.focus({ preventScroll: true }), 30);
+      });
+    }
+    const heroes = () => (st.flags.party ? ['io', 'sol'] : ['io']);
+    function bar(parent, label, v, max, cls) { const r = el('div', { class: 'gm-row' }, parent); el('span', null, r, label); el('b', null, r, nf(v) + ' / ' + nf(max)); const g = el('div', { class: 'gauge ' + (cls || '') }, parent); el('i', { style: 'width:' + (100 * v / max).toFixed(1) + '%' }, g); }
+    function party(b) {
+      el('p', { class: 'gm-top' }, b, 'Level ' + st.level + (st.level < RL.MAX_LEVEL ? ' · ' + nf(RL.xpNeed(st.level) - st.xp) + ' experience to the next' : ' · the highest level') + ' · ' + nf(st.shards) + ' sunstone shards');
+      for (const id of heroes()) {
+        const c = el('div', { class: 'gm-hero' }, b); el('h3', null, c, RL.HEROES[id].name);
+        bar(c, 'HP', GS.hpOf(st, id), GS.maxHp(st, id), 'hp');
+        if (id === 'io') bar(c, 'MP', GS.mpOf(st), GS.maxMp(st), 'mp');
+      }
+      el('p', { class: 'gm-note' }, b, 'Played ' + clock(st.time) + ' · ' + st.wins + ' fights won · The Magpie: ' + (st.flags.magpie ? 'band ' + st.band + (st.magpie ? ', at ' + LANDINGS[st.magpie].name : '') : 'not yet yours'));
+    }
+    function pickHero(b, then) { const r = el('div', { class: 'gm-pick' }, b); for (const id of heroes()) { const x = el('button', { type: 'button', class: 'go alt' }, r, RL.HEROES[id].name); x.addEventListener('click', () => then(id)); } }
+    function herbs(b, redraw) {
+      el('p', { class: 'gm-top' }, b, 'The party carries one of each herb at most. The Ember-star Lily only works in a fight.');
+      for (const id of Object.keys(RL.HERBS)) {
+        const H = RL.HERBS[id], n = st.herbs[id] || 0, r = el('div', { class: 'gm-item' }, b);
+        el('span', null, r, H.name); el('b', null, r, n ? '×' + n : 'none');
+        if (!n || id === 'emberLily') continue;
+        const u = el('button', { type: 'button', class: 'go small' }, r, 'Use');
+        u.addEventListener('click', () => {
+          const go = (who) => { const err = GS.useHerb(st, id, who); if (err) note(err); else { sfx('heal'); note(H.name + ' used.'); } redraw(); };
+          if (H.target === 'ally' || H.target === 'fallen') { r.textContent = ''; el('span', null, r, 'On whom?'); pickHero(r, go); } else go('io');
+        });
+      }
+    }
+    function lore(b, redraw) {
+      el('p', { class: 'gm-top' }, b, 'Io’s healing Moonlore works out of battle too. MP ' + nf(GS.mpOf(st)) + ' / ' + nf(GS.maxMp(st)) + '.');
+      const M = RL.HEROES.io.moves;
+      for (const k of ['mend', 'waxing']) {
+        if (k === 'waxing' && !st.flags.party) continue;
+        const r = el('div', { class: 'gm-item' }, b); el('span', null, r, M[k].name); el('b', null, r, M[k].mp + ' MP');
+        const u = el('button', { type: 'button', class: 'go small' }, r, 'Cast');
+        u.addEventListener('click', () => {
+          const go = (who) => { const err = GS.healOutside(st, k, who); if (err) note(err); else { sfx('heal'); } redraw(); };
+          if (k === 'mend') { r.textContent = ''; el('span', null, r, 'On whom?'); pickHero(r, go); } else go();
+        });
+      }
+    }
+    function setup(b, redraw) {
+      const row = (label, opts2, key) => { const r = el('div', { class: 'gm-item' }, b); el('span', null, r, label); const g = el('div', { class: 'gm-pick' }, r); for (const [t, v] of opts2) { const x = el('button', { type: 'button', class: 'go small' + (settings[key] === v ? '' : ' alt'), 'aria-pressed': String(settings[key] === v) }, g, t); x.addEventListener('click', () => { settings[key] = v; keepSettings(); if (key === 'music') { if (v) { const m = curMusic; curMusic = null; music(m); } else { try { AUD.musicStop(0.4); } catch (e) { /* none */ } } } redraw(); }); } };
+      row('Random fights', [['Fewer', 0.6], ['Normal', 1], ['More', 1.5]], 'rate');
+      row('Map light', [['Dim', 0.85], ['Normal', 1], ['Bright', 1.2]], 'light');
+      row('Music', [['On', true], ['Off', false]], 'music');
+      // the battles' frame rate, kept where the battle screen reads it (30 by default, Chris)
+      let fps = 30; try { const v = localStorage.getItem('envoi.fps'); if (v !== null) fps = +v; } catch (e) { /* default */ }
+      const r = el('div', { class: 'gm-item' }, b); el('span', null, r, 'Battle frame rate'); const gp = el('div', { class: 'gm-pick' }, r);
+      for (const [t, v] of [['30', 30], ['45', 45], ['60', 60], ['Screen', 0]]) { const x = el('button', { type: 'button', class: 'go small' + (fps === v ? '' : ' alt'), 'aria-pressed': String(fps === v) }, gp, t); x.addEventListener('click', () => { try { localStorage.setItem('envoi.fps', String(v)); } catch (e) { /* not kept */ } redraw(); }); }
+    }
+
+    // ---------- the herb shop ----------
+    function shop(p) {
+      return new Promise((done) => {
+        const ov = el('div', { class: 'gmenu', role: 'dialog', 'aria-label': p.name + '’s herbs' }, root);
+        const card = el('div', { class: 'gmenu-card win' }, ov); el('h2', null, card, p.name + '’s herbs');
+        const body = el('div', { class: 'gmenu-body' }, card);
+        const band = bandHere();
+        function draw() {
+          body.textContent = ''; el('p', { class: 'gm-top' }, body, nf(st.shards) + ' sunstone shards. One of each herb at most.');
+          const what = { moonpetal: 'heals one', lavender: 'heals both', mugwort: 'Io’s MP', emberLily: 'blows 10% harder for a fight', nightrose: 'brings one back' };
+          for (const id of Object.keys(RL.HERBS)) {
+            const H = RL.HERBS[id], price = RL.herbPrice(id, band), have = st.herbs[id] || 0, r = el('div', { class: 'gm-item' }, body);
+            const nm = el('span', null, r, H.name); el('small', null, nm, ' ' + what[id]);
+            el('b', null, r, nf(price));
+            const bt = el('button', { type: 'button', class: 'go small' }, r, have >= RL.CARRY ? 'Have one' : 'Buy');
+            bt.disabled = have >= RL.CARRY || st.shards < price;
+            bt.addEventListener('click', () => { st.shards -= price; st.herbs[id] = have + 1; sfx('ui-buy'); save(); draw(); });
+          }
+        }
+        draw();
+        const foot = el('div', { class: 'gmenu-foot' }, card), x = el('button', { type: 'button', class: 'go' }, foot, 'Done');
+        x.addEventListener('click', () => { ov.remove(); done(); }); setTimeout(() => x.focus({ preventScroll: true }), 30);
+      });
+    }
+
+    // ---------- the title ----------
+    let titleEl = null;
+    function showTitle() {
+      mode = 'title'; field.show(false); world.show(false); pauseAll();
+      if (titleEl) titleEl.remove();
+      titleEl = el('div', { class: 'title' }, root);
+      const img = el('img', { class: 'title-art', alt: '' }, titleEl); img.src = src("art/title/key-art.webp");
+      const box = el('div', { class: 'title-box' }, titleEl);
+      el('h1', null, box, 'Envoi on the Longest Night');
+      const saved = GS.load();
+      if (saved) { const c = el('button', { type: 'button', class: 'go' }, box, 'Continue'); c.addEventListener('click', () => { audioInit(); st = saved; begin(false); }); el('p', { class: 'title-save' }, box, 'Level ' + saved.level + ' · ' + clock(saved.time) + ' played'); }
+      const n = el('button', { type: 'button', class: 'go' + (saved ? ' alt' : '') }, box, 'New game');
+      n.addEventListener('click', async () => { audioInit(); if (saved) { titleEl.hidden = true; const k = await ask(null, 'Start a new game? The saved one will be lost.', ['New game', 'Keep it']); titleEl.hidden = false; if (k) return; } st = GS.fresh(); begin(true); });
+      if (audioOn) music('title');
+      setTimeout(() => (box.querySelector('button') || n).focus({ preventScroll: true }), 50);
+    }
+    async function begin(isNew) {
+      titleEl.remove(); titleEl = null; busy++;
+      try {
+        if (isNew) { music('title'); await prologue(); await goField('cottage', [838, 520], 's'); }
+        else { const W = st.where; if (W.mode === 'world') await goWorld(W.at[0], W.at[1], W.dir); else await goField(W.map, W.at, W.dir); }
+      } finally { busy--; resumeAll(); }
+    }
+    async function prologue() {
+      const card = el('div', { class: 'prologue' }, root); const img = el('img', { alt: '' }, card); img.src = src("art/backdrops/night-square.webp");
+      await wait(0.2); card.classList.add('on');
+      for (const ln of S.scenes.prologue) { if (typeof ln !== 'string') { card.classList.add('out'); await wait(0.6); card.remove(); } await say([ln]); }
+      if (card.isConnected) card.remove();
+    }
+
+    // time played
+    setInterval(() => { if (mode !== 'title' && !document.hidden) st.time += 1; }, 1000);
+    if (opts.skipTitle) { audioOn = false; begin(!opts.state); } else showTitle();
+    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit };
+    window.__game = api;
+    return api;
+  }
+  window.Game = { start, PLACES, LANDINGS };
+})();

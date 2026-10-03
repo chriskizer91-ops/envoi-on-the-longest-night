@@ -124,9 +124,9 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 ## Next steps
 
-1. **Phase 4, walking (step 18):** the field engine (`src/game/field.js`) on the traced maps (`src/game/maps.js`), the townsfolk (`sprites.js`), the dialogue box (`talk.js`), the world map (`world.js`, with its land mask from `tools/world-mask.mjs`) and the game's fights (`fights.js`, the battle screen's game mode). Next: the game director that joins them, menus, shops and saves, then the step 18 demo.
-2. **Step 19, the Magpie,** built from Chris's world travel demo (`reference/demos/the-magpie-over-aethermoor.html`).
-3. **Phase 5:** the title, the story scenes and the script, band by band, and the single-file build.
+1. **The game is joined in one page** (`demos/game.html`, `src/game/game.js`): title, prologue, the field and world maps, the Magpie's flight, every set fight in order, shops, inns, camps, wells, the menu, the save and the ending. Band 1 plays through headless from the title to the refit; bands 2 to 4 need the same pass.
+2. **Art to come:** the townsfolk's portraits (`art-requests/06-townsfolk-portraits.md`) and the story stills (`art-requests/07-story-stills.md`). When they arrive the page passes 16 MB, so its paintings move to separate files beside it.
+3. **The script** is Claude's placeholder throughout (`src/game/script.js`), for the lore conversation to replace.
 
 Art in hand (`../reference/art/README.md`):
 

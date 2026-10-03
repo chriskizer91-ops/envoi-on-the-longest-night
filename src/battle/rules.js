@@ -243,5 +243,10 @@
     { level: 15, name: 'The final upgrade at the shipyard', shards: 4500 },
   ];
 
-  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, xpNeed, grows, herbPrice, MAGPIE };
+  // a wild fight's experience and shards, against the fight tables: the game's walks between stops are shorter than the
+  // simulator first assumed, so each wild fight is worth more and the levels at the gates stay where they were
+  // (design decisions, twenty-third round)
+  const WILD_REWARD = 1.75;
+
+  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, xpNeed, grows, herbPrice, MAGPIE, WILD_REWARD };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

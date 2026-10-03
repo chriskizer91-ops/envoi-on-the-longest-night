@@ -5,6 +5,7 @@
 //   fight:   a set fight that must be won to go on (gate: true for the band's gate), or a story fight (story: true), which
 //            goes on whatever happens
 //   walk:    wild country between two places: about `fights` random encounters for a player who walks straight through
+//            (measured on the game's own maps; each wild fight is worth rules.js WILD_REWARD times its table's experience)
 //   rest:    a rest place (an inn, or a camp where the way is long): HP and MP back, and where a lost fight wakes you
 //   shop:    a herb shop: the party carries one of each herb
 //   upgrade: the Magpie's upgrade (rules.js MAGPIE): it needs the band's gate won, the party's level and the shards
@@ -32,7 +33,7 @@
     { scene: 'sol', at: 'wickhollow', flags: { party: true } },
     { scene: 'magpie', at: 'wickhollow' },
     { shop: 'wickhollow' },
-    { walk: 'thornwood', band: 1, fights: 10 },
+    { walk: 'thornwood', band: 1, fights: 3 },
     { rest: 'bogmire' },
     { shop: 'bogmire' },
     { fight: 'greatWraith', at: 'bogmire', gate: true, level: 5 },
@@ -40,7 +41,7 @@
     { upgrade: 0, at: 'bogmire', flags: { refit: true } },
     // ---------- band 2: the Warm Roads and Dawnroost ----------
     { rest: 'warmRoads', camp: true },
-    { walk: 'warmRoads', band: 2, fights: 10 },
+    { walk: 'warmRoads', band: 2, fights: 5 },
     { rest: 'dawnroost' },
     { shop: 'dawnroost' },
     { fight: 'dawnroost', at: 'dawnroost', gate: true, level: 10 },
@@ -48,7 +49,7 @@
     { upgrade: 1, at: 'dawnroost' },
     // ---------- band 3: the northern wilds, Halcyon, the shipyard ----------
     { rest: 'northernWilds', camp: true },
-    { walk: 'northernWilds', band: 3, fights: 9 },
+    { walk: 'northernWilds', band: 3, fights: 6 },
     { fight: 'halcyon', at: 'crossroads', story: true, level: 15 },
     { scene: 'kestrel', at: 'crossroads', flags: { stoop: true } },
     { rest: 'shipyard' },
@@ -57,7 +58,7 @@
     { upgrade: 2, at: 'shipyard' },
     // ---------- band 4: the frozen pass and Misthollow ----------
     { rest: 'frozenPass', camp: true },
-    { walk: 'frozenPass', band: 4, fights: 22 },
+    { walk: 'frozenPass', band: 4, fights: 5 },
     { rest: 'misthollow' },
     { shop: 'misthollow' },
     { fight: 'finale', at: 'misthollow', gate: true, level: 20 },

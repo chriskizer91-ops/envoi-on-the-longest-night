@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Envoi on the Longest Night</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/battle/screen.css">
+<link rel="stylesheet" href="../src/game/game.css">
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/night-square.js"></script>
+<script src="../src/stage/thornwood-bridge.js"></script>
+<script src="../src/stage/gloamwood-road.js"></script>
+<script src="../src/stage/bogmire-boardwalk.js"></script>
+<script src="../src/stage/warm-road.js"></script>
+<script src="../src/stage/dawnroost-node.js"></script>
+<script src="../src/stage/northern-crossroads.js"></script>
+<script src="../src/stage/frozen-road.js"></script>
+<script src="../src/stage/dead-moonwell.js"></script>
+<script src="../src/models/witch.js"></script>
+<script src="../src/models/sol.js"></script>
+<script src="../src/models/wraith.js"></script>
+<script src="../src/models/wisp.js"></script>
+<script src="../src/models/bramble.js"></script>
+<script src="../src/models/halcyon.js"></script>
+<script src="../src/models/noctara.js"></script>
+<script src="../src/models/lunara.js"></script>
+<script src="../src/models/envoi.js"></script>
+<script src="../src/models/magpie.js"></script>
+<script src="../src/fx/battle-fx.js"></script>
+<script src="../src/fx/io-spells.js"></script>
+<script src="../src/battle/rules.js"></script>
+<script src="../src/battle/engine.js"></script>
+<script src="../src/battle/sim.js"></script>
+<script src="../src/battle/sound.js"></script>
+<script src="../src/battle/screen.js"></script>
+<script src="../src/walk/pixel-io.js"></script>
+<script src="../src/game/sprites.js"></script>
+<script src="../src/game/maps.js"></script>
+<script src="../src/game/world-mask.js"></script>
+<script src="../src/game/world.js"></script>
+<script src="../src/game/field.js"></script>
+<script src="../src/game/talk.js"></script>
+<script src="../src/game/fights.js"></script>
+<script src="../src/game/state.js"></script>
+<script src="../src/game/script.js"></script>
+<script src="../src/game/thareia-audio.js"></script>
+<script src="../src/game/fly.js"></script>
+<script src="../src/game/game.js"></script>
+<script>
+// The game (plan phase 5). In this folder the art loads from ../art; the build inlines it.
+Game.start({ src: (p) => (p.startsWith('data:') ? p : '../' + p) });
+</script>
+</body>
+</html>

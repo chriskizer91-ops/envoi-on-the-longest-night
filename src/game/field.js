@@ -8,6 +8,7 @@
 // Map coordinates are the paintings' own 1536 x 1024 pixels whatever size they ship at.
 // Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw() }
 //   opts: maps, speed (map px a second), zoom, ioH (map px), encounter: { mean, min } (map px walked between fights),
+//   light(map) (the painting's brightness, 1 as painted),
 //   and the callbacks onExit(exit), onEvent(spot), onTalk(person), onSpot(spot), onEncounter(map), onMenu(),
 //   isDone(id) (an event or a well already used), src(path) (the art's URL)
 // Needs makePixelIo (src/walk/pixel-io.js) and makeFolk (sprites.js). Defines window.Field.
@@ -17,6 +18,9 @@
   function el(tag, attrs, parent, text) { const e = document.createElement(tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; if (parent) parent.appendChild(e); return e; }
   const inPoly = (pts, x, y) => { let ins = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) ins = !ins; } return ins; };
   const inRect = (r, x, y) => x >= r[0] && x <= r[2] && y >= r[1] && y <= r[3];
+  // an exit reaches 8 px further in than its rectangle: her feet stay a few pixels inside the walk area, so an exit at
+  // the painting's edge would otherwise be just out of reach
+  const inExit = (r, x, y) => x >= r[0] - 8 && x <= r[2] + 8 && y >= r[1] - 8 && y <= r[3] + 8;
   const MW = 1536, MH = 1024, CELL = 12, GW = Math.ceil(MW / CELL), GH = Math.ceil(MH / CELL);
   const REACH = 58; // how close Io must stand to talk or use something (map px)
 
@@ -73,7 +77,9 @@
     // the coarse grid for tap-to-walk: each 12 px cell is open if its centre is
     function buildGrid() {
       grid = new Uint8Array(GW * GH);
-      for (let j = 0; j < GH; j++) for (let i = 0; i < GW; i++) grid[j * GW + i] = canStand(i * CELL + CELL / 2, j * CELL + CELL / 2) ? 1 : 0;
+      // a cell is open when she can stand at its centre and at the middle of each edge, so a path between open cells is
+      // open all the way
+      for (let j = 0; j < GH; j++) for (let i = 0; i < GW; i++) { const x = i * CELL + CELL / 2, y = j * CELL + CELL / 2, h = CELL / 2 - 1; grid[j * GW + i] = canStand(x, y) && canStand(x, y - h) && canStand(x, y + h) && canStand(x - h, y) && canStand(x + h, y) ? 1 : 0; }
     }
     // breadth-first from her cell to the open cell nearest the tap; the path is smoothed to the cells where it turns
     function findRoute(tx, ty) {
@@ -202,7 +208,7 @@
       if (!P.moving) P.walkT = 0;
       // exits, then events, then the wilds
       for (const ex of map.exits || []) {
-        if (inRect(ex.rect, P.x, P.y)) { if (lastExit !== ex) { lastExit = ex; held.clear(); route = null; if (opts.onExit) opts.onExit(ex); } return; }
+        if (inExit(ex.rect, P.x, P.y)) { if (lastExit !== ex) { lastExit = ex; held.clear(); route = null; if (opts.onExit) opts.onExit(ex); } return; }
       }
       lastExit = null;
       for (const s of map.spots || []) {
@@ -223,7 +229,10 @@
       g.setTransform(DPR, 0, 0, DPR, 0, 0);
       g.fillStyle = '#0b0912'; g.fillRect(0, 0, W, H);
       g.imageSmoothingEnabled = false;
+      const lit = opts.light ? opts.light(map) : 1;
+      if (lit !== 1) g.filter = 'brightness(' + lit + ')';
       g.drawImage(img, cam.x * mk, cam.y * mk, vw * mk, vh * mk, 0, 0, W, H);
+      g.filter = 'none';
       // spots glimmer softly, so a player can find them
       const pulse = 0.5 + 0.5 * Math.sin(t / 300);
       for (const s of things()) {
