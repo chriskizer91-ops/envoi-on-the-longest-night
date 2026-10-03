@@ -4,6 +4,13 @@ A handoff for the next session. Updated October 3, 2026, after the twenty-second
 
 **Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Steps 13 to 17, the party, the great wraith, Dawnroost, Halcyon's ambush and the finale, are built too. **Phase 3 is done:** the whole journey plays in order in the simulator (`src/game/story.js`, `src/battle/chain.js`). **Phase 4 is under way:** every ground-level map is traced, and the field engine, the world map, the townsfolk, the dialogue box and the game's fights are written.
 
+## Putting it all together (October 3, later)
+
+Chris asked for everything to be brought together in a new folder, `../putting-it-all-together/`. It holds the game's page (moved from `demos/game.html`), and its README lists every piece of the game, where it comes from, and what is still to come: the Bramble Colossus, the living battlefields, Chris's next mobs, the art, the words, and his three songs, which go in last.
+
+- **Branch:** this work is on `ccr-9e19f4e2-29pyn6`, which holds everything: the game from `second-account-work` and the creature ideas from `claude/sleepy-dirac-t4ftx0`, merged.
+- **Testing:** `node tools/game-test.mjs` plays the built game headless (the title, a new game, walking, the menu, the save, and a wild fight to its end with `--steps`).
+
 ## Working from the second account
 
 - **Branch:** commit only to `second-account-work`. Never commit to `main` or any other branch, and never to the sibling repos.
@@ -137,7 +144,7 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 Everything Claude would add or improve, and what is waiting on Chris, is in `handoff.md`.
 
 
-1. **The game is joined in one page** (`demos/game.html`, `src/game/game.js`): title, prologue, the field and world maps, the Magpie's flight, every set fight in order, shops, inns, camps, wells, the menu, the save and the ending. Every part has been played headless with no errors. Build it with `node tools/build.mjs --min demos/game.html`.
+1. **The game is joined in one page** (`putting-it-all-together/game.html`, `src/game/game.js`): title, prologue, the field and world maps, the Magpie's flight, every set fight in order, shops, inns, camps, wells, the menu, the save and the ending. Every part has been played headless with no errors. Build it with `node tools/build.mjs --min putting-it-all-together/game.html`.
 2. **Art to come:** the townsfolk's portraits (`art-requests/06-townsfolk-portraits.md`) and the story stills (`art-requests/07-story-stills.md`). When they arrive the page passes 16 MB, so its paintings move to separate files beside it.
 3. **The script** is Claude's placeholder throughout (`src/game/script.js`), for the lore conversation to replace.
 

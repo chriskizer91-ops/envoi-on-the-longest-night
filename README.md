@@ -6,7 +6,7 @@ A game in early development.
 
 ## Status
 
-Phase 1, the models (see `docs/plan.md`): every model is touched up, and the polish round is next. `docs/status.md` is the handoff note.
+The whole game plays from the title to the ending, and is being put together with the new creatures in `putting-it-all-together/` (see its README). `docs/status.md` is the handoff note and `docs/handoff.md` the list of what the game still wants.
 
 ## Layout
 
@@ -18,3 +18,4 @@ Phase 1, the models (see `docs/plan.md`): every model is touched up, and the pol
 - `src/bench/`, `demos/`, `dist/`: the shared battle bench, each model's bench page, and the built single-file pages.
 - `tools/`: build, headless checks, turnaround renders and the line-up. See `docs/model-touchup-guide.md`.
 - `3d-model-new-character-ideas/`: new characters and creatures Chris brings as ideas, each with its 3D model, bench page and records. They aren't part of the story until he places them.
+- `putting-it-all-together/`: the whole game's page, and the list of every piece going into it.

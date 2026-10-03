@@ -136,7 +136,7 @@ The final deliverable is one HTML file under 30 MB, sent to Chris to keep. The p
 
 - **Tests:** the headless test drivers live in the session scratchpad. They should move into `tools/` as one game test, with saves to start at each band.
   - Headless Chrome renders slowly (a 3D fight takes several minutes), so set fights are weakened to keep tests short.
-  - The unbuilt page can't load the flight's textures from `file://`; test the built page (`node tools/build.mjs --min demos/game.html`) or serve the folder.
+  - The unbuilt page can't load the flight's textures from `file://`; test the built page (`node tools/build.mjs --min putting-it-all-together/game.html`) or serve the folder.
 - **Map tracing:** `node tools/check-maps.mjs` after any change to `src/game/maps.js`; `node tools/trace-overlay.mjs <map> <out.png>` to see it.
 - **Balance:**
   - `node tools/balance.mjs` for the fights' 52 targets.

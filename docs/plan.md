@@ -177,7 +177,7 @@ The pieces joined from title to ending, one band at a time.
 2. **Bands 2, 3 and 4,** each playable when finished.
 3. **The ending:** Envoi's last strike, the letters burning, the stars coming back.
 
-**Where phase 5 stands (October 3):** the whole game is joined in one page (`demos/game.html`, `src/game/game.js`):
+**Where phase 5 stands (October 3):** the whole game is joined in one page (`putting-it-all-together/game.html`, `src/game/game.js`):
 
 - the title, the prologue, the story's scenes and words (`src/game/script.js`), and every set fight in order;
 - shops, inns and camps, the menu and the save (`src/game/state.js`);
