@@ -81,8 +81,8 @@
     sol: [
       // Io steps clear of the Moonwell; Sol runs in over the stone bridge from the Thornwood
       { map: 'wickhollow', io: [[800, 610]], speed: 90 },
-      { add: 'sol', look: 'sol', at: [1440, 382], dir: 'w' }, { focus: [1150, 470] },
-      { walk: 'sol', path: [[1280, 418], [1080, 428], [1050, 560], [862, 608]], speed: 190, wait: false },
+      { add: 'sol', look: 'sol', at: [1440, 382], dir: 'w' }, { focus: { on: 'sol' } },
+      { walk: 'sol', path: [[1290, 386], [1240, 395], [1080, 395], [1062, 450], [1030, 530], [862, 608]], speed: 190, wait: false },
       'Someone comes running over the bridge, a sword drawn and burning.',
       { until: 'sol' },
       { focus: { near: 'io', dx: 30 } }, { face: 'sol', to: 'io' }, { face: 'io', to: 'sol' },
@@ -168,14 +168,14 @@
     ],
     // before Halcyon's ambush: the knight comes down the north road and stops at the crossroads' heart
     ambush: [
-      { map: 'crossroads', add: 'halcyon', look: 'halcyon', at: [770, 30], dir: 's' }, { focus: [768, 260] },
+      { map: 'crossroads', add: 'halcyon', look: 'halcyon', at: [770, 30], dir: 's' }, { focus: { on: 'halcyon' } },
       'Someone is coming down the north road, out of the dark.',
       { walk: 'halcyon', path: [[770, 330], [768, 430]], speed: 60 },
       { face: 'io', dir: 'n' }, { wait: 0.6 }, { keep: true },
     ],
     shipyard: [
       // Ysmera comes down from the slip to meet them on the bridge
-      { map: 'shipyard', person: 'ysmera' }, { add: 'ysmera', look: 'aurosi', at: [765, 500], dir: 's' }, { focus: [762, 700] },
+      { map: 'shipyard', person: 'ysmera' }, { add: 'ysmera', look: 'aurosi', at: [765, 500], dir: 's' }, { focus: { on: 'ysmera' } },
       { walk: 'ysmera', path: [[763, 600], [762, 690]], speed: 95, wait: false }, { io: [[760, 760]], speed: 100 }, { until: 'ysmera' },
       { face: 'io', dir: 'n' }, { face: 'ysmera', dir: 's' },
       ['shipmaster', 'A witch and the last of the Wardens, at my yard. Your little ship will need more than courage to fly north.'],

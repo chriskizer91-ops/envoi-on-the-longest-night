@@ -127,8 +127,11 @@
     async function fadeTo(on, s) { fade.style.transition = 'opacity ' + (s || 0.35) + 's'; fade.classList.toggle('on', on); await wait(s || 0.35); }
 
     // ---------- the ground maps ----------
+    // Io walks as Path Polish paints her (src/walk/painted-io.js), her height 15% of the screen's shorter side, at 1.9 of
+    // her heights a second; the pixel Io stands in until the painting loads
+    const paintedIo = makePaintedIo(src);
     const field = Field.create(fieldHost, {
-      maps: MAPS, src, speed: 110, zoom: 0.7, ioH: 42,
+      maps: MAPS, src, speed: 110, zoom: 0.7, ioH: 42, paintedIo, pace: 1.9, ioScreen: 0.15,
       encounter: { get mean() { return 770 / settings.rate; }, get min() { return 440 / settings.rate; } },
       light: (m) => settings.light * (m.id === 'bogmire' && !st.flags.lights ? 0.55 : m.id === 'bogmire-heart' && !st.flags.lights ? 0.8 : 1),
       isDone: (k) => !!st.done[k],
@@ -137,7 +140,7 @@
     });
     // ---------- the world map ----------
     const world = World.create(worldHost, {
-      tiles: (r, c) => src(TILES[r + '' + c]), speed: 45, zoom: 2,
+      tiles: (r, c) => src(TILES[r + '' + c]), speed: 45, zoom: 2, paintedIo,
       encounter: { get mean() { return 330 / settings.rate; }, get min() { return 190 / settings.rate; } },
       places: Object.fromEntries(Object.entries(PLACES).map(([id, p]) => [id, Object.assign({}, p, { hidden: () => (p.need && !p.need(st)) || (p.kind === 'node' && st.done[id]) })])),
       open: (b) => b <= st.band,
@@ -200,7 +203,7 @@
         if (ln.walk) { const path = ln.path.map(pt).filter(Boolean); const w = walks[ln.walk] = F.walk(ln.walk, path, ln.speed); if (ln.wait !== false) await w; }
         if (ln.io) await F.io(ln.io.map(pt).filter(Boolean), ln.speed);
         if (ln.face) { const me = posOf(ln.face), d = ln.dir || (me && pt(ln.to) ? dirTo(me, pt(ln.to)) : null); if (d) { if (ln.face === 'io') F.ioFace(d); else F.face(ln.face, d); } }
-        if ('focus' in ln) F.focus(ln.focus ? pt(ln.focus) : null);
+        if ('focus' in ln) F.focus(ln.focus ? (ln.focus.on || pt(ln.focus)) : null); // { on: id } follows an actor
         if (ln.until && walks[ln.until]) await walks[ln.until];
         if (ln.remove) F.remove(ln.remove);
         if (ln.keep) keep = true; // the actors stay on the map after the words (the knight, until the fight)
@@ -318,6 +321,7 @@
       if (s.kind === 'well') {
         const W = S.wells[s.id];
         if (st.done['well:' + s.id] || !W) { await say(['The water lies still and dark.']); return; }
+        await field.pose('kneel', 1.9); // she kneels for what was left there
         await say(W.letter.concat(W.sol ? [['sol', W.sol]] : []));
         st.done['well:' + s.id] = true;
         const g = W.gift;
@@ -333,6 +337,7 @@
     async function rest(name) {
       const i = await ask(null, 'Rest here? HP and MP come back, and the game is saved.', ['Rest', 'Not now']);
       if (i) return;
+      if (mode === 'field' && /Moonwell/.test(name)) await field.pose('cast', 2.1); // at a Moonwell she casts moonlight into it
       await fadeTo(true, 0.6); sfx('hearthfire'); GS.restore(st);
       st.rest = mode === 'world' ? { mode: 'world', at: [Math.round(world.P.x), Math.round(world.P.y)] } : { mode: 'field', map: field.map.id, at: [Math.round(field.P.x), Math.round(field.P.y)] };
       save(); await wait(0.6); await fadeTo(false, 0.6);

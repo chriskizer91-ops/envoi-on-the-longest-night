@@ -11,19 +11,22 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 
 | Piece | Where it comes from | State |
 |---|---|---|
-| The game, from the title to the ending | `game.html` here, built from `../src/` | In. It has been played through headless with no errors, but not yet on a phone |
+| The game, from the title to the ending | `game.html` here, built from `../src/` | In. It has been played through headless with no errors, and Chris has played it on his phone |
+| Io on foot, painted as in Path Polish: her walk sheet, the cape's ripple, the lean, the breath, kneeling at wells and casting at the Moonwell | `../src/walk/painted-io.js`, from Chris's `follow-me-down-witch-way` (`versions/path-polish/game`) | In, on the ground maps and the world map. The 3D model stays for the battles. Her own page: `../demos/io-on-foot.html` |
+| Where she can walk: every map traced close to the painted ground, with lamp posts, trees and the well's frame drawn over her when she walks behind them | `../src/game/maps.js` (check with `node tools/trace-overlay.mjs` and `node tools/check-maps.mjs`) | In for Wickhollow; the other twelve maps are being traced the same way |
 | Io, Sol, Lunara, Envoi, the wisps, the wraiths, Halcyon, Noctara | `../src/models/` | In, all polished |
 | The Bramble Horror, version 2 | `../3d-model-new-character-ideas/bramble-horror/` | In. The game's `../src/models/bramble.js` is the same model. It is a lone wild foe in all four bands |
 | The Bramble Colossus | `../3d-model-new-character-ideas/bramble-colossus/` | In: the last band's great wild foe, about one wild fight in twelve there, on the frozen road. Its fight on its own: `../demos/colossus.html` |
 | The wild meadow's life, on every painted battle: mist, fireflies, snow, dust and turf where big blows land, birds and bats put up by roars, leaves shaken down, a red storm for the Colossus's Wrath | `../src/fx/battlefield.js`, after `../3d-model-new-character-ideas/bramble-horror/meadow.js` | In |
 | The story's people walking in: Sol over the bridge, Quill to the skiff, the knight at the crossroads, Ysmera at the slip | `../src/game/script.js` (the stage directions), `../src/game/field.js` | In. The words are still placeholders |
-| Walking with sound: footsteps on each map's ground, a pace that builds to a run, each place's own ambience | `../src/game/game.js` | In |
+| Walking with sound: each place's own ambience, and a pace that builds to a run | `../src/game/game.js` | In. The footsteps are gone (Chris didn't like them); `io-on-foot.html` has two other ideas to try by ear |
 | Saves and settings: three save slots, a save code, word speed, larger text, music and effects volumes | `../src/game/state.js`, `../src/game/game.js` | In |
-| Chris's next mobs (at least two) | `../3d-model-new-character-ideas/<name>/` once he brings them | Waiting on Chris. Each one comes in the way the next section says |
+| Chris's next mobs (at least two, for the wilds) | `../3d-model-new-character-ideas/<name>/` once he brings them | Waiting on Chris. Each one comes in the way the next section says |
+| Everyone else on the maps as paper dolls: Sol, Halcyon, Ysmera, Quill and Inkblot, and the fifteen townsfolk | Art request 08 in `../docs/art-requests/`: one walk sheet each, in Io's sheet's style | Waiting on the art. Until then they stay pixel figures |
 | The townsfolk's portraits and the story stills | Art requests 06 and 07 in `../docs/art-requests/` | Waiting on the art |
 | Every word of the story | `../src/game/script.js`, placeholders for now | Waiting on the lore conversation |
-| Chris's three songs | Meant to be in `building-with-assets-`, but they aren't there yet | Last of all, once the whole build is finished |
-| The file Chris keeps, which works offline | `tools/build.mjs --offline` | In: three.js and the fonts are inside it (15.4 MB), and it plays with the internet blocked. The songs and the art will make it bigger |
+| Chris's three songs: Moonlit Forest Path for the towns, Herbal Decay for the wilds, Herbal Decay Battle for the battles | `../art/music/`, from his Game Music Squeezer page (a 48k copy of the battle song in `../reference/music/`) | Here, saved. They go in last of all, once the whole build is finished |
+| The file Chris keeps, which works offline | `tools/build.mjs --offline` | In: three.js and the fonts are inside it, and it plays with the internet blocked. It may grow to 30 MB (Chris); the size section below keeps count |
 | The game in Mooncart | Mooncart builds this repository with `node tools/build.mjs`, which makes the game too (`dist/game.html`) | Ready. Mooncart takes the repository's main branch (today `claude/admiring-hawking-p7m87n`), so the game reaches it once this branch is merged there |
 
 ## Pages to open on the phone
@@ -48,7 +51,19 @@ Both are private until Chris shares them from the page's Share menu.
 
 ## The songs
 
-Chris wants his three labeled, compressed songs in the game, but only once the whole build is finished. On October 3 they weren't in `building-with-assets-`: no branch or release there has a sound file. When they're uploaded, Chris says which song is which (the title, a battle, a boss, the ending?), and each one replaces the made-up music where it goes.
+Chris sent his three songs on October 3, already compressed for the game, and they are saved in `../art/music/`:
+
+| Song | Where it plays | File |
+|---|---|---|
+| Moonlit Forest Path | the towns | `towns-moonlit-forest-path.webm` (24k stereo, 3:15, 699 KB) |
+| Herbal Decay | the wilds | `wilds-herbal-decay.webm` (24k stereo, 3:52, 788 KB) |
+| Herbal Decay Battle | the battles | `battle-herbal-decay.webm` (32k stereo, 3:20, 824 KB) |
+
+A 48k copy of the battle song (1.2 MB), the size Chris once said it shouldn't go below, is in `../reference/music/`, in case the 32k one sounds thin. As Chris asked, they go in last, once the whole build is finished. The made-up music keeps the title, the bosses and the ending.
+
+## Size
+
+The file Chris keeps may be up to 30 MB. Today it is 18.3 MB. The songs, the paper dolls, the portraits and the stills would bring it to about 32 MB, so the pictures get squeezed a little more at the end (`../docs/handoff.md`, size and delivery, has the sums).
 
 ## Building and checking
 
@@ -61,6 +76,15 @@ node tools/game-test.mjs                                      # plays it headles
 node tools/balance.mjs                                        # every fight's balance targets; must meet all of them
 ```
 
+The published game is a small page with its pictures as files beside it, since the whole game is over a published page's 16 MB:
+
+```sh
+node tools/build.mjs --min --split putting-it-all-together/game.html   # dist/game-split/: the page, art/, files.json
+node tools/game-test.mjs dist/game-split/game.html                     # plays the split copy
+```
+
+Publish `dist/game-split/game.artifact.html` with every file in `files.json` beside it, at the same paths.
+
 The file Chris keeps, with three.js and the fonts inside it:
 
 ```sh
@@ -71,3 +95,7 @@ node tools/game-test.mjs --offline   # plays it with the internet blocked; anyth
 Both builds write `dist/game.html`. The published page is built without `--offline`, to leave room under the 16 MB page limit. `node tools/build.mjs` with nothing after it builds every demo page and the game; that is what Mooncart runs.
 
 `tools/game-test.mjs` can also play a wild fight to its end: `--steps title,new,wild --band 2 --level 8`.
+
+The walking maps: `node tools/trace-overlay.mjs wickhollow out.png 1600 --grid 25 --crop 600,200,400,400` draws a map's walk areas (green), blocks (red) and fronts (violet) over the painting, close up; `node tools/check-maps.mjs` checks that every exit, person and spot can be reached.
+
+A paper-doll sheet from art request 08: `node tools/cut-sheet.mjs reference/art/walkers/<id>-walk.png <id>` cuts it into the game's walker (`art/walkers/<id>.webp`).

@@ -10,6 +10,7 @@
 //   draw: x, y: her feet on the canvas; k: canvas px per art px (her height on the canvas / h)
 //   s: { dir: 'n' | 's' | 'e' | 'w', walk: how far she has walked (in her heights), moving, t: seconds,
 //        lean, turn: -1 to 1 (her motion's), pose: null | 'kneel' | 'cast', poseP: 0 to 1 through the pose }
+// The art paths are in double quotes so the build (tools/build.mjs) puts the images inside the page.
 // Defines window.makePaintedIo.
 (function () {
   'use strict';
@@ -26,12 +27,12 @@
   // her 80 px), six frames a stride
   const FRAMES_PER_HEIGHT = 6.4;
   // the poses' canvases (384 x 320) put her feet at (192, 317)
-  const POSE = { kneel: 'art/walk/io-kneel.png', cast: 'art/walk/io-cast.png' };
+  const POSE = { kneel: "art/walk/io-kneel.png", cast: "art/walk/io-cast.png" };
 
   function makePaintedIo(src) {
     const im = {};
     const load = (key, path) => new Promise((res) => { const i = new Image(); i.onload = () => { im[key] = i; res(); }; i.onerror = () => res(); i.src = src(path); });
-    const ready = Promise.all([load('walk', 'art/walk/io-walk.webp'), load('kneel', POSE.kneel), load('cast', POSE.cast)]);
+    const ready = Promise.all([load('walk', "art/walk/io-walk.webp"), load('kneel', POSE.kneel), load('cast', POSE.cast)]);
 
     // a pose blends in and out over its first and last 18% (Path Polish's gatherWeight)
     const weight = (p) => (Number.isFinite(p) ? ease(p / 0.18) * ease((1 - p) / 0.18) : 1);

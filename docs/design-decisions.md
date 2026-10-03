@@ -942,3 +942,30 @@ The plan in `handoff.md` (section 2), built:
 - **The first battle** shows two tips once: picking a command, and Trance.
 - **Set fights and the great foes** end on a longer fanfare; wild fights keep the short one.
 
+
+## October 3, 2026, later: the paper-doll walk
+
+Chris's notes after playing the put-together game: the footsteps don't sound good; Path Polish's painted Io should walk the maps instead of the pixel Io (the 3D model stays for battle), and so every townsperson must become a paper doll too; the walking areas need work; the final file may be 30 MB; and his three songs.
+
+- **No footsteps.** Each step played the library's whole four-step clip, so the clips piled into a clatter. They are gone; each place's ambience stays. The demo page `demos/io-on-foot.html` lets Chris try two other ideas: Path Polish's own soft steps, one quiet footfall as each painted step lands, and a cloak's soft swish.
+- **Io walks as Path Polish paints her** (`src/walk/painted-io.js`, from Chris's `follow-me-down-witch-way`, `versions/path-polish/game`):
+  - its painted walk sheet, six steps in each of four directions;
+  - her cape ripples, she leans into her walk and into a turn, and she breathes when she stands;
+  - her speed eases into and out of a walk, as Path Polish's motion does;
+  - two of its painted poses: she kneels at a well before its letter is read, and casts moonlight into a Moonwell when she rests there.
+  - She walks the world map painted too. The pixel Io stays only as a stand-in while her art loads.
+- **The camera comes close enough to see her:** her height is 15% of the screen's shorter side (about 62 px on a Pixel 7a held sideways). She is still 42 map px tall, so she keeps her size beside the houses.
+- **The walking maps now ship 1152 px wide** (they were 768): up close, the paintings' pixels stay near the size Chris approved at the old 0.7 zoom.
+- **Her pace** is 1.9 of her own heights a second (80 map px; the pixel Io walked 110), so her painted steps keep Path Polish's rhythm. It builds to a run of 1.5 times that. Chris can try other heights, closeness and paces on the demo page.
+- **The walk areas follow the painted ground:** cobbles, paths, stairs, decks and bridges. Nothing walks over grass, gardens, trees, walls or water. Wickhollow is done first, as the standard; the other twelve maps follow in the same pass.
+  - **Blocks** keep her off lamp posts' feet, wells, benches, stalls and barrels.
+  - **Fronts** are pieces of the painting (lamp posts, trees, the Moonwell's iron frame) drawn again over Io, or anyone, standing behind them, so she walks behind things instead of over them.
+  - Wickhollow's Moonwell ring is open to the south, so she can stand at the well itself.
+- **Everyone else becomes a paper doll:** art request 08 asks for one walk sheet for each of nineteen people, in Io's sheet's style and layout, with her sheet attached. Until the sheets come in, they stay as pixel figures.
+- **Scenes follow their walkers:** with the closer camera, a scene's camera follows the person walking in (`{ focus: { on: 'sol' } }`).
+- **Size:** the final file Chris keeps may be up to 30 MB (Chris, October 3). The published game outgrew a published page's 16 MB, so the game is now published as a small page with its pictures as files beside it (`node tools/build.mjs --min --split`). The file Chris keeps stays one file.
+- **The songs:**
+  - towns: Moonlit Forest Path, Opus 24k stereo;
+  - wilds: Herbal Decay, Opus 24k stereo;
+  - battles: Herbal Decay Battle, Opus 32k stereo, with a 48k copy kept in `reference/music/`.
+  - They are saved in `art/music/` and go into the game last, once the whole build is finished.

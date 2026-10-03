@@ -41,6 +41,7 @@
 <script src="../src/battle/sound.js"></script>
 <script src="../src/battle/screen.js"></script>
 <script src="../src/walk/pixel-io.js"></script>
+<script src="../src/walk/painted-io.js"></script>
 <script src="../src/game/sprites.js"></script>
 <script src="../src/game/maps.js"></script>
 <script src="../src/game/world-mask.js"></script>
@@ -55,8 +56,9 @@
 <script src="../src/game/fly.js"></script>
 <script src="../src/game/game.js"></script>
 <script>
-// The game (plan phase 5). In this folder the art loads from ../art; the build inlines it.
-Game.start({ src: (p) => (p.startsWith('data:') ? p : '../' + p) });
+// The game (plan phase 5). In this folder the art loads from ../art; the build inlines it, or with --split leaves it
+// beside the page (ART_BASE '').
+Game.start({ src: (p) => (p.startsWith('data:') ? p : (window.ART_BASE != null ? window.ART_BASE : '../') + p) });
 </script>
 </body>
 </html>

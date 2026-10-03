@@ -4,18 +4,21 @@ October 3, 2026. The game plays from the title to the ending in one page (https:
 
 **Done since, in `../putting-it-all-together/` (October 3, later):** the Bramble Colossus in the game (section 2); living battlefields on every painted battle (section 3, the first way); three save slots, a save code, word speed, larger text and separate volumes (section 9); the offline build (size and delivery); and `tools/game-test.mjs` (technical notes). Each is marked below.
 
+**After Chris's first play (October 3, later still):** no footsteps; Io walks as Path Polish paints her; the walking maps retraced close, Wickhollow first, with walking behind lamp posts and trees (section 8); art request 08 for everyone else as paper dolls (section 4); his three songs saved; the published game split into a small page and its pictures (size and delivery). `design-decisions.md` has the details.
+
 ## Waiting on Chris
 
-1. **A play on the phone.** Nothing has been played by hand yet. The headless tests prove it runs, not that it feels right: the walking pace, how often fights come, the difficulty, how long each fight takes to load, and how the battles run on the Pixel 7a inside the full page.
+1. **Io on foot** (`demos/io-on-foot.html`): her height, how close the camera comes, her pace, and whether the footsteps stay off or one of the two new ideas goes in.
 2. **The lore conversation.** Every line of the script is a placeholder (`src/game/script.js`):
    - the townsfolk's words;
    - the twelve new townsfolk's names: Old Wenna, Tobb and Pell in Bogmire; Marta, Brann and Tamsin at Dawnroost; Pim, Tock and Old Gil at the shipyard; Sorrel, Ede and the watchwoman in Misthollow;
    - the five well letters;
    - every story scene, the ending's words included.
 3. **Art requests 06 and 07:** sixteen townsfolk portraits and nine story stills. Each goes in with one line in `src/game/stills.js`.
-4. **The songs.** Say which song is which (the title, a battle theme, a boss theme, the ending?). Claude puts each where it goes, and the synthesized pieces keep the rest.
+4. **The songs** are here (`art/music/`): Moonlit Forest Path for the towns, Herbal Decay for the wilds, Herbal Decay Battle for the battles. They go in last, once the build is finished, unless Chris wants them sooner. The synthesized pieces keep the rest (the title, the bosses, the ending).
 5. **The Bramble Colossus** (`reference/demos/bramble-colossus-bench.html`): built as the plan below says (`demos/colossus.html`). Changes are still welcome: its name, where it lives, its moves.
-6. **The townsfolk's sprites:** a yes to the paper doll below, or another direction.
+6. **Art request 08:** a walk sheet for each of nineteen people, so everyone on the maps is a painted paper doll like Io. `node tools/cut-sheet.mjs` cuts each sheet into the game's walker.
+7. **The next mobs** for the wilds (at least two), the way `putting-it-all-together/README.md` says.
 
 ## Gameplay, in order
 
@@ -71,13 +74,12 @@ The meadow in Chris's bench answers the fight: shockwaves roll through the grass
 
 ### 4. The townsfolk
 
-- **Better sprites, as a paper doll drawn in code:** a library of parts (faces, hair, hats, coats, aprons, skirts, beards, ears, held things), each drawn pixel by pixel to the pixel Io's standard (three-tone shading, outlines, one-pixel details).
-  - Each townsperson is one line of data choosing parts and colors.
-  - **Space:** code costs almost nothing. All of today's townsfolk and Io together are under 30 KB of code, and no images.
-  - **Images:** a paper doll of small images would also be small (a sheet per part, 2 to 5 KB each, about 100 KB in all).
-  - **Why code:** it is consistent with Io's own sprite, which is drawn in code and must keep her look, and it makes adding people trivial.
+- **Painted paper dolls (Chris's call, October 3):** Io walks as Path Polish paints her, so everyone else becomes a painted walker too, one sheet each from art request 08, instead of the paper doll drawn in code that this note first proposed.
+  - When a sheet comes in: `node tools/cut-sheet.mjs reference/art/walkers/<id>-walk.png <id>` finds its 24 figures by itself (on a clear or a green ground), and lays them out again with their feet on one line at the phone's size, as `art/walkers/<id>.webp` with a small JSON.
+  - Then the field draws that person with the painted walker's code, as it draws Io (`src/walk/painted-io.js`), in place of their pixel figure (`look` in `maps.js`).
+  - **Space:** about 200 KB a sheet, about 4 MB for all nineteen.
 - **More townsfolk per town** (Chris's mission), each with a line or two that changes with the story. Some can walk a short beat, turn to Io as she passes, or do something: Hilde at her anvil, Pim and Tock at the slip.
-- **Inkblot**, Quill's crow, on his shoulder and in his scenes.
+- **Inkblot**, Quill's crow, on his shoulder and in his scenes: he is in Quill's sheet in request 08.
 
 ### 5. Story staging
 
@@ -100,8 +102,8 @@ Today the party grows only by levels and the story's gifts (Harvest Moon, Envoi,
 
 ### 8. The field
 
-- **Walking behind things:** Io walks over the painted roofs, trees and arches. Each map needs a foreground mask (cut from the painting) drawn over her when she's behind it. The plan named it; it isn't built.
-- Footsteps and doors in sound; a soft step-in when a map loads. **Footsteps are built** (each map's ground: grass, stone or wood).
+- **Walking behind things: built (October 3, later still).** Each map's fronts (`maps.js`) are pieces of the painting (lamp posts, trees, arches, the Moonwell's frame) drawn again over Io, or anyone, standing behind them. The walk areas themselves follow the painted ground: Wickhollow first, the other twelve maps in the same pass.
+- Footsteps and doors in sound; a soft step-in when a map loads. **Footsteps were built and taken out** (Chris didn't like them). `demos/io-on-foot.html` has two other ideas to try by ear: Path Polish's soft steps, and a cloak's swish.
 - A run (hold the action button) for long walks. **Built differently:** the pace builds to a run after a moment of walking, so no button is needed.
 - An ambient loop per place (wind on the pass, frogs in the fen, the forge at Dawnroost). **Built** from the music library's own sounds, each coming back now and then.
 
@@ -118,29 +120,29 @@ Today the party grows only by levels and the story's gifts (Harvest Moon, Envoi,
 
 ## Size and delivery
 
-The final deliverable is one HTML file under 30 MB, sent to Chris to keep. The page today is 14.5 MB: 13.5 MB of paintings (inlined as base64, a third larger than the files) and under 1 MB of code.
+The final deliverable is one HTML file of at most 30 MB (Chris, October 3), sent to Chris to keep. It works offline, so three.js and the fonts are inside it.
 
-| Part | Inlined |
+| Part | In the file |
 |---|---|
-| Today's page | 14.5 MB |
-| Chris's songs (about 2.5 MB of files) | +3.3 MB |
+| Today's file, with the 1152 px walking maps and Io's walk sheet | 18.3 MB |
+| Chris's songs (2.4 MB of files) | +3.2 MB |
+| Nineteen paper-doll sheets (art request 08, about 200 KB each) | +5 MB |
 | Sixteen portraits | +1.7 MB |
 | Nine story stills | +4.2 MB |
-| The Colossus, its meadow, and three.js and the fonts embedded so the file works offline | +0.9 MB |
-| **The final file** | **about 25 MB** |
+| **Everything** | **about 32 MB** |
 
-**Published demos** have a 16 MB page limit, so once the songs and art come the page no longer fits.
+That is about 2 MB over, so the last step squeezes the pictures: the paper dolls a little smaller (150 px tall instead of 170: about +3.8 MB), the stills a little harder (about +3 MB), and the battle backdrops squeezed again (about 1 MB back). That lands under 30 MB.
 
-- **Two halves** (bands 1 and 2, bands 3 and 4) would work, but each published page keeps its own save, so carrying a game from one half to the other needs the save code from section 9.
-- **Simpler:** one link, with the paintings and songs published as files beside a small page. The same game and the same save; only the published copy is split, not the file Chris keeps.
+**The published game** has outgrown a published page's 16 MB, so it is published split, as planned: a small page (1.1 MB) with its 41 pictures beside it as files, at the same link with the same save. Build it with `node tools/build.mjs --min --split putting-it-all-together/game.html`; `dist/game-split/files.json` lists the pictures to publish with the page. Only the published copy is split, never the file Chris keeps.
 
-**The file Chris keeps must work offline,** so its build embeds three.js and the two fonts instead of loading them from the web. **Built:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` (15.4 MB with the Colossus, three.js and the fonts inside). `node tools/game-test.mjs --offline` plays it with the internet blocked and checks that its fonts are inside.
+**The file Chris keeps must work offline,** so its build embeds three.js and the two fonts instead of loading them from the web. **Built:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` (18.3 MB today, with three.js and the fonts inside). `node tools/game-test.mjs --offline` plays it with the internet blocked and checks that its fonts are inside.
 
 **Mooncart** (`building-with-assets-`) builds this repository with `node tools/build.mjs` and takes every page in `dist/`. With nothing after it, the build now makes the game too (`dist/game.html`), so the game reaches Mooncart once this branch is on the repository's main branch.
 
 ## Technical notes
 
-- **Tests:** `tools/game-test.mjs` is the game test (October 3, later): the title, a new game, walking, the menu, the save slots and code, and a wild fight or the Colossus to its end. Saves to start at each band are still to come.
+- **Tests:** `tools/game-test.mjs` is the game test (October 3, later): the title, a new game, walking on a ground map and on the world map, the menu, the save slots and code, the staged scenes, and a wild fight or the Colossus to its end. Saves to start at each band are still to come.
+- **The walking maps:** `node tools/trace-overlay.mjs <map> out.png 1600 --grid 25 --crop x,y,w,h` draws a map's walk areas, blocks and fronts over its painting, close up; `node tools/check-maps.mjs` checks that every exit, person, spot and arrival can be reached.
   - Headless Chrome renders slowly (a 3D fight takes several minutes), so set fights are weakened to keep tests short.
   - The unbuilt page can't load the flight's textures from `file://`; test the built page (`node tools/build.mjs --min putting-it-all-together/game.html`) or serve the folder.
 - **Map tracing:** `node tools/check-maps.mjs` after any change to `src/game/maps.js`; `node tools/trace-overlay.mjs <map> <out.png>` to see it.

@@ -1,10 +1,11 @@
 // game-test.mjs: plays the built game headless (Chromium + SwiftShader, as tools/check.mjs does) and reports any error.
 // Build the page first: node tools/build.mjs --min putting-it-all-together/game.html
-// Usage: node tools/game-test.mjs [dist/game.html] [--steps title,new,walk,menu,saves,save,wild,colossus] [--band 4]
+// Usage: node tools/game-test.mjs [dist/game.html] [--steps title,new,walk,world,menu,saves,save,wild,colossus] [--band 4]
 //        [--level 18] [--out <dir>] [--size 960x540] [--turbo 8] [--offline]
 //   title:    the title screen comes up
 //   new:      a new game starts, the prologue plays, and Io stands in her cottage
-//   walk:     Io walks the Wickhollow square with the arrow keys
+//   walk:     Io walks up Wickhollow's south road with the arrow keys
+//   world:    Io walks the world map
 //   menu:     the menu opens on every tab and closes
 //   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load
 //   scenes:   the staged scenes play on their maps (Sol at the bridge, Quill at the jetty, the knight, Ysmera)
@@ -29,7 +30,7 @@ const THREE_JS = fs.readFileSync(cache);
 
 const args = process.argv.slice(2);
 let file = path.join(R, 'dist/game.html'), out = path.join(R, 'tools/.cache/game-test'), size = [960, 540];
-let steps = ['title', 'new', 'walk', 'menu', 'saves', 'save'], band = 1, level = 3, turbo = 8, offline = false;
+let steps = ['title', 'new', 'walk', 'world', 'menu', 'saves', 'save'], band = 1, level = 3, turbo = 8, offline = false;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--steps') steps = args[++i].split(',');
   else if (args[i] === '--band') band = +args[++i];
@@ -107,13 +108,22 @@ try {
       await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'cottage', null, 30000, 'the cottage');
       await sleep(600); await shot('cottage');
     } else if (step === 'walk') {
-      await page.evaluate(() => { window.__game.goField('wickhollow', [768, 900]); });
+      await page.evaluate(() => { window.__game.goField('wickhollow', [780, 940]); });
       await waitFor(() => window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 30000, 'the square');
       const p0 = await page.evaluate(() => [window.__game.field.P.x, window.__game.field.P.y]);
-      await page.keyboard.down('ArrowLeft'); await sleep(1200); await page.keyboard.up('ArrowLeft');
+      await page.keyboard.down('ArrowUp'); await sleep(1200); await page.keyboard.up('ArrowUp'); // up the south road
       const p1 = await page.evaluate(() => [window.__game.field.P.x, window.__game.field.P.y]);
       if (Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) < 20) throw new Error('Io did not walk: ' + p0 + ' to ' + p1);
       await shot('walk');
+    } else if (step === 'world') {
+      await page.evaluate(() => { window.__game.goWorld(1348, 1900); });
+      await waitFor(() => window.__game.mode === 'world' && !window.__game.busy, null, 30000, 'the world map');
+      await sleep(600);
+      const w0 = await page.evaluate(() => [window.__game.world.P.x, window.__game.world.P.y]);
+      await page.keyboard.down('ArrowRight'); await sleep(900); await page.keyboard.up('ArrowRight');
+      const w1 = await page.evaluate(() => [window.__game.world.P.x, window.__game.world.P.y]);
+      if (Math.hypot(w1[0] - w0[0], w1[1] - w0[1]) < 10) throw new Error('Io did not walk the world map: ' + w0 + ' to ' + w1);
+      await shot('world');
     } else if (step === 'menu') {
       await page.evaluate(() => { window.__game.menu(); });
       await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');

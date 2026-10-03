@@ -7,7 +7,9 @@
 // on the map, is a little skiff to walk up to. The mini-map shows the whole world, the mist, the places and Io.
 // World.create(host, opts) -> { show(on), place(x, y, dir), pause(), resume(), P, bandAt(x, y) }
 //   opts: tiles (r, c) -> URL, places: { id: { name, at: [x, y], band } }, open(band) -> bool, magpie() -> [x, y] | null,
-//   speed (atlas px a second), zoom, encounter: { mean, min }, onEnter(id), onEncounter(band), onMagpie(), onMenu()
+//   speed (atlas px a second), zoom, encounter: { mean, min }, onEnter(id), onEncounter(band), onMagpie(), onMenu(),
+//   paintedIo (makePaintedIo's: she walks the world as she walks the ground maps, painted; the pixel Io stands in
+//   until her art loads)
 // Needs makePixelIo and WORLD_MASK (world-mask.js). Defines window.World.
 (function () {
   'use strict';
@@ -71,7 +73,8 @@
       const im = new Image(); im.src = opts.tiles(r, c); tiles[k] = im; return im;
     }
     const io = makePixelIo(1);
-    const P = { x: 1348, y: 1900, dir: 's', walkT: 0, moving: false, counter: 0, next: 300 };
+    const P = { x: 1348, y: 1900, dir: 's', walkT: 0, moving: false, counter: 0, next: 300, walk: 0 };
+    const IO_H = 42 * 0.42; // her height on the world map, in atlas px
     let paused = false, route = null, inside = null, flash = 0, stopped = false;
     const cam = { z: 2, x: 0, y: 0 };
     function layout() { cv.width = Math.round(root.clientWidth * DPR); cv.height = Math.round(root.clientHeight * DPR); }
@@ -139,7 +142,7 @@
         const moved = Math.hypot(P.x - x0, P.y - y0); P.moving = moved > 0.01;
         P.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : (dy > 0 ? 's' : 'n');
         if (P.moving) {
-          P.walkT += dt;
+          P.walkT += dt; P.walk += moved / IO_H;
           // safe near a place; anywhere else is wild country
           const safe = things().some((th) => Math.hypot(th.x - P.x, th.y - P.y) < 90);
           if (!safe) P.counter += moved;
@@ -193,11 +196,14 @@
         g.lineWidth = 3; g.strokeStyle = 'rgba(10,6,20,0.85)'; g.strokeText(th.name, x, y - 22); g.fillStyle = '#ffe6b0'; g.fillText(th.name, x, y - 22);
       }
       // Io, smaller than on the ground maps: the world is far bigger
-      const sk = cam.z * 0.42, fx = (P.x - cam.x) * cam.z, fy = (P.y - cam.y) * cam.z;
-      g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(fx, fy - sk, 9 * sk, 2.6 * sk, 0, 0, Math.PI * 2); g.fill();
-      const stepF = P.moving ? [1, 0, 2, 0][Math.floor(P.walkT / 0.12) % 4] : 0, [sx, sy] = io.frame(P.dir, stepF);
-      g.imageSmoothingEnabled = false;
-      g.drawImage(io.canvas, sx, sy, io.w, io.h, Math.round((fx - io.foot[0] * sk) * DPR) / DPR, Math.round((fy - (io.foot[1] + 1) * sk) * DPR) / DPR, io.w * sk, io.h * sk);
+      const sk = cam.z * 0.42, fx = (P.x - cam.x) * cam.z, fy = (P.y - cam.y) * cam.z, pio = opts.paintedIo;
+      if (pio && pio.loaded) pio.draw(g, fx, fy, cam.z * IO_H / pio.h, { dir: P.dir, walk: P.walk, moving: P.moving, t: t / 1000, lean: 0, turn: 0 });
+      else {
+        g.fillStyle = 'rgba(0,0,0,0.4)'; g.beginPath(); g.ellipse(fx, fy - sk, 9 * sk, 2.6 * sk, 0, 0, Math.PI * 2); g.fill();
+        const stepF = P.moving ? [1, 0, 2, 0][Math.floor(P.walkT / 0.12) % 4] : 0, [sx, sy] = io.frame(P.dir, stepF);
+        g.imageSmoothingEnabled = false;
+        g.drawImage(io.canvas, sx, sy, io.w, io.h, Math.round((fx - io.foot[0] * sk) * DPR) / DPR, Math.round((fy - (io.foot[1] + 1) * sk) * DPR) / DPR, io.w * sk, io.h * sk);
+      }
       const vgr = g.createRadialGradient(W / 2, H * 0.55, Math.min(W, H) * 0.35, W / 2, H * 0.55, Math.max(W, H) * 0.75);
       vgr.addColorStop(0, 'rgba(5,3,14,0)'); vgr.addColorStop(1, 'rgba(5,3,14,0.5)'); g.fillStyle = vgr; g.fillRect(0, 0, W, H);
       if (flash > 0) { g.fillStyle = 'rgba(5,3,14,' + flash.toFixed(3) + ')'; g.fillRect(0, 0, W, H); flash = Math.max(0, flash - 0.05); }

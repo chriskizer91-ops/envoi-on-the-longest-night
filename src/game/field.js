@@ -11,8 +11,9 @@
 // Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw(), stage }
 //   stage: the story's actors, walking on the map while a scene plays (handoff, section 5): add(id, look, [x, y], dir),
 //   walk(id, path, speed) -> Promise (path: points to walk through), face(id, dir), remove(id), clear(), io(path, speed)
-//   -> Promise (Io walks it, even while the field is paused for the scene), ioFace(dir), focus([x, y] or null) (the camera
-//   eases to a point, and back to Io), hidePerson(id, hide) (a townsperson steps out of their place to act)
+//   -> Promise (Io walks it, even while the field is paused for the scene), ioFace(dir), focus([x, y], an actor's id, or
+//   null) (the camera eases to a point, or follows the actor as they walk, and back to Io), hidePerson(id, hide) (a
+//   townsperson steps out of their place to act)
 //   opts: maps, speed (map px a second), zoom, ioH (map px), encounter: { mean, min } (map px walked between fights),
 //   light(map) (the painting's brightness, 1 as painted), paintedIo (makePaintedIo's), and for the painted Io:
 //   pace (her walk in her own heights a second; it replaces speed), ioScreen (her height as a share of the screen's
@@ -293,7 +294,7 @@
       clear() { while (actors.length) stage.remove(actors[0].id); for (const n of (map && map.people) || []) n.hidden = false; look.focus = null; },
       io(path, speed) { if (ioWalk.res) ioWalk.res(); return new Promise((res) => { ioWalk.path = path.map((p) => p.slice()); ioWalk.speed = speed || 110; ioWalk.res = res; }); },
       ioFace(dir) { P.dir = dir; },
-      focus(at) { look.focus = at ? { x: at[0], y: at[1] } : null; if (at && !look.on) { look.on = true; look.x = P.x; look.y = P.y; } },
+      focus(at) { look.focus = at ? (typeof at === 'string' ? { follow: at } : { x: at[0], y: at[1] }) : null; if (at && !look.on) { look.on = true; look.x = P.x; look.y = P.y; } },
       hidePerson(id, hide) { for (const n of (map && map.people) || []) if (n.id === id) n.hidden = !!hide; },
       actor: (id) => actors.find((x) => x.id === id) || null,
     };
@@ -312,7 +313,9 @@
       let cx0 = P.x, cy0 = P.y;
       if (look.on) {
         // in a scene the point of interest sits higher (h), clear of the dialogue box along the bottom
-        const tg = look.focus || P, k = 1 - Math.exp(-(t - (look.t || t)) / 1000 * 3.2);
+        // the focus: a point, or an actor followed as they walk (focus('sol'))
+        const fa = look.focus && look.focus.follow ? actors.find((a) => a.id === look.focus.follow) : null;
+        const tg = fa || (look.focus && !look.focus.follow ? look.focus : P), k = 1 - Math.exp(-(t - (look.t || t)) / 1000 * 3.2);
         look.x += (tg.x - look.x) * k; look.y += (tg.y - look.y) * k; look.h += ((look.focus ? 0.4 : 0.55) - look.h) * k; cx0 = look.x; cy0 = look.y;
         if (!look.focus && Math.hypot(look.x - P.x, look.y - P.y) < 2 && look.h > 0.545) { look.on = false; look.h = 0.55; }
       }

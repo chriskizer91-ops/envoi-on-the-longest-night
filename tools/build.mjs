@@ -2,23 +2,27 @@
 // stylesheets are inlined, and image paths under art/ inside them become data URIs. three.js
 // stays a cdnjs <script> tag, and the fonts come from Google Fonts, unless --offline puts them inside
 // the page too (the file Chris keeps, which must work with no internet).
-// Usage: node tools/build.mjs [--min] [--offline] [demos/name.html ...]  (default: every demo, and the game
+// --split leaves the art out of the page instead: it stays art/... beside it, copied into dist/<name>-split/ (the
+// published game, which is over the 16 MB a published page may be: a small page with its pictures as files beside it).
+// Usage: node tools/build.mjs [--min] [--offline] [--split] [demos/name.html ...]  (default: every demo, and the game
 // from putting-it-all-together/, which Mooncart's collect-games picks up as dist/game.html)
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
 const R = path.resolve(new URL('..', import.meta.url).pathname);
 const MIME = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg' };
+const SPLIT = process.argv.includes('--split'), used = new Set();
 function inlineArt(code) {
   return code.replace(/"(art\/[^"]+\.(webp|png|jpe?g))"/g, (m, p, ext) => {
     const f = path.join(R, p);
     if (!fs.existsSync(f)) return m;
+    if (SPLIT) { used.add(p); return m; }
     return '"data:' + MIME[ext] + ';base64,' + fs.readFileSync(f).toString('base64') + '"';
   });
 }
 // --min minifies each script with esbuild (the game's build, to stay inside a page's size); the source stays readable
 const MIN = process.argv.includes('--min'), OFFLINE = process.argv.includes('--offline');
-const args = process.argv.slice(2).filter((a) => a !== '--min' && a !== '--offline');
+const args = process.argv.slice(2).filter((a) => a !== '--min' && a !== '--offline' && a !== '--split');
 const NM = path.join(R, 'tools/node_modules');
 // --offline: three.js r128 and the two fonts (IM Fell English, Atkinson Hyperlegible) from npm, inside the page
 function offline(html) {
@@ -52,7 +56,11 @@ for (const rel of files) {
   });
   html = html.replace(/<link rel="stylesheet" href="(\.\.?\/[^"]+\.css)">/g, (m, p) => '<style>\n' + fs.readFileSync(path.resolve(dir, p), 'utf8') + '\n</style>');
   if (OFFLINE) html = offline(html);
-  const out = path.join(R, 'dist', path.basename(src));
+  // split: the page's art paths stay as they are, read from beside the page (ART_BASE '')
+  if (SPLIT) html = html.replace(/<body>\n?/, (b) => b + '<script>window.ART_BASE = \'\';</script>\n');
+  const dir_ = SPLIT ? path.join(R, 'dist', path.basename(src, '.html') + '-split') : path.join(R, 'dist');
+  fs.mkdirSync(dir_, { recursive: true });
+  const out = path.join(dir_, path.basename(src));
   fs.writeFileSync(out, html);
   console.log(path.relative(R, out), (fs.statSync(out).size / 1048576).toFixed(2) + ' MB');
   // the Artifact publisher wraps the page in its own doctype, head and body, so that copy leaves them out
@@ -61,6 +69,13 @@ for (const rel of files) {
     .replace(/<title>[^<]*<\/title>\n?/, '')
     .replace(/<!doctype html>\n?|<html[^>]*>\n?|<\/html>\n?|<head>\n?|<\/head>\n?|<body>\n?|<\/body>\n?/gi, '')
     .replace(/<meta charset="utf-8">\n?|<meta name="viewport"[^>]*>\n?/g, '');
-  const aout = path.join(R, 'dist', path.basename(src, '.html') + '.artifact.html');
+  const aout = path.join(dir_, path.basename(src, '.html') + '.artifact.html');
   fs.writeFileSync(aout, art);
+  if (SPLIT) {
+    let bytes = 0;
+    for (const p of used) { const to = path.join(dir_, p); fs.mkdirSync(path.dirname(to), { recursive: true }); fs.copyFileSync(path.join(R, p), to); bytes += fs.statSync(to).size; }
+    fs.writeFileSync(path.join(dir_, 'files.json'), JSON.stringify([...used].sort(), null, 1));
+    console.log('  ' + used.size + ' art files beside it, ' + (bytes / 1048576).toFixed(2) + ' MB (listed in files.json)');
+    used.clear();
+  }
 }
