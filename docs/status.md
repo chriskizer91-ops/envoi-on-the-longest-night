@@ -13,6 +13,7 @@ A handoff for the next session. Updated October 3, 2026, after the twenty-second
 
 | Page | Link | State |
 |---|---|---|
+| **The game** | https://claude.ai/artifact/UDTnemDCiz2EKcoGqbCtm8 | October 3: the whole game in one page, title to ending: Io's cottage and Wickhollow, the first fight, Sol and the Magpie, the Thornwood, Bogmire and the great wraith, the world map in four bands under cold mist, flying the Magpie, Dawnroost and Envoi, Halcyon, the shipyard, Misthollow and the finale. Shops, inns, camps, wells with letters, the menu and the save. Every part played headless with no errors. The words are placeholders; the townsfolk speak with pixel portraits until their paintings come |
 | The finale | https://claude.ai/artifact/UWft3rdQxCrMV3qnb1fMST | Step 17 (October 3): Io and Sol at level 17 to 20 against Noctara and Halcyon at the dead Moonwell. Crown Shards, Void Sphere, Frost Dust and Blackout; the cold deepens 11.5% a turn and shows by Noctara's name and at the screen's edges; Halcyon kneels when she falls; the ending (lore answer 10) with the stars coming back |
 | Bramble Horror | https://claude.ai/artifact/DzNK9CukB2rMsbcEhTSGGV | October 3: Chris's Bramble Horror as a lone wild foe at the Thornwood bridge, any of its four forms at any level from 1 to 20 (at the party's level): Lure then Grab, Consume, Thorn Sweep, Strike, Undergrowth; fire makes it recoil and breaks a lure, a heavy blade severs a cane |
 | Halcyon's ambush | https://claude.ai/artifact/9DkTvwCiXQcS1vJa2WSsUA | Step 16 (October 3): Io and Sol at level 15 to 20 against Halcyon at 20 at the northern crossroads, the gate out of band 3. She is the Gloam Knight until Sol knows her stance; Kestrel, Warden's Vow and its counter, Black Noon charged a turn ahead; her retreat at 20%, or the party falls and she spares them; either way Sol learns Kestrel Stoop |
@@ -124,7 +125,7 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 ## Next steps
 
-1. **The game is joined in one page** (`demos/game.html`, `src/game/game.js`): title, prologue, the field and world maps, the Magpie's flight, every set fight in order, shops, inns, camps, wells, the menu, the save and the ending. Band 1 plays through headless from the title to the refit; bands 2 to 4 need the same pass.
+1. **The game is joined in one page** (`demos/game.html`, `src/game/game.js`): title, prologue, the field and world maps, the Magpie's flight, every set fight in order, shops, inns, camps, wells, the menu, the save and the ending. Every part has been played headless with no errors. Build it with `node tools/build.mjs --min demos/game.html`.
 2. **Art to come:** the townsfolk's portraits (`art-requests/06-townsfolk-portraits.md`) and the story stills (`art-requests/07-story-stills.md`). When they arrive the page passes 16 MB, so its paintings move to separate files beside it.
 3. **The script** is Claude's placeholder throughout (`src/game/script.js`), for the lore conversation to replace.
 

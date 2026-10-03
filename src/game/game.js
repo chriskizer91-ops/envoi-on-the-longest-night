@@ -329,9 +329,12 @@
       const layer = el('div', { class: 'battle-layer' }, root), stage = el('main', { id: 'stage', 'aria-label': 'Battle' }, layer);
       stage.innerHTML = BattleScreen.markup();
       sw.remove();
+      // the map under the battle stops drawing until the fight is over
+      const was = mode; field.show(false); world.show(false);
       const cfg = GameFights.config(kind, st, o);
       const r = await new Promise((res) => { cfg.game = { onEnd: res, onError: () => res({ outcome: 'error' }) }; cfg.sound = SND; layer.ctl = BattleScreen.start(cfg); });
       layer.ctl.stop(); layer.remove();
+      if (was === 'field') field.show(true); else if (was === 'world') world.show(true);
       if (r.outcome !== 'error') GS.applyBattle(st, r);
       if (mode === 'field') music(MUSIC[field.map.id] || 'travel'); else if (mode === 'world') music('travel');
       save();
@@ -362,11 +365,12 @@
       card.remove(); showTitle();
     }
     function drawStars(cv) {
-      const w = cv.width = 900, h = cv.height = 600, g = cv.getContext('2d');
+      // at the screen's own size, so the moon is in view however the phone is held
+      const r = cv.getBoundingClientRect(), k = Math.min(window.devicePixelRatio || 1, 2), w = cv.width = Math.max(300, Math.round(r.width * k)), h = cv.height = Math.max(300, Math.round(r.height * k)), g = cv.getContext('2d');
       const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#05030f'); gr.addColorStop(1, '#1b1440'); g.fillStyle = gr; g.fillRect(0, 0, w, h);
-      for (let i = 0; i < 420; i++) { const x = Math.random() * w, y = Math.random() * h * 0.9, r = Math.random() < 0.08 ? 1.6 : 0.8; g.fillStyle = 'rgba(255,250,235,' + (0.4 + Math.random() * 0.6).toFixed(2) + ')'; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
-      const m = g.createRadialGradient(w * 0.72, h * 0.25, 0, w * 0.72, h * 0.25, 70); m.addColorStop(0, '#fffbe8'); m.addColorStop(0.5, 'rgba(255,248,220,0.9)'); m.addColorStop(0.55, 'rgba(255,240,200,0.25)'); m.addColorStop(1, 'rgba(255,240,200,0)');
-      g.fillStyle = m; g.beginPath(); g.arc(w * 0.72, h * 0.25, 70, 0, Math.PI * 2); g.fill();
+      for (let i = 0; i < Math.round(w * h / 1300); i++) { const x = Math.random() * w, y = Math.random() * h * 0.9, r = Math.random() < 0.08 ? 1.6 : 0.8; g.fillStyle = 'rgba(255,250,235,' + (0.4 + Math.random() * 0.6).toFixed(2) + ')'; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+      const mr = Math.min(w, h) * 0.09, mx = w * 0.66, my = h * 0.2, m = g.createRadialGradient(mx, my, 0, mx, my, mr); m.addColorStop(0, '#fffbe8'); m.addColorStop(0.5, 'rgba(255,248,220,0.9)'); m.addColorStop(0.55, 'rgba(255,240,200,0.25)'); m.addColorStop(1, 'rgba(255,240,200,0)');
+      g.fillStyle = m; g.beginPath(); g.arc(mx, my, mr, 0, Math.PI * 2); g.fill();
     }
     const clock = (s) => { const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60; return h + ':' + String(m).padStart(2, '0'); };
 

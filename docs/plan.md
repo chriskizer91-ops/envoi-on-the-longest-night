@@ -184,7 +184,7 @@ The pieces joined from title to ending, one band at a time.
 - Chris's music library from 20-min (`src/game/thareia-audio.js`);
 - the ending.
 
-Band 1 has been played through headless from the title to the refit.
+Every part has been played through headless, from the title to the end card, with no errors. It is published as one page (`dist/game.html`, 14.5 MB, minified).
 
 Around them:
 
