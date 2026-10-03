@@ -15,14 +15,16 @@
 //   null) (the camera eases to a point, or follows the actor as they walk, and back to Io), hidePerson(id, hide) (a
 //   townsperson steps out of their place to act)
 //   opts: maps, speed (map px a second), zoom, ioH (map px), encounter: { mean, min } (map px walked between fights),
-//   light(map) (the painting's brightness, 1 as painted), paintedIo (makePaintedIo's), and for the painted Io:
+//   light(map) (the painting's brightness, 1 as painted), paintedIo (makePaintedIo's), paintedFolk (makePaintedFolk's:
+//   the townsfolk and the story's actors as painted paper dolls, by their ids, once their sheets load), and for the painted Io:
 //   pace (her walk in her own heights a second; it replaces speed), ioScreen (her height as a share of the screen's
 //   shorter side; it sets the camera's closeness in place of zoom), showWalk (draws the walk areas, for checking them);
 //   the page may change ioH, pace, ioScreen and showWalk while it runs
 //   and the callbacks onExit(exit), onEvent(spot), onTalk(person), onSpot(spot), onEncounter(map), onMenu(), onStep(map, running),
 //   isDone(id) (an event or a well already used), src(path) (the art's URL)
 //   pose(name, seconds) -> Promise: the painted Io kneels ('kneel') or casts moonlight ('cast'), even in a scene
-// Needs makePixelIo (src/walk/pixel-io.js) and makeFolk (sprites.js). Defines window.Field.
+// Needs makePixelIo (src/walk/pixel-io.js) and makeFolk (sprites.js; the pixel figures stand in for anyone without a
+// painted sheet, or until it loads). Defines window.Field.
 (function () {
   'use strict';
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -67,7 +69,7 @@
     const onKeyUp = (e) => { const d = KEYS[e.key]; if (d) held.delete(d); };
     window.addEventListener('keydown', onKey); window.addEventListener('keyup', onKeyUp);
 
-    const io = makePixelIo(1), painted = opts.paintedIo || null;
+    const io = makePixelIo(1), painted = opts.paintedIo || null, folk = opts.paintedFolk || null;
     const folkSprites = {};
     const sprite = (look) => folkSprites[look] || (folkSprites[look] = makeFolk(look, 1));
     // run: how long she has walked without stopping; after a moment the pace builds to a run (handoff, section 8)
@@ -267,6 +269,7 @@
       if (!a.path || !a.path.length) return false;
       const [tx, ty] = a.path[0], dx = tx - a.x, dy = ty - a.y, L = Math.hypot(dx, dy), sp = a.speed * dt;
       if (L > 0.01) a.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : (dy > 0 ? 's' : 'n');
+      a.walk = (a.walk || 0) + Math.min(L, sp) / ioH();
       if (L <= sp) { a.x = tx; a.y = ty; a.path.shift(); if (!a.path.length) { a.path = null; const r = a.res; a.res = null; if (r) r(); return false; } }
       else { a.x += dx / L * sp; a.y += dy / L * sp; }
       a.walkT += dt * a.speed / 110; return true;
@@ -341,8 +344,8 @@
         g.fillStyle = gr; g.beginPath(); g.arc(x, y - 6, r * 2.4, 0, Math.PI * 2); g.fill();
       }
       // the people and Io, back to front
-      const figs = (map.people || []).filter((n) => !n.hidden).map((n) => ({ y: n.at[1], x: n.at[0], s: sprite(n.look), dir: n.face || 's', step: 0 }));
-      for (const a of actors) figs.push({ y: a.y, x: a.x, s: sprite(a.look), dir: a.dir, step: a.moving ? [1, 0, 2, 0][Math.floor(a.walkT / 0.1) % 4] : 0 });
+      const figs = (map.people || []).filter((n) => !n.hidden).map((n) => ({ id: n.id, y: n.at[1], x: n.at[0], s: sprite(n.look), dir: n.face || 's', step: 0 }));
+      for (const a of actors) figs.push({ id: a.id, y: a.y, x: a.x, s: sprite(a.look), dir: a.dir, step: a.moving ? [1, 0, 2, 0][Math.floor(a.walkT / 0.1) % 4] : 0, walk: a.walk, moving: a.moving });
       const stepF = P.moving ? [1, 0, 2, 0][Math.floor(P.walkT / 0.1) % 4] : 0;
       figs.push({ y: P.y, x: P.x, s: io, dir: P.dir, step: stepF, me: true });
       // the painting's fronts (lamp posts, trees) take their place among them by their base lines
@@ -353,6 +356,11 @@
         const fx = (f.x - cam.x) * cam.z, fy = (f.y - cam.y) * cam.z;
         if (f.me && usePainted) {
           painted.draw(g, fx, fy, cam.z * ioH() / painted.h, { dir: P.dir, walk: P.walk, moving: P.moving, t: t / 1000, lean: P.lean, turn: P.turn, pose: P.pose, poseP: P.pose ? P.poseT / P.poseDur : 0 });
+          g.imageSmoothingEnabled = false;
+          continue;
+        }
+        if (folk && f.id && folk.loaded(f.id)) {
+          folk.draw(g, f.id, fx, fy, cam.z * ioH(), { dir: f.dir, walk: f.walk, moving: f.moving, t: t / 1000, seed: f.x * 0.013 });
           g.imageSmoothingEnabled = false;
           continue;
         }

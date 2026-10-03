@@ -1,4 +1,4 @@
-// Dawnroost's living node (art/backdrops/battle-dawnroost-node.webp, art request 03, number 5): the courtyard of the
+// Dawnroost's living node (art/backdrops/battle-dawnroost-node.avif, art request 03, number 5): the courtyard of the
 // Warden waystation, with the living sunstone node burning at the back (plan step 15). The camera is the one Bogmire's
 // painting matched (26 degree pitch, the long 12 degree lens, 52 pixels a meter): the courtyard is drawn the same way,
 // and its crates and doors come out at their true size. The node lights the courtyard like a hearth; two braziers
@@ -8,7 +8,7 @@ window.SCENES = window.SCENES || {};
 window.SCENES['dawnroost-node'] = {
   id: 'dawnroost-node',
   name: "Dawnroost's living node",
-  image: "art/backdrops/battle-dawnroost-node.webp",
+  image: "art/backdrops/battle-dawnroost-node.avif",
   width: 1448, height: 1086, fov: 12, pitch: 26, ppm: 52,
   lamps: [0, 1, 2],
   summon: [640, 520], summonFrom: 'the moonlight',

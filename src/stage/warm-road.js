@@ -1,4 +1,4 @@
-// The Warm Road (art/backdrops/battle-warm-road.webp, art request 03, number 4): a crossing of the old roads along the
+// The Warm Road (art/backdrops/battle-warm-road.avif, art request 03, number 4): a crossing of the old roads along the
 // Ember Line in the western riverlands, its cobbles veined with sunstone light, a waymarker with a glowing ember crystal,
 // and a watchtower on the hill beyond. Band 2's wild fights. The camera is the Thornwood bridge's (12 degree lens, 25
 // degree pitch, 54 painting pixels a meter). The two lanterns and the waymarker's crystal light the road. Nothing stands
@@ -8,7 +8,7 @@ window.SCENES = window.SCENES || {};
 window.SCENES['warm-road'] = {
   id: 'warm-road',
   name: 'The Warm Road',
-  image: "art/backdrops/battle-warm-road.webp",
+  image: "art/backdrops/battle-warm-road.avif",
   width: 1448, height: 1086, fov: 12, pitch: 25, ppm: 54,
   lamps: [0, 1, 2],
   summon: [760, 470], summonFrom: 'the moonlight',

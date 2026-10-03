@@ -3,7 +3,7 @@
 // six steps in each of four directions; in code her cape ripples behind her, she leans into her walk and into a turn,
 // and she breathes when she stands. Two of Path Polish's painted poses are for doing things: kneeling to gather, and
 // casting moonlight. The battles keep her 3D model; this is only her walk.
-// The sheet ships at 3/4 size (art/walk/io-walk.webp, 1152 x 768); every measure below is the original 1536 x 1024's,
+// The sheet ships at 3/4 size (art/walk/io-walk.avif, 1152 x 768); every measure below is the original 1536 x 1024's,
 // scaled to whatever size loads. Her figure is about 250 art px tall, on the sheet and in the poses alike.
 // makePaintedIo(src) -> { ready, h, draw(g, x, y, k, s) }
 //   src(path) -> the image's URL; ready: a promise, resolved once the art is in (draw does nothing before)
@@ -32,7 +32,7 @@
   function makePaintedIo(src) {
     const im = {};
     const load = (key, path) => new Promise((res) => { const i = new Image(); i.onload = () => { im[key] = i; res(); }; i.onerror = () => res(); i.src = src(path); });
-    const ready = Promise.all([load('walk', "art/walk/io-walk.webp"), load('kneel', POSE.kneel), load('cast', POSE.cast)]);
+    const ready = Promise.all([load('walk', "art/walk/io-walk.avif"), load('kneel', POSE.kneel), load('cast', POSE.cast)]);
 
     // a pose blends in and out over its first and last 18% (Path Polish's gatherWeight)
     const weight = (p) => (Number.isFinite(p) ? ease(p / 0.18) * ease((1 - p) / 0.18) : 1);

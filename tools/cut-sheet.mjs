@@ -1,11 +1,19 @@
 // cut-sheet.mjs: turns a generated walk sheet (art request 08: six steps in each of four directions, on a transparent or
 // a plain green background) into the game's walker: every figure found on the sheet by itself, then laid out again in
-// even cells with its feet on one line, at the size the phone needs, as WebP, with a small JSON beside it.
-// Usage: node tools/cut-sheet.mjs <sheet.png> <out-name> [--height 170] [--q 85] [--out art/walkers] [--preview x.png]
-//   out-name: the walker's id (art/walkers/<id>.webp and <id>.json); --height: a full-height figure's height in the output
-//   (an adult; children and gnomes come out smaller, as drawn); --preview also writes the cut frames on a dark ground
-// The JSON: { cols: 6, rows: 4, cell: [w, h], foot: [x, y] (the feet's spot in each cell), h: the tallest figure's
-// height, rows order: s, w, e, n (toward the viewer, left, right, away) }
+// even cells with its feet on one line, at the size the phone needs, as WebP or AVIF, with a small JSON beside it.
+// Usage: node tools/cut-sheet.mjs <sheet.png> <out-name> [--height 170] [--ratio 1] [--q 85] [--avif] [--still]
+//        [--out art/walkers] [--preview x.png]
+//   out-name: the walker's id (art/walkers/<id>.webp or .avif, and <id>.json); --height: the tallest figure's height in the
+//   output for an adult; --ratio: the person's height beside Io's (art request 08's manifests: a girl .75, a gnome .667),
+//   so a smaller person's sheet is cut smaller too; --avif writes AVIF (its quality runs lower for the same look: 50 is
+//   about WebP's 85); --still keeps only standing poses, for someone who stands in their place and turns to talk but
+//   never walks (Chris, October 3): toward the viewer, and to the left and the right where the sheet has a side frame
+//   with the feet together (a side that only strides keeps the pose toward the viewer); --preview also writes the cut
+//   frames on a dark ground
+// The JSON: { cols: 6, rows: 4, order: s, w, e, n (toward the viewer, left, right, away), cell: [w, h], foot: [x, y]
+// (the feet's spot in each cell), h: the tallest figure's height, heights: each frame's, fig: the middle frame height
+// (what the game scales to the person's height on the map), ratio, stand: each row's standing frame (its feet closest
+// together) }; with --still: { cols: 1 to 3, rows: 1, still: { s, w, e, n: the cell each facing shows }, ... }
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
@@ -13,10 +21,13 @@ const require = createRequire(new URL('./package.json', import.meta.url));
 const sharp = require('sharp');
 
 const args = process.argv.slice(2), pos = [];
-let height = 170, q = 85, outDir = 'art/walkers', preview = '';
+let height = 170, ratio = 1, q = 85, avif = false, still = false, outDir = 'art/walkers', preview = '';
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--height') height = +args[++i];
+  else if (args[i] === '--ratio') ratio = +args[++i];
   else if (args[i] === '--q') q = +args[++i];
+  else if (args[i] === '--avif') avif = true;
+  else if (args[i] === '--still') still = true;
   else if (args[i] === '--out') outDir = args[++i];
   else if (args[i] === '--preview') preview = args[++i];
   else pos.push(args[i]);
@@ -83,26 +94,44 @@ for (const f of figs) {
   const band = Math.max(4, Math.round((f.y1 - f.y0) * 0.1)); let sx = 0, n = 0;
   for (let y = f.y1 - band; y <= f.y1; y++) for (let x = f.x0; x <= f.x1; x++) { const i = y * W + x; if (solid[i] && f.parts.includes(label[i])) { sx += x; n++; } }
   f.fx = n ? sx / n : (f.x0 + f.x1) / 2; f.fy = f.y1;
+  // how far apart the feet are: the width of the lowest eighth
+  const low = Math.max(4, Math.round((f.y1 - f.y0) * 0.125)); let lx = 1e9, rx = -1;
+  for (let y = f.y1 - low; y <= f.y1; y++) for (let x = f.x0; x <= f.x1; x++) { const i = y * W + x; if (solid[i] && f.parts.includes(label[i])) { if (x < lx) lx = x; if (x > rx) rx = x; } }
+  f.spread = rx - lx;
 }
+// each row's standing frame: the one whose feet are closest together
+const stand = Array.from({ length: ROWS }, (_, r) => { let best = 0; for (let c = 1; c < COLS; c++) if (figs[r * COLS + c].spread < figs[r * COLS + best].spread) best = c; return best; });
+// what goes on the cut sheet: every frame, or with --still the standing poses. A side frame whose feet are much
+// wider apart than the pose toward the viewer is still a stride, so that side shows the pose toward the viewer instead
+const faces = { s: 0, w: 0, e: 0, n: 0 }, keep = [stand[0]];
+if (still) for (const [r, d] of [[1, 'w'], [2, 'e']]) {
+  const k = r * COLS + stand[r];
+  if (figs[k].spread <= 1.8 * figs[stand[0]].spread) { faces[d] = keep.length; keep.push(k); }
+}
+if (!still) keep.splice(0, 1, ...figs.map((_, k) => k));
+const cols = still ? keep.length : COLS, rows = still ? 1 : ROWS;
 // 4. even cells: every figure at one scale (the tallest figure becomes --height), its feet on the same spot
-const tallest = Math.max(...figs.map((f) => f.y1 - f.y0 + 1)), s = height / tallest;
-const left = Math.max(...figs.map((f) => f.fx - f.x0)), right = Math.max(...figs.map((f) => f.x1 - f.fx)), up = Math.max(...figs.map((f) => f.fy - f.y0));
+const tallest = Math.max(...figs.map((f) => f.y1 - f.y0 + 1)), s = height * ratio / tallest;
+const kept = keep.map((k) => figs[k]);
+const left = Math.max(...kept.map((f) => f.fx - f.x0)), right = Math.max(...kept.map((f) => f.x1 - f.fx)), up = Math.max(...kept.map((f) => f.fy - f.y0));
 const pad = 4, cw = Math.ceil((left + right) * s) + pad * 2, ch = Math.ceil(up * s) + pad * 2, foot = [Math.round(left * s) + pad, Math.round(up * s) + pad];
 const comps = [];
-for (let k = 0; k < figs.length; k++) {
-  const f = figs[k], w = f.x1 - f.x0 + 1, h = f.y1 - f.y0 + 1;
+for (let k = 0; k < kept.length; k++) {
+  const f = kept[k], w = f.x1 - f.x0 + 1, h = f.y1 - f.y0 + 1;
   // only this figure's own pixels, not a neighbour's stray parts inside its box
   const buf = Buffer.alloc(w * h * 4);
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const i = (f.y0 + y) * W + f.x0 + x; if (!f.parts.includes(label[i]) && solid[i]) continue; data.copy(buf, (y * w + x) * 4, i * 4, i * 4 + 4); }
   const rw = Math.max(1, Math.round(w * s)), rh = Math.max(1, Math.round(h * s));
   const img = await sharp(buf, { raw: { width: w, height: h, channels: 4 } }).resize(rw, rh, { kernel: 'lanczos3' }).png().toBuffer();
-  comps.push({ input: img, left: (k % COLS) * cw + Math.round(foot[0] - (f.fx - f.x0) * s), top: Math.floor(k / COLS) * ch + Math.round(foot[1] - (f.fy - f.y0) * s) });
+  comps.push({ input: img, left: (k % cols) * cw + Math.round(foot[0] - (f.fx - f.x0) * s), top: Math.floor(k / cols) * ch + Math.round(foot[1] - (f.fy - f.y0) * s) });
 }
 fs.mkdirSync(outDir, { recursive: true });
-const sheet = sharp({ create: { width: cw * COLS, height: ch * ROWS, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite(comps);
-const out = path.join(outDir, id + '.webp');
-await sheet.clone().webp({ quality: q, alphaQuality: 90, effort: 6 }).toFile(out);
-const meta = { cols: COLS, rows: ROWS, order: ['s', 'w', 'e', 'n'], cell: [cw, ch], foot, h: Math.round(height), heights: figs.map((f) => Math.round((f.y1 - f.y0 + 1) * s)) };
+const sheet = sharp({ create: { width: cw * cols, height: ch * rows, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite(comps);
+const out = path.join(outDir, id + (avif ? '.avif' : '.webp'));
+await (avif ? sheet.clone().avif({ quality: q, effort: 6 }) : sheet.clone().webp({ quality: q, alphaQuality: 90, effort: 6 })).toFile(out);
+const heights = kept.map((f) => Math.round((f.y1 - f.y0 + 1) * s)), mid = heights.slice().sort((a, b) => a - b)[heights.length >> 1];
+const meta = still ? { cols, rows, still: faces, cell: [cw, ch], foot, h: Math.round(height * ratio), heights, fig: mid, ratio }
+  : { cols, rows, order: ['s', 'w', 'e', 'n'], cell: [cw, ch], foot, h: Math.round(height * ratio), heights, fig: mid, ratio, stand };
 fs.writeFileSync(path.join(outDir, id + '.json'), JSON.stringify(meta));
 if (preview) await sharp(await sheet.clone().png().toBuffer()).flatten({ background: '#2a2338' }).png().toFile(preview);
-console.log(out, (cw * COLS) + 'x' + (ch * ROWS), (fs.statSync(out).size / 1024).toFixed(0) + ' KB', 'cell ' + cw + 'x' + ch, 'feet at ' + foot.join(','));
+console.log(out, (cw * cols) + 'x' + (ch * rows), (fs.statSync(out).size / 1024).toFixed(0) + ' KB', 'cell ' + cw + 'x' + ch, 'feet at ' + foot.join(','), 'standing frames ' + stand.join(','));

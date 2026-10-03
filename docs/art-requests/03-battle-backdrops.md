@@ -1,6 +1,6 @@
 # Art Request 03: Battle Backdrops
 
-The paintings the 3D fights stand in, for phase 2 (`plan.md`). All eight arrived on October 2, 2026: the originals are in `../../reference/art/backdrops/`, the game's copies in `../../art/backdrops/`. The Night square (`art/backdrops/night-square.webp`) is the model for all of them: the same high, steep three-quarter view, the same detailed painted look, and night.
+The paintings the 3D fights stand in, for phase 2 (`plan.md`). All eight arrived on October 2, 2026: the originals are in `../../reference/art/backdrops/`, the game's copies in `../../art/backdrops/`. The Night square (`reference/art/backdrops/night-square.webp`; the game's copy is `art/backdrops/night-square.avif`) is the model for all of them: the same high, steep three-quarter view, the same detailed painted look, and night.
 
 Each painting needs:
 

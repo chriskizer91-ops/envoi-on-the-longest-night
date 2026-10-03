@@ -1,0 +1,144 @@
+{
+  "assets": [
+    {
+      "filename": "sol-walk.png",
+      "path": "reference/art/walkers/sol-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 240,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "a46c998894db4e80985b4a634d64b1f5e55c5e68cc3df526150fe5736ef69df2"
+    },
+    {
+      "filename": "halcyon-walk.png",
+      "path": "reference/art/walkers/halcyon-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 249,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "73415616252a5937d2dc235f357c16598337df4cdd6cb84a34a84770c7061a31"
+    },
+    {
+      "filename": "ysmera-walk.png",
+      "path": "reference/art/walkers/ysmera-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 242,
+      "recommended_world_height_relative_to_io": 1.04,
+      "sha256": "a993120a3ffbfbb94c8eda0d9a123786c37b4e9e00e927f372ec6caa850233d2"
+    },
+    {
+      "filename": "quill-walk.png",
+      "path": "reference/art/walkers/quill-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 244,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "1d607f5676eb4bc2232d257953b35136617df3efd098c9d014326952dfd4369e"
+    },
+    {
+      "filename": "gretch-walk.png",
+      "path": "reference/art/walkers/gretch-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 244,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "934b01f547755fa56b480244fe49560b9170f9e3eda51f4a479aec41520914f7"
+    },
+    {
+      "filename": "nettie-walk.png",
+      "path": "reference/art/walkers/nettie-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 249,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "1487eba46de57b9df93af69e0ffbaa0fb6e5189dc67e524ac69ee1597ea172a9"
+    },
+    {
+      "filename": "hilde-walk.png",
+      "path": "reference/art/walkers/hilde-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 249,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "b2201d9ea11f276aceeed7d9bc54d1df3a0088b342b249fb806ceeac179daef3"
+    }
+  ]
+}

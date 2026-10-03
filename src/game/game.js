@@ -131,8 +131,10 @@
     // side, at 1.7 of her heights a second (Chris's settings on the Io on Foot page, October 3); the pixel Io stands in
     // until the painting loads
     const paintedIo = makePaintedIo(src);
+    // everyone else as painted paper dolls (art request 08), in the same style, at Io's scale
+    const paintedFolk = makePaintedFolk(src);
     const field = Field.create(fieldHost, {
-      maps: MAPS, src, speed: 110, zoom: 0.7, ioH: 52, paintedIo, pace: 1.7, ioScreen: 0.15,
+      maps: MAPS, src, speed: 110, zoom: 0.7, ioH: 52, paintedIo, paintedFolk, pace: 1.7, ioScreen: 0.15,
       encounter: { get mean() { return 770 / settings.rate; }, get min() { return 440 / settings.rate; } },
       light: (m) => settings.light * (m.id === 'bogmire' && !st.flags.lights ? 0.55 : m.id === 'bogmire-heart' && !st.flags.lights ? 0.8 : 1),
       isDone: (k) => !!st.done[k],
@@ -643,7 +645,7 @@
       } finally { busy--; resumeAll(); }
     }
     async function prologue() {
-      const card = el('div', { class: 'prologue' }, root); const img = el('img', { alt: '' }, card); img.src = src((window.STILLS || {}).prologue || "art/backdrops/night-square.webp");
+      const card = el('div', { class: 'prologue' }, root); const img = el('img', { alt: '' }, card); img.src = src((window.STILLS || {}).prologue || window.SCENES['night-square'].image); // the first fight's painting, so the page carries it once
       await wait(0.2); card.classList.add('on');
       for (const ln of S.scenes.prologue) { if (typeof ln !== 'string') { card.classList.add('out'); await wait(0.6); card.remove(); } await say([ln]); }
       if (card.isConnected) card.remove();

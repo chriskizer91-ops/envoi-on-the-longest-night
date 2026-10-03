@@ -1,0 +1,124 @@
+{
+  "assets": [
+    {
+      "filename": "pim-walk.png",
+      "path": "reference/art/walkers/pim-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 188,
+      "recommended_world_height_relative_to_io": 0.667,
+      "sha256": "c958a17272698cdcfe7e452af363794c8b32836b4d24a04a4fd0ce39a8a1b176"
+    },
+    {
+      "filename": "tock-walk.png",
+      "path": "reference/art/walkers/tock-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 176,
+      "recommended_world_height_relative_to_io": 0.667,
+      "sha256": "3c585634236a80b6a48aac91c0d0ce02325e236054a57f6c3991c53d1a0cadba"
+    },
+    {
+      "filename": "gil-walk.png",
+      "path": "reference/art/walkers/gil-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 241,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "a97c0329715f6e2e36226388156713eb4e3f7a854468edf5724997407ecbc6cc"
+    },
+    {
+      "filename": "sorrel-walk.png",
+      "path": "reference/art/walkers/sorrel-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 246,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "dea84b55dd68d85c0ab29fe4a417f71c61bd98c7a6888067ec80da5fdac9aa31"
+    },
+    {
+      "filename": "ede-walk.png",
+      "path": "reference/art/walkers/ede-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 241,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "1571c47e07266c982ae3b0e6260083fb260d971b30c2645560e974813995be5c"
+    },
+    {
+      "filename": "watch-walk.png",
+      "path": "reference/art/walkers/watch-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 238,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "9c3eba4d6c6f4e1eaf62f94f2259a44751556f8a7c8010298dd06f165d90f0fe"
+    }
+  ]
+}

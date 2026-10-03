@@ -1,4 +1,4 @@
-// The dead Moonwell (art/backdrops/battle-dead-moonwell.webp, art request 03, number 8): the square of Misthollow, where
+// The dead Moonwell (art/backdrops/battle-dead-moonwell.avif, art request 03, number 8): the square of Misthollow, where
 // Noctara waits with Halcyon at her side for the finale (plan step 17). The great round well stands dark at the back, the
 // moon is going out behind the towers, and two braziers burn low at the plaza's near corners. The camera is the one
 // Bogmire's painting matched (26 degree pitch, the long 12 degree lens) at 54 painting pixels a meter, which makes the
@@ -9,7 +9,7 @@ window.SCENES = window.SCENES || {};
 window.SCENES['dead-moonwell'] = {
   id: 'dead-moonwell',
   name: 'The dead Moonwell',
-  image: "art/backdrops/battle-dead-moonwell.webp",
+  image: "art/backdrops/battle-dead-moonwell.avif",
   width: 1448, height: 1086, fov: 12, pitch: 26, ppm: 54,
   lamps: [0, 1],
   summon: [720, 420], summonFrom: 'the dead Moonwell',

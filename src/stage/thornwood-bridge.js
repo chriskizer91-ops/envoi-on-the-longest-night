@@ -1,4 +1,4 @@
-// The Thornwood bridge (art/backdrops/battle-thornwood-bridge.webp, art request 03, number 2): the paved landing before
+// The Thornwood bridge (art/backdrops/battle-thornwood-bridge.avif, art request 03, number 2): the paved landing before
 // an old stone bridge on the way out of the Thornwood, walled in by black thorns and red berries. It is where the Bramble
 // Horror waits (Chris's bench, reference/demos/bramble-horror-bench.html). The camera is the Night square's (12 degree
 // lens, 25 degree pitch, 54 painting pixels a meter): the lamp post at the bridge's foot comes out about 3 m tall. Its
@@ -8,7 +8,7 @@ window.SCENES = window.SCENES || {};
 window.SCENES['thornwood-bridge'] = {
   id: 'thornwood-bridge',
   name: 'The Thornwood bridge',
-  image: "art/backdrops/battle-thornwood-bridge.webp",
+  image: "art/backdrops/battle-thornwood-bridge.avif",
   width: 1448, height: 1086, fov: 12, pitch: 25, ppm: 54,
   lamps: [0, 1],
   summon: [700, 470], summonFrom: 'the river',

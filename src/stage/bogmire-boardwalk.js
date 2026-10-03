@@ -1,4 +1,4 @@
-// Bogmire's dark boardwalk (art/backdrops/battle-bogmire-boardwalk.webp, art request 03, number 3): the town square on
+// Bogmire's dark boardwalk (art/backdrops/battle-bogmire-boardwalk.avif, art request 03, number 3): the town square on
 // stilts where the great wraith waits (plan step 14). The camera is matched to the painting: the platform is a square
 // about 20 m a side seen corner-on, which puts the pitch at about 26 degrees; the lamp posts (about 2.5 m) give 52
 // painting pixels a meter; the lens is the Night square's long 12 degrees. Two lanterns still burn at the platform's
@@ -9,7 +9,7 @@ window.SCENES = window.SCENES || {};
 window.SCENES['bogmire-boardwalk'] = {
   id: 'bogmire-boardwalk',
   name: 'Bogmire, the dark boardwalk',
-  image: "art/backdrops/battle-bogmire-boardwalk.webp",
+  image: "art/backdrops/battle-bogmire-boardwalk.avif",
   width: 1448, height: 1086, fov: 12, pitch: 26, ppm: 52,
   lamps: [0, 1],
   summon: [760, 378], summonFrom: 'the black water',

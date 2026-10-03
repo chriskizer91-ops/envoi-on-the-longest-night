@@ -1,4 +1,4 @@
-// The northern crossroads (art/backdrops/battle-northern-crossroads.webp, art request 03, number 6): a ruined crossroads
+// The northern crossroads (art/backdrops/battle-northern-crossroads.avif, art request 03, number 6): a ruined crossroads
 // in the empty northern wilds, where Halcyon ambushes the party on the way to the shipyard (plan step 16). The camera is
 // matched to the paved circle where the four roads meet: its rings come out about 0.39 times as tall as they are wide,
 // which puts the pitch at about 23 degrees; the well and its lantern post give about 58 painting pixels a meter; the lens
@@ -10,7 +10,7 @@ window.SCENES = window.SCENES || {};
 window.SCENES['northern-crossroads'] = {
   id: 'northern-crossroads',
   name: 'The northern crossroads',
-  image: "art/backdrops/battle-northern-crossroads.webp",
+  image: "art/backdrops/battle-northern-crossroads.avif",
   width: 1448, height: 1086, fov: 12, pitch: 23, ppm: 58,
   lamps: [0, 1],
   summon: [700, 470], summonFrom: 'the moonlight',

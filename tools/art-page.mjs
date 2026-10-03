@@ -63,7 +63,7 @@ const reqs = files.map((arg) => {
   const id = path.basename(f, '.md').replace(/^(\d+)-.*/, 'r$1');
   return Object.assign({ id }, render(fs.readFileSync(path.resolve(R, f), 'utf8'), id, from));
 });
-const ref = 'data:image/webp;base64,' + fs.readFileSync(path.join(R, 'art/backdrops/night-square.webp')).toString('base64');
+const ref = 'data:image/webp;base64,' + fs.readFileSync(path.join(R, 'reference/art/backdrops/night-square.webp')).toString('base64');
 
 const page = `<title>Envoi Art Requests</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -126,7 +126,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(-
 </header>
 <main>
 ${reqs.map((r) => `<h2 id="${r.id}">${esc(r.title)}</h2>
-${r.id === 'r04' ? `<figure class="ref"><img src="${ref}" alt="The Night square painting: a moonlit village square seen from high above, with a stone well in the middle and warm lamps around it."><small>The Night square, the style reference for Wickhollow square. Press and hold to save it if your phone allows; it is also in the repo at <code>art/backdrops/night-square.webp</code>. The battle backdrops you made are the style references for the other places.</small></figure>` : ''}
+${r.id === 'r04' ? `<figure class="ref"><img src="${ref}" alt="The Night square painting: a moonlit village square seen from high above, with a stone well in the middle and warm lamps around it."><small>The Night square, the style reference for Wickhollow square. Press and hold to save it if your phone allows; it is also in the repo at <code>reference/art/backdrops/night-square.webp</code>. The battle backdrops you made are the style references for the other places.</small></figure>` : ''}
 ${r.html}`).join('\n')}
 </main>
 </div>

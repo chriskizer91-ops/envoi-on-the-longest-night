@@ -1,0 +1,124 @@
+{
+  "assets": [
+    {
+      "filename": "wenna-walk.png",
+      "path": "reference/art/walkers/wenna-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 242,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "9c09616c69eb6996a5758a6234faa63b3250e35764541e6ba507a08a53e09a4c"
+    },
+    {
+      "filename": "tobb-walk.png",
+      "path": "reference/art/walkers/tobb-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 246,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "d0ba472d36d993511eceb3da89291ca9ebc7a348545158429ae822d78739f73d"
+    },
+    {
+      "filename": "pell-walk.png",
+      "path": "reference/art/walkers/pell-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 190,
+      "recommended_world_height_relative_to_io": 0.75,
+      "sha256": "d7cc53b396a884e030de66c0c9ff6f0d74236bcbb0abf88a16c4bcce64849524"
+    },
+    {
+      "filename": "marta-walk.png",
+      "path": "reference/art/walkers/marta-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 247,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "044da0766572b6cee0b5aba5584be5f701ca7bf3f7c14e0aeb6b6a775419542e"
+    },
+    {
+      "filename": "brann-walk.png",
+      "path": "reference/art/walkers/brann-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 242,
+      "recommended_world_height_relative_to_io": 1,
+      "sha256": "f0382f841d973532700a4d3db8dd87808a77e6c15c7c6df612c7e5e043198f15"
+    },
+    {
+      "filename": "tamsin-walk.png",
+      "path": "reference/art/walkers/tamsin-walk.png",
+      "width": 1536,
+      "height": 1024,
+      "format": "PNG",
+      "mode": "RGBA",
+      "columns": 6,
+      "rows": 4,
+      "directions": [
+        "front",
+        "left",
+        "right",
+        "back"
+      ],
+      "frames": 24,
+      "measured_median_figure_height_px": 196,
+      "recommended_world_height_relative_to_io": 0.75,
+      "sha256": "77b940e035ae1f225d8e7d03cda3f19ea4c79a02f49cd4894c314dce955a6702"
+    }
+  ]
+}

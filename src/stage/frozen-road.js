@@ -1,4 +1,4 @@
-// The frozen road (art/backdrops/battle-frozen-road.webp, art request 03, number 7): the snowbound paved road up through
+// The frozen road (art/backdrops/battle-frozen-road.avif, art request 03, number 7): the snowbound paved road up through
 // the northeast peaks to Misthollow, beside a frozen river and its old stone bridge, under snow-heavy pines. Band 4's wild
 // fights. The camera is the Thornwood bridge's (12 degree lens, 25 degree pitch, 54 painting pixels a meter). The warm
 // lantern on the left and the cold blue one on the right light the road. Nothing stands in front of it, so no cutouts
@@ -7,7 +7,7 @@ window.SCENES = window.SCENES || {};
 window.SCENES['frozen-road'] = {
   id: 'frozen-road',
   name: 'The frozen road',
-  image: "art/backdrops/battle-frozen-road.webp",
+  image: "art/backdrops/battle-frozen-road.avif",
   width: 1448, height: 1086, fov: 12, pitch: 25, ppm: 54,
   lamps: [0, 1],
   summon: [650, 420], summonFrom: 'the frozen river',

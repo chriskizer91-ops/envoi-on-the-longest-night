@@ -3,7 +3,8 @@
 //   src/models/<id>.js            the working copy that touch-ups edit
 //   src/models/originals/<id>.js  the untouched original, renamed make<Name>Original, for before/after
 //   src/stage/night-square.js     the painting's camera, layout and lamp data
-//   art/backdrops/night-square.webp
+//   reference/art/backdrops/night-square.webp (the game's copy, art/backdrops/night-square.avif, is squeezed from it by
+//   tools/compress.mjs --avif)
 // Run from the repo root: node tools/import-models.mjs (existing working copies are kept; --force overwrites them)
 import fs from 'fs';
 const R = new URL('..', import.meta.url).pathname;
@@ -44,9 +45,9 @@ const layoutLine = ns.find((s) => s.includes('const LAYOUT = {'));
 const LAYOUT = JSON.parse(layoutLine.slice(layoutLine.indexOf('{'), layoutLine.lastIndexOf('}') + 1));
 const paintLine = ns.find((s) => s.includes("paintEl.src = 'data:image/webp;base64,"));
 const b64 = paintLine.slice(paintLine.indexOf('base64,') + 7, paintLine.lastIndexOf("'"));
-fs.writeFileSync(R + 'art/backdrops/night-square.webp', Buffer.from(b64, 'base64'));
+fs.writeFileSync(R + 'reference/art/backdrops/night-square.webp', Buffer.from(b64, 'base64'));
 const scene = {
-  id: 'night-square', name: 'The Night square', image: 'art/backdrops/night-square.webp',
+  id: 'night-square', name: 'The Night square', image: 'art/backdrops/night-square.avif',
   width: 1448, height: 1086, fov: 12, pitch: 24, ppm: 54,
   lamps: [0, 1, 2, 4, 5], layout: LAYOUT,
 };
@@ -55,4 +56,4 @@ fs.writeFileSync(R + 'src/stage/night-square.js',
   '// the foreground cutouts characters walk behind, and the lamps that light them. Imported from\n' +
   '// reference/demos/night-square-shadow-wraith.html. The build inlines `image` as a data URI.\n' +
   'window.SCENES = window.SCENES || {};\nwindow.SCENES[' + JSON.stringify(scene.id) + '] = ' + JSON.stringify(scene) + ';\n');
-console.log('night-square.webp', (fs.statSync(R + 'art/backdrops/night-square.webp').size / 1024).toFixed(0) + ' KB');
+console.log('night-square.webp', (fs.statSync(R + 'reference/art/backdrops/night-square.webp').size / 1024).toFixed(0) + ' KB');
