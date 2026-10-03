@@ -20,20 +20,17 @@
   // ---------- the fights ----------
   // each band's wild packs: about a minute to a minute and a half for a sensible player, and a careless one still wins
   // most of them; three wraiths together are kept for Dawnroost
-  // A Bramble Horror ('bramble?') is always met alone, in one wild fight in five; its form is rolled from its band's
-  // (Chris, October 3): the Ancient Crown, the worst of them, only from the third band on
+  // A Bramble Horror ('bramble?') is always met alone, in one wild fight in five of band 3, the only band it lives in;
+  // its form is rolled from its four (Chris, October 3)
   const BAND_PACKS = {
-    1: [['wisp', 'wisp'], ['wraith'], ['wisp', 'wraith'], ['wisp', 'wisp', 'wisp'], ['bramble?']],
-    2: [['wisp', 'wraith'], ['wraith', 'wraith'], ['wraith', 'wisp', 'wisp'], ['wisp', 'wisp', 'wisp'], ['bramble?']],
+    1: [['wisp', 'wisp'], ['wraith'], ['wisp', 'wraith'], ['wisp', 'wisp', 'wisp']],
+    2: [['wisp', 'wraith'], ['wraith', 'wraith'], ['wraith', 'wisp', 'wisp'], ['wisp', 'wisp', 'wisp']],
     3: [['wraith', 'wraith'], ['wraith', 'wisp', 'wisp'], ['frostWisp', 'frostWisp', 'wraith'], ['wraith', 'frostWisp'], ['bramble?']],
-    4: [['frostWisp', 'frostWisp', 'wraith'], ['frostWisp', 'frostWisp', 'frostWisp'], ['wraith', 'wraith', 'frostWisp'], ['wraith', 'wraith'], ['bramble?']],
+    4: [['frostWisp', 'frostWisp', 'wraith'], ['frostWisp', 'frostWisp', 'frostWisp'], ['wraith', 'wraith', 'frostWisp'], ['wraith', 'wraith']],
   };
-  const BRAMBLE_FORMS = {
-    1: ['bramble', 'brambleAmbush'],
-    2: ['bramble', 'brambleAmbush', 'brambleTowering'],
-    3: ['bramble', 'brambleTowering', 'brambleAncient'],
-    4: ['brambleTowering', 'brambleAncient'],
-  };
+  // the Bramble Horror lives in band 3 only, levels 11 to 15, in all four of its forms (Chris, October 3: the Horror in
+  // the 10 to 15 range, the Colossus in 16 to 20)
+  const BRAMBLE_FORMS = { 3: ['bramble', 'brambleAmbush', 'brambleTowering', 'brambleAncient'] };
   const formOf = (id, band, rand) => (id === 'bramble?' ? BRAMBLE_FORMS[band][Math.floor(rand() * BRAMBLE_FORMS[band].length)] : id);
   // the Bramble Colossus, the last band's great wild foe: about one wild fight in twelve there, never in the first three
   // after the party reaches the band, always alone (handoff, October 3)
@@ -78,8 +75,8 @@
       },
     },
     wildBramble: {
-      name: 'Wild bramble', note: "the Bramble Horror as the wilds bring it: its band's form, at a level in the band's range", level: 9, levels: [2, 20],
-      setup: (L, rand) => { const b = bandOf(L); return { party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: formOf('bramble?', b, rand), level: wildLevel(b, rand) }], flags: flagsAt(L), herbs: BAGS.wild }; },
+      name: 'Wild bramble', note: "the Bramble Horror as band 3's wilds bring it: any of its four forms, at a level from 11 to 15", level: 13, levels: [11, 15],
+      setup: (L, rand) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: formOf('bramble?', 3, rand), level: wildLevel(3, rand) }], flags: flagsAt(L), herbs: BAGS.wild }),
     },
     // the Bramble Horror alone, at the party's own level
     bramble: {
@@ -129,17 +126,16 @@
     // the Bramble Horror as the wilds bring it (one wild fight in five), at a level rolled in the band's range: Chris's rule
     // for how hard a fight is. A decent player always beats a lower-level foe, beats one at her own level about half the
     // time, and seldom beats a higher-level one (October 3)
-    ...[8, 13, 18].map((L) => ({ fight: 'wildBramble', level: L, policy: 'sensible', win: [0.35, 0.7], why: 'A wild Bramble Horror in the middle of a band, about the party’s level: won about half the time' })),
-    ...[6, 11, 16].map((L) => ({ fight: 'wildBramble', level: L, policy: 'sensible', win: [0.05, 0.35], why: 'A wild Bramble Horror on entering a band, usually above the party: seldom won' })),
-    { fight: 'wildBramble', level: 20, policy: 'sensible', win: [0.75, 1], why: 'A wild Bramble Horror at the end of the game, below the party: nearly always won' },
-    // the Bramble Horror, always alone and formidable (Chris, October 3): gentler in the first band, where it has no Undergrowth
-    { fight: 'bramble', level: 4, policy: 'careless', win: [0.15, 0.6], why: 'The Bramble Horror in the first band: a careless player loses it more often than not' },
-    { fight: 'bramble', level: 4, policy: 'sensible', win: [0.8, 1], why: 'The Bramble Horror in the first band: an attentive player usually wins' },
-    ...[9, 14].map((L) => ({ fight: 'bramble', level: L, policy: 'careless', win: [0.05, 0.4], why: 'The Bramble Horror alone, at the party’s level: formidable; a careless player usually loses' })),
-    ...[9, 14].map((L) => ({ fight: 'bramble', level: L, policy: 'sensible', win: [0.7, 0.92], why: 'The Bramble Horror alone, at the party’s level: an attentive player loses one in five or so' })),
-    ...[4, 9, 14].map((L) => ({ fight: 'bramble', level: L, policy: 'expert', win: [0.92, 1], why: 'The Bramble Horror alone: a good player wins' })),
-    ...[14, 19].map((L) => ({ fight: 'brambleAncient', level: L, policy: 'sensible', win: [0.2, 0.5], why: 'The Ancient Crown at the party’s level: the worst thing in the wilds; an attentive player wins about one time in three' })),
-    ...[14, 19].map((L) => ({ fight: 'brambleAncient', level: L, policy: 'expert', win: [0.45, 0.8], why: 'The Ancient Crown at the party’s level: even a perfect player wins only a little more than half the time' })),
+    // (band 3 only, levels 11 to 15, since Chris placed it there on October 3)
+    { fight: 'wildBramble', level: 13, policy: 'sensible', win: [0.35, 0.7], why: 'A wild Bramble Horror in the middle of band 3, about the party’s level: won about half the time' },
+    { fight: 'wildBramble', level: 11, policy: 'sensible', win: [0.05, 0.35], why: 'A wild Bramble Horror on entering band 3, usually above the party: seldom won' },
+    { fight: 'wildBramble', level: 15, policy: 'sensible', win: [0.5, 0.95], why: 'A wild Bramble Horror at the end of band 3, at or below the party: mostly won' },
+    // the Bramble Horror, always alone and formidable (Chris, October 3)
+    ...[12, 14].map((L) => ({ fight: 'bramble', level: L, policy: 'careless', win: [0.05, 0.4], why: 'The Bramble Horror alone, at the party’s level: formidable; a careless player usually loses' })),
+    ...[12, 14].map((L) => ({ fight: 'bramble', level: L, policy: 'sensible', win: [0.7, 0.92], why: 'The Bramble Horror alone, at the party’s level: an attentive player loses one in five or so' })),
+    ...[12, 14].map((L) => ({ fight: 'bramble', level: L, policy: 'expert', win: [0.92, 1], why: 'The Bramble Horror alone: a good player wins' })),
+    ...[13, 15].map((L) => ({ fight: 'brambleAncient', level: L, policy: 'sensible', win: [0.2, 0.5], why: 'The Ancient Crown at the party’s level: the worst thing in the wilds; an attentive player wins about one time in three' })),
+    ...[13, 15].map((L) => ({ fight: 'brambleAncient', level: L, policy: 'expert', win: [0.45, 0.8], why: 'The Ancient Crown at the party’s level: even a perfect player wins only a little more than half the time' })),
     // the Bramble Colossus at the party's level, from 18 to 20 (handoff, October 3): an expert wins about two times in three;
     // an attentive player about one time in four, and flees when it goes badly, so seldom loses
     ...[18, 19, 20].map((L) => ({ fight: 'colossus', level: L, policy: 'expert', win: [0.55, 0.8], why: 'The Bramble Colossus at the party’s level: an expert wins about two times in three' })),

@@ -76,7 +76,7 @@
       const pack = opts.pack || S.wildPack(band, rand, opts.seen);
       const foes = pack.map((id) => ({ id: S.formOf(id, band, rand), level: S.wildLevel(band, rand) }));
       if (foes[0].id === 'colossus') return colossus(P, foes, opts);
-      const scene = foes[0].id.startsWith('bramble') && band === 1 ? 'thornwood-bridge' : (opts.scene || 'gloamwood-road');
+      const scene = opts.scene || 'gloamwood-road';
       const c = base(scene, P);
       const lone = foes[0].id.startsWith('bramble');
       if (lone) { const at = PLACES[scene]; c.heroes[0].home = [at.io[0] + 40, at.io[1] - 50]; if (c.heroes[1]) c.heroes[1].home = [at.sol[0] + 40, at.sol[1] - 50]; c.slots = [at.slots[0]]; }
