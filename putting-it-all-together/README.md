@@ -1,6 +1,6 @@
 # Putting It All Together
 
-This folder is where the whole game comes together. Every piece is built and tried on its own first: a model on its bench page, a fight on its demo page, a new creature in `../3d-model-new-character-ideas/`. Then it joins the game here. At the end, the game becomes one file that Chris keeps, and it works with no internet.
+A new session starts with `../docs/next-session.md`, where the work stands. This folder is where the whole game comes together. Every piece is built and tried on its own first: a model on its bench page, a fight on its demo page, a new creature in `../3d-model-new-character-ideas/`. Then it joins the game here. At the end, the game becomes one file that Chris keeps, and it works with no internet.
 
 Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2-29pyn6`:
 

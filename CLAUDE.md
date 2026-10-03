@@ -14,6 +14,7 @@
 ## Project
 
 - Working title: *Envoi on the Longest Night*.
+- A new session starts with `docs/next-session.md` (where the work stands), then `docs/handoff.md` (everything the game still wants).
 - Design context lives in `docs/game-context.md`; decisions in `docs/design-decisions.md`; the build order in `docs/plan.md`.
 - Canon order: `docs/design-decisions.md`, then `docs/lore/lore-answers-2026-10-01.md`, then the Noctara amendment, then the bible.
 - The main cast is all women: Io the Witch, Sol, Halcyon, Noctara and Lunara. Halcyon is "she" everywhere, including code comments.
