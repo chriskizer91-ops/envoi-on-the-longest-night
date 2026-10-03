@@ -61,6 +61,7 @@ dd{margin:0;font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion:reduce){.dmg{animation-duration:.01s;animation-delay:1s}}
 /* shared bench additions */
 #overlay{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;opacity:0;z-index:1}
+#flash{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:1;mix-blend-mode:screen;background:radial-gradient(circle at var(--fx,50%) var(--fy,50%),var(--fc,rgba(225,205,255,.9)),rgba(150,100,255,.3) 30%,rgba(0,0,0,0) 65%)}
 .vs{display:flex;gap:6px;margin-top:8px}
 .vs button{flex:1;text-align:center;appearance:none;min-height:40px;border-radius:6px;border:1px solid rgba(214,222,255,.28);background:rgba(10,12,34,.35);color:var(--wt);text-shadow:inherit;padding:5px 10px;line-height:1.15}
 .vs button[aria-pressed="true"]{background:rgba(255,179,71,.24);border-color:var(--sun);color:#fff}

@@ -13,7 +13,8 @@ The spec's targets: 70k to 100k triangles (minimum 50k, ceiling 120k for bosses)
 | Sol | `sol-in-the-night-square.html` | 83k | 54 | 38 | Yes |
 | Sol, touched up | `src/models/sol.js` | 98k | 54 | 26 (16 body + 10 effects) | Yes |
 | Halcyon (v2) | `halcyon-in-the-night-square.html` | 88k | 63 | 31 | Yes |
-| Noctara, touched up | `src/models/noctara.js` | 72k | 30 joints, hands skinned | 24 | Yes |
+| Noctara, first touch-up | `src/models/previous/noctara-pass1.js` | 72k | 30 joints, hands skinned | 24 | Yes |
+| Noctara, second pass | `src/models/noctara.js` | 83k | 30 joints, hands skinned | 24 (+ up to 82 for her spells) | Yes |
 | Noctara, original | `noctara-in-the-night-square.html` | 28k | none (rigid joints) | 88 | Mostly (no `setFade`; `block` is 0.6 s) |
 | Shadow Wraith | `night-square-shadow-wraith.html` | 55k | 32 | 35 | No (older interface) |
 | Shadow Wraith, touched up | `src/models/wraith.js` | 59k (great wraith 71k) | 54 | 11 + up to 7 effects (great 20 + 8) | Yes |
@@ -98,6 +99,26 @@ Brought toward its model and action sheets and the two Envoi scenes.
 - **Wings:** the pleated fans are close; push the scorched, glowing tips.
 - **Scale and pose:** match its size and its long low coil next to the Witch and the wraith in the two Envoi scenes.
 - **Spec fixes:** skin the body to a bone chain, make `block` 0.45 s, and keep `busy` true while a hold action plays, so a stray `play()` can't cut off the summon.
+
+### Noctara: second pass, October 3, 2026
+
+Chris saw the Bramble Colossus and said it looked better than Noctara, so she got a second pass to bring her up to it, inside her rules (no hair moves, no lantern, a glowing edge, big simple shapes). Her bench's Before switch now shows the first touch-up.
+
+- **Robes:** black silk instead of purple-black, hanging in deep folds of two sizes that grow toward the hem, with a longer train and a hem that pools on the ground. The sleeves and cape fold too.
+- **Gold:** the filigree is polished metal now. It catches the lamps and a small painted night around her (an environment map), and it still glows a little so it reads in the dark.
+- **The night in her lining:** her lining is a window onto a night sky of stars and violet cloud, drawn by a shader and fixed on the screen like a hole in the world. It shows faintly at rest and blazes in Blackout, as in the sheet's Blackout pose.
+- **Starlight specks:** faint stars twinkle in her silk, and violet wisps curl off her hem at rest.
+- **Face:** larger violet eyes, smoky lids with a winged line, darker brows and plum lips, and lids that rest a little low.
+- **Crown:** the crystals are glossy obsidian with violet light inside.
+- **Void Sphere:** about twice the size, higher over the party, with lightning crawling out over the dark and streams of light spiralling into it. When it bursts, a ring of light races out over the ground and its rocks fly out and fall.
+- **Frost Dust:** a spiral of real ice shards from her hand to the party, and frost that spreads over the ground under them and melts as the slow ends. The battle tells her how long the slow lasts through a new state field, `frost` (seconds; 11 if it says nothing).
+- **Crown Shards:** bigger, with violet trails, and each bursts into splinters where it strikes.
+- **Blackout:** the dark pours out over the ground from her, and a violet glow stands behind her.
+- **Appear:** smoke pours up round her, and stars gather into her as she rises.
+- **Defeat:** she opens her arms and her whole body turns into the night sky, then rises as stars that hang over the square before they fade.
+- **The bench** shakes the camera on her heavy hits and flashes where the Void Sphere bursts (a `shake` and a `flash` any stage can now call).
+
+Animation got cheaper, not dearer: the cloth works out each column's folds once a frame and reads its curves from small tables, so a frame costs about 0.9 ms against the first touch-up's 1.1 on the same machine. 83k triangles, 24 draw calls for her body, 25 textures (21.3 MB, down from 23.3), 107 KB of code. Renders: `../reference/renders/2026-10-03-noctara-pass2/` (the two passes side by side, and her spells on the battle bench).
 
 ### Noctara: done October 1, 2026
 

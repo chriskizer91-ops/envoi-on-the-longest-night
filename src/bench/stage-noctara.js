@@ -40,7 +40,7 @@ window.STAGES.noctara = (function () {
       shatter = FR.t < end ? 0 : (FR.t - end) / FR.thaw;
       FR.slow = FR.t < end ? 1 - 0.72 * Math.min(1, FR.t / 1.0) : 0.28 + 0.72 * Math.min(1, shatter);
       const tick = [0.15, 0.45, 0.75];
-      while (FR.hits < 3 && shatter >= tick[FR.hits]) { for (const id of PARTY) ctx.damage(id, ctx.swing(680, 0.08), 'ice', id === 'sol' ? 120 : 0); FR.hits++; }
+      while (FR.hits < 3 && shatter >= tick[FR.hits]) { for (const id of PARTY) ctx.damage(id, ctx.swing(680, 0.08), 'ice', id === 'sol' ? 120 : 0); ctx.shake(0.005); FR.hits++; }
       if (FR.t >= total) { FR.on = false; FR.slow = 1; }
     } else FR.slow = 1;
     for (const id of PARTY) if (ctx.actors[id]) ctx.actors[id].ts = FR.slow;
@@ -120,14 +120,14 @@ window.STAGES.noctara = (function () {
     },
     onHit(ctx, a, i) {
       const mo = ctx.subject.m, v = new THREE.Vector3();
-      if (a === 'voidSphere') { ctx.ring(mo.anchor('orb', v), 'hit'); for (const id of PARTY) ctx.damage(id, ctx.swing(2100, 0.06), '', id === 'sol' ? 90 : 0); }
-      else if (a === 'crownShards') { ctx.ring(mo.anchor('impact', v), 'hit'); ctx.damage('witch', ctx.swing(540, 0.08)); }
-      else if (a === 'blackout') ctx.damage('witch', ctx.actors.halcyon && ctx.actors.halcyon.visible ? ctx.swing(2450, 0.04) : 1500, 'dark');
+      if (a === 'voidSphere') { ctx.ring(mo.anchor('orb', v), 'hit'); ctx.shake(0.016); if (ctx.flash) ctx.flash(0.75, v); for (const id of PARTY) ctx.damage(id, ctx.swing(2100, 0.06), '', id === 'sol' ? 90 : 0); }
+      else if (a === 'crownShards') { ctx.ring(mo.anchor('impact', v), 'hit'); ctx.shake(0.004); ctx.damage('witch', ctx.swing(540, 0.08)); }
+      else if (a === 'blackout') { ctx.shake(0.012); ctx.damage('witch', ctx.actors.halcyon && ctx.actors.halcyon.visible ? ctx.swing(2450, 0.04) : 1500, 'dark'); }
       else return false;
       return true;
     },
     onCue(ctx, a, i) {
-      if (a === 'frostDust') { FR.on = true; FR.t = 0; FR.hits = 0; for (const f of FR.flakes) { f.ox = 0; f.oy = 0; } }
+      if (a === 'frostDust') { FR.on = true; FR.t = 0; FR.hits = 0; for (const f of FR.flakes) { f.ox = 0; f.oy = 0; } ctx.subject.m.state.frost = FR.dur + FR.thaw; }
       if (a === 'blackout' && i === 1 && ctx.actors.halcyon && ctx.actors.halcyon.visible) ctx.ring(ctx.actors.halcyon.m.anchor('hit', new THREE.Vector3()), 'cue blue');
     },
     wide() { return FR.on; },

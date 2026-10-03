@@ -8,7 +8,7 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 
 | Page | Link | State |
 |---|---|---|
-| Noctara | https://claude.ai/artifact/4FzTFkD5JRPhci57H2ybvz | Done (October 1). Rebuild once every model is final: its supporting actors use working copies. |
+| Noctara | https://claude.ai/artifact/4FzTFkD5JRPhci57H2ybvz | Second pass done October 3: black silk in deep folds, metal gold, a lining that opens on the night sky, bigger spells, and a defeat in which she rises as stars. Rebuild once every model is final: its supporting actors use working copies. |
 | Halcyon | https://claude.ai/artifact/7zPEx3g6VC4SFfdZ8zdHj8 | Done: refined against her new sheets on October 2. |
 | Lunara | https://claude.ai/artifact/XpsLozXGFgPCwLG5s5iUce | Done |
 | Io, the Witch | https://claude.ai/artifact/1mF6YFp3xg1KhGs5tZNYky | Done: technical pass, plus Waxing Light, Moonsteel and Moth Veil |
