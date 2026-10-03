@@ -1,0 +1,23 @@
+/* The boss bench on top of the Bramble Horror's bench.css: the creature tag becomes a boss bar across the top of the
+   stage, with a mark at half its HP where its second phase begins; a chip says which phase it is in. */
+header #resetView{margin-left:auto}
+#tag{left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 20px));min-width:0}
+#tag .top{display:flex;align-items:baseline;gap:8px}
+#tag .nm{font-size:18px;letter-spacing:.02em}
+#tag .phase{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#d8ffd0;border:1px solid rgba(216,255,208,.45);border-radius:4px;padding:1px 6px;text-shadow:none;white-space:nowrap}
+#tag .phase.wrath{color:#ffd8bc;border-color:#ff7a3a;background:rgba(255,90,30,.2);box-shadow:0 0 10px rgba(255,90,30,.4)}
+#tag .hpbar{height:10px;border-radius:5px;overflow:visible}
+#tag .hpbar i{border-radius:5px}
+#tag .hpbar i.wrath{background:linear-gradient(90deg,#8a1e1e,#ff7a3a)}
+#tag .hpbar::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;margin-left:-1px;border-radius:1px;background:rgba(255,200,150,.9);box-shadow:0 0 4px rgba(255,120,60,.8)}
+#hint{top:86px}
+.dmg.weak{font:italic 400 24px/1 var(--display);color:#fff0b4;text-shadow:0 0 10px #ffb02e,0 2px 0 #3a1a06}
+.ring.heart{border-color:#ffe0f0;box-shadow:0 0 18px #ff3d8a,inset 0 0 12px #ff3d8a;width:56px;height:56px;margin:-28px 0 0 -28px}
+.fight{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.fight .wbtn{align-items:center;text-align:center}
+.segrow .wbtn{font-size:13.5px}
+@media (max-width:760px){
+ #tag{top:8px;padding:5px 9px 7px}
+ #tag .nm{font-size:16px}
+ #tag .ds{display:none}
+}

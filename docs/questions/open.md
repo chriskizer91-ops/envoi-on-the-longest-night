@@ -16,3 +16,20 @@ Chris asked Claude to decide the rest and keep building until the game is finish
 - Lore 3, 4, 5, 11, 12: "the moon's people" only; gnomes at the shipyard; the party learns at the shipyard that Halcyon serves Noctara; the Sunken Ruins stay out of the story; Halcyon holds back in the finale since Sol called her Kestrel.
 
 New questions, if any come up while the game is built, go here.
+
+## New character ideas
+
+Asked October 3 by the session that polished them in `../../3d-model-new-character-ideas/`, at the same time as the game was being built. Where the game has already answered, the answer is noted.
+
+2. **The Bramble Horror** (`../../3d-model-new-character-ideas/bramble-horror/`). Answered by the game: it is a lone wild foe in all four bands (question 19 above), and Undergrowth and Scorch stay (`BRAMBLE_MOVES` in `src/battle/screen.js`).
+3. **The Bramble Colossus** (`../../3d-model-new-character-ideas/bramble-colossus/`), the Bramble Horror grown into a boss as big as a house. "Bramble Colossus" is a working name.
+   - Is it a boss in the game? If so, where does it stand, and at which level do the party meet it? `../handoff.md` proposes a rare wild fight in band 4, with an optional lair, the Thornheart.
+   - What is it called?
+   - Its moves were all made up for it: Awakening, Siren Bloom, Thorn Lance, Hammerfall, Maelstrom, Thorn Volley, Devour, Thornwood, Wrath and Felled. Which stay?
+   - Its Wrath is a second phase at half its HP. Do battles have phases like that?
+
+## The wild meadow
+
+4. **The wild meadow** (`../../3d-model-new-character-ideas/bramble-horror/meadow.js`), the living place made for the creature benches, with its own hours and weather. On October 3 Chris said it should be in the game.
+   - Where does it go: behind the fights in the wilderness between stops, or one place in particular? `../handoff.md` (Living battlefields) weighs both.
+   - Battles are set in front of painted backdrops (`design-decisions.md`, October 1). Is the meadow, a 3D place that answers the fight, an exception for the wilds?

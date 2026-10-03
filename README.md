@@ -17,3 +17,4 @@ Phase 1, the models (see `docs/plan.md`): every model is touched up, and the pol
 - `src/models/`: the code-built 3D models, one file each; `originals/` keeps the untouched versions.
 - `src/bench/`, `demos/`, `dist/`: the shared battle bench, each model's bench page, and the built single-file pages.
 - `tools/`: build, headless checks, turnaround renders and the line-up. See `docs/model-touchup-guide.md`.
+- `3d-model-new-character-ideas/`: new characters and creatures Chris brings as ideas, each with its 3D model, bench page and records. They aren't part of the story until he places them.
