@@ -20,6 +20,7 @@ October 3, 2026, end of the evening session that started **pass three**. Read th
 | The game (version 5: paper dolls, Chapters, smoother walking) | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
 | Battle Backgrounds: Chris's paintings behind live 3D ground, with squeeze, weather and phone controls | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw |
 | Wilderness Walk: Io on Chris's wilderness path, nine squeezes | https://claude.ai/artifact/BcRjgVynWymYim84Yb7STk |
+| Walking Paths: the laptop editor for the maps' paths (its edits come back through its database, collection `edits`) | https://claude.ai/artifact/8BmLZd8sJjYBQ6kRbX2enm |
 | Io on Foot: her walk, with sliders and the footstep ideas | https://claude.ai/artifact/G1B5cMkYzBq4RiausDAAQj |
 | Walking Map Resolution: the town maps' compression choices | https://claude.ai/artifact/7F4pu4v3BQiKAZAtVJkC1i |
 | The Bramble Colossus on its own | https://claude.ai/artifact/H2QTXhNnEi7W7Qbs6BXvA2 |
@@ -45,7 +46,7 @@ October 3, 2026, end of the evening session that started **pass three**. Read th
 1. **The battle squeeze** (Battle Backgrounds page) and **the wilderness squeeze** (Wilderness Walk page).
 2. **Art request 11:** four battle paintings (band 2's Warm Roads, Dawnroost's node, the northern crossroads, the dead Moonwell).
 3. **The walking plan** without the world map, and whether the wilderness scenes are at night (`questions/open.md`, 20 and 21). Art request 12 follows his answer.
-4. **His map path edits** on the Map Paths page (the editor is being built).
+4. **His map path edits**, sent from the Walking Paths page.
 5. **The lore conversation:** every word of the script is still a placeholder.
 6. **Art requests 06 and 07** (townsfolk portraits, story stills), and the footsteps.
 7. **The songs** go in only when the whole build is finished, unless he says sooner.
@@ -54,7 +55,7 @@ October 3, 2026, end of the evening session that started **pass three**. Read th
 
 1. **The new battles** (pass-three README, "Next: the new battles"): the living field with a ground for each place, the battle screen using it, a phone setting; demo page first.
 2. **Walking without the world map**, once Chris agrees the plan: the wilderness scenes as ground maps, the Magpie's landings at the camps, and the world map's walking taken out.
-3. **His map path edits**, when he sends them: read them from the Map Paths page's database, apply them to `src/game/maps.js`, run `node tools/check-maps.mjs`, publish.
+3. **His map path edits**, when he sends them: `../envoi-game-pass-3/map-paths/README.md` says how to read, check and apply them.
 
 ## When things arrive
 

@@ -11,7 +11,7 @@ Started October 3, 2026, in the evening, after Chris played the put-together gam
 | The game | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w | The whole game, now with the paper dolls, Chapters (start at gate 5, 10, 15 or the finale), and smoother walking |
 | Battle Backgrounds | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw | Chris's combat backgrounds far off, live 3D ground in front: pick a place, squeeze it from 207 KB to 4 KB, play the Colossus fight, try 20 to 60 frames a second and three sharpnesses |
 | Wilderness Walk | https://claude.ai/artifact/BcRjgVynWymYim84Yb7STk | Io on Chris's wilderness path example, at his walk settings, with nine squeezes of the painting to switch between |
-| Map Paths | (being built) | The editor for the walking maps' paths, for the laptop |
+| Walking Paths | https://claude.ai/artifact/8BmLZd8sJjYBQ6kRbX2enm | The laptop editor for where Io can walk on all 13 maps: drag the paths over each painting, walk her on the change, and send the edits to Claude |
 
 ## What Chris decided
 
@@ -26,7 +26,7 @@ Started October 3, 2026, in the evening, after Chris played the put-together gam
   - The world map is for flying the Magpie, the fun part. Nobody walks on it.
   - Walking happens only on painted pictures: town scenes, and wilderness path scenes like Chris's example (`../reference/art/walk/wilds/wilderness-path-example.webp`).
   - He wants direct control and tap or click to walk, as one control. **Done.**
-  - He wants an editor page for the map paths, used on his laptop. **Being built.**
+  - He wants an editor page for the map paths, used on his laptop. **Done:** Walking Paths.
 - **Battles:** 3D ground in front and a painting far off behind, for every fight, as in Colossus in the Meadow.
   - The paintings can be squeezed much harder than the maps.
   - One painting for each band's wilds, plus the story fights, matched to where they happen on the world map.
@@ -63,6 +63,8 @@ Started October 3, 2026, in the evening, after Chris played the put-together gam
    - A bug found on the way: a tap never reached the walking map (the hidden world map lay over it), so tap-to-walk had never worked in the game. Fixed.
 7. **The Battle Backgrounds page** and **art request 11** (`../docs/art-requests/11-battle-backgrounds.md`): which painting goes with which fight, and four prompts for the places none of the ten show.
 8. **The Wilderness Walk page.**
+9. **The Walking Paths editor** (`map-paths/`): Witch Way's scene editor remade for this game's maps, with a walk test and a store his edits come back through.
+10. **Noctara's second pass checked against the finale:** every move the finale plays is there, with its blow timings.
 
 ## The size, measured
 
@@ -125,7 +127,7 @@ Random fights happen on the wilderness scenes, as in the Thornwood today, and th
 2. **Art request 11:** the four battle paintings.
 3. **The walking plan** above, and whether the wilderness scenes are at night.
 4. **The wilderness squeeze:** which version, from the Wilderness Walk page.
-5. **The map paths:** his edits, on the Map Paths page once it's ready.
+5. **The map paths:** his edits, sent from the Walking Paths page.
 6. Still open from before:
    - the lore conversation (every word is a placeholder);
    - art requests 06 (portraits) and 07 (stills);

@@ -1,0 +1,150 @@
+/* map-paths.css: the walking-path page's look. The game's night (src/game/game.css and the battle screen's windows),
+   calm and dark whatever the device's theme. The painting fills the left, the tools sit in a panel on the right; on a
+   phone the panel stacks under the painting. The field's own pieces (its d-pad, mini-map and name plate) keep
+   game.css's look; this file only styles the page around them. */
+:root {
+  /* layout: one working screen: the painting on the left, a quiet panel on the right; stacked on a phone */
+  --night: #07050f;          /* the page's ground: the game's night */
+  --deep: #0c0a1a;           /* behind the painting */
+  --panel: #110e22;          /* the side panel */
+  --raise: #1b1836;          /* buttons */
+  --raise-hi: #272250;
+  --line: rgba(214, 222, 255, 0.15);
+  --line-hi: rgba(214, 222, 255, 0.34);
+  --ink: #eeedfb;
+  --ink-soft: #c9cbec;
+  --dim: #9da4d0;
+  --gold: #ffd66e;           /* the one accent: Io's lantern gold, as on the game's action button */
+  --gold-hi: #ffe28f;
+  --gold-lo: #f0b84a;
+  --gold-ink: #2a1d05;
+  --good: #8dffb0;
+  --bad: #ff9d9d;
+  --veil: rgba(9, 7, 22, 0.78);
+  /* the game's windows (screen.css), for the field's name plate and the notes */
+  --w1: rgba(70, 78, 128, 0.95);
+  --w2: rgba(28, 32, 62, 0.95);
+  --wb: rgba(214, 222, 255, 0.92);
+  --wt: #f4f6ff;
+  /* the layers drawn on the painting (map-paths.js reads these) */
+  --walk: #5aff96;
+  --block: #ff5a64;
+  --front: #c48cff;
+  --exit: #6eaaff;
+  --arrive: #ff8fd2;
+  --people: #ffd36e;
+  --reach: #7fe7ff;
+  --island: #ff9f43;
+  --io: #ff5fb2;             /* where Io stood when a walk ended (the mini-map's own pink) */
+  --problem: #ff5a64;        /* what she can't reach */
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html { height: 100%; box-sizing: border-box; background: var(--night); }
+*, *::before, *::after { box-sizing: inherit; }
+body { height: 100%; margin: 0; background: var(--night); color: var(--ink); font: 14px/1.4 var(--sans); }
+
+.mp { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 10px; padding-block: 10px 12px; padding-inline: 16px; }
+
+/* ---------- the bar along the top ---------- */
+.mp-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.mp-brand { display: flex; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; min-width: 0; }
+.mp-brand h1 { margin: 0; font: italic 400 24px/1.1 var(--serif); color: #fff4dc; letter-spacing: 0.01em; text-wrap: balance; }
+.mp-brand span { font-size: 12.5px; color: var(--dim); letter-spacing: 0.04em; }
+.mp-bar-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-left: auto; }
+.mp-gap { width: 8px; }
+
+/* ---------- buttons (the page's own: the field's d-pad keeps game.css's) ---------- */
+.mp-bar button, .mp-panel button, .mp-btn {
+  appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 32px; padding: 0 11px; border: 1px solid var(--line-hi); border-radius: 7px;
+  background: var(--raise); color: var(--ink); font: inherit; font-size: 13.5px; line-height: 1.15;
+  text-decoration: none; cursor: pointer; white-space: nowrap;
+}
+.mp-bar button:hover, .mp-panel button:hover, .mp-btn:hover { background: var(--raise-hi); }
+.mp-bar button[aria-pressed="true"], .mp-panel button[aria-pressed="true"] { background: rgba(255, 214, 110, 0.15); border-color: var(--gold); color: #fff4d0; }
+.mp-bar button:disabled, .mp-panel button:disabled, .mp-btn[aria-disabled="true"] { opacity: 0.42; cursor: default; pointer-events: none; }
+.mp-bar .mp-primary, .mp-panel .mp-primary { background: linear-gradient(180deg, var(--gold-hi), var(--gold-lo)); color: var(--gold-ink); border-color: transparent; font-weight: 700; }
+.mp-bar .mp-primary:hover, .mp-panel .mp-primary:hover { background: linear-gradient(180deg, #fff0b8, var(--gold-hi)); }
+.mp-bar .mp-primary[aria-pressed="true"] { background: var(--raise-hi); color: var(--gold); border-color: var(--gold); }
+.mp button:focus-visible, .mp-btn:focus-visible, .mp input:focus-visible, .mp-map-pick:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ---------- the painting ---------- */
+.mp-main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; min-height: 0; }
+.mp-stagecol { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 8px; min-width: 0; min-height: 0; }
+.mp-stage { position: relative; min-height: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: var(--deep); }
+.mp-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; outline: none; }
+.mp-cv:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.mp-walk-host { position: absolute; inset: 0; }
+.mp-walk-host .win { background: linear-gradient(180deg, var(--w1), var(--w2)); border: 2px solid var(--wb); border-radius: 7px; color: var(--wt); text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7); }
+.mp-plate { position: absolute; left: 10px; top: 10px; display: flex; align-items: center; gap: 8px; max-width: calc(100% - 20px); padding: 4px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--veil); font: italic 17px/1.25 var(--serif); color: #fff4dc; pointer-events: none; }
+.mp-readout { position: absolute; left: 10px; bottom: 10px; max-width: calc(100% - 20px); padding: 3px 9px; border-radius: 6px; background: var(--veil); color: var(--ink-soft); font: 12px/1.4 var(--mono); font-variant-numeric: tabular-nums; pointer-events: none; }
+.mp-readout b { font-weight: 600; }
+.mp-readout .ok { color: var(--good); }
+.mp-readout .no { color: var(--bad); }
+.mp-note { position: absolute; left: 50%; top: 12px; z-index: 6; transform: translateX(-50%); max-width: calc(100% - 40px); padding: 7px 14px; border: 2px solid var(--wb); border-radius: 7px; background: linear-gradient(180deg, var(--w1), var(--w2)); color: var(--wt); font-size: 14px; text-align: center; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6); pointer-events: none; }
+.mp-help { margin: 0; color: var(--dim); font-size: 12.5px; line-height: 1.75; text-wrap: pretty; }
+.mp-help kbd, .mp-panel kbd { display: inline-block; min-width: 1.6em; padding: 0 5px; border: 1px solid var(--line-hi); border-bottom-width: 2px; border-radius: 4px; background: var(--raise); color: var(--ink); font: 11.5px/1.5 var(--mono); text-align: center; }
+.mp-help .mp-dot { margin: 0 6px; color: var(--line-hi); }
+
+/* ---------- the panel ---------- */
+.mp-panel { min-height: 0; overflow: auto; padding: 2px 14px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.mp-sec { padding-block: 12px; border-top: 1px solid var(--line); }
+.mp-sec:first-child { border-top: 0; }
+.mp-sec h2 { margin: 0 0 8px; color: var(--dim); font: 600 11.5px/1.3 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; }
+.mp-small { margin: 0 0 8px; color: var(--dim); font-size: 12.5px; line-height: 1.45; }
+.mp-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.mp-maps { display: grid; gap: 1px; margin: 0; padding: 0; list-style: none; }
+.mp-maps li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 8px; padding: 1px 4px; border-radius: 7px; }
+.mp-maps li.is-current { background: rgba(255, 214, 110, 0.09); box-shadow: inset 0 0 0 1px rgba(255, 214, 110, 0.36); }
+.mp-panel .mp-map-pick { justify-content: flex-start; min-height: 30px; padding: 0 6px; border: 0; background: none; color: var(--ink-soft); font-size: 13.5px; text-align: left; white-space: normal; }
+.mp-panel .mp-map-pick:hover { background: none; color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-hi); text-underline-offset: 3px; }
+.mp-maps li.is-current .mp-map-pick { color: #fff4d0; font-weight: 600; }
+.mp-chip { display: inline-block; padding: 1px 8px; border: 1px solid var(--line-hi); border-radius: 999px; color: var(--dim); font: 600 11px/1.5 var(--sans); letter-spacing: 0.03em; font-style: normal; white-space: nowrap; }
+.mp-chip.is-edited { border-color: rgba(255, 214, 110, 0.6); background: rgba(255, 214, 110, 0.12); color: var(--gold); }
+.mp-chip.is-sent { border-color: rgba(141, 255, 176, 0.5); background: rgba(141, 255, 176, 0.1); color: var(--good); }
+.mp-maps .mp-stale { grid-column: 1 / -1; margin: 0 6px 2px; color: var(--bad); font-size: 12px; line-height: 1.35; }
+.mp-panel .mp-reset { grid-column: 1 / -1; justify-self: start; min-height: 28px; margin: 0 0 5px 6px; font-size: 12.5px; }
+.mp-panel .mp-reset.is-armed { border-color: var(--bad); color: var(--bad); }
+
+.mp-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+.mp-picked { min-height: 3.2em; margin-bottom: 8px; padding: 8px 10px; border-radius: 7px; background: rgba(0, 0, 0, 0.25); color: var(--ink-soft); font-size: 13px; line-height: 1.45; }
+.mp-picked b { color: var(--ink); font-weight: 600; }
+.mp-picked small { display: block; margin-top: 3px; color: var(--dim); font-size: 12px; }
+
+.mp-layers { display: grid; gap: 4px; }
+.mp-layers label, .mp-check { display: flex; align-items: center; gap: 8px; min-height: 26px; color: var(--ink-soft); font-size: 13.5px; cursor: pointer; }
+.mp-layers input, .mp-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--gold); }
+.mp-sw { flex: 0 0 auto; width: 12px; height: 12px; border-radius: 3px; border: 1px solid rgba(0, 0, 0, 0.5); }
+.mp-sw.walk { background: var(--walk); }
+.mp-sw.block { background: var(--block); }
+.mp-sw.front { background: var(--front); }
+.mp-sw.exit { background: linear-gradient(90deg, var(--exit) 50%, var(--arrive) 50%); }
+.mp-sw.people { background: var(--people); border-radius: 50%; }
+.mp-sw.reach { background: linear-gradient(90deg, var(--reach) 50%, var(--island) 50%); }
+.mp-reach { margin: 8px 0 0; color: var(--dim); font-size: 12.5px; line-height: 1.45; }
+.mp-reach.is-good { color: var(--good); }
+.mp-reach.is-warn { color: var(--gold); }
+.mp-reach ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.mp-panel .mp-reach button { justify-content: flex-start; width: 100%; min-height: 0; padding: 5px 8px; border-color: rgba(255, 157, 157, 0.4); background: rgba(255, 90, 100, 0.08); color: var(--ink-soft); font-size: 12.5px; text-align: left; white-space: normal; }
+.mp-check { margin-top: 10px; }
+
+.mp-status { min-height: 1.4em; margin: 8px 0 0; color: var(--ink-soft); font-size: 13px; line-height: 1.45; }
+.mp-status.is-good { color: var(--good); }
+.mp-status.is-bad { color: var(--bad); }
+.mp-copybox { display: block; width: 100%; margin-top: 8px; padding: 8px; border: 1px solid var(--line-hi); border-radius: 7px; background: rgba(0, 0, 0, 0.4); color: var(--ink); font: 12px/1.35 var(--mono); resize: vertical; }
+
+/* ---------- a phone: the panel under the painting, the page scrolls ---------- */
+@media (max-width: 760px) {
+  html, body { height: auto; }
+  .mp { height: auto; min-height: 100%; grid-template-rows: auto auto; }
+  .mp-main { grid-template-columns: minmax(0, 1fr); }
+  .mp-stage { height: 62vh; min-height: 300px; }
+  .mp-panel { overflow: visible; }
+  .mp-bar-tools { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .mp * { transition: none !important; animation: none !important; } }
