@@ -29,7 +29,7 @@
     const B = {
       t: 0, gaugeT: 0, turns: 0, units: [], heroes: [], foes: [], queue: [], over: null, cur: null, log: [],
       herbs: Object.assign({}, setup.herbs || {}), flags: Object.assign({}, setup.flags || {}), ends: setup.ends || {},
-      lunara: 0, envoi: 0, ward: false, frost: 0, frostLate: null, kestrelUsed: false, might: 0, rand, tune,
+      lunara: 0, envoi: 0, ward: false, frost: 0, frostLate: null, kestrelUsed: false, might: 0, act: 0, rand, tune,
       stats: { dealt: 0, taken: 0, healed: 0, low: 1, downs: 0, herbsUsed: 0, summons: [] },
     };
     const solo = setup.party.length === 1;
@@ -41,7 +41,7 @@
         side: 'hero', id: s.id, key: s.id, name: d.name, def: d, level: L, fill: d.atb,
         maxHp: Math.round(d.hp * k), maxMp: Math.round(d.mp * RL.mpScale(L)),
         atb: s.atb || 0, heat: s.heat || 0, trance: s.trance || 0, tranceReady: false, inTrance: false, tranceLeft: 0, heatBefore: 0,
-        defending: false, guarding: false, severed: false, moonNext: false, hovering: null,
+        defending: false, guarding: false, severed: false, moonNext: false, hovering: null, lured: null,
       };
       u.hp = s.hp != null ? Math.min(s.hp, u.maxHp) : u.maxHp;
       u.mp = s.mp != null ? Math.min(s.mp, u.maxMp) : u.maxMp;
@@ -59,8 +59,10 @@
         side: 'foe', id: s.id, key: count[s.id] > 1 ? s.id + seen[s.id] : s.id, name: d.name + (count[s.id] > 1 ? ' ' + 'ABC'[seen[s.id] - 1] : ''),
         def: d, level: L, fill: d.atb * ((tune.foeAtb && tune.foeAtb[s.id]) || 1), solo: alone,
         maxHp: Math.round(((alone && d.hpSolo) || d.hp) * k * hpMul * (s.hpMul || 1)),
-        atb: s.atb != null ? s.atb : rand() * 0.25, last: [], used: {}, cd: {},
-        bound: false, sunder: 0, evade: 0, vow: 0, charging: null, stagger: false, lastAttacker: null, dmgMul: s.dmgMul || 1, rage: s.rage != null ? s.rage : d.rage || 0, acted: 0,
+        // a Low Ambush bramble strikes before the party can act
+        atb: s.atb != null ? s.atb : d.ambush ? 1 : rand() * 0.25, last: [], used: {}, cd: {},
+        bound: false, sunder: 0, evade: 0, vow: 0, charging: null, chargeAt: null, stagger: false, lastAttacker: null,
+        dmgMul: (s.dmgMul || 1) * (d.dmg || 1), rage: s.rage != null ? s.rage : d.rage || 0, acted: 0, canes: d.canes || 0, scorchAt: -1,
       };
       u.hp = u.maxHp;
       B.units.push(u); B.foes.push(u);
@@ -75,7 +77,10 @@
     const sunburnOn = (h) => h.id === 'sol' && (h.inTrance || h.heat >= HE.sol.sunburn.at);
     const firstFoe = () => living('foe')[0] || null;
 
+    // the Bramble Horror lets its lured prey go (the lure broke, the Grab fell, or it is gone)
+    function unlure(f) { for (const h of B.heroes) if (h.lured === f.key) { h.lured = null; emit({ t: 'unlured', to: h.key }); } }
     function down(u) {
+      if (u.side === 'foe') unlure(u);
       u.hp = 0; u.atb = 0;
       const i = B.queue.indexOf(u); if (i >= 0) B.queue.splice(i, 1);
       if (u.side === 'hero') {
@@ -109,8 +114,16 @@
       emit({ t: 'hit', from: a.key, to: f.key, n, el: el || null });
       if (a.side === 'hero' && !a.inTrance && !a.tranceReady) a.trance = Math.min(0.99, a.trance + TR.dealt);
       if (f.hp <= 0) down(f);
+      // the Bramble Horror fears fire: once an action, flame makes it recoil (its gauge drops) or breaks its Lure
+      else if ((el === 'fire' || el === 'sun') && f.def.fearsFire && f.scorchAt !== B.act) {
+        f.scorchAt = B.act;
+        if (f.charging) { f.charging = null; f.chargeAt = null; emit({ t: 'scorch', who: f.key, broke: true }); unlure(f); }
+        else { f.atb = Math.max(0, f.atb - f.def.fearsFire); emit({ t: 'scorch', who: f.key }); }
+      }
       return n;
     }
+    // every cane the Bramble Horror has lost takes 8% off its blows
+    const caneMul = (f) => (f.def.canes ? 1 - 0.08 * (f.def.canes - f.canes) : 1);
     // a foe's blow on a hero: Guard and the Warden's Oath can pull a single hit off Io onto Sol; Defend and Guard halve
     // it, and Lunara's Embrace takes 40% off
     function hitHero(f, h, base, o) {
@@ -121,7 +134,7 @@
         if (s.guarding) { to = s; emit({ t: 'cover', who: s.key, from: h.key }); }
         else if (h.hp < h.maxHp * HE.sol.oath.below) { to = s; take = HE.sol.oath.take; emit({ t: 'oath', who: s.key, from: h.key }); }
       }
-      let n = base * RL.scale(f.level) * swing() * take * (o.mul || 1) * f.dmgMul * ((f.solo && f.def.dmgSolo) || 1) * (1 + f.rage * f.acted) * ((tune.foeDmg && tune.foeDmg[f.id]) || 1);
+      let n = base * RL.scale(f.level) * swing() * take * (o.mul || 1) * f.dmgMul * ((f.solo && f.def.dmgSolo) || 1) * (1 + f.rage * f.acted) * ((tune.foeDmg && tune.foeDmg[f.id]) || 1) * caneMul(f);
       if (to.defending || to.guarding) n *= ST.defend;
       if (B.lunara === 1) n *= SU.lunara.cut;
       n = Math.max(1, Math.round(n));
@@ -158,6 +171,7 @@
       let r = 1 / u.fill;
       if (u.side === 'foe' && u.bound) r *= ST.bindSlow;
       if (u.side === 'hero' && B.frost > 0) r *= ST.frostSlow;
+      if (u.lured) r = 0; // drawn to the Bramble Horror's fruit, her gauge stops
       return r;
     }
     // run the gauges for up to `limit` seconds, stopping as soon as anyone's gauge is full
@@ -215,6 +229,7 @@
         if (f.last[0] === id && f.last[1] === id) return false;
         if (m.cooldown && f.cd[id] > 0) return false;
         if (m.hurt && f.hp > f.maxHp * m.hurt) return false;
+        if (m.minLevel && f.level < m.minLevel && !f.def.allMoves) return false;
         if (m.blackout && (!halcyonUp || B.ward)) return false; // lore answer 12: no Blackout while Envoi's ward is up
         return true;
       });
@@ -232,6 +247,7 @@
     function targetFor(f, m) {
       const party = reach();
       if (!party.length) return null;
+      if (f.chargeAt) { const u = unit(f.chargeAt); f.chargeAt = null; if (alive(u) && !u.hovering) return u; }
       const one = () => party[Math.floor(rand() * party.length)];
       switch (m.target) {
         case 'io': { const io = hero('io'); return alive(io) && !io.hovering ? io : one(); }
@@ -269,7 +285,7 @@
         outOfReach(f);
         return;
       }
-      let first = null;
+      let first = null, took = null;
       for (const base of hits) {
         if (!living('hero').length) break;
         const pool = reach();
@@ -277,6 +293,7 @@
         const tgt = m.target === 'random' ? pool[Math.floor(rand() * pool.length)] : (first && alive(first) ? first : targetFor(f, m));
         const r = hitHero(f, tgt, base, { single: true });
         if (!first) first = tgt;
+        if (!took) took = r.to; // whoever the blow actually landed on (Sol's Guard can take it for Io)
         if (m.drain && alive(f)) { f.hp = Math.min(f.maxHp, f.hp + r.n); emit({ t: 'heal', from: f.key, to: f.key, n: r.n }); }
         if (m.sap && alive(r.to)) {
           let n;
@@ -286,6 +303,9 @@
         }
         if (m.sever && alive(r.to)) { r.to.severed = true; emit({ t: 'sever', to: r.to.key }); }
       }
+      // the Grab drags its prey to the root crown: her turn gauge empties, and the lure lets go
+      if (m.held && took && alive(took)) { took.atb = 0; const i = B.queue.indexOf(took); if (i >= 0) B.queue.splice(i, 1); emit({ t: 'held', to: took.key }); }
+      if (m.held) unlure(f);
     }
     function foeTurn(f) {
       f.atb = 0; f.bound = false; f.vow = 0;
@@ -294,7 +314,14 @@
       else if (f.charging) { const id = f.charging; f.charging = null; useFoeMove(f, id, true); }
       else {
         const id = pickFoeMove(f), m = f.def.moves[id];
-        if (m.charge) { f.charging = id; B.t += 1.2; emit({ t: 'charge', who: f.key, move: id, name: m.name }); }
+        if (m.charge) {
+          f.charging = id; B.t += 1.2;
+          // a Lure is held out to one hero, and the Grab falls on her
+          const tg = m.target === 'all' ? null : targetFor(f, m); f.chargeAt = tg ? tg.key : null;
+          emit({ t: 'charge', who: f.key, move: id, name: m.chargeName || m.name, to: f.chargeAt });
+          // the Lure: its prey walks toward the fruit, and her gauge stops until the Grab or until flame breaks the lure
+          if (m.held && tg) { tg.lured = f.key; const i = B.queue.indexOf(tg); if (i >= 0) B.queue.splice(i, 1); emit({ t: 'lured', to: tg.key }); }
+        }
         else useFoeMove(f, id);
       }
       if (f.sunder > 0) f.sunder--;
@@ -366,7 +393,13 @@
       if (f.evade && d.target === 'foe') { f.evade = 0; emit({ t: 'miss', from: h.key, to: f.key }); return; }
       const moon = h.moonNext && !d.element, el = d.element || (moon ? 'moon' : null);
       if (burn === undefined) burn = sunburnOn(h);
-      for (const base of hits || d.hits) { if (!alive(f)) break; hitFoe(h, f, base, el, burn); }
+      let cut = false;
+      for (const base of hits || d.hits) {
+        if (!alive(f)) break;
+        hitFoe(h, f, base, el, burn);
+        // a heavy blade blow severs one of the Bramble Horror's canes (it keeps at least three)
+        if (!cut && d.physical && f.def.canes && base >= 300 && f.canes > 3 && alive(f)) { cut = true; f.canes--; emit({ t: 'cane', who: f.key, left: f.canes }); }
+      }
       if (moon) h.moonNext = false;
       if (d.physical && alive(f) && f.vow > 0 && alive(h)) { emit({ t: 'counter', who: f.key, to: h.key }); hitHero(f, h, f.vow, { counter: true }); }
       if (d.bind && alive(f)) { f.bound = true; f.atb = Math.max(0, f.atb - d.bind); emit({ t: 'bound', to: f.key }); }
@@ -383,6 +416,7 @@
       if (d.might) { B.might = d.might; emit({ t: 'might', n: d.might }); }
     }
     function heroAct(h, id, tgt, herb) {
+      B.act++;
       if (herb) { B.t += 1.8; useHerb(h, herb, tgt); return; }
       const d = h.def.moves[id];
       emit({ t: 'move', who: h.key, move: id, name: d.name, target: tgt ? tgt.key : null });
@@ -435,7 +469,7 @@
     // the summons' strikes, when Io's gauge next fills: Envoi wraps its foe and Io still takes her turn; Lunara's
     // Silver Requiem takes Io's turn (the six beams fall on any foe, Moonfall on the one Io chose)
     function summonStrike(io, who) {
-      const S = SU[who];
+      const S = SU[who]; B.act++;
       const pick = () => { const at = unit(who === 'envoi' ? B.envoiAt : B.lunaraAt); return alive(at) ? at : living('foe').reduce((a, b) => (b.hp > a.hp ? b : a), firstFoe()); };
       emit({ t: 'strike', who });
       B.t += S.time;

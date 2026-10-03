@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bramble Horror</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/battle/screen.css">
+</head>
+<body>
+<header>
+  <h1>Bramble Horror</h1>
+  <div class="hbtns">
+    <button type="button" class="hbtn" id="fps"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4a9 9 0 0 0-9 9 8.9 8.9 0 0 0 1.8 5.4l1.6-1.2A7 7 0 1 1 19 13a6.9 6.9 0 0 1-1.4 4.2l1.6 1.2A8.9 8.9 0 0 0 21 13a9 9 0 0 0-9-9Zm4.2 4.4-5 4.1a1.6 1.6 0 1 0 2.2 2.2l4.1-5Z"/></svg><span>fps</span></button>
+    <button type="button" class="hbtn" id="snd" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3Zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Zm-2.5-8.8v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6Z"/></svg><span>Sound on</span></button>
+  </div>
+</header>
+<main id="stage" aria-label="Battle between Io and Sol and the Bramble Horror at the Thornwood bridge">
+  <canvas id="paint" aria-hidden="true"></canvas>
+  <div id="tint" class="fill"></div>
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <canvas id="rime" aria-hidden="true"></canvas>
+  <div id="vignette" class="fill"></div>
+  <div id="flash" class="fill"></div>
+  <div id="barT" class="bar"></div><div id="barB" class="bar"></div>
+  <div id="enemy" class="win" hidden></div>
+  <div id="banner" class="win" aria-live="polite"></div>
+  <div id="msg" class="win" role="status"></div>
+  <div id="nums" aria-hidden="true"></div>
+  <div id="marker" aria-hidden="true" hidden><svg viewBox="0 0 22 18"><path d="M2 2h18L11 16Z" fill="currentColor" stroke="#2c3160" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+  <div id="ui" hidden>
+    <div id="cmd" class="win" role="menu" aria-label="Commands"></div>
+    <div id="status" class="win" aria-label="The party"></div>
+  </div>
+  <div id="skip" hidden><button type="button" class="skipb" id="skipBtn">Skip intro</button></div>
+  <div id="start" class="overlay">
+    <div class="card win">
+      <h2>The Bramble Horror</h2>
+      <p>What looks like a lush, unusually fruitful blackberry thicket by the Thornwood bridge is a predator: rooted, patient and hungry. It is always met alone, and it is the most dangerous thing in the wilds. It fears fire, and a heavy blade can cut its canes. Pick the party’s level and its form; it comes at the party’s own level.</p>
+      <div class="pickr" id="picker" hidden>
+        <label for="pickLevel"><span>Party level</span><input type="range" id="pickLevel" min="1" max="20" step="1" value="3"><output id="pickLevelOut" for="pickLevel">3</output></label>
+        <label for="pickPack"><span>Form</span><select id="pickPack"></select></label>
+        <p id="pickNote"></p>
+      </div>
+      <button type="button" class="go" id="begin" disabled>Setting the scene…</button>
+    </div>
+  </div>
+  <div id="end" class="overlay" hidden>
+    <div class="card win">
+      <h2 id="endTitle">Victory!</h2>
+      <p id="endText"></p>
+      <div class="stats"><div><b id="stTime">0:00</b><span>Battle time</span></div><div><b id="stDmg">0</b><span>Damage dealt</span></div></div>
+      <p class="fpsline" id="stFps"></p>
+      <div class="xp" id="xpBox" hidden>
+        <div class="stats"><div><b id="xpGain">+0</b><span>Experience</span></div><div><b id="shardGain">+0</b><span>Sunstone shards</span></div></div>
+        <div class="row"><span>Next level</span><b id="xpNext"></b></div>
+        <div class="gauge"><i id="xpBar"></i></div>
+      </div>
+      <div class="lvl" id="lvlBox" hidden>
+        <h3 id="lvlTitle">Level up!</h3>
+        <dl id="lvlList"></dl>
+        <p>Every move hits and heals about 20% harder.</p>
+      </div>
+      <div class="btns"><button type="button" class="go" id="again">Fight again</button><button type="button" class="go alt" id="change" hidden>Change the fight</button></div>
+    </div>
+  </div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/thornwood-bridge.js"></script>
+<script src="../src/models/witch.js"></script>
+<script src="../src/models/sol.js"></script>
+<script src="../src/models/bramble.js"></script>
+<script src="../src/models/lunara.js"></script>
+<script src="../src/models/envoi.js"></script>
+<script src="../src/fx/battle-fx.js"></script>
+<script src="../src/fx/io-spells.js"></script>
+<script src="../src/battle/rules.js"></script>
+<script src="../src/battle/engine.js"></script>
+<script src="../src/battle/sim.js"></script>
+<script src="../src/battle/sound.js"></script>
+<script src="../src/battle/screen.js"></script>
+<script>
+// The Bramble Horror (Chris, October 3: reference/demos/bramble-horror-bench.html), a wild foe that is always met alone,
+// at the Thornwood bridge. Io and Sol at a level from 1 to 20 against one of its four forms at the party's own level:
+// the Classic Horror, the Low Ambush (it strikes first), the Towering Reach (quicker and harder) and the Ancient Crown
+// (older, more massive, the worst of them). Strike, Thorn Sweep, Lure then Grab (its prey's turn gauge stops while she
+// is lured, and empties when she is dragged to the crown), Consume, and Undergrowth from level 8. It fears fire: flame
+// makes it recoil and breaks a lure. A heavy blade blow severs a cane, and it weakens with every cane lost.
+const FORMS = [
+  { name: 'Classic Horror', foes: ['bramble'] },
+  { name: 'Low Ambush', foes: ['brambleAmbush'] },
+  { name: 'Towering Reach', foes: ['brambleTowering'] },
+  { name: 'Ancient Crown', foes: ['brambleAncient'] },
+];
+const VARIANT = { bramble: 'classic', brambleAmbush: 'ambush', brambleTowering: 'towering', brambleAncient: 'ancient' };
+const look = (tall, reach, shadow, halfW) => ({ kind: 'bramble', tall, reach, shadow, halfW, yawBias: 0.2, glow: [shadow * 1.1, 0xff3d8a], appearColor: [0.95, 0.35, 0.5] });
+BattleScreen.start({
+  scene: 'thornwood-bridge',
+  level: 9, pack: 0, levels: [1, 20], packs: FORMS,
+  heroes: [
+    { id: 'io', make: () => makeWitch({}), home: [690, 625], yawBias: -0.3, shadow: 0.62, tall: 2.1, kind: 'io' },
+    { id: 'sol', make: () => makeSol({}), home: [742, 668], yawBias: -0.25, shadow: 0.6, tall: 1.9, kind: 'sol', stop: 0.9 },
+  ],
+  slots: [[845, 598]],
+  foeLook: { bramble: look(1.9, 1.0, 1.6, 1.9), brambleAmbush: look(1.6, 1.0, 1.7, 1.9), brambleTowering: look(2.3, 1.1, 1.4, 2.2), brambleAncient: look(2.7, 1.5, 2.1, 2.9) },
+  makeFoe: (id, level) => makeBramble({ variant: VARIANT[id], level }),
+  makeLunara: () => makeLunara({}),
+  makeEnvoi: () => makeEnvoi({}),
+  fight: (L, p) => ({
+    party: [{ id: 'io', level: L }, { id: 'sol', level: L }],
+    foes: [{ id: FORMS[p].foes[0], level: L }],
+    flags: { party: true, refit: L > 5, envoi: L > 10, stoop: L > 15 },
+    herbs: Object.assign({}, BattleSim.BAGS.wild),
+  }),
+  pickNote: (L) => 'It comes at the party’s level. At its own level a careful player beats the Classic Horror about four times in five and the Ancient Crown about one time in three; a perfect player beats the Ancient Crown a little more than half the time. In the wilds it is one fight in five, at a level rolled in the band’s range.' + (L < 8 ? ' Below level 8 it has no Undergrowth.' : '') + (L > 10 ? ' Envoi is in the Summon menu once Sol has 70 Heat.' : ''),
+  introMsg: (fs) => (fs[0].id === 'brambleAmbush' ? 'By the Thornwood bridge a low blackberry thicket grows over the stones, heavy with fruit.' : 'By the Thornwood bridge stands a blackberry thicket, lusher than any the party has seen, and heavy with fruit.'),
+  introAfter: (fs) => (fs[0].id === 'brambleAmbush' ? 'It was never a thicket. It strikes before anyone can move.' : fs[0].id === 'brambleAncient' ? 'The ground heaves. Old woody horns rise out of its crown: an Ancient Crown.' : 'The ground heaves, its roots flare, and its canes rise toward the party.'),
+  attackText: (fs) => 'The ' + fs[0].def.form + ' attacks!',
+  winMoth: 'It thrashes once more, then collapses flat, drops its fruit, withers brown and crumbles away.',
+  winText: 'The thicket is only dead canes and fallen fruit now. The way over the bridge is clear.',
+  loseText: 'The party falls among the thorns. They wake at the last rest with everything they had. Next time: fire breaks its lure, and a heavy blade cuts its canes.',
+});
+</script>
+</body>
+</html>

@@ -132,7 +132,11 @@
     // everyone still standing, heads included
     function shotField(k) {
       const pts = [];
-      for (const f of standing()) pts.push({ x: f.pos.x, y: 0, z: f.pos.z }, { x: f.pos.x, y: f.tall, z: f.pos.z });
+      for (const f of standing()) {
+        pts.push({ x: f.pos.x, y: 0, z: f.pos.z }, { x: f.pos.x, y: f.tall, z: f.pos.z });
+        const w = (f.look && f.look.halfW) || 0; // a sprawling foe (the Bramble Horror's canes) is framed by its width too
+        if (w) pts.push({ x: f.pos.x + w, y: 0, z: f.pos.z }, { x: f.pos.x - w, y: 0, z: f.pos.z });
+      }
       if (pts.length) shotFit(pts, 1, k || 2);
     }
     function addShake(px) { if (!REDUCED) shake.amp = Math.max(shake.amp, px); }
@@ -450,6 +454,15 @@
       else if (e.t === 'severed') word(to, 'Can’t be healed');
       else if (e.t === 'cover') word(who, 'Guard');
       else if (e.t === 'counter') word(who, 'Counter');
+      else if (e.t === 'scorch') {
+        who.m.play('burn', true);
+        if (e.broke) { who.charged = false; word(who, 'Lure broken'); UI.note('The flame breaks the lure. Its prey is free.', 2); }
+        else { word(who, 'Recoils'); if (!S.scorchSeen) { S.scorchSeen = true; UI.note('It fears fire: the flame makes it recoil, and its next turn comes later.', 2.4); } }
+      } else if (e.t === 'cane') {
+        if (who.m.sever) who.m.sever();
+        word(who, 'Cane severed');
+        if (!S.caneSeen) { S.caneSeen = true; UI.note('A heavy blade blow severs a cane. Every cane it loses takes some force from its blows.', 2.6); }
+      } else if (e.t === 'held') { word(to, 'Held'); UI.note(E.unit(e.to).name + ' is dragged to its crown. Her turn starts over.', 2.2); }
       else if (e.t === 'sap') {
         if (e.what === 'heat') { D[e.to].heat = Math.max(0, D[e.to].heat - e.n); if (e.n) word(to, '−' + e.n + ' Heat', 'heat'); }
         else { D[e.to].mp = Math.max(0, D[e.to].mp - e.n); if (e.n) word(to, '−' + e.n + ' MP'); }
@@ -1196,9 +1209,10 @@
       },
       // the charged blow, released: the black sun falls on the whole party
       async blackNoon(f, ev) {
-        const W = f.m, A = W.ACTIONS.blackNoon;
+        const W = f.m, A = W.ACTIONS.blackNoon, tg = reach(), c = centerOf((tg.length ? tg : living('hero')).map((h) => h.pos));
         UI.cinematic(true); UI.vignette(0.85);
         shotField(2.2);
+        const spot = toward(f.pos, c, 3.0); await moveTo(f, spot.x, spot.z, 4.6); faceTo(f, { pos: c });
         W.play('blackNoon', true); SND.sfx.eclipse();
         await untilP(W, A.hits[0] - 0.08); SND.sfx.swish();
         await untilP(W, A.hits[0]);
@@ -1210,6 +1224,87 @@
         await goHome(f, 3.6);
       },
     };
+    // ---------- the Bramble Horror (Chris's bench, reference/demos/bramble-horror-bench.html) ----------
+    // Rooted: it never moves. Its canes orient on its prey (state.target, from aimAt), lash out, hook and drag; its own model
+    // carries the sap, the berry juice, the leaves and the feeding glow. Its prey is carried in its canes while it holds her
+    const BERRY = 0xff4d7a;
+    function thornFx(t, big) {
+      const p = chest(t);
+      FX.slash(p, BERRY, rnd(-0.6, 2.6), big ? 1.35 : 1.1, 0.3); FX.burst(p, [0.95, 0.35, 0.5], big ? 40 : 26, big ? 3.8 : 3); FX.flashLight(p, 0xff6080, big ? 3 : 2, 0.3);
+      SND.sfx.hit(big ? 1.2 : 0.95); addShake(big ? 11 : 7); hitStop(big ? 0.1 : 0.06);
+    }
+    const BRAMBLE_MOVES = {
+      async strike(f, ev) {
+        const t = blowTarget(ev), W = f.m; f.aimAt = t;
+        shotBoth(t.pos, f.pos, 1.05, 2.6);
+        W.play('strike', true); SND.sfx.swish();
+        await untilP(W, W.ACTIONS.strike.hits[0]);
+        if (ev.has()) { thornFx(blowTarget(ev), true); ev.show(); }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+      },
+      async sweep(f, ev) {
+        const W = f.m; shotField(2.5);
+        W.play('sweep', true); SND.sfx.swish();
+        await untilP(W, W.ACTIONS.sweep.hits[0]);
+        if (warded(ev)) thornFx(ENV.ward, true); else for (const h of reach()) thornFx(h);
+        addShake(9); ev.showAll();
+        await until(() => !W.busy); ev.rest();
+      },
+      // its canes take the lured hero, lift her on each squeeze and drag her to the crown; then it lets her drop
+      async grab(f, ev) {
+        const t = blowTarget(ev), W = f.m, A = W.ACTIONS.grab, real = !!F[t.key] && t.side === 'hero';
+        f.aimAt = t; shotBoth(t.pos, f.pos, 1.0, 2.4);
+        if (real) { t.chestH = chest(t).y - (t.y || 0); t.heldBy = f; }
+        W.play('grab', true); SND.sfx.grasp();
+        for (let k = 0; k < A.hits.length; k++) {
+          await untilP(W, A.hits[k]);
+          if (ev.has()) { thornFx(blowTarget(ev), k === A.hits.length - 1); ev.show(); }
+        }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+        if (real) { await until(() => !t.heldBy && !(t.y > 0.01)); if (D[t.key].hp > 0) await goHome(t, 3); }
+      },
+      // it feeds through its roots: each pulse a blow on its prey, then a heal of what it took
+      async consume(f, ev) {
+        const t = blowTarget(ev), W = f.m, A = W.ACTIONS.consume;
+        f.aimAt = t; shotBoth(t.pos, f.pos, 1.0, 2.4);
+        W.play('consume', true); SND.sfx.grasp();
+        for (let k = 0; k < A.hits.length; k++) {
+          await untilP(W, A.hits[k]);
+          if (ev.peek() && ev.peek().t !== 'heal') { const p = chest(blowTarget(ev)); FX.burst(p, [0.95, 0.3, 0.55], 22, 2.4); FX.flashLight(p, 0xff3d8a, 2.4, 0.3); SND.sfx.hit(0.8); addShake(5); ev.show(); }
+          await untilP(W, A.cues[k]);
+          if (ev.peek() && ev.peek().t === 'heal') { FX.burst(W.anchor('hollow', V()), [1, 0.35, 0.6], 20, 2); SND.sfx.heal(); ev.show(); }
+        }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+      },
+      // canes stabbed into the soil; thorned shoots burst up round the prey and close over her
+      async undergrowth(f, ev) {
+        const t = blowTarget(ev), W = f.m, A = W.ACTIONS.undergrowth;
+        f.aimAt = t; shotBoth(t.pos, f.pos, 1.0, 2.4);
+        W.play('undergrowth', true); SND.sfx.grasp();
+        await untilP(W, A.cues[0]); addShake(9); hitStop(0.05); SND.sfx.boom(0.6);
+        if (!warded(ev)) FX.briars(t.pos, 1.9);
+        for (let k = 0; k < A.hits.length; k++) {
+          await untilP(W, A.hits[k]);
+          if (ev.has()) { thornFx(blowTarget(ev), true); FX.burst(new THREE.Vector3(t.pos.x, 0.25, t.pos.z), [0.6, 0.3, 0.35], 40, 3, { up: 1 }); ev.show(); }
+        }
+        await until(() => !W.busy); f.aimAt = null; ev.rest();
+      },
+    };
+    // the Lure: it holds its fruit out to one hero, who walks a few steps toward it; the Grab comes on its next turn
+    async function lureTurn(f, hd, ev) {
+      const W = f.m, t = hd.to ? F[hd.to] : null;
+      UI.banner('Lure', 2.2); if (t) { f.aimAt = t; shotBoth(t.pos, f.pos, 1.0, 2.2); } else shotAt(f.pos, 1.2, 2.2);
+      W.play('lure', true); SND.sfx.chime(); f.charged = true;
+      await untilP(W, W.ACTIONS.lure.hits[0]);
+      if (t) {
+        word(t, 'Lured');
+        const fruit = W.anchor('lure', V()), p = { x: t.pos.x + (fruit.x - t.pos.x) * 0.35, z: t.pos.z + (fruit.z - t.pos.z) * 0.35 };
+        moveTo(t, p.x, p.z, 0.9);
+        UI.note(E.unit(t.key).name + ' is drawn to the fruit, and her turn gauge stops. It will Grab her on its next turn. Fire breaks the lure.', 3.2);
+      }
+      await until(() => !W.busy); await wait(0.4); ev.rest();
+    }
+
     // her lost turn after Kestrel: she hesitates, and the moment passes
     async function hesitate(f, ev) {
       UI.banner('Hesitates', 1.6); shotAt(f.pos, 1.5, 2.4);
@@ -1250,7 +1345,7 @@
         else if (hd.t === 'strike' && hd.who === 'lunara') await lunaraStrike(ev);
         else if (hd.t === 'strike' && hd.who === 'envoi' && EN) await envoiStrike(ev);
         else if (hd.t === 'herb') await useHerb(F[hd.who], hd, ev);
-        else if (hd.t === 'charge') await chargeTurn(F[hd.who], hd, ev);
+        else if (hd.t === 'charge') await (F[hd.who] && F[hd.who].kind === 'bramble' ? lureTurn(F[hd.who], hd, ev) : chargeTurn(F[hd.who], hd, ev));
         else if (hd.t === 'stagger') await hesitate(F[hd.who], ev);
         else if (hd.t === 'move') {
           const f = F[hd.who], u = E.unit(hd.who), t = hd.target ? F[hd.target] : null;
@@ -1263,7 +1358,7 @@
           } else {
             if (hd.released) f.charged = false;
             UI.banner(hd.name, hd.move === 'eclipse' ? 2.4 : 1.4);
-            const fn = (f.kind === 'wisp' ? WISP_MOVES : f.kind === 'halcyon' ? HALCYON_MOVES : WRAITH_MOVES)[hd.move];
+            const fn = (f.kind === 'wisp' ? WISP_MOVES : f.kind === 'halcyon' ? HALCYON_MOVES : f.kind === 'bramble' ? BRAMBLE_MOVES : WRAITH_MOVES)[hd.move];
             if (fn) await fn(f, ev); else { await wait(0.8); ev.rest(); }
           }
         } else { apply(hd); ev.rest(); } // anything between turns, such as the frost wearing off
@@ -1353,7 +1448,7 @@
       } else await playLog(s.log);
       if (E.over) return finish();
       // anyone knocked out of place walks back (not a fallen hero, and not Sol hanging in the air)
-      await Promise.all(standing().filter((f) => D[f.key].hp > 0 && f.m.action !== 'stoopRise').map((f) => goHome(f, 2.2)));
+      await Promise.all(standing().filter((f) => D[f.key].hp > 0 && f.m.action !== 'stoopRise' && !(E.unit(f.key) && E.unit(f.key).lured)).map((f) => goHome(f, 2.2)));
       shotField(2);
       S.acting = false;
     }
@@ -1390,8 +1485,8 @@
       } else {
         // the foes rise where they stand, with a line of story before and after when the page has one
         for (const f of foes) { f.pos = { x: f.home.x, z: f.home.z }; f.yaw = f.tyaw = f.home.yaw; }
-        const told = cfg.introMsg && !quick;
-        if (told) { $('skip').hidden = false; shot(IW / 2, IH * 0.4, 0, 1.4); UI.msg(cfg.introMsg); await ws(2.6); }
+        const told = cfg.introMsg && !quick, said = (x) => (typeof x === 'function' ? x(E.foes) : x);
+        if (told) { $('skip').hidden = false; shot(IW / 2, IH * 0.4, 0, 1.4); UI.msg(said(cfg.introMsg)); await ws(2.6); }
         shotField(3);
         for (const f of foes) {
           f.m.root.visible = true; f.m.play('appear', true);
@@ -1400,7 +1495,7 @@
         }
         SND.sfx.shriek(1.0);
         await wait(0.6);
-        if (told && cfg.introAfter && !S.skip) { UI.msg(cfg.introAfter, true); await ws(2.6); }
+        if (told && cfg.introAfter && !S.skip) { UI.msg(said(cfg.introAfter), true); await ws(2.6); }
         UI.hideMsg(); $('skip').hidden = true;
       }
       for (const f of foes) { f.m.root.visible = true; f.tyaw = f.home.yaw; }
@@ -1441,10 +1536,10 @@
         // the last foe to fall: the robe falls empty (or the flame goes out), and the soul goes home as a pale moth
         const lastF = foes.filter((f) => f.m.action === 'die').sort((a, b) => a.m.progress - b.m.progress)[0] || foes[0];
         shotAt(lastF.pos, lastF.tall > 3 ? 0.8 : 1.35, 2, lastF.tall * 0.5);
-        for (let i = 0; i < 4; i++) { await wait(0.28); const p = chest(lastF); p.x += rnd(-0.3, 0.3); p.y += rnd(-0.4, 0.3); FX.burst(p, lastF.kind === 'wisp' ? [0.8, 0.6, 1] : [0.3, 1, 0.55], 26, 3); }
+        for (let i = 0; i < 4; i++) { await wait(0.28); const p = chest(lastF); p.x += rnd(-0.3, 0.3); p.y += rnd(-0.4, 0.3); FX.burst(p, lastF.look.appearColor || (lastF.kind === 'wisp' ? [0.8, 0.6, 1] : [0.3, 1, 0.55]), 26, 3); }
         SND.sfx.boom(0.9); mark('die');
         await until(() => lastF.m.progress >= 0.7 || lastF.m.progress < 0); mark('moth');
-        UI.msg(cfg.winMoth || 'A pale moth rises and drifts down into the Moonwell: the soul has gone home.', true);
+        UI.msg((typeof cfg.winMoth === 'function' ? cfg.winMoth(E.foes) : cfg.winMoth) || 'A pale moth rises and drifts down into the Moonwell: the soul has gone home.', true);
         await until(() => foes.every((f) => f.m.progress >= 0.99 || f.m.progress < 0 || f.m.action !== 'die'));
         mark('released'); UI.hideMsg();
         if (cfg.winLights) { const src = foes.find((f) => f.look.lights) || lastF; await relightTown(src.m.anchor('heart', V())); mark('relit'); }
@@ -1603,7 +1698,7 @@
     function resetHeroes() {
       for (const h of heroes) {
         if (h.m.reset) h.m.reset();
-        h.m.guard(false); h.pos = { x: h.home.x, z: h.home.z }; h.yaw = h.tyaw = h.home.yaw; h.target = null; h.res = null; h.spin = 0; h.aim = null; h.aimAt = null; h.trance = 0; h.out = false;
+        h.m.guard(false); h.pos = { x: h.home.x, z: h.home.z }; h.yaw = h.tyaw = h.home.yaw; h.target = null; h.res = null; h.spin = 0; h.aim = null; h.aimAt = null; h.trance = 0; h.out = false; h.heldBy = null; h.y = 0; h.vy = 0;
         if (h.m.state) { h.m.state.heat = 0; h.m.state.sunburn = 0; h.m.state.trance = 0; }
       }
       FX.shield(false); S.rimeOn = false;
@@ -1637,6 +1732,7 @@
 
     // ---------- main loop ----------
     let last = 0, fxKids = -1, glowG = null, rimeEdge = null;
+    const heldV = new THREE.Vector3();
     const flameP = new THREE.Vector3();
     function frame(now) {
       if (pace(now)) { requestAnimationFrame(frame); return; }
@@ -1652,6 +1748,14 @@
 
       for (const f of heroes.concat(foes)) {
         const mv = stepActor(f, dt);
+        // held in the Bramble Horror's canes: carried to where its canes hold her chest, lifted on each squeeze; dropped, she falls
+        if (f.heldBy) {
+          const H = f.heldBy.m.holding || 0;
+          if (H > 0.01) { f.heldBy.m.anchor('held', heldV); f.pos.x += (heldV.x - f.pos.x) * H; f.pos.z += (heldV.z - f.pos.z) * H; f.y = Math.max(0, heldV.y - (f.chestH || 1.1)) * H; f.vy = 0; }
+          else if (!f.heldBy.m.busy) f.heldBy = null;
+        }
+        if (!f.heldBy && f.y > 0) { f.vy = (f.vy || 0) - 9.8 * dt; f.y = Math.max(0, f.y + f.vy * dt); if (!f.y) f.vy = 0; }
+        if (f.kind === 'bramble' && f.m.state && E) { const u = E.unit(f.key); if (u) f.m.state.wilt = 1 - D[f.key].hp / u.maxHp; }
         f.phase += mv * 4.2; f.wb += ((mv > 1e-4 ? 1 : 0) - f.wb) * Math.min(1, dt * 10);
         const d = D[f.key];
         f.trance += (((d && d.inTrance) ? 1 : 0) - f.trance) * Math.min(1, dt * 3);
@@ -1661,7 +1765,7 @@
           if (t && t !== f) { const c = chest(t); f.m.state.target = { x: c.x, y: c.y, z: c.z }; }
           if (f.key === 'sol' && d) { f.m.state.heat = d.heat / 100; f.m.state.sunburn = d.heat >= 70 || d.inTrance ? 1 : 0; f.m.state.trance = f.trance; }
         }
-        f.m.root.position.set(f.pos.x, 0, f.pos.z); f.m.root.rotation.y = f.yaw;
+        f.m.root.position.set(f.pos.x, f.y || 0, f.pos.z); f.m.root.rotation.y = f.yaw;
         f.m.animate(f.phase, f.wb, clock.t, dt);
         const dying = f.m.action === 'die' && f.m.progress >= 0, fade = dying ? 1 - f.m.progress : f.m.root.visible ? 1 : 0;
         f.shadow.position.set(f.pos.x, 0.006, f.pos.z); f.shadow.material.opacity = 0.7 * fade;

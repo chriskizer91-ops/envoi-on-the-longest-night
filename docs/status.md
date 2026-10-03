@@ -1,6 +1,6 @@
 # Where Things Stand
 
-A handoff for the next session. Updated October 3, 2026, after the twentieth round: Harvest Moon replaces Moth Veil, the party carries one of each herb, and step 16, Halcyon's ambush, is built.
+A handoff for the next session. Updated October 3, 2026, after the twenty-first round: Harvest Moon replaces Moth Veil, the party carries one of each herb, step 16 (Halcyon's ambush) is built, and Chris's Bramble Horror is in the wilds.
 
 **Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Steps 13 to 16, the party, the great wraith, Dawnroost and Halcyon's ambush, are built too. Next is step 17, the finale.
 
@@ -13,16 +13,18 @@ A handoff for the next session. Updated October 3, 2026, after the twentieth rou
 
 | Page | Link | State |
 |---|---|---|
+| Bramble Horror | https://claude.ai/artifact/DzNK9CukB2rMsbcEhTSGGV | October 3: Chris's Bramble Horror as a lone wild foe at the Thornwood bridge, any of its four forms at any level from 1 to 20 (at the party's level): Lure then Grab, Consume, Thorn Sweep, Strike, Undergrowth; fire makes it recoil and breaks a lure, a heavy blade severs a cane |
+| Halcyon's ambush | https://claude.ai/artifact/9DkTvwCiXQcS1vJa2WSsUA | Step 16 (October 3): Io and Sol at level 15 to 20 against Halcyon at 20 at the northern crossroads, the gate out of band 3. She is the Gloam Knight until Sol knows her stance; Kestrel, Warden's Vow and its counter, Black Noon charged a turn ahead; her retreat at 20%, or the party falls and she spares them; either way Sol learns Kestrel Stoop |
 | Dawnroost | https://claude.ai/artifact/JuoPFYrjc9rGZKpuBGF3Jn | Step 15 (October 3): Io and Sol at level 8 to 13 against three level 12 wraiths at Dawnroost's living node, the gate out of band 2; win, and Envoi is made at the node |
 | The great wraith | https://claude.ai/artifact/Kk1fEqKFDzGbEcCbkYqZt5 | Step 14 (October 3): Io and Sol at level 3 to 8 against the great wraith on Bogmire's dark boardwalk, the gate out of band 1: Stolen Fire, Swallow Lamplight, Eclipse; beaten, it lets the town's lamplight go and the windows glow again |
-| The party | https://claude.ai/artifact/5awxTd1H3htoFJbjinQwz1 | Step 13 (October 2): Io and Sol against nine packs of wisps, frost wisps and wraiths at any level from 1 to 20; Sol's Heat, Sword Arts and Dawnbreaker, Io's new Moonlore, Lunara across the pack, Envoi from level 11, herbs, a target for every blow, and a frame-rate button |
+| The party | https://claude.ai/artifact/5awxTd1H3htoFJbjinQwz1 | Step 13 (October 2): Io and Sol against nine packs of wisps, frost wisps and wraiths at any level from 1 to 20; Sol's Heat, Sword Arts and Dawnbreaker, Io's new Moonlore (Harvest Moon from level 6), Lunara across the pack, Envoi from level 11, one of each herb, a target for every blow, and a frame-rate button |
 | The first fight | https://claude.ai/artifact/MkgkJSQVgGp3JEivcmN2KN | Step 12 (October 2): Io alone against the Night square wraith at level 1, played by the battle engine with the finished models; Lunara's Embrace and Silver Requiem; experience, shards and the level-up at the end. You can lose |
-| Battle balance | https://claude.ai/artifact/DruqrA8zAzZNpe4ahRXFwe | Phase 2 groundwork (October 2): all 25 balance targets with the simulator's results, any fight played turn by turn with its gauges, the level curve, experience and shards, and the new rules for Chris to approve |
-| The cast | https://claude.ai/artifact/Qk8apijsA3ZjVoK88XF4bJ | Step 11 (October 2): every model at true scale; pick an encounter, who acts and their target. Pixel 7a: 60 fps with five models, 39 with eight. Builds models when first needed |
+| Battle balance | https://claude.ai/artifact/DruqrA8zAzZNpe4ahRXFwe | Updated October 3: all 52 balance targets with the simulator's results (the Bramble Horror's among them), any fight played turn by turn with its gauges, the level curve, experience and shards, and the rules |
+| The cast | https://claude.ai/artifact/Qk8apijsA3ZjVoK88XF4bJ | Step 11 (October 2): every model at true scale; pick an encounter, who acts and their target. Pixel 7a: 60 fps with five models, 39 with eight. Builds models when first needed. October 3: Harvest Moon in place of Moth Veil |
 | Walking test | https://claude.ai/artifact/3YJkf77SD43iWJgo6pXmcf | The pixel Io (28 × 42) on all 13 ground-level maps at 768 wide with sharp pixels, 0.7× zoom, one walking speed and a mini-map; the talking portraits in a dialogue box. No walls yet |
 | Noctara | https://claude.ai/artifact/JWFwFUZTDum2CZjbGXotir | Rebuilt October 2 with the finished Io, Sol and Halcyon |
 | Lunara | https://claude.ai/artifact/Y1hTureSoXGBnTer4tJNSX | Polished October 2: heavier skirt chains and pointed ears |
-| Io, the Witch | https://claude.ai/artifact/6vRCkyYzZjn5Fc77GYebyE | Polished October 2: her new spells sized for the battle camera |
+| Io, the Witch | https://claude.ai/artifact/6vRCkyYzZjn5Fc77GYebyE | Polished October 2: her new spells sized for the battle camera. October 3: Harvest Moon in place of Moth Veil |
 | The wisp | https://claude.ai/artifact/GG9LKbSjeohk7UA2UJ7Kcp | Polished October 2: a darker, fuller tail and a deeper, torn hollow; the frost variant checked in every action |
 | Shadow Wraith and great wraith | https://claude.ai/artifact/VzY24F1cx38cVhs87wfvKU | Polished October 2: the scythe's ornate head and the long torn hem from its sheet; the Great wraith toggle switches in place |
 | Sol | https://claude.ai/artifact/9Sbu4aSYqmmiKytpy3y8as | Polished October 2: wispier hair, a rounder face, the cape over her shoulders, Ember Rush aimed at the wraith |
@@ -92,6 +94,13 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
   - a foe's name can wait for the party to know her (`alias`, with `knowLines`);
   - endings: `retreatLines` for a foe who leaves at a share of her HP, and `spared` with `sparedLines` for a lost fight that goes on with the story;
   - `stoopLines` for learning Kestrel Stoop, and end card titles and texts per outcome (`endTitles`, `endTexts`).
+- **The Bramble Horror** (Chris's new wild foe, `BRAMBLE_MOVES` in `screen.js`):
+  - one wild fight in five, alone, in four forms;
+  - its Lure stops the lured hero's gauge, and its Grab carries her in its canes (`heldBy`, lifted by the model's `holding`);
+  - flame makes it recoil and breaks a lure (`scorch`), and a heavy blade severs a cane (`cane`);
+  - it wilts as its HP falls;
+  - the page's `foeLook.halfW` frames a sprawling foe by its width;
+  - its numbers and targets: `design-decisions.md`, twenty-first round.
 
 ## The battle groundwork
 

@@ -141,7 +141,7 @@
         case 'oath': flush(); parts.push(['note', " Warden's Oath: Sol steps in front of Io."]); break;
         case 'counter': flush(); parts.push(['note', ' ' + nameOf(B, e.who) + ' counters.']); break;
         case 'ward': flush(); parts.push(['note', " Envoi's Folding Ward takes the whole blow."]); break;
-        case 'charge': flush(); parts.push(['b', nameOf(B, e.who)], ' gathers ' + e.name + '. It lands on her next turn.'); break;
+        case 'charge': flush(); parts.push(['b', nameOf(B, e.who)], e.name === 'Lure' ? ' holds out its fruit: the Lure. The Grab comes next turn.' : ' gathers ' + e.name + '. It lands on her next turn.'); break;
         case 'tranceReady': flush(); parts.push(['note', ' ' + nameOf(B, e.who) + "'s Trance gauge is full."]); break;
         case 'trance': flush(); parts.push(['b', nameOf(B, e.who)], ' enters Trance.'); break;
         case 'tranceEnds': flush(); parts.push(['note', ' ' + nameOf(B, e.who) + "'s Trance ends."]); break;
@@ -162,6 +162,11 @@
         case 'mp': flush(); parts.push(['heal', ' Io +' + e.n + ' MP']); break;
         case 'sap': flush(); parts.push(['note', ' The blade drinks ' + (e.to === 'sol' ? 'Heat' : 'MP') + '.']); break;
         case 'retreat': flush(); parts.push(['note', ' Halcyon is down to a fifth of her strength and retreats into the dark.']); break;
+        case 'lured': flush(); parts.push(['note', ' ' + nameOf(B, e.to) + ' is drawn to the fruit; her gauge stops.']); break;
+        case 'unlured': break;
+        case 'held': flush(); parts.push(['note', ' ' + nameOf(B, e.to) + ' is dragged to the crown; her turn starts over.']); break;
+        case 'scorch': flush(); parts.push(['note', e.broke ? ' The flame breaks the lure.' : ' It recoils from the flame.']); break;
+        case 'cane': flush(); parts.push(['note', ' A cane is severed: ' + e.left + ' left.']); break;
         case 'end': break;
       }
     }

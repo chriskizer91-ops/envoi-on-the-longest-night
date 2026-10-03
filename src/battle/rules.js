@@ -87,6 +87,19 @@
     envoi: { name: 'Envoi', heatNeed: 70, hits: [180, 180, 180, 180, 180, 180, 180, 180, 1800], element: 'sun', time: 8.2 },
   };
 
+  // the Bramble Horror's kit, shared by its four forms (the moves on Chris's bench). Undergrowth, its big move, comes from
+  // level 8 (the Ancient Crown always has it)
+  const BRAMBLE_MOVES = {
+    strike: { name: 'Strike', weight: 0.33, hits: [480], target: 'lastAttacker', time: 2.0 },
+    sweep: { name: 'Thorn Sweep', weight: 0.24, hits: [300], target: 'all', time: 2.4 },
+    // Lure, then Grab: the fruit is held out to one hero for a turn; the canes take her on the next, and her turn gauge empties
+    grab: { name: 'Grab', weight: 0.24, charge: true, chargeName: 'Lure', hits: [165, 165, 195], held: true, target: 'one', time: 3.2 },
+    // it feeds through its roots on the weakest: each pulse a blow, then a heal of what it took
+    consume: { name: 'Consume', weight: 0.2, hurt: 0.7, cooldown: 3, hits: [165, 165, 180], drain: true, target: 'lowest', time: 3.6 },
+    undergrowth: { name: 'Undergrowth', weight: 0.16, minLevel: 8, hits: [345, 450], target: 'one', time: 3.8 },
+  };
+  const bramble = (form, o) => Object.assign({ name: 'Bramble Horror', form, moves: BRAMBLE_MOVES, weak: { fire: 1.5, sun: 1.25 }, fearsFire: 0.3, canes: 6, alone: true }, o);
+
   // ---------- foes ----------
   // A regular foe takes a level, so it can meet the party anywhere; Halcyon and Noctara are fixed at 20.
   // A move's weight is how often it's picked; "below" and "once" make a desperation move; "charge" spends one turn
@@ -140,6 +153,20 @@
         eclipse: { name: 'Eclipse', below: 0.35, once: true, hits: [670], target: 'all', time: 3.4 },
       },
     },
+    // ---------- the Bramble Horror (Chris, October 3: reference/demos/bramble-horror-bench.html) ----------
+    // A patient predator of the wilds that looks like a lush blackberry thicket: always met alone, and formidable. Four
+    // forms: the Classic Horror, the Low Ambush (it strikes before the party can act), the Towering Reach (quicker and
+    // harder) and the Ancient Crown (older, more massive, the worst of them). It fears fire: a fire blow makes it recoil
+    // (its gauge drops), and breaks a Lure. A heavy blade blow severs a cane, and every cane lost takes 8% off its blows.
+    // Lure spends a turn with the fruit held out (it can be seen coming), and the Grab falls on that hero next turn,
+    // emptying her turn gauge as she is dragged to the crown.
+    // Its level is rolled in the band's range like any wild foe's, so it follows Chris's rule for how hard a fight is: a
+    // decent player beats one below her level, about half of those at her level, and seldom one above it. It is worth about
+    // 1.6 times an average pack's experience (the Ancient Crown about 3.2 times). Set with the simulator (tools/balance.mjs)
+    bramble: bramble('Classic Horror', { hp: 10000, atb: 1.9, xp: 75, shards: 40 }),
+    brambleAmbush: bramble('Low Ambush', { hp: 9000, atb: 1.9, ambush: true, xp: 70, shards: 38 }),
+    brambleTowering: bramble('Towering Reach', { hp: 9000, atb: 1.7, dmg: 1.1, xp: 80, shards: 45 }),
+    brambleAncient: bramble('Ancient Crown', { hp: 15000, atb: 2.0, dmg: 1.25, canes: 7, allMoves: true, xp: 150, shards: 90 }),
     // Halcyon, the Gloam Knight, fixed at level 20: the bible's kit on this game's curve. Weak to Sun (the blade
     // remembers), resists Shadow. Tuned for the ambush: a party at 15 falls in about two minutes; an expert at 18
     // brings her to 20% (and her retreat) about half the time, and at 20 almost always

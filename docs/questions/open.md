@@ -1,6 +1,6 @@
 # Still Open
 
-Everything not yet decided, as of October 3, 2026, twentieth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
+Everything not yet decided, as of October 3, 2026, twenty-first round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
 
 Every earlier question has been answered; the answers are in `design-decisions.md`, under the October 2 rounds.
 
@@ -34,6 +34,13 @@ Every earlier question has been answered; the answers are in `design-decisions.m
 15. Answered: Moth Veil is gone. In its place Io learns Harvest Moon at the Bogmire refit, which gives Sol Heat (`design-decisions.md`, twentieth round).
 
 
+18. **The Bramble Horror at band entries.** In the wilds its level is rolled in the band's range, like any wild foe's, so on entering a band it is often two to four levels above the party, and an attentive player beats it only about one time in five. It is one wild fight in five. Three ways to go:
+    - keep it as it is: it follows the rule for how hard fights are, and band entries are dangerous;
+    - its level follows the party's, so it is always formidable but never out of reach (about four in five for an attentive player, the Ancient Crown about one in four);
+    - or, since it is rooted, the party can always walk away from it: a Flee command that works only on it.
+
+    The recommendation is the third with the first: a too-strong bramble can be left, which suits a patient predator that can't chase.
+
 ## Lore questions
 
 For the separate lore conversation.
@@ -53,3 +60,4 @@ For the separate lore conversation.
     - The party falls: "Io is down. The knight walks toward her, blade low." Then: "Sol drags herself up and stands over Io, her sword raised." Then: "Halcyon's blade stops. For a long moment she only looks at her old squire." Then: "Then she steps back into the dark, and is gone."
     - Kestrel Stoop: "The fight has stirred an old memory: Halcyon in the waystation yard, teaching her squire to hover before she strikes."
 17. **A name for Io's new spell.** It replaced Moth Veil and pours 70 Heat into Sol. For now it is "Harvest Moon": a low, warm moon, and Io's Moonlore is all moon. Keep it, or name it something else?
+19. **Where the Bramble Horror lives** (lore). Chris's bench places it in the Wildlands of the Southern Isles. In this game it is in all four bands, the Ancient Crown from the third. Should it stay out of the frozen north (band 4), or is the Ancient Crown old enough to outlast the cold?

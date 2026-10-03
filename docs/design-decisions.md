@@ -743,3 +743,49 @@ Two more findings, for later:
   | 20 | 99% | 89% |
 
   At 19, one level below her, an attentive player makes her retreat about half the time, close to Chris's "half the time against an equal-level foe".
+
+## October 3, 2026, twenty-first round: the Bramble Horror
+
+Chris brought the Bramble Horror, a carnivorous blackberry thicket from the book he is writing, as a model bench (`reference/demos/bramble-horror-bench.html`; the model is `src/models/bramble.js`, unchanged). His brief: it is for the wilds, it is only ever fought one at a time, and it should be formidable, the Ancient Crown most of all.
+
+- **One wild fight in five is a Bramble Horror, alone.** Its form comes from the band:
+
+  | Band | Forms |
+  |---|---|
+  | 1 | Classic Horror, Low Ambush |
+  | 2 | Classic Horror, Low Ambush, Towering Reach |
+  | 3 | Classic Horror, Towering Reach, Ancient Crown |
+  | 4 | Towering Reach, Ancient Crown |
+
+- **Its kit** is the bench's moves:
+  - **Strike** (one hero) and **Thorn Sweep** (both).
+  - **Lure, then Grab:** it holds its fruit out to one hero for a turn. She walks toward it, and her turn gauge stops. On its next turn the canes take her, lift her and drag her to the crown, and her gauge empties.
+  - **Consume:** when it is hurt, it feeds on the weakest hero, healing by what it takes.
+  - **Undergrowth:** its big move, from level 8 (the Ancient Crown always has it).
+- **What fights it:**
+  - It fears fire, as on the bench. Flame (Flame Bolt, or Sol's sun blade) makes it recoil, so its gauge drops, and breaks a lure, freeing the lured hero.
+  - A heavy blade blow severs a cane (the bench's Sever), and each cane lost takes 8% off its blows. It keeps at least three.
+  - It wilts as its HP falls, as on the bench.
+- **The forms:**
+  - The Low Ambush strikes before the party can act.
+  - The Towering Reach is quicker and hits 10% harder.
+  - The Ancient Crown is older and more massive: half again the HP, 25% harder blows, seven canes and Undergrowth at any level.
+- **How formidable** (1,000 fights each, at the party's own level):
+
+  | Form | Careless | Attentive | Expert |
+  |---|---|---|---|
+  | Classic Horror (level 9) | 17% | 82% | 96% |
+  | Low Ambush (level 9) | 18% | 79% | 95% |
+  | Towering Reach (level 12) | 11% | 49% | 74% |
+  | Ancient Crown (level 14) | 1% | 25% | 59% |
+
+  Without the Lure's cost, breaking it with fire only swapped a harmless turn for a real attack, so the expert did better never casting Flame Bolt. Now the lured hero's gauge stops, and flame is the answer. If Sol's Guard takes the Grab for Io, Sol is the one held.
+- **In the wilds its level is rolled in the band's range,** like any wild foe's, so it follows Chris's rule for how hard fights are. Attentive win rates:
+  - near the end of a band, where it is usually below the party: 86%;
+  - in the middle, at about the party's level: about half;
+  - on entering a band, often two to four levels above: 11% to 23%.
+
+  The open question is whether that is too harsh at band entries (`questions/open.md`, 18).
+- **The wild-fight targets** now measure the packs, the other four fights in five, and hold as before. The Bramble has its own targets. All 52 are met.
+- **Experience:** about 1.6 times an average pack, and the Ancient Crown about 3.2 times. The game is about 74 wild fights from level 2 to 20 (79 before), with the last band holding 39%, inside Chris's 70 to 85.
+- **The demo** is `demos/bramble.html`: the Thornwood bridge, any level, any form, at the party's own level. On screen, its canes take aim at their prey, and a grabbed hero is carried in the canes. Flame makes it rear away from the fire, and a severed cane drops.
