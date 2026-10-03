@@ -6,10 +6,16 @@ A handoff for the next session. Updated October 3, 2026, after the twenty-second
 
 ## Putting it all together (October 3, later)
 
-Chris asked for everything to be brought together in a new folder, `../putting-it-all-together/`. It holds the game's page (moved from `demos/game.html`), and its README lists every piece of the game, where it comes from, and what is still to come: the Bramble Colossus, the living battlefields, Chris's next mobs, the art, the words, and his three songs, which go in last.
+Chris asked for everything to be brought together in a new folder, `../putting-it-all-together/`. It holds the game's page (moved from `demos/game.html`), and its README lists every piece of the game, where it comes from, and what is still to come: Chris's next mobs, the art, the words, and his three songs, which go in last.
 
 - **Branch:** this work is on `ccr-9e19f4e2-29pyn6`, which holds everything: the game from `second-account-work` and the creature ideas from `claude/sleepy-dirac-t4ftx0`, merged.
-- **Testing:** `node tools/game-test.mjs` plays the built game headless (the title, a new game, walking, the menu, the save, and a wild fight to its end with `--steps`).
+- **Built since (the handoff's sections 2, 3, 9 and the delivery notes):**
+  - **The Bramble Colossus** in the game: the last band's great wild foe, about one wild fight in twelve there (`design-decisions.md`, "putting it all together"). Its fight on its own is `demos/colossus.html`.
+  - **Living battlefields** on every painted battle (`src/fx/battlefield.js`): each painting's own air (mist, fireflies, snow, sparks), dust and turf where big blows land, birds and bats put up by roars, leaves shaken down, and a red storm for the Colossus's Wrath.
+  - **New mobs play from their models:** a foe with no choreography of its own plays each move with its model's action and hit times (`anyMove` in `src/battle/screen.js`). The steps for a new mob are in the folder's README.
+  - **Saves and settings:** three save slots, a save code to copy to another device or copy of the game, word speed, larger text, and separate music and effects volumes.
+  - **The file Chris keeps:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` puts three.js and the two fonts inside the page (15.4 MB), so it works with no internet.
+- **Testing:** `node tools/game-test.mjs` plays the built game headless: the title, a new game, walking, the menu, the save slots and save code, the save, and with `--steps` a wild fight or the Colossus to its end.
 
 ## Working from the second account
 

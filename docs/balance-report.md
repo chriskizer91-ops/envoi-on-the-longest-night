@@ -46,12 +46,12 @@ The play styles: **careless** picks moves almost at random and heals late; **att
 | Ancient Crown | 19 | attentive | 37% | 20% to 50% | 2.9 min | 53% of foe HP | Yes |
 | Ancient Crown | 14 | expert | 59% | 45% to 80% | 4.6 min | 35% of foe HP | Yes |
 | Ancient Crown | 19 | expert | 64% | 45% to 80% | 4.5 min | 39% of foe HP | Yes |
-| Bramble Colossus | 18 | expert | 63% | 55% to 80% | 4.3 min | 19% of foe HP | Yes |
-| Bramble Colossus | 19 | expert | 63% | 55% to 80% | 4.3 min | 19% of foe HP | Yes |
-| Bramble Colossus | 20 | expert | 63% | 55% to 80% | 4.3 min | 19% of foe HP | Yes |
-| Bramble Colossus | 18 | attentive | 26% | 15% to 40% | 2.1 min | 13% of foe HP | Yes |
-| Bramble Colossus | 19 | attentive | 26% | 15% to 40% | 2.1 min | 13% of foe HP | Yes |
-| Bramble Colossus | 20 | attentive | 25% | 15% to 40% | 2.1 min | 13% of foe HP | Yes |
+| Bramble Colossus | 18 | expert | 68% | 55% to 80% | 3.7 min | 19% of foe HP | Yes |
+| Bramble Colossus | 19 | expert | 68% | 55% to 80% | 3.7 min | 19% of foe HP | Yes |
+| Bramble Colossus | 20 | expert | 68% | 55% to 80% | 3.7 min | 19% of foe HP | Yes |
+| Bramble Colossus | 18 | attentive | 28% | 15% to 40% | 2.0 min | 12% of foe HP | Yes |
+| Bramble Colossus | 19 | attentive | 28% | 15% to 40% | 2.0 min | 12% of foe HP | Yes |
+| Bramble Colossus | 20 | attentive | 27% | 15% to 40% | 2.0 min | 12% of foe HP | Yes |
 | The great wraith | 5 | careless | 37% | 20% to 60% | 2.2 min | 17% of foe HP | Yes |
 | The great wraith | 5 | attentive | 93% | 80% to 96% | 2.4 min | 12% of foe HP | Yes |
 | The great wraith | 5 | expert | 100% | 97% to 100% | 2.6 min | 10% of foe HP | Yes |

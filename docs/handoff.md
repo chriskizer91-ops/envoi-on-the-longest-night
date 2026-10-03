@@ -2,6 +2,8 @@
 
 October 3, 2026. The game plays from the title to the ending in one page (https://claude.ai/artifact/UDTnemDCiz2EKcoGqbCtm8), and every part has been played through headless with no errors. This note lists what is waiting on Chris, then everything Claude would add or improve, most important first. `status.md` has the links and `design-decisions.md` the reasons behind what is built.
 
+**Done since, in `../putting-it-all-together/` (October 3, later):** the Bramble Colossus in the game (section 2); living battlefields on every painted battle (section 3, the first way); three save slots, a save code, word speed, larger text and separate volumes (section 9); the offline build (size and delivery); and `tools/game-test.mjs` (technical notes). Each is marked below.
+
 ## Waiting on Chris
 
 1. **A play on the phone.** Nothing has been played by hand yet. The headless tests prove it runs, not that it feels right: the walking pace, how often fights come, the difficulty, how long each fight takes to load, and how the battles run on the Pixel 7a inside the full page.
@@ -12,7 +14,7 @@ October 3, 2026. The game plays from the title to the ending in one page (https:
    - every story scene, the ending's words included.
 3. **Art requests 06 and 07:** sixteen townsfolk portraits and nine story stills. Each goes in with one line in `src/game/stills.js`.
 4. **The songs.** Say which song is which (the title, a battle theme, a boss theme, the ending?). Claude puts each where it goes, and the synthesized pieces keep the rest.
-5. **The Bramble Colossus** (`reference/demos/bramble-colossus-bench.html`): a yes to the plan below, or changes to it.
+5. **The Bramble Colossus** (`reference/demos/bramble-colossus-bench.html`): built as the plan below says (`demos/colossus.html`). Changes are still welcome: its name, where it lives, its moves.
 6. **The townsfolk's sprites:** a yes to the paper doll below, or another direction.
 
 ## Gameplay, in order
@@ -24,6 +26,8 @@ October 3, 2026. The game plays from the title to the ending in one page (https:
 - The finale is meant to be hard: an attentive player wins about one try in twenty. If that is too much once played by hand, ease the cold from 11.5% a turn.
 
 ### 2. The Bramble Colossus, the last band's great wild foe
+
+**Built (October 3, later):** as planned, without the lair. Siren Bloom and Devour became one move in two turns, broken by fire or a big blow to its bare heart, since a battle turn can't stop halfway through Devour (`design-decisions.md`, "putting it all together").
 
 Chris's model is a perfect boss: the Bramble Horror grown to 7.5 m, with a two-phase fight (Wrath at half HP), a weak point (its heart, bare while the bud is open), fear of fire, canes it loses, and ten big moves.
 
@@ -51,7 +55,7 @@ The plan:
 
 The meadow in Chris's bench answers the fight: shockwaves roll through the grass, a roar sends the birds up, Wrath turns the sky into a red storm. Two ways to bring that in:
 
-- **On every painted battle** (cheap, and it fits the look). The battle screen already knows the ground plane of each painting, so these work on all nine:
+- **On every painted battle** (cheap, and it fits the look). **Built (October 3, later):** `src/fx/battlefield.js`. The battle screen already knows the ground plane of each painting, so these work on all nine:
   - shockwave rings with dust and turf thrown up where big blows land;
   - drifting ground mist and fireflies, or snow on the frozen road and the dead Moonwell;
   - rain and lightning with thunder for the storms;
@@ -103,9 +107,9 @@ Today the party grows only by levels and the story's gifts (Harvest Moon, Envoi,
 
 ### 9. Menus and saves
 
-- **Three save slots,** and a save code to copy and paste, to move a game between devices or between the two halves of a split demo (each published page keeps its own save).
-- Text speed, auto-advance and larger text.
-- Separate volume for music and effects.
+- **Three save slots,** and a save code to copy and paste, to move a game between devices or between the two halves of a split demo (each published page keeps its own save). **Built.**
+- Text speed, auto-advance and larger text. **Word speed and larger text are built;** auto-advance isn't.
+- Separate volume for music and effects. **Built.**
 
 ### 10. Sound
 
@@ -130,11 +134,11 @@ The final deliverable is one HTML file under 30 MB, sent to Chris to keep. The p
 - **Two halves** (bands 1 and 2, bands 3 and 4) would work, but each published page keeps its own save, so carrying a game from one half to the other needs the save code from section 9.
 - **Simpler:** one link, with the paintings and songs published as files beside a small page. The same game and the same save; only the published copy is split, not the file Chris keeps.
 
-**The file Chris keeps must work offline,** so its build embeds three.js and the two fonts instead of loading them from the web. `tools/build.mjs` needs that option.
+**The file Chris keeps must work offline,** so its build embeds three.js and the two fonts instead of loading them from the web. **Built:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` (15.4 MB with the Colossus, three.js and the fonts inside).
 
 ## Technical notes
 
-- **Tests:** the headless test drivers live in the session scratchpad. They should move into `tools/` as one game test, with saves to start at each band.
+- **Tests:** `tools/game-test.mjs` is the game test (October 3, later): the title, a new game, walking, the menu, the save slots and code, and a wild fight or the Colossus to its end. Saves to start at each band are still to come.
   - Headless Chrome renders slowly (a 3D fight takes several minutes), so set fights are weakened to keep tests short.
   - The unbuilt page can't load the flight's textures from `file://`; test the built page (`node tools/build.mjs --min putting-it-all-together/game.html`) or serve the folder.
 - **Map tracing:** `node tools/check-maps.mjs` after any change to `src/game/maps.js`; `node tools/trace-overlay.mjs <map> <out.png>` to see it.

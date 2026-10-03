@@ -919,11 +919,12 @@ The plan in `handoff.md` (section 2), built:
 - **Fire and canes, as the Bramble Horror's:**
   - fire makes it recoil, and its next turn comes later;
   - a heavy blade blow severs one of its four great canes (it keeps two), and each cane lost takes 8% off its blows.
-- **Its numbers:** 20,000 HP at level 1's scale, a turn gauge of 2.3 seconds. Worth three times an average wild fight in its band (270 experience and 195 shards at level 1), and wild fights' 1.75 on top.
+- **Its numbers:** 17,000 HP at level 1's scale, a turn gauge of 2.3 seconds. Devour is the hardest thing it does: a seizing blow of 245 and three gulps of 280. Worth three times an average wild fight in its band (270 experience and 195 shards at level 1), and wild fights' 1.75 on top.
 - **How hard it is,** at the party's level from 18 to 20, 1,000 fights each (`tools/balance.mjs`):
-  - an expert wins 63%;
-  - an attentive player wins 25%, flees about 68% of the time and loses 6%. They walk away once a fallen hero can't be brought back, or when both heroes are under 42% of their HP;
-  - a careless one wins about 3%.
+  - an expert wins 68%, in about 3.7 minutes (about four and a half on screen);
+  - an attentive player wins 28%, flees 63% of the time and loses 10%. They walk away once a fallen hero can't be brought back, or when both heroes are under 42% of their HP;
+  - a careless one wins 8%.
+  - A first tuning, with more HP, took about seven minutes on screen; a headless play measured the screen at about 1.3 times the engine's own clock.
 - **The journey** (`tools/chain.mjs`, medians of 40): the attentive player's 28 wild fights and 25 more walking for levels, and the expert's 27 and 22, are as before. Every gate is reached at its level.
 - **The battle screen:**
   - a boss bar with a mark at half its HP, its phase ("Wrath"), and a "Heart bare" line while blows land double;

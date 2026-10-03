@@ -123,7 +123,7 @@
     bloom: { name: 'Siren Bloom', weight: 0.2, wrathWeight: 0.06, charge: true, charm: 0.5, then: 'devour', target: 'one', time: 3.6 },
     // the bloom's end: its arms lift the charmed hero into the flower, which shuts; a seizing blow, then three gulps, each
     // healing it by what it takes; then it bursts open and sets her back where she stood, its heart bare until its next turn
-    devour: { name: 'Devour', weight: 0, seize: 175, hits: [200, 200, 200], drain: true, prey: true, opens: true, target: 'one', time: 5.6 },
+    devour: { name: 'Devour', weight: 0, seize: 245, hits: [280, 280, 280], drain: true, prey: true, opens: true, target: 'one', time: 5.6 },
     // its second phase, once, at half its HP: faster and harder, its veins burning ember-red; it bursts open, heart bare
     enrage: { name: 'Wrath', below: 0.5, once: true, wrath: { haste: 0.8, fury: 1.2 }, opens: true, target: 'self', time: 3.6 },
   };
@@ -202,7 +202,7 @@
     // Bramble Horror, and a heavy blade blow severs one of its four great canes (it keeps two). Worth three times an
     // average wild fight in its band (xp and shards). Set with the simulator (tools/balance.mjs): at the party's level from
     // 18 to 20 an expert wins about two times in three; an attentive player about one time in four, fleeing otherwise
-    colossus: { name: 'Bramble Colossus', moves: COLOSSUS_MOVES, hp: 20000, atb: 2.3, weak: { fire: 1.5, sun: 1.25 }, fearsFire: 0.3, canes: 4, minCanes: 2, heart: 2, alone: true, boss: true, xp: 270, shards: 195 },
+    colossus: { name: 'Bramble Colossus', moves: COLOSSUS_MOVES, hp: 17000, atb: 2.3, weak: { fire: 1.5, sun: 1.25 }, fearsFire: 0.3, canes: 4, minCanes: 2, heart: 2, alone: true, boss: true, xp: 270, shards: 195 },
     // Halcyon, the Gloam Knight, fixed at level 20: the bible's kit on this game's curve. Weak to Sun (the blade
     // remembers), resists Shadow. Tuned for the ambush: a party at 15 falls in about two minutes; an expert at 18
     // brings her to 20% (and her retreat) about half the time, and at 20 almost always

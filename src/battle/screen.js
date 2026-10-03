@@ -1658,7 +1658,8 @@
           } else {
             if (hd.released) f.charged = false;
             UI.banner(hd.name, hd.move === 'eclipse' ? 2.4 : 1.4);
-            const fn = (f.kind === 'wisp' ? WISP_MOVES : f.kind === 'halcyon' ? HALCYON_MOVES : f.kind === 'bramble' ? BRAMBLE_MOVES : f.kind === 'colossus' ? COLOSSUS_MOVES : f.kind === 'noctara' ? NOCTARA_MOVES : WRAITH_MOVES)[hd.move];
+            // each kind of foe with choreography of its own; any other (a new mob) plays its moves from its model (anyMove)
+            const table = { wisp: WISP_MOVES, halcyon: HALCYON_MOVES, bramble: BRAMBLE_MOVES, colossus: COLOSSUS_MOVES, noctara: NOCTARA_MOVES, wraith: WRAITH_MOVES }[f.kind], fn = table && table[hd.move];
             if (fn) await fn(f, ev); else await anyMove(f, hd, ev);
           }
         } else if (hd.t === 'frostEnds' && ev.has()) await thaw(hd, ev);
