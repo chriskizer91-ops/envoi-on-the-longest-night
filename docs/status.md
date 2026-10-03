@@ -13,6 +13,7 @@ A handoff for the next session. Updated October 3, 2026, after the seventeenth r
 
 | Page | Link | State |
 |---|---|---|
+| Dawnroost | https://claude.ai/artifact/JuoPFYrjc9rGZKpuBGF3Jn | Step 15 (October 3): Io and Sol at level 8 to 13 against three level 12 wraiths at Dawnroost's living node, the gate out of band 2; win, and Envoi is made at the node |
 | The great wraith | https://claude.ai/artifact/Kk1fEqKFDzGbEcCbkYqZt5 | Step 14 (October 3): Io and Sol at level 3 to 8 against the great wraith on Bogmire's dark boardwalk, the gate out of band 1: Stolen Fire, Swallow Lamplight, Eclipse; beaten, it lets the town's lamplight go and the windows glow again |
 | The party | https://claude.ai/artifact/5awxTd1H3htoFJbjinQwz1 | Step 13 (October 2): Io and Sol against nine packs of wisps, frost wisps and wraiths at any level from 1 to 20; Sol's Heat, Sword Arts and Dawnbreaker, Io's new Moonlore, Lunara across the pack, Envoi from level 11, herbs, a target for every blow, and a frame-rate button |
 | The first fight | https://claude.ai/artifact/MkgkJSQVgGp3JEivcmN2KN | Step 12 (October 2): Io alone against the Night square wraith at level 1, played by the battle engine with the finished models; Lunara's Embrace and Silver Requiem; experience, shards and the level-up at the end. You can lose |
