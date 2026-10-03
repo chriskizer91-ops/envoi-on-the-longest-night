@@ -1,0 +1,14 @@
+/* The Bramble Ancient's bench on top of the Bramble Horror's bench.css and the Colossus's boss bar: an old-wood and
+   lichen HP bar, the header's sound switch, a "new" mark on its own two moves, and the words its stone and roots leave. */
+header #sound{margin-left:auto}
+header #resetView{margin-left:6px}
+header #sound[aria-pressed="true"]{color:#1c2414;background:#d9e8c4;border-color:#b9d49a;box-shadow:0 0 10px rgba(200,232,170,.35)}
+#tag .hpbar i{background:linear-gradient(90deg,#3e4f2c,#9fbf74 70%,#d8e6b8)}
+#tag .phase{color:#e2f0cc;border-color:rgba(200,226,170,.5)}
+.newk{display:inline-block;font:700 9.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:#1c2414;background:#c8e2a6;border-radius:3px;padding:2px 4px;vertical-align:1px}
+.moves .wbtn.new{border-color:rgba(200,226,170,.55)}
+.moves .wbtn.new small::after{content:" · new";color:#c8e2a6;font-weight:700}
+.dmg.stone{font:italic 400 22px/1 var(--display);color:#ece8dc;text-shadow:0 0 8px #8c8778,0 2px 0 #1c1a16}
+.dmg.root{font:italic 400 22px/1 var(--display);color:#e6f2cc;text-shadow:0 0 8px #6f9a4c,0 2px 0 #141c0e}
+.ring.stone{border-color:#efe9da;box-shadow:0 0 16px #a39d8a,inset 0 0 10px #a39d8a;width:52px;height:52px;margin:-26px 0 0 -26px}
+.ring.root{border-color:#e2f0c8;box-shadow:0 0 16px #7aa955,inset 0 0 10px #7aa955}

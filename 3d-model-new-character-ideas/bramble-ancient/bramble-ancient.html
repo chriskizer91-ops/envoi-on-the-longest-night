@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bramble Ancient Bench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../bramble-horror/bench.css">
+<link rel="stylesheet" href="../bramble-colossus/boss.css">
+<link rel="stylesheet" href="./ancient.css">
+</head>
+<body>
+<header>
+ <h1>Bramble Ancient</h1>
+ <span class="sub">The first bramble, as old as the forest · a test model</span>
+ <button class="hbtn" id="sound" type="button" aria-pressed="false">Sound off</button>
+ <button class="hbtn" id="resetView" type="button">Reset view</button>
+</header>
+<div id="app">
+ <div id="stage">
+  <canvas id="gl"></canvas>
+  <div id="flash" aria-hidden="true"></div>
+  <div id="vignette" aria-hidden="true"></div>
+  <div id="pops" aria-hidden="true"></div>
+  <div id="tag" class="win">
+   <div class="top"><span class="nm" id="tagName">Waking the Ancient…</span><span class="phase" id="phase">Calm</span></div>
+   <div class="ds" id="tagDesc">Building the model.</div>
+   <div class="hp"><span class="lbl">HP</span><span class="hpbar"><i id="hpFill"></i></span><span class="val" id="hpVal">—</span></div>
+  </div>
+  <div id="hint">Drag to turn · scroll or pinch to zoom</div>
+  <div id="tl" class="win">
+   <div class="row"><span class="an" id="actName">Idle</span><span class="meta" id="actMeta">Rooted. Ancient. Hungry.</span></div>
+   <div class="track" id="track"><div class="fill" id="fill"></div></div>
+   <div class="cap" id="actCap"></div>
+  </div>
+ </div>
+ <aside id="panel" class="win" aria-label="Controls">
+  <section class="sec"><h2>Moves</h2><div class="moves" id="moves"></div>
+   <div class="legend"><span><i style="background:var(--berry)"></i>hit</span><span><i style="background:var(--gold)"></i>cue</span><span>★ strikes the whole party</span><span><b class="newk">new</b> its own</span></div></section>
+  <section class="sec"><h2>Fight it</h2>
+   <div class="row2"><button class="wbtn" id="auto" type="button" aria-pressed="false"><span class="t">Watch a fight</span><small>it and the party take turns</small></button></div>
+   <div class="fight">
+    <button class="wbtn" id="ioDagger" type="button"><span class="t">Io: dagger</span><small>three cuts</small></button>
+    <button class="wbtn" id="ioFlame" type="button"><span class="t">Io: flame</span><small>it fears fire</small></button>
+    <button class="wbtn" id="solFlare" type="button"><span class="t">Sol: Flare Cut</span><small>one burning blow</small></button>
+    <button class="wbtn" id="solRush" type="button"><span class="t">Sol: Ember Rush</span><small>four, at a run</small></button>
+    <button class="wbtn" id="sever" type="button"><span class="t">Sever a great cane</span><small id="caneCount">4 of 4 great canes</small></button>
+    <button class="wbtn" id="regrow" type="button"><span class="t">Regrow</span><small>canes and HP</small></button>
+   </div>
+   <div class="row2"><button class="wbtn" id="wrath" type="button" aria-pressed="false"><span class="t">Wrath</span><small>its second phase's look</small></button></div>
+   <label class="slider" for="wilt"><span>Wilt</span><input id="wilt" type="range" min="0" max="100" value="0"><output id="wiltOut" for="wilt">0%</output></label>
+   <p class="note">Blows take its HP, and wilt follows HP. At half HP it turns to its Wrath; at no HP it falls, and any move wakes it again. While its flower is open, blows land on its heart for double.</p>
+  </section>
+  <section class="sec"><h2>Stance</h2><div class="toggles" id="toggles"></div>
+   <div class="segrow" role="group" aria-label="Party" id="partySeg"><span class="lbl">Party</span></div>
+   <div class="segrow" role="group" aria-label="Its prey" id="preySeg"><span class="lbl">Prey</span></div></section>
+  <section class="sec"><h2>Light and place</h2>
+   <div class="place3" role="group" aria-label="Place" id="placeSeg"></div>
+   <div class="row2"><button class="wbtn" id="lightNight" type="button" aria-pressed="true"><span class="t">Night square</span><small>the battle's light</small></button><button class="wbtn" id="lightDay" type="button" aria-pressed="false"><span class="t">Daylight</span><small>overcast</small></button></div>
+   <div id="meadowCtl">
+    <label class="slider" for="hour"><span>Time</span><input id="hour" type="range" min="0" max="24" step="0.05" value="21"><output id="hourOut" class="clock" for="hour">9:00 pm</output></label>
+    <div class="segrow" role="group" aria-label="Weather" id="weatherSeg"><span class="lbl">Weather</span></div>
+    <div class="row2"><button class="wbtn" id="timeRuns" type="button" aria-pressed="false"><span class="t">Time runs</span><small>a day in about six minutes</small></button></div>
+   </div>
+   <div class="row2"><button class="wbtn" id="rings" type="button" aria-pressed="true"><span class="t">Metre rings</span><small>to judge its size</small></button><button class="wbtn" id="small" type="button" aria-pressed="false"><span class="t">Colossus beside it</span><small>the boss it grew from</small></button></div>
+   <label class="slider" for="level"><span>Level</span><input id="level" type="range" min="1" max="20" value="1"><output id="levelOut" for="level">1</output></label>
+  </section>
+  <section class="sec"><h2>Model</h2><div class="stats" id="stats"></div>
+   <p class="note">A test of how far the Colossus can go: past the Model Build Spec's budgets on purpose. Damage numbers are placeholders until the battle steps: level 1 is the Night square's scale, and they grow 20% a level with a 25% swing.</p></section>
+ </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../../src/models/originals/witch.js"></script>
+<script src="../../src/models/originals/sol.js"></script>
+<script src="../bramble-colossus/colossus.js"></script>
+<script src="./ancient.js"></script>
+<script src="../bramble-horror/glade.js"></script>
+<script src="../bramble-horror/meadow.js"></script>
+<script src="../../living-battlefields/sfx.js"></script>
+<script src="./bench.js"></script>
+</body>
+</html>

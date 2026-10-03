@@ -8,8 +8,9 @@ Creatures and characters Chris brings to the project as ideas, each with its cod
 | Bramble Colossus, the Bramble Horror grown into a boss | `bramble-colossus/` | https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q | Version 1, October 3, 2026 |
 | Emberback, a giant salamander of the buried sunstone | `emberback/` | https://claude.ai/artifact/TBksnXh6X37EoL6F5wWBHo | Version 1, October 3, 2026, from Chris's sheets |
 | Gloamwing, a great night-flier that hunts the souls' moths | `gloamwing/` | https://claude.ai/artifact/NMbNDwKCSzLbX9DZurydWc | Version 1, October 3, 2026, from Chris's sheets |
+| Bramble Ancient, a test of the Colossus grown old | `bramble-ancient/` | https://claude.ai/artifact/Lt1LuBqNE2zKKCuYFtAg3B | A test, October 3, 2026 |
 
-The Bramble Colossus has no `original/`: it was made here from the Bramble Horror, as Chris asked, and its bench shares the Bramble Horror's `bench.css` and its two places, `glade.js` and `meadow.js`.
+The Bramble Colossus has no `original/`: it was made here from the Bramble Horror, as Chris asked, and its bench shares the Bramble Horror's `bench.css` and its two places, `glade.js` and `meadow.js`. The Bramble Ancient has none either: it is a test made here from the Colossus, as Chris asked, and its bench shares the same files and the living battlefield's sounds.
 
 ## Places for the benches
 
@@ -49,4 +50,4 @@ node tools/build.mjs 3d-model-new-character-ideas/bramble-horror/bramble-horror.
 cp dist/bramble-horror.html 3d-model-new-character-ideas/bramble-horror/Bramble_Horror_Bench.html
 ```
 
-The same for `bramble-colossus/bramble-colossus.html`, `emberback/emberback.html` and `gloamwing/gloamwing.html`. `dist/<name>.artifact.html` is each page without its outer document tags, for publishing.
+The same for `bramble-colossus/bramble-colossus.html`, `emberback/emberback.html`, `gloamwing/gloamwing.html` and `bramble-ancient/bramble-ancient.html`. `dist/<name>.artifact.html` is each page without its outer document tags, for publishing.

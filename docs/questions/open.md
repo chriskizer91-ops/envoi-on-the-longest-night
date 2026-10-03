@@ -26,7 +26,7 @@ The first set of questions here (the Witch's name, the waystation's name, the Ma
    - Where does it go: behind the fights in the wilderness between stops, or one place in particular?
    - Battles are set in front of painted backdrops (`design-decisions.md`, October 1). Is the meadow, a 3D place that answers the fight, an exception for the wilds?
 
-## Another new character idea
+## More new character ideas
 
 5. **The Emberback** (`../../3d-model-new-character-ideas/emberback/`), the giant salamander of the buried sunstone, built from Chris's sheets on October 3.
    - Is it a foe in the game? Where does the party meet it: by a Warm Road node going cold, and at which level?
@@ -38,3 +38,8 @@ The first set of questions here (the Witch's name, the waystation's name, the Ma
    - What do Moonlure and Hush do in a fight? Its bench shows them as a lure and a silence on the whole party ("Lured", "Hushed"), with no damage.
    - Beaten, it falls, its sac splits and every soul it swallowed flies free to the Moon. Does it stay down after that, or fly off? Its bench lets it rise again only so it can be fought again.
    - Its sheets show its sac a warm ivory, where the art request asked for moon-silver. The model follows the sheets. Is that right?
+7. **The Bramble Ancient** (`../../3d-model-new-character-ideas/bramble-ancient/`), a test made on October 3 of how far the Bramble Colossus can go: the first bramble, as old as the forest, about 10 m tall, mossy, with birds in its arms and an old stone ruin caught up in its roots. "Bramble Ancient" is a working name.
+   - Is it only a test, or does it have a place in the game? If so, where, at which level, and is it the Colossus grown old or something older than it?
+   - What is it called: Bramble Ancient, Bramble Elder, Primordial Bramble, Bramble Titan, or something else?
+   - Its two new moves are Rootquake (its roots heave up out of the ground under the whole party) and Monolith (it tears a carved standing stone out of the ground and hurls it at one of them). Do they stay?
+   - It grew through a ring of standing stones and an old arch, carved with signs that glow with its heartbeat, and it carries the swords, spears, arrows and shield of people who once fought it. The signs are made-up shapes with no meaning yet. What were the stones, and who fought it? Or should they go?
