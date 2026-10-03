@@ -499,7 +499,7 @@
       else if (e.t === 'ward') wardHit();
       else if (e.t === 'tranceReady') {
         D[e.who].tr = 1; SND.sfx.chime(); FX.burst(chest(who), [1, 0.92, 1], 30, 2.5);
-        UI.note(E.unit(e.who).name + '’s Trance gauge is full.');
+        UI.note(E.unit(e.who).name + '’s Trance gauge is full.' + (cfg.tips && cfg.tips.trance && !S.tipTrance ? ' ' + cfg.tips.trance : ''), cfg.tips && cfg.tips.trance && !S.tipTrance ? 4.2 : 1.5); S.tipTrance = true;
       } else if (e.t === 'bound') word(to, 'Bound');
       else if (e.t === 'sundered') word(to, 'Sundered');
       else if (e.t === 'sever') word(to, 'Severed');
@@ -535,6 +535,8 @@
         const u = E.unit(e.who);
         if (u.side === 'foe') {
           D[e.who].hp = 0; who.out = true; const da = who.look.downAct || 'die'; if (da !== 'none') who.m.play(da, true); SND.sfx.shriek(0.9);
+          // its Wrath's red storm clears as it falls
+          if (who.wrathShown) { if (BF) BF.storm(0); skyTo(0); }
           if (who.look.downNote) UI.note(who.look.downNote, 2.6);
           if (!living('foe').length) { clock.scale = 0.25; clock.slowT = 1.2; UI.cinematic(true); }
         } else { D[e.who].hp = 0; D[e.who].inTrance = false; D[e.who].tr = 0; who.trance = 0; if (who.m.action !== 'kneel') who.m.play('kneel', true); }
@@ -1722,13 +1724,17 @@
           return;
         }
         const main = () => UI.open(menuMain(s), heroes.length > 1 ? s.unit.name : null, onCmd);
+        // a first battle's tip (cfg.tips.menu), shown over the first command menu until a command is picked
+        let tip = false;
+        if (cfg.tips && cfg.tips.menu && !S.tipMenu) { S.tipMenu = true; tip = true; UI.msg(cfg.tips.menu, true); }
+        const done = (v) => { if (tip) UI.hideMsg(); res(v); };
         const onCmd = (id) => {
           if (SUB[id]) return UI.open(menuOf(s, id), SUB[id], onCmd);
           if (id === 'back') return main();
           const o = s.options.find((x) => x.id === id);
           if (!o || !o.ok) return;
-          if (o.targets.length > 1) return targetMenu(s, o, (t) => res([id, t]), main);
-          res([id, o.targets[0]]);
+          if (o.targets.length > 1) return targetMenu(s, o, (t) => done([id, t]), main);
+          done([id, o.targets[0]]);
         };
         main();
       });
@@ -1848,7 +1854,8 @@
         mark('released'); UI.hideMsg();
         if (cfg.winLights) { const src = foes.find((f) => f.look.lights) || lastF; await relightTown(src.m.anchor('heart', V())); mark('relit'); }
         if (cfg.winEnvoi && EN) { UI.hideEnemy(); await envoiMade(); mark('envoi'); }
-        UI.cinematic(false); UI.hideEnemy(); SND.sfx.victory();
+        // the story's set fights and the great foes end on the longer fanfare
+        UI.cinematic(false); UI.hideEnemy(); if (cfg.fanfare) SND.sfx.fanfare(); else SND.sfx.victory();
         const up = living('hero');
         shotField(2);
         for (const h of up) { h.tyaw = 0.25; h.spin = TAU; h.m.play('victory', true); }

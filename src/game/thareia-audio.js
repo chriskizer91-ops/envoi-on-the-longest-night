@@ -2,8 +2,8 @@
 // read-only), joined unchanged into one plain script for the game: 100 sound effects and nine pieces of music, all
 // made in code with Web Audio. Only the module wrapping changed (no import or export).
 // Defines window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, setVolume }.
-// One addition for the game (October 3, 2026): setVolume(music, effects), the game's two volume settings (0 to 1; 0.75 is
-// the library's own level).
+// Additions for the game (October 3, 2026): setVolume(music, effects), the game's two volume settings (0 to 1; 0.75 is
+// the library's own level), and a gain for playSfx, for its quieter sounds (footsteps, a place's ambience).
 (function () {
 'use strict';
 /* ---------- sounds.js ---------- */
@@ -347,10 +347,10 @@ function withBus(bus, rev, echo, fn) { const b = BUS, r = BUSREV, e = ECHO; BUS 
 const sfxNodes = () => ({ AC, OUT, REV });
 
 // Play one sound at its measured level (LEVEL, written by tools/level.mjs from offline renders), on a bus of its own.
-function playSfx(sound, t) {
+function playSfx(sound, t, gain) {
   const e = typeof sound === 'string' ? S.find(x => x.id === sound) : sound;
   if (!e || !AC) return;
-  const k = (LEVEL[e.id] ?? 1) * VOL.sfx;
+  const k = (LEVEL[e.id] ?? 1) * VOL.sfx * (gain ?? 1); // gain: the game's quieter sounds (footsteps, a place's ambience)
   BUS = AC.createGain(); BUS.gain.value = k; BUS.connect(OUT);
   BUSREV = AC.createGain(); BUSREV.gain.value = k; BUSREV.connect(REV);
   try { e.play(t ?? AC.currentTime + .02); } finally { BUS = null; BUSREV = null; }

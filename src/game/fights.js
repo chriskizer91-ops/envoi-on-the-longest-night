@@ -96,6 +96,11 @@
       c.slots = [[860, 800]]; c.foeLook = { wraith: Object.assign({}, FOE_LOOK.wraith, { shadow: 0.8, yawBias: 0.38 }) };
       return Object.assign(c, {
         bridge: true,
+        // the first battle's tips, once each (handoff, section 5)
+        tips: {
+          menu: 'Io’s Turn gauge is full: pick a command, then its target. While anyone acts or chooses, every gauge waits.',
+          trance: 'On her next turn her power wakes: Moonlore costs half, and Moonlight strikes with all of it.',
+        },
         fight: () => ({ party: [Object.assign(partyOf(P, true)[0], { atb: 0.6 })], foes: [{ id: 'wraith', level: 1, atb: 0.15 }], flags: {}, herbs: herbsOf(P) }),
         attackText: () => 'The Shadow Wraith attacks!',
         winMoth: 'A pale moth rises from the empty robe and drifts down into the Moonwell.',
@@ -112,7 +117,7 @@
         introAfter: 'The great wraith rises out of the fen, the town’s stolen lamplight burning in its ribs.',
         attackText: () => 'The great wraith attacks!',
         winMoth: 'The great wraith comes apart, and a great pale moth rises out of the empty robe.',
-        winLights: true, winLightsText: 'The stolen lamplight flies home, and Bogmire’s windows glow again.',
+        winLights: true, winLightsText: 'The stolen lamplight flies home, and Bogmire’s windows glow again.', fanfare: true,
         winText: 'Bogmire has its lights back.',
         loseText: 'The party falls on the boardwalk. They wake at the last rest with everything they had, and the great wraith waits.',
       });
@@ -127,7 +132,7 @@
         introAfter: 'Three wraiths, stronger than any the party has met, rise around the node.',
         attackText: () => 'The wraiths close in!',
         winMoth: 'Three pale moths rise from the empty robes and drift into the light of the node.',
-        winEnvoi: true,
+        winEnvoi: true, fanfare: true,
         envoiLines: [
           'Io takes out the letters she was meant to burn, her letters to the dead, and admits she never could.',
           'She folds them into a wyrm, and Sol lights its heart from the living node.',
@@ -203,6 +208,7 @@
       winText: 'The Bramble Colossus is felled. Where it stood, its fallen fruit is melting the snow.',
       loseText: 'The party falls among its thorns. They wake at the last rest with everything they had.',
       endTexts: { fled: 'The party backs away down the road. It can’t follow: it is rooted.' },
+      fanfare: true,
     });
   }
   // the painting each band's wild fights play on: the Thornwood's own map has its bridge

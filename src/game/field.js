@@ -9,7 +9,7 @@
 // Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw() }
 //   opts: maps, speed (map px a second), zoom, ioH (map px), encounter: { mean, min } (map px walked between fights),
 //   light(map) (the painting's brightness, 1 as painted),
-//   and the callbacks onExit(exit), onEvent(spot), onTalk(person), onSpot(spot), onEncounter(map), onMenu(),
+//   and the callbacks onExit(exit), onEvent(spot), onTalk(person), onSpot(spot), onEncounter(map), onMenu(), onStep(map, running),
 //   isDone(id) (an event or a well already used), src(path) (the art's URL)
 // Needs makePixelIo (src/walk/pixel-io.js) and makeFolk (sprites.js). Defines window.Field.
 (function () {
@@ -59,7 +59,8 @@
     const io = makePixelIo(1);
     const folkSprites = {};
     const sprite = (look) => folkSprites[look] || (folkSprites[look] = makeFolk(look, 1));
-    const P = { x: 0, y: 0, dir: 's', walkT: 0, moving: false, counter: 0, next: 0 };
+    // run: how long she has walked without stopping; after a moment the pace builds to a run (handoff, section 8)
+    const P = { x: 0, y: 0, dir: 's', walkT: 0, moving: false, counter: 0, next: 0, run: 0, stepD: 0 };
     let map = null, img = null, grid = null, route = null, paused = false, lastExit = null, flash = 0;
     const cam = { z: opts.zoom || 0.7, x: 0, y: 0 };
     function layout() { cv.width = Math.round(root.clientWidth * DPR); cv.height = Math.round(root.clientHeight * DPR); }
@@ -190,7 +191,7 @@
       const L = Math.hypot(dx, dy);
       P.moving = false;
       if (L > 0) {
-        const sp = speed * dt, k = Math.min(1, (route ? Math.min(sp, L) : sp) / L);
+        const pace = 1 + 0.6 * clamp((P.run - 0.8) / 0.8, 0, 1), sp = speed * pace * dt, k = Math.min(1, (route ? Math.min(sp, L) : sp) / L);
         const mx = dx * k, my = dy * k, x0 = P.x, y0 = P.y;
         // slide along walls: the whole step, or the part of it that's open
         if (canStand(P.x + mx, P.y + my)) { P.x += mx; P.y += my; }
@@ -202,10 +203,14 @@
         const moved = Math.hypot(P.x - x0, P.y - y0);
         P.moving = moved > 0.01;
         P.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : (dy > 0 ? 's' : 'n');
-        if (P.moving) { P.walkT += dt; if (map.wild) P.counter += moved; }
+        if (P.moving) {
+          P.walkT += dt * pace; P.run += dt; if (map.wild) P.counter += moved;
+          // a footstep every half stride, on the map's ground (opts.onStep)
+          P.stepD += moved; if (P.stepD > 26) { P.stepD = 0; if (opts.onStep) opts.onStep(map, pace > 1.3); }
+        }
         else if (route) { route = null; target = null; }
       }
-      if (!P.moving) P.walkT = 0;
+      if (!P.moving) { P.walkT = 0; P.run = 0; }
       // exits, then events, then the wilds
       for (const ex of map.exits || []) {
         if (inExit(ex.rect, P.x, P.y)) { if (lastExit !== ex) { lastExit = ex; held.clear(); route = null; if (opts.onExit) opts.onExit(ex); } return; }

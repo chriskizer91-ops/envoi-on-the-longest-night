@@ -22,6 +22,15 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | Chris's three songs | Meant to be in `building-with-assets-`, but they aren't there yet | Last of all, once the whole build is finished |
 | The file Chris keeps, which works offline | `tools/build.mjs` | Coming: the build will put three.js and the fonts inside the file |
 
+## Pages to open on the phone
+
+| Page | Link | What it is |
+|---|---|---|
+| The game, put together | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w | The whole game, title to ending, with everything in the table above that says In. Its saves are its own: a save code carries a game from the older link |
+| The Bramble Colossus | https://claude.ai/artifact/H2QTXhNnEi7W7Qbs6BXvA2 | Its fight on its own, at a level from 16 to 20 |
+
+Both are private until Chris shares them from the page's Share menu.
+
 ## How a new mob comes into the game
 
 1. **Its idea folder.** Chris brings the creature. It gets its own folder in `../3d-model-new-character-ideas/`, and what he brought stays untouched in `original/`. It is polished there on its own bench page until he is happy with it. Its integration card lists its actions and their hit times.

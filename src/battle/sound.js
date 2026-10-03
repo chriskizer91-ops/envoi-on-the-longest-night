@@ -1,6 +1,7 @@
 // sound.js: the battle's music and sound effects, all synthesized in the browser. Imported unchanged from
 // reference/demos/night-square-shadow-wraith.html (its SND module): a D minor battle theme at 132 BPM and the swish, hit,
 // fire, boom, chime, blade, heal, guard, moon, shriek, grasp, eclipse, menu, select, trance, victory and defeat effects.
+// Added for the game: a longer fanfare for set fights, and setVolumes(music, effects) for the game's two volume settings.
 // Defines makeBattleSound() -> { init, sfx, startMusic, stopMusic, setMuted, setMusicOff, muted }. Call init() from a tap or a click:
 // browsers only start audio after the player touches the page.
 function makeBattleSound() {
@@ -42,6 +43,19 @@ function makeBattleSound() {
     menu() { if (!ctx) return; tone(1100, now(), 0.05, 'square', 0.05); },
     select() { if (!ctx) return; const t = now(); tone(1320, t, 0.06, 'square', 0.06); tone(1760, t + 0.05, 0.08, 'square', 0.05); },
     trance() { const t = now(); tone(400, t, 0.9, 'sine', 0.14, sfxBus, 1600, 0.05); [1568, 2093, 2637].forEach((f, i) => tone(f, t + 0.5 + i * 0.09, 0.8, 'sine', 0.08)); },
+    // a longer fanfare for the story's set fights and the great foes (added for the game, October 3): a rising call in
+    // D major, an answer, and a held chord over a drum roll
+    fanfare() {
+      const t = now(), q = 0.16;
+      const notes = [[587.3, 0], [740, 1], [880, 2], [1175, 3], [1175, 4.5], [1318.5, 5], [1175, 6], [987.8, 8], [880, 9], [740, 10], [880, 11]];
+      for (const [f, k] of notes) { tone(f, t + k * q, q * 1.1, 'square', 0.06); tone(f, t + k * q, q * 1.25, 'triangle', 0.09); }
+      const end = t + 12 * q;
+      [587.3, 740, 880, 1175].forEach((f) => { tone(f, end, 2.4, 'triangle', 0.09); tone(f / 2, end, 2.4, 'sawtooth', 0.025); });
+      tone(146.8, end, 2.4, 'sine', 0.3, sfxBus, 73);
+      for (let i = 0; i < 6; i++) noise(t + i * q * 2, 0.08, 0.12, 'bandpass', 1800, 1200, 0.7);
+      for (let i = 0; i < 10; i++) noise(end - 0.5 + i * 0.05, 0.06, 0.06 + i * 0.01, 'bandpass', 1600, 1100, 0.7);
+      noise(end, 1.4, 0.16, 'highpass', 5000, 3000, 0.5);
+    },
     victory() { const t = now(); [587.3, 740, 880, 1175, 880, 1175].forEach((f, i) => { tone(f, t + i * 0.13, 0.18, 'square', 0.07); tone(f, t + i * 0.13, 0.2, 'triangle', 0.1); }); [587.3, 740, 880, 1175].forEach((f) => { tone(f, t + 0.85, 1.4, 'triangle', 0.09); tone(f / 2, t + 0.85, 1.4, 'sawtooth', 0.025); }); },
     defeat() { const t = now(); [440, 349.2, 293.7, 220].forEach((f, i) => tone(f, t + i * 0.38, 0.6, 'triangle', 0.12)); }
   };

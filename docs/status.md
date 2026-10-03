@@ -15,6 +15,7 @@ Chris asked for everything to be brought together in a new folder, `../putting-i
   - **New mobs play from their models:** a foe with no choreography of its own plays each move with its model's action and hit times (`anyMove` in `src/battle/screen.js`). The steps for a new mob are in the folder's README.
   - **Saves and settings:** three save slots, a save code to copy to another device or copy of the game, word speed, larger text, and separate music and effects volumes.
   - **The file Chris keeps:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` puts three.js and the two fonts inside the page (15.4 MB), so it works with no internet.
+- **Published (October 3, from this session):** the game put together, https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w, and the Bramble Colossus on its own, https://claude.ai/artifact/H2QTXhNnEi7W7Qbs6BXvA2.
 - **Testing:** `node tools/game-test.mjs` plays the built game headless: the title, a new game, walking, the menu, the save slots and save code, the save, and with `--steps` a wild fight or the Colossus to its end.
 
 ## Working from the second account

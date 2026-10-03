@@ -47,6 +47,26 @@
     { flag: 'charge', who: 'brann', after: 'envoi', scene: 'charge' },
     { flag: 'upgrade2', who: 'ysmera', after: 'shipyard', scene: 'upgrade2' },
   ];
+  // what each ground map is underfoot, for her footsteps (the world map is grass)
+  const GROUND = { cottage: 'grass', wickhollow: 'stone', jetty: 'wood', thornwood: 'grass', bogmire: 'wood', 'bogmire-heart': 'wood', dawnroost: 'stone', 'dawnroost-node': 'stone', crossroads: 'stone', shipyard: 'wood', 'frozen-pass': 'grass', misthollow: 'stone', moonwell: 'stone' };
+  // each place's ambience (handoff, section 8): the library's sounds, each now and then, quietly: [sound, every so many
+  // seconds (from, to), how loud]
+  const AMBIENCE = {
+    cottage: [['crickets', 6, 12, 0.3], ['owl', 14, 30, 0.25]],
+    wickhollow: [['crickets', 7, 14, 0.25], ['clock', 20, 40, 0.2], ['dog', 25, 60, 0.15]],
+    jetty: [['river', 6, 10, 0.35], ['rope-creak', 9, 18, 0.25], ['crickets', 10, 16, 0.2]],
+    thornwood: [['crickets', 5, 10, 0.3], ['owl', 12, 26, 0.25], ['leaves', 9, 18, 0.25]],
+    bogmire: [['frog', 4, 9, 0.3], ['crickets', 7, 13, 0.22], ['cave-drip', 8, 16, 0.2]],
+    'bogmire-heart': [['frog', 5, 10, 0.25], ['bats', 12, 24, 0.22], ['cave-drip', 6, 12, 0.22]],
+    dawnroost: [['anvil', 5, 9, 0.28], ['campfire', 7, 12, 0.22], ['crickets', 10, 18, 0.18]],
+    'dawnroost-node': [['vein-pulse', 6, 11, 0.25], ['campfire', 8, 14, 0.2]],
+    crossroads: [['wind', 7, 13, 0.25], ['owl', 14, 28, 0.22]],
+    shipyard: [['hammer-wood', 5, 10, 0.25], ['rope-creak', 8, 15, 0.22], ['sea', 9, 16, 0.25]],
+    'frozen-pass': [['wind', 5, 9, 0.32], ['blizzard', 12, 22, 0.2]],
+    misthollow: [['wind', 6, 11, 0.25], ['bell', 25, 50, 0.15], ['owl', 16, 30, 0.2]],
+    moonwell: [['wind', 6, 11, 0.25]],
+    world: [['wind', 8, 15, 0.2], ['crickets', 10, 18, 0.18]],
+  };
   const MUSIC = { cottage: 'title', wickhollow: 'town', jetty: 'town', thornwood: 'travel', bogmire: 'marsh', 'bogmire-heart': 'ruins', dawnroost: 'town', 'dawnroost-node': 'ruins', crossroads: 'travel', shipyard: 'town', 'frozen-pass': 'travel', misthollow: 'ruins', moonwell: 'ruins' };
   // the night atlas in nine tiles (the build inlines each path)
   const TILES = { '00': "art/world/night-00.webp", '01': "art/world/night-01.webp", '02': "art/world/night-02.webp", '10': "art/world/night-10.webp", '11': "art/world/night-11.webp", '12': "art/world/night-12.webp", '20': "art/world/night-20.webp", '21': "art/world/night-21.webp", '22': "art/world/night-22.webp" };
@@ -81,7 +101,20 @@
       } catch (e) { /* no audio */ }
     }
     function music(id) { if (!audioOn || !settings.music) { curMusic = id; return; } if (curMusic === id && AUD.musicPlaying() === id) return; curMusic = id; try { if (id) AUD.musicPlay(id); else AUD.musicStop(0.6); } catch (e) { /* no audio */ } }
-    function sfx(id) { if (!audioOn || !settings.sfx) return; try { AUD.playSfx(id); } catch (e) { /* no audio */ } }
+    function sfx(id, gain) { if (!audioOn || !settings.sfx) return; try { AUD.playSfx(id, undefined, gain); } catch (e) { /* no audio */ } }
+    // the place's ambience: each of its sounds comes back now and then, while Io is walking there
+    const ambNext = {};
+    setInterval(() => {
+      if (!audioOn || !settings.sfx || busy || document.hidden) return;
+      const id = mode === 'field' ? field.map && field.map.id : mode === 'world' ? 'world' : null, list = id && AMBIENCE[id];
+      if (!list) return;
+      const now = performance.now() / 1000;
+      for (const [snd, a, b, v] of list) {
+        const k = id + ':' + snd;
+        if (ambNext[k] == null) ambNext[k] = now + a * Math.random();
+        else if (now >= ambNext[k]) { ambNext[k] = now + a + Math.random() * (b - a); sfx(snd, v); }
+      }
+    }, 500);
 
     // ---------- the people's portraits and the dialogue box ----------
     const talk = Talk.create(root, {
@@ -103,6 +136,7 @@
       isDone: (k) => !!st.done[k],
       onExit: (ex) => act(() => onExit(ex)), onEvent: (s) => act(() => onEvent(s)), onTalk: (p) => act(() => onTalk(p)),
       onSpot: (s) => act(() => onSpot(s)), onEncounter: (m) => act(() => wild(m.wild.band, m.wild.scene)), onMenu: () => act(menu),
+      onStep: (m, running) => sfx('step-' + (GROUND[m.id] || 'stone'), running ? 0.32 : 0.24),
     });
     // ---------- the world map ----------
     const world = World.create(worldHost, {
