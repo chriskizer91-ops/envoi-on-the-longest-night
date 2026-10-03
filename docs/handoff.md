@@ -134,7 +134,9 @@ The final deliverable is one HTML file under 30 MB, sent to Chris to keep. The p
 - **Two halves** (bands 1 and 2, bands 3 and 4) would work, but each published page keeps its own save, so carrying a game from one half to the other needs the save code from section 9.
 - **Simpler:** one link, with the paintings and songs published as files beside a small page. The same game and the same save; only the published copy is split, not the file Chris keeps.
 
-**The file Chris keeps must work offline,** so its build embeds three.js and the two fonts instead of loading them from the web. **Built:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` (15.4 MB with the Colossus, three.js and the fonts inside).
+**The file Chris keeps must work offline,** so its build embeds three.js and the two fonts instead of loading them from the web. **Built:** `node tools/build.mjs --min --offline putting-it-all-together/game.html` (15.4 MB with the Colossus, three.js and the fonts inside). `node tools/game-test.mjs --offline` plays it with the internet blocked and checks that its fonts are inside.
+
+**Mooncart** (`building-with-assets-`) builds this repository with `node tools/build.mjs` and takes every page in `dist/`. With nothing after it, the build now makes the game too (`dist/game.html`), so the game reaches Mooncart once this branch is on the repository's main branch.
 
 ## Technical notes
 

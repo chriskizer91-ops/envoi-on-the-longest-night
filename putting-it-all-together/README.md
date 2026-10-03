@@ -23,7 +23,8 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | The townsfolk's portraits and the story stills | Art requests 06 and 07 in `../docs/art-requests/` | Waiting on the art |
 | Every word of the story | `../src/game/script.js`, placeholders for now | Waiting on the lore conversation |
 | Chris's three songs | Meant to be in `building-with-assets-`, but they aren't there yet | Last of all, once the whole build is finished |
-| The file Chris keeps, which works offline | `tools/build.mjs` | Coming: the build will put three.js and the fonts inside the file |
+| The file Chris keeps, which works offline | `tools/build.mjs --offline` | In: three.js and the fonts are inside it (15.4 MB), and it plays with the internet blocked. The songs and the art will make it bigger |
+| The game in Mooncart | Mooncart builds this repository with `node tools/build.mjs`, which makes the game too (`dist/game.html`) | Ready. Mooncart takes the repository's main branch (today `claude/admiring-hawking-p7m87n`), so the game reaches it once this branch is merged there |
 
 ## Pages to open on the phone
 
@@ -59,5 +60,14 @@ node tools/build.mjs --min putting-it-all-together/game.html  # makes dist/game.
 node tools/game-test.mjs                                      # plays it headless; must end with "game test passed"
 node tools/balance.mjs                                        # every fight's balance targets; must meet all of them
 ```
+
+The file Chris keeps, with three.js and the fonts inside it:
+
+```sh
+node tools/build.mjs --min --offline putting-it-all-together/game.html
+node tools/game-test.mjs --offline   # plays it with the internet blocked; anything it reaches for fails the test
+```
+
+Both builds write `dist/game.html`. The published page is built without `--offline`, to leave room under the 16 MB page limit. `node tools/build.mjs` with nothing after it builds every demo page and the game; that is what Mooncart runs.
 
 `tools/game-test.mjs` can also play a wild fight to its end: `--steps title,new,wild --band 2 --level 8`.

@@ -1,7 +1,7 @@
 // game-test.mjs: plays the built game headless (Chromium + SwiftShader, as tools/check.mjs does) and reports any error.
 // Build the page first: node tools/build.mjs --min putting-it-all-together/game.html
 // Usage: node tools/game-test.mjs [dist/game.html] [--steps title,new,walk,menu,saves,save,wild,colossus] [--band 4]
-//        [--level 18] [--out <dir>] [--size 960x540] [--turbo 8]
+//        [--level 18] [--out <dir>] [--size 960x540] [--turbo 8] [--offline]
 //   title:    the title screen comes up
 //   new:      a new game starts, the prologue plays, and Io stands in her cottage
 //   walk:     Io walks the Wickhollow square with the arrow keys
@@ -13,6 +13,8 @@
 //   colossus: the Bramble Colossus is fought the same way (band 4); headless, a whole fight takes a long while
 // Each step saves a screenshot in --out (tools/.cache/game-test by default). Exits 1 on any page error.
 // three.js r128 comes from npm into tools/.cache, since the CDN is unreachable from the sandbox; the fonts are skipped.
+// --offline tests the file Chris keeps (node tools/build.mjs --min --offline putting-it-all-together/game.html):
+// nothing is served, any reach for the web fails the test, and its fonts must be inside it.
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
@@ -27,7 +29,7 @@ const THREE_JS = fs.readFileSync(cache);
 
 const args = process.argv.slice(2);
 let file = path.join(R, 'dist/game.html'), out = path.join(R, 'tools/.cache/game-test'), size = [960, 540];
-let steps = ['title', 'new', 'walk', 'menu', 'saves', 'save'], band = 1, level = 3, turbo = 8;
+let steps = ['title', 'new', 'walk', 'menu', 'saves', 'save'], band = 1, level = 3, turbo = 8, offline = false;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--steps') steps = args[++i].split(',');
   else if (args[i] === '--band') band = +args[++i];
@@ -35,6 +37,7 @@ for (let i = 0; i < args.length; i++) {
   else if (args[i] === '--out') out = path.resolve(args[++i]);
   else if (args[i] === '--size') size = args[++i].split('x').map(Number);
   else if (args[i] === '--turbo') turbo = +args[++i];
+  else if (args[i] === '--offline') offline = true;
   else file = path.resolve(args[i]);
 }
 fs.mkdirSync(out, { recursive: true });
@@ -46,6 +49,11 @@ page.on('pageerror', (e) => errs.push('pageerror: ' + e.message));
 page.on('console', (m) => { if (m.type() === 'error') errs.push('console: ' + m.text()); });
 await page.route('**/*', (route) => {
   const u = route.request().url();
+  if (offline) {
+    if (u.startsWith('file:') || u.startsWith('data:') || u.startsWith('blob:')) return route.continue();
+    errs.push('reached for the web: ' + u.slice(0, 120));
+    return route.abort();
+  }
   if (u.includes('three.min.js')) return route.fulfill({ status: 200, contentType: 'application/javascript', body: THREE_JS });
   if (u.startsWith('file:') || u.startsWith('data:') || u.startsWith('blob:')) return route.continue();
   return route.fulfill({ status: 200, contentType: 'text/css', body: '' });
@@ -81,6 +89,17 @@ try {
     log('step ' + step);
     if (step === 'title') {
       await waitFor(() => !!document.querySelector('.title h1'), null, 30000, 'the title');
+      if (offline) {
+        // the four faces the page uses, loaded from inside the file
+        const faces = await page.evaluate(async () => {
+          const want = ['16px "IM Fell English"', 'italic 16px "IM Fell English"', '16px "Atkinson Hyperlegible"', 'bold 16px "Atkinson Hyperlegible"'];
+          const got = await Promise.all(want.map((f) => document.fonts.load(f)));
+          return want.map((f, i) => f + ': ' + (!got[i].length ? 'missing' : got[i].every((x) => x.status === 'loaded') ? 'loaded' : 'not loaded'));
+        });
+        const bad = faces.filter((f) => !/: loaded$/.test(f));
+        if (bad.length) throw new Error('fonts not inside the file: ' + bad.join('; '));
+        log('  fonts inside the file: ' + faces.length);
+      }
       await shot('title');
     } else if (step === 'new') {
       await page.click('.title-box button');

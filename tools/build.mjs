@@ -2,7 +2,8 @@
 // stylesheets are inlined, and image paths under art/ inside them become data URIs. three.js
 // stays a cdnjs <script> tag, and the fonts come from Google Fonts, unless --offline puts them inside
 // the page too (the file Chris keeps, which must work with no internet).
-// Usage: node tools/build.mjs [--min] [--offline] [demos/name.html ...]  (default: all)
+// Usage: node tools/build.mjs [--min] [--offline] [demos/name.html ...]  (default: every demo, and the game
+// from putting-it-all-together/, which Mooncart's collect-games picks up as dist/game.html)
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
@@ -38,7 +39,8 @@ function offline(html) {
   return html;
 }
 const esbuild = MIN ? createRequire(import.meta.url)(path.join(R, 'tools/node_modules/esbuild')) : null;
-const files = args.length ? args : fs.readdirSync(path.join(R, 'demos')).filter((f) => f.endsWith('.html')).map((f) => 'demos/' + f);
+const files = args.length ? args : fs.readdirSync(path.join(R, 'demos')).filter((f) => f.endsWith('.html')).map((f) => 'demos/' + f)
+  .concat('putting-it-all-together/game.html');
 fs.mkdirSync(path.join(R, 'dist'), { recursive: true });
 for (const rel of files) {
   const src = path.resolve(R, rel), dir = path.dirname(src);
