@@ -24,7 +24,7 @@ A model is finished when:
 | # | Step | What changes | State |
 |---|---|---|---|
 | 1 | **The shared bench** | One battle-bench page that every model plugs into, a build step that turns it into a single file, and the current models moved into their own files unchanged | Done |
-| 2 | **Noctara** | Face, sheer veil, sculpted collar, gold filigree, a star-filled lining, a fuller build with fewer draw calls (see `model-review.md`) | Done; page rebuilt with the finished cast on October 2 |
+| 2 | **Noctara** | Face, sheer veil, sculpted collar, gold filigree, a star-filled lining, a fuller build with fewer draw calls (see `model-review.md`) | Done; page rebuilt with the finished cast on October 2. Second pass October 3: black silk in deep folds, metal gold, a lining that opens on the night sky, bigger spells and a defeat into stars (see `model-review.md`) |
 | 3 | **Lunara** | Face, hair and gown from her sheet, less glare, the scale from the Envoi scenes, and the Embrace action | Done |
 | 4 | **Shadow Wraith** | Tattered robe, hands and scythe in soul-green, a pale moth rising on defeat, a tougher look at higher levels | Done |
 | 5 | **Great wraith** | The wraith at three times the size, with stolen lamplight inside | Done |

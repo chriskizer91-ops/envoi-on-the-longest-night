@@ -1,0 +1,16 @@
+/* The Gloamwing's bench on top of the Bramble Horror's bench.css and the Colossus's boss bar: a moonlit HP bar, a chip
+   saying how it is (Hunting, Full, Released), and the header's sound switch. */
+header #sound{margin-left:auto}
+header #resetView{margin-left:6px}
+header #sound[aria-pressed="true"]{color:#2a2410;background:#f4ead2;border-color:#e8d7a8;box-shadow:0 0 10px rgba(255,236,190,.35)}
+#tag .hpbar i{background:linear-gradient(90deg,#5a4630,#f0dcb0)}
+#tag .hpbar::after{display:none}
+#tag .phase{color:#f3e7cc;border-color:rgba(240,220,176,.55)}
+#tag .phase.full{color:#fff6dc;border-color:#f0dcb0;background:rgba(240,220,176,.18);box-shadow:0 0 10px rgba(255,236,190,.3)}
+#tag .phase.down{color:#d8d4cc;border-color:rgba(200,196,190,.5);background:rgba(90,86,80,.3)}
+.dmg.lure{font:italic 400 20px/1 var(--display);color:#fff4d6;text-shadow:0 0 10px #f0d090,0 2px 0 #2a2010}
+.dmg.hush{font:italic 400 20px/1 var(--display);color:#c8c4e8;text-shadow:0 0 10px #6a64a0,0 2px 0 #14101e}
+.dmg.heal{color:#fff0c8;text-shadow:0 0 10px #f0c060,0 2px 0 #2a2010}
+.dmg.wind{color:#e4e8f4;text-shadow:0 0 8px #8a96c0,0 2px 0 #14182a}
+.ring.moon{border-color:#fff2d0;box-shadow:0 0 16px #f0d090,inset 0 0 10px #f0d090}
+.ring.fire{border-color:#ffd2a0;box-shadow:0 0 16px #ff8a1e,inset 0 0 10px #ff8a1e}

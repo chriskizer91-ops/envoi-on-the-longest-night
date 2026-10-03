@@ -1,10 +1,8 @@
-// noctara.js: Noctara the Starless, final boss of Moonlight in the Aether. three.js r128 (global THREE). Defines makeNoctara(opts) only.
+// noctara-pass1.js: Noctara as her first touch-up left her (October 1, 2026), kept for the bench's Before switch. Defines makeNoctaraPass1(opts) only.
 // Touched up from src/models/originals/noctara.js after her concept sheets (reference/art/noctara-model-sheet-b.png):
 // a sculpted face with eyes that blink, sleek hair under a sheer veil, the tall gold-piped collar and star clasp,
 // a faceted crown, gold filigree on the robes, fewer draw calls, and a defeat in which she becomes night full of stars.
-// Second pass (October 3, 2026): black silk robes in deep folds with a long train, gold that shines like metal, an obsidian
-// crown, a lining that opens on a night sky full of stars, and her spells and her defeat made as big as a final boss's.
-function makeNoctara(opts) {
+function makeNoctaraPass1(opts) {
  'use strict';
  // Code-built model. Units are meters, Y up, facing +Z, standing with the hem on y = 0. Her right side is -X.
  // Her robes, sleeves, cape and veil are rebuilt every frame from her pose, so they hang, spread and trail without hair or cloth simulation.
@@ -35,72 +33,11 @@ function makeNoctara(opts) {
   const m = new THREE.MeshStandardMaterial(Object.assign({ color, roughness: rough, metalness: 0 }, o || {}));
   const rS = { value: rimS === undefined ? 1 : rimS };
   m.onBeforeCompile = (sh) => {
-   sh.uniforms.uRim = U.rim; sh.uniforms.uRimC = U.rimC; sh.uniforms.uRimS = rS; Object.assign(sh.uniforms, NU);
-   sh.fragmentShader = 'uniform float uRim;\nuniform vec3 uRimC;\nuniform float uRimS;\n' + sh.fragmentShader
-    .replace('void main() {', NIGHT + 'void main() {')
-    .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n if (uNight > .001) { totalEmissiveRadiance += nightSky() * uNight * 1.3; diffuseColor.rgb *= 1. - .9 * uNight; }')
-    .replace('#include <dithering_fragment>', 'float nFr = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition)));\n gl_FragColor.rgb += uRimC * (uRim * uRimS * pow(nFr, 2.6) * (1. + 2. * uNight));\n#include <dithering_fragment>');
+   sh.uniforms.uRim = U.rim; sh.uniforms.uRimC = U.rimC; sh.uniforms.uRimS = rS;
+   sh.fragmentShader = 'uniform float uRim;\nuniform vec3 uRimC;\nuniform float uRimS;\n' + sh.fragmentShader.replace('#include <dithering_fragment>',
+    'float nFr = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition)));\n gl_FragColor.rgb += uRimC * (uRim * uRimS * pow(nFr, 2.6));\n#include <dithering_fragment>');
   };
   m.customProgramCacheKey = () => 'noctara-rim';
-  m.clippingPlanes = [CLIP];
-  allMats.push({ m, op: m.opacity, tr: m.transparent }); return m;
- }
-
- // a small night around her for the gold, the crystals and the ice to shine in: a violet sky, lamplight low on two sides
- const ENV = (() => {
-  const S = 32, faces = [];
-  for (let f = 0; f < 6; f++) {
-   const c = cvs(S, S), g = c.getContext('2d'), q = g.createLinearGradient(0, 0, 0, S);
-   if (f === 2) { q.addColorStop(0, '#2a2348'); q.addColorStop(1, '#3a3060'); } else if (f === 3) { q.addColorStop(0, '#120c14'); q.addColorStop(1, '#0a070c'); }
-   else { q.addColorStop(0, '#2e2650'); q.addColorStop(.55, '#3a2c4a'); q.addColorStop(.62, '#20161e'); q.addColorStop(1, '#0c080c'); }
-   g.fillStyle = q; g.fillRect(0, 0, S, S);
-   const lamp = (x, y, r, col) => { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col); gr.addColorStop(1, 'rgba(255,170,90,0)'); g.fillStyle = gr; g.fillRect(0, 0, S, S); };
-   if (f === 0 || f === 4) lamp(S * .3, S * .52, S * .45, 'rgba(255,190,110,.95)');
-   if (f === 1) lamp(S * .7, S * .5, S * .35, 'rgba(255,170,90,.7)');
-   if (f === 5) lamp(S * .5, S * .25, S * .3, 'rgba(200,210,255,.8)');
-   faces.push(c);
-  }
-  const t = new THREE.CubeTexture(faces); t.needsUpdate = true; return t;
- })();
- // the night: a window into a sky of stars and violet cloud, fixed on the screen behind her like a hole in the world.
- // Her lining shows it faintly, brightly in Blackout; in defeat all of her turns into it.
- const NU = { uT: { value: 0 }, uStar: { value: .12 }, uNight: { value: 0 }, uSpeck: { value: 1 } };
- const NIGHT = [
-  'uniform float uT, uStar, uNight, uSpeck; uniform mat4 projectionMatrix;',
-  'float nh(vec3 p){ return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }',
-  'float nn(vec3 p){ vec3 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);',
-  ' return mix(mix(mix(nh(i), nh(i + vec3(1., 0., 0.)), f.x), mix(nh(i + vec3(0., 1., 0.)), nh(i + vec3(1., 1., 0.)), f.x), f.y),',
-  '  mix(mix(nh(i + vec3(0., 0., 1.)), nh(i + vec3(1., 0., 1.)), f.x), mix(nh(i + vec3(0., 1., 1.)), nh(i + vec3(1., 1., 1.)), f.x), f.y), f.z); }',
-  'vec3 nightSky(){',
-  ' vec2 sp = -vViewPosition.xy / vViewPosition.z * vec2(projectionMatrix[0][0], projectionMatrix[1][1]);',
-  ' vec3 q = vec3(sp * 1.6, uT * .02); float n = nn(q) * .5 + nn(q * 2.2 + 4.) * .3 + nn(q * 4.7 + 9.) * .2, m = nn(q * 1.3 + 2.5);',
-  ' vec3 c = vec3(.34, .12, .7) * smoothstep(.42, .85, n) + vec3(.08, .1, .42) * smoothstep(.45, .9, m) * .8 + vec3(.04, .015, .08);',
-  ' for (int L = 0; L < 2; L++) {',
-  '  float sc = L == 0 ? 95. : 38.; vec2 p = sp * sc + (L == 0 ? vec2(0.) : vViewPosition.xy * 1.5), i = floor(p), f = fract(p);',
-  '  vec3 h = vec3(nh(vec3(i, 1.)), nh(vec3(i, 2.)), nh(vec3(i, 3.)));',
-  '  float on = step(L == 0 ? .8 : .93, h.z), s = smoothstep(L == 0 ? .2 : .26, 0., length(f - h.xy)) * on;',
-  '  c += vec3(.86, .84, 1.) * s * (.45 + .55 * sin(uT * (1.4 + h.x * 3.) + h.y * 40.)) * (L == 0 ? 1.1 : 2.2);',
-  ' }',
-  ' return c; }'].join('\n') + '\n';
- const RIMF = 'float nFr = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition)));\n gl_FragColor.rgb += uRimC * (uRim * pow(nFr, 2.6) * (1. + 2. * uNight)) + vec3(.06, .05, .09) * pow(nFr, 1.6) * (1. - gm);\n';
- // cloth: black silk with a soft sheen; where its emissive map marks gold, it turns to polished metal
- function cloth(o, lining) {
-  const m = new THREE.MeshStandardMaterial(Object.assign({ color: 0xffffff, roughness: .84, metalness: 0, envMap: ENV, envMapIntensity: 1.35 }, o));
-  m.onBeforeCompile = (sh) => {
-   Object.assign(sh.uniforms, { uRim: U.rim, uRimC: U.rimC }, NU);
-   sh.fragmentShader = 'uniform float uRim;\nuniform vec3 uRimC;\n' + sh.fragmentShader
-    .replace('void main() {', NIGHT + 'void main() {')
-    .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n float gm = 0.;\n#ifdef USE_EMISSIVEMAP\n gm = smoothstep(.08, .22, texture2D(emissiveMap, vUv).r);\n#endif\n roughnessFactor = mix(roughnessFactor, .26, gm);')
-    .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\n metalnessFactor = mix(metalnessFactor, .95, gm);')
-    .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n' + (lining
-     ? ' { float k = clamp(uStar / 1.5, 0., 1.); totalEmissiveRadiance += nightSky() * (uStar + 1.4 * uNight); diffuseColor.rgb *= 1. - .8 * max(k, uNight); }'
-     : ' if (uNight > .001) { totalEmissiveRadiance += nightSky() * uNight * 1.5; diffuseColor.rgb *= 1. - .93 * uNight; }\n' +
-       // starlight specks woven into the silk, twinkling: the night she is made of
-       ' { vec2 g = vUv * vec2(110., 64.), i = floor(g); float h = fract(sin(dot(i, vec2(12.9898, 78.233))) * 43758.5453);\n' +
-       '   totalEmissiveRadiance += vec3(.8, .74, 1.) * step(.982, h) * smoothstep(.34, 0., length(fract(g) - .5)) * (.35 + .65 * pow(.5 + .5 * sin(uT * (1.2 + h * 7.) + h * 60.), 3.)) * uSpeck * (1. - gm); }'))
-    .replace('#include <dithering_fragment>', RIMF + '#include <dithering_fragment>');
-  };
-  m.customProgramCacheKey = () => 'noctara-cloth' + (lining ? 'L' : '');
   m.clippingPlanes = [CLIP];
   allMats.push({ m, op: m.opacity, tr: m.transparent }); return m;
  }
@@ -109,10 +46,10 @@ function makeNoctara(opts) {
  const GOLD = '#b48d57', GOLDHI = 'rgba(255,236,190,.55)', GOLDE = '#6a5130';
  function fabric(W, H, baseCol) {
   const c = cvs(W, H), g = c.getContext('2d'), e = cvs(W, H), eg = e.getContext('2d');
-  g.fillStyle = baseCol || '#141118'; g.fillRect(0, 0, W, H);
+  g.fillStyle = baseCol || '#17131d'; g.fillRect(0, 0, W, H);
   for (let i = 0; i < 70; i++) {
-   const x = rnd() * W, w = 3 + rnd() * W * .03, a = (.03 + rnd() * .05).toFixed(3), gr = g.createLinearGradient(x - w, 0, x + w, 0);
-   gr.addColorStop(0, 'rgba(150,135,165,0)'); gr.addColorStop(.5, 'rgba(150,135,165,' + a + ')'); gr.addColorStop(1, 'rgba(150,135,165,0)');
+   const x = rnd() * W, w = 3 + rnd() * W * .03, a = (.03 + rnd() * .06).toFixed(3), gr = g.createLinearGradient(x - w, 0, x + w, 0);
+   gr.addColorStop(0, 'rgba(140,110,170,0)'); gr.addColorStop(.5, 'rgba(140,110,170,' + a + ')'); gr.addColorStop(1, 'rgba(140,110,170,0)');
    g.fillStyle = gr; g.fillRect(x - w, 0, w * 2, H);
   }
   const id = g.getImageData(0, 0, W, H), d = id.data;
@@ -216,17 +153,27 @@ function makeNoctara(opts) {
   gLine(F, 2, (c) => { c.moveTo(W / 2, H - 150); c.lineTo(W / 2, H - 116); });
  }
 
- // the purple lining: satin by light; the night inside it is drawn by its shader
+ // the purple lining: satin by light, a starfield in the dark
  function lining(W, H) {
-  const c = cvs(W, H), g = c.getContext('2d');
+  const c = cvs(W, H), g = c.getContext('2d'), e = cvs(W, H), eg = e.getContext('2d');
   const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#3a1762'); gr.addColorStop(1, '#5b2b8e'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
   for (let i = 0; i < 60; i++) {
    const x = rnd() * W, w = 6 + rnd() * W * .04, a = (.05 + rnd() * .1).toFixed(3), col = rnd() < .5 ? '20,4,40' : '190,150,240', q = g.createLinearGradient(x - w, 0, x + w, 0);
    q.addColorStop(0, 'rgba(' + col + ',0)'); q.addColorStop(.5, 'rgba(' + col + ',' + a + ')'); q.addColorStop(1, 'rgba(' + col + ',0)'); g.fillStyle = q; g.fillRect(x - w, 0, w * 2, H);
   }
-  return tex(c);
+  eg.fillStyle = '#000'; eg.fillRect(0, 0, W, H);
+  for (let i = 0; i < 30; i++) {
+   const x = rnd() * W, y = rnd() * H, r = 20 + rnd() * 90, hue = rnd() < .7 ? '130,60,220' : '70,90,230', q = eg.createRadialGradient(x, y, 0, x, y, r);
+   q.addColorStop(0, 'rgba(' + hue + ',' + (.14 + rnd() * .2).toFixed(2) + ')'); q.addColorStop(1, 'rgba(' + hue + ',0)'); eg.fillStyle = q; eg.fillRect(x - r, y - r, r * 2, r * 2);
+  }
+  for (let i = 0; i < 1300; i++) {
+   const x = rnd() * W, y = rnd() * H, b = rnd(), s = b > .97 ? 2.4 : b > .85 ? 1.5 : .9;
+   eg.fillStyle = 'rgba(' + (225 + 30 * rnd() | 0) + ',' + (215 + 40 * rnd() | 0) + ',255,' + (.35 + .65 * b).toFixed(2) + ')'; eg.fillRect(x, y, s, s);
+   if (b > .988) { eg.fillRect(x - 4, y + .7, 9, .9); eg.fillRect(x + .7, y - 4, .9, 9); }
+  }
+  return [tex(c), tex(e)];
  }
- const linMap = lining(256, 256);
+ const [linMap, linEm] = lining(512, 512);
 
  // ---------- the face, painted in the head's front view: X and Y run -1.1 to 1.1 across and up ----------
  function blob(g, x, y, r, col, sx) {
@@ -236,42 +183,37 @@ function makeNoctara(opts) {
  const FW = 512, FS = FW / 2.2, PX = (X) => (X / 1.1 * .5 + .5) * FW, PY = (Y) => (.5 - Y / 1.1 * .5) * FW;
  function faceTex() {
   const c = cvs(FW, FW), g = c.getContext('2d');
-  g.fillStyle = '#c0b7c6'; g.fillRect(0, 0, FW, FW);
+  g.fillStyle = '#b2a9b6'; g.fillRect(0, 0, FW, FW);
   const B = (X, Y, r, col, sx) => blob(g, PX(X), PY(Y), r * FS, col, sx);
   // light on the planes that face forward, shade where the face turns away
   B(0, .3, .5, 'rgba(218,212,224,.42)', 1.3); B(0, -.12, .14, 'rgba(234,228,236,.55)', .45); B(0, -.86, .16, 'rgba(226,220,230,.35)', 1.2);
   for (const s of [-1, 1]) {
    B(s * .52, -.06, .2, 'rgba(230,224,232,.45)', 1.3);  // cheekbones
    B(s * .75, .2, .32, 'rgba(100,74,112,.36)');          // temples
-   B(s * .5, -.36, .22, 'rgba(104,74,114,.34)', .7);     // hollow cheeks under the cheekbones
+   B(s * .47, -.37, .2, 'rgba(92,62,102,.5)', .8);       // hollow cheeks under the cheekbones
    B(s * .72, -.62, .3, 'rgba(92,64,100,.42)');          // the jaw turning under
-   B(s * .37, .085, .25, 'rgba(52,24,78,.82)', 1.35);    // smoky violet over the eyes
-   B(s * .53, .12, .14, 'rgba(34,14,52,.75)');           // deepest at the outer corners
+   B(s * .37, .085, .23, 'rgba(66,38,92,.72)', 1.35);    // violet shadow over the eyes
+   B(s * .52, .115, .13, 'rgba(50,26,74,.62)');          // deepest at the outer corners
    B(s * .36, -.09, .12, 'rgba(118,88,130,.25)', 1.5);   // under the eyes
    B(s * .085, -.2, .07, 'rgba(120,88,120,.3)', .5);     // the sides of the nose
    B(s * .07, -.385, .02, 'rgba(70,40,64,.32)');         // nostrils
   }
   B(0, -1.04, .38, 'rgba(86,58,94,.5)', 1.5);            // under the chin
-  B(0, -.06, .07, 'rgba(244,236,244,.5)', .32);           // light down the bridge of the nose
-  // a dark line along each upper lid, swept up into a wing at the outer corner
-  g.save(); g.strokeStyle = 'rgba(16,6,22,.9)'; g.lineCap = 'round';
-  for (const s of [-1, 1]) { g.lineWidth = 3.2; g.beginPath(); g.moveTo(PX(s * .21), PY(.075)); g.quadraticCurveTo(PX(s * .37), PY(.125), PX(s * .55), PY(.085)); g.quadraticCurveTo(PX(s * .61), PY(.1), PX(s * .66), PY(.135)); g.stroke(); }
-  g.restore();
   // lines from the nose to the corners of the mouth
   g.save(); g.strokeStyle = 'rgba(92,60,92,.2)'; g.lineWidth = 3.6; g.lineCap = 'round'; g.shadowColor = 'rgba(104,70,100,.4)'; g.shadowBlur = 4;
   for (const s of [-1, 1]) { g.beginPath(); g.moveTo(PX(s * .17), PY(-.39)); g.quadraticCurveTo(PX(s * .28), PY(-.45), PX(s * .27), PY(-.57)); g.stroke(); }
   g.restore();
   // thin dark brows that arch high and pull down at the ends
-  g.save(); g.strokeStyle = '#1c1220'; g.lineCap = 'round';
+  g.save(); g.strokeStyle = '#2a1e2c'; g.lineCap = 'round';
   for (const s of [-1, 1]) {
-   g.lineWidth = 4.6; g.beginPath(); g.moveTo(PX(s * .15), PY(.165)); g.quadraticCurveTo(PX(s * .36), PY(.27), PX(s * .55), PY(.225)); g.stroke();
+   g.lineWidth = 3.6; g.beginPath(); g.moveTo(PX(s * .15), PY(.165)); g.quadraticCurveTo(PX(s * .36), PY(.27), PX(s * .55), PY(.225)); g.stroke();
    g.lineWidth = 2.1; g.beginPath(); g.moveTo(PX(s * .55), PY(.225)); g.quadraticCurveTo(PX(s * .62), PY(.2), PX(s * .66), PY(.15)); g.stroke();
   }
   g.restore();
   // plum lips set in a cold line, the corners turned down
   const ML = -.533;
-  g.fillStyle = '#55233f'; g.beginPath(); g.moveTo(PX(-.2), PY(ML - .01)); g.quadraticCurveTo(PX(-.1), PY(-.476), PX(-.033), PY(-.488)); g.quadraticCurveTo(PX(0), PY(-.478), PX(.033), PY(-.488)); g.quadraticCurveTo(PX(.1), PY(-.476), PX(.2), PY(ML - .01)); g.quadraticCurveTo(PX(0), PY(ML + .006), PX(-.2), PY(ML - .01)); g.fill();
-  g.fillStyle = '#672c4c'; g.beginPath(); g.moveTo(PX(-.17), PY(ML - .006)); g.quadraticCurveTo(PX(0), PY(ML + .002), PX(.17), PY(ML - .006)); g.quadraticCurveTo(PX(.1), PY(-.612), PX(0), PY(-.609)); g.quadraticCurveTo(PX(-.1), PY(-.612), PX(-.17), PY(ML - .006)); g.fill();
+  g.fillStyle = '#6e3d5a'; g.beginPath(); g.moveTo(PX(-.2), PY(ML - .01)); g.quadraticCurveTo(PX(-.1), PY(-.476), PX(-.033), PY(-.488)); g.quadraticCurveTo(PX(0), PY(-.478), PX(.033), PY(-.488)); g.quadraticCurveTo(PX(.1), PY(-.476), PX(.2), PY(ML - .01)); g.quadraticCurveTo(PX(0), PY(ML + .006), PX(-.2), PY(ML - .01)); g.fill();
+  g.fillStyle = '#7d4762'; g.beginPath(); g.moveTo(PX(-.17), PY(ML - .006)); g.quadraticCurveTo(PX(0), PY(ML + .002), PX(.17), PY(ML - .006)); g.quadraticCurveTo(PX(.1), PY(-.612), PX(0), PY(-.609)); g.quadraticCurveTo(PX(-.1), PY(-.612), PX(-.17), PY(ML - .006)); g.fill();
   B(0, -.57, .045, 'rgba(226,186,210,.38)', 1.8);
   g.strokeStyle = '#2c1022'; g.lineWidth = 2.2; g.lineCap = 'round'; g.beginPath(); g.moveTo(PX(-.22), PY(ML - .028)); g.quadraticCurveTo(PX(-.14), PY(ML - .002), PX(0), PY(ML + .004)); g.quadraticCurveTo(PX(.14), PY(ML - .002), PX(.22), PY(ML - .028)); g.stroke();
   return tex(c);
@@ -312,13 +254,13 @@ function makeNoctara(opts) {
  const [skMap, skEm] = fin(skirtF), [bdMap, bdEm] = fin(bodF), [slMap, slEm] = fin(sleeveF), [cpMap, cpEm] = fin(capeF), [coMap, coEm] = fin(collarF), [veMap, veEm] = fin(veilF);
  const GE = new THREE.Color(0xffffff);
  const M = {
-  skirt: cloth({ map: skMap, emissive: GE, emissiveMap: skEm, emissiveIntensity: .2 }),
-  bodice: cloth({ map: bdMap, emissive: GE, emissiveMap: bdEm, emissiveIntensity: .2, roughness: .72 }),
-  sleeve: cloth({ map: slMap, emissive: GE, emissiveMap: slEm, emissiveIntensity: .2 }),
-  cape: cloth({ map: cpMap, emissive: GE, emissiveMap: cpEm, emissiveIntensity: .2 }),
-  collar: cloth({ map: coMap, emissive: GE, emissiveMap: coEm, emissiveIntensity: .2, roughness: .62 }),
-  veil: cloth({ map: veMap, emissive: GE, emissiveMap: veEm, emissiveIntensity: .2, transparent: true, opacity: .62, depthWrite: false, side: THREE.DoubleSide }),
-  lining: cloth({ map: linMap, emissive: 0x000000, roughness: .5, side: THREE.BackSide }, true),
+  skirt: std(0xffffff, .82, { map: skMap, emissive: GE, emissiveMap: skEm, emissiveIntensity: .35 }),
+  bodice: std(0xffffff, .7, { map: bdMap, emissive: GE, emissiveMap: bdEm, emissiveIntensity: .35 }),
+  sleeve: std(0xffffff, .82, { map: slMap, emissive: GE, emissiveMap: slEm, emissiveIntensity: .35 }),
+  cape: std(0xffffff, .84, { map: cpMap, emissive: GE, emissiveMap: cpEm, emissiveIntensity: .35 }),
+  collar: std(0xffffff, .6, { map: coMap, emissive: GE, emissiveMap: coEm, emissiveIntensity: .35 }),
+  veil: std(0xffffff, .78, { map: veMap, emissive: GE, emissiveMap: veEm, emissiveIntensity: .3, transparent: true, opacity: .86, depthWrite: false, side: THREE.DoubleSide }, .9),
+  lining: std(0xffffff, .55, { map: linMap, emissive: GE, emissiveMap: linEm, emissiveIntensity: .12, side: THREE.BackSide }, 1.3),
   collarIn: std(0x3f1d66, .42, { emissive: 0x12061f }, 1.1),
   skin: std(0xffffff, .6, { vertexColors: true, emissive: 0x120e15 }, .7),
   skinS: std(0xc9bfc9, .6, { emissive: 0x120e15, skinning: true }, .7),
@@ -328,9 +270,9 @@ function makeNoctara(opts) {
   lid: std(0xffffff, .6, { vertexColors: true, emissive: 0x160e1a, morphTargets: true }, .7),
   mouthIn: std(0x2a0f1e, .7, {}, 0),
   hair: std(0xffffff, .55, { map: hairMap, alphaTest: .5 }, .9),
-  gold: std(0xd4ab6a, .26, { metalness: .95, emissive: 0x2a1c0a, envMap: ENV, envMapIntensity: 1.2 }, .6),
-  crystal: std(0x0a0612, .06, { metalness: .35, emissive: 0x7a3ce0, emissiveIntensity: .2, flatShading: true, envMap: ENV, envMapIntensity: 1.6 }, 2),
-  gem: std(0x07040a, .05, { metalness: .6, emissive: 0x3a1470, emissiveIntensity: .5, envMap: ENV, envMapIntensity: 1.4 }, 1.5),
+  gold: std(0xc9a063, .32, { metalness: .85, emissive: 0x3a2810 }, .6),
+  crystal: std(0x120a1e, .14, { metalness: .3, emissive: 0x7a3ce0, emissiveIntensity: .2, flatShading: true }, 2),
+  gem: std(0x07040a, .08, { metalness: .6, emissive: 0x3a1470, emissiveIntensity: .5 }, 1.5),
   rock: std(0x1b1226, .45, { metalness: .15, emissive: 0x23103c }, 2.5)
  };
  const CLOTH_EM = [M.skirt, M.bodice, M.sleeve, M.cape, M.collar, M.veil];
@@ -459,7 +401,7 @@ function makeNoctara(opts) {
   return { p, n };
  }
  // eyes: lavender irises under heavy, half-lowered lids that blink
- const SX = .0182, SY = .0118, SZ = .0078, IR = .0074, YA = new THREE.Vector3(0, 1, 0), ZF = new THREE.Vector3(0, 0, 1);
+ const SX = .0152, SY = .0097, SZ = .0066, IR = .0061, YA = new THREE.Vector3(0, 1, 0), ZF = new THREE.Vector3(0, 0, 1);
  const zS = (x, y) => SZ * Math.sqrt(Math.max(0, 1 - (x / SX) ** 2 - (y / SY) ** 2));
  const EF = [-1, 1].map((sd) => {
   const { p, n } = faceAt(sd * .37, .045);
@@ -644,20 +586,17 @@ function makeNoctara(opts) {
   }
   g.attributes.position.needsUpdate = true; g.attributes.normal.needsUpdate = true;
  }
- const SK = grid(Q(144), Q(32), M.skirt, M.lining);
- const SL = arms.map(() => grid(Q(40), Q(28), M.sleeve, M.lining));
- const CP = grid(Q(64), Q(36), M.cape, M.lining, true);
- // the cloth is rebuilt at every point every frame, so the curves it uses are read from small tables
- const TN = 256, table = (f) => { const T = new Float32Array(TN + 1); for (let k = 0; k <= TN; k++) T[k] = f(k / TN); return T; };
- const tab = (T, x) => { const f = (x < 0 ? 0 : x > 1 ? 1 : x) * TN, i = f >= TN ? TN - 1 : f | 0, r = f - i; return T[i] + (T[i + 1] - T[i]) * r; };
- // a fold's profile across: broad rounded ridges and narrow creases between them, as heavy silk hangs
- const FPT = table((q) => { const x = q * 2 - 1; return x > 0 ? Math.pow(x, .7) : -.8 * Math.pow(-x, 1.5); }), foldP = (x) => tab(FPT, (x + 1) * .5);
- const R0T = table((v) => .132 + .075 * sm(0, .2, v) + .36 * Math.pow(v, 1.45) + .05 * sm(.86, 1, v)), V22T = table((v) => Math.pow(v, 2.2)), P16T = table((v) => Math.pow(v, 1.6)), P13T = table((v) => Math.pow(v, 1.3));
+ const SK = grid(Q(96), Q(30), M.skirt, M.lining);
+ const SL = arms.map(() => grid(Q(30), Q(28), M.sleeve, M.lining));
+ const CP = grid(Q(48), Q(36), M.cape, M.lining, true);
  const VE = grid(Q(40), Q(40), M.veil);
 
  // her silhouette below the waist, shared by the robe and by everything that must stay outside it
- // ct: the cosine of the angle round her from the front (the train is behind)
- function skirtRc(v, ct, fl) { return tab(R0T, v) * (1 + .85 * tab(V22T, v) * (ct < 0 ? tab(P16T, -ct) : 0)) * (1 + .3 * fl * v * v); }
+ function skirtR(v, th, fl) {
+  const r0 = .132 + .075 * sm(0, .2, v) + .36 * Math.pow(v, 1.45);
+  const train = 1 + .62 * v * v * Math.pow(Math.max(0, -Math.cos(th)), 1.6);
+  return r0 * train * (1 + .3 * fl * v * v);
+ }
  const _m = new THREE.Matrix4(), _bi = new THREE.Matrix4(), _a = V3(), _b = V3(), _c = V3(), _d = V3(), _e = V3(), _n1 = V3(), _n2 = V3(), _ax = V3();
  const REL = { pel: new THREE.Matrix4(), ch: new THREE.Matrix4(), hd: new THREE.Matrix4(), sh: [new THREE.Matrix4(), new THREE.Matrix4()], el: [new THREE.Matrix4(), new THREE.Matrix4()], wr: [new THREE.Matrix4(), new THREE.Matrix4()] };
  const PC = V3(); // pelvis in base space
@@ -665,7 +604,7 @@ function makeNoctara(opts) {
  function pushOut(x, y, z, fl, out) {
   const dx = x - PC.x, dz = z - PC.z, d = Math.hypot(dx, dz) || 1e-6;
   let Rr = 0;
-  if (y <= PELVIS_Y + .02) Rr = skirtRc(cl((PELVIS_Y - y) / PELVIS_Y, 0, 1), dz / d, fl) + .025;
+  if (y <= PELVIS_Y + .02) Rr = skirtR(cl((PELVIS_Y - y) / PELVIS_Y, 0, 1), Math.atan2(dx, dz), fl) + .025;
   else if (y < PELVIS_Y + .4) Rr = .175 * (1 - .25 * sm(PELVIS_Y + .3, PELVIS_Y + .4, y));
   const k = d < Rr ? Rr / d : 1;
   return out.set(PC.x + dx * k, y, PC.z + dz * k);
@@ -698,39 +637,32 @@ function makeNoctara(opts) {
  }
  root.updateMatrixWorld(true); buildVeilRest();
 
- const SKN = SK.nu + 1, SKS = new Float32Array(SKN), SKC = new Float32Array(SKN), SKT = new Float32Array(SKN), SK3 = new Float32Array(SKN), SKF = new Float32Array(SKN), SKY1 = new Float32Array(SKN), SKY2 = new Float32Array(SKN);
- for (let i = 0; i < SKN; i++) { const th = (i / SK.nu - .5) * TAU; SKS[i] = Math.sin(th); SKC[i] = Math.cos(th); SKT[i] = SKC[i] < 0 ? Math.pow(-SKC[i], 1.6) : 0; SK3[i] = .9 * Math.sin(th * 3); }
  function clothSkirt(P, t, lag) {
-  const nu = SK.nu, nv = SK.nv, pos = SK.pos, fl = P.fl, e = REL.pel.elements, bx = PC.x * .3, bz = PC.z * .3;
-  // each column's folds, worked out once a frame
-  for (let i = 0; i <= nu; i++) {
-   const th = (i / nu - .5) * TAU;
-   SKF[i] = .06 * foldP(Math.sin(th * 7 + SK3[i] + .35 * Math.sin(t * .8 + th * 2))) + .028 * foldP(Math.sin(th * 13 + 1.3 + .4 * Math.sin(t * .9 + th))) + .01 * Math.sin(th * 29 + 2);
-   SKY1[i] = .7 + .3 * Math.sin(th * 3 + t * 2.2); SKY2[i] = Math.sin(t * 1.3 + th * 5);
-  }
+  const nu = SK.nu, nv = SK.nv, pos = SK.pos, fl = P.fl;
   for (let j = 0; j <= nv; j++) {
-   const v = j / nv, yl = -PELVIS_Y * v, w = sm(.04, .7, v), lagK = tab(P16T, v) * .9, r0 = tab(R0T, v) * (1 + .3 * fl * v * v), tr = .85 * tab(V22T, v), fk = Math.pow(v, .85) * (1 + .8 * fl);
-   const yf = fl * .14 * v * v * v, yw = .006 * v * v, ymin = j === nv ? .004 : .012, by = PELVIS_Y + yl, lx = lag.x * lagK, lz = lag.z * lagK;
+   const v = j / nv, yl = -PELVIS_Y * v, w = sm(.04, .7, v), lagK = Math.pow(v, 1.6) * .9;
    for (let i = 0; i <= nu; i++) {
-    const r = r0 * (1 + tr * SKT[i]) * (1 + fk * SKF[i]), x = SKS[i] * r, z = SKC[i] * r;
-    const ax = e[0] * x + e[4] * yl + e[8] * z + e[12], ay = e[1] * x + e[5] * yl + e[9] * z + e[13], az = e[2] * x + e[6] * yl + e[10] * z + e[14];
-    const k = (j * (nu + 1) + i) * 3;
-    pos[k] = ax + (x + bx - ax) * w + lx; pos[k + 2] = az + (z + bz - az) * w + lz;
-    pos[k + 1] = Math.max(ymin, ay + (by - ay) * w + yf * SKY1[i] + yw * SKY2[i]);
+    const th = (i / nu - .5) * TAU;
+    let r = skirtR(v, th, fl);
+    r *= 1 + (.045 * v + .05 * fl * v) * Math.sin(th * 9 + .6 * Math.sin(t * .8 + th * 2)) + .015 * v * Math.sin(th * 23);
+    const x = Math.sin(th) * r, z = Math.cos(th) * r;
+    _a.set(x, yl, z).applyMatrix4(REL.pel);
+    _b.set(x + PC.x * .3, PELVIS_Y + yl, z + PC.z * .3);
+    _a.lerp(_b, w);
+    _a.x += lag.x * lagK; _a.z += lag.z * lagK;
+    _a.y += fl * .14 * v * v * v * (.7 + .3 * Math.sin(th * 3 + t * 2.2)) + .006 * v * v * Math.sin(t * 1.3 + th * 5);
+    if (j === nv) _a.y = Math.max(.004, _a.y); else _a.y = Math.max(.012, _a.y);
+    const k = (j * (nu + 1) + i) * 3; pos[k] = _a.x; pos[k + 1] = _a.y; pos[k + 2] = _a.z;
    }
   }
   done(SK, true);
  }
  const sleeveR = (d) => { const s = d / ARM; return s < .5 ? lerp(.07, .06, s / .5) + .014 * sm(.36, .5, s) : .072 + .15 * Math.pow(sm(.5, 1.1, s), 1.3); };
  const sleeveH = (d) => .5 * Math.pow(sm(.45, 1.12, d / ARM), 1.6);
- const SLN = SL[0].nu + 1, SLC = new Float32Array(SLN), SLS = new Float32Array(SLN), SLF = new Float32Array(SLN * 2), SLW = new Float32Array(SLN * 2);
- for (let i = 0; i < SLN; i++) { const a = -i / SL[0].nu * TAU; SLC[i] = Math.cos(a); SLS[i] = Math.sin(a); }
  function clothSleeve(A, ai, P, t, lag) {
   const C = SL[ai], nu = C.nu, nv = C.nv, pos = C.pos;
   const S = _c.setFromMatrixPosition(REL.sh[ai]), E = _d.setFromMatrixPosition(REL.el[ai]), Wr = _e.setFromMatrixPosition(REL.wr[ai]);
   const ue = REL.sh[ai].elements, fe = REL.el[ai].elements;
-  // each column's fold and ripple phases, as sine and cosine pairs, so each point only adds its own distance down the sleeve
-  for (let i = 0; i <= nu; i++) { const a = -i / nu * TAU, f = a * 6 + .4 * Math.sin(t * 1.1 + a), w = t * 1.6 + a * 2; SLF[i * 2] = Math.sin(f); SLF[i * 2 + 1] = Math.cos(f); SLW[i * 2] = Math.sin(w); SLW[i * 2 + 1] = Math.cos(w); }
   for (let j = 0; j <= nv; j++) {
    const d = j / nv * (ARM + CUFF), s = d / ARM, k = sm(UA - .05, UA + .06, d);
    let cx, cy, cz;
@@ -739,13 +671,12 @@ function makeNoctara(opts) {
    _ax.set(lerp(-ue[4], -fe[4], k), lerp(-ue[5], -fe[5], k), lerp(-ue[6], -fe[6], k)).normalize();
    _n1.set(lerp(ue[0], fe[0], k), lerp(ue[1], fe[1], k), lerp(ue[2], fe[2], k));
    _n1.addScaledVector(_ax, -_n1.dot(_ax)).normalize(); _n2.crossVectors(_ax, _n1);
-   const r = sleeveR(d), hg = sleeveH(d), lagK = s * s * .5, fA = .16 * sm(.35, 1, s), wA = .012 * s * s;
-   const cd = Math.cos(d * 2.5), sd = Math.sin(d * 2.5), cw = Math.cos(d * 6), sw = Math.sin(d * 6), lx = lag.x * lagK, lz = lag.z * lagK;
+   const r = sleeveR(d), hg = sleeveH(d), lagK = s * s * .5;
    for (let i = 0; i <= nu; i++) {
-    const ca = SLC[i], sa = SLS[i];
+    const a = -i / nu * TAU, ca = Math.cos(a), sa = Math.sin(a);
     const dx = _n1.x * ca + _n2.x * sa, dy = _n1.y * ca + _n2.y * sa, dz = _n1.z * ca + _n2.z * sa;
-    const q = (dy < 0 ? tab(P13T, -dy) : 0) * hg, rf = r * (1 + fA * foldP(SLF[i * 2] * cd + SLF[i * 2 + 1] * sd));
-    let x = cx + dx * rf + lx, y = cy + dy * rf - q + wA * (SLW[i * 2] * cw + SLW[i * 2 + 1] * sw), z = cz + dz * rf + lz - q * .12;
+    const q = Math.pow(Math.max(0, -dy), 1.3) * hg;
+    let x = cx + dx * r + lag.x * lagK, y = cy + dy * r - q + .012 * s * s * Math.sin(t * 1.6 + a * 2 + d * 6), z = cz + dz * r + lag.z * lagK - q * .12;
     pushOut(x, y, z, P.fl, _b); x = _b.x; z = _b.z; y = Math.max(.01, y);
     const kk = (j * (nu + 1) + i) * 3; pos[kk] = x; pos[kk + 1] = y; pos[kk + 2] = z;
    }
@@ -757,15 +688,12 @@ function makeNoctara(opts) {
   const S = _c.setFromMatrixPosition(REL.sh[ai]), E = _d.setFromMatrixPosition(REL.el[ai]), W = _e.setFromMatrixPosition(REL.wr[ai]);
   return s < .5 ? out.copy(S).lerp(E, s / .5) : out.copy(E).lerp(W, (s - .5) / .5);
  }
- const CPV = [], CP2 = new Float32Array((CP.nu + 1) * (CP.nv + 1));
- for (let j = 0; j <= CP.nv; j++) { const v = j / CP.nv; CPV.push({ v, hk: Math.pow(v, .72), fv: Math.pow(v, .8), c: Math.cos(v * 2.2), s: Math.sin(v * 2.2), vv: v * v }); }
- for (let i = 0; i <= CP.nu; i++) for (let j = 0; j <= CP.nv; j++) { const u = i / CP.nu * 2 - 1, v = j / CP.nv; CP2[i * (CP.nv + 1) + j] = .25 * Math.sin(u * 19 + 1.7 + v * 3); }
  function clothCape(P, t, lag) {
-  const nu = CP.nu, nv = CP.nv, pos = CP.pos, cs = P.cs, ce = REL.ch.elements, fA = .034 + .03 * cs;
+  const nu = CP.nu, nv = CP.nv, pos = CP.pos, cs = P.cs, ce = REL.ch.elements;
   const backX = -ce[8], backZ = -ce[10];
   for (let i = 0; i <= nu; i++) {
-   const u = i / nu * 2 - 1, au = Math.abs(u), ps = u * 1.95, cps = Math.cos(ps), sps = Math.sin(ps);
-   const A = _a.set(sps * .182, .392 - .025 * u * u, -cps * .128 - .02).applyMatrix4(REL.ch);
+   const u = i / nu * 2 - 1, au = Math.abs(u), ps = u * 1.95;
+   const A = _a.set(Math.sin(ps) * .182, .392 - .025 * u * u, -Math.cos(ps) * .128 - .02).applyMatrix4(REL.ch);
    const w = cs * sm(.15, .6, au);
    if (w > 0) { armPoint(u < 0 ? 0 : 1, sm(.22, .96, au), _n1); _n1.x += backX * .04; _n1.z += backZ * .04; _n1.y += .015; A.lerp(_n1, w); }
    const pb = u * 2.05, rb = .5 + .27 * Math.pow(1 - au, 1.2);
@@ -775,12 +703,12 @@ function makeNoctara(opts) {
     _n1.set(A.x + _n2.x * (.22 + .25 * au) + backX * .1, .004, A.z + _n2.z * (.22 + .25 * au) + backZ * .1);
     B.lerp(_n1, w);
    }
-   const ph = u * 9 + t * (.7 + cs), sph = Math.sin(ph), cph = Math.cos(ph), wy = .02 * cs * Math.sin(t * 2.1 + u * 5);
    for (let j = 0; j <= nv; j++) {
-    const R = CPV[j], v = R.v;
-    let x = A.x + (B.x - A.x) * R.hk, y = A.y + (B.y - A.y) * v, z = A.z + (B.z - A.z) * R.hk;
-    const fold = fA * R.fv * (.75 * foldP(sph * R.c + cph * R.s) + CP2[i * (nv + 1) + j]);
-    x += fold * cps + lag.x * R.vv; z += fold * sps + lag.z * R.vv; y += wy * v;
+    const v = j / nv, hk = Math.pow(v, .72);
+    let x = lerp(A.x, B.x, hk), y = lerp(A.y, B.y, v), z = lerp(A.z, B.z, hk);
+    const fold = (.018 + .03 * cs) * v * Math.sin(u * 11 + t * (.9 + cs) + v * 2.5);
+    x += fold * Math.cos(ps) + lag.x * v * v; z += fold * Math.sin(ps) + lag.z * v * v;
+    y += .02 * cs * v * Math.sin(t * 2.1 + u * 5);
     pushOut(x, y, z, P.fl, _d); x = _d.x; z = _d.z;
     y = Math.max(j === nv ? .004 : .01, y);
     const k = (j * (nu + 1) + i) * 3; pos[k] = x; pos[k + 1] = y; pos[k + 2] = z;
@@ -807,11 +735,11 @@ function makeNoctara(opts) {
  // arms (r right, l left): f forward raise, s side raise, u upper-arm turn, e elbow, t forearm turn (0 palm in, PI palm up when the arm is out to the side),
  //   w wrist (+ toward the palm), c finger curl, p finger spread, pt index finger straight (pointing)
  // look: cs cape spread into wings, fl robe flare, rim violet edge light, star lining starlight, cg crown glow, eye eye glow,
- //   fade (1 solid, 0 gone into the night), bl lids lowered, mo lips parted, nt how far she has turned into the night itself
+ //   fade (1 solid, 0 gone into the night), bl lids lowered, mo lips parted
  const BASE = { y: 0, sink: 0, px: 0, pz: 0, lean: .03, sway: 0, tw: 0, hp: .07, hy: 0, hr: 0,
   rf: .14, rs: .3, ru: .1, re: .32, rt: .15, rw: .12, rc: .32, rp: .12, rpt: 0,
   lf: .14, ls: .3, lu: .1, le: .32, lt: .15, lw: .12, lc: .32, lp: .12, lpt: 0,
-  cs: 0, fl: 0, rim: .3, star: .12, cg: .18, eye: 0, fade: 1, bl: .16, mo: 0, nt: 0 };
+  cs: 0, fl: 0, rim: .3, star: .12, cg: .18, eye: 0, fade: 1, bl: 0, mo: 0 };
  const KEYS = Object.keys(BASE);
  const ARMK = ['f', 's', 'u', 'e', 't', 'w', 'c', 'p', 'pt'];
  const both = (o) => { const r = {}; for (const k in o) { if (ARMK.includes(k)) { r['r' + k] = o[k]; r['l' + k] = o[k]; } else r[k] = o[k]; } return r; };
@@ -864,9 +792,9 @@ function makeNoctara(opts) {
  // defeat: she is not killed. She opens her arms to the sky and becomes night with stars in it.
  act('die', 4.4, [[0, {}],
   [.12, mix(both({ s: .6, f: .35, e: .55, t: PI * .6, c: .35 }), { hp: -.28, lean: -.12, rim: .9, star: 1.2, cs: .45, fl: .3, eye: .6, bl: .4, mo: .4 })],
-  [.32, mix(WIDE, { hp: -.38, lean: -.1, cs: 1, fl: .6, rim: 1.4, star: 2.2, cg: 1.4, eye: 1, y: .06, bl: .2, mo: .2, nt: .15 })],
-  [.6, mix(WIDE, { hp: -.46, lean: -.12, y: .12, cs: 1, fl: .7, rim: 1.1, star: 2.6, cg: 1.2, eye: .6, bl: .7, mo: 0, nt: 1, fade: .92 })],
-  [.92, mix(WIDE, { hp: -.5, y: .2, cs: 1, fl: .75, star: 2.6, nt: 1, fade: 0, bl: 1 })],
+  [.32, mix(WIDE, { hp: -.38, lean: -.1, cs: 1, fl: .6, rim: 1.4, star: 2.2, cg: 1.4, eye: 1, y: .06, bl: .2, mo: .2 })],
+  [.6, mix(WIDE, { hp: -.46, lean: -.12, y: .12, cs: 1, fl: .7, rim: 1.2, star: 2.6, cg: 1.2, eye: .6, bl: .7, mo: 0, fade: .45 })],
+  [.92, mix(WIDE, { hp: -.5, y: .18, cs: 1, fl: .75, star: 2.6, fade: 0, bl: 1 })],
   [1, { fade: 0, sink: -2.25 }]], { hold: true, cues: [.32], rate: 9 });
  act('hurt', .7, [[0, {}], [.2, mix(both({ s: .45, e: .9, c: .75 }), { pz: -.05, lean: -.15, hp: -.22, hr: .1, fl: .2, rim: .6, bl: .6, mo: .5 })], [1, BASE]], { interrupt: true, rate: 16 });
  act('block', .45, [[0, {}], [.3, mix(right({ f: 1.25, s: .05, e: 1.95, t: .4, c: .5 }), { lean: -.06, hp: .14, tw: -.18, cs: .25, bl: .3 })], [.7, {}], [1, BASE]], { interrupt: true, rate: 18 });
@@ -902,7 +830,7 @@ function makeNoctara(opts) {
   P.g.attributes.position.needsUpdate = true; P.g.attributes.color.needsUpdate = true;
  }
  const drift = (P) => (i, h, a) => { const p = P.pos, v = P.vel; p[i * 3] += v[i * 3] * h; p[i * 3 + 1] += v[i * 3 + 1] * h; p[i * 3 + 2] += v[i * 3 + 2] * h; return Math.sin(PI * Math.min(1, a * 1.15)); };
- const disk = particles(700, .085), sparks = particles(700, .07), frost = particles(900, .11, sparkT), stars = particles(900, .055, sparkT), heaven = particles(1100, .1, sparkT);
+ const disk = particles(700, .085), sparks = particles(700, .07), frost = particles(900, .11, sparkT), stars = particles(900, .05, sparkT);
  for (const P of [sparks, frost]) { P.pts.material.depthTest = false; P.pts.renderOrder = 10; }
  // the void sphere: a black core, a violet rim hugging its edge, a photon ring, a corona, an accretion disk and orbiting rock
  const vCore = new THREE.Mesh(new THREE.SphereGeometry(1, 36, 24), new THREE.MeshBasicMaterial({ color: 0x000000 })); vCore.visible = false; fx.add(vCore);
@@ -917,78 +845,21 @@ function makeNoctara(opts) {
  const vSwirl = spr(swirlT, 0xc8a0ff), vSwirl2 = spr(swirlT, 0x8a4cff);
  const vFloorDark = decal(darkT, 0xffffff, THREE.NormalBlending), vFloorRing = decal(ringT, 0x8a4cff);
  const rocks = [];
- for (let i = 0; i < 18; i++) { const g = new THREE.OctahedronGeometry(1, 0); g.scale(.6 + rnd() * .6, .5 + rnd() * .8, .5 + rnd() * .6); const m = new THREE.Mesh(g, M.rock); m.visible = false; fx.add(m); rocks.push({ m, r: 0, a: rnd() * TAU, h: 0, s: .5 + rnd(), spin: V3().set(rnd(), rnd(), rnd()).multiplyScalar(4), v: V3(), fl: 0 }); }
+ for (let i = 0; i < 18; i++) { const g = new THREE.OctahedronGeometry(1, 0); g.scale(.6 + rnd() * .6, .5 + rnd() * .8, .5 + rnd() * .6); const m = new THREE.Mesh(g, M.rock); m.visible = false; fx.add(m); rocks.push({ m, r: 0, a: rnd() * TAU, h: 0, s: .5 + rnd(), spin: V3().set(rnd(), rnd(), rnd()).multiplyScalar(4) }); }
  // crown shards: three crystals that form over her crown and fly at the target
  const shards = [];
- for (let k = 0; k < 3; k++) { const g = new THREE.OctahedronGeometry(1, 0); g.scale(.075, .3, .075); const sm2 = M.crystal.clone(); sm2.depthTest = false; sm2.onBeforeCompile = M.crystal.onBeforeCompile; sm2.customProgramCacheKey = M.crystal.customProgramCacheKey; sm2.emissiveIntensity = 1.6; const m = new THREE.Mesh(g, sm2); m.renderOrder = 9; m.visible = false; fx.add(m); const gl = spr(glowT, 0x9a5cff); gl.material.depthTest = false; gl.renderOrder = 9; shards.push({ m, gl, done: false }); }
+ for (let k = 0; k < 3; k++) { const g = new THREE.OctahedronGeometry(1, 0); g.scale(.05, .2, .05); const sm2 = M.crystal.clone(); sm2.depthTest = false; sm2.onBeforeCompile = M.crystal.onBeforeCompile; sm2.customProgramCacheKey = M.crystal.customProgramCacheKey; sm2.emissiveIntensity = 1.6; const m = new THREE.Mesh(g, sm2); m.renderOrder = 9; m.visible = false; fx.add(m); const gl = spr(glowT, 0x9a5cff); gl.material.depthTest = false; gl.renderOrder = 9; shards.push({ m, gl, done: false }); }
  const handGlow = spr(glowT, 0x9a6cff), crownGlow = spr(glowT, 0x8a50ff), frostGlow = spr(glowT, 0xbfe4ff);
  const pool = decal(poolT, 0xffffff, THREE.NormalBlending), poolRing = decal(ringT, 0x7e3cff);
- const smoke = []; for (let i = 0; i < 28; i++) { const s = spr(smokeT, 0x6a2ccf); s.material.rotation = rnd() * TAU; smoke.push({ s, life: 0, max: 1, v: V3(), p: V3(), k: 1 }); }
+ const smoke = []; for (let i = 0; i < 22; i++) { const s = spr(smokeT, 0x6a2ccf); s.material.rotation = rnd() * TAU; smoke.push({ s, life: 0, max: 1, v: V3(), p: V3() }); }
  const mist = []; for (let i = 0; i < 7; i++) { const s = spr(smokeT, 0x5a28b0); mist.push({ s, a: i / 7 * TAU, ph: rnd() * TAU }); }
  const TMP = { orb: V3(), hand: V3(), crown: V3(), tgt: V3(), last: V3() };
  const _p1 = V3(), _p2 = V3(), _q = new THREE.Quaternion(), UP = new THREE.Vector3(0, 1, 0);
  const DN = new THREE.Vector3(.15, .55, .82).normalize(), DE1 = V3().crossVectors(UP, DN).normalize(), DE2 = V3().crossVectors(DN, DE1);
- const fxState = { burst: false, shardFired: [false, false, false], frost: false, acc: { disk: 0, frost: 0, star: 0, smoke: 0, spark: 0, ice: 0, app: 0, mote: 0 } };
-
- // ---------- second pass: spells as big as a final boss's ----------
- // ribbons of light that always turn to face the camera: lightning, streams of power, trails
- function ribbons(nStrip, nPt) {
-  const n = nStrip * nPt * 2, pos = new Float32Array(n * 3), tan = new Float32Array(n * 3), wid = new Float32Array(n), col = new Float32Array(n * 3), idx = [];
-  for (let k = 0; k < nStrip; k++) for (let i = 0; i < nPt - 1; i++) { const a = (k * nPt + i) * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
-  const g = new THREE.BufferGeometry();
-  for (const [k, a, d] of [['position', pos, 3], ['aTan', tan, 3], ['aW', wid, 1], ['aCol', col, 3]]) g.setAttribute(k, new THREE.BufferAttribute(a, d).setUsage(THREE.DynamicDrawUsage));
-  g.setIndex(idx);
-  const m = new THREE.Mesh(g, new THREE.ShaderMaterial({
-   transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
-   vertexShader: 'attribute vec3 aTan; attribute float aW; attribute vec3 aCol; varying vec3 vC; varying float vS;\nvoid main(){ vC = aCol; vS = sign(aW); vec3 sd = normalize(cross(aTan, normalize(cameraPosition - position)) + 1e-5); gl_Position = projectionMatrix * viewMatrix * vec4(position + sd * aW, 1.); }',
-   fragmentShader: 'varying vec3 vC; varying float vS;\nvoid main(){ float e = 1. - vS * vS; gl_FragColor = vec4(vC * (.3 + .7 * e) + vC * vC * e * e * .8, 1.); }',
-  }));
-  m.frustumCulled = false; m.renderOrder = 9; m.visible = false; fx.add(m);
-  return { m, g, pos, tan, wid, col, nStrip, nPt };
- }
- const _rt = V3(), PTS = (n) => Array.from({ length: n }, () => V3());
- // strip k through the points P: half-width w(i), colour c times k(i)
- function strip(R, k, P, wf, c, kf) {
-  const n = R.nPt;
-  for (let i = 0; i < n; i++) {
-   const p = P[i]; _rt.subVectors(P[Math.min(i + 1, n - 1)], P[Math.max(i - 1, 0)]); if (_rt.lengthSq() < 1e-12) _rt.set(0, 1, 0); _rt.normalize();
-   const w = wf(i), b = kf(i);
-   for (let e = 0; e < 2; e++) { const a = (k * n + i) * 2 + e; R.pos[a * 3] = p.x; R.pos[a * 3 + 1] = p.y; R.pos[a * 3 + 2] = p.z; R.tan[a * 3] = _rt.x; R.tan[a * 3 + 1] = _rt.y; R.tan[a * 3 + 2] = _rt.z; R.wid[a] = e ? w : -w; R.col[a * 3] = c.r * b; R.col[a * 3 + 1] = c.g * b; R.col[a * 3 + 2] = c.b * b; }
-  }
- }
- function stripOff(R, k) { R.col.fill(0, k * R.nPt * 6, (k + 1) * R.nPt * 6); R.wid.fill(0, k * R.nPt * 2, (k + 1) * R.nPt * 2); }
- function rdone(R) { for (const k of ['position', 'aTan', 'aW', 'aCol']) R.g.attributes[k].needsUpdate = true; }
- const CV = new THREE.Color(0xb98cff), CW = new THREE.Color(0xeee0ff);
- // the void sphere's lightning and the streams of light it swallows
- const ARC = ribbons(7, 12), arcP = PTS(12), arcS = Array.from({ length: 7 }, () => ({ a: 0, b: 0, seed: 0, k: 0 }));
- const STR = ribbons(10, 24), strP = PTS(24);
- const shockFloor = decal(ringT, 0xa070ff);
- // crown shards' trails, and the splinters each one bursts into
- const TRL = ribbons(3, 14), trH = [PTS(14), PTS(14), PTS(14)];
- const FRAG_N = 18, fragGeo = new THREE.OctahedronGeometry(1, 0); fragGeo.scale(.022, .07, .022);
- const frags = new THREE.InstancedMesh(fragGeo, shards[0].m.material, FRAG_N); frags.frustumCulled = false; frags.renderOrder = 9; frags.visible = false; fx.add(frags);
- const FRAG = Array.from({ length: FRAG_N }, () => ({ life: 0, p: V3(), v: V3(), q: new THREE.Quaternion(), ax: V3(1, 0, 0) }));
- // frost dust: shards of ice spiralling out of her hand, and frost spreading over the ground under the party
- const ICE_N = 70, iceGeo = (() => { const a = new THREE.ConeGeometry(.032, .2, 6, 1); a.translate(0, .1, 0); const b = new THREE.ConeGeometry(.032, .075, 6, 1); b.rotateX(PI); b.translate(0, -.0375, 0); return mergeGeos([a, b]); })();
- const ice = new THREE.InstancedMesh(iceGeo, new THREE.MeshStandardMaterial({ color: 0xd6ebff, roughness: .08, metalness: .25, envMap: ENV, envMapIntensity: 2.4, emissive: 0x4f86ff, emissiveIntensity: .5, transparent: true, opacity: .92, flatShading: true }), ICE_N);
- ice.frustumCulled = false; ice.renderOrder = 9; ice.visible = false; fx.add(ice);
- const ICE = Array.from({ length: ICE_N }, () => ({ s: -1, sp: 1, ph: 0, rho: 0, sz: 1, q: new THREE.Quaternion(), ax: V3(1, 0, 0), w: 0 }));
- const frostFloorT = (() => {
-  const S = 256, c = cvs(S, S), g = c.getContext('2d'), h = S / 2, q = g.createRadialGradient(h, h, 0, h, h, h);
-  q.addColorStop(0, 'rgba(225,240,255,.5)'); q.addColorStop(.62, 'rgba(200,228,255,.3)'); q.addColorStop(1, 'rgba(200,228,255,0)'); g.fillStyle = q; g.fillRect(0, 0, S, S);
-  g.strokeStyle = 'rgba(240,250,255,.75)'; g.lineCap = 'round';
-  const br = (x, y, a, l, w, d) => { const x2 = x + Math.cos(a) * l, y2 = y + Math.sin(a) * l; g.lineWidth = w; g.beginPath(); g.moveTo(x, y); g.lineTo(x2, y2); g.stroke(); if (d > 0) { br(x2, y2, a + .55, l * .6, w * .7, d - 1); br(x2, y2, a - .55, l * .6, w * .7, d - 1); } };
-  for (let i = 0; i < 30; i++) { const a = rnd() * TAU, r = Math.sqrt(rnd()) * 96; br(h + Math.cos(a) * r, h + Math.sin(a) * r, rnd() * TAU, 12 + rnd() * 14, 1.6, 3); }
-  return tex(c);
- })();
- const frostFloor = decal(frostFloorT, 0xffffff, THREE.NormalBlending);
- // blackout: the dark pours out across the ground from her, and a violet glow stands behind her
- const darkSpread = decal(poolT, 0xffffff, THREE.NormalBlending), aura = spr(glowT, 0x7a3cff);
- const fx2 = { arcT: 0, shockT: -1, frostT: -1 };
- const _im = new THREE.Matrix4(), _iq = new THREE.Quaternion(), _is = V3(), _ip = V3(), _ia = V3(), _ib = V3(), ZERO = new THREE.Matrix4().makeScale(0, 0, 0);
+ const fxState = { burst: false, shardFired: [false, false, false], acc: { disk: 0, frost: 0, star: 0, smoke: 0, spark: 0 } };
 
  // ---------- runtime ----------
- const state = { target: { x: 0, y: 1, z: 2 }, frost: 11 };
+ const state = { target: { x: 0, y: 1, z: 2 } };
  const FIN = Object.assign({}, BASE), TGT = Object.assign({}, BASE);
  let actv = null, gOn = false, gW = 0, velInit = false, fadeE = 1, fadeNow = -1, blinkIn = 2.2, blinkT = -1;
  const vel = V3(), prevW = V3(), lag = V3();
@@ -1022,7 +893,7 @@ function makeNoctara(opts) {
   if (actv && !force && (actv.name === 'die' || (!def.interrupt && !(actv.def.hold && actv.t >= actv.def.dur - 1e-6)))) return false;
   if (def.snap) for (const k of def.snap) FIN[k] = def.p[0][k];
   if (name === 'appear') FIN.fade = 1;
-  actv = { name, def, t: 0 }; fxState.burst = false; fxState.shardFired = [false, false, false]; fxState.frost = false;
+  actv = { name, def, t: 0 }; fxState.burst = false; fxState.shardFired = [false, false, false];
   return true;
  }
  const P3 = (o, x, y, z, out) => o.localToWorld((out || V3()).set(x, y, z));
@@ -1035,9 +906,9 @@ function makeNoctara(opts) {
   if (name === 'voidSphere') {
    const f = sm(.07, .26, u), tr = sm(.38, .52, u), gr = sm(.5, .74, u), co = sm(.8, .845, u);
    const H = _p1.copy(TMP.hand); H.y += .15;
-   const Ch = _p2.set(tg.x + .2, 2.95, tg.z);
+   const Ch = _p2.set(tg.x + .2, 2.05, tg.z);
    const C = TMP.orb.copy(H).lerp(Ch, tr); C.y += Math.sin(PI * tr) * .5;
-   let rad = (.035 + .075 * f) * lerp(1, 1.45, tr); rad = lerp(rad, .95, gr) * (1 + .04 * Math.sin(t * 9) * gr) * (1 - co);
+   let rad = (.035 + .075 * f) * lerp(1, 1.45, tr); rad = lerp(rad, .58, gr) * (1 + .04 * Math.sin(t * 9) * gr) * (1 - co);
    vOn = u > .05 && co < .995 && f > 0;
    if (vOn) {
     for (const o of [vCore, vRim, vCorona, vRing, vFloorDark, vFloorRing, vSwirl, vSwirl2]) o.visible = true;
@@ -1046,8 +917,8 @@ function makeNoctara(opts) {
     vCore.position.copy(C); vCore.scale.setScalar(rad); vRim.position.copy(C); vRim.scale.setScalar(rad); rimMat.uniforms.k.value = 1 + .4 * Math.sin(t * 6);
     vCorona.position.copy(C); vCorona.scale.setScalar(rad * 5.5); vCorona.material.opacity = .5 + .15 * Math.sin(t * 5);
     vRing.position.copy(C); vRing.scale.setScalar(rad * 2.6); vRing.material.opacity = .85;
-    vFloorDark.position.set(C.x, .01, C.z); vFloorDark.scale.set(rad * 5.5, rad * 5.5, 1); vFloorDark.material.opacity = gr * .85;
-    vFloorRing.position.set(C.x, .014, C.z); vFloorRing.scale.set(rad * 4.6, rad * 4.6, 1); vFloorRing.material.opacity = gr * (.45 + .2 * Math.sin(t * 7));
+    vFloorDark.position.set(C.x, .01, C.z); vFloorDark.scale.set(rad * 7, rad * 7, 1); vFloorDark.material.opacity = gr * .8;
+    vFloorRing.position.set(C.x, .014, C.z); vFloorRing.scale.set(rad * 6, rad * 6, 1); vFloorRing.material.opacity = gr * (.45 + .2 * Math.sin(t * 7));
     fxState.acc.disk += dt * 420 * (.35 + .65 * gr) * (1 - co);
     while (fxState.acc.disk > 1) { fxState.acc.disk -= 1; const i = emit(disk, 0, 0, 0, 0, 0, 0, 3, ...(rnd() < .4 ? [.95, .8, 1] : [.6, .28, 1])); disk.aux[i * 3] = 2.3 + 1.4 * rnd(); disk.aux[i * 3 + 1] = rnd() * TAU; disk.aux[i * 3 + 2] = (rnd() - .5) * .35; }
     rocks.forEach((r, k) => {
@@ -1059,15 +930,14 @@ function makeNoctara(opts) {
     vis(handGlow, f > 0 && tr < 1); handGlow.position.copy(H); handGlow.scale.setScalar(.3 * f * (1 - tr)); handGlow.material.opacity = .9;
    }
    if (u >= .845 && !fxState.burst) {
-    fxState.burst = true; TMP.last.copy(Ch); fx2.shockT = 0;
-    for (const r of rocks) { const a = rnd() * TAU, b = rnd() - .2, sp = 3 + 4 * rnd(); r.fl = 1.6 + rnd(); r.m.visible = true; r.m.position.copy(Ch).add(_p1.set(Math.cos(a) * .3, b * .3, Math.sin(a) * .3)); r.v.set(Math.cos(a) * sp, b * sp + 1.5, Math.sin(a) * sp); r.m.scale.setScalar(.1 + .08 * r.s); }
-    for (let i = 0; i < 240; i++) { const a = rnd() * TAU, b = (rnd() - .5) * 2, sp = 1.6 + 2.6 * rnd(), cb = Math.sqrt(1 - b * b); emit(sparks, Ch.x, Ch.y, Ch.z, Math.cos(a) * cb * sp, b * sp, Math.sin(a) * cb * sp, .5 + .6 * rnd(), ...(rnd() < .5 ? [1, .9, 1] : [.7, .4, 1])); }
+    fxState.burst = true; TMP.last.copy(Ch);
+    for (let i = 0; i < 160; i++) { const a = rnd() * TAU, b = (rnd() - .5) * 2, sp = 1.6 + 2.6 * rnd(), cb = Math.sqrt(1 - b * b); emit(sparks, Ch.x, Ch.y, Ch.z, Math.cos(a) * cb * sp, b * sp, Math.sin(a) * cb * sp, .5 + .6 * rnd(), ...(rnd() < .5 ? [1, .9, 1] : [.7, .4, 1])); }
    }
    const fl = u > .84 ? 1 - sm(.845, .99, u) : 0;
    vis(vFlash, fl > 0); vis(vShock, fl > 0);
    if (fl > 0) { const k = (u - .84) / .16; vFlash.position.copy(TMP.last); vFlash.scale.setScalar(.4 + 2.4 * k); vFlash.material.opacity = fl; vShock.position.copy(TMP.last); vShock.scale.setScalar(.5 + 5.5 * k); vShock.material.opacity = fl * .9; }
   } else { vis(vFlash, false); vis(vShock, false); }
-  if (!vOn) { for (const o of [vCore, vRim, vCorona, vRing, vFloorDark, vFloorRing, handGlow, vSwirl, vSwirl2]) o.visible = false; for (const r of rocks) if (!(r.fl > 0)) { r.m.visible = false; r.r = 0; } }
+  if (!vOn) { for (const o of [vCore, vRim, vCorona, vRing, vFloorDark, vFloorRing, handGlow, vSwirl, vSwirl2]) o.visible = false; for (const r of rocks) { r.m.visible = false; r.r = 0; } }
   const rad = vCore.scale.x, C = TMP.orb;
   stepP(disk, dt, (i, h, a) => {
    const q = disk.aux; let rr = q[i * 3]; rr -= h * (.75 + 1.7 / rr) * .55; q[i * 3] = rr; q[i * 3 + 1] += h * 3.4 * Math.pow(rr, -1.5);
@@ -1093,7 +963,7 @@ function makeNoctara(opts) {
     S.gl.position.copy(pos); S.gl.scale.setScalar((.45 + .25 * fly) * form); S.gl.material.opacity = 1;
     if (fly > 0) for (let i = 0; i < 14; i++) { _p1.copy(pos).lerp(S.m.position, 0); emit(sparks, pos.x + (rnd() - .5) * .05, pos.y + (rnd() - .5) * .05, pos.z, (rnd() - .5) * .25, (rnd() - .5) * .25, (rnd() - .5) * .25, .45, .8, .55, 1); }
    }
-   if (fly >= 1 && !fxState.shardFired[k]) { fxState.shardFired[k] = true; for (let n = 0; n < 6; n++) { const F = FRAG[(k * 6 + n) % FRAG_N], a = rnd() * TAU, sp = 1.2 + 1.8 * rnd(); F.life = .9 + .4 * rnd(); F.p.copy(tg); F.v.set(Math.cos(a) * sp, 1 + 2 * rnd(), Math.sin(a) * sp); F.ax.set(rnd() - .5, rnd() - .5, rnd() - .5).normalize(); } for (let i = 0; i < 40; i++) { const a = rnd() * TAU, b = rnd() - .3; emit(sparks, tg.x, tg.y, tg.z, Math.cos(a) * 1.4 * rnd(), b * 1.6, Math.sin(a) * 1.4 * rnd(), .4 + .4 * rnd(), .8, .55, 1); } }
+   if (fly >= 1 && !fxState.shardFired[k]) { fxState.shardFired[k] = true; for (let i = 0; i < 40; i++) { const a = rnd() * TAU, b = rnd() - .3; emit(sparks, tg.x, tg.y, tg.z, Math.cos(a) * 1.4 * rnd(), b * 1.6, Math.sin(a) * 1.4 * rnd(), .4 + .4 * rnd(), .8, .55, 1); } }
   });
   // frost dust
   const frOn = name === 'frostDust' ? win(u, .3, .62, .03) : 0;
@@ -1110,22 +980,19 @@ function makeNoctara(opts) {
   const rq = root.getWorldQuaternion(_q);
   if (boOn > 0) {
    fxState.acc.smoke += dt * 12 * boOn;
-   while (fxState.acc.smoke > 1) { fxState.acc.smoke -= 1; const S = smoke.find((o) => o.life <= 0); if (!S) break; const sd = rnd() < .5 ? -1 : 1; S.p.set(sd * (.45 + .55 * rnd()), .3 + 1.3 * rnd(), (rnd() - .6) * .4).applyQuaternion(rq).add(root.position); S.v.set(sd * (.15 + .2 * rnd()), .08 + .12 * rnd(), (rnd() - .5) * .1).applyQuaternion(rq); S.life = S.max = 2.2 + rnd(); S.k = 1; S.s.material.rotation = rnd() * TAU; }
+   while (fxState.acc.smoke > 1) { fxState.acc.smoke -= 1; const S = smoke.find((o) => o.life <= 0); if (!S) break; const sd = rnd() < .5 ? -1 : 1; S.p.set(sd * (.45 + .55 * rnd()), .3 + 1.3 * rnd(), (rnd() - .6) * .4).applyQuaternion(rq).add(root.position); S.v.set(sd * (.15 + .2 * rnd()), .08 + .12 * rnd(), (rnd() - .5) * .1).applyQuaternion(rq); S.life = S.max = 2.2 + rnd(); S.s.material.rotation = rnd() * TAU; }
   }
-  for (const S of smoke) { if (S.life <= 0) { S.s.visible = false; continue; } S.life -= dt; const a = 1 - S.life / S.max; S.p.addScaledVector(S.v, dt); S.s.visible = true; S.s.position.copy(S.p); S.s.scale.setScalar(.5 + .9 * a); S.s.material.opacity = .45 * S.k * Math.sin(PI * a); S.s.material.rotation += dt * .3; }
+  for (const S of smoke) { if (S.life <= 0) { S.s.visible = false; continue; } S.life -= dt; const a = 1 - S.life / S.max; S.p.addScaledVector(S.v, dt); S.s.visible = true; S.s.position.copy(S.p); S.s.scale.setScalar(.5 + .9 * a); S.s.material.opacity = .45 * Math.sin(PI * a); S.s.material.rotation += dt * .3; }
   if (boOn > 0 || dieOn > 0) {
-   fxState.acc.star += dt * (boOn * 40 + dieOn * 600);
+   fxState.acc.star += dt * (boOn * 40 + dieOn * 520);
    while (fxState.acc.star > 1) {
     fxState.acc.star -= 1; const src = rnd() < .6 ? CP : SK, k = (rnd() * (src.pos.length / 3)) | 0;
     _p1.set(src.pos[k * 3], src.pos[k * 3 + 1], src.pos[k * 3 + 2]); base.localToWorld(_p1);
-    if (dieOn > 0) emit(heaven, _p1.x, _p1.y, _p1.z, (rnd() - .5) * 1.6, .9 + 2.2 * rnd(), (rnd() - .5) * 1.6, 4 + 4 * rnd(), ...(rnd() < .7 ? [1, .95, 1] : [.8, .66, 1]));
-    else emit(stars, _p1.x, _p1.y, _p1.z, (rnd() - .5) * .2, .1 + .15 * rnd(), (rnd() - .5) * .2, 1.8 + rnd(), ...(rnd() < .7 ? [.95, .9, 1] : [.75, .6, 1]));
+    const up = dieOn > 0 ? .3 + .8 * rnd() : .1 + .15 * rnd(), spread = dieOn > 0 ? 1.2 : .2;
+    emit(stars, _p1.x, _p1.y, _p1.z, (rnd() - .5) * spread, up, (rnd() - .5) * spread, dieOn > 0 ? 2.6 + 1.6 * rnd() : 1.8 + rnd(), ...(rnd() < .7 ? [.95, .9, 1] : [.75, .6, 1]));
    }
   }
-  stepP(stars, dt, (i, h, a) => { const p = stars.pos, v = stars.vel; p[i * 3] += v[i * 3] * h; p[i * 3 + 1] += v[i * 3 + 1] * h; p[i * 3 + 2] += v[i * 3 + 2] * h; return Math.sin(PI * Math.min(1, a * 1.1)) * (.55 + .45 * Math.sin(t * 15 + stars.ph[i])); });
-  // the stars of her defeat slow as they rise and hang over the square, twinkling, before they fade
-  const hang = Math.exp(-dt * .5);
-  stepP(heaven, dt, (i, h, a) => { const p = heaven.pos, v = heaven.vel; v[i * 3] *= hang; v[i * 3 + 1] *= hang; v[i * 3 + 2] *= hang; p[i * 3] += v[i * 3] * h; p[i * 3 + 1] += v[i * 3 + 1] * h; p[i * 3 + 2] += v[i * 3 + 2] * h; return Math.min(1, a * 6) * (1 - a * a) * (.5 + .5 * Math.sin(t * (6 + 9 * heaven.ph[i] / TAU) + heaven.ph[i] * 7)); });
+  stepP(stars, dt, (i, h, a) => { const p = stars.pos, v = stars.vel; p[i * 3] += v[i * 3] * h; p[i * 3 + 1] += v[i * 3 + 1] * h; p[i * 3 + 2] += v[i * 3 + 2] * h; return Math.sin(PI * a) * (.55 + .45 * Math.sin(t * 15 + stars.ph[i])); });
   stepP(sparks, dt, (i, h, a) => { const p = sparks.pos, v = sparks.vel, dr = 1 - Math.min(1, 2.2 * h); v[i * 3] *= dr; v[i * 3 + 1] *= dr; v[i * 3 + 2] *= dr; p[i * 3] += v[i * 3] * h; p[i * 3 + 1] += v[i * 3 + 1] * h; p[i * 3 + 2] += v[i * 3 + 2] * h; return 1 - a; });
   // the pool of dark she rises from and sinks into
   const pk = name === 'appear' ? sm(0, .1, u) * (1 - sm(.8, 1, u)) : 0;
@@ -1135,103 +1002,6 @@ function makeNoctara(opts) {
   const mk = FIN.sink > -.3 ? (.07 + .08 * FIN.rim) * FIN.fade : 0;
   mist.forEach((m, k) => { m.s.visible = mk > 0; if (!mk) return; const a = m.a + t * .05; m.s.position.set(Math.cos(a) * .55, .1 + .03 * Math.sin(t * .7 + m.ph), Math.sin(a) * .5).applyQuaternion(rq).add(root.position); m.s.scale.setScalar(.75 + .1 * Math.sin(t * .5 + m.ph)); m.s.material.opacity = mk * (.7 + .3 * Math.sin(t * .9 + m.ph)); });
   crownGlow.visible = FIN.sink > -.5 && FIN.fade > .03; crownGlow.position.copy(TMP.crown); crownGlow.position.y -= .2; crownGlow.scale.setScalar(.45); crownGlow.material.opacity = .1 * FIN.cg * FIN.fade;
-  updateFX2(name, u, t, dt, vOn, rad, tg, rq);
- }
- function updateFX2(name, u, t, dt, vOn, rad, tg, rq) {
-  const C = TMP.orb;
-  // the void sphere: lightning crawling out over the dark, and streams of light spiralling into it
-  ARC.m.visible = STR.m.visible = vOn && rad > .05;
-  if (ARC.m.visible) {
-   fx2.arcT -= dt; const regen = fx2.arcT <= 0; if (regen) fx2.arcT = .07;
-   for (let k = 0; k < ARC.nStrip; k++) {
-    const A = arcS[k];
-    if (regen && (A.k === 0 || rnd() < .5)) { A.a = rnd() * TAU; A.b = (rnd() - .5) * 1.2; A.seed = rnd() * 100; A.k = .45 + .55 * rnd(); }
-    for (let i = 0; i < ARC.nPt; i++) {
-     const f = i / (ARC.nPt - 1), r = rad * (1.02 + 1.5 * f), a = A.a + .9 * f, j = .2 * rad * f, h1 = Math.sin(A.seed + i * 12.9898) * 43758.5453, h2 = Math.sin(A.seed + i * 78.233) * 12345.678;
-     arcP[i].copy(C).addScaledVector(DE1, Math.cos(a) * r + (h1 - Math.floor(h1) - .5) * 2 * j).addScaledVector(DE2, Math.sin(a) * r + (h2 - Math.floor(h2) - .5) * 2 * j).addScaledVector(DN, A.b * rad * (.6 + .4 * f));
-    }
-    strip(ARC, k, arcP, (i) => .05 * (1 - i / ARC.nPt) * (.5 + .5 * rad), CW, (i) => A.k * (1 - i / ARC.nPt * .7) * (.6 + .4 * Math.sin(t * 40 + k)));
-   }
-   rdone(ARC);
-   for (let k = 0; k < STR.nStrip; k++) {
-    const a0 = k / STR.nStrip * TAU - t * 1.3, tilt = Math.sin(k * 2.3) * .35;
-    for (let i = 0; i < STR.nPt; i++) { const f = i / (STR.nPt - 1), r = rad * (1.05 + 2.6 * Math.pow(1 - f, 1.6)), a = a0 + 2.8 * f; strP[i].copy(C).addScaledVector(DE1, Math.cos(a) * r).addScaledVector(DE2, Math.sin(a) * r).addScaledVector(DN, tilt * r * .3); }
-    strip(STR, k, strP, (i) => (.055 * (1 - i / STR.nPt) + .015) * (.5 + .5 * rad), CV, (i) => { const f = i / (STR.nPt - 1); return sm(0, .25, f) * (.25 + .9 * Math.pow(.5 + .5 * Math.sin(f * 14 - t * 10 + k * 1.7), 6)); });
-   }
-   rdone(STR);
-  }
-  // when it bursts: a ring of violet light races out over the ground, and its rocks fly and fall
-  if (fx2.shockT >= 0) {
-   fx2.shockT += dt; const k = fx2.shockT, sc = 1 + 10 * (1 - Math.exp(-k * 3.2));
-   shockFloor.visible = k < 1; shockFloor.position.set(TMP.last.x, .02, TMP.last.z); shockFloor.scale.set(sc, sc, 1); shockFloor.material.opacity = 1 - sm(.15, 1, k);
-   if (k >= 1) { fx2.shockT = -1; shockFloor.visible = false; }
-  }
-  for (const r of rocks) {
-   if (!(r.fl > 0)) continue;
-   r.fl -= dt; r.v.y -= 9.8 * dt; r.m.position.addScaledVector(r.v, dt);
-   if (r.m.position.y < .06) { r.m.position.y = .06; r.v.multiplyScalar(.35); r.v.y = Math.abs(r.v.y) * .4; }
-   r.m.rotation.x += r.spin.x * dt; r.m.rotation.y += r.spin.y * dt;
-   if (r.fl <= .4) r.m.scale.multiplyScalar(Math.max(0, 1 - dt / .4 * 2)); if (r.fl <= 0) { r.m.visible = false; r.r = 0; }
-  }
-  // crown shards: violet trails, and the splinters of each where it strikes
-  let trOn = false;
-  shards.forEach((S, k) => {
-   const H = trH[k];
-   if (S.m.visible) { if (!S.th) { for (const p of H) p.copy(S.m.position); S.th = 1; } for (let i = H.length - 1; i > 0; i--) H[i].copy(H[i - 1]); H[0].copy(S.m.position); strip(TRL, k, H, (i) => .055 * (1 - i / H.length), CV, (i) => (1 - i / H.length) * 1.5); trOn = true; }
-   else { S.th = 0; stripOff(TRL, k); }
-  });
-  TRL.m.visible = trOn; if (trOn) rdone(TRL);
-  let fOn = false;
-  FRAG.forEach((F, k) => {
-   if (F.life <= 0) { frags.setMatrixAt(k, ZERO); return; }
-   F.life -= dt; F.v.y -= 7 * dt; F.p.addScaledVector(F.v, dt); if (F.p.y < .03) { F.p.y = .03; F.v.multiplyScalar(.3); }
-   F.q.multiply(_iq.setFromAxisAngle(F.ax, dt * 12)); _is.setScalar(Math.min(1, F.life * 2)); frags.setMatrixAt(k, _im.compose(F.p, F.q, _is)); fOn = true;
-  });
-  frags.visible = fOn; if (fOn) frags.instanceMatrix.needsUpdate = true;
-  // frost dust: shards of ice in a widening spiral from her hand to the party
-  const frK = name === 'frostDust' ? win(u, .28, .64, .03) : 0;
-  if (name === 'frostDust' && u > .3 && !fxState.frost) { fxState.frost = true; fx2.frostT = 0; }
-  if (frK > 0 && dt > 0) {
-   fxState.acc.ice += dt * 80 * frK;
-   while (fxState.acc.ice > 1) { fxState.acc.ice -= 1; const I = ICE.find((o) => o.s < 0); if (!I) break; I.s = 0; I.sp = 1 / (.7 + .4 * rnd()); I.ph = rnd() * TAU; I.rho = .18 + .32 * rnd(); I.sz = 1 + 1.1 * rnd(); I.ax.set(rnd() - .5, rnd() - .5, rnd() - .5).normalize(); I.w = 6 + 10 * rnd(); I.q.setFromAxisAngle(I.ax, rnd() * 6); }
-  }
-  _ia.copy(tg).sub(TMP.hand).normalize(); _ib.crossVectors(_ia, UP).normalize(); const _ic = _p1.crossVectors(_ib, _ia);
-  let iceOn = false;
-  ICE.forEach((I, k) => {
-   if (I.s < 0) { ice.setMatrixAt(k, ZERO); return; }
-   I.s += dt * I.sp;
-   if (I.s >= 1) { I.s = -1; ice.setMatrixAt(k, ZERO); for (let n = 0; n < 5; n++) emit(frost, tg.x + (rnd() - .5) * .6, tg.y + (rnd() - .5) * .6, tg.z + (rnd() - .5) * .6, (rnd() - .5) * 2, rnd() * 1.5, (rnd() - .5) * 2, .5 + .4 * rnd(), .85, .95, 1); return; }
-   const s2 = I.s, ang = I.ph + s2 * 4 * PI + t * 1.5, rho = I.rho * Math.sin(PI * Math.min(1, s2 * 1.25)) + .05;
-   _ip.copy(TMP.hand).lerp(tg, s2); _ip.y += Math.sin(PI * s2) * .4; _ip.addScaledVector(_ib, Math.cos(ang) * rho).addScaledVector(_ic, Math.sin(ang) * rho);
-   I.q.multiply(_iq.setFromAxisAngle(I.ax, dt * I.w)); _is.setScalar(I.sz * sm(0, .08, s2) * (1 - .6 * sm(.85, 1, s2)));
-   ice.setMatrixAt(k, _im.compose(_ip, I.q, _is)); iceOn = true;
-  });
-  ice.visible = iceOn; if (iceOn) ice.instanceMatrix.needsUpdate = true;
-  if (fx2.frostT >= 0) {
-   const Hf = state.frost || 11; // how long the party stays slowed: the battle sets it
-   fx2.frostT += dt; const k = sm(.1, .9, fx2.frostT) * (1 - sm(Hf - 2.5, Hf, fx2.frostT)), sc = 3.8 * (.45 + .55 * sm(.1, 1.2, fx2.frostT));
-   frostFloor.visible = k > .01; frostFloor.position.set(tg.x - .5, .016, tg.z + .2); frostFloor.scale.set(sc, sc, 1); frostFloor.material.opacity = k * .9;
-   if (fx2.frostT > Hf) fx2.frostT = -1;
-  } else frostFloor.visible = false;
-  // blackout: the dark pours out over the ground from her, and a violet glow stands behind her
-  const boK = name === 'blackout' ? win(u, .2, .86, .05) : 0;
-  darkSpread.visible = boK > .01;
-  if (darkSpread.visible) { const sc = 2 + 5.5 * sm(.2, .5, u); darkSpread.position.set(root.position.x, .011, root.position.z); darkSpread.scale.set(sc, sc, 1); darkSpread.rotation.z = t * .06; darkSpread.material.opacity = boK * .92; }
-  aura.visible = boK > .01; if (aura.visible) { _p1.set(0, 1.1, -.25).applyQuaternion(rq).add(root.position); aura.position.copy(_p1); aura.scale.setScalar(3.8 + .3 * Math.sin(t * 2)); aura.material.opacity = .42 * boK; }
-  // appear: smoke pours up round her and the night's stars gather into her
-  if (name === 'appear' && u < .75 && dt > 0) {
-   fxState.acc.app += dt * 16;
-   while (fxState.acc.app > 1) { fxState.acc.app -= 1; const S = smoke.find((o) => o.life <= 0); if (!S) break; const a = rnd() * TAU, r = .3 + .5 * rnd(); S.p.set(root.position.x + Math.cos(a) * r, .1, root.position.z + Math.sin(a) * r); S.v.set(-Math.cos(a) * .12, .8 + .6 * rnd(), -Math.sin(a) * .12); S.life = S.max = 1.6 + .8 * rnd(); S.k = 1; S.s.material.rotation = rnd() * TAU; }
-   fxState.acc.star += dt * 180;
-   while (fxState.acc.star > 1) { fxState.acc.star -= 1; const a = rnd() * TAU, r = 1.8 + rnd(), y = .2 + 2.2 * rnd(); emit(stars, root.position.x + Math.cos(a) * r, y, root.position.z + Math.sin(a) * r, -Math.cos(a) * r * 1.15, (1.1 - y) * .55, -Math.sin(a) * r * 1.15, .85, .9, .85, 1); }
-  }
-  // at rest, faint violet motes drift up off her hem, and now and then a wisp of violet curls away from it
-  if (!actv && FIN.fade > .5 && FIN.sink > -.3 && dt > 0) {
-   fxState.acc.app += dt * 2.2;
-   while (fxState.acc.app > 1) { fxState.acc.app -= 1; const S = smoke.find((o) => o.life <= 0); if (!S) break; const a = rnd() * TAU, r = .5 + .25 * rnd(); S.p.set(root.position.x + Math.cos(a) * r, .12 + .1 * rnd(), root.position.z + Math.sin(a) * r); S.v.set(Math.cos(a) * .12, .1 + .1 * rnd(), Math.sin(a) * .12); S.life = S.max = 2.6 + rnd(); S.k = .4; S.s.material.rotation = rnd() * TAU; }
-   fxState.acc.mote += dt * 5;
-   while (fxState.acc.mote > 1) { fxState.acc.mote -= 1; const a = rnd() * TAU, r = .4 + .5 * rnd(); emit(stars, root.position.x + Math.cos(a) * r, .1 + .3 * rnd(), root.position.z + Math.sin(a) * r * .8, (rnd() - .5) * .1, .15 + .2 * rnd(), (rnd() - .5) * .1, 2.5 + 2 * rnd(), .5, .32, .9); }
-  }
  }
  function animate(phase, walk, t, dt) {
   let u = 0, name = '';
@@ -1265,8 +1035,8 @@ function makeNoctara(opts) {
   arms.forEach((A, i) => { rel(REL.sh[i], A.sh); rel(REL.el[i], A.el); rel(REL.wr[i], A.wr); });
   PC.setFromMatrixPosition(REL.pel);
   clothSkirt(FIN, t, lag); clothSleeve(R, 0, FIN, t, lag); clothSleeve(L, 1, FIN, t, lag); clothCape(FIN, t, lag); clothVeil(FIN, t, lag);
-  U.rim.value = FIN.rim; NU.uT.value = t; NU.uStar.value = FIN.star; NU.uNight.value = cl(FIN.nt, 0, 1); NU.uSpeck.value = 1 - cl(FIN.nt, 0, 1); M.crystal.emissiveIntensity = FIN.cg; M.iris.emissiveIntensity = .12 + 1.5 * FIN.eye;
-  for (const m of CLOTH_EM) m.emissiveIntensity = .32 + .5 * Math.max(0, FIN.rim - .3);
+  U.rim.value = FIN.rim; M.lining.emissiveIntensity = FIN.star; M.crystal.emissiveIntensity = FIN.cg; M.iris.emissiveIntensity = .12 + 1.5 * FIN.eye;
+  for (const m of CLOTH_EM) m.emissiveIntensity = .3 + .5 * Math.max(0, FIN.rim - .3);
   updateFX(name, u, t, dt);
  }
  const ACTIONS = {};

@@ -16,7 +16,7 @@
 <script src="../src/models/sol.js"></script>
 <script src="../src/models/halcyon.js"></script>
 <script src="../src/models/noctara.js"></script>
-<script src="../src/models/originals/noctara.js"></script>
+<script src="../src/models/previous/noctara-pass1.js"></script>
 <script src="../src/bench/bench.js"></script>
 <script src="../src/bench/stage-noctara.js"></script>
 <script>
@@ -24,7 +24,7 @@ Bench.start({
   title: 'Noctara the Starless',
   blurb: 'The final boss in the Night square, with Halcyon, her knight, in front of her and the Witch and Sol facing them.',
   subject: {
-    id: 'noctara', name: 'Noctara', make: () => makeNoctara({}), before: () => makeNoctaraOriginal({}),
+    id: 'noctara', name: 'Noctara', make: () => makeNoctara({}), before: () => makeNoctaraPass1({}),
     home: [905, 770], face: 'witch', yawBias: 0.3, shadow: 0.75, target: 'witch',
     walkLabel: 'Glide', walkSpeed: 0.8, height: '1.9 m with the crown',
   },
@@ -45,7 +45,7 @@ Bench.start({
   wide: { blackout: 1, voidSphere: 1, frostDust: 1, crownShards: 1 },
   sliders: [{ label: 'Frost length', min: 6, max: 20, step: 1, value: 10, unit: ' s', onInput: (v) => STAGES.noctara.setFrostLength(v) }],
   stage: STAGES.noctara,
-  note: 'Gold rings mark hits; numbers show where damage lands on the party. In Blackout, Halcyon strikes in the dark and the damage lands when the light comes back. Frost Dust slows only the party, so Noctara and Halcyon keep full speed until the thaw. In defeat she is not killed: she opens her arms and becomes night with stars in it. Before and After switch between the old model and the touched-up one.',
+  note: 'Gold rings mark hits; numbers show where damage lands on the party. In Blackout, Halcyon strikes in the dark and the damage lands when the light comes back. Frost Dust slows only the party, so Noctara and Halcyon keep full speed until the thaw. In defeat she is not killed: she opens her arms, turns into the night sky and rises as stars. Before is her first touch-up; After is the second, with black silk robes, metal gold, the starry lining and the bigger spells.',
 });
 </script>
 </body>

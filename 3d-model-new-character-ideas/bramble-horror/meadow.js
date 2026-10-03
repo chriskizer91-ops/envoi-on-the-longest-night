@@ -1,6 +1,7 @@
 // meadow.js: a wild meadow at the edge of the forest for a model bench to stand a creature in, as alive as it can be made.
 // three.js r128 (global THREE). Defines makeMeadow(opts) only. Tall grass that waves as gusts of wind roll across it; a
-// sky that turns through the day and the night (sun, moon, stars, drifting clouds and their shadows on the grass), the
+// sky that turns through the day and the night (sun, moon, drifting clouds and their shadows on the grass; no stars: the
+// sky has none until the ending, when opts.stars may light them), the
 // sun setting through an opening in the forest; weather from clear to rain to a thunderstorm (rain, puddles, lightning
 // and thunder); mist, fireflies, falling leaves and pollen; birds in the trees and bats round two lanterns that swing on
 // their posts. And it answers what happens in it: shockwaves roll out through the grass and the mist, throwing up turf
@@ -18,7 +19,7 @@
 function makeMeadow(opts) {
   'use strict';
   opts = opts || {};
-  const CLEAR = opts.radius || 11, RM = opts.rings || 12, GS = opts.grass || 1, TAU = Math.PI * 2, PI = Math.PI;
+  const CLEAR = opts.radius || 11, RM = opts.rings || 12, GS = opts.grass || 1, TAU = Math.PI * 2, PI = Math.PI, STARS = !!opts.stars;
   let seed = 7717;
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const rr = (a, b) => a + (b - a) * rnd();
@@ -562,7 +563,7 @@ function makeMeadow(opts) {
     for (const [u, c] of [[SKY.uTop, H.top], [SKY.uMid, H.mid], [SKY.uHor, H.hor]]) u.value.copy(c).lerp(C0.copy(STORMC).multiplyScalar(.3 + .5 * dayW), .55 * wN).multiplyScalar(dim);
     const sd = sunDir(hours, SKY.uSunDir.value); SKY.uSunC.value.copy(H.lc); SKY.uSunUp.value = sm(-.1, .06, sd.y) * (1 - .9 * wN);
     SKY.uMoonDir.value.copy(MOOND); SKY.uMoonUp.value = H.stars * (1 - .9 * wN); SKY.uMoonC.value.set(0xdfe4ff).lerp(RED, wrathV * .7);
-    SKY.uStars.value = H.stars; SKY.uCloud.value = cloud; SKY.uWrath.value = wrathV; SKY.uFlash.value = flashV;
+    SKY.uStars.value = STARS ? H.stars : 0; SKY.uCloud.value = cloud; SKY.uWrath.value = wrathV; SKY.uFlash.value = flashV;
     SKY.uCloudC.value.copy(H.hor).multiplyScalar(.6).add(C0.copy(H.mid).multiplyScalar(.4)).lerp(C1.setRGB(.86, .86, .9), dayW * .65).multiplyScalar(1 - .55 * storm - .2 * rainK);
     SKY.uCloudL.value.copy(H.lc).multiplyScalar((.25 + .5 * dayW) * (1 - .7 * wN));
     // the clouds' shadows: only on a fair day, while the sun is up

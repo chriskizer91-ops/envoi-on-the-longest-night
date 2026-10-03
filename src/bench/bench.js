@@ -80,6 +80,7 @@
     const night = el('div', { id: 'night', 'aria-hidden': 'true' }, stage);
     const glCanvas = el('canvas', { id: 'gl', 'aria-hidden': 'true' }, stage);
     const overlay = el('canvas', { id: 'overlay', 'aria-hidden': 'true' }, stage);
+    const flashEl = el('div', { id: 'flash', 'aria-hidden': 'true' }, stage);
     const now = el('div', { id: 'now', class: 'win', role: 'status', 'aria-live': 'polite' }, stage);
     const nowName = el('div', { id: 'nowName' }, now, 'Building the model');
     const bar = el('div', { id: 'bar' }, now), barFill = el('div', { id: 'barFill' }, bar);
@@ -322,11 +323,15 @@
       overlay.width = Math.round(view.w * DPR); overlay.height = Math.round(view.h * DPR);
       paintCv.width = Math.round(view.w * DPR); paintCv.height = Math.round(view.h * DPR); lastTf = '';
     }
+    // a shake for heavy blows (a share of the view's height) and a flash of light where a big spell lands
+    let shakeA = 0, shT = 0, flashA = 0;
     function applyCam(rdt) {
       const k = REDUCED ? 1 : 1 - Math.exp(-rdt * 4);
       cam.cx += (cam.tx - cam.cx) * k; cam.cy += (cam.ty - cam.cy) * k; cam.s += (cam.ts - cam.s) * k;
       const sMin = Math.max(view.w / IW, view.h / IH), S2 = Math.max(sMin, cam.s);
       let ox = cam.cx * S2 - view.w / 2, oy = cam.cy * S2 - view.h * 0.45;
+      shT += rdt; ox += shakeA * view.h * Math.sin(shT * 73); oy += shakeA * view.h * .8 * Math.sin(shT * 59 + 1.3); shakeA *= Math.exp(-rdt * 8);
+      if (flashA > .005) { flashA *= Math.exp(-rdt * 6); flashEl.style.opacity = flashA.toFixed(3); } else if (flashA > 0) { flashA = 0; flashEl.style.opacity = '0'; }
       ox = clamp(ox, 0, IW * S2 - view.w); oy = clamp(oy, 0, IH * S2 - view.h);
       ox = Math.round(ox * DPR) / DPR; oy = Math.round(oy * DPR) / DPR;
       camera.setViewOffset(IW * S2, IH * S2, ox, oy, view.w, view.h);
@@ -478,6 +483,8 @@
       get cast() { return others(); },
       foe() { return foeOf(sub); },
       setDark(k) { darkK = k; night.style.opacity = (k * 0.97).toFixed(3); for (const L of sceneLights) L.o.intensity = L.i * (1 - 0.96 * k); },
+      shake(a) { if (!REDUCED) shakeA = Math.max(shakeA, a); },
+      flash(a, p3, color) { if (REDUCED) return; flashA = Math.max(flashA, a); if (p3) { const p = toScreen(p3); flashEl.style.setProperty('--fx', p[0] + 'px'); flashEl.style.setProperty('--fy', p[1] + 'px'); } flashEl.style.setProperty('--fc', color || 'rgba(225,205,255,.9)'); flashEl.style.opacity = flashA.toFixed(3); },
       get dark() { return darkK; },
       label, setPressed,
     };

@@ -49,6 +49,7 @@ Chris asked for everything to be brought together in a new folder, `../putting-i
 | Battle balance | https://claude.ai/artifact/DruqrA8zAzZNpe4ahRXFwe | Updated October 3: all 52 balance targets with the simulator's results (the Bramble Horror's among them), any fight played turn by turn with its gauges, the level curve, experience and shards, and the rules |
 | The cast | https://claude.ai/artifact/Qk8apijsA3ZjVoK88XF4bJ | Step 11 (October 2): every model at true scale; pick an encounter, who acts and their target. Pixel 7a: 60 fps with five models, 39 with eight. Builds models when first needed. October 3: Harvest Moon in place of Moth Veil |
 | Walking test | https://claude.ai/artifact/3YJkf77SD43iWJgo6pXmcf | The pixel Io (28 × 42) on all 13 ground-level maps at 768 wide with sharp pixels, 0.7× zoom, one walking speed and a mini-map; the talking portraits in a dialogue box. No walls yet |
+| Noctara, second pass | https://claude.ai/artifact/XmiJgGB64CFCyExEdm1k3M | October 3: black silk in deep folds, metal gold, a lining that opens on the night sky, bigger spells, and a defeat in which she rises as stars. Its supporting actors were the creature branch's working copies; the game uses this pass since the two branches were merged (pass three, October 3) |
 | Noctara | https://claude.ai/artifact/JWFwFUZTDum2CZjbGXotir | Rebuilt October 2 with the finished Io, Sol and Halcyon |
 | Lunara | https://claude.ai/artifact/Y1hTureSoXGBnTer4tJNSX | Polished October 2: heavier skirt chains and pointed ears |
 | Io, the Witch | https://claude.ai/artifact/6vRCkyYzZjn5Fc77GYebyE | Polished October 2: her new spells sized for the battle camera. October 3: Harvest Moon in place of Moth Veil |
@@ -74,12 +75,22 @@ Chris asked for everything to be brought together in a new folder, `../putting-i
 
 ## New character ideas
 
-Added October 3, 2026: `../3d-model-new-character-ideas/` holds creatures Chris brings as ideas, polished one folder each and kept apart from the cast until he places them. Their benches share two painted places: the wild glade, and the wild meadow, whose day, night and weather turn by themselves and whose grass answers a creature's blows.
+Added October 3, 2026: `../3d-model-new-character-ideas/` holds creatures Chris brings as ideas, polished one folder each and kept apart from the cast until he places them. Their benches share two painted places: the wild glade, and the wild meadow, whose day, night and weather turn by themselves and whose grass answers a creature's blows. Neither place has stars any more (October 3): the sky has none until the ending, and `opts.stars` lights them for it.
 
 | Idea | Link | State |
 |---|---|---|
 | Bramble Horror | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Version 2: thorns, veins and a feeding hollow, whip-sprung canes that coil round the prey, Undergrowth and Scorch, a bench with Io as its prey in the wild glade or the wild meadow. Where it lives is asked in `questions/open.md`. |
 | Bramble Colossus | https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q | Version 1: the Bramble Horror grown into a 7.5 m boss, with a braided spire, a bud that opens on its glowing heart, ten moves of its own and a Wrath phase at half HP; a bench where it fights Io and Sol, or fights them by itself, in the wild meadow or the wild glade. Its name and place are asked in `questions/open.md`. |
+| Emberback | https://claude.ai/artifact/TBksnXh6X37EoL6F5wWBHo | Version 1, October 3, from Chris's sheets: the 7 m salamander with its lava-cracked hide, glowing crystal ridge and every pose on its action sheet (Bursting Up, Tail Lash, Ember Spit, Heat Drain, Eruption, starving, asleep as stone), plus Roar and Waking; a bench where it fights Io and Sol in the wild meadow, with Sheet poses to set beside the action sheet and sounds made in code. Its questions are in `questions/open.md`, question 5. |
+| Gloamwing | https://claude.ai/artifact/NMbNDwKCSzLbX9DZurydWc | Version 1, October 3, from Chris's sheets: the 3 m night-flier with its barn owl's face, glowing bat wings 9 m across and the moon-sac full of souls, hovering on slow wingbeats, with every pose on its action sheet (Moonlure, Swoop, Wing Gale, Hush, Glut, hurt, released), plus its arrival and Rising; a bench where it fights Io and Sol in the wild meadow, with Sheet poses to set beside the action sheet and sounds made in code. Its questions are in `questions/open.md`, question 6. |
+
+## Living battlefields
+
+Added October 3, 2026, from Chris's question about locking the battle camera: `../living-battlefields/`.
+
+| Page | Link | State |
+|---|---|---|
+| Colossus in the Meadow | https://claude.ai/artifact/KCMQSy3QksJbZ4ikquxYVj | Io and Sol against the Bramble Colossus through a locked camera: the far meadow painted once in code (sky with the moon and no stars, mountains, 1,092 trees, 32,000 tufts), a live meadow in front at a fifth of the old meadow's triangles, a fight played from the Awakening to the fall with its Wrath storm, and every sound made in code. A painting of Chris's can replace the code's own (art request 08). |
 
 ## The models
 
