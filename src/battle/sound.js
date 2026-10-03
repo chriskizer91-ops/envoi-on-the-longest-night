@@ -1,7 +1,7 @@
 // sound.js: the battle's music and sound effects, all synthesized in the browser. Imported unchanged from
 // reference/demos/night-square-shadow-wraith.html (its SND module): a D minor battle theme at 132 BPM and the swish, hit,
 // fire, boom, chime, blade, heal, guard, moon, shriek, grasp, eclipse, menu, select, trance, victory and defeat effects.
-// Defines makeBattleSound() -> { init, sfx, startMusic, stopMusic, setMuted, muted }. Call init() from a tap or a click:
+// Defines makeBattleSound() -> { init, sfx, startMusic, stopMusic, setMuted, setMusicOff, muted }. Call init() from a tap or a click:
 // browsers only start audio after the player touches the page.
 function makeBattleSound() {
   'use strict';
@@ -63,8 +63,11 @@ function makeBattleSound() {
       nextT += SPB; step++;
     }
   }
-  function startMusic() { if (!ctx || musOn) return; clearTimeout(fadeTO); clearInterval(timer); musOn = true; nextT = ctx.currentTime + 0.05; step = 0; musBus.gain.cancelScheduledValues(ctx.currentTime); musBus.gain.setValueAtTime(0.3, ctx.currentTime); timer = setInterval(schedule, 25); }
+  let musicOff = false;
+  function startMusic() { if (!ctx || musOn || musicOff) return; clearTimeout(fadeTO); clearInterval(timer); musOn = true; nextT = ctx.currentTime + 0.05; step = 0; musBus.gain.cancelScheduledValues(ctx.currentTime); musBus.gain.setValueAtTime(0.3, ctx.currentTime); timer = setInterval(schedule, 25); }
   function stopMusic(fade) { if (!ctx || !musOn) return; musOn = false; const t = ctx.currentTime; musBus.gain.setValueAtTime(musBus.gain.value, t); musBus.gain.linearRampToValueAtTime(0.0001, t + (fade || 0.8)); fadeTO = setTimeout(() => { clearInterval(timer); }, (fade || 0.8) * 1000 + 50); }
   function setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : 0.6, ctx.currentTime, 0.05); }
-  return { init, sfx, startMusic, stopMusic, setMuted, get muted() { return muted; } };
+  // the game's sound setting can keep the battle theme quiet while the effects play
+  function setMusicOff(m) { musicOff = m; if (m) stopMusic(0.3); }
+  return { init, sfx, startMusic, stopMusic, setMuted, setMusicOff, get muted() { return muted; } };
 }

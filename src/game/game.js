@@ -61,7 +61,7 @@
     const root = el('div', { class: 'game' }, host);
     const fieldHost = el('div', { class: 'layer' }, root), worldHost = el('div', { class: 'layer' }, root);
     let st = opts.state || GS.fresh();
-    const settings = { rate: 1, light: 1, music: true };
+    const settings = { rate: 1, light: 1, sound: 'on' };
     try { Object.assign(settings, JSON.parse(localStorage.getItem('envoi.settings') || '{}')); } catch (e) { /* defaults */ }
     const keepSettings = () => { try { localStorage.setItem('envoi.settings', JSON.stringify(settings)); } catch (e) { /* not kept */ } };
     let mode = 'title', busy = 0;
@@ -69,13 +69,16 @@
     // ---------- sound ----------
     let audioOn = false, curMusic = null;
     const SND = window.makeBattleSound();
-    function audioInit() { if (audioOn) return; audioOn = true; try { AUD.sfxInit(); SND.init(); } catch (e) { /* no audio */ } }
-    function music(id) { if (!audioOn || !settings.music) { curMusic = id; return; } if (curMusic === id && AUD.musicPlaying() === id) return; curMusic = id; try { if (id) AUD.musicPlay(id); else AUD.musicStop(0.6); } catch (e) { /* no audio */ } }
-    function sfx(id) { if (!audioOn) return; try { AUD.playSfx(id); } catch (e) { /* no audio */ } }
+    function audioInit() { if (audioOn) return; audioOn = true; try { AUD.sfxInit(); SND.init(); applySound(); } catch (e) { /* no audio */ } }
+    // the sound setting: everything, the effects without the music, or nothing
+    function applySound() { try { SND.setMuted(settings.sound === 'off'); SND.setMusicOff(settings.sound !== 'on'); if (settings.sound !== 'on') AUD.musicStop(0.4); } catch (e) { /* no audio */ } }
+    function music(id) { if (!audioOn || settings.sound !== 'on') { curMusic = id; return; } if (curMusic === id && AUD.musicPlaying() === id) return; curMusic = id; try { if (id) AUD.musicPlay(id); else AUD.musicStop(0.6); } catch (e) { /* no audio */ } }
+    function sfx(id) { if (!audioOn || settings.sound === 'off') return; try { AUD.playSfx(id); } catch (e) { /* no audio */ } }
 
     // ---------- the people's portraits and the dialogue box ----------
     const talk = Talk.create(root, {
-      portraits: { io: { name: 'Io', src: "art/portraits/portrait-io.webp" }, sol: { name: 'Sol', src: "art/portraits/portrait-sol.webp" }, shipmaster: { name: 'Ysmera Brightkeel', src: "art/portraits/portrait-shipmaster-a.webp" } },
+      portraits: Object.assign({ io: { name: 'Io', src: "art/portraits/portrait-io.webp" }, sol: { name: 'Sol', src: "art/portraits/portrait-sol.webp" }, shipmaster: { name: 'Ysmera Brightkeel', src: "art/portraits/portrait-shipmaster-a.webp" } },
+        Object.fromEntries(Object.entries(window.PORTRAITS || {}).map(([id, p]) => [id, { name: S.cast[id] ? S.cast[id].name : id, src: p }]))),
       people: (id) => S.cast[id] || null, src,
     });
     const toast = el('div', { class: 'toast win', hidden: '' }, root);
@@ -125,7 +128,15 @@
       try { await fn(); } catch (e) { console.error(e); } finally { busy--; resumeAll(); }
     }
     const say = (lines) => (lines && lines.length ? talk.say(lines) : Promise.resolve());
-    const scene = (id) => say(S.scenes[id]);
+    // a story scene: its still (stills.js) behind the words when it has one, else the map behind them
+    async function scene(id) {
+      const still = (window.STILLS || {})[id];
+      if (!still) return say(S.scenes[id]);
+      const card = el('div', { class: 'prologue' }, root); const img = el('img', { alt: '' }, card); img.src = src(still);
+      await wait(0.1); card.classList.add('on'); await wait(0.8);
+      await say(S.scenes[id]);
+      card.classList.add('out'); await wait(0.6); card.remove();
+    }
     async function ask(who, text, choices) { return talk.ask(who, text, choices); }
     function save() { st.where = mode === 'world' ? { mode: 'world', at: [Math.round(world.P.x), Math.round(world.P.y)], dir: world.P.dir } : { mode: 'field', map: field.map && field.map.id, at: [Math.round(field.P.x), Math.round(field.P.y)], dir: field.P.dir }; GS.save(st); }
 
@@ -196,7 +207,9 @@
       }
       if (id === 'halcyon') {
         const r = await battle('halcyon');
-        st.done.halcyon = true; st.flags.stoop = true; await scene('kestrel'); save();
+        st.done.halcyon = true; st.flags.stoop = true; await scene('kestrel');
+        // whichever way it ended, the party gets its breath back by the crossroads well
+        GS.restore(st); await say(['The party rests by the crossroads well until their hands stop shaking.']); save();
         return;
       }
       if (id === 'finale') {
@@ -416,10 +429,10 @@
       }
     }
     function setup(b, redraw) {
-      const row = (label, opts2, key) => { const r = el('div', { class: 'gm-item' }, b); el('span', null, r, label); const g = el('div', { class: 'gm-pick' }, r); for (const [t, v] of opts2) { const x = el('button', { type: 'button', class: 'go small' + (settings[key] === v ? '' : ' alt'), 'aria-pressed': String(settings[key] === v) }, g, t); x.addEventListener('click', () => { settings[key] = v; keepSettings(); if (key === 'music') { if (v) { const m = curMusic; curMusic = null; music(m); } else { try { AUD.musicStop(0.4); } catch (e) { /* none */ } } } redraw(); }); } };
+      const row = (label, opts2, key) => { const r = el('div', { class: 'gm-item' }, b); el('span', null, r, label); const g = el('div', { class: 'gm-pick' }, r); for (const [t, v] of opts2) { const x = el('button', { type: 'button', class: 'go small' + (settings[key] === v ? '' : ' alt'), 'aria-pressed': String(settings[key] === v) }, g, t); x.addEventListener('click', () => { settings[key] = v; keepSettings(); if (key === 'sound') { applySound(); if (v === 'on') { const m = curMusic; curMusic = null; music(m); } } redraw(); }); } };
       row('Random fights', [['Fewer', 0.6], ['Normal', 1], ['More', 1.5]], 'rate');
       row('Map light', [['Dim', 0.85], ['Normal', 1], ['Bright', 1.2]], 'light');
-      row('Music', [['On', true], ['Off', false]], 'music');
+      row('Sound', [['On', 'on'], ['No music', 'music'], ['Off', 'off']], 'sound');
       // the battles' frame rate, kept where the battle screen reads it (30 by default, Chris)
       let fps = 30; try { const v = localStorage.getItem('envoi.fps'); if (v !== null) fps = +v; } catch (e) { /* default */ }
       const r = el('div', { class: 'gm-item' }, b); el('span', null, r, 'Battle frame rate'); const gp = el('div', { class: 'gm-pick' }, r);
@@ -464,6 +477,7 @@
       if (saved) { const c = el('button', { type: 'button', class: 'go' }, box, 'Continue'); c.addEventListener('click', () => { audioInit(); st = saved; begin(false); }); el('p', { class: 'title-save' }, box, 'Level ' + saved.level + ' · ' + clock(saved.time) + ' played'); }
       const n = el('button', { type: 'button', class: 'go' + (saved ? ' alt' : '') }, box, 'New game');
       n.addEventListener('click', async () => { audioInit(); if (saved) { titleEl.hidden = true; const k = await ask(null, 'Start a new game? The saved one will be lost.', ['New game', 'Keep it']); titleEl.hidden = false; if (k) return; } st = GS.fresh(); begin(true); });
+      el('p', { class: 'title-help' }, box, 'Tap the map to walk, or use the arrows. Tap people and glowing things to talk to them or use them. Sound on.');
       if (audioOn) music('title');
       setTimeout(() => (box.querySelector('button') || n).focus({ preventScroll: true }), 50);
     }
@@ -475,7 +489,7 @@
       } finally { busy--; resumeAll(); }
     }
     async function prologue() {
-      const card = el('div', { class: 'prologue' }, root); const img = el('img', { alt: '' }, card); img.src = src("art/backdrops/night-square.webp");
+      const card = el('div', { class: 'prologue' }, root); const img = el('img', { alt: '' }, card); img.src = src((window.STILLS || {}).prologue || "art/backdrops/night-square.webp");
       await wait(0.2); card.classList.add('on');
       for (const ln of S.scenes.prologue) { if (typeof ln !== 'string') { card.classList.add('out'); await wait(0.6); card.remove(); } await say([ln]); }
       if (card.isConnected) card.remove();
