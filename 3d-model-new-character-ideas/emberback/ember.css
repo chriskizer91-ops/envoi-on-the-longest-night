@@ -1,0 +1,13 @@
+/* The Emberback's bench on top of the Bramble Horror's bench.css and the Colossus's boss bar: an ember-gold HP bar, a chip
+   saying how it is (Hungry, Starving, Asleep), and the header's sound switch. */
+header #sound{margin-left:auto}
+header #resetView{margin-left:6px}
+header #sound[aria-pressed="true"]{color:#4a2200;background:#ffd9a0;border-color:#ff9a2a;box-shadow:0 0 10px rgba(255,150,40,.35)}
+#tag .hpbar i{background:linear-gradient(90deg,#8a2a0c,#ffae3a)}
+#tag .hpbar::after{display:none}
+#tag .phase{color:#ffe2b0;border-color:rgba(255,190,110,.55)}
+#tag .phase.starve{color:#ffd0c8;border-color:#ff6a5a;background:rgba(160,30,20,.25);box-shadow:0 0 10px rgba(120,190,255,.25)}
+#tag .phase.asleep{color:#d8d4cc;border-color:rgba(200,196,190,.5);background:rgba(90,86,80,.3)}
+.dmg.resist{font:italic 400 20px/1 var(--display);color:#ffd9a0;text-shadow:0 0 8px #ff8a1e,0 2px 0 #3a1a06}
+.dmg.heal{color:#ffd27a;text-shadow:0 0 10px #ff9a1e,0 2px 0 #3a1a06}
+.ring.fire{border-color:#ffd2a0;box-shadow:0 0 16px #ff8a1e,inset 0 0 10px #ff8a1e}

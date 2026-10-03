@@ -6,7 +6,7 @@ Creatures and characters Chris brings to the project as ideas, each with its cod
 |---|---|---|---|
 | Bramble Horror | `bramble-horror/` | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Version 2, October 3, 2026 |
 | Bramble Colossus, the Bramble Horror grown into a boss | `bramble-colossus/` | https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q | Version 1, October 3, 2026 |
-| Emberback, a giant salamander of the buried sunstone | `emberback/` | — | Chris's sheets in, October 3, 2026; the model is next |
+| Emberback, a giant salamander of the buried sunstone | `emberback/` | https://claude.ai/artifact/TBksnXh6X37EoL6F5wWBHo | Version 1, October 3, 2026, from Chris's sheets |
 | Gloamwing, a great night-flier that hunts the souls' moths | `gloamwing/` | — | Chris's sheets in, October 3, 2026; the model is next |
 
 The Bramble Colossus has no `original/`: it was made here from the Bramble Horror, as Chris asked, and its bench shares the Bramble Horror's `bench.css` and its two places, `glade.js` and `meadow.js`.
@@ -22,7 +22,7 @@ Painted in code and shared by any wilderness bench, in `bramble-horror/`. Neithe
 
 What the wild meadow does:
 
-- **Its hours turn.** The sun goes down through an opening in the forest, the stars come out, fireflies rise from the grass, the two lanterns light up and bats circle them; then dawn comes, and a sunny day with clouds whose shadows drift over the grass. A whole day takes about six minutes. **Time** picks any hour and **Time runs** stops or starts the clock. **Night square** jumps to ten at night, when its light is the battle screen's own (the lanterns stand in for the battle's two lamps), and **Daylight** jumps to noon.
+- **Its hours turn.** The sun goes down through an opening in the forest, the moon rises (there are no stars: the sky has none until the ending), fireflies rise from the grass, the two lanterns light up and bats circle them; then dawn comes, and a sunny day with clouds whose shadows drift over the grass. A whole day takes about six minutes. **Time** picks any hour and **Time runs** stops or starts the clock. **Night square** jumps to ten at night, when its light is the battle screen's own (the lanterns stand in for the battle's two lamps), and **Daylight** jumps to noon.
 - **Weather.** **Clear**, **Rain** (rain, a stronger wind, puddles that ripple) or **Storm** (lightning over the forest, thunder that shakes the camera a moment later, a gale through the grass). Bad weather rolls in and clears over several seconds.
 - **The wind** never stops: gusts roll across the tall grass in waves, the trees sway, the lanterns swing, and leaves blow across the meadow.
 - **It answers the creature.** Its blows send a shockwave rolling out through the grass and the mist, throwing up turf and dust; heavy blows shake the trees and put the birds up out of them, and so does a roar. The Colossus's Maelstrom raises a whirlwind that tears up grass and dust, and its Wrath turns the sky into a red storm with red lightning, embers rising off the meadow.
@@ -49,4 +49,4 @@ node tools/build.mjs 3d-model-new-character-ideas/bramble-horror/bramble-horror.
 cp dist/bramble-horror.html 3d-model-new-character-ideas/bramble-horror/Bramble_Horror_Bench.html
 ```
 
-The same for `bramble-colossus/bramble-colossus.html`. `dist/<name>.artifact.html` is each page without its outer document tags, for publishing.
+The same for `bramble-colossus/bramble-colossus.html` and `emberback/emberback.html`. `dist/<name>.artifact.html` is each page without its outer document tags, for publishing.

@@ -33,7 +33,7 @@ This folder is the answer: a fight page, **Colossus in the Meadow**, and the two
 
 - **One locked camera.** It looks at the fight from behind the party (`field.camera`). A shot is a crop and a zoom of its frame, as the battle screen's shots are of its painting (`setViewOffset`). On a phone held upright, the page shows a tall slice of the frame and moves it to follow the action. The shake, the zoom punches on big blows, the slow motion of Hammerfall and the hit-stops all happen inside the frame.
 - **The painting** (`field.js`, the first half). Drawn once into a picture the size of the frame (2048 × 1536):
-  - the night sky, with a big moon, stars and the Milky Way;
+  - the night sky, with a big moon and no stars (they come back only at the ending);
   - three mountain ranges, the far one snow-capped;
   - 1,092 trees of eight kinds round the meadow, hazier further off, each with a rim of moonlight;
   - the ground, and 32,250 tufts of grass out to the forest.
@@ -83,7 +83,7 @@ The page can use a painting instead of the one it draws:
 |---|---|---|
 | The place, live: draw calls | 25 | 16 |
 | The place, live: triangles | 19,500 | 95,000 |
-| Painted once | 32,250 tufts, 1,092 trees, mountains, moon and stars | — |
+| Painted once | 32,250 tufts, 1,092 trees, mountains and the moon | — |
 | The whole frame, with the Colossus, Io and Sol | 96 draw calls, 319,000 triangles | 94 draw calls, 394,000 triangles |
 | Painting it | 6 s in a headless browser that draws without a graphics chip; the page shows the time it took on the phone | — |
 | Code | 88 KB (`field.js`), 35 KB (`sfx.js`), 40 KB (`fight.js`) | 65 KB |
@@ -112,6 +112,6 @@ cp dist/colossus-fight.html living-battlefields/Colossus_Fight.html
 
 - **Into the game.** The battle screen on the game's branch (`src/battle/screen.js`) could take this for the Colossus's fight, as the handoff note there plans for living battlefields. That needs this branch and the game's branch to be together first.
 - **Chris's painted backdrop** for the meadow (art request 08), and paintings for other places.
-- **No stars.** The fight's sky has only the moon, because the stars only come back at the ending (lore answers 5 and 10). The wild meadow on the creature benches still shows stars at night; it should lose them before any of it goes into the game.
+- **No stars.** The fight's sky has only the moon, because the stars only come back at the ending (lore answers 5 and 10). Since October 3 the wild meadow and the wild glade on the creature benches have none either; `opts.stars` lights them for the ending.
 - **Towns:** the same painting-plus-weather approach over the town paintings, without the 3D grass.
-- **The Gloamwing and the Emberback** could fight here too, once their models are built.
+- **The Gloamwing and the Emberback** could fight here too. The Emberback's model and bench are done (`../3d-model-new-character-ideas/emberback/`).

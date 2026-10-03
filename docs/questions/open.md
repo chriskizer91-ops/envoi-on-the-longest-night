@@ -1,6 +1,6 @@
 # Still Open
 
-Everything not yet decided, as of October 2, 2026. None of it blocks the model touch-ups.
+Everything not yet decided, as of October 3, 2026. None of it blocks the model touch-ups.
 
 The first set of questions here (the Witch's name, the waystation's name, the Magpie's limits, the final battle's level, the Witch's healing) and every follow-up (the finale, Kestrel Stoop, the third band, the level 15 fight) were answered on October 2. The answers are in `design-decisions.md`, under the October 2 rounds.
 
@@ -25,3 +25,11 @@ The first set of questions here (the Witch's name, the waystation's name, the Ma
 4. **The wild meadow** (`../../3d-model-new-character-ideas/bramble-horror/meadow.js`), the living place made for the creature benches, with its own hours and weather. On October 3 Chris said it should be in the game.
    - Where does it go: behind the fights in the wilderness between stops, or one place in particular?
    - Battles are set in front of painted backdrops (`design-decisions.md`, October 1). Is the meadow, a 3D place that answers the fight, an exception for the wilds?
+
+## Another new character idea
+
+5. **The Emberback** (`../../3d-model-new-character-ideas/emberback/`), the giant salamander of the buried sunstone, built from Chris's sheets on October 3.
+   - Is it a foe in the game? Where does the party meet it: by a Warm Road node going cold, and at which level?
+   - Does fire hurt it, feed it, or only half hurt it? Its bench has it resist fire (half damage), and Heat Drain heals it.
+   - Beaten, it curls up asleep as stone, and Sol can relight the node it was guarding. Does it ever wake again, for instance when the node is lit? Its bench wakes it only so it can be fought again.
+   - Roar is the one move not on its action sheet. Does it stay?
