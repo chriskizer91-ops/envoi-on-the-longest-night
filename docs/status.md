@@ -25,6 +25,16 @@ Added October 3, 2026: `../3d-model-new-character-ideas/` holds creatures Chris 
 |---|---|---|
 | Bramble Horror | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Version 2: thorns, veins and a feeding hollow, whip-sprung canes that coil round the prey, Undergrowth and Scorch, a bench with Io as its prey in the wild glade or the wild meadow. Where it lives is asked in `questions/open.md`. |
 | Bramble Colossus | https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q | Version 1: the Bramble Horror grown into a 7.5 m boss, with a braided spire, a bud that opens on its glowing heart, ten moves of its own and a Wrath phase at half HP; a bench where it fights Io and Sol, or fights them by itself, in the wild meadow or the wild glade. Its name and place are asked in `questions/open.md`. |
+| Emberback | — | Chris's model and action sheets arrived October 3 (`../3d-model-new-character-ideas/emberback/original/`); the model is next. |
+| Gloamwing | — | Chris's model and action sheets arrived October 3 (`../3d-model-new-character-ideas/gloamwing/original/`); the model is next. |
+
+## Living battlefields
+
+Added October 3, 2026, from Chris's question about locking the battle camera: `../living-battlefields/`.
+
+| Page | Link | State |
+|---|---|---|
+| Colossus in the Meadow | https://claude.ai/artifact/KCMQSy3QksJbZ4ikquxYVj | Io and Sol against the Bramble Colossus through a locked camera: the far meadow painted once in code (sky with the moon and no stars, mountains, 1,092 trees, 32,000 tufts), a live meadow in front at a fifth of the old meadow's triangles, a fight played from the Awakening to the fall with its Wrath storm, and every sound made in code. A painting of Chris's can replace the code's own (art request 08). |
 
 ## The models
 
