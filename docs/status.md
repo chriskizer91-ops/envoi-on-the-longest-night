@@ -2,7 +2,7 @@
 
 A handoff for the next session. Updated October 3, 2026, after the seventeenth round: Sol out of reach while she hovers, battles at 30 fps, rest places for a lost fight, and the game's places on Chris's D&D map.
 
-**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Step 13, the party, is built too. Next is step 14, the great wraith.
+**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Steps 13 and 14, the party and the great wraith, are built too. Next is step 15, Dawnroost.
 
 ## Working from the second account
 
@@ -13,6 +13,7 @@ A handoff for the next session. Updated October 3, 2026, after the seventeenth r
 
 | Page | Link | State |
 |---|---|---|
+| The great wraith | https://claude.ai/artifact/Kk1fEqKFDzGbEcCbkYqZt5 | Step 14 (October 3): Io and Sol at level 3 to 8 against the great wraith on Bogmire's dark boardwalk, the gate out of band 1: Stolen Fire, Swallow Lamplight, Eclipse; beaten, it lets the town's lamplight go and the windows glow again |
 | The party | https://claude.ai/artifact/5awxTd1H3htoFJbjinQwz1 | Step 13 (October 2): Io and Sol against nine packs of wisps, frost wisps and wraiths at any level from 1 to 20; Sol's Heat, Sword Arts and Dawnbreaker, Io's new Moonlore, Lunara across the pack, Envoi from level 11, herbs, a target for every blow, and a frame-rate button |
 | The first fight | https://claude.ai/artifact/MkgkJSQVgGp3JEivcmN2KN | Step 12 (October 2): Io alone against the Night square wraith at level 1, played by the battle engine with the finished models; Lunara's Embrace and Silver Requiem; experience, shards and the level-up at the end. You can lose |
 | Battle balance | https://claude.ai/artifact/DruqrA8zAzZNpe4ahRXFwe | Phase 2 groundwork (October 2): all 25 balance targets with the simulator's results, any fight played turn by turn with its gauges, the level curve, experience and shards, and the new rules for Chris to approve |
@@ -99,7 +100,7 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 ## Next steps
 
-1. Step 14, the great wraith: the Bogmire boss and level 5 gate, with its Stolen Fire, Swallow Lamplight and its lights released at the end; winning leads to the refit and Moth Veil.
+1. Step 15, Dawnroost: three level 12 wraiths at the living node, on the Dawnroost backdrop (its camera matched as Bogmire's was); Envoi is made after it.
 2. Phase 3: reset the shards' prices (the Magpie and the shops) for the new experience curve, and play the whole chain of fights in order. The curve itself is set (about 79 wild fights, 40% in the last band).
 3. Step 19, the Magpie, builds on Chris's world travel demo (`reference/demos/the-magpie-over-aethermoor.html`).
 4. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.
