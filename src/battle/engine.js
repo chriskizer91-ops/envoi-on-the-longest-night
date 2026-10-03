@@ -104,6 +104,8 @@
       if (a.side === 'hero') n *= 1 + B.might; // Ember-star Lily
       n = Math.max(1, Math.round(n * (tune.heroDmg || 1)));
       f.hp = Math.max(0, f.hp - n); B.stats.dealt += n; f.lastAttacker = a.side === 'hero' ? a.key : (hero('io') || a).key;
+      // a foe who retreats (Halcyon in the ambush) never falls: she leaves first
+      if (f.hp <= 0 && B.ends.retreat && B.ends.retreat.foe === f.id) f.hp = 1;
       emit({ t: 'hit', from: a.key, to: f.key, n, el: el || null });
       if (a.side === 'hero' && !a.inTrance && !a.tranceReady) a.trance = Math.min(0.99, a.trance + TR.dealt);
       if (f.hp <= 0) down(f);
@@ -244,7 +246,7 @@
       B.t += m.time || 2;
       if (m.target === 'self') {
         if (m.evade) f.evade = m.evade;
-        if (m.vow) f.vow = m.vow;
+        if (m.vow) { f.vow = m.vow; f.vowed = true; }
         if (m.healPct) {
           const n = Math.round(f.maxHp * m.healPct); f.hp = Math.min(f.maxHp, f.hp + n);
           emit({ t: 'heal', from: f.key, to: f.key, n });
@@ -276,10 +278,11 @@
         const r = hitHero(f, tgt, base, { single: true });
         if (!first) first = tgt;
         if (m.drain && alive(f)) { f.hp = Math.min(f.maxHp, f.hp + r.n); emit({ t: 'heal', from: f.key, to: f.key, n: r.n }); }
-        if (m.sap) {
-          if (r.to.id === 'sol') r.to.heat = Math.max(0, r.to.heat - m.sap);
-          else r.to.mp = Math.max(0, r.to.mp - Math.round(m.sap * RL.mpScale(r.to.level)));
-          emit({ t: 'sap', to: r.to.key });
+        if (m.sap && alive(r.to)) {
+          let n;
+          if (r.to.id === 'sol') { n = r.to.inTrance ? 0 : Math.min(r.to.heat, m.sap); r.to.heat -= n; }
+          else { n = Math.min(r.to.mp, Math.round(m.sap * RL.mpScale(r.to.level))); r.to.mp -= n; }
+          emit({ t: 'sap', to: r.to.key, n, what: r.to.id === 'sol' ? 'heat' : 'mp' });
         }
         if (m.sever && alive(r.to)) { r.to.severed = true; emit({ t: 'sever', to: r.to.key }); }
       }
@@ -337,8 +340,9 @@
         if (knows(h, 'stoopRise')) { const ok = h.inTrance || h.heat >= 40; add('stoopRise', { heat: 40, ok, why: ok ? '' : 'Heat', targets: foes }); }
         const hal = B.foes.find((u) => u.id === 'halcyon' && alive(u));
         if (knows(h, 'kestrel') && hal && !B.kestrelUsed) {
-          // Sol knows her once she has seen her fight: from Halcyon's third turn, or half her HP, whichever comes first
-          const ok = hal.acted >= 2 || hal.hp <= hal.maxHp * 0.5;
+          // Sol knows her once she has seen her fight: from Halcyon's third turn, at half her HP, or as soon as she takes
+          // Warden's Vow, Sol's own stance (lore answer 2: Sol knows the stance, not the face), whichever comes first
+          const ok = hal.acted >= 2 || hal.hp <= hal.maxHp * 0.5 || !!hal.vowed;
           add('kestrel', { ok, why: ok ? '' : 'not yet', targets: [hal.key] });
         }
         add('guard', {});

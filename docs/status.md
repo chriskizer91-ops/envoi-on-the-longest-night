@@ -1,8 +1,8 @@
 # Where Things Stand
 
-A handoff for the next session. Updated October 3, 2026, after the seventeenth round: Sol out of reach while she hovers, battles at 30 fps, rest places for a lost fight, and the game's places on Chris's D&D map.
+A handoff for the next session. Updated October 3, 2026, after the twentieth round: Harvest Moon replaces Moth Veil, the party carries one of each herb, and step 16, Halcyon's ambush, is built.
 
-**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Steps 13 to 15, the party, the great wraith and Dawnroost, are built too. Next is step 16, Halcyon's ambush.
+**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Steps 13 to 16, the party, the great wraith, Dawnroost and Halcyon's ambush, are built too. Next is step 17, the finale.
 
 ## Working from the second account
 
@@ -81,6 +81,18 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 - `tools/turnaround`: `--q anchor=<name>` and `--q fov=<deg>` for close-ups of any anchor.
 - The Night square's well: its lantern cutout is traced to the painted lantern instead of a box, and its bucket chain has a cutout.
 
+## Since the seventeenth round
+
+- **Harvest Moon replaces Moth Veil** at the Bogmire refit: 28 MP for 70 Heat on Sol. Its effect is `harvestMoon` in `src/fx/io-spells.js`; Io's bench page and the cast page show it.
+- **One of each herb:** Moonpetal heals 20% more than Lunar Mend; Ember-star Lily makes every blow 10% harder for the rest of the fight.
+- **The finale's cold** deepens 11.5% a turn.
+- **Halcyon on the battle screen** (`HALCYON_MOVES` in `screen.js`):
+  - her own moves, with Warden's Vow's counter after a hero's melee;
+  - her charge pose for Black Noon, and the turn she loses after Kestrel;
+  - a foe's name can wait for the party to know her (`alias`, with `knowLines`);
+  - endings: `retreatLines` for a foe who leaves at a share of her HP, and `spared` with `sparedLines` for a lost fight that goes on with the story;
+  - `stoopLines` for learning Kestrel Stoop, and end card titles and texts per outcome (`endTitles`, `endTexts`).
+
 ## The battle groundwork
 
 - `src/battle/rules.js`: every hero, summon, foe, herb and status as data at level 1, growing ×1.2 a level; numbers marked "proposed" wait for Chris (`questions/open.md`).
@@ -102,7 +114,7 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 ## Next steps
 
-1. Step 16, Halcyon's ambush: Halcyon at level 20 against the party at 15 or more, on the northern crossroads or frozen road backdrop: her moves on the battle screen, the Kestrel command from her third turn, Sol recognizing her, and both endings (the party falls and Sol steps in front of Io, or she retreats into the dark at 20%). Afterwards Sol learns Kestrel Stoop.
+1. Step 17, the finale: Noctara with Halcyon at level 20, at the dead Moonwell (`battle-dead-moonwell.webp`). Noctara's moves on the battle screen (Crown Shards, Void Sphere, Frost Dust, Blackout), the cold deepening shown on screen, and Halcyon kneeling when she falls.
 2. Phase 3: reset the shards' prices (the Magpie and the shops) for the new experience curve, and play the whole chain of fights in order. The curve itself is set (about 79 wild fights, 40% in the last band).
 3. Step 19, the Magpie, builds on Chris's world travel demo (`reference/demos/the-magpie-over-aethermoor.html`).
 4. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.

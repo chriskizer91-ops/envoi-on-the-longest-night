@@ -5,9 +5,10 @@
 // Briars, Lunar Mend, the summon, Lunar Trance and Moonlight bring their spells; Defend raises her guard and the
 // shield while the wraith's Soul Bolts break on it. The original model has no ACTIONS, so this file keeps the same
 // times (TIMES) and fires from them for both models: the before/after switch plays identically.
-// Her new Moonlore (src/fx/io-spells.js) plays on her existing motions: Waxing Light on mend, Moonsteel and Moth Veil
-// on cast. While one plays, its own effect, cue and hit times and name replace those of the motion. Moth Veil and the
-// wraith's Shadow Grasp go to the target picked under the Moonlore buttons (Sol or Io), so the veil can be tested.
+// Her new Moonlore (src/fx/io-spells.js) plays on her existing motions: Waxing Light on mend, Moonsteel and Harvest
+// Moon on cast. While one plays, its own effect, cue and hit times and name replace those of the motion. Harvest Moon
+// replaced Moth Veil on October 3; the veil still works here if a page asks for it (mothveil). The wraith's Shadow
+// Grasp goes to the target picked under the Moonlore buttons (Sol or Io).
 window.STAGES = window.STAGES || {};
 window.STAGES.witch = (function () {
   'use strict';
@@ -19,7 +20,7 @@ window.STAGES.witch = (function () {
     moon: { hits: [0.407, 0.521, 0.636], cues: [0.3, 0.389] }, summon: { cues: [0.3, 0.569] }, transform: { cues: [0.55] },
   };
   const DUR = { mend: 1.9, cast: 1.4 }; // the motions her new spells play (the same on both models)
-  const SPELL_OF = { waxing: 'waxing', moonsteel: 'moonsteel', mothveil: 'veil' }; // button id -> io-spells id
+  const SPELL_OF = { waxing: 'waxing', moonsteel: 'moonsteel', harvest: 'harvest', mothveil: 'veil' }; // button id -> io-spells id
   const NONE = { hits: [], cues: [] };
   const TAU = Math.PI * 2;
   const rnd = (a, b) => a + Math.random() * (b - a);
@@ -124,6 +125,8 @@ window.STAGES.witch = (function () {
       IO.waxingLight({ sky: () => V().set((w.x + s.x) / 2, 2.9, (w.z + s.z) / 2), allies: [chestW, chestOf('sol')], landIn: left(S.hits[0]) });
     } else if (id === 'moonsteel' && i === 0) {
       IO.moonsteel({ palm: flameW, blade: solBlade, releaseIn: left(S.cues[1]), landIn: left(S.hits[0]), glowFor: S.glow });
+    } else if (id === 'harvest' && i === 0) {
+      IO.harvestMoon({ palm: flameW, chest: chestOf('sol'), feet: posOf('sol'), blade: solBlade, releaseIn: left(S.cues[1]), landIn: left(S.hits[0]), glowFor: S.glow });
     } else if (id === 'veil') {
       const t = SPELL.target, tall = t === 'sol' ? 2.0 : 2.3;
       if (VEIL.veil) VEIL.veil.dismiss();
@@ -134,11 +137,12 @@ window.STAGES.witch = (function () {
   function spellHit(id) {
     const S = IO.SPELLS[id];
     if (id === 'waxing') { for (const t of ['witch', 'sol']) ctx.damage(t, Math.round(S.heal * rnd(0.95, 1.05)), 'heal'); }
-    else if (id === 'moonsteel') { tag('sol', '+' + S.heat + ' Heat', ''); HEAT.v = Math.min(1, HEAT.v + S.heat / 100); HEAT.hold = S.glow; wideTill = clock + S.glow; } // keep Sol's glowing blade in frame
+    else if (id === 'moonsteel' || id === 'harvest') { tag('sol', '+' + S.heat + ' Heat', ''); HEAT.v = Math.min(1, HEAT.v + S.heat / 100); HEAT.hold = S.glow; wideTill = clock + S.glow; } // keep Sol's glowing blade in frame
   }
   const SPELL_RING = {
     waxing: { cue: () => [flameW()], hit: () => [chestW(), chestOf('sol')()] },
     moonsteel: { cue: () => [flameW()], hit: () => { const a = V(), b = V(); solBlade(a, b); return [a.lerp(b, 0.55)]; } },
+    harvest: { cue: () => [flameW()], hit: () => [chestOf('sol')()] },
     veil: { cue: () => [palm(1)()], hit: () => [chestOf(SPELL.target)()] },
   };
   function castSpell(id) {
@@ -264,7 +268,7 @@ window.STAGES.witch = (function () {
   function targetControl() {
     const head = [...document.querySelectorAll('#panel h2')].find((h) => h.textContent === 'Moonlore');
     if (!head || !head.nextElementSibling) return;
-    const cap = document.createElement('h2'); cap.textContent = 'Target of Moth Veil and Shadow Grasp';
+    const cap = document.createElement('h2'); cap.textContent = 'Target of Shadow Grasp';
     const seg = document.createElement('div'); seg.className = 'seg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', cap.textContent);
     for (const [id, label] of [['sol', 'Sol'], ['witch', 'Io']]) {
       const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.dataset.target = id;
@@ -353,7 +357,7 @@ window.STAGES.witch = (function () {
       if (ATK) return (ATK.act === 'lunge' ? 'Lunge' : 'Attack') + (ATK.phase === 'back' ? ': back to her place' : '');
       if (DEF) return 'Defend: Soul Bolts break on her guard';
       const who = (id) => (id === 'sol' ? 'Sol' : 'Io');
-      if (SPELL) return IO.SPELLS[SPELL.id].name + (SPELL.id === 'veil' ? ' on ' + who(SPELL.target) : SPELL.id === 'moonsteel' ? ' on Sol' : '');
+      if (SPELL) return IO.SPELLS[SPELL.id].name + (SPELL.id === 'veil' ? ' on ' + who(SPELL.target) : SPELL.id === 'moonsteel' || SPELL.id === 'harvest' ? ' on Sol' : '');
       if (GR) return 'Shadow Grasp on ' + who(GR.t);
       if (RISE.pending) return 'Rise: she falls first';
       const a = c.subject.action;

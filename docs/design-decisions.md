@@ -716,3 +716,30 @@ Two more findings, for later:
     - at 19 a perfect player has a 5% chance.
 
   All 32 targets are met.
+
+### Step 16, Halcyon's ambush (built)
+
+- **The backdrop is the northern crossroads**, painted for this fight: a ruined crossroads on the road north, with frost creeping in. Its paved circle gives the camera: 23° pitch, the long 12° lens, 58 painting pixels a meter.
+- **The party doesn't know her at first.** Her name shows as "The Gloam Knight" until Sol recognizes her. Then it becomes Halcyon, and Kestrel opens in Sol's menu.
+- **When Sol knows her:** from Halcyon's third turn or at half her HP, as before, or as soon as Halcyon takes Warden's Vow, whichever comes first. Lore answer 2 says Sol knows the stance, not the face, and Warden's Vow is Sol's own stance. The balance doesn't change.
+- **Kestrel** plays Sol's own Kestrel motion. Halcyon falters, and on her next turn she hesitates and the turn passes.
+- **Warden's Vow** holds her in the stance. A physical blow brings her counter after the hero's own blows, then she takes the stance again. Magic doesn't set it off.
+- **Black Noon** shows its charge a turn ahead: the banner, her held charge pose, a pulsing glow at her feet, and a note. If Envoi's ward is up, the ward takes it whole.
+- **Light-Drinker** shows how much it drank: Heat from Sol, MP from Io.
+- **The two endings:**
+  - **Brought down to 20%:** she steps back, and the dark rises round her like smoke. The engine never lets her fall below 1 HP, so even an overkill blow ends in her retreat.
+  - **The party falls:** she walks toward Io; Sol drags herself up and stands over Io, sword raised; Halcyon's blade stops, she looks at her old squire, and steps back into the dark.
+  - **After either:** the memory stirs, and Sol springs up and hangs in the air like a kestrel: she learns Kestrel Stoop. The end card says "Halcyon retreats" (with experience and shards) or "Spared".
+- **Every line is a placeholder** for Chris's lore conversation (`questions/open.md`, lore question 16).
+- **How it plays now** (the simulator, 1,000 fights each):
+
+  | Party level | Perfect player | Attentive player |
+  |---|---|---|
+  | 15 | 0% | 0% |
+  | 16 | 0% | 0% |
+  | 17 | 6% | 0% |
+  | 18 | 53% | 8% |
+  | 19 | 91% | 50% |
+  | 20 | 99% | 89% |
+
+  At 19, one level below her, an attentive player makes her retreat about half the time, close to Chris's "half the time against an equal-level foe".

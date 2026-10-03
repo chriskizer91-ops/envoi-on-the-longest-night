@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Halcyon’s Ambush</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/battle/screen.css">
+</head>
+<body>
+<header>
+  <h1>Halcyon’s Ambush</h1>
+  <div class="hbtns">
+    <button type="button" class="hbtn" id="fps"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4a9 9 0 0 0-9 9 8.9 8.9 0 0 0 1.8 5.4l1.6-1.2A7 7 0 1 1 19 13a6.9 6.9 0 0 1-1.4 4.2l1.6 1.2A8.9 8.9 0 0 0 21 13a9 9 0 0 0-9-9Zm4.2 4.4-5 4.1a1.6 1.6 0 1 0 2.2 2.2l4.1-5Z"/></svg><span>fps</span></button>
+    <button type="button" class="hbtn" id="snd" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3Zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Zm-2.5-8.8v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6Z"/></svg><span>Sound on</span></button>
+  </div>
+</header>
+<main id="stage" aria-label="Battle between Io and Sol and a knight in dark armor at the northern crossroads">
+  <canvas id="paint" aria-hidden="true"></canvas>
+  <div id="tint" class="fill"></div>
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <canvas id="rime" aria-hidden="true"></canvas>
+  <div id="vignette" class="fill"></div>
+  <div id="flash" class="fill"></div>
+  <div id="barT" class="bar"></div><div id="barB" class="bar"></div>
+  <div id="enemy" class="win" hidden></div>
+  <div id="banner" class="win" aria-live="polite"></div>
+  <div id="msg" class="win" role="status"></div>
+  <div id="nums" aria-hidden="true"></div>
+  <div id="marker" aria-hidden="true" hidden><svg viewBox="0 0 22 18"><path d="M2 2h18L11 16Z" fill="currentColor" stroke="#2c3160" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+  <div id="ui" hidden>
+    <div id="cmd" class="win" role="menu" aria-label="Commands"></div>
+    <div id="status" class="win" aria-label="The party"></div>
+  </div>
+  <div id="skip" hidden><button type="button" class="skipb" id="skipBtn">Skip intro</button></div>
+  <div id="start" class="overlay">
+    <div class="card win">
+      <h2>Halcyon’s Ambush</h2>
+      <p>On the road north to the shipyard, the four old roads meet at a ruined crossroads, and someone is waiting there in dark armor. This is the gate out of the third band, and it isn’t meant to be won at level 15: the knight is level 20. It ends when the party falls, or, if they bring her down to a fifth of her strength, when she retreats. Either way the story goes on.</p>
+      <div class="pickr" id="picker" hidden>
+        <label for="pickLevel"><span>Party level</span><input type="range" id="pickLevel" min="1" max="20" step="1" value="3"><output id="pickLevelOut" for="pickLevel">3</output></label>
+        <label for="pickPack"><span>Foes</span><select id="pickPack"></select></label>
+        <p id="pickNote"></p>
+      </div>
+      <button type="button" class="go" id="begin" disabled>Setting the scene…</button>
+    </div>
+  </div>
+  <div id="end" class="overlay" hidden>
+    <div class="card win">
+      <h2 id="endTitle">Victory!</h2>
+      <p id="endText"></p>
+      <div class="stats"><div><b id="stTime">0:00</b><span>Battle time</span></div><div><b id="stDmg">0</b><span>Damage dealt</span></div></div>
+      <p class="fpsline" id="stFps"></p>
+      <div class="xp" id="xpBox" hidden>
+        <div class="stats"><div><b id="xpGain">+0</b><span>Experience</span></div><div><b id="shardGain">+0</b><span>Sunstone shards</span></div></div>
+        <div class="row"><span>Next level</span><b id="xpNext"></b></div>
+        <div class="gauge"><i id="xpBar"></i></div>
+      </div>
+      <div class="lvl" id="lvlBox" hidden>
+        <h3 id="lvlTitle">Level up!</h3>
+        <dl id="lvlList"></dl>
+        <p>Every move hits and heals about 20% harder.</p>
+      </div>
+      <div class="btns"><button type="button" class="go" id="again">Fight again</button><button type="button" class="go alt" id="change" hidden>Change the fight</button></div>
+    </div>
+  </div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/northern-crossroads.js"></script>
+<script src="../src/models/witch.js"></script>
+<script src="../src/models/sol.js"></script>
+<script src="../src/models/halcyon.js"></script>
+<script src="../src/models/lunara.js"></script>
+<script src="../src/models/envoi.js"></script>
+<script src="../src/fx/battle-fx.js"></script>
+<script src="../src/fx/io-spells.js"></script>
+<script src="../src/battle/rules.js"></script>
+<script src="../src/battle/engine.js"></script>
+<script src="../src/battle/sim.js"></script>
+<script src="../src/battle/sound.js"></script>
+<script src="../src/battle/screen.js"></script>
+<script>
+// Step 16: Halcyon's ambush, the gate out of band 3, at the northern crossroads on the way to the shipyard. Io and Sol at
+// a level from 15 to 20 against Halcyon, the Gloam Knight, at 20: Gloam Cleave, Dusk Arc, Severance, Light-Drinker,
+// Warden's Vow (she counters every physical blow until her next turn) and Black Noon, charged a turn ahead, under 30%.
+// The party doesn't know her at first. Sol knows the stance (lore answer 2) from Halcyon's third turn, at half her HP,
+// or when she takes Warden's Vow: the name becomes Halcyon, and Sol can call to her once with Kestrel, which costs
+// Halcyon her next turn. Envoi and Harvest Moon are in Io's menus. It ends one of two ways (design decisions, October
+// 2): the party falls, Sol stands over Io, and Halcyon sees her old squire and leaves; or she is brought to 20% and
+// retreats into the dark. Either way Sol learns Kestrel Stoop.
+BattleScreen.start({
+  scene: 'northern-crossroads',
+  level: 15, pack: 0, levels: [15, 20], packs: [{ name: 'Halcyon, at level 20', foes: ['halcyon'] }],
+  heroes: [
+    { id: 'io', make: () => makeWitch({}), home: [560, 690], yawBias: -0.38, shadow: 0.62, tall: 2.1, kind: 'io' },
+    { id: 'sol', make: () => makeSol({}), home: [645, 752], yawBias: -0.3, shadow: 0.6, tall: 1.9, kind: 'sol', stop: 0.9 },
+  ],
+  slots: [[895, 622]],
+  foeLook: { halcyon: { kind: 'halcyon', shadow: 0.62, tall: 2.11, yawBias: 0.15, glow: [1.4, 0x6f9cff], appearColor: [0.45, 0.55, 0.95], stop: 0.95 } },
+  makeFoe: () => makeHalcyon({}),
+  makeLunara: () => makeLunara({}),
+  makeEnvoi: () => makeEnvoi({}),
+  // the party doesn't know her yet
+  alias: { halcyon: 'The Gloam Knight' },
+  fight: (L) => ({
+    party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'halcyon' }],
+    flags: { party: true, refit: true, envoi: true, kestrel: true }, herbs: Object.assign({}, BattleSim.BAGS.gate),
+    ends: { retreat: { foe: 'halcyon', below: 0.2 } },
+  }),
+  pickNote: (L) => 'The knight is level 20. ' + ({
+    15: 'At 15 she brings the party down in about two minutes, however well it plays: this is how the story expects it.',
+    16: 'At 16 the party still falls, though it lasts longer.',
+    17: 'At 17 a perfect player makes her retreat about one time in sixteen.',
+    18: 'At 18 a perfect player makes her retreat about half the time; an attentive one, now and then.',
+    19: 'At 19 a perfect player nearly always makes her retreat, and an attentive one about half the time.',
+    20: 'At 20 the party is her equal, and makes her retreat almost every time.',
+  })[L] + ' The party carries one of each herb.',
+  introMsg: 'The road north to the shipyard crosses an old ruined crossroads. Someone is waiting there.',
+  introAfter: 'A knight in dark armor steps out of the dark, her blade already drawn.',
+  attackText: () => 'The knight attacks!',
+  // the lines are placeholders for Chris's lore conversation (questions/lore-and-story.md)
+  knowLines: Object.assign([
+    'Sol knows the way this knight fights. It is the way she was taught to fight, in the waystation yard, by one Warden only.',
+    '“Halcyon?” Her teacher, who went north eight years ago and never came back.',
+  ], { vow: 'Warden’s Vow. Sol knows that stance. “She taught me that.”' }),
+  kestrelLine: 'Sol calls out the name Halcyon gave her: “It’s me. Kestrel!”',
+  retreatLines: [
+    'Halcyon steps back from them, her blade lowered.',
+    'The dark rises round her like smoke, and she is gone.',
+  ],
+  sparedLines: [
+    'Io is down. The knight walks toward her, blade low.',
+    'Sol drags herself up and stands over Io, her sword raised.',
+    'Halcyon’s blade stops. For a long moment she only looks at her old squire.',
+    'Then she steps back into the dark, and is gone.',
+  ],
+  stoopLines: [
+    'The fight has stirred an old memory: Halcyon in the waystation yard, teaching her squire to hover before she strikes.',
+    'Sol springs up and hangs in the air like a kestrel.',
+  ],
+  spared: true,
+  endTitles: { retreat: 'Halcyon retreats', lose: 'Spared' },
+  endTexts: {
+    retreat: 'Halcyon is gone into the dark, and the road to the shipyard is open. Sol has learned Kestrel Stoop: a turn hanging in the air, out of reach, then the biggest sword blow she has.',
+    lose: 'Halcyon spared them for her old squire’s sake, and the story goes on to the shipyard. Sol has learned Kestrel Stoop. Leveled past 15, the party can bring her down to a fifth of her strength and make her retreat instead.',
+  },
+});
+</script>
+</body>
+</html>

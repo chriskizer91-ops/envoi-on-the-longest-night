@@ -194,11 +194,13 @@
     let EN = null;                // Envoi, when the page has it (from Dawnroost on)
     let E = null;                 // the engine
     const D = {};                 // what the player has been shown so far, per unit
-    const S = { trace: [], state: 'boot', acting: false, t0: 0, skip: false, auto: cfg.auto || null, rand: null, result: null, dealt: 0, guard: {}, rime: 0, rimeOn: false, choosing: null };
+    const S = { trace: [], state: 'boot', acting: false, t0: 0, skip: false, auto: cfg.auto || null, rand: null, result: null, dealt: 0, guard: {}, rime: 0, rimeOn: false, choosing: null, known: false };
     const standing = () => heroes.concat(foes).filter((f) => !f.out && f.m.root.visible);
     const living = (side) => (side === 'hero' ? heroes : foes).filter((f) => D[f.key] && D[f.key].hp > 0 && !f.out);
     // the heroes the foes can reach: Sol is out of reach while she hovers for Kestrel Stoop
     const reach = () => living('hero').filter((h) => !D[h.key].aloft);
+    // a foe the party doesn't know yet goes by what they see (the ambush: the Gloam Knight, until Sol knows her stance)
+    const shownName = (u) => (cfg.alias && cfg.alias[u.id] && !S.known ? cfg.alias[u.id] : u.name);
 
     // ---------- interface: the demo's windows and menus, for a party ----------
     const UI = (() => {
@@ -280,9 +282,9 @@
         const en = $('enemy'); en.textContent = '';
         for (const f of foes) {
           const u = E.unit(f.key), r = el('div', { class: 'foe' }, en);
-          const nm = el('div', { class: 'ename' }, r); el('span', null, nm, u.name); el('small', null, nm, 'Level ' + u.level);
+          const nm = el('div', { class: 'ename' }, r), label = el('span', null, nm, shownName(u)); el('small', null, nm, 'Level ' + u.level);
           const ga = el('div', { class: 'gauge' }, r), i = el('i', { class: 'ehp' }, ga);
-          rows[f.key] = { r, i, last: {} };
+          rows[f.key] = { r, i, label, last: {} };
         }
       }
       const set = (row, k, v, fn) => { if (row.last[k] !== v) { row.last[k] = v; fn(v); } };
@@ -321,6 +323,7 @@
       function showBattle(on) { $('ui').hidden = !on; $('enemy').hidden = !on; }
       return {
         open, waitMenu, banner, msg, hideMsg, note, number, mark, flash, vignette, tint, cinematic, status, update, showBattle, buildWindows,
+        rename(key, text) { if (rows[key] && rows[key].label) rows[key].label.textContent = text; },
         hideEnemy() { $('enemy').hidden = true; }, get menuOpen() { return !!cb; },
         pickId(id) { const i = items.findIndex((it) => it.id === id); if (i >= 0) pick(i); return i >= 0; },
       };
@@ -419,7 +422,7 @@
         if (u.side === 'foe') {
           S.dealt += e.n;
           UI.number(chest(to), nf(e.n), big ? 'big' : '');
-          if (d.hp > 0) to.m.play('hurt');
+          if (d.hp > 0 && !(u.vow > 0) && !u.charging) to.m.play('hurt');
           const df = D[e.from]; if (df && !df.inTrance && from && from.side === 'hero') df.tr = Math.min(0.99, df.tr + RL.TRANCE.dealt);
         } else {
           if (E.lunara === 1) FX.burst(chest(to), [0.8, 0.88, 1], 18, 2.2);
@@ -446,6 +449,11 @@
       else if (e.t === 'sever') word(to, 'Severed');
       else if (e.t === 'severed') word(to, 'Can’t be healed');
       else if (e.t === 'cover') word(who, 'Guard');
+      else if (e.t === 'counter') word(who, 'Counter');
+      else if (e.t === 'sap') {
+        if (e.what === 'heat') { D[e.to].heat = Math.max(0, D[e.to].heat - e.n); if (e.n) word(to, '−' + e.n + ' Heat', 'heat'); }
+        else { D[e.to].mp = Math.max(0, D[e.to].mp - e.n); if (e.n) word(to, '−' + e.n + ' MP'); }
+      }
       else if (e.t === 'oath') word(who, 'Warden’s Oath');
       else if (e.t === 'heat') { D[e.to].heat = Math.min(100, D[e.to].heat + e.n); word(to, '+' + e.n + ' Heat', 'heat'); }
       else if (e.t === 'mp') { D[e.to].mp = Math.min(E.unit(e.to).maxMp, D[e.to].mp + e.n); word(to, '+' + e.n + ' MP', 'heal'); }
@@ -483,16 +491,34 @@
       for (let k = 0; k < H.length; k++) {
         await untilP(m, H[k] - 0.04); SND.sfx.swish();
         await untilP(m, H[k]);
-        if (!ev.has()) continue;
+        if (!ev.has() || countering(ev)) continue;
         if (ev.peek().t === 'miss') { ev.show(); continue; }
         const tgt = F[ev.peek().to] || t, big = k === H.length - 1 && (o.bigLast || H.length > 1);
         strikeFx(tgt, big || o.big, o.color, o.rots ? o.rots[k] : undefined);
         ev.show({ big: big || o.big });
       }
       await until(() => !m.busy);
-      h.aim = null; ev.rest();
+      h.aim = null;
+      await counterBlow(h, ev);
+      ev.rest();
       if (E.over === 'win') return;
       await goHome(h);
+    }
+    // Warden's Vow: a physical blow on Halcyon in her stance brings her counter, after the hero's own blows
+    const countering = (ev) => ev.list.some((e) => e.t === 'counter') && ev.peek() && ev.peek().t === 'hit' && E.unit(ev.peek().to).side === 'hero';
+    async function counterBlow(h, ev) {
+      const c = ev.list.find((e) => e.t === 'counter'); if (!c || !ev.has()) return;
+      const f = F[c.who]; if (!f) return;
+      UI.banner('Warden’s Vow: Counter', 1.4);
+      faceTo(f, h); shotAt(mid(h.pos, f.pos), 1.7, 3);
+      f.aim = h; f.m.play('counter', true); SND.sfx.swish();
+      await untilP(f.m, f.m.ACTIONS.counter.hits[0]);
+      const p = chest(h);
+      FX.slash(p, 0x9ec4ff, rnd(-0.6, 2.6), 1.2, 0.3); FX.burst(p, [0.6, 0.75, 1], 32, 3.4); FX.flashLight(p, 0x8fb8ff, 3, 0.3);
+      SND.sfx.hit(1.1); addShake(9); hitStop(0.09);
+      ev.show();
+      await until(() => !f.m.busy); f.aim = null;
+      if (E.unit(f.key).vow > 0 && !E.over) f.m.play('vowStance', true);
     }
 
     // ---------- Io ----------
@@ -653,9 +679,25 @@
         faceTo(h, t); shotFit([h.pos, t.pos, { x: h.pos.x, y: 4.2, z: h.pos.z }], 1, 3);
         h.aim = t; h.m.play('stoop', true); SND.sfx.swish();
         await untilP(h.m, h.m.ACTIONS.stoop.hits[0]);
-        if (ev.has()) { const p = chest(t); strikeFx(t, true, 0xffe8a0); FX.ring(t.pos, 0xffd070, 0.3, 3.5, 0.7, 1); FX.flashLight(p, 0xffe0a0, 6, 0.5, 8); UI.flash('#fff1c8', 0.55, 0.35); SND.sfx.boom(1.2); addShake(16); ev.show({ big: true }); }
-        await until(() => !h.m.busy); h.aim = null; h.aimAt = null; ev.rest();
+        if (ev.has() && !countering(ev)) { const p = chest(t); strikeFx(t, true, 0xffe8a0); FX.ring(t.pos, 0xffd070, 0.3, 3.5, 0.7, 1); FX.flashLight(p, 0xffe0a0, 6, 0.5, 8); UI.flash('#fff1c8', 0.55, 0.35); SND.sfx.boom(1.2); addShake(16); ev.show({ big: true }); }
+        await until(() => !h.m.busy); h.aim = null; h.aimAt = null;
+        await counterBlow(h, ev); ev.rest();
         if (E.over !== 'win') await goHome(h);
+      },
+      // the story command in Halcyon's fights: Sol calls to her by the name Halcyon gave her, and Halcyon falters,
+      // losing her next turn
+      async kestrel(h, t, ev) {
+        UI.cinematic(true); UI.vignette(0.4);
+        faceTo(h, t); faceTo(t, h); shotBoth(h.pos, t.pos, 1.1, 2.4);
+        h.m.play('kestrel', true); SND.sfx.chime();
+        UI.msg(cfg.kestrelLine || 'Sol calls to her by the name she gave her: “Kestrel!”', true);
+        await untilP(h.m, 0.45);
+        t.m.play('stagger', true); word(t, 'Falters'); FX.ring(t.pos, 0xffd9a0, 0.2, 1.8, 0.7, 0.8);
+        await until(() => !h.m.busy); await wait(1.4);
+        UI.msg(shownName(E.unit(t.key)) + ' falters. She will lose her next turn.', true);
+        await wait(1.8); UI.hideMsg();
+        ev.rest();
+        UI.vignette(0); UI.cinematic(false);
       },
     };
 
@@ -1094,15 +1136,97 @@
       },
     };
 
+    // ---------- Halcyon, the Gloam Knight ----------
+    // Her model carries her own effects (the blade's cold trail and sparks, Light-Drinker's streams, Black Noon's black
+    // sun and swirls); the screen moves her to her targets and lands the engine's blows at her hit times
+    const HAL_BLUE = 0x9ec4ff;
+    const warded = (ev) => !!(EN && EN.on && ev.list.some((e) => e.t === 'ward'));
+    function halHitFx(t, big) {
+      const p = chest(t);
+      FX.slash(p, HAL_BLUE, rnd(-0.6, 2.6), big ? 1.4 : 1.15, 0.3); FX.burst(p, [0.6, 0.75, 1], big ? 44 : 30, big ? 4 : 3.2); FX.flashLight(p, 0x8fb8ff, big ? 4 : 3, 0.3);
+      SND.sfx.hit(big ? 1.2 : 1.0); addShake(big ? 12 : 9); hitStop(big ? 0.11 : 0.08);
+    }
+    // a blade blow on one hero: she closes to `dist` (her own lunge carries her the rest), strikes, and walks back
+    async function halMelee(f, ev, act, dist, o) {
+      o = o || {};
+      const t = blowTarget(ev), W = f.m;
+      shotBoth(t.pos, f.pos, 1.1, 2.5);
+      await runUp(f, t, dist, 4.6);
+      shotAt(mid(t.pos, f.pos), 1.6, 3);
+      f.aim = t; if (o.drink) f.aimAt = t;
+      W.play(act, true); SND.sfx.swish();
+      await untilP(W, W.ACTIONS[act].hits[0]);
+      if (ev.has()) { halHitFx(blowTarget(ev), o.big); ev.show(); }
+      if (o.drink) {
+        // the stolen light streams up into her blade: she heals by what she took, and drinks Sol's Heat or Io's MP
+        await untilP(W, 0.62);
+        if (ev.peek() && ev.peek().t === 'heal') { FX.converge(() => W.anchor('blade', V()), [0.75, 0.85, 1], 0.6, 50); SND.sfx.heal(); ev.show(); }
+      }
+      await until(() => !W.busy); f.aim = null; f.aimAt = null; ev.rest();
+      await goHome(f, 3.6);
+    }
+    const HALCYON_MOVES = {
+      gloamCleave: (f, ev) => halMelee(f, ev, 'gloamCleave', 2.0, { big: true }),
+      // she lunges from a few strides off at whoever is lowest; the cut leaves them Severed
+      severance: (f, ev) => halMelee(f, ev, 'severance', 4.2),
+      lightDrinker: (f, ev) => halMelee(f, ev, 'lightDrinker', 1.5, { drink: true }),
+      // a wide arc of dusk through both heroes
+      async duskArc(f, ev) {
+        const W = f.m, tg = reach(), c = centerOf((tg.length ? tg : living('hero')).map((h) => h.pos));
+        shotField(2.5);
+        const spot = toward(f.pos, c, 2.0); await moveTo(f, spot.x, spot.z, 4.6); faceTo(f, { pos: c }); await wait(0.1);
+        shotField(3);
+        W.play('duskArc', true); SND.sfx.swish();
+        await untilP(W, W.ACTIONS.duskArc.hits[0]);
+        if (warded(ev)) halHitFx(ENV.ward, true); else for (const h of reach()) halHitFx(h);
+        FX.ring(c, HAL_BLUE, 0.4, 3.2, 0.6, 0.8);
+        ev.showAll();
+        await until(() => !W.busy); ev.rest();
+        await goHome(f, 3.6);
+      },
+      // Sol's own stance: until her next turn she counters every physical blow; magic doesn't set it off
+      async vowStance(f, ev) {
+        const W = f.m; shotAt(f.pos, 1.6, 2.6);
+        W.play('vowStance', true); SND.sfx.guard();
+        await until(() => !W.busy || W.progress >= 0.95);
+        word(f, 'Warden’s Vow');
+        UI.note(S.vowSeen ? 'Warden’s Vow: she counters any physical blow until her next turn.' : 'Warden’s Vow: until her next turn she counters every physical blow. Magic doesn’t set it off.', 2.4);
+        S.vowSeen = true;
+        await wait(0.8); ev.rest();
+      },
+      // the charged blow, released: the black sun falls on the whole party
+      async blackNoon(f, ev) {
+        const W = f.m, A = W.ACTIONS.blackNoon;
+        UI.cinematic(true); UI.vignette(0.85);
+        shotField(2.2);
+        W.play('blackNoon', true); SND.sfx.eclipse();
+        await untilP(W, A.hits[0] - 0.08); SND.sfx.swish();
+        await untilP(W, A.hits[0]);
+        for (const h of warded(ev) ? [ENV.ward] : reach()) { const p = chest(h); FX.burst(p, [0.5, 0.6, 1], 80, 5); FX.flashLight(p, 0x7fa0ff, 5, 0.5, 8); }
+        UI.flash('#0a0c1e', 0.8, 0.5); SND.sfx.boom(1.5); addShake(20); hitStop(0.18);
+        ev.showAll({ big: true });
+        await until(() => !W.busy); ev.rest();
+        UI.vignette(0); if (!E.over) UI.cinematic(false);
+        await goHome(f, 3.6);
+      },
+    };
+    // her lost turn after Kestrel: she hesitates, and the moment passes
+    async function hesitate(f, ev) {
+      UI.banner('Hesitates', 1.6); shotAt(f.pos, 1.5, 2.4);
+      f.m.play('stagger', true);
+      UI.note(shownName(E.unit(f.key)) + ' hesitates, and her turn passes.', 2);
+      await wait(1.8); ev.rest();
+    }
+
     // a foe gathers a charged blow (Black Noon, Void Sphere): it can be seen coming, and lands on the foe's next turn.
     // Its ground glow pulses until then
     async function chargeTurn(f, hd, ev) {
       if (!f) { ev.rest(); return; }
       UI.banner(hd.name, 2.2); shotAt(f.pos, 1.2, 2.4);
-      const W = f.m; if (W.ACTIONS && W.ACTIONS.charge) W.play('charge', true); else if (W.ACTIONS && W.ACTIONS.cast) W.play('cast', true);
+      const W = f.m; if (W.ACTIONS && W.ACTIONS.blackNoonCharge) W.play('blackNoonCharge', true); else if (W.ACTIONS && W.ACTIONS.charge) W.play('charge', true); else if (W.ACTIONS && W.ACTIONS.cast) W.play('cast', true);
       FX.ring(f.pos, 0xc49cff, 0.3, 3.2 * (f.look.fxScale || 1), 1.2, 0.9); FX.converge(() => chest(f), [0.8, 0.65, 1], 1.3, 80);
       SND.sfx.eclipse(); f.charged = true;
-      UI.note(E.unit(f.key).name + ' gathers ' + hd.name + '. It falls on its next turn.', 2.6);
+      UI.note(shownName(E.unit(f.key)) + ' gathers ' + hd.name + '. It falls on its next turn.', 2.6);
       await wait(1.8); ev.rest();
     }
 
@@ -1113,7 +1237,7 @@
     async function playLog(log) {
       const parts = [];
       for (const e of log) {
-        if (['turn', 'move', 'strike', 'trance', 'charge', 'herb'].includes(e.t) || !parts.length) parts.push([e]);
+        if (['turn', 'move', 'strike', 'trance', 'charge', 'herb', 'stagger'].includes(e.t) || !parts.length) parts.push([e]);
         else parts[parts.length - 1].push(e);
       }
       for (const part of parts) {
@@ -1127,6 +1251,7 @@
         else if (hd.t === 'strike' && hd.who === 'envoi' && EN) await envoiStrike(ev);
         else if (hd.t === 'herb') await useHerb(F[hd.who], hd, ev);
         else if (hd.t === 'charge') await chargeTurn(F[hd.who], hd, ev);
+        else if (hd.t === 'stagger') await hesitate(F[hd.who], ev);
         else if (hd.t === 'move') {
           const f = F[hd.who], u = E.unit(hd.who), t = hd.target ? F[hd.target] : null;
           if (u.side === 'hero') {
@@ -1138,7 +1263,7 @@
           } else {
             if (hd.released) f.charged = false;
             UI.banner(hd.name, hd.move === 'eclipse' ? 2.4 : 1.4);
-            const fn = (f.kind === 'wisp' ? WISP_MOVES : WRAITH_MOVES)[hd.move];
+            const fn = (f.kind === 'wisp' ? WISP_MOVES : f.kind === 'halcyon' ? HALCYON_MOVES : WRAITH_MOVES)[hd.move];
             if (fn) await fn(f, ev); else { await wait(0.8); ev.rest(); }
           }
         } else { apply(hd); ev.rest(); } // anything between turns, such as the frost wearing off
@@ -1156,6 +1281,8 @@
         const sums = ['lunara', 'envoi'].map(has).filter(Boolean);
         list.push({ id: 'summon', label: 'Summon', disabled: !sums.some((o) => o.ok) });
       } else {
+        // Kestrel, once Sol knows the knight
+        if (has('kestrel') && has('kestrel').ok) list.push({ id: 'kestrel', label: 'Kestrel', tag: 'Once', hot: true });
         if (has('highNoon')) list.push({ id: 'highNoon', label: 'High Noon', hot: true });
         list.push(has('daybreak') ? { id: 'daybreak', label: 'Daybreak' } : { id: 'attack', label: 'Attack' });
         list.push({ id: 'arts', label: 'Sword Arts' });
@@ -1181,7 +1308,7 @@
       const ts = o.targets.map((k) => F[k]).filter(Boolean);
       const list = ts.map((f) => {
         const u = E.unit(f.key), d = D[f.key];
-        return { id: f.key, label: u.name, tag: u.side === 'foe' ? Math.round(100 * d.hp / u.maxHp) + '%' : nf(d.hp) + ' HP', first: false };
+        return { id: f.key, label: shownName(u), tag: u.side === 'foe' ? Math.round(100 * d.hp / u.maxHp) + '%' : nf(d.hp) + ' HP', first: false };
       });
       // the most hurt is pointed at first: the weakest foe, or the ally who needs it most
       let best = 0, bv = Infinity;
@@ -1214,6 +1341,8 @@
       if (s.type === 'choose') {
         await playLog(s.log);
         if (E.over) return finish();
+        // Sol knows the knight: from her third turn, half her HP, or her Warden's Vow (the engine offers Kestrel then)
+        if (cfg.alias && !S.known && s.unit.id === 'sol' && s.options.some((o) => o.id === 'kestrel' && o.ok)) await recognize();
         S.choosing = s.unit.key;
         // the whole field while a command and a target are chosen, every foe in frame
         if (foes.length > 1 || heroes.length > 1) shotField(2); else shotBoth(F[s.unit.key].pos, firstFoe().pos, 1, 2);
@@ -1266,7 +1395,7 @@
         shotField(3);
         for (const f of foes) {
           f.m.root.visible = true; f.m.play('appear', true);
-          FX.burst(new THREE.Vector3(f.pos.x, f.tall * 0.6, f.pos.z), f.kind === 'wisp' ? [0.8, 0.6, 1] : [0.3, 1, 0.55], 40, 2.6);
+          FX.burst(new THREE.Vector3(f.pos.x, f.tall * 0.6, f.pos.z), f.look.appearColor || (f.kind === 'wisp' ? [0.8, 0.6, 1] : [0.3, 1, 0.55]), 40, 2.6);
           await wait(0.25);
         }
         SND.sfx.shriek(1.0);
@@ -1326,7 +1455,9 @@
         for (const h of up) { h.tyaw = 0.25; h.spin = TAU; h.m.play('victory', true); }
         await until(() => up.every((h) => h.m.action !== 'victory' || h.m.progress >= 1));
         mark('victory'); await wait(0.9);
-      } else {
+      } else if (r.outcome === 'retreat') await retreatEnding(mark);
+      else if (cfg.spared) await sparedEnding(mark);
+      else {
         SND.stopMusic(1.0); SND.sfx.defeat();
         for (const h of heroes) { h.m.guard(false); if (h.m.action !== 'kneel') h.m.play('kneel', true); }
         FX.shield(false); shotField(2); UI.vignette(0.6);
@@ -1334,11 +1465,89 @@
       }
       mark('card'); showEnd(r);
     }
+
+    // ---------- Halcyon's ambush: Sol knows her; she retreats, or spares them; Sol learns Kestrel Stoop ----------
+    const knight = () => foes.find((f) => cfg.alias && cfg.alias[E.unit(f.key).id]) || foes[0];
+    // Sol knows the stance, not the face (lore answer 2): the knight's name becomes Halcyon, and Kestrel opens
+    async function recognize() {
+      S.known = true;
+      const f = knight(), u = E.unit(f.key), s = F.sol, L = cfg.knowLines || [];
+      UI.rename(f.key, u.name);
+      UI.cinematic(true); UI.vignette(0.4);
+      if (s && D.sol.hp > 0) { faceTo(s, f); shotBoth(s.pos, f.pos, 1.1, 2.2); } else shotAt(f.pos, 1.4, 2.2);
+      SND.sfx.chime();
+      UI.msg((u.vowed && L.vow) || L[0] || 'Sol knows that stance.', true); await wait(3.2);
+      if (L[1]) { UI.msg(L[1], true); await wait(3.4); }
+      UI.hideMsg(); UI.vignette(0); UI.cinematic(false);
+      if (S.state === 'battle') UI.note('Kestrel: once, Sol can call to her.', 2.2);
+    }
+    // Sol learns Kestrel Stoop: the fight stirred a memory. She springs up and hangs in the air like a kestrel
+    async function learnStoop(mark) {
+      const s = F.sol, L = cfg.stoopLines || []; if (!s) return;
+      if (D.sol.hp <= 0) { s.m.play('rise', true); D.sol.hp = 1; await wait(1.1); }
+      s.m.guard(false); s.tyaw = s.home.yaw; shotFit([s.pos, { x: s.pos.x, y: 4.6, z: s.pos.z }], 1, 1.6);
+      if (L[0]) { UI.msg(L[0], true); await wait(3.6); }
+      s.m.play('stoopRise', true); SND.sfx.swish();
+      FX.ring(s.pos, 0xffd070, 0.3, 2.6, 0.8, 1); FX.rise(() => s.pos, [1, 0.8, 0.45], 1.4, 40, 0.5);
+      await untilP(s.m, 0.6); SND.sfx.chime(); UI.banner('Sol learns Kestrel Stoop', 2.8);
+      if (L[1]) UI.msg(L[1], true);
+      await wait(2.8); UI.hideMsg();
+      if (mark) mark('stoop');
+    }
+    // brought down to 20% of her HP, Halcyon steps back and the dark takes her (her model's retreat)
+    async function retreatEnding(mark) {
+      const f = knight(), L = cfg.retreatLines || [];
+      UI.cinematic(true); SND.stopMusic(1.4);
+      await wait(0.4); clock.scale = 1; clock.slowT = 0;
+      for (const h of heroes) { h.m.guard(false); }
+      FX.shield(false);
+      if (!S.known) await recognize();
+      UI.cinematic(true); faceTo(f, { pos: centerOf(heroes.map((h) => h.pos)) });
+      shotAt(f.pos, 1.3, 2);
+      if (L[0]) { UI.msg(L[0], true); await wait(3.0); }
+      f.m.play('retreat', true); SND.sfx.eclipse();
+      if (L[1]) UI.msg(L[1], true);
+      await until(() => !f.m.busy); f.out = true; mark('retreat');
+      await wait(1.2); UI.hideMsg(); UI.hideEnemy();
+      await learnStoop(mark);
+      UI.cinematic(false);
+    }
+    // the party falls: Sol drags herself up and stands over Io, and Halcyon sees her old squire and leaves (lore answer 2)
+    async function sparedEnding(mark) {
+      const f = knight(), s = F.sol, i = io(), L = cfg.sparedLines || [];
+      SND.stopMusic(1.2); SND.sfx.defeat();
+      for (const h of heroes) { h.m.guard(false); if (h.m.action !== 'kneel') h.m.play('kneel', true); }
+      FX.shield(false); UI.cinematic(true); UI.vignette(0.45);
+      await wait(1.6); clock.scale = 1; clock.slowT = 0;
+      if (!S.known) await recognize();
+      UI.cinematic(true); UI.vignette(0.45);
+      // she walks toward Io, blade low
+      shotBoth(i.pos, f.pos, 1, 1.6);
+      if (L[0]) UI.msg(L[0], true);
+      const near = toward(f.pos, i.pos, 2.3); await moveTo(f, near.x, near.z, 1.5); faceTo(f, i);
+      // Sol gets up and stands between them
+      if (s) {
+        s.m.play('rise', true); D.sol.hp = 1; await wait(0.8);
+        if (L[1]) UI.msg(L[1], true);
+        const p = toward(f.pos, i.pos, 0.95); await moveTo(s, p.x, p.z, 2.0); faceTo(s, f); s.m.guard(true);
+        shotBoth(s.pos, f.pos, 1.2, 2);
+        await wait(2.4);
+      }
+      mark('stand');
+      f.m.play('stagger', true);
+      if (L[2]) { UI.msg(L[2], true); await wait(3.4); }
+      f.m.play('retreat', true); SND.sfx.eclipse();
+      if (L[3]) UI.msg(L[3], true);
+      await until(() => !f.m.busy); f.out = true; mark('retreat');
+      await wait(1.2); UI.hideMsg(); UI.hideEnemy(); UI.vignette(0);
+      await learnStoop(mark);
+      UI.cinematic(false);
+    }
     // the end card: the battle time and damage dealt; on a win, the experience, the shards and the level-up
     function showEnd(r) {
-      const win = r.outcome === 'win';
-      $('endTitle').textContent = win ? 'Victory!' : 'Defeated';
-      $('endText').textContent = win ? cfg.winText : cfg.loseText;
+      const win = r.outcome === 'win' || r.outcome === 'retreat', T = cfg.endTitles || {}, X = cfg.endTexts || {};
+      $('endTitle').textContent = T[r.outcome] || (win ? 'Victory!' : 'Defeated');
+      $('endText').textContent = X[r.outcome] || (win ? cfg.winText : cfg.loseText);
       const sec = (clock.t - S.t0), m = Math.floor(sec / 60), s = Math.floor(sec % 60);
       $('stTime').textContent = m + ':' + String(s).padStart(2, '0'); $('stDmg').textContent = nf(S.dealt);
       const F = PACE.fps, fl = $('stFps');

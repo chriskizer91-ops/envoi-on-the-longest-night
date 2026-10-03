@@ -37,7 +37,7 @@ Bench.start({
   groups: [
     { title: 'Attack', acts: ['attack'] },
     { title: 'Witchcraft', acts: ['throw', 'crescent', 'briar'] },
-    { title: 'Moonlore', acts: ['mend', 'waxing', 'moonsteel', 'mothveil'] },
+    { title: 'Moonlore', acts: ['mend', 'waxing', 'moonsteel', 'harvest'] },
     { title: 'The wraith', acts: ['wraithGrasp'] },
     { title: 'Summon', acts: ['summon'] },
     { title: 'Trance', acts: ['transform', 'moon'] },
@@ -47,15 +47,15 @@ Bench.start({
   ],
   names: {
     attack: 'Attack', combo: 'Attack', throw: 'Flame Bolt', crescent: 'Crescent Blades', briar: 'Nightbloom Briars', mend: 'Lunar Mend',
-    waxing: 'Waxing Light', moonsteel: 'Moonsteel', mothveil: 'Moth Veil', wraithGrasp: 'Shadow Grasp',
+    waxing: 'Waxing Light', moonsteel: 'Moonsteel', harvest: 'Harvest Moon', wraithGrasp: 'Shadow Grasp',
     summon: 'Lunara', transform: 'Lunar Trance', moon: 'Moonlight', defend: 'Defend', hurt: 'Hurt', block: 'Block', kneel: 'Kneel',
     rise: 'Rise', victory: 'Victory', cast: 'Battle start', lunge: 'Lunge', lungeAt: 'Lunge',
   },
-  hints: { attack: 'three blows', throw: '12 MP', crescent: '24 MP', briar: '18 MP, binds', mend: '16 MP, heals', waxing: '24 MP, heals both', moonsteel: '18 MP, Sol +40 Heat', mothveil: '22 MP, barrier', wraithGrasp: 'strikes the target', summon: 'her part only', transform: 'Trance full', moon: 'spends Trance', defend: 'Soul Bolts break on it', kneel: 'KO', rise: 'new' },
+  hints: { attack: 'three blows', throw: '12 MP', crescent: '24 MP', briar: '18 MP, binds', mend: '16 MP, heals', waxing: '24 MP, heals both', moonsteel: '18 MP, Sol +40 Heat', harvest: '28 MP, Sol +70 Heat', wraithGrasp: 'strikes the target', summon: 'her part only', transform: 'Trance full', moon: 'spends Trance', defend: 'Soul Bolts break on it', kneel: 'KO', rise: 'new' },
   wide: { combo: 1, throw: 1, crescent: 1, briar: 1, summon: 1, moon: 1, lunge: 1 },
   toggles: [{ label: 'Trance', value: false, onToggle: () => STAGES.witch.toggleTrance() }],
   stage: STAGES.witch,
-  note: 'Gold rings mark the hit times in her ACTIONS table and lilac rings its cues (where a spell leaves or begins); gold numbers are damage on the wraith, green ones her healing. Attack runs up to the wraith, strikes three times and runs back. Waxing Light, Moonsteel and Moth Veil are new: they play her mend and cast motions with effects of their own. Moth Veil goes to the target picked under them, and Shadow Grasp makes the wraith strike that target: the veil takes the blow and fades. Summon shows only her calling: Lunara herself rises in her own model. Lunar Trance turns the Trance look on (so does the toggle) and Moonlight spends it. Rise is new: it gets her up from Kneel. Before and After switch between the original model and this technical pass: they must look and move the same, and the budget shows the drop in draw calls.',
+  note: 'Gold rings mark the hit times in her ACTIONS table and lilac rings its cues (where a spell leaves or begins); gold numbers are damage on the wraith, green ones her healing. Attack runs up to the wraith, strikes three times and runs back. Waxing Light, Moonsteel and Harvest Moon are new: they play her mend and cast motions with effects of their own. Harvest Moon (it replaced Moth Veil) pours a warm full moon into Sol, and her blade glows amber. Shadow Grasp makes the wraith strike the target picked under them. Summon shows only her calling: Lunara herself rises in her own model. Lunar Trance turns the Trance look on (so does the toggle) and Moonlight spends it. Rise is new: it gets her up from Kneel. Before and After switch between the original model and this technical pass: they must look and move the same, and the budget shows the drop in draw calls.',
 });
 </script>
 </body>

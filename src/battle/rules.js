@@ -142,7 +142,7 @@
     },
     // Halcyon, the Gloam Knight, fixed at level 20: the bible's kit on this game's curve. Weak to Sun (the blade
     // remembers), resists Shadow. Tuned for the ambush: a party at 15 falls in about two minutes; an expert at 18
-    // brings her to 20% (and her retreat) about two times in three, and at 20 always
+    // brings her to 20% (and her retreat) about half the time, and at 20 almost always
     halcyon: {
       name: 'Halcyon', hp: 19800, atb: 2.4, fixedLevel: 20, weak: { sun: 1.5 }, resist: { shadow: 0.5 }, boss: true, shards: 120, xp: 80,
       moves: {
