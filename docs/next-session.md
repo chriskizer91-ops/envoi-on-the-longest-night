@@ -1,91 +1,71 @@
 # Next Session: Where the Work Stands
 
-October 3, 2026, end of the session that put the game together. Read this first. Then:
+October 3, 2026, end of the evening session that started **pass three**. Read this first. Then:
 
-- `docs/handoff.md` lists everything the game still wants.
-- `putting-it-all-together/README.md` lists every piece, where it comes from and its state.
-- `docs/design-decisions.md` (the October 3 sections) has the reasons behind what is built.
+- `../envoi-game-pass-3/README.md`: everything from pass three: Chris's decisions, the pages, the measured sizes, and the plans for the new battles and for walking without the world map.
+- `docs/handoff.md` lists what the game still wants (written before pass three; the pass-three README supersedes it where they differ).
+- `putting-it-all-together/README.md` lists every piece of the game, where it comes from and its state.
+- `docs/design-decisions.md` (the October 3 sections, pass three last) has the reasons behind what is built.
 
 ## Where things are
 
-- **The branch:** all the work is on `ccr-9e19f4e2-29pyn6`, pushed.
+- **The branch:** all the work is on `claude/practical-franklin-l1ctf9`, pushed. It holds the game from `ccr-9e19f4e2-29pyn6` (which held all of `second-account-work`) and the creature branch `claude/sleepy-dirac-t4ftx0`, merged.
   - The repository's default branch is still `claude/admiring-hawking-p7m87n`, and nothing is merged into it yet. Chris decides when.
   - Mooncart builds the default branch, so the game reaches Mooncart only after that merge.
 - **The game:** `putting-it-all-together/game.html`, built from `src/`. It plays from the title to the ending.
-- **Pages on Chris's phone** (private until he shares them):
+- **Pages on Chris's phone** (private until he shares them; this account can update them in place):
 
 | Page | Link |
 |---|---|
-| The game, put together (version 3) | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
+| The game (version 5: paper dolls, Chapters, smoother walking) | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
+| Battle Backgrounds: Chris's paintings behind live 3D ground, with squeeze, weather and phone controls | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw |
+| Wilderness Walk: Io on Chris's wilderness path, nine squeezes | https://claude.ai/artifact/BcRjgVynWymYim84Yb7STk |
 | Io on Foot: her walk, with sliders and the footstep ideas | https://claude.ai/artifact/G1B5cMkYzBq4RiausDAAQj |
-| Walking Map Resolution: the maps' compression choices | https://claude.ai/artifact/7F4pu4v3BQiKAZAtVJkC1i |
+| Walking Map Resolution: the town maps' compression choices | https://claude.ai/artifact/7F4pu4v3BQiKAZAtVJkC1i |
 | The Bramble Colossus on its own | https://claude.ai/artifact/H2QTXhNnEi7W7Qbs6BXvA2 |
+| Colossus in the Meadow: the living battlefield's first fight | https://claude.ai/artifact/KCMQSy3QksJbZ4ikquxYVj |
 
-  To update a page from a new session, pass its link as `url` to the Artifact tool. Read it first: the tool asks for that before a publish.
+  To update a page from a new session, pass its link as `url` to the Artifact tool. A publish to a page this conversation hasn't read is refused once and hands back the live copy; check it holds nothing your build lacks, then publish again.
 
-## What this session did
+## What pass three did (so far)
 
-**Put everything together** in `putting-it-all-together/`:
+`../envoi-game-pass-3/README.md` has the list. In short:
 
-- the Bramble Colossus as the last band's great wild foe;
-- living battlefields on every painted battle;
-- three save slots and a save code;
-- word speed, larger text, and separate music and effects volumes;
-- the scenes' people walking on the maps;
-- the offline file Chris keeps;
-- the game test;
-- `node tools/build.mjs` with no arguments builds the game too, for Mooncart.
-
-**Then, after Chris's first play on his phone:**
-
-- **No footsteps.** Each step played a whole four-step clip, so the clips piled into a clatter. Two gentler ideas are on Io on Foot to try by ear.
-- **Io walks as Path Polish paints her,** on the ground maps and the world map:
-  - the code is `src/walk/painted-io.js`, from Chris's `follow-me-down-witch-way`, `versions/path-polish/game`;
-  - her walk sheet is `art/walk/io-walk.webp`;
-  - she kneels at a well before its letter is read, and casts moonlight when she rests at a Moonwell;
-  - the 3D model stays for battle;
-  - **Chris's settings:** 52 map px tall, 15% of the screen's shorter side, pace 1.7 (`game.js`, `Field.create`).
-- **All thirteen walking maps retraced** close to the painted ground (`src/game/maps.js`):
-  - **walk areas:** where her feet can stand;
-  - **blocks:** things cut out of the walk areas;
-  - **fronts:** pieces of the painting redrawn over anyone standing behind them (lamp posts, trees, arches).
-  - People and spots now stand on the paths. Every exit, person, spot and arrival can be reached.
-- **The walking maps squeezed** to Chris's pick, "75% light": AVIF at 1152 px, quality 30. That is 1.1 MB for all thirteen instead of 3.6 MB.
-- **Scenes:** the camera can follow a walking person (`{ focus: { on: 'sol' } }`), and each scene frames its people above the words.
-- **Art request 08** (`docs/art-requests/08-paper-dolls.md`): one walk sheet for each of nineteen people, in Io's sheet's style.
-  - `tools/cut-sheet.mjs` is ready to cut each sheet into the game's walker.
-- **Chris's three songs** are saved in `art/music/`, to go in last.
-- **Size:** the file Chris keeps is 15.0 MB (the limit he set is 30 MB). The published game is 14.3 MB on one page (a published page may be 16 MB).
+- the branches merged, with Noctara's second pass and the living battlefield;
+- Chris's nineteen paper dolls on the maps (the townsfolk in still poses, the four scene walkers walking);
+- the battle paintings squeezed a little, and the Night square's painting in the file once;
+- Chapters on the title (the start, gate 5, 10, 15, the finale);
+- the Bramble Horror in band 3 only;
+- smoother walking (hold to steer, tap to walk, a one-thumb pad, corners, straight tapped walks), and the fix that makes taps reach the walking map at all;
+- the Battle Backgrounds page and art request 11; the Wilderness Walk page.
+- **Size:** the file Chris keeps is 12.2 MB (from 15.0); the published game is 11.5 MB.
 
 ## Waiting on Chris
 
-1. **The footsteps:** none (as now), Path Polish's soft steps, or the cloak swish. He can try all three on Io on Foot.
-2. **Art request 08's nineteen walk sheets,** and requests 06 (portraits) and 07 (story stills).
-3. **At least two new mobs** for the wilds.
-4. **The lore conversation:** every word of the script is still a placeholder.
-5. **The songs** go in only when the whole build is finished, unless he says sooner. Ask before wiring them in.
-6. **Judgment calls the map tracing made,** for him to confirm after a play:
-   - **Cottage:** the forest path east doesn't quite meet the garden in the painting. A way through behind the hollyhocks and the fir keeps it reachable.
-   - **Shipyard:** the slip's ramp is walkable, and the Magpie sits in its cradle.
-   - **Dawnroost's living node:** she can climb the dais steps to the crystal.
-   - **Bogmire:** the Magpie ties up on the west landing platform.
-   - **Misthollow:** the watchwoman stands at the foot of the great stair. The chapel ledge passes behind one railing pillar.
+1. **The battle squeeze** (Battle Backgrounds page) and **the wilderness squeeze** (Wilderness Walk page).
+2. **Art request 11:** four battle paintings (band 2's Warm Roads, Dawnroost's node, the northern crossroads, the dead Moonwell).
+3. **The walking plan** without the world map, and whether the wilderness scenes are at night (`questions/open.md`, 20 and 21). Art request 12 follows his answer.
+4. **His map path edits** on the Map Paths page (the editor is being built).
+5. **The lore conversation:** every word of the script is still a placeholder.
+6. **Art requests 06 and 07** (townsfolk portraits, story stills), and the footsteps.
+7. **The songs** go in only when the whole build is finished, unless he says sooner.
+
+## Next for Claude
+
+1. **The new battles** (pass-three README, "Next: the new battles"): the living field with a ground for each place, the battle screen using it, a phone setting; demo page first.
+2. **Walking without the world map**, once Chris agrees the plan: the wilderness scenes as ground maps, the Magpie's landings at the camps, and the world map's walking taken out.
+3. **His map path edits**, when he sends them: read them from the Map Paths page's database, apply them to `src/game/maps.js`, run `node tools/check-maps.mjs`, publish.
 
 ## When things arrive
 
-### The paper dolls (art request 08)
+### A new paper doll (a new townsperson, or a sheet redone)
 
-- **Cut each sheet:** Chris saves it as `reference/art/walkers/<id>-walk.png`. Then `node tools/cut-sheet.mjs reference/art/walkers/<id>-walk.png <id>` makes `art/walkers/<id>.webp` and `<id>.json`.
-  - The tool finds the 24 figures by itself, on a clear or a green ground.
-  - It lines their feet up at the phone's size.
-  - The JSON gives the columns, the rows (in the order s, w, e, n), the cell size and where the feet stand.
-  - Consider AVIF for the sheets too (add an option to `cut-sheet.mjs`).
-- **Still to write: the drawing.**
-  - Turn `painted-io.js` into a painted walker that reads that JSON.
-  - In `field.js`, draw people and the scenes' actors with it once their sheet exists, keyed by their `look` or id in `maps.js` and `script.js`.
-  - The standing frame is frame 1 of the facing row, with a slow breathing bob, as Io has. They turn to face her when she talks, as now.
-  - Keep each person's height as drawn: children and gnomes are smaller on their sheets.
-  - Make a demo page first (CLAUDE.md: every step ends in a page Chris can open on his phone).
+The nineteen from art request 08 are in (pass three). For another one:
+
+1. Save the sheet as `reference/art/walkers/<id>-walk.png`, kept as it came.
+2. Cut it: `node tools/cut-sheet.mjs reference/art/walkers/<id>-walk.png <id> --ratio <height beside Io> --avif --q 45`, adding `--still` for someone who only stands and turns to talk (most townsfolk). The four who walk in scenes (Sol, Halcyon, Quill, Ysmera) keep the whole walk.
+3. List it: `node tools/walkers-index.mjs` writes `src/walk/walkers.js`.
+4. The field draws a person with their sheet when their id in `maps.js` (or an actor's id in `script.js`) matches the sheet's (`src/walk/painted-folk.js`).
 
 ### A new mob
 

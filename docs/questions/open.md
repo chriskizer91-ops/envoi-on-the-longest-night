@@ -17,6 +17,13 @@ Chris asked Claude to decide the rest and keep building until the game is finish
 
 New questions, if any come up while the game is built, go here.
 
+## Pass three (October 3, evening)
+
+20. **Walking without the world map.** Today the world map carries band 2's and band 3's wild walking and the camps where the Magpie lands. The plan in `../../envoi-game-pass-3/README.md` makes each band's wilds a short run of painted wilderness scenes (about three in band 2, three in band 3, one or two in band 4). Is that the right shape and number?
+21. **Night or day for the wilderness scenes?** Every map in the game is at night (the story is one long night); Chris's example path is by day.
+22. **The squeezes:** which level for the battle backgrounds (the Battle Backgrounds page), and which for the wilderness scenes (the Wilderness Walk page)?
+23. **Gate 5's painting:** Chris counted seven backgrounds (four wilds, gates 10 and 15, the finale). Gate 5, the great wraith, also needs one; 03 Bogmire Lantern Banks fits it exactly. And the first fight: keep the Night square's painting?
+
 ## New character ideas
 
 Asked October 3 by the session that polished them in `../../3d-model-new-character-ideas/`, at the same time as the game was being built. Where the game has already answered, the answer is noted.
@@ -35,6 +42,8 @@ Asked October 3 by the session that polished them in `../../3d-model-new-charact
    - Battles are set in front of painted backdrops (`design-decisions.md`, October 1). Is the meadow, a 3D place that answers the fight, an exception for the wilds?
 
 ## Another new character idea
+
+Answered in pass three (October 3, evening): neither the Emberback nor the Gloamwing goes in the game; both stay as ideas.
 
 5. **The Emberback** (`../../3d-model-new-character-ideas/emberback/`), the giant salamander of the buried sunstone, built from Chris's sheets on October 3.
    - Is it a foe in the game? Where does the party meet it: by a Warm Road node going cold, and at which level?

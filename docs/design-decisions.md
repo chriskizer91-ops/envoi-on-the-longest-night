@@ -973,3 +973,47 @@ Chris's notes after playing the put-together game: the footsteps don't sound goo
   - wilds: Herbal Decay, Opus 24k stereo;
   - battles: Herbal Decay Battle, Opus 32k stereo, with a 48k copy kept in `reference/music/`.
   - They are saved in `art/music/` and go into the game last, once the whole build is finished.
+
+## October 3, 2026, evening: pass three
+
+Chris played the put-together game and set the next pass. Everything from that session is kept in `../envoi-game-pass-3/` (its README has the pages, the measured sizes and the plans). The work is on the branch `claude/practical-franklin-l1ctf9`: the game from `ccr-9e19f4e2-29pyn6` and the creature branch `claude/sleepy-dirac-t4ftx0`, merged.
+
+### Mobs
+
+- **The Gloamwing and the Emberback stay out of the game.** The Gloamwing looks wrong to Chris (he may make a bat from it himself), and the Emberback's fight is too much about fire. Both stay in `3d-model-new-character-ideas/`, as ideas.
+- **No new mobs yet.** Chris's direction for later: the wisps and wraiths are Noctara's; the wild's own creatures grow more upset the closer the party comes to her.
+- **The Bramble Horror lives in band 3** (levels 11 to 15), in all four forms, one wild fight in five there; **the Bramble Colossus in band 4** (16 to 20), as built. The Horror's targets moved with it; all 51 are met, and the journey still reaches every gate at its level (6, 11, 15 and 20).
+
+### Models
+
+- **Noctara's second pass is approved** and in the game.
+- **Richer models are Chris's experiment.** They cost the file little (each model is 55 to 90 KB in the page); what limits them is the phone's drawing power. The model rules still stand: 120,000 triangles and 24 MB of textures for a boss.
+
+### Battles: 3D ground in front, a painting behind
+
+- **Every fight will be fought the way Colossus in the Meadow is:** a locked camera, the place far off as a painting, live 3D ground in front (grass, mist, weather, everything the blows throw up). Chris measured that page at 29 to 30 frames a second on his phone, even in the storm.
+- **The paintings come from Chris's combat backgrounds pack**, matched to where each fight happens on the world map (art request 11): 01 Wickhollow River Glade for band 1's wilds, 02 Eldergrove for band 3's, 05 Frostmere Lake for band 4's and the Colossus, 03 Bogmire Lantern Banks for the great wraith, and 06 Ironhold High Pass (Ironhold is Misthollow) for the finale until its own painting comes. Four new ones are asked for: band 2's Warm Roads, Dawnroost's living node, the northern crossroads and the dead Moonwell.
+- **They can be squeezed hard**, since they are far off with live ground in front: about 55 KB each at the walking maps' squeeze, against 2 MB as PNG. The Battle Backgrounds page lets Chris choose the level.
+- **Phones:** a richer look is welcome on a laptop; a phone may run below 30 frames a second if it must. The levers are the frame cap and the picture's sharpness (its pixel ratio), both on the Battle Backgrounds page.
+
+### Walking
+
+- **The world map is for flying the Magpie, and nobody walks on it.** Walking happens on painted pictures only: the town scenes, and wilderness path scenes like Chris's example (`reference/art/walk/wilds/wilderness-path-example.webp`). The plan for which scenes (about seven, in bands 2 to 4, where the world map carries the wild walking today) waits on Chris (`questions/open.md`).
+- **Directing her and tapping to walk are one control:** press and hold anywhere to steer her toward the finger or the mouse; a quick tap or click walks her there round the walls, in straight lines. The pad takes one thumb rolling round to eight ways, and she slips round corners she brushes, after Witch Way's pad and walker.
+- **Tap-to-walk had never worked in the game:** the hidden world map's layer lay over the field and took every tap. Fixed.
+- **An editor page for the map paths**, used on Chris's laptop, after Witch Way's scene editor. His edits come back through the page's own database.
+
+### The paper dolls
+
+- **The townsfolk don't walk** (Chris: two or three pictures each). Each of the fifteen has one to three standing poses, cut from the frame of each row whose feet are closest together. Where a side's frames all stride, that person faces the viewer instead of turning. Sol, Halcyon, Quill and Ysmera walk in the story's scenes, so they keep their whole walk.
+- **Each is drawn at the height Chris's packs give:** girls three quarters of Io's, the gnomes two thirds, Ysmera a little taller.
+
+### Squeezing
+
+- **The battle paintings: a little** (AVIF at quality 50, the same look, 2.2 MB for nine from 4.2). The paper dolls and Io's walk sheet are AVIF too.
+- **Nothing squeezed that doesn't need it, and no clever packing of the code that would make it confusing.**
+- **Locked in:** the Magpie's flying map and Chris's three songs.
+
+### Chapters
+
+- **The title offers Chapters:** the start, gate 5, gate 10, gate 15 and the finale, each with the party as the story leaves it there, so a later part can be tried without playing up to it.
