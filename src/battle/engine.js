@@ -114,7 +114,7 @@
       o = o || {};
       let to = h, take = 1;
       const s = hero('sol');
-      if (o.single && h.id === 'io' && alive(s) && s !== h && !o.counter) {
+      if (o.single && h.id === 'io' && alive(s) && s !== h && !s.hovering && !o.counter) {
         if (s.guarding) { to = s; emit({ t: 'cover', who: s.key, from: h.key }); }
         else if (h.hp < h.maxHp * HE.sol.oath.below) { to = s; take = HE.sol.oath.take; emit({ t: 'oath', who: s.key, from: h.key }); }
       }
@@ -186,7 +186,8 @@
       const late = B.frostLate; B.frostLate = null;
       if (!late || !alive(late.f)) return;
       if (B.ward) { B.ward = false; emit({ t: 'ward', who: late.f.key }); return; }
-      for (const h of living('hero')) for (const base of late.m.hits) if (alive(h)) hitHero(late.f, h, base, { single: false });
+      for (const h of reach()) for (const base of late.m.hits) if (alive(h)) hitHero(late.f, h, base, { single: false });
+      outOfReach(late.f);
     }
     function checkEnd() {
       if (B.over) return B.over;
@@ -226,12 +227,17 @@
       if (M[pick].cooldown) f.cd[pick] = M[pick].cooldown + 1;
       return pick;
     }
+    // the heroes a foe can reach: while Sol hovers for Kestrel Stoop she is out of reach until her next turn (Chris,
+    // October 3). Blows aimed at her go to Io; blows on the whole party pass under her
+    const reach = () => living('hero').filter((h) => !h.hovering);
+    const outOfReach = (f) => { for (const h of living('hero')) if (h.hovering) emit({ t: 'miss', from: f.key, to: h.key, aloft: true }); };
     function targetFor(f, m) {
-      const party = living('hero');
+      const party = reach();
+      if (!party.length) return null;
       const one = () => party[Math.floor(rand() * party.length)];
       switch (m.target) {
-        case 'io': return alive(hero('io')) ? hero('io') : one();
-        case 'lastAttacker': { const u = unit(f.lastAttacker); return u && u.side === 'hero' && alive(u) ? u : one(); }
+        case 'io': { const io = hero('io'); return alive(io) && !io.hovering ? io : one(); }
+        case 'lastAttacker': { const u = unit(f.lastAttacker); return u && u.side === 'hero' && alive(u) && !u.hovering ? u : one(); }
         case 'lowest': return party.reduce((a, b) => (b.hp < a.hp ? b : a));
         default: return one();
       }
@@ -255,18 +261,22 @@
         const h = B.foes.find((u) => u.id === 'halcyon' && alive(u));
         emit({ t: 'blackout', who: f.key, by: h.key });
         const c = h.def.moves.gloamCleave, tgt = targetFor(h, c);
+        if (!tgt) { outOfReach(h); return; }
         for (const base of c.hits) hitHero(h, tgt, base, { single: true, mul: m.blackout });
         return;
       }
       if (m.frost) { B.frost = Math.max(B.frost, m.frost); emit({ t: 'frost', who: f.key, s: m.frost }); if (m.late) { B.frostLate = { f, m }; return; } }
       if (m.target === 'all') {
-        for (const h of living('hero')) for (const base of hits) if (alive(h)) hitHero(f, h, base, { single: false });
+        for (const h of reach()) for (const base of hits) if (alive(h)) hitHero(f, h, base, { single: false });
+        outOfReach(f);
         return;
       }
       let first = null;
       for (const base of hits) {
         if (!living('hero').length) break;
-        const tgt = m.target === 'random' ? living('hero')[Math.floor(rand() * living('hero').length)] : (first && alive(first) ? first : targetFor(f, m));
+        const pool = reach();
+        if (!pool.length) { outOfReach(f); break; }
+        const tgt = m.target === 'random' ? pool[Math.floor(rand() * pool.length)] : (first && alive(first) ? first : targetFor(f, m));
         const r = hitHero(f, tgt, base, { single: true });
         if (!first) first = tgt;
         if (m.drain && alive(f)) { f.hp = Math.min(f.maxHp, f.hp + r.n); emit({ t: 'heal', from: f.key, to: f.key, n: r.n }); }

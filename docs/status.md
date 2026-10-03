@@ -1,6 +1,6 @@
 # Where Things Stand
 
-A handoff for the next session. Updated October 2, 2026, after the sixteenth round: the experience curve (about 79 wild fights, 40% in the last band), wild foes at their band's levels, and a finale that takes being locked in.
+A handoff for the next session. Updated October 3, 2026, after the seventeenth round: Sol out of reach while she hovers, battles at 30 fps, rest places for a lost fight, and the game's places on Chris's D&D map.
 
 **Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Step 13, the party, is built too. Next is step 14, the great wraith.
 

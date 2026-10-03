@@ -45,7 +45,9 @@
     // the busiest moments. Frames are paced to the screen's refreshes, so 45 and 30 stay even on a 90 Hz phone. The
     // choice is kept in this browser; fps counts the fight's frames for the end card
     const PACE = { cap: 0, due: 0, hz: 0, deltas: [], prev: 0, fps: { n: 0, t: 0, secN: 0, secT: 0, low: 0 } };
-    try { PACE.cap = +localStorage.getItem('envoi.fps') || 0; } catch (e) { /* storage blocked: the screen's own rate */ }
+    // 30 by default (Chris, October 3): steady on any phone, and it suits the retro look
+    PACE.cap = 30;
+    try { const v = localStorage.getItem('envoi.fps'); if (v !== null) PACE.cap = +v || 0; } catch (e) { /* storage blocked: 30 */ }
     const REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     const coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
     const stage = $('stage'), paintCv = $('paint'), paintCtx = paintCv.getContext('2d'), glCanvas = $('gl');
@@ -163,6 +165,8 @@
     const S = { trace: [], state: 'boot', acting: false, t0: 0, skip: false, auto: cfg.auto || null, rand: null, result: null, dealt: 0, guard: {}, veils: {}, rime: 0, rimeOn: false, choosing: null };
     const standing = () => heroes.concat(foes).filter((f) => !f.out && f.m.root.visible);
     const living = (side) => (side === 'hero' ? heroes : foes).filter((f) => D[f.key] && D[f.key].hp > 0 && !f.out);
+    // the heroes the foes can reach: Sol is out of reach while she hovers for Kestrel Stoop
+    const reach = () => living('hero').filter((h) => !D[h.key].aloft);
 
     // ---------- interface: the demo's windows and menus, for a party ----------
     const UI = (() => {
@@ -400,7 +404,8 @@
         UI.number(chest(to), nf(e.n), 'heal');
       } else if (e.t === 'revive') {
         D[e.who].hp = e.n; who.m.play('rise', true); UI.number(chest(who), nf(e.n), 'heal'); word(who, 'Back up', 'heal');
-      } else if (e.t === 'miss') word(to, 'Miss');
+      } else if (e.t === 'miss') word(to, e.aloft ? 'Out of reach' : 'Miss');
+      else if (e.t === 'hover') D[e.who].aloft = true;
       else if (e.t === 'ward') wardHit();
       else if (e.t === 'tranceReady') {
         D[e.who].tr = 1; SND.sfx.chime(); FX.burst(chest(who), [1, 0.92, 1], 30, 2.5);
@@ -607,10 +612,11 @@
         faceTo(h, t); shotFit([h.pos, t.pos, { x: h.pos.x, y: 4.6, z: h.pos.z }], 1, 2.4);
         h.aimAt = t; h.m.play('stoopRise', true); SND.sfx.swish();
         await untilP(h.m, 0.95);
-        UI.note('Sol hangs in the air like a kestrel. She stoops on her next turn.', 2);
+        UI.note('Sol hangs in the air like a kestrel, out of reach. She stoops on her next turn.', 2.2);
         ev.rest();
       },
       async stoop(h, t, ev) {
+        D[h.key].aloft = false;
         faceTo(h, t); shotFit([h.pos, t.pos, { x: h.pos.x, y: 4.2, z: h.pos.z }], 1, 3);
         h.aim = t; h.m.play('stoop', true); SND.sfx.swish();
         await untilP(h.m, h.m.ACTIONS.stoop.hits[0]);
@@ -822,7 +828,7 @@
         d.v.set(Math.cos(a) * sp + tx / tl * 1.8, 0.6 + Math.random() * 2.6, Math.sin(a) * sp + tz / tl * 1.8);
         d.life = 0; d.max = 0.7 + Math.random() * 0.6; d.r = 0.22 + Math.random() * 0.34; d.s.visible = true;
       }
-      for (const h of living('hero')) word(h, 'Warded', 'ward');
+      for (const h of reach()) word(h, 'Warded', 'ward');
       SND.sfx.hit(1.0); addShake(8); hitStop(0.08);
     }
     const envoiShot = (extra, k) => shotFit(standing().map((f) => f.pos).concat([{ x: EN.pos.x, y: 6.4, z: EN.pos.z }, { x: EN.pos.x, y: 0, z: EN.pos.z }], extra || []), 1, k || 1);
@@ -896,7 +902,7 @@
     }
 
     // ---------- the foes ----------
-    const blowTarget = (ev) => (ev.peek() && F[ev.peek().to]) || (EN && EN.on && ev.list.some((e) => e.t === 'ward') ? ENV.ward : null) || living('hero')[0] || io();
+    const blowTarget = (ev) => (ev.peek() && F[ev.peek().to]) || (EN && EN.on && ev.list.some((e) => e.t === 'ward') ? ENV.ward : null) || reach()[0] || living('hero')[0] || io();
     const WRAITH_MOVES = {
       async sweep(f, ev) {
         const t = blowTarget(ev), W = f.m, spot = toward(f.pos, t.pos, 1.75);
@@ -945,7 +951,7 @@
         await untilP(W, EC.cues[1]); shotField(3);
         FX.ring(f.pos, 0x2dff7a, 0.3, 6.5, 0.9, 1);
         await untilP(W, EC.hits[0]);
-        for (const h of living('hero')) { const p = chest(h); FX.burst(p, [0.2, 1, 0.5], 80, 5); FX.flashLight(p, 0x3cff8a, 5, 0.5, 8); }
+        for (const h of reach()) { const p = chest(h); FX.burst(p, [0.2, 1, 0.5], 80, 5); FX.flashLight(p, 0x3cff8a, 5, 0.5, 8); }
         UI.flash('#0b2a16', 0.7, 0.4); SND.sfx.boom(1.3); addShake(16); hitStop(0.14);
         ev.showAll({ big: true });
         await until(() => !W.busy); ev.rest();
@@ -976,14 +982,14 @@
       async wail(f, ev) {
         shotField(2.5); const W = f.m; W.play('wail', true); SND.sfx.shriek(0.9);
         await untilP(W, W.ACTIONS.wail.hits[0]);
-        for (const h of living('hero')) FX.burst(chest(h), [0.8, 0.6, 1], 26, 2.6);
+        for (const h of reach()) FX.burst(chest(h), [0.8, 0.6, 1], 26, 2.6);
         addShake(8); hitStop(0.06); ev.showAll();
         await until(() => !W.busy); ev.rest();
       },
       async breath(f, ev) {
         shotField(2.5); const W = f.m; W.play('breath', true); SND.sfx.fire();
         await untilP(W, W.ACTIONS.breath.hits[0]);
-        for (const h of living('hero')) { const p = chest(h); FX.burst(p, [0.7, 0.9, 1], 30, 2.8); FX.flashLight(p, 0x9fd8ff, 2.5, 0.4); }
+        for (const h of reach()) { const p = chest(h); FX.burst(p, [0.7, 0.9, 1], 30, 2.8); FX.flashLight(p, 0x9fd8ff, 2.5, 0.4); }
         addShake(7); hitStop(0.05); ev.showAll(); ev.rest();
         UI.note('Frost: the party’s turns come slower for a while.', 1.6);
         await until(() => !W.busy);

@@ -583,3 +583,52 @@ Another session read every commit and replayed the simulator. What it found:
   All 32 balance targets are met.
 - **Shards outrun the Magpie's prices now.** With wild foes at their band's levels and more fights, a player who skips nothing has about 10,200 shards by level 15, against 6,800 for all three upgrades. The prices are reset in phase 3, together with the shops.
 
+## October 3, 2026, seventeenth round
+
+### Losing a fight (question 10, answered)
+
+- **The party wakes at the last rest** with everything it had: experience, shards and herbs. The fight waits.
+- **So the world needs rest places:** every town, and camps where the way between towns is long. They are placed in phase 3, with the fights.
+- **Halcyon's ambush is the exception:** losing it goes on with the story.
+
+### The frame rate
+
+- **Battles run at 30 frames a second by default.** Chris finds it fine for the fights, and it suits the retro look. The button stays for testing; a phone that already has a choice saved keeps it.
+
+### Moth Veil (question 7, answered)
+
+- **It stays on one hero,** and the balance stays as it is.
+
+### Kestrel Stoop's hover (question 8, answered)
+
+- **While Sol hovers, she is out of reach until her next turn,** as Freya's Jump works in FF9:
+  - blows aimed at her go to Io;
+  - blows on the whole party pass under her, and "Out of reach" shows over her;
+  - she can't take Io's blows (Guard, Warden's Oath) while she is up;
+  - if she is the only one standing, the foes' blows miss.
+- **The expert uses it as a dodge:** she rises when a charged blow, Void Sphere or Black Noon, will land before her next turn.
+- **With the dodge, an expert won the finale 67%,** so the cold deepens 8.5% a turn instead of 8%:
+  - an expert at 20 wins 58%;
+  - an attentive player wins 8%, about one time in twelve;
+  - at 19 nobody wins, and losses leave 38% of the bosses' HP, closer than before.
+
+  All 32 targets are met. Halcyon's ambush doesn't change, since Sol learns the Stoop after it.
+
+### Place names (question 2, answered)
+
+- **The world map doesn't change; where names clash, the names change.**
+- **The Magpie demo has the most accurate map of Chris's D&D campaign,** so its places and names are the reference (`../reference/demos/the-magpie-over-aethermoor.html`). The game's places on it are drawn in `../reference/art/world-map/places-on-the-dnd-map.webp`.
+- **Where the game's places sit on that map** (atlas pixels, 4608 × 3072):
+
+  | The game's place | Where | On the D&D map |
+  |---|---|---|
+  | Wickhollow (1) | 1348, 1838 | Wickhollow. It moves there from the first bands map's dot, about 400 pixels southwest of it. |
+  | Bogmire (2) | 1752, 2512 | Bogmire |
+  | Dawnroost (3) | 1325, 1098 | Thornhollow, the rangers' outpost: in this game it is Dawnroost |
+  | The shipyard | 2097, 599 | A town on the north coast with no name on the map |
+  | Misthollow (4) | 3500, 735 | Ironhold, in the Ironspire Peaks: in this game it is Misthollow |
+
+- **The fen's "Misthollow Ruins" become the Sunken Ruins,** so there is only one Misthollow: a description until Chris names them (`questions/open.md`, 11).
+- **Every other name from the D&D map stays:** Rotbridge, Willowmurk, Mosswatch Tower, Eldergrove, Fawnrest Shrine, Frostmere Lake, Peak's Veil, Stormwatch, and the regions (the Gloamwood, the Gloomfen, the Verdant Wilds, the Ironspire Peaks). Hearthstone Keep and the eastern wastes (Dusthaven, Sandspire, Miragewell, the Scorchgate Ruins) are under mist all game. Mother's Hollow stays out: it belongs to the Drowned Mother's story.
+- **The town notes on the flying map** come from this game's lore, not from the other game.
+

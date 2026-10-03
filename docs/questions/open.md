@@ -1,6 +1,6 @@
 # Still Open
 
-Everything not yet decided, as of October 2, 2026, sixteenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
+Everything not yet decided, as of October 3, 2026, seventeenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
 
 Every earlier question has been answered; the answers are in `design-decisions.md`, under the October 2 rounds.
 
@@ -10,27 +10,17 @@ Every earlier question has been answered; the answers are in `design-decisions.m
 
 ## Design questions
 
-2. **Names from Aethermoor.** The map pack's notes name Willowmurk, Rotbridge and "Misthollow Ruins" in the southern wetlands. In this game Misthollow is the frozen town in the north. Do the pale flooded ruins in the wetlands get another name, or none?
+2. Answered: the map stays and the names change; the Magpie demo's map is the reference, and the game's places take their spots on it (`design-decisions.md`, seventeenth round).
 
 6. Answered: each wild foe is a level in its band's range (1 to 5, 6 to 10, 11 to 15, 16 to 20), and stronger foes give more experience (`design-decisions.md`, fifteenth round).
 
-7. **Moth Veil: one hero, or both?** It shields one hero for 35% of her max HP. The design calls it the answer to the telegraphed blows, Void Sphere and Black Noon, but both hit the whole party, so one veil covers half of the blow. Measured in the finale (expert, level 20, 1,000 fights each):
-   - one hero, as now: 50% of fights won;
-   - both heroes at 35%: 73%;
-   - both heroes at about 25% each: 62%.
+7. Answered: Moth Veil stays on one hero, with the balance as it is.
 
-   The attentive player doesn't use it yet, so only the expert's numbers move. The recommendation is both heroes at about 25% each, with the finale retuned back to its target. Either way, the attentive player should learn Moth Veil in the progression pass.
-
-8. **Kestrel Stoop's hover.** While Sol hovers, the foes can still hit her. In FF9, Freya's Jump takes her out of reach until she lands. Should the hover do the same, with blows aimed at Sol going to Io instead? It would make Stoop stronger, and the Halcyon fight and the finale would be retuned to match.
+8. Answered: while Sol hovers for Kestrel Stoop she is out of reach; the finale was retuned to match.
 
 9. Answered: about 70 to 85 wild fights, with the last band holding about 40% (`design-decisions.md`, sixteenth round).
 
-10. **What happens when the party loses a fight.** The average player is meant to lose sometimes, mostly at band entries and gates, so this decides how losing feels. Some ways it could go:
-    - **Wake at the last rest** (a town or a camp) with everything the party had: experience, shards and herbs kept, and the fight waits. Losing costs only the walk back.
-    - **Wake at the last rest, but lose something:** for example, the shards picked up since that rest.
-    - **Game over,** back to the last save, as in FF9.
-
-    The recommendation is the first: a loss sends the party back to try again, and no time is lost to a save screen. Halcyon's ambush is the exception, where losing goes on with the story.
+10. Answered: the party wakes at the last rest with everything it had, and the fight waits; Halcyon's ambush goes on with the story instead. Rest places go in every town, and camps where the way is long.
 
 ## Lore questions
 
@@ -42,3 +32,4 @@ For the separate lore conversation.
    - another way.
 4. **Gnomes at the shipyard.** In the compendium, Aurosi elves design ships and Aurosi gnomes build them ("elven theory, gnomish application"). Should the shipyard have gnomish hands working under the elven shipmaster?
 5. **When the party learns Halcyon serves Noctara.** Sol recognizes Halcyon during the ambush. Does the party also learn then that she serves Noctara, or later, before Misthollow?
+11. **A name for the sunken ruins in the Gloomfen.** The D&D map calls them Misthollow Ruins, but in this game Misthollow is the frozen town in the north. For now they are "the Sunken Ruins". Do they get a name of their own?

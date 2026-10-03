@@ -51,7 +51,7 @@
         // halves what she takes, and takes any single hit aimed at Io, until her next turn
         guard: { name: 'Guard', kind: 'defend', heat: -40, target: 'self', time: 0.8 },
         // Kestrel Stoop: a turn hovering, then on her next turn the biggest sword hit in the game. It costs what one
-        // Ember Rush does and beats two of them
+        // Ember Rush does and beats two of them. While she hovers she is out of reach (Chris, October 3)
         stoopRise: { name: 'Kestrel Stoop', kind: 'art', heat: -40, need: 'stoop', target: 'foe', time: 1.6 },
         stoop: { name: 'Stoop', kind: 'auto', hits: [1500], element: 'sun', physical: true, target: 'foe', time: 2.6 },
         // Dawnbreaker: Attack becomes Daybreak, and High Noon ends the Trance
@@ -157,12 +157,13 @@
       },
     },
     // Noctara the Starless, fixed at level 20, with Halcyon beside her. The cold deepens as the fight goes on: every
-    // turn she takes makes her blows 8% harder (rage), and Halcyon's too, so the finale is a race. Tuned so an expert
-    // at 20 wins about half the time and an attentive player about one time in eleven: you have to be locked in, but
-    // it isn't impossible (Chris, October 2). At 19 the party falls with about two fifths of the bosses' HP left. (It
-    // was 6% until Kestrel Stoop's hit, which never landed, was fixed; with the hit the expert won 87%.)
+    // turn she takes makes her blows 8.5% harder (rage), and Halcyon's too, so the finale is a race. Tuned so an expert
+    // at 20 wins a little over half the time and an attentive player about one time in twelve: you have to be locked
+    // in, but it isn't impossible (Chris, October 2). At 19 the party falls with a little over a third of the bosses'
+    // HP left. (It was 6% until Kestrel Stoop's hit, which never landed, was fixed; 8% until Kestrel's hover took Sol
+    // out of reach, which an expert uses to dodge Void Sphere and Black Noon.)
     noctara: {
-      name: 'Noctara', hp: 29000, atb: 2.8, fixedLevel: 20, boss: true, rage: 0.08, shards: 0, xp: 0,
+      name: 'Noctara', hp: 29000, atb: 2.8, fixedLevel: 20, boss: true, rage: 0.085, shards: 0, xp: 0,
       moves: {
         crownShards: { name: 'Crown Shards', weight: 0.35, hits: [52, 52, 52], target: 'random', time: 2.6 },
         // opens over the party a turn before it collapses: the time for Moth Veil, Defend, Lunara or Envoi's ward

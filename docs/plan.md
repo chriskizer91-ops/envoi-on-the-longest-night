@@ -115,11 +115,12 @@ Every fight gets its place in the story before travel is built. It is drafted on
 - **Towns are safe.** People to talk to: shops, and people with information.
 - **The wilds have random encounters.** No foes are drawn on the map. Each step in wild country fills a hidden counter, and a fight starts when it passes a random threshold. That keeps the rate even: never two fights back to back, and never a long walk with none. Each area has its own rate, and the rate is a number the balancing tunes. A player can walk back and forth to grind levels.
 - **Set fights** wait at fixed places: the gate fights and the story fights.
+- **Rest places** in every town, and camps where the way between towns is long. A lost fight wakes the party at the last rest with everything it had, and the fight waits; losing Halcyon's ambush goes on with the story (Chris, October 3).
 - **Money is sunstone shards.** Fights give them. The Magpie's upgrades cost shards and need the party's level, so moving on to the next band takes both. Shops sell herbs for shards. The simulator balances shards too: what a player has earned by each gate.
 
 **About five hours:** the story, about 79 wild fights from level 1 to 20 (40% of them in the last band) against wisps, frost wisps, wraiths and the great wraith, and the set fights.
 
-The first draft. The places are marked on `../reference/art/world-map/bands-and-stops.webp`, which Chris confirmed:
+The first draft. The bands are marked on `../reference/art/world-map/bands-and-stops.webp`, which Chris confirmed; the places sit where `../reference/art/world-map/places-on-the-dnd-map.webp` puts them, on his D&D campaign's map (`design-decisions.md`, seventeenth round):
 
 | Band | Levels | Where on the world map | Places | Fights |
 |---|---|---|---|---|

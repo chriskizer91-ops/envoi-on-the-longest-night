@@ -249,6 +249,11 @@
       // Sol
       const hal = v.foes.find((f) => f.id === 'halcyon');
       if (v.ok('kestrel') && hal) return ['kestrel', hal.key];
+      // a charged blow will land before her next turn: rise for Kestrel Stoop and be out of reach when it falls
+      if (v.charging && v.ok('stoopRise')) {
+        const f = v.charging, foeT = (1 - f.atb) * f.def.atb * (f.bound ? 1 / RL.STATUS.bindSlow : 1), solT = u.def.atb / (B.frost > 0 ? RL.STATUS.frostSlow : 1);
+        if (foeT < solT) return ['stoopRise', tgt];
+      }
       if (v.ok('highNoon') && (u.tranceLeft <= 1 || mainFoe.hp < mainFoe.maxHp * 0.08)) return ['highNoon', tgt];
       if (v.ok('daybreak') && !vowed(mainFoe)) return ['daybreak', tgt];
       if (v.fallen.length && v.ok('herb:nightrose')) return ['herb:nightrose', v.fallen[0].key];
