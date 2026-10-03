@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Io on Foot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/bench/bench.css">
+<link rel="stylesheet" href="../src/game/game.css">
+<style>
+body{padding:0}
+.wrap.onfoot{position:fixed;inset:0;display:block}
+.onfoot #stage{position:absolute;inset:0;border-radius:0;margin:0;min-height:0}
+.onfoot #panel{position:absolute;top:8px;right:8px;bottom:8px;width:min(380px,calc(100% - 16px));max-height:none;margin:0;z-index:7;overflow:auto;padding-top:10px}
+.onfoot #panel h1{font-size:21px;margin:0 30px 4px 0;color:var(--wt)}
+.onfoot .shut{position:sticky;top:0;float:right;appearance:none;width:36px;height:36px;margin:-4px -6px 0 0;border-radius:18px;border:1px solid rgba(214,222,255,.45);background:rgba(10,12,34,.6);color:var(--wt);font-size:16px}
+.onfoot .try{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;appearance:none;min-height:36px;padding:0 14px;border-radius:18px;border:1px solid rgba(214,222,255,.5);background:rgba(18,16,40,.7);color:#f4f6ff;font-weight:700;font-size:14px}
+#stage .toast{position:absolute;left:50%;top:52px;transform:translateX(-50%);max-width:calc(100% - 24px);padding:7px 12px;font-size:14px;z-index:5;pointer-events:none;text-align:center}
+</style>
+</head>
+<body>
+<script src="../src/walk/pixel-io.js"></script>
+<script src="../src/walk/painted-io.js"></script>
+<script src="../src/game/sprites.js"></script>
+<script src="../src/game/maps.js"></script>
+<script src="../src/game/field.js"></script>
+<script src="../src/walk/on-foot.js"></script>
+<script>
+OnFoot.start({
+  title: 'Io on Foot',
+  blurb: 'Path Polish’s painted Io walking the game’s own maps. Walk with the arrows, the d-pad or a tap; walk off a map’s edge to the next one.',
+  src: (p) => (p.startsWith('data:') ? p : '../' + p),
+  note: 'Her walk sheet, her cape’s ripple, the lean and the easing in and out of a walk are Path Polish’s. The camera comes close enough to see her: Close sets her height as a share of the screen. Height is how tall she stands on the painting (42 was the pixel Io’s). Pace is her walk in her own heights a second; after a moment of walking it builds to a run. Kneel and Cast are two of Path Polish’s poses: she kneels at a well and casts at a Moonwell. The townsfolk are still the pixel ones until their paper dolls are painted (art request 08).',
+});
+</script>
+</body>
+</html>

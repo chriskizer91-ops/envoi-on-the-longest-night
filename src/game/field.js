@@ -1,4 +1,6 @@
-// field.js: walking a ground-level map (plan step 18). The pixel Io walks one of the traced paintings (src/game/maps.js):
+// field.js: walking a ground-level map (plan step 18). Io walks one of the traced paintings (src/game/maps.js), painted
+// as Path Polish paints her (src/walk/painted-io.js), with its easing into and out of a walk; the pixel Io stands in
+// until her art loads, or when no painted Io is given:
 // the d-pad, the arrow keys or a tap (a tap walks her there round the walls, by a path found on a coarse grid of the
 // walk areas). The townsfolk stand in their places (sprites.js) and turn to her when she talks to them. The action
 // button names what is in reach: a person to talk to, a well, a rest, something to look at, the Magpie. Exits take her
@@ -12,9 +14,13 @@
 //   -> Promise (Io walks it, even while the field is paused for the scene), ioFace(dir), focus([x, y] or null) (the camera
 //   eases to a point, and back to Io), hidePerson(id, hide) (a townsperson steps out of their place to act)
 //   opts: maps, speed (map px a second), zoom, ioH (map px), encounter: { mean, min } (map px walked between fights),
-//   light(map) (the painting's brightness, 1 as painted),
+//   light(map) (the painting's brightness, 1 as painted), paintedIo (makePaintedIo's), and for the painted Io:
+//   pace (her walk in her own heights a second; it replaces speed), ioScreen (her height as a share of the screen's
+//   shorter side; it sets the camera's closeness in place of zoom), showWalk (draws the walk areas, for checking them);
+//   the page may change ioH, pace, ioScreen and showWalk while it runs
 //   and the callbacks onExit(exit), onEvent(spot), onTalk(person), onSpot(spot), onEncounter(map), onMenu(), onStep(map, running),
 //   isDone(id) (an event or a well already used), src(path) (the art's URL)
+//   pose(name, seconds) -> Promise: the painted Io kneels ('kneel') or casts moonlight ('cast'), even in a scene
 // Needs makePixelIo (src/walk/pixel-io.js) and makeFolk (sprites.js). Defines window.Field.
 (function () {
   'use strict';
@@ -60,11 +66,15 @@
     const onKeyUp = (e) => { const d = KEYS[e.key]; if (d) held.delete(d); };
     window.addEventListener('keydown', onKey); window.addEventListener('keyup', onKeyUp);
 
-    const io = makePixelIo(1);
+    const io = makePixelIo(1), painted = opts.paintedIo || null;
     const folkSprites = {};
     const sprite = (look) => folkSprites[look] || (folkSprites[look] = makeFolk(look, 1));
     // run: how long she has walked without stopping; after a moment the pace builds to a run (handoff, section 8)
-    const P = { x: 0, y: 0, dir: 's', walkT: 0, moving: false, counter: 0, next: 0, run: 0, stepD: 0 };
+    // vx, vy: her speed (map px a second), eased as Path Polish's motion eases it; walk: how far she has walked, in her
+    // heights, for her painted steps; lean and turn: the motion's lean into the walk and into a turn; pose: kneel or cast
+    const P = { x: 0, y: 0, dir: 's', walkT: 0, moving: false, counter: 0, next: 0, run: 0, stepD: 0, vx: 0, vy: 0, walk: 0, lean: 0, turn: 0, blocked: 0, pose: null, poseT: 0, poseDur: 1, poseRes: null };
+    const RUN = 0.5; // the run is half again her walk
+    const ioH = () => opts.ioH || 42;
     let map = null, img = null, grid = null, route = null, paused = false, lastExit = null, flash = 0;
     const cam = { z: opts.zoom || 0.7, x: 0, y: 0 };
     // the story's actors, Io's scripted walk, and where the camera looks (eased toward a scene's focus, then back to Io)
@@ -158,7 +168,7 @@
     function load(id, at, dir) {
       const m = opts.maps[id]; if (!m) throw new Error('no map ' + id);
       map = m; m.id = id; route = null; target = null; held.clear(); lastExit = null; flash = 1; actors.length = 0; look.on = false; look.focus = null;
-      P.x = (at || m.start)[0]; P.y = (at || m.start)[1]; P.dir = dir || 's'; P.walkT = 0;
+      P.x = (at || m.start)[0]; P.y = (at || m.start)[1]; P.dir = dir || 's'; P.walkT = 0; P.vx = P.vy = 0; P.lean = P.turn = 0;
       for (const n of m.people || []) n.face = n.face0 || 's';
       buildGrid();
       // never start inside a wall: the nearest open cell
@@ -189,34 +199,54 @@
       requestAnimationFrame(frame);
     }
     function step(dt) {
-      let dx = 0, dy = 0;
+      if (P.pose) { P.vx = P.vy = 0; P.moving = false; return; } // a pose holds her still
+      let dx = 0, dy = 0, last = false;
       if (held.size) { if (held.has('e')) dx++; if (held.has('w')) dx--; if (held.has('s')) dy++; if (held.has('n')) dy--; }
       else if (route && route.length) {
-        const [wx, wy] = route[0]; dx = wx - P.x; dy = wy - P.y;
-        if (Math.hypot(dx, dy) < 3) { route.shift(); if (!route.length) { route = null; dx = dy = 0; if (target) { const tt = target; target = null; const n = near(); if (n && n.ref === tt.ref) useNear(); } } }
+        let [wx, wy] = route[0]; dx = wx - P.x; dy = wy - P.y;
+        if (Math.hypot(dx, dy) < 3) {
+          route.shift();
+          if (!route.length) { route = null; dx = dy = 0; if (target) { const tt = target; target = null; const n = near(); if (n && n.ref === tt.ref) useNear(); } }
+          else { [wx, wy] = route[0]; dx = wx - P.x; dy = wy - P.y; }
+        }
+        last = !!route && route.length === 1;
       }
-      const L = Math.hypot(dx, dy);
-      P.moving = false;
-      if (L > 0) {
-        const pace = 1 + 0.6 * clamp((P.run - 0.8) / 0.8, 0, 1), sp = speed * pace * dt, k = Math.min(1, (route ? Math.min(sp, L) : sp) / L);
-        const mx = dx * k, my = dy * k, x0 = P.x, y0 = P.y;
+      const L = Math.hypot(dx, dy), h = ioH();
+      const pace = 1 + RUN * clamp((P.run - 0.8) / 0.8, 0, 1), top = (opts.pace ? opts.pace * h : speed) * pace;
+      // the speed she heads for: full pace where she's going, slowing into the end of a tapped walk. As in Path
+      // Polish's motion, her speed eases toward it: about a tenth of a second to start, a little less to stop.
+      let tx = 0, ty = 0;
+      if (L > 0) { const sp = last ? Math.min(top, L * 9) : top; tx = dx / L * sp; ty = dy / L * sp; }
+      const ek = 1 - Math.exp(-dt / ((L > 0 ? 0.12 : 0.10) / 3));
+      P.vx += (tx - P.vx) * ek; P.vy += (ty - P.vy) * ek;
+      if (!L && Math.hypot(P.vx, P.vy) < 2) { P.vx = 0; P.vy = 0; }
+      const mx = P.vx * dt, my = P.vy * dt, x0 = P.x, y0 = P.y;
+      if (mx || my) {
         // slide along walls: the whole step, or the part of it that's open
         if (canStand(P.x + mx, P.y + my)) { P.x += mx; P.y += my; }
-        else if (mx && canStand(P.x + mx, P.y)) P.x += mx;
-        else if (my && canStand(P.x, P.y + my)) P.y += my;
+        else if (mx && canStand(P.x + mx, P.y)) { P.x += mx; P.vy = 0; }
+        else if (my && canStand(P.x, P.y + my)) { P.y += my; P.vx = 0; }
         else if (held.size) { // round a corner: try a small sidestep
+          const sp = top * dt;
           for (const s of [1, -1]) { if (my && canStand(P.x + s * sp, P.y + my * 0.5)) { P.x += s * sp * 0.6; break; } if (mx && canStand(P.x + mx * 0.5, P.y + s * sp)) { P.y += s * sp * 0.6; break; } }
         }
-        const moved = Math.hypot(P.x - x0, P.y - y0);
-        P.moving = moved > 0.01;
-        P.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : (dy > 0 ? 's' : 'n');
-        if (P.moving) {
-          P.walkT += dt * pace; P.run += dt; if (map.wild) P.counter += moved;
-          // a footstep every half stride, on the map's ground (opts.onStep)
-          P.stepD += moved; if (P.stepD > 26) { P.stepD = 0; if (opts.onStep) opts.onStep(map, pace > 1.3); }
-        }
-        else if (route) { route = null; target = null; }
       }
+      const moved = Math.hypot(P.x - x0, P.y - y0);
+      P.moving = moved > 0.02;
+      if (L > 0) {
+        const dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : (dy > 0 ? 's' : 'n');
+        if (dir !== P.dir) P.turn = dx === 0 ? (dir === 'n' ? -1 : 1) : Math.sign(dx);
+        P.dir = dir;
+      }
+      P.turn *= Math.exp(-dt / 0.11);
+      P.lean = top > 0 ? clamp(P.vx / top, -1, 1) : 0;
+      if (P.moving) {
+        P.walkT += dt * pace; P.run += dt; P.blocked = 0; if (map.wild) P.counter += moved;
+        // her steps: a footfall as each painted step lands (frames 0 and 3 of the six), for opts.onStep
+        const f0 = Math.floor(P.walk * 6.4) % 6; P.walk += moved / h; const f1 = Math.floor(P.walk * 6.4) % 6;
+        if (f1 !== f0 && (f1 === 0 || f1 === 3) && opts.onStep) opts.onStep(map, pace > 1.3);
+      }
+      else if (L > 0) { P.blocked += dt; if (route && P.blocked > 0.25) { route = null; target = null; } } // a tapped walk that's stuck gives up
       if (!P.moving) { P.walkT = 0; P.run = 0; }
       // exits, then events, then the wilds
       for (const ex of map.exits || []) {
@@ -244,9 +274,12 @@
       for (const a of actors) { a.moving = walkAlong(a, dt); if (!a.moving) a.walkT = 0; }
       if (ioWalk.path) {
         const q = { x: P.x, y: P.y, dir: P.dir, path: ioWalk.path, speed: ioWalk.speed, res: ioWalk.res, walkT: P.walkT };
+        const x0 = P.x, y0 = P.y;
         P.moving = walkAlong(q, dt); P.x = q.x; P.y = q.y; P.dir = q.dir; P.walkT = P.moving ? q.walkT : 0;
+        P.walk += Math.hypot(P.x - x0, P.y - y0) / ioH(); P.lean = 0;
         ioWalk.path = q.path; ioWalk.res = q.res;
       }
+      if (P.pose) { P.poseT += dt; if (P.poseT >= P.poseDur) { const r = P.poseRes; P.pose = null; P.poseRes = null; if (r) r(); } }
     }
     const stage = {
       add(id, lookId, at, dir) { stage.remove(id); actors.push({ id, look: lookId, x: at[0], y: at[1], dir: dir || 's', path: null, speed: 110, res: null, walkT: 0, moving: false }); },
@@ -267,8 +300,13 @@
 
     function draw(t) {
       const W = cv.width / DPR, H = cv.height / DPR;
-      cam.z = (map.zoom || opts.zoom || 0.7) * Math.max(1, Math.min(W, H) / 700);
-      const sk = cam.z * (opts.ioH || 42) / io.h;
+      // with the painted Io the camera comes close enough for her to stand ioScreen of the screen's shorter side
+      // (each map's own zoom, 0.7 as standard, still nudges it); the townsfolk keep her scale
+      const usePainted = painted && painted.loaded;
+      cam.z = usePainted && opts.ioScreen ? opts.ioScreen * Math.min(W, H) / ioH() * (map.zoom || 0.7) / 0.7
+        : (map.zoom || opts.zoom || 0.7) * Math.max(1, Math.min(W, H) / 700);
+      cam.z = Math.max(cam.z, W / MW, H / MH); // never wider than the painting
+      const sk = cam.z * ioH() / io.h;
       const vw = W / cam.z, vh = H / cam.z, mk = img.naturalWidth / MW;
       // the camera follows Io; in a scene it eases to the scene's focus and back, then follows her again
       let cx0 = P.x, cy0 = P.y;
@@ -288,6 +326,7 @@
       if (lit !== 1) g.filter = 'brightness(' + lit + ')';
       g.drawImage(img, cam.x * mk, cam.y * mk, vw * mk, vh * mk, 0, 0, W, H);
       g.filter = 'none';
+      if (opts.showWalk) drawWalk();
       // spots glimmer softly, so a player can find them
       const pulse = 0.5 + 0.5 * Math.sin(t / 300);
       for (const s of things()) {
@@ -303,9 +342,17 @@
       for (const a of actors) figs.push({ y: a.y, x: a.x, s: sprite(a.look), dir: a.dir, step: a.moving ? [1, 0, 2, 0][Math.floor(a.walkT / 0.1) % 4] : 0 });
       const stepF = P.moving ? [1, 0, 2, 0][Math.floor(P.walkT / 0.1) % 4] : 0;
       figs.push({ y: P.y, x: P.x, s: io, dir: P.dir, step: stepF, me: true });
+      // the painting's fronts (lamp posts, trees) take their place among them by their base lines
+      for (const fr of map.front || []) figs.push({ y: fr.base, front: fr });
       figs.sort((a, b) => a.y - b.y);
       for (const f of figs) {
+        if (f.front) { drawFront(f.front, mk, vw, vh, lit); continue; }
         const fx = (f.x - cam.x) * cam.z, fy = (f.y - cam.y) * cam.z;
+        if (f.me && usePainted) {
+          painted.draw(g, fx, fy, cam.z * ioH() / painted.h, { dir: P.dir, walk: P.walk, moving: P.moving, t: t / 1000, lean: P.lean, turn: P.turn, pose: P.pose, poseP: P.pose ? P.poseT / P.poseDur : 0 });
+          g.imageSmoothingEnabled = false;
+          continue;
+        }
         g.fillStyle = 'rgba(0,0,0,0.38)'; g.beginPath(); g.ellipse(fx, fy - sk, 9 * sk, 2.6 * sk, 0, 0, Math.PI * 2); g.fill();
         const [sx, sy] = f.s.frame(f.dir, f.step);
         const ox = Math.round((fx - f.s.foot[0] * sk) * DPR) / DPR, oy = Math.round((fy - (f.s.foot[1] + 1) * sk) * DPR) / DPR;
@@ -319,6 +366,28 @@
       const n = paused ? null : near();
       if (n) { act.hidden = false; if (act.textContent !== n.label) act.textContent = n.label; } else act.hidden = true;
       drawMini(vw, vh, t);
+    }
+    // a front: its piece of the painting drawn again, clipped to its outline, over whoever stands behind it
+    function drawFront(fr, mk, vw, vh, lit) {
+      const bb = fr._bb || (fr._bb = fr.pts.reduce((b, [x, y]) => [Math.min(b[0], x), Math.min(b[1], y), Math.max(b[2], x), Math.max(b[3], y)], [1e9, 1e9, -1e9, -1e9]));
+      if (bb[2] < cam.x || bb[0] > cam.x + vw || bb[3] < cam.y || bb[1] > cam.y + vh) return;
+      g.save(); g.beginPath();
+      fr.pts.forEach(([x, y], i) => { const X = (x - cam.x) * cam.z, Y = (y - cam.y) * cam.z; if (i) g.lineTo(X, Y); else g.moveTo(X, Y); });
+      g.closePath(); g.clip();
+      g.imageSmoothingEnabled = false; if (lit !== 1) g.filter = 'brightness(' + lit + ')';
+      g.drawImage(img, bb[0] * mk, bb[1] * mk, (bb[2] - bb[0]) * mk, (bb[3] - bb[1]) * mk, (bb[0] - cam.x) * cam.z, (bb[1] - cam.y) * cam.z, (bb[2] - bb[0]) * cam.z, (bb[3] - bb[1]) * cam.z);
+      g.restore();
+    }
+    // the walk areas (green), the blocks cut out of them (red) and the exits (blue), over the painting (opts.showWalk)
+    function drawWalk() {
+      const path = (pts) => { g.beginPath(); pts.forEach(([x, y], i) => { const X = (x - cam.x) * cam.z, Y = (y - cam.y) * cam.z; if (i) g.lineTo(X, Y); else g.moveTo(X, Y); }); g.closePath(); };
+      g.lineWidth = 1.5;
+      g.fillStyle = 'rgba(90,255,150,0.2)'; g.strokeStyle = 'rgba(90,255,150,0.85)';
+      for (const p of map.walk) { path(p); g.fill(); g.stroke(); }
+      g.fillStyle = 'rgba(255,80,90,0.3)'; g.strokeStyle = 'rgba(255,80,90,0.9)';
+      for (const p of map.block || []) { path(p); g.fill(); g.stroke(); }
+      g.strokeStyle = 'rgba(110,170,255,0.95)'; g.lineWidth = 2;
+      for (const ex of map.exits || []) { const r = ex.rect; g.strokeRect((r[0] - cam.x) * cam.z, (r[1] - cam.y) * cam.z, (r[2] - r[0]) * cam.z, (r[3] - r[1]) * cam.z); }
     }
     function drawMini(vw, vh, t) {
       const r = mini.getBoundingClientRect(), w = Math.round(r.width * DPR), h = Math.round(w * MH / MW);
@@ -344,6 +413,7 @@
       resume() { paused = false; last = performance.now(); },
       show(on) { root.hidden = !on; if (on) { layout(); last = performance.now(); } },
       walkTo(x, y) { route = findRoute(x, y); },
+      pose(name, secs) { if (P.poseRes) P.poseRes(); return new Promise((res) => { P.pose = name; P.poseT = 0; P.poseDur = secs || 1.4; P.poseRes = res; held.clear(); route = null; }); },
       setCounter(v) { P.counter = v; },
       stop() { stopped = true; ro.disconnect(); window.removeEventListener('keydown', onKey); window.removeEventListener('keyup', onKeyUp); },
     };

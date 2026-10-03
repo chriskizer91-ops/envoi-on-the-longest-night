@@ -1,6 +1,10 @@
 // maps.js: the ground-level maps (art request 04) traced for walking (plan step 18). Every position is in the paintings'
 // own 1536 x 1024 pixels, whatever size the image ships at. For each map:
-//   walk:   polygons Io can walk inside (their union); block: polygons cut out of them (wells, stalls, rocks)
+//   walk:   polygons Io's feet can stand inside (their union): the painted ground she can see, the cobbles, paths, stairs,
+//           decks and bridges, traced close to the painting (October 3, the paper-doll walk); block: polygons cut out of
+//           them (wells, stalls, rocks, lamp posts' feet)
+//   front:  pieces of the painting that stand up off the ground (lamp posts, trees, the well's frame), each { pts, base }:
+//           the piece is drawn again over Io, or anyone, whose feet are above (behind) its base line
 //   exits:  rectangles that take her to another map (`to`, arriving at `at` there) or out to the world map (`to: 'world'`)
 //   people: who stands where, how they look (`look`, a pixel figure from sprites.js) and what they say (`talk`, in
 //           script.js); `role` makes them a shop or an inn
@@ -12,34 +16,56 @@
   'use strict';
   // a rough circle as a polygon, for wells and round things
   const ring = (cx, cy, r, n) => Array.from({ length: n || 14 }, (_, i) => { const a = i / (n || 14) * Math.PI * 2; return [Math.round(cx + Math.cos(a) * r), Math.round(cy + Math.sin(a) * r * 0.8)]; });
+  // points along an ellipse's rim from angle a0 to a1 (degrees: 0 east, 90 south)
+  const arc = (cx, cy, rx, ry, a0, a1, n) => Array.from({ length: n + 1 }, (_, i) => { const a = (a0 + (a1 - a0) * i / n) * Math.PI / 180; return [Math.round(cx + Math.cos(a) * rx), Math.round(cy + Math.sin(a) * ry)]; });
+  // a lamp post (or any thin upright thing) standing on the walk: its foot is a block, and the post and its lantern a
+  // front. x: the post's middle; base: where it stands; top: the lantern's top
+  const lamp = (x, base, top) => ({ block: [[x - 8, base - 9], [x + 8, base - 9], [x + 8, base + 3], [x - 8, base + 3]], front: { pts: [[x - 11, top], [x + 11, top], [x + 11, top + 34], [x + 5, top + 40], [x + 6, base + 2], [x - 6, base + 2], [x - 5, top + 40], [x - 11, top + 34]], base } });
+  const lampBlocks = (ls) => ls.map((l) => l.block), lampFronts = (ls) => ls.map((l) => l.front);
+  // Wickhollow's lamps: the four round the Moonwell, and the one by the west stairs
+  const WICK_LAMPS = [lamp(659, 392, 310), lamp(904, 392, 310), lamp(640, 595, 509), lamp(914, 595, 509), lamp(260, 590, 525)];
   const MAPS = {
     wickhollow: {
       name: 'Wickhollow', src: "art/walk/walk-wickhollow-square.webp", band: 1, kind: 'town', music: 'town',
-      start: [773, 600],
+      start: [777, 600],
       walk: [
-        // the square, round the Moonwell, from the big house and the stall in the west to the forge and the east house
-        [[280, 400], [615, 400], [615, 300], [700, 300], [745, 240], [805, 240], [830, 300], [960, 300], [960, 400], [1290, 400], [1290, 440], [1075, 440], [1075, 670], [835, 670], [835, 690], [740, 690], [740, 610], [560, 610], [560, 450], [370, 450], [370, 560], [280, 560]],
-        [[1270, 332], [1536, 332], [1536, 424], [1270, 424]], // the stone bridge east, over the river to the Thornwood
-        [[740, 690], [835, 690], [835, 1024], [740, 1024]], // the south road, out to the world
-        [[230, 540], [300, 540], [300, 650], [262, 800], [150, 800], [150, 700], [230, 650]], // the steps down to the lower jetty
-        [[0, 702], [160, 702], [160, 778], [0, 778]], // the lower jetty
-        [[60, 352], [240, 352], [240, 498], [60, 498]], // the upper pier
-        [[228, 392], [292, 392], [292, 480], [228, 480]],
-        [[225, 790], [745, 790], [745, 860], [225, 860]], // the lane under the garden fence
+        // the square: from the big house's front and Nettie's stall, past the chapel steps and the forge, over the
+        // stone bridge east; down the middle house's west side to its door; and the south road down to the cottage
+        [[262, 405], [345, 405], [500, 402], [512, 418], [560, 412], [612, 405], [622, 395], [625, 300], [735, 296], [742, 275], [742, 232], [810, 232], [812, 275], [822, 294], [950, 292], [955, 350], [1075, 352], [1080, 372], [1240, 376], [1300, 354], [1536, 354], [1536, 396], [1300, 398], [1256, 414], [1080, 412], [1078, 498], [1040, 500], [1038, 548], [1080, 560], [1086, 618], [1125, 620], [1128, 602], [1150, 602], [1160, 625], [1162, 670], [1040, 670], [1037, 598], [966, 598], [962, 645], [850, 655], [816, 700], [816, 1024], [745, 1024], [745, 625], [690, 612], [600, 612], [565, 600], [565, 458], [375, 458], [282, 458], [262, 452]],
+        [[266, 255], [294, 255], [294, 410], [266, 410]], // the lane up the big house's west side
+        [[244, 440], [282, 440], [282, 505], [300, 505], [300, 600], [290, 640], [272, 640], [190, 640], [188, 548], [244, 548]], // down the west stairs and the ramp beside them
+        [[160, 630], [272, 630], [272, 700], [268, 745], [264, 775], [212, 775], [205, 738], [160, 738]], // the landing, and the steps down to the lane
+        [[136, 698], [175, 690], [178, 742], [136, 745]], // round the tree to the lower jetty
+        [[0, 706], [152, 706], [152, 760], [0, 760]], // the lower jetty
+        [[205, 772], [280, 772], [312, 818], [745, 818], [745, 846], [725, 848], [292, 848], [272, 826], [220, 815]], // the lane under the garden fence
+        [[452, 718], [482, 718], [486, 822], [454, 822]], [[432, 712], [502, 712], [502, 734], [432, 734]], // through the garden gate to the lower house's door
       ],
-      block: [ring(773, 440, 108)],
+      block: [
+        // the Moonwell's low wall and flower beds, a ring open to the south, and the well itself inside it
+        [...arc(777, 462, 122, 100, 105, 435, 22), ...arc(777, 462, 86, 64, 435, 105, 22)],
+        [...arc(777, 452, 44, 47, 0, 360, 16)],
+        [[1046, 632], [1093, 632], [1093, 662], [1046, 662]], // the bench by the middle house
+        ...lampBlocks(WICK_LAMPS),
+      ],
+      front: [
+        ...lampFronts(WICK_LAMPS),
+        { pts: [[740, 333], [814, 333], [814, 405], [819, 410], [819, 484], [802, 484], [802, 410], [752, 410], [752, 484], [735, 484], [735, 410], [740, 405]], base: 484 }, // the Moonwell's iron frame
+        { pts: [[962, 572], [1040, 572], [1044, 640], [1030, 672], [972, 672], [960, 640]], base: 672 }, // the pine by the middle house
+        { pts: [[282, 446], [352, 446], [356, 500], [334, 532], [296, 532], [282, 505]], base: 530 }, // the dark tree by the west stairs
+        { pts: [[130, 664], [200, 664], [202, 712], [180, 730], [140, 730], [128, 712]], base: 728 }, // the tree by the lower jetty
+      ],
       exits: [
-        { rect: [1512, 332, 1536, 424], to: 'thornwood', at: [60, 456], label: 'The Thornwood' },
-        { rect: [740, 1004, 835, 1024], to: 'cottage', at: [567, 40], label: "Io's cottage" },
-        { rect: [0, 702, 18, 778], to: 'jetty', at: [782, 50], label: 'The jetty' },
+        { rect: [1514, 354, 1536, 396], to: 'thornwood', at: [60, 456], label: 'The Thornwood' },
+        { rect: [745, 1006, 816, 1024], to: 'cottage', at: [567, 40], label: "Io's cottage" },
+        { rect: [0, 706, 18, 760], to: 'jetty', at: [782, 50], label: 'The jetty' },
       ],
       people: [
-        { id: 'nettie', name: 'Nettie', at: [570, 412], look: 'witch2', talk: 'nettie', role: 'shop' },
-        { id: 'hilde', name: 'Hilde', at: [1050, 412], look: 'smith', talk: 'hilde' },
-        { id: 'gretch', name: 'Mayor Gretch', at: [640, 560], look: 'elder', talk: 'gretch' },
+        { id: 'nettie', name: 'Nettie', at: [568, 426], look: 'witch2', talk: 'nettie', role: 'shop' },
+        { id: 'hilde', name: 'Hilde', at: [1015, 364], look: 'smith', talk: 'hilde' },
+        { id: 'gretch', name: 'Mayor Gretch', at: [705, 594], look: 'elder', talk: 'gretch', face0: 'e' },
       ],
       spots: [
-        { kind: 'rest', at: [773, 552], label: 'The Moonwell', note: 'Lunara sleeps here. Rest, and the game is saved.' },
+        { kind: 'rest', at: [777, 530], label: 'The Moonwell', note: 'Lunara sleeps here. Rest, and the game is saved.' },
       ],
     },
     // Io's cottage, in the woods south of the square, with her garden: where the story starts

@@ -19,8 +19,15 @@ for (let i = 0; i < args.length; i++) {
 }
 fs.mkdirSync(out, { recursive: true });
 let total = 0;
+// Chris's PNGs can carry a content-credentials block (C2PA) that sharp won't read: keep only the chunks an image needs
+function plainPng(buf) {
+  if (buf.toString('ascii', 1, 4) !== 'PNG') return buf;
+  const keep = new Set(['IHDR', 'PLTE', 'tRNS', 'IDAT', 'IEND', 'gAMA', 'sRGB', 'cHRM', 'iCCP']), parts = [buf.subarray(0, 8)];
+  for (let o = 8; o + 12 <= buf.length;) { const len = buf.readUInt32BE(o), type = buf.toString('ascii', o + 4, o + 8); if (keep.has(type)) parts.push(buf.subarray(o, o + 12 + len)); o += 12 + len; }
+  return Buffer.concat(parts);
+}
 for (const f of files) {
-  let img = sharp(f);
+  let img = sharp(plainPng(fs.readFileSync(f)));
   const meta = await img.metadata();
   if (width && meta.width > width) img = img.resize({ width, kernel: 'lanczos3' });
   const dest = path.join(out, (name && files.length === 1 ? name : path.basename(f).replace(/\.[^.]+$/, '')) + '.webp');

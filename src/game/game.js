@@ -47,8 +47,6 @@
     { flag: 'charge', who: 'brann', after: 'envoi', scene: 'charge' },
     { flag: 'upgrade2', who: 'ysmera', after: 'shipyard', scene: 'upgrade2' },
   ];
-  // what each ground map is underfoot, for her footsteps (the world map is grass)
-  const GROUND = { cottage: 'grass', wickhollow: 'stone', jetty: 'wood', thornwood: 'grass', bogmire: 'wood', 'bogmire-heart': 'wood', dawnroost: 'stone', 'dawnroost-node': 'stone', crossroads: 'stone', shipyard: 'wood', 'frozen-pass': 'grass', misthollow: 'stone', moonwell: 'stone' };
   // each place's ambience (handoff, section 8): the library's sounds, each now and then, quietly: [sound, every so many
   // seconds (from, to), how loud]
   const AMBIENCE = {
@@ -136,7 +134,6 @@
       isDone: (k) => !!st.done[k],
       onExit: (ex) => act(() => onExit(ex)), onEvent: (s) => act(() => onEvent(s)), onTalk: (p) => act(() => onTalk(p)),
       onSpot: (s) => act(() => onSpot(s)), onEncounter: (m) => act(() => wild(m.wild.band, m.wild.scene)), onMenu: () => act(menu),
-      onStep: (m, running) => sfx('step-' + (GROUND[m.id] || 'stone'), running ? 0.32 : 0.24),
     });
     // ---------- the world map ----------
     const world = World.create(worldHost, {
