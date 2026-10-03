@@ -24,6 +24,7 @@ Added October 3, 2026: `../3d-model-new-character-ideas/` holds creatures Chris 
 | Idea | Link | State |
 |---|---|---|
 | Bramble Horror | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Version 2: thorns, veins and a feeding hollow, whip-sprung canes that coil round the prey, Undergrowth and Scorch, a wild glade bench with Io as its prey. Where it lives is asked in `questions/open.md`. |
+| Bramble Colossus | https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q | Version 1: the Bramble Horror grown into a 7.5 m boss, with a braided spire, a bud that opens on its glowing heart, ten moves of its own and a Wrath phase at half HP; a bench where it fights Io and Sol, or fights them by itself. Its name and place are asked in `questions/open.md`. |
 
 ## The models
 

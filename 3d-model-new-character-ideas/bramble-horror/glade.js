@@ -3,12 +3,12 @@
 // forest floor with grass, ferns and stones round the edge, fireflies, and metre rings to judge size by. Everything is
 // painted in code. It adds no lights, so whatever stands in it is seen under the bench's own lights alone; its sky,
 // trees and mist are unlit, and only the floor, grass and stones take the bench's light.
-// opts: { radius (of the clear middle, where nothing grows; default 3.4 m) }
+// opts: { radius (of the clear middle, where nothing grows; default 3.4 m), rings (how far the metre rings run; default 6 m) }
 // Returns { root, update(t, dt), setDay(on), setRings(on), setScenery(on) }.
 function makeGlade(opts) {
   'use strict';
   opts = opts || {};
-  const CLEAR = opts.radius || 3.4, TAU = Math.PI * 2;
+  const CLEAR = opts.radius || 3.4, RM = opts.rings || 6, TAU = Math.PI * 2;
   let seed = 4242;
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const rr = (a, b) => a + (b - a) * rnd();
@@ -175,11 +175,11 @@ function makeGlade(opts) {
     };
     const m = new THREE.Mesh(geo, mat); m.frustumCulled = false; scenery.add(m); return m;
   }
-  const grass = clumps(grassTex, 150, CLEAR + .3, 15, .28, .62), ferns = clumps(fernTex, 34, CLEAR + 1.2, 13, .5, .95);
+  const grass = clumps(grassTex, 150, CLEAR + .3, CLEAR + 11.6, .28, .62), ferns = clumps(fernTex, 34, CLEAR + 1.2, CLEAR + 9.6, .5, .95);
   const stoneGeo = (() => {
     const list = [];
     for (let i = 0; i < 9; i++) {
-      const g = new THREE.IcosahedronGeometry(1, 1), p = g.attributes.position, k = rr(.14, .42), a = rnd() * TAU, r = rr(CLEAR + .8, 11), ph = rnd() * 9;
+      const g = new THREE.IcosahedronGeometry(1, 1), p = g.attributes.position, k = rr(.14, .42), a = rnd() * TAU, r = rr(CLEAR + .8, CLEAR + 7.6), ph = rnd() * 9;
       for (let j = 0; j < p.count; j++) { const x = p.getX(j), y = p.getY(j), z = p.getZ(j), n = 1 + .22 * Math.sin(x * 3.1 + ph) * Math.sin(z * 2.7 + ph) + .1 * Math.sin(y * 5 + ph); p.setXYZ(j, x * k * n * 1.3, Math.max(-.2, y) * k * n * .7, z * k * n); }
       g.rotateY(rnd() * TAU); g.translate(Math.sin(a) * r, 0, Math.cos(a) * r); list.push(g);
     }
@@ -216,7 +216,7 @@ function makeGlade(opts) {
 
   // ---------- fireflies: drifting, blinking motes over the grass (night only) ----------
   const NF = 70, fpos = new Float32Array(NF * 3), fph = new Float32Array(NF * 4);
-  for (let i = 0; i < NF; i++) { const a = rnd() * TAU, r = rr(CLEAR, 13); fpos.set([Math.sin(a) * r, rr(.25, 2.6), Math.cos(a) * r], i * 3); fph.set([rnd() * TAU, rr(.5, 1.4), rr(.15, .5), rr(.6, 1.6)], i * 4); }
+  for (let i = 0; i < NF; i++) { const a = rnd() * TAU, r = rr(CLEAR, CLEAR + 9.6); fpos.set([Math.sin(a) * r, rr(.25, 2.6), Math.cos(a) * r], i * 3); fph.set([rnd() * TAU, rr(.5, 1.4), rr(.15, .5), rr(.6, 1.6)], i * 4); }
   const fgeo = new THREE.BufferGeometry(); fgeo.setAttribute('position', new THREE.BufferAttribute(fpos, 3)); fgeo.setAttribute('aPh', new THREE.BufferAttribute(fph, 4));
   const fliesU = { uT: T, uScale: { value: 400 }, uOn: { value: 1 } };
   const flies = new THREE.Points(fgeo, new THREE.ShaderMaterial({
@@ -235,13 +235,13 @@ function makeGlade(opts) {
 
   // ---------- metre rings, to judge the size by ----------
   function ringsTex(day) {
-    const S = 1024, c = cvs(S, S), g = c.getContext('2d'), h = S / 2, ppm = h / 7;
+    const S = 1024, c = cvs(S, S), g = c.getContext('2d'), h = S / 2, ppm = h / (RM + 1);
     g.strokeStyle = day ? 'rgba(40,30,20,.3)' : 'rgba(214,222,255,.16)'; g.lineWidth = 2; g.fillStyle = day ? 'rgba(40,30,20,.5)' : 'rgba(214,222,255,.38)'; g.font = '22px sans-serif';
-    for (let m = 1; m <= 6; m++) { g.beginPath(); g.arc(h, h, m * ppm, 0, TAU); g.stroke(); g.fillText(m + ' m', h + m * ppm + 6, h - 6); }
+    for (let m = 1; m <= RM; m++) { g.beginPath(); g.arc(h, h, m * ppm, 0, TAU); g.stroke(); if (RM <= 8 || m % 2 === 0) g.fillText(m + ' m', h + m * ppm + 6, h - 6); }
     const t = new THREE.CanvasTexture(c); t.anisotropy = 4; return t;
   }
   const ringTex = [ringsTex(false), ringsTex(true)];
-  const rings = new THREE.Mesh(new THREE.CircleGeometry(7, 72), new THREE.MeshBasicMaterial({ map: ringTex[0], transparent: true, depthWrite: false }));
+  const rings = new THREE.Mesh(new THREE.CircleGeometry(RM + 1, 72), new THREE.MeshBasicMaterial({ map: ringTex[0], transparent: true, depthWrite: false }));
   rings.rotation.x = -Math.PI / 2; rings.position.y = .003; rings.renderOrder = -7; root.add(rings);
   // with the scenery off: the bench's old plain floor, a soft disc fading into the stage
   const bareTex = (day) => {
@@ -250,7 +250,7 @@ function makeGlade(opts) {
     return new THREE.CanvasTexture(c);
   };
   const bareT = [bareTex(false), bareTex(true)];
-  const bare = new THREE.Mesh(new THREE.CircleGeometry(7, 72), new THREE.MeshStandardMaterial({ map: bareT[0], transparent: true, roughness: .95, depthWrite: false }));
+  const bare = new THREE.Mesh(new THREE.CircleGeometry(RM + 1, 72), new THREE.MeshStandardMaterial({ map: bareT[0], transparent: true, roughness: .95, depthWrite: false }));
   bare.rotation.x = -Math.PI / 2; bare.renderOrder = -8; bare.visible = false; root.add(bare);
 
   // ---------- switching looks ----------

@@ -14,3 +14,8 @@ The first set of questions here (the Witch's name, the waystation's name, the Ma
    - Is it a foe in *Envoi on the Longest Night*? If so, where does it grow: the wilderness between two stops, Bogmire, or somewhere new?
    - At which levels do the party meet it? Undergrowth is built as a big move for the higher levels.
    - Do Undergrowth (shoots that burst up round the prey and close over it) and Scorch (its recoil from fire) stay? Neither is on its sheets.
+3. **The Bramble Colossus** (`../../3d-model-new-character-ideas/bramble-colossus/`), the Bramble Horror grown into a boss as big as a house. "Bramble Colossus" is a working name.
+   - Is it a boss in the game? If so, where does it stand, and at which level do the party meet it?
+   - What is it called?
+   - Its moves were all made up for it: Awakening, Siren Bloom, Thorn Lance, Hammerfall, Maelstrom, Thorn Volley, Devour, Thornwood, Wrath and Felled. Which stay?
+   - Its Wrath is a second phase at half its HP. Do battles have phases like that?

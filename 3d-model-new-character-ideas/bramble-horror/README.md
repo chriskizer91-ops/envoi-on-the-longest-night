@@ -2,7 +2,7 @@
 
 A patient predator of the Wildlands of the Southern Isles. What looks like a lush, unusually fruitful blackberry thicket is a root crown of twisted woody roots with six thorny canes that rise, orient on prey, offer their berries as a lure, lash out, hook with recurved thorns, wrap and drag prey to the crown, and feed through the roots. It has no face: its intent shows only in how the canes move together. Rooted. Patient. Hungry.
 
-**The page:** https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv (private; it works on a phone). **Before** and **After** at the top switch between the Bramble as it came from its sheets and the polished one. `Bramble_Horror_Bench.html` in this folder is the same page as one file: version 2. `versions/Bramble_Horror_Bench_v1.html` keeps version 1.
+**The page:** https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv (private; it works on a phone). Its boss form, the Bramble Colossus, is in `../bramble-colossus/`. **Before** and **After** at the top switch between the Bramble as it came from its sheets and the polished one. `Bramble_Horror_Bench.html` in this folder is the same page as one file: version 2. `versions/Bramble_Horror_Bench_v1.html` keeps version 1.
 
 ## Version 2, October 3, 2026
 
@@ -115,7 +115,7 @@ Notes: holding (0 to 1) and anchor('held') say where a grabbed prey belongs (Gra
 |---|---|
 | `bramble.js` | The polished model |
 | `bramble-horror.html`, `bench.js`, `bench.css` | The bench page's source; it also loads Io's original model from `src/models/originals/witch.js` |
-| `glade.js` | The wild glade, `makeGlade()`, written to be reused by other wilderness benches |
+| `glade.js` | The wild glade, `makeGlade()`, written to be reused by other wilderness benches; the Bramble Colossus's bench uses it with a wider clearing |
 | `Bramble_Horror_Bench.html` | The built page, one file (version 2) |
 | `versions/Bramble_Horror_Bench_v1.html` | Version 1's page, kept as it was delivered |
 | `original/Bramble_Horror_Bench.html` | The page as Chris brought it, untouched |
