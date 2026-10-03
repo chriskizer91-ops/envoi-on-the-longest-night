@@ -1,14 +1,15 @@
 // glade.js: a clearing in the wildlands for a model bench to stand a creature in. three.js r128 (global THREE).
-// Defines makeGlade(opts) only: a sky with a moon and stars, two rings of trees fading into mist, drifting ground mist, a
+// Defines makeGlade(opts) only: a sky with a moon (and no stars: the sky has none until the ending), two rings of trees fading into mist, drifting ground mist, a
 // forest floor with grass, ferns and stones round the edge, fireflies, and metre rings to judge size by. Everything is
 // painted in code. It adds no lights, so whatever stands in it is seen under the bench's own lights alone; its sky,
 // trees and mist are unlit, and only the floor, grass and stones take the bench's light.
-// opts: { radius (of the clear middle, where nothing grows; default 3.4 m), rings (how far the metre rings run; default 6 m) }
+// opts: { radius (of the clear middle, where nothing grows; default 3.4 m), rings (how far the metre rings run; default 6 m),
+//   stars (true only for the ending) }
 // Returns { root, update(t, dt), setDay(on), setRings(on), setScenery(on) }.
 function makeGlade(opts) {
   'use strict';
   opts = opts || {};
-  const CLEAR = opts.radius || 3.4, RM = opts.rings || 6, TAU = Math.PI * 2;
+  const CLEAR = opts.radius || 3.4, RM = opts.rings || 6, TAU = Math.PI * 2, STARS = !!opts.stars;
   let seed = 4242;
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const rr = (a, b) => a + (b - a) * rnd();
@@ -257,7 +258,7 @@ function makeGlade(opts) {
   let isDay = false;
   function setDay(on) {
     isDay = !!on; const L = on ? LOOK.day : LOOK.night;
-    skyU.uTop.value.set(L.top); skyU.uMid.value.set(L.mid); skyU.uHor.value.set(L.hor); skyU.uMoon.value.set(L.moon); skyU.uGlow.value = L.glow; skyU.uStars.value = L.stars;
+    skyU.uTop.value.set(L.top); skyU.uMid.value.set(L.mid); skyU.uHor.value.set(L.hor); skyU.uMoon.value.set(L.moon); skyU.uGlow.value = L.glow; skyU.uStars.value = STARS ? L.stars : 0;
     for (const { u, near } of treeU) { u.uTree.value.set(near ? L.near : L.far); u.uMist.value.set(L.mist); u.uRim.value.set(L.moon); }
     for (const u of mistU) { u.uC.value.set(L.mist); u.uA.value = L.mistA * (u === mistU[0] ? 1 : u === mistU[1] ? .8 : .55); }
     floorMat.color.set(L.floor); grass.material.color.set(L.grass); ferns.material.color.set(L.grass); stoneMat.color.set(L.stone);

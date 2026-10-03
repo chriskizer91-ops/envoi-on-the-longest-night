@@ -3,7 +3,7 @@
 //
 // The camera never moves. A shot is a crop or a zoom of its frame, as the battle screen's shots are of its painting, so
 // nothing outside the frame is ever made, and the field comes in two parts:
-// - the painting: everything far off (the night sky, the moon and the stars, mountains, the forest round the meadow, the
+// - the painting: everything far off (the night sky and the moon, with no stars, mountains, the forest round the meadow, the
 //   ground and the far grass) is drawn once, when the page opens, into one picture the size of the frame. It can be as
 //   detailed as the phone can draw once, because afterwards it costs one flat picture a frame. Its shader brings it to
 //   life where a picture can live: clouds drift over the moon and a storm rolls in over the sky, lightning lights it, gusts
