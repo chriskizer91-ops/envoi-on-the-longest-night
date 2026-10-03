@@ -645,7 +645,7 @@ Chris passed on the other session's first assessment, with each item's status ag
 - **Most players never saw the Kestrel command.** It waited for Halcyon at half her HP. At level 15, where most players meet her, that never happened; at 17 it came up in under half the expert's fights. The design says Sol recognizes her during the fight, so the command now comes from Halcyon's third turn, or at half her HP if that comes first.
 - **The expert wasn't quite perfect:**
   - Without Guard it won the finale 75% instead of 59%, because a turn spent guarding loses more than it saves in a race. It no longer guards in the finale; nothing else changes.
-  - Moth Veil helps it now (without it the expert wins 33%), so that part of the old finding no longer holds.
+  - (Corrected in the nineteenth round: the expert also did better without Moth Veil. The 33% measured here came from swapping in a plain Attack whenever it chose the Veil, not from locking the Veil out.)
 - **The finale, retuned for the better expert:** the cold deepens 9% a turn.
   - a perfect player wins 74% at 20;
   - an attentive one wins 6%, about one time in sixteen;
@@ -665,4 +665,34 @@ Chris passed on the other session's first assessment, with each item's status ag
   - Wild fights get tested in a row, carrying HP, MP and herbs, not each from a fresh start.
   - The gate fights should teach what the finale asks for: Envoi's timing, Lunara, Briars, the Trance finishers, and now Kestrel Stoop's dodge.
 - **The simulator, optional:** a skilled human play style that doesn't read the hidden numbers, for tuning.
+
+## October 3, 2026, nineteenth round
+
+- **Envoi and Frost Dust:** Envoi's strike ends the Frost Dust slow, but the blow waiting in the frost still lands, as the party speeds back up. It doesn't cancel it.
+- **The finale's spread is right** (Chris): a perfect player wins about three times in four at level 20, so even perfect play can lose; at 19 a perfect player has a very slight chance; an attentive player rarely wins.
+- **How hard fights are, in general** (Chris): a decent player always beats a lower-level foe, beats an equal-level foe about half the time, and seldom beats a higher-level one. The finale's spread fits this. How it applies to the gates and the wild fights is question 13.
+- **Herbs are a special healing** (Chris): stronger than Io's healing spells, and scarce. Either they are hard to come by (but not impossible), or easy to find but she can carry only one or so. Question 14 asks which.
+
+### The observing session's second pass
+
+It re-checked everything on the newest code and found three things, all fixed now:
+
+- **Kestrel Stoop's dive never landed hot.** Sunburn was judged at the dive, after the rise had already spent 40 Heat, so from full Heat two Ember Rushes out-damaged it (about 1,600 against 1,500). The dive now lands as hot as Sol was when she rose: about 2,040 from full Heat at level 1.
+- **The expert still wasn't perfect.** It did better with Moth Veil locked out (90% against 82% in the finale): in the race, veiling one hero against a blow on both loses more than it saves. It no longer does that in the finale.
+- **The finale, retuned once more:** the cold deepens 10% a turn.
+  - a perfect player wins 78% at 20;
+  - an attentive one wins 3%;
+  - at 19 a perfect player has a 5% chance, and losses leave 31% of the bosses' HP.
+
+  All 32 targets are met.
+- **A foe's charge turn showed nothing on screen,** so Black Noon and Void Sphere couldn't be seen coming. Now a banner names the blow, the foe's ground glow pulses until it falls, and a note says it lands on its next turn.
+
+Two more findings, for later:
+
+- **Band entries are harsh once HP and MP carry over.** With no rest between them, an attentive party survives three wild fights in a row only 84% of the time at level 6, 63% at 11 and 49% at 16. Phase 3 puts a rest place at each band's entry, and question 13 asks whether the foes near an entry should be the band's weaker ones.
+- **The walking test's pixels** (for phase 4):
+  - each map pixel covers 2×2 of Io's pixels;
+  - at 0.7× zoom her pixels don't land on whole screen pixels on Chris's phone, so edges and her glasses can crawl as she walks.
+
+  The fix is a zoom that lands on whole pixels (0.762 on the Pixel 7a) and a camera snapped to whole pixels.
 

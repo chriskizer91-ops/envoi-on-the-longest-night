@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dawnroost</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/battle/screen.css">
+</head>
+<body>
+<header>
+  <h1>Dawnroost</h1>
+  <div class="hbtns">
+    <button type="button" class="hbtn" id="fps"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4a9 9 0 0 0-9 9 8.9 8.9 0 0 0 1.8 5.4l1.6-1.2A7 7 0 1 1 19 13a6.9 6.9 0 0 1-1.4 4.2l1.6 1.2A8.9 8.9 0 0 0 21 13a9 9 0 0 0-9-9Zm4.2 4.4-5 4.1a1.6 1.6 0 1 0 2.2 2.2l4.1-5Z"/></svg><span>fps</span></button>
+    <button type="button" class="hbtn" id="snd" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3Zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Zm-2.5-8.8v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6Z"/></svg><span>Sound on</span></button>
+  </div>
+</header>
+<main id="stage" aria-label="Battle between Io and Sol and three wraiths at Dawnroost's living node">
+  <canvas id="paint" aria-hidden="true"></canvas>
+  <div id="tint" class="fill"></div>
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <canvas id="rime" aria-hidden="true"></canvas>
+  <div id="vignette" class="fill"></div>
+  <div id="flash" class="fill"></div>
+  <div id="barT" class="bar"></div><div id="barB" class="bar"></div>
+  <div id="enemy" class="win" hidden></div>
+  <div id="banner" class="win" aria-live="polite"></div>
+  <div id="msg" class="win" role="status"></div>
+  <div id="nums" aria-hidden="true"></div>
+  <div id="marker" aria-hidden="true" hidden><svg viewBox="0 0 22 18"><path d="M2 2h18L11 16Z" fill="currentColor" stroke="#2c3160" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+  <div id="ui" hidden>
+    <div id="cmd" class="win" role="menu" aria-label="Commands"></div>
+    <div id="status" class="win" aria-label="The party"></div>
+  </div>
+  <div id="skip" hidden><button type="button" class="skipb" id="skipBtn">Skip intro</button></div>
+  <div id="start" class="overlay">
+    <div class="card win">
+      <h2>Dawnroost</h2>
+      <p>The Warden waystation on its hilltop still keeps a living sunstone node, and its light has drawn the strongest wraiths the party has met. This is the gate out of the second band: three of them, two levels above the party. Pick the party’s level, and win to see what Io and Sol make at the node.</p>
+      <div class="pickr" id="picker" hidden>
+        <label for="pickLevel"><span>Party level</span><input type="range" id="pickLevel" min="1" max="20" step="1" value="3"><output id="pickLevelOut" for="pickLevel">3</output></label>
+        <label for="pickPack"><span>Foes</span><select id="pickPack"></select></label>
+        <p id="pickNote"></p>
+      </div>
+      <button type="button" class="go" id="begin" disabled>Setting the scene…</button>
+    </div>
+  </div>
+  <div id="end" class="overlay" hidden>
+    <div class="card win">
+      <h2 id="endTitle">Victory!</h2>
+      <p id="endText"></p>
+      <div class="stats"><div><b id="stTime">0:00</b><span>Battle time</span></div><div><b id="stDmg">0</b><span>Damage dealt</span></div></div>
+      <p class="fpsline" id="stFps"></p>
+      <div class="xp" id="xpBox" hidden>
+        <div class="stats"><div><b id="xpGain">+0</b><span>Experience</span></div><div><b id="shardGain">+0</b><span>Sunstone shards</span></div></div>
+        <div class="row"><span>Next level</span><b id="xpNext"></b></div>
+        <div class="gauge"><i id="xpBar"></i></div>
+      </div>
+      <div class="lvl" id="lvlBox" hidden>
+        <h3 id="lvlTitle">Level up!</h3>
+        <dl id="lvlList"></dl>
+        <p>Every move hits and heals about 20% harder.</p>
+      </div>
+      <div class="btns"><button type="button" class="go" id="again">Fight again</button><button type="button" class="go alt" id="change" hidden>Change the fight</button></div>
+    </div>
+  </div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/dawnroost-node.js"></script>
+<script src="../src/models/witch.js"></script>
+<script src="../src/models/sol.js"></script>
+<script src="../src/models/wraith.js"></script>
+<script src="../src/models/lunara.js"></script>
+<script src="../src/models/envoi.js"></script>
+<script src="../src/fx/battle-fx.js"></script>
+<script src="../src/fx/io-spells.js"></script>
+<script src="../src/battle/rules.js"></script>
+<script src="../src/battle/engine.js"></script>
+<script src="../src/battle/sim.js"></script>
+<script src="../src/battle/sound.js"></script>
+<script src="../src/battle/screen.js"></script>
+<script>
+// Step 15: Dawnroost's living node, the gate out of band 2. Io and Sol at a level from 8 to 13 (the gate is at 10)
+// against three level 12 wraiths, the largest group of stronger wraiths so far, without Envoi. Io has Moth Veil from
+// the Bogmire refit. Win, and Envoi is made at the node: Io's letters fold into the wyrm and Sol lights its heart.
+BattleScreen.start({
+  scene: 'dawnroost-node',
+  level: 10, pack: 0, levels: [8, 13], packs: [{ name: 'Three wraiths at level 12', foes: ['wraith', 'wraith', 'wraith'] }],
+  heroes: [
+    { id: 'io', make: () => makeWitch({}), home: [530, 700], yawBias: -0.38, shadow: 0.62, tall: 2.1, kind: 'io' },
+    { id: 'sol', make: () => makeSol({}), home: [615, 760], yawBias: -0.3, shadow: 0.6, tall: 1.9, kind: 'sol', stop: 0.9 },
+  ],
+  slots: [[805, 645], [880, 600], [875, 722]],
+  foeLook: { wraith: { kind: 'wraith', shadow: 0.75, tall: 2.3, yawBias: 0.45, glow: [1.6, 0x2cff7a] } },
+  makeFoe: (id, level) => makeWraith({ level }),
+  makeLunara: () => makeLunara({}),
+  makeEnvoi: () => makeEnvoi({}),
+  fight: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }], flags: { party: true, veil: true }, herbs: Object.assign({}, BattleSim.BAGS.gate) }),
+  pickNote: (L) => 'The wraiths are level 12' + (L < 10 ? ': the party is well behind them. ' : L >= 12 ? ': the party has caught up with them. ' : ', two levels above the party. ') + 'Io has Moth Veil. Herbs for a gate fight: 4 Moonpetal, 2 Lavender, 3 Silver Mugwort, 2 Ember-star Lily and 2 Nightrose.',
+  introMsg: 'Dawnroost’s living node still burns, and its light has drawn the wraiths.',
+  introAfter: 'Three wraiths, stronger than any the party has met, rise around the node.',
+  attackText: () => 'The wraiths close in!',
+  winMoth: 'Three pale moths rise from the empty robes and drift into the light of the node.',
+  winEnvoi: true,
+  envoiLines: [
+    'Io takes out the letters she was meant to burn, her letters to the dead, and admits she never could.',
+    'She folds them into a wyrm, and Sol lights its heart from the living node.',
+    'Envoi is made. It folds away until Io calls it.',
+  ],
+  winText: 'Envoi is made. From now on Io can call it once a battle, while Sol stands with 70 Heat or more: it takes the next blow whole on its Folding Ward, then wraps a foe in fire.',
+  loseText: 'The party falls in the courtyard. They wake at the last rest with everything they had, and the wraiths still circle the node. Keep Moth Veil on whoever they are striking, slow the fastest with Briars, and keep something back for their Eclipses.',
+});
+</script>
+</body>
+</html>

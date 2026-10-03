@@ -181,8 +181,8 @@
         checkEnd();
       }
     }
-    function frostEnds() {
-      B.frost = 0; emit({ t: 'frostEnds' });
+    function frostEnds(by) {
+      B.frost = 0; emit({ t: 'frostEnds', by: by || null });
       const late = B.frostLate; B.frostLate = null;
       if (!late || !alive(late.f)) return;
       if (B.ward) { B.ward = false; emit({ t: 'ward', who: late.f.key }); return; }
@@ -387,13 +387,15 @@
       const d = h.def.moves[id];
       emit({ t: 'move', who: h.key, move: id, name: d.name, target: tgt ? tgt.key : null });
       B.t += d.time || 2;
-      const hot = sunburnOn(h);
+      // the dive lands as hot as Sol was when she rose: the rise spends her Heat, so judging it at the dive would never land hot
+      const hot = id === 'stoop' && h.stoopHot != null ? h.stoopHot : sunburnOn(h);
       const c = cost(h, d); if (c) h.mp -= c;
       if (h.id === 'sol' && d.heat && !h.inTrance) h.heat = Math.max(0, Math.min(HE.sol.heat.max, h.heat + (d.heat < 0 ? d.heat : 0)));
       switch (id) {
         case 'attack': case 'flame': case 'crescent': case 'briars': case 'moonlight':
         case 'flareCut': case 'sunder': case 'emberRush': case 'daybreak': case 'highNoon': case 'stoop':
           strike(h, tgt, d, null, hot);
+          if (id === 'stoop') h.stoopHot = null;
           if (id === 'attack' && h.id === 'sol' && !h.inTrance) h.heat = Math.min(HE.sol.heat.max, h.heat + d.heat);
           break;
         case 'solarCrest': {
@@ -402,7 +404,7 @@
           if (!h.inTrance) h.heat = 0;
           break;
         }
-        case 'stoopRise': h.hovering = tgt ? tgt.key : null; emit({ t: 'hover', who: h.key }); break;
+        case 'stoopRise': h.hovering = tgt ? tgt.key : null; h.stoopHot = hot; emit({ t: 'hover', who: h.key }); break;
         case 'kestrel': B.kestrelUsed = true; tgt.stagger = true; emit({ t: 'kestrel', who: h.key, to: tgt.key }); break;
         case 'defend': h.defending = true; break;
         case 'guard': h.guarding = true; break;
@@ -445,8 +447,9 @@
       });
       if (who === 'envoi') {
         B.envoi = 2; B.ward = false;
-        // lore answer 12: its fire burns the frost away, the slow and the blow waiting in it
-        if (B.frost > 0) { B.frost = 0; B.frostLate = null; emit({ t: 'frostEnds', by: 'envoi' }); }
+        // lore answer 12: its fire ends the Frost Dust slow. The blow waiting in the frost still lands, as the party
+        // speeds back up (Chris, October 3)
+        if (B.frost > 0) frostEnds('envoi');
       } else B.lunara = 2;
       emit({ t: 'leave', who });
     }

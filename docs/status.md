@@ -2,7 +2,7 @@
 
 A handoff for the next session. Updated October 3, 2026, after the seventeenth round: Sol out of reach while she hovers, battles at 30 fps, rest places for a lost fight, and the game's places on Chris's D&D map.
 
-**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Steps 13 and 14, the party and the great wraith, are built too. Next is step 15, Dawnroost.
+**Phase 1, the models, is done** (`plan.md`): every model is polished, and the cast page runs at 60 fps with five models on Chris's Pixel 7a. **Phase 2, the battles, has its groundwork and its first battle:** the rules tables, a battle engine without graphics, a balance simulator that meets all 25 targets (Chris approved the new rules), and step 12, the first fight. Steps 13 to 15, the party, the great wraith and Dawnroost, are built too. Next is step 16, Halcyon's ambush.
 
 ## Working from the second account
 
@@ -93,6 +93,7 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 - Each turn, the engine resolves the action and returns its log. The screen splits the log at each move, plays that move's choreography with the model's own hit and cue times, and shows the engine's numbers as the blows land. What the player has been shown (HP, MP, Trance) catches up blow by blow, then matches the engine.
 - One screen plays any party (Io alone, or Io and Sol) against up to three foes. The page's config names the heroes and their places, the foe slots, how each foe looks, and `fight(level, pack)`, which returns the engine's setup. A start card can offer a level and a pack (`levels`, `packs`).
 - **The frame rate:** a header button cycles through the screen's own rate and caps of 60, 45 and 30, paced to the screen's refreshes and kept in the browser (`envoi.fps`). The end card shows the fight's average and slowest second. Headless Chrome renders only a few frames a second here, so the pacing was checked with simulated 60, 90 and 120 Hz screens.
+- **After the fight:** `winLights` sends the stolen lamplight home to the scene's windows (Bogmire); `winEnvoi` with `envoiLines` plays the making of Envoi at the scene's `envoiAt` (Dawnroost).
 - **Scenes:** a page names its painting (`scene: 'bogmire-boardwalk'`; the Night square by default). A scene file in `src/stage/` gives the matched camera, the lamps and cutouts, where Lunara rises (`summon`, `summonFrom`) and the windows that light again at the end (`windows`, with `winLights` on the page). A page can open with a line of story before and after the foes rise (`introMsg`, `introAfter`). A giant foe's look sets how far the heroes stop short (`reach`), how close it comes to strike (`near`) and how big its effects are (`fxScale`).
 - **Summons:** Lunara rises from the scene's summon spot (the Moonwell in the Night square); Envoi (when the page passes `makeEnvoi`) folds in between the party and the foes, takes the next blow on its Folding Ward (foes aim at the ward), and strikes on Io's next turn.
 - Every command with more than one target opens a target list (foes with their HP left, allies with their HP); an arrow marks the one pointed at, and the most hurt is pointed at first.
@@ -100,7 +101,7 @@ Every change the agents asked for is in, and all eight pages were rebuilt and ch
 
 ## Next steps
 
-1. Step 15, Dawnroost: three level 12 wraiths at the living node, on the Dawnroost backdrop (its camera matched as Bogmire's was); Envoi is made after it.
+1. Step 16, Halcyon's ambush: Halcyon at level 20 against the party at 15 or more, on the northern crossroads or frozen road backdrop: her moves on the battle screen, the Kestrel command from her third turn, Sol recognizing her, and both endings (the party falls and Sol steps in front of Io, or she retreats into the dark at 20%). Afterwards Sol learns Kestrel Stoop.
 2. Phase 3: reset the shards' prices (the Magpie and the shops) for the new experience curve, and play the whole chain of fights in order. The curve itself is set (about 79 wild fights, 40% in the last band).
 3. Step 19, the Magpie, builds on Chris's world travel demo (`reference/demos/the-magpie-over-aethermoor.html`).
 4. Walking (phase 4): trace each ground-level map's walls, exits and walk-behind parts, and set any map's own closer zoom. Io is 42 map px; the maps ship at 768 wide with sharp pixels; the zoom is 0.7×.

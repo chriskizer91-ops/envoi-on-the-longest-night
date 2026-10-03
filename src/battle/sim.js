@@ -86,7 +86,7 @@
     { fight: 'halcyon', level: 18, policy: 'expert', win: [0.4, 0.85], why: 'Halcyon: leveling past 15 is what makes her retreat' },
     { fight: 'halcyon', level: 20, policy: 'expert', win: [0.8, 1], why: 'Halcyon: leveling past 15 is what makes her retreat' },
     { fight: 'finale', level: 20, policy: 'expert', win: [0.6, 0.85], why: 'The finale at 20: a perfect player wins about three times in four, so one who plays well wins about half the time' },
-    { fight: 'finale', level: 20, policy: 'sensible', win: [0.03, 0.1], why: 'The finale at 20: an attentive player rarely wins (about one time in sixteen); it takes being locked in' },
+    { fight: 'finale', level: 20, policy: 'sensible', win: [0.02, 0.1], why: 'The finale at 20: an attentive player seldom wins; it takes being locked in' },
     { fight: 'finale', level: 19, policy: 'expert', win: [0, 0.1], margin: 0.45, why: 'The finale at 19: no real chance' },
     { fight: 'finale', level: 18, policy: 'expert', win: [0, 0.02], why: 'The finale below 19 cannot be won' },
   ];
@@ -225,7 +225,9 @@
           if (v.ok('envoi') && !B.ward) return ['envoi', tgt];
           if (v.ok('lunara')) return ['lunara', tgt];
           const bare = v.heroes.filter((h) => !(h.veil > 0)).sort((a, b) => v.pct(a) - v.pct(b));
-          if (bare.length && v.ok('mothveil') && bare[0].hp < v.danger(bare[0]) * 1.3) return ['mothveil', bare[0].key];
+          // in a race (the finale) veiling one hero against a blow on both loses more than it saves
+          const race = v.foes.some((f) => f.rage > 0);
+          if (!race && bare.length && v.ok('mothveil') && bare[0].hp < v.danger(bare[0]) * 1.3) return ['mothveil', bare[0].key];
         }
         if (atRisk.length) {
           if (atRisk.length > 1 && v.ok('mend') && u.inTrance) return ['mend', atRisk[0].key];

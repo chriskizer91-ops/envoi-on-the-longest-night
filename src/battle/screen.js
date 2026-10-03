@@ -453,7 +453,7 @@
       else if (e.t === 'burn') { D[e.to].hp = Math.max(1, D[e.to].hp - e.n); UI.number(chest(to), nf(e.n), 'burn'); }
       else if (e.t === 'veilBroken' || e.t === 'veilEnds') { const v = S.veils[e.who]; if (v && e.t === 'veilEnds') v.dismiss(); delete S.veils[e.who]; }
       else if (e.t === 'frost') { S.rimeOn = true; }
-      else if (e.t === 'frostEnds') { S.rimeOn = false; if (e.by === 'envoi') UI.note('Envoi’s fire burns the frost away.', 1.8); }
+      else if (e.t === 'frostEnds') { S.rimeOn = false; if (e.by === 'envoi') UI.note('Envoi’s fire ends the frost’s slow.', 1.8); }
       else if (e.t === 'down') {
         const u = E.unit(e.who);
         if (u.side === 'foe') {
@@ -902,6 +902,36 @@
       h.tyaw = h.home.yaw;
       if (s && !s.out) await goHome(s);
     }
+    // Envoi is made (lore answer 11): after Dawnroost, Io admits she never burned her letters to the dead, folds them
+    // into the wyrm, and Sol lights its heart at the living node. Between battles it folds away
+    async function envoiMade() {
+      const io = F.io, s = F.sol, M = EN.m, A = M.ACTIONS.summon;
+      for (const h of heroes) if (D[h.key].hp <= 0) { h.m.play('rise', true); D[h.key].hp = 1; }
+      await wait(0.6);
+      UI.cinematic(true); UI.vignette(0.45);
+      EN.pos = { x: EN.home.x, z: EN.home.z }; EN.yaw = EN.tyaw = faceYaw(EN.home, centerOf(heroes.map((h) => h.pos))) - 0.5;
+      io.tyaw = faceYaw(io.pos, EN.pos); if (s) s.tyaw = faceYaw(s.pos, EN.pos);
+      shotBoth(io.pos, EN.pos, 1, 2);
+      UI.msg(cfg.envoiLines[0], true); await wait(3.2);
+      io.m.play('summon', true); SND.sfx.chime();
+      await untilP(io.m, io.m.ACTIONS.summon.cues[0]);
+      await FX.projectile({ from: io.m.flamePos(V()), to: () => new THREE.Vector3(EN.pos.x, 1.6, EN.pos.z), dur: 0.7, arc: 1.2, color: 0xfff1d8, halo: 0xffb45a, size: 0.24, trail: [1, 0.85, 0.6], light: 0xffc890, lightI: 3 });
+      M.root.visible = true; if (M.fx) M.fx.visible = true; EN.shadow.visible = true; EN.on = true;
+      M.play('summon', true); SND.sfx.fire();
+      envoiShot(null, 1.2);
+      UI.msg(cfg.envoiLines[1], true);
+      await untilP(M, 0.27);
+      if (s && D.sol.hp > 0) { s.m.play('flareCut', true); SND.sfx.swish(); }
+      await untilP(M, A.cues[0]);
+      FX.ring(M.anchor('heart', V()), 0xffd08a, 0.2, 2.4, 0.6, 1); SND.sfx.boom(0.6); addShake(5);
+      await untilP(M, A.hits[0]);
+      FX.ring(M.anchor('seal', V()), 0xfff1c8, 0.2, 3, 0.7, 1); UI.flash('#fff1c8', 0.4, 0.35); SND.sfx.boom(1.0); addShake(8);
+      await until(() => !M.busy); await wait(1.0);
+      UI.msg(cfg.envoiLines[2], true); await wait(2.6);
+      EN.on = false; M.play('leave', true);
+      await until(() => !M.busy); envoiHide(); await wait(0.4);
+      UI.hideMsg(); UI.vignette(0); UI.cinematic(false);
+    }
     // the strike: it wraps its foe, eight blows as the ring of fire catches from the tail up, then the Last Word
     async function envoiStrike(ev) {
       const M = EN.m, A = M.ACTIONS.envoi;
@@ -1062,6 +1092,18 @@
       },
     };
 
+    // a foe gathers a charged blow (Black Noon, Void Sphere): it can be seen coming, and lands on the foe's next turn.
+    // Its ground glow pulses until then
+    async function chargeTurn(f, hd, ev) {
+      if (!f) { ev.rest(); return; }
+      UI.banner(hd.name, 2.2); shotAt(f.pos, 1.2, 2.4);
+      const W = f.m; if (W.ACTIONS && W.ACTIONS.charge) W.play('charge', true); else if (W.ACTIONS && W.ACTIONS.cast) W.play('cast', true);
+      FX.ring(f.pos, 0xc49cff, 0.3, 3.2 * (f.look.fxScale || 1), 1.2, 0.9); FX.converge(() => chest(f), [0.8, 0.65, 1], 1.3, 80);
+      SND.sfx.eclipse(); f.charged = true;
+      UI.note(E.unit(f.key).name + ' gathers ' + hd.name + '. It falls on its next turn.', 2.6);
+      await wait(1.8); ev.rest();
+    }
+
     // ---------- playing a turn's log ----------
     // The log splits into parts, each starting at a move, a strike, a Trance, a herb or a turn; each part plays its
     // own choreography, and the blows inside it are shown at that choreography's hit times
@@ -1082,6 +1124,7 @@
         else if (hd.t === 'strike' && hd.who === 'lunara') await lunaraStrike(ev);
         else if (hd.t === 'strike' && hd.who === 'envoi' && EN) await envoiStrike(ev);
         else if (hd.t === 'herb') await useHerb(F[hd.who], hd, ev);
+        else if (hd.t === 'charge') await chargeTurn(F[hd.who], hd, ev);
         else if (hd.t === 'move') {
           const f = F[hd.who], u = E.unit(hd.who), t = hd.target ? F[hd.target] : null;
           if (u.side === 'hero') {
@@ -1091,6 +1134,7 @@
             if (fn) await fn(f, t || firstFoe(), ev); else { await wait(0.8); ev.rest(); }
             if (f.key === 'sol') D.sol.heat = u.heat;
           } else {
+            if (hd.released) f.charged = false;
             UI.banner(hd.name, hd.move === 'eclipse' ? 2.4 : 1.4);
             const fn = (f.kind === 'wisp' ? WISP_MOVES : WRAITH_MOVES)[hd.move];
             if (fn) await fn(f, ev); else { await wait(0.8); ev.rest(); }
@@ -1256,6 +1300,8 @@
       const r = E.result(); S.result = r;
       // Envoi still warding when the fight ends: it burns away quietly
       if (EN && EN.on) { EN.on = false; EN.m.play('leave', true); }
+      // and Lunara, if she is still up, sinks away
+      if (LU && LU.on) { LU.on = false; LU.m.play('leave', true); }
       const mark = (k) => S.trace.push([k, +clock.t.toFixed(2)]);
       mark('finish');
       if (r.outcome === 'win') {
@@ -1271,6 +1317,7 @@
         await until(() => foes.every((f) => f.m.progress >= 0.99 || f.m.progress < 0 || f.m.action !== 'die'));
         mark('released'); UI.hideMsg();
         if (cfg.winLights) { const src = foes.find((f) => f.look.lights) || lastF; await relightTown(src.m.anchor('heart', V())); mark('relit'); }
+        if (cfg.winEnvoi && EN) { UI.hideEnemy(); await envoiMade(); mark('envoi'); }
         UI.cinematic(false); UI.hideEnemy(); SND.sfx.victory();
         const up = living('hero');
         shotField(2);
@@ -1351,6 +1398,7 @@
       for (const k in S.veils) { const v = S.veils[k]; if (v && v.dismiss) v.dismiss(); }
       S.veils = {}; FX.shield(false); S.rimeOn = false;
       for (let i = 0; i < TOWN.a.length; i++) TOWN.a[i] = TOWN.to[i] = 0; TOWN.ver++;
+      for (const f of foes) f.charged = false;
       LU.m.reset(); LU.on = false; LU.m.root.visible = false; if (LU.m.fx) LU.m.fx.visible = false; LU.shadow.visible = false;
       if (EN) { envoiHide(); EN.wrap = null; for (const d of ENV.ink) d.s.visible = false; }
     }
@@ -1408,7 +1456,7 @@
         const dying = f.m.action === 'die' && f.m.progress >= 0, fade = dying ? 1 - f.m.progress : f.m.root.visible ? 1 : 0;
         f.shadow.position.set(f.pos.x, 0.006, f.pos.z); f.shadow.material.opacity = 0.7 * fade;
         if (f.key === 'io') { f.m.flamePos(flameP); f.glow.position.set(flameP.x, 0.012, flameP.z); f.glow.material.opacity = (0.14 + f.m.flameLight.intensity * 0.1) * (1 - (f.m.moon || 0)) * (d && d.hp > 0 ? 1 : 0.3); }
-        else if (f.glow) { f.glow.position.set(f.pos.x, 0.012, f.pos.z); f.glow.material.opacity = 0.32 * fade; }
+        else if (f.glow) { f.glow.position.set(f.pos.x, 0.012, f.pos.z); f.glow.material.opacity = (f.charged ? 0.45 + 0.35 * Math.sin(clock.t * 5) : 0.32) * fade; }
       }
       // Lunara, while she is up
       if (LU.on || LU.m.busy) {
@@ -1514,7 +1562,7 @@
       glowG = disc(3.2, lightTex, 0xcfdcff, true, 2); glowG.position.set(WELL.x, 0.015, WELL.z); glowG.material.opacity = 0;
       if (cfg.makeEnvoi) {
         // as on its bench: between the party and the foes, nudged off Io so its coils keep clear of her
-        const ep = g(720, 790); ep.x += 0.55; ep.z -= 0.3; ep.yaw = 0;
+        const ep = SC.envoiAt ? g(...SC.envoiAt) : g(720, 790); if (!SC.envoiAt) { ep.x += 0.55; ep.z -= 0.3; } ep.yaw = 0;
         EN = fighter('envoi', addModel(cfg.makeEnvoi()), { kind: 'envoi', tall: 6.4 }, ep); EN.on = false;
         EN.shadow = disc(1.6, shadowTex, 0xffffff, false, 1); EN.shadow.scale.set(1, 0.6, 1); EN.shadow.position.set(ep.x, 0.006, ep.z);
         initEnvoi();

@@ -45,44 +45,45 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .num.heal{color:var(--good)}.num.big{font-size:34px;color:#fff6c8}.num.small{font-size:18px}.num.word{font-size:17px;color:#e9d8ff}
 .num.burn{font-size:16px;color:#ffb35c}.num.veil{font-size:16px;color:#cfe6ff}.num.heat{font-size:16px;color:#ffc46e}.num.ward{font-size:19px;font-style:italic;color:#fff1c8;text-shadow:0 0 8px #ff9a2e,0 2px 0 #4a1e08}
 #ui{position:absolute;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;max-width:760px;margin:0 auto;z-index:7}
-#cmd{padding:6px 4px;min-height:172px;display:flex;flex-direction:column}
-#cmd .title{font-size:12px;color:var(--dim);padding:2px 10px 4px;letter-spacing:.04em;text-transform:uppercase}
-#cmd button{appearance:none;border:0;background:none;color:var(--wt);text-shadow:inherit;text-align:left;display:flex;align-items:center;gap:6px;min-height:36px;padding:0 6px 0 4px;font-size:17px;border-radius:5px;position:relative}
-#cmd button .hand{width:26px;height:16px;flex:none;opacity:0}
+#cmd{padding:4px 3px;min-height:128px;display:flex;flex-direction:column}
+#cmd .title{font-size:10.5px;color:var(--dim);padding:1px 8px 3px;letter-spacing:.04em;text-transform:uppercase}
+#cmd button{appearance:none;border:0;background:none;color:var(--wt);text-shadow:inherit;text-align:left;display:flex;align-items:center;gap:5px;min-height:27px;padding:0 5px 0 3px;font-size:14.5px;border-radius:4px;position:relative}
+#cmd button .hand{width:21px;height:13px;flex:none;opacity:0}
 #cmd button.sel .hand{opacity:1;animation:bob .7s ease-in-out infinite}
 #cmd button.sel{background:rgba(255,255,255,.08)}
 #cmd button.hot{color:var(--gold)}
 #cmd button:disabled{color:rgba(244,246,255,.38);cursor:default}
-#cmd button .mp{margin-left:auto;font-size:13px;color:var(--dim);padding-right:4px;white-space:nowrap}
-#cmd .wait{margin:auto;color:var(--dim);font-size:14px}
+#cmd button .mp{margin-left:auto;font-size:11px;color:var(--dim);padding-right:4px;white-space:nowrap}
+#cmd .wait{margin:auto;color:var(--dim);font-size:12.5px}
 @keyframes bob{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
 /* the party's window: a block per hero (name and level, HP with MP or Heat, the turn and Trance gauges) */
-#status{padding:7px 10px 9px;display:flex;flex-direction:column;justify-content:center;gap:8px;min-height:172px}
-.hero{display:flex;flex-direction:column;gap:3px;padding-left:6px;border-left:2px solid transparent;transition:border-color .2s}
+#status{padding:5px 8px 6px;display:flex;flex-direction:column;justify-content:center;gap:5px;min-height:128px}
+.hero{display:flex;flex-direction:column;gap:2px;padding-left:5px;border-left:2px solid transparent;transition:border-color .2s}
 .hero.turn{border-left-color:var(--gold)}
 .hero.down{opacity:.55}
-.hero .name{font-family:"IM Fell English",Georgia,serif;font-size:17px;line-height:1.15;display:flex;align-items:baseline;gap:7px}
-.hero .name small{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:11.5px;color:var(--dim);margin-right:auto}
-.ttag{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:11px;font-weight:700;color:#1a1530;background:linear-gradient(90deg,#ffe3f4,#e2ecff);border-radius:4px;padding:1px 6px;opacity:0;transition:opacity .3s;text-shadow:none;align-self:center}
+.hero .name{font-family:"IM Fell English",Georgia,serif;font-size:14.5px;line-height:1.1;display:flex;align-items:baseline;gap:6px}
+.hero .name small{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:10px;color:var(--dim);margin-right:auto}
+.ttag{font-family:"Atkinson Hyperlegible",system-ui,sans-serif;font-size:9.5px;font-weight:700;color:#1a1530;background:linear-gradient(90deg,#ffe3f4,#e2ecff);border-radius:3px;padding:0 5px;opacity:0;transition:opacity .3s;text-shadow:none;align-self:center}
 .ttag.on{opacity:1}
-.stat{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
-.stat .lbl{font-size:12px;color:var(--dim)}
-.stat .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
-.stat .m{font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums}
+.stat{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
+.stat .lbl{font-size:10.5px;color:var(--dim)}
+.stat .v{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat .m{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums}
 .stat .v.low{color:var(--gold)}.stat .v.crit{color:#ff8a8a}
 .stat .sec{margin-left:auto;display:flex;gap:5px;align-items:baseline}
-.stat .sv{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat .sv{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
 .stat .sv.burn{color:#ffb35c}
-.gs{display:grid;grid-template-columns:3fr 2fr;gap:8px}
+.gs{display:grid;grid-template-columns:3fr 2fr;gap:6px}
+.gs .gauge{height:6px}
 .gw{display:flex;flex-direction:column;gap:2px}
-.gw span{font-size:10.5px;color:var(--dim);line-height:1}
+.gw span{font-size:9px;color:var(--dim);line-height:1}
 .gauge.atb i{background:linear-gradient(90deg,#4f7bff,#a8c4ff)}
 .gauge.atb.full i{background:linear-gradient(90deg,#ffd66e,#fff3c4);animation:pulse .6s ease-in-out infinite}
 .gauge.tr i{background:linear-gradient(90deg,#ff9fd4,#f4f2ff)}
 .gauge.tr.full i{animation:pulse .5s ease-in-out infinite}
-#status.solo .hero .name{font-size:19px}
-#status.solo .stat .v{font-size:22px}
-#status.solo .gs{grid-template-columns:1fr;gap:5px}
+#status.solo .hero .name{font-size:16px}
+#status.solo .stat .v{font-size:18px}
+#status.solo .gs{grid-template-columns:1fr;gap:4px}
 /* the arrow over the fighter a menu points at, and the frost at the edges */
 #marker{position:absolute;left:0;top:0;z-index:6;pointer-events:none;width:22px;height:18px;color:var(--gold);filter:drop-shadow(0 2px 2px rgba(0,0,0,.7))}
 #marker svg{display:block;width:22px;height:18px;animation:hover .8s ease-in-out infinite}
@@ -114,9 +115,9 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .go:disabled{opacity:.6;cursor:default}
 #skip{position:absolute;right:10px;top:10px;z-index:8}
 .skipb{appearance:none;border:1px solid rgba(255,255,255,.35);background:rgba(10,8,18,.6);color:#fff;border-radius:18px;padding:8px 14px;font-size:14px}
-@media (min-width:700px){#cmd,#status{min-height:150px}}
+@media (min-width:700px){#cmd,#status{min-height:112px}}
 @media (max-width:560px){#banner{left:auto;right:10px;top:10px;transform:translate(0,-8px);font-size:16px;padding:6px 12px;white-space:normal;text-align:center;max-width:calc(100% - 196px)}#banner.on{transform:translate(0,0)}#msg{top:34%}}
-@media (max-width:420px){#cmd button{font-size:15px;gap:4px;min-height:34px}#cmd button .hand{width:22px}#cmd button .mp{font-size:11.5px}.stat .v{font-size:20px}#status .name{font-size:17px}header{padding-inline:12px}}
+@media (max-width:420px){#cmd button{font-size:13.5px;gap:3px;min-height:26px}#cmd button .hand{width:18px}#cmd button .mp{font-size:10px}.stat .v{font-size:16px}#status .name{font-size:14.5px}header{padding-inline:12px}}
 /* the start card's choices: the party's level and the pack */
 .pickr{display:flex;flex-direction:column;gap:10px;margin:0 0 14px;text-align:left}
 .pickr label{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;font-size:14px;color:#dfe4ff}

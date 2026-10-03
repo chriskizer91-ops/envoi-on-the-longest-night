@@ -1,6 +1,6 @@
 # Still Open
 
-Everything not yet decided, as of October 3, 2026, eighteenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
+Everything not yet decided, as of October 3, 2026, nineteenth round. None of it blocks the next step; the battle numbers can change at any time and the simulator rechecks them.
 
 Every earlier question has been answered; the answers are in `design-decisions.md`, under the October 2 rounds.
 
@@ -21,6 +21,28 @@ Every earlier question has been answered; the answers are in `design-decisions.m
 9. Answered: about 70 to 85 wild fights, with the last band holding about 40% (`design-decisions.md`, sixteenth round).
 
 10. Answered: the party wakes at the last rest with everything it had, and the fight waits; Halcyon's ambush goes on with the story instead. Rest places go in every town, and camps where the way is long.
+
+13. **Where "half the time against an equal-level foe" applies.** Today, at the level each fight is meant for:
+    - the great wraith at 5: an attentive player wins 90%, an expert 99%;
+    - Dawnroost at 10 (its wraiths are level 12): attentive 91%, expert 98%;
+    - wild fights: nearly always won, except on entering a new band (attentive 91% to 99%, careless 39% to 72%).
+
+    If a decent player should win only about half the time at a fight's own level, the gates get much harder: an attentive player would win perhaps one time in four or five, and win easily a level or two later. The recommendation is to apply it to the gates and bosses, which are the fights a player prepares for, and keep wild fights mostly winnable, since they are the leveling. Is that right?
+
+14. **How herbs stay special.** Herbs heal more than Io's spells. One way to keep them scarce: herbs are easy to find, but the party carries at most one of each kind (five in all), so each one is a choice. The other way: no carry limit, but herbs are rare in the world and costly in shops. The recommendation is the carry limit: every fight starts from a known pouch, so the simulator can balance it exactly, and a player never hoards. Along with it, herbs about twice as strong as now:
+    - Moonpetal heals about three quarters of a hero's HP;
+    - Lavender heals both for about 40%;
+    - Nightrose revives at half HP;
+    - Silver Mugwort restores half of Io's MP;
+    - Ember-star Lily gives Sol 50 Heat.
+
+    Which way?
+
+15. **Moth Veil is hardly worth a turn.** With the best play the simulator finds, it changes almost nothing: Dawnroost 98% with it and 98% without, Halcyon at 18 62% and 61%, and in the finale it's better left unused, since it covers one hero against blows on both. It was meant to be the answer to the telegraphed blows. Keeping it on one hero, as decided, it could be made worth a turn:
+    - a bigger barrier, about 60% of the hero's HP instead of 35%;
+    - and it lasts until it breaks, not just two foe turns.
+
+    That way it saves the hero a charged blow would otherwise drop. Should it change like that, or stay as it is?
 
 ## Lore questions
 
