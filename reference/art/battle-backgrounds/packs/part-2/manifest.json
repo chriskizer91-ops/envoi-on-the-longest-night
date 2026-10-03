@@ -1,0 +1,63 @@
+{
+  "pack": "Aethermoor combat backgrounds",
+  "part": 2,
+  "images": [
+    {
+      "index": 7,
+      "title": "Sandspire Moonlit Steppe",
+      "region": "Sunscorch Wastes",
+      "locations": [
+        "Sandspire",
+        "The Sunscorch Wastes"
+      ],
+      "filename": "07-sunscorch-sandspire-moonlit-steppe.png",
+      "width": 1448,
+      "height": 1086,
+      "size_bytes": 2626438,
+      "sha256": "c0065393139ef8eddf67196a6864bd7e48e9aed1c261c52e42df8ab5b151b5ff"
+    },
+    {
+      "index": 8,
+      "title": "Miragewell Oasis Margin",
+      "region": "Sunscorch Wastes",
+      "locations": [
+        "Miragewell",
+        "Dusthaven",
+        "The Sunscorch Wastes"
+      ],
+      "filename": "08-sunscorch-miragewell-oasis-margin.png",
+      "width": 1448,
+      "height": 1086,
+      "size_bytes": 2550066,
+      "sha256": "b76ee92872906d971478a683702f273dc305691dd3a5df0642513574e3ad0292"
+    },
+    {
+      "index": 9,
+      "title": "Hearthstone Island Shore",
+      "region": "Hearthsea Shores",
+      "locations": [
+        "Hearthstone Keep",
+        "The Hearthsea"
+      ],
+      "filename": "09-hearthsea-hearthstone-island-shore.png",
+      "width": 1448,
+      "height": 1086,
+      "size_bytes": 2373078,
+      "sha256": "17af008130263240c10c9205ad475bf9fbf6e898770c20c8f76981db0a8d3fc0"
+    },
+    {
+      "index": 10,
+      "title": "Hearthsea Moonlit Headland",
+      "region": "Hearthsea Shores",
+      "locations": [
+        "The Hearthsea",
+        "Hearthstone Keep"
+      ],
+      "filename": "10-hearthsea-moonlit-headland.png",
+      "width": 1448,
+      "height": 1086,
+      "size_bytes": 2668582,
+      "sha256": "d85e21c48d8d25503cc111b7ff8ade751fefc4a3302e1120849e1d5965b9b5ed"
+    }
+  ]
+}

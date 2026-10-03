@@ -569,6 +569,9 @@
    play(name) { if (m.play(name, true)) { soundStart(name); setCaption(name); } }, strike: strikeBack, setWeather, setWrath, setPlay,
    advance(sec, quiet) { const n = Math.max(1, Math.round(sec * 30)); for (let i = 0; i < n; i++) step(1 / 30); if (!quiet) { renderer.info.reset(); render(); } return { calls: renderer.info.render.calls, tris: renderer.info.render.triangles }; },
    setPrey(id) { prey = id === 'sol' ? SOL : IO; aim(); },
+   // for pages built on this one (pass three's Battle Backgrounds): the frame-rate cap, and a fresh layout after the
+   // renderer's pixel ratio changes
+   get cap() { return CAP; }, set cap(v) { CAP = v; }, resize,
   };
  }
  requestAnimationFrame(() => setTimeout(() => {

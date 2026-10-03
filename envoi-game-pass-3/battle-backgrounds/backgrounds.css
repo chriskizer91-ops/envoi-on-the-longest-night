@@ -1,0 +1,15 @@
+/* Battle Backgrounds: the background and phone sections added to Colossus in the Meadow's panel. The page keeps the
+   fight page's look (bench.css, boss.css, fight.css); this only lays out the new controls. */
+.places{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.places .wbtn .t{font-family:var(--display);font-size:15px}
+.places .wbtn.unused{opacity:.62}
+.places .wbtn.unused[aria-pressed="true"]{opacity:1}
+.squeeze{flex-wrap:wrap}
+.squeeze .wbtn{flex:1 1 22%;min-width:0}
+.bgread{font-size:13px;line-height:1.45;color:var(--dim);margin:8px 0 6px;font-variant-numeric:tabular-nums}
+.bgread b{color:var(--wt);font-weight:700}
+#bgBest{touch-action:none;user-select:none;-webkit-user-select:none}
+#bgBest.held{border-color:var(--gold);background:rgba(255,214,110,.12)}
+#bgBest.held .t{color:var(--gold)}
+/* the page's own frame-rate buttons replace the fight page's 30/60 toggle */
+#cap60{display:none}

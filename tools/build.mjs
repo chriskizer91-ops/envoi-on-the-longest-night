@@ -1,5 +1,6 @@
 // Builds each demo shell in demos/ into one self-contained page in dist/: local scripts and
-// stylesheets are inlined, and image paths under art/ inside them become data URIs. three.js
+// stylesheets are inlined, and image paths under art/ inside them become data URIs, as do "./" image paths, read from
+// the page's own folder (a demo's own test pictures, which stay out of the game's art/). three.js
 // stays a cdnjs <script> tag, and the fonts come from Google Fonts, unless --offline puts them inside
 // the page too (the file Chris keeps, which must work with no internet).
 // --split leaves the art out of the page instead: it stays art/... beside it, copied into dist/<name>-split/ (the
@@ -12,11 +13,11 @@ import { createRequire } from 'module';
 const R = path.resolve(new URL('..', import.meta.url).pathname);
 const MIME = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', avif: 'image/avif' };
 const SPLIT = process.argv.includes('--split'), used = new Set();
-function inlineArt(code) {
-  return code.replace(/"(art\/[^"]+\.(webp|png|jpe?g|avif))"/g, (m, p, ext) => {
-    const f = path.join(R, p);
+function inlineArt(code, dir) {
+  return code.replace(/"((?:art\/|\.\/)[^"]+\.(webp|png|jpe?g|avif))"/g, (m, p, ext) => {
+    const own = p.startsWith('./'), f = own ? path.resolve(dir, p) : path.join(R, p);
     if (!fs.existsSync(f)) return m;
-    if (SPLIT) { used.add(p); return m; }
+    if (SPLIT && !own) { used.add(p); return m; }
     return '"data:' + MIME[ext] + ';base64,' + fs.readFileSync(f).toString('base64') + '"';
   });
 }
@@ -50,7 +51,7 @@ for (const rel of files) {
   const src = path.resolve(R, rel), dir = path.dirname(src);
   let html = fs.readFileSync(src, 'utf8');
   html = html.replace(/<script src="(\.\.?\/[^"]+\.js)"><\/script>/g, (m, p) => {
-    let code = inlineArt(fs.readFileSync(path.resolve(dir, p), 'utf8'));
+    let code = inlineArt(fs.readFileSync(path.resolve(dir, p), 'utf8'), dir);
     if (esbuild) code = esbuild.transformSync(code, { minify: true, target: 'es2019', legalComments: 'none' }).code;
     return '<script>\n/* ' + path.relative(R, path.resolve(dir, p)) + ' */\n' + code.replace(/<\/script/gi, '<\\/script') + '\n</script>';
   });

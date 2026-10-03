@@ -1,0 +1,91 @@
+{
+  "pack": "Aethermoor combat backgrounds",
+  "part": 1,
+  "images": [
+    {
+      "index": 1,
+      "title": "Wickhollow River Glade",
+      "region": "Woodland",
+      "locations": [
+        "Wickhollow",
+        "The Gloamwood"
+      ],
+      "filename": "01-woodland-wickhollow-river-glade.png",
+      "width": 1448,
+      "height": 1086,
+      "size_bytes": 2623712,
+      "sha256": "dda56e6773dbaa6d14430c80dbcbfac0328a3a39c15cc4fc271b136f6ff12e90"
+    },
+    {
+      "index": 2,
+      "title": "Eldergrove First-Age Clearing",
+      "region": "Woodland",
+      "locations": [
+        "Eldergrove",
+        "The Verdant Wilds"
+      ],
+      "filename": "02-woodland-eldergrove-first-age-clearing.png",
+      "width": 1448,
+      "height": 1086,
+      "size_bytes": 2553251,
+      "sha256": "045c004c3cd9424c5488e979e340ebcc9a96c9e24d2e2236319a8302aa9da7b1"
+    },
+    {
+      "index": 3,
+      "title": "Bogmire Lantern Banks",
+      "region": "Gloomfen",
+      "locations": [
+        "Bogmire",
+        "The Gloomfen"
+      ],
+      "filename": "03-gloomfen-bogmire-lantern-banks.png",
+      "width": 1448,
+      "height": 1086,
+      "size_bytes": 2521825,
+      "sha256": "a155e8f2f8f57248c6abaf9a802ae82f2ab8fe51350ea1b1f8947c2cee955ddc"
+    },
+    {
+      "index": 4,
+      "title": "Misthollow Drowned City",
+      "region": "Gloomfen",
+      "locations": [
+        "Misthollow Ruins",
+        "The Gloomfen"
+      ],
+      "filename": "04-gloomfen-misthollow-drowned-city.png",
+      "width": 1448,
+      "height": 1086,
+      "size_bytes": 2461172,
+      "sha256": "0f48ccf9b2f59976fb85ee9bea3fcbabc236cfed7a64173d6507fddda897dd42"
+    },
+    {
+      "index": 5,
+      "title": "Frostmere Lakeside Meadow",
+      "region": "Ironspire Peaks",
+      "locations": [
+        "Frostmere Lake",
+        "The Ironspire Peaks"
+      ],
+      "filename": "05-ironspire-frostmere-lakeside-meadow.png",
+      "width": 1448,
+      "height": 1086,
+      "size_bytes": 2609171,
+      "sha256": "1da5fdfa42121a688c7b843d64e5156e85b5af777a14f81b153f679e121494ff"
+    },
+    {
+      "index": 6,
+      "title": "Ironhold High Pass",
+      "region": "Ironspire Peaks",
+      "locations": [
+        "Ironhold",
+        "Stormwatch",
+        "The Ironspire Peaks"
+      ],
+      "filename": "06-ironspire-ironhold-high-pass.png",
+      "width": 1448,
+      "height": 1086,
+      "size_bytes": 2622434,
+      "sha256": "75b11cf52a0e691a29e03609bdf4064141b438aae9a485d178e373ef095b73ec"
+    }
+  ]
+}
