@@ -19,12 +19,12 @@ We are in **phase 1, the models** (`plan.md`). Every model gets touched up again
 
 ## New character ideas
 
-Added October 3, 2026: `../3d-model-new-character-ideas/` holds creatures Chris brings as ideas, polished one folder each and kept apart from the cast until he places them.
+Added October 3, 2026: `../3d-model-new-character-ideas/` holds creatures Chris brings as ideas, polished one folder each and kept apart from the cast until he places them. Their benches share two painted places: the wild glade, and the wild meadow, whose day, night and weather turn by themselves and whose grass answers a creature's blows.
 
 | Idea | Link | State |
 |---|---|---|
-| Bramble Horror | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Version 2: thorns, veins and a feeding hollow, whip-sprung canes that coil round the prey, Undergrowth and Scorch, a wild glade bench with Io as its prey. Where it lives is asked in `questions/open.md`. |
-| Bramble Colossus | https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q | Version 1: the Bramble Horror grown into a 7.5 m boss, with a braided spire, a bud that opens on its glowing heart, ten moves of its own and a Wrath phase at half HP; a bench where it fights Io and Sol, or fights them by itself. Its name and place are asked in `questions/open.md`. |
+| Bramble Horror | https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv | Version 2: thorns, veins and a feeding hollow, whip-sprung canes that coil round the prey, Undergrowth and Scorch, a bench with Io as its prey in the wild glade or the wild meadow. Where it lives is asked in `questions/open.md`. |
+| Bramble Colossus | https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q | Version 1: the Bramble Horror grown into a 7.5 m boss, with a braided spire, a bud that opens on its glowing heart, ten moves of its own and a Wrath phase at half HP; a bench where it fights Io and Sol, or fights them by itself, in the wild meadow or the wild glade. Its name and place are asked in `questions/open.md`. |
 
 ## The models
 

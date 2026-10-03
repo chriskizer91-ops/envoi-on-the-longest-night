@@ -4,7 +4,7 @@ The Bramble Horror grown into a boss: the same hunting blackberry thicket, as bi
 
 "Bramble Colossus" is a working name. Nothing here is canon until Chris places it (`docs/questions/open.md`, question 3).
 
-**The page:** https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q (private; it works on a phone). `Bramble_Colossus_Bench.html` in this folder is the same page as one file. It opens with the colossus rising out of the earth.
+**The page:** https://claude.ai/artifact/HbXsmA8xNLUnLMQ6px7h6Q (private; it works on a phone). `Bramble_Colossus_Bench.html` in this folder is the same page as one file. It opens at sunset in the wild meadow, with the colossus rising out of the earth.
 
 ![Its moves](renders/moves.jpg)
 
@@ -47,7 +47,7 @@ None of these come from a sheet: they were made for it, to be a boss's.
 - **Watch a fight:** the colossus and the party take turns by themselves. It turns to its Wrath at half HP and fights harder, falls after about a minute and a half, and wakes again.
 - **The boss bar** across the top shows its HP with a mark at half, where the Wrath begins, and which phase it is in. **Wrath** in Fight it switches the second phase's look on and off.
 - The battle's feel as on the Bramble Horror's bench: big numbers, rings, hit-stop, a camera that shakes harder the heavier the blow, and flashes. The ground rumbles while it rises.
-- The same wild glade as the Bramble Horror's (`../bramble-horror/glade.js`), with a wider clearing and metre rings out to 12 m. Night square light or overcast daylight.
+- **Place:** the wild meadow (`../bramble-horror/meadow.js`; `../README.md` says everything it does), the wild glade with a wider clearing, or a bare floor, all with metre rings out to 12 m. In the meadow its hours and weather turn, and the meadow answers the colossus: Thorn Lance, Hammerfall, Thorn Volley, Devour's grab and Thornwood send shockwaves out through the grass from where they land; the Awakening shakes the ground as it rises and its roar puts the birds up, as Alert and Wrath do; Maelstrom raises a whirlwind; Wrath turns the sky into a red storm, which clears when it is calm again; and when it is Felled, its spire crashes down in a great wave. In the glade the light is the Night square's or an overcast day.
 
 The damage numbers are placeholders until the battle steps: level 1 is the Night square's scale (its HP 6,400, Hammerfall 320 then 150, Thornwood 220 and 300), and everything grows 20% a level with a swing of up to 25% either way.
 
@@ -93,7 +93,7 @@ Notes: holding (0 to 1) and anchor('held') say where a seized prey belongs; insi
 | Path | What it is |
 |---|---|
 | `colossus.js` | The model |
-| `bramble-colossus.html`, `bench.js`, `boss.css` | The bench page's source. It also loads Io's and Sol's original models (`src/models/originals/`), the Bramble Horror (`../bramble-horror/bramble.js`), its glade and its `bench.css` |
+| `bramble-colossus.html`, `bench.js`, `boss.css` | The bench page's source. It also loads Io's and Sol's original models (`src/models/originals/`), the Bramble Horror (`../bramble-horror/bramble.js`), its two places (`glade.js` and `meadow.js`) and its `bench.css` |
 | `Bramble_Colossus_Bench.html` | The built page, one file |
 | `renders/` | Its moves, its open flower, and its size beside the Bramble Horror, rendered headless from the bench |
 

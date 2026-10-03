@@ -79,6 +79,11 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .slider{display:flex;align-items:center;gap:10px;font-size:13px}
 .slider input{flex:1;accent-color:#b7e39b;min-width:0;min-height:28px}
 .slider output{width:42px;text-align:right;font-variant-numeric:tabular-nums;color:var(--dim)}
+.slider output.clock{width:62px}
+.place3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.place3 .wbtn{align-items:center;text-align:center;padding:6px 4px}
+#meadowCtl{display:flex;flex-direction:column;gap:7px}
+#meadowCtl[hidden]{display:none}
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 8px;font-size:12px;color:var(--dim)}
 .stats b{display:block;color:var(--wt);font-size:15px;font-variant-numeric:tabular-nums}
 .note{margin:0;font-size:12px;color:var(--dim);line-height:1.35}

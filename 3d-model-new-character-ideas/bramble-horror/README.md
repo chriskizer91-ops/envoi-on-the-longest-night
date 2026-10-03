@@ -4,6 +4,10 @@ A patient predator of the Wildlands of the Southern Isles. What looks like a lus
 
 **The page:** https://claude.ai/artifact/ASy7Y7hL3EuAHZbFDwihWv (private; it works on a phone). Its boss form, the Bramble Colossus, is in `../bramble-colossus/`. **Before** and **After** at the top switch between the Bramble as it came from its sheets and the polished one. `Bramble_Horror_Bench.html` in this folder is the same page as one file: version 2. `versions/Bramble_Horror_Bench_v1.html` keeps version 1.
 
+## The wild meadow, October 3, 2026
+
+Light and place has a second place now: **Wild meadow**, next to the wild glade (which the bench still opens in). Its sun sets and rises, its weather turns from clear to rain to a thunderstorm, and its grass answers the Bramble: Strike, Thorn Sweep, Undergrowth and Appear send ripples out through it, Thorn Sweep stirs a swirl, and Appear and Alert put the birds up out of the trees. `../README.md` says everything it does.
+
 ## Version 2, October 3, 2026
 
 Once version 1 was finished I looked at what still read weakest in its renders, and changed that:
@@ -88,7 +92,7 @@ The Ancient Crown plays every move 15% slower. The bench's damage numbers are pl
 | Build time, desktop | 220 to 420 ms | 180 to 320 ms | 170 to 270 ms |
 | Animation, per frame | 0.1 to 0.6 ms | 0.1 to 0.35 ms | 0.1 to 0.4 ms |
 
-"Shrunk and compressed" is the file minified and gzipped, the way a finished game would ship it. The bench page is bigger (about 360 KB) because it also carries Io, the original Bramble for the Before switch, and the glade.
+"Shrunk and compressed" is the file minified and gzipped, the way a finished game would ship it. The bench page is bigger (about 440 KB) because it also carries Io, the original Bramble for the Before switch, and its two places.
 
 Like the original, it has more bones than the spec's ceiling of 64 (its berry bunches swing on bones of their own). That needs bone textures, which every phone with WebGL 2 has.
 
@@ -116,11 +120,12 @@ Notes: holding (0 to 1) and anchor('held') say where a grabbed prey belongs (Gra
 | `bramble.js` | The polished model |
 | `bramble-horror.html`, `bench.js`, `bench.css` | The bench page's source; it also loads Io's original model from `src/models/originals/witch.js` |
 | `glade.js` | The wild glade, `makeGlade()`, written to be reused by other wilderness benches; the Bramble Colossus's bench uses it with a wider clearing |
+| `meadow.js` | The wild meadow, `makeMeadow()`: day and night, weather, and grass that answers a creature's blows; shared by both benches |
 | `Bramble_Horror_Bench.html` | The built page, one file (version 2) |
 | `versions/Bramble_Horror_Bench_v1.html` | Version 1's page, kept as it was delivered |
 | `original/Bramble_Horror_Bench.html` | The page as Chris brought it, untouched |
 | `original/bramble.js` | Its model, renamed `makeBrambleOriginal` for the Before switch; never edited |
-| `renders/` | Before and after, the moves (version 1 and version 2) and the forms, rendered headless from the bench |
+| `renders/` | Before and after, the moves (version 1 and version 2), the forms and the wild meadow, rendered headless from the benches |
 
 ## Still open
 

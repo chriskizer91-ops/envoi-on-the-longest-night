@@ -1,8 +1,9 @@
-// bench.js: the Bramble Horror's model bench. The creature stands in a wild glade under the battle screen's lights. Io,
+// bench.js: the Bramble Horror's model bench. The creature stands in a wild glade under the battle screen's lights, or
+// in a wild meadow whose hours and weather turn by themselves and answer its blows. Io,
 // the Witch (her original model, as every bench's supporting actors are), stands where its canes reach: she takes its
 // blows, is lured toward its fruit, held and dragged in its Grab, and strikes back with her dagger and her flame. Big
 // numbers on the game's level curve, hit-stop, a shaking camera, and its HP driving its wilt. three.js r128 (global
-// THREE); needs makeBramble, makeBrambleOriginal (the Before switch), makeWitchOriginal and makeGlade.
+// THREE); needs makeBramble, makeBrambleOriginal (the Before switch), makeWitchOriginal, makeGlade and makeMeadow.
 // Test hooks for headless checks are on window.__bench.
 (function () {
  'use strict';
@@ -43,7 +44,7 @@
   { id: 'guard', name: 'Guard', note: 'thorn wall' },
   { id: 'spin', name: 'Turntable', note: 'slow turn' },
  ];
- const opts = { variant: 'classic', level: 1, after: true, walk: false, guard: false, spin: false, prey: 'io', day: false, scenery: true, rings: true };
+ const opts = { variant: 'classic', level: 1, after: true, walk: false, guard: false, spin: false, prey: 'io', day: false, place: 'glade', weather: 'clear', timeRuns: true, rings: true };
  const lvlK = () => Math.pow(1.2, opts.level - 1);
  const swing = (n) => Math.max(1, Math.round(n * (1 + (Math.random() * 2 - 1) * .25)));
  const V3 = (x, y, z) => new THREE.Vector3(x || 0, y || 0, z || 0);
@@ -66,6 +67,15 @@
  { const l = new THREE.DirectionalLight(0xbcd0ff, 0.25); l.position.set(-6, 4, -5); day.add(l); }
  scene.add(night, day); day.visible = false;
  const glade = makeGlade({ radius: 3.4 }); scene.add(glade.root);
+ // the wild meadow (built the first time it is chosen): its own sky, hours and weather, and the lights it asks for, which
+ // at night are the Night square's; its two lanterns stand to either side, in for the battle's lamps
+ const rig = new THREE.Group(), rigHemi = new THREE.HemisphereLight(0x756aa8, 0x33262f, 1.1), rigSun = new THREE.DirectionalLight(0xb8c0ff, .62), rigFill = new THREE.DirectionalLight(0xffdcc0, .42);
+ rigFill.position.set(2, 5, 10); rig.add(rigHemi, rigSun, rigFill); rig.visible = false; scene.add(rig);
+ let meadow = null;
+ function getMeadow() {
+  if (!meadow) { meadow = makeMeadow({ radius: 4.4, rings: 6, grass: .6, lamps: [[.2, -3.9, 1.2], [-4.1, 3.6, 1]] }); meadow.setTime(17.6); meadow.onThunder = (k) => shake(.015 + .02 * k); scene.add(meadow.root); }
+  return meadow;
+ }
 
  // ---------- the prey: Io as she is in the Night square demo, or a plain 1.8 m figure ----------
  const io = makeWitchOriginal(); scene.add(io.root); if (io.fx) scene.add(io.fx);
@@ -147,8 +157,25 @@
   if (opts.prey === 'io') { if (PR.cheer < 0) io.play('hurt', true); }
   else PR.flinch = 1;
  }
+ // in the meadow its blows land in the grass: a ripple runs out through it, and the bigger ones shake the trees and put the
+ // birds up
+ function meadowHit(name, i) {
+  if (opts.place !== 'meadow' || !meadow) return;
+  if (name === 'strike') meadow.impact(PR.home.x, PR.home.z, .3);
+  if (name === 'grab' && i === 0) meadow.impact(PR.home.x, PR.home.z, .15);
+  if (name === 'sweep') meadow.impact(0, 1.5, .4);
+  if (name === 'undergrowth') meadow.impact(PR.home.x, PR.home.z, i ? .35 : .45);
+ }
+ function meadowCue(name, i) {
+  if (opts.place !== 'meadow' || !meadow) return;
+  if (name === 'appear') { meadow.impact(0, 0, .4); meadow.roar(.45); }
+  if (name === 'alert') meadow.roar(.2);
+  if (name === 'undergrowth' && i === 0) meadow.impact(0, 0, .3);
+  if (name === 'die') meadow.impact(0, 0, .3);
+ }
  // its blows on the prey
  function onHit(name, i) {
+  meadowHit(name, i);
   if (!preyOn()) return;
   if (name === 'lure') { preyHead(_h); pop('Lured', _h, 'word'); PR.lured = true; return; }
   const base = (BLOWS[name] || [])[i]; if (!base) return;
@@ -161,6 +188,7 @@
  }
  // its cues: Consume heals it after each blow; Undergrowth's canes slam into the soil; Appear's ground heaves
  function onCue(name, i) {
+  meadowCue(name, i);
   if (name === 'consume' && preyOn()) { const n = swing(HEALS.consume * lvlK()); hp = Math.min(hpMax, hp + n); setHP(); hpWilt(); m.anchor('top', _h); _h.y += .2; pop('+' + n.toLocaleString('en-US'), _h, 'heal'); }
   if (name === 'undergrowth' && i === 0) { shake(.09); hitStop(.05); }
   if (name === 'appear') shake(.05);
@@ -302,14 +330,43 @@
  $('wilt').addEventListener('input', (e) => { const v = +e.target.value / 100; $('wiltOut').textContent = Math.round(v * 100) + '%'; m.state.wilt = v; hp = Math.max(1, Math.round(hpMax * (1 - v))); setHP(); });
  $('level').addEventListener('input', (e) => { $('levelOut').textContent = e.target.value; });
  $('level').addEventListener('change', (e) => { opts.level = +e.target.value; build(); });
+ // Night square and Daylight: in the glade, the battle's light or an overcast day; in the meadow they set its clock to ten at
+ // night (when its light is the Night square's) or to noon, so there they are not left pressed
+ let mDay = false; // whether the meadow's clock says day (the glade keeps its own light in opts.day)
  function setLight(isDay) {
-  opts.day = isDay; day.visible = isDay; night.visible = !isDay; glade.setDay(isDay);
-  stage.classList.toggle('day', isDay);
-  $('lightDay').setAttribute('aria-pressed', String(isDay)); $('lightNight').setAttribute('aria-pressed', String(!isDay));
+  if (opts.place === 'meadow') { meadow.setTime(isDay ? 12 : 22); syncHour(); mDay = isDay; }
+  else { opts.day = isDay; day.visible = isDay; night.visible = !isDay; glade.setDay(isDay); }
+  stage.classList.toggle('day', isDay); showDay(isDay);
  }
+ function showDay(isDay) { const md = opts.place === 'meadow'; $('lightDay').setAttribute('aria-pressed', String(!md && isDay)); $('lightNight').setAttribute('aria-pressed', String(!md && !isDay)); }
+ function setPlace(p) {
+  opts.place = p; const md = p === 'meadow';
+  if (md) getMeadow();
+  if (meadow) { meadow.root.visible = md; meadow.setRings(opts.rings); }
+  glade.root.visible = !md; glade.setScenery(p === 'glade'); glade.setRings(opts.rings);
+  rig.visible = md; night.visible = !md && !opts.day; day.visible = !md && opts.day; glade.setDay(opts.day);
+  if (md) mDay = meadow.day; stage.classList.toggle('day', md ? mDay : opts.day); showDay(md ? mDay : opts.day);
+  $('lightNight').querySelector('small').textContent = md ? '10 pm, battle light' : 'the battle\'s light';
+  $('lightDay').querySelector('small').textContent = md ? 'noon' : 'overcast';
+  for (const b of $('placeSeg').querySelectorAll('.wbtn')) b.setAttribute('aria-pressed', String(b.dataset.id === p));
+  $('meadowCtl').hidden = !md; if (md) syncHour();
+ }
+ const clock = (h) => { const mn = Math.round(h * 60) % 1440, hh = Math.floor(mn / 60); return ((hh + 11) % 12 + 1) + ':' + String(mn % 60).padStart(2, '0') + (hh < 12 ? ' am' : ' pm'); };
+ let hourDrag = false;
+ function syncHour() { if (!meadow || hourDrag) return; $('hour').value = meadow.time.toFixed(2); $('hourOut').textContent = clock(meadow.time); }
+ function setWeather(id) { opts.weather = id; getMeadow().setWeather(id); for (const x of $('weatherSeg').querySelectorAll('.wbtn')) x.setAttribute('aria-pressed', String(x.dataset.id === id)); }
+ for (const [id, name, note] of [['glade', 'Wild glade', 'mist, fireflies'], ['meadow', 'Wild meadow', 'hours, weather'], ['bare', 'Bare floor', 'nothing round it']]) {
+  const b = wbtn(name, note, opts.place === id); b.dataset.id = id; b.addEventListener('click', () => setPlace(id)); $('placeSeg').appendChild(b);
+ }
+ for (const [id, name, tip] of [['clear', 'Clear', 'A fair sky and a breeze'], ['rain', 'Rain', 'Rain, a stronger wind and puddles'], ['storm', 'Storm', 'A thunderstorm: lightning, thunder and a gale']]) {
+  const b = wbtn(name, null, opts.weather === id); b.dataset.id = id; b.title = tip; b.addEventListener('click', () => setWeather(id)); $('weatherSeg').appendChild(b);
+ }
+ $('hour').addEventListener('pointerdown', () => { hourDrag = true; });
+ for (const ev of ['pointerup', 'pointercancel', 'change']) $('hour').addEventListener(ev, () => { hourDrag = false; });
+ $('hour').addEventListener('input', (e) => { getMeadow().setTime(+e.target.value); $('hourOut').textContent = clock(+e.target.value); });
+ $('timeRuns').addEventListener('click', (e) => { opts.timeRuns = !opts.timeRuns; e.currentTarget.setAttribute('aria-pressed', String(opts.timeRuns)); });
  $('lightNight').addEventListener('click', () => setLight(false)); $('lightDay').addEventListener('click', () => setLight(true));
- $('scenery').addEventListener('click', (e) => { opts.scenery = !opts.scenery; e.currentTarget.setAttribute('aria-pressed', String(opts.scenery)); glade.setScenery(opts.scenery); });
- $('rings').addEventListener('click', (e) => { opts.rings = !opts.rings; e.currentTarget.setAttribute('aria-pressed', String(opts.rings)); glade.setRings(opts.rings); });
+ $('rings').addEventListener('click', (e) => { opts.rings = !opts.rings; e.currentTarget.setAttribute('aria-pressed', String(opts.rings)); glade.setRings(opts.rings); if (meadow) meadow.setRings(opts.rings); });
  function setVersion(after) {
   if (after === opts.after) return; opts.after = after;
   $('vAfter').setAttribute('aria-pressed', String(after)); $('vBefore').setAttribute('aria-pressed', String(!after)); build();
@@ -338,7 +395,7 @@
 
  // ---------- loop ----------
  function resize() { const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h, false); cam.aspect = w / Math.max(1, h); cam.fov = cam.aspect < .9 ? 42 : 30; cam.updateProjectionMatrix(); }
- let gt = 0, phase = 0, statT = 0;
+ let gt = 0, phase = 0, statT = 0, hourT = 0;
  function step(rdt) {
   // hit-stop: the world holds still a moment when a heavy blow lands
   let dt = rdt; if (stopT > 0) { stopT -= rdt; dt = 0; }
@@ -352,7 +409,14 @@
   if (A && p >= 0) { A.hits.forEach((h, i) => { if (lastP < h && p >= h) onHit(a, i); }); A.cues.forEach((h, i) => { if (lastP < h && p >= h) onCue(a, i); }); lastP = p; }
   if (a === 'appear' && hp < hpMax && p < .1) { hp = hpMax; setHP(); hpWilt(); }
   stepPrey(dt, gt);
-  glade.update(gt);
+  if (opts.place === 'meadow' && meadow) {
+   // the meadow: its Thorn Sweep stirs a swirl through the grass, and its lights are the bench's
+   meadow.vortex(0, .8, 3.6, a === 'sweep' && p > .28 && p < .62 ? .8 : 0);
+   meadow.timeRate = opts.timeRuns ? .07 : 0; meadow.update(gt, dt, cam);
+   const L = meadow.light; rigHemi.color.copy(L.hemiSky); rigHemi.groundColor.copy(L.hemiGround); rigHemi.intensity = L.hemiI;
+   rigSun.position.copy(L.dir).multiplyScalar(20); rigSun.color.copy(L.color); rigSun.intensity = L.I; rigFill.color.copy(L.fillC); rigFill.intensity = L.fillI;
+   if ((hourT += rdt) > .25) { hourT = 0; syncHour(); const dd = meadow.day; if (dd !== mDay) { mDay = dd; stage.classList.toggle('day', dd); } }
+  } else glade.update(gt);
   shakeA *= Math.exp(-rdt * 9); flashA *= Math.exp(-rdt * 7);
   placeCam(rdt);
   // the readout
@@ -365,7 +429,7 @@
  function render() { $('flash').style.opacity = flashA > .01 ? flashA.toFixed(3) : '0'; renderer.render(scene, cam); }
  const DBG = { freeze: false };
  function start() {
-  build(); showPrey(); resize(); placeCam(0);
+  build(); setPlace(opts.place); showPrey(); resize(); placeCam(0);
   new ResizeObserver(resize).observe(stage);
   let last = performance.now();
   function frame(now) {
@@ -377,11 +441,16 @@
   requestAnimationFrame(frame);
   // test hooks for headless checks: freeze the clock, then step it by hand
   window.__bench = {
-   ready: true, DBG, opts, view, get m() { return m; }, io, renderer, scene,
+   ready: true, DBG, opts, view, get m() { return m; }, get meadow() { return meadow; }, io, renderer, scene,
    play(name) { if (m.play(name, true)) setAct(m.action || name); },
    advance(sec) { const n = Math.max(1, Math.round(sec * 60)); for (let i = 0; i < n; i++) step(1 / 60); render(); },
    strike(kind) { strikeBack(kind); },
-   set(o) { if (o.view) Object.assign(view, o.view); if (o.prey) { opts.prey = o.prey; showPrey(); } if (o.day !== undefined) setLight(o.day); if (o.after !== undefined) setVersion(o.after); if (o.variant || o.level) { if (o.variant) opts.variant = o.variant; if (o.level) opts.level = o.level; build(); } if (o.scenery !== undefined) { opts.scenery = o.scenery; glade.setScenery(o.scenery); } },
+   set(o) {
+    if (o.view) Object.assign(view, o.view); if (o.prey) { opts.prey = o.prey; showPrey(); } if (o.place) setPlace(o.place); if (o.day !== undefined) setLight(o.day);
+    if (o.after !== undefined) setVersion(o.after); if (o.variant || o.level) { if (o.variant) opts.variant = o.variant; if (o.level) opts.level = o.level; build(); }
+    if (o.scenery !== undefined) setPlace(o.scenery ? 'glade' : 'bare');
+    if (o.time !== undefined) { getMeadow().setTime(o.time); syncHour(); } if (o.weather) setWeather(o.weather); if (o.timeRuns !== undefined) opts.timeRuns = !!o.timeRuns;
+   },
   };
  }
  // let the page paint "Growing the thicket" before the models are built
