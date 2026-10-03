@@ -9,7 +9,8 @@
 //   opts: tiles (r, c) -> URL, places: { id: { name, at: [x, y], band } }, open(band) -> bool, magpie() -> [x, y] | null,
 //   speed (atlas px a second), zoom, encounter: { mean, min }, onEnter(id), onEncounter(band), onMagpie(), onMenu(),
 //   paintedIo (makePaintedIo's: she walks the world as she walks the ground maps, painted; the pixel Io stands in
-//   until her art loads)
+//   until her art loads), goal() -> null or [x, y]: where the story wants her next, which the little arrow points to
+//   (goal-arrow.js) and the mini-map rings
 // Needs makePixelIo and WORLD_MASK (world-mask.js). Defines window.World.
 (function () {
   'use strict';
@@ -75,7 +76,7 @@
     const io = makePixelIo(1);
     const P = { x: 1348, y: 1900, dir: 's', walkT: 0, moving: false, counter: 0, next: 300, walk: 0 };
     const IO_H = 42 * 0.42; // her height on the world map, in atlas px
-    let paused = false, route = null, inside = null, flash = 0, stopped = false;
+    let paused = false, route = null, inside = null, flash = 0, stopped = false, goalNow = null;
     const cam = { z: 2, x: 0, y: 0 };
     function layout() { cv.width = Math.round(root.clientWidth * DPR); cv.height = Math.round(root.clientHeight * DPR); }
 
@@ -206,6 +207,9 @@
       }
       const vgr = g.createRadialGradient(W / 2, H * 0.55, Math.min(W, H) * 0.35, W / 2, H * 0.55, Math.max(W, H) * 0.75);
       vgr.addColorStop(0, 'rgba(5,3,14,0)'); vgr.addColorStop(1, 'rgba(5,3,14,0.5)'); g.fillStyle = vgr; g.fillRect(0, 0, W, H);
+      // the story's next step: the little arrow over the place (above its name), or beside Io pointing the way
+      goalNow = !paused && opts.goal && window.GoalArrow ? opts.goal() : null;
+      if (goalNow && Math.hypot(goalNow[0] - P.x, goalNow[1] - P.y) > 40) GoalArrow.draw(g, { x: (goalNow[0] - cam.x) * cam.z, y: (goalNow[1] - cam.y) * cam.z, over: 38, ix: fx, iy: fy, ih: cam.z * IO_H, W, H, t });
       if (flash > 0) { g.fillStyle = 'rgba(5,3,14,' + flash.toFixed(3) + ')'; g.fillRect(0, 0, W, H); flash = Math.max(0, flash - 0.05); }
       const n = paused ? null : near();
       if (n) { act.hidden = false; if (act.textContent !== n.label) act.textContent = n.label; } else act.hidden = true;
@@ -243,6 +247,7 @@
       mg.lineWidth = Math.max(1, DPR); mg.strokeStyle = 'rgba(244,246,255,.85)'; mg.strokeRect(cam.x * k, cam.y * k, vw * k, vh * k);
       for (const th of things()) { mg.fillStyle = th.kind === 'magpie' ? '#9fc8ff' : '#ffd36e'; mg.beginPath(); mg.arc(th.x * k, th.y * k, 2.4 * DPR, 0, Math.PI * 2); mg.fill(); }
       const pulse = 0.5 + 0.5 * Math.sin(t / 180);
+      if (goalNow) { mg.lineWidth = 1.5 * DPR; mg.strokeStyle = '#ffd36e'; mg.beginPath(); mg.arc(goalNow[0] * k, goalNow[1] * k, (5 + pulse * 1.5) * DPR, 0, Math.PI * 2); mg.stroke(); }
       mg.fillStyle = '#1a0c1d'; mg.beginPath(); mg.arc(P.x * k, P.y * k, (3.4 + pulse) * DPR, 0, Math.PI * 2); mg.fill();
       mg.fillStyle = '#ff5fb2'; mg.beginPath(); mg.arc(P.x * k, P.y * k, (2.2 + pulse) * DPR, 0, Math.PI * 2); mg.fill();
     }

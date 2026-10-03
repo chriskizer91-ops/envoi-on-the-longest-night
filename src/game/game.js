@@ -7,7 +7,8 @@
 // opens the world map's bands; the rest lie under cold mist.
 // Until the flying demo (plan step 19) is joined in, boarding the Magpie picks a landing and the flight is a short
 // crossing of the night sky.
-// Game.start({ host, src(path) -> URL, skipTitle, state }) -> the game. Defines window.Game.
+// Game.start({ host, src(path) -> URL, skipTitle, state, chapter }) -> the game (chapter: a CHAPTERS index, for a page
+// that plays only that chapter: its title offers to begin it or carry on). Defines window.Game.
 (function () {
   'use strict';
   function el(tag, attrs, parent, text) { const e = document.createElement(tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; if (parent) parent.appendChild(e); return e; }
@@ -42,24 +43,25 @@
     frozenCamp: { name: 'The northeast peaks', band: 4, world: 'frozenCamp', sky: [2760, 1090] },
   };
   // the chapters: the start, and each gate with the party as the story leaves it there (story.js's path), for trying a
-  // later part without playing up to it (Chris, October 3). Each starts on the gate's map at its entrance, a few steps
-  // from the fight, with one of each herb and the shards for the band's Magpie upgrade; losing wakes the party at the
-  // nearest rest.
+  // later part without playing up to it (Chris, October 3). Each starts just before its gate, in the town on its
+  // doorstep (the crossroads' gate is the crossroads itself, so that one starts on its south road), with one of each
+  // herb and the shards for the band's Magpie upgrade; the town's first-arrival scene plays, and losing wakes the
+  // party at the town's rest. The last one starts at the foot of Misthollow, on the approach to the finale.
   const BEEN = ['first', 'visit:bogmire'];
   const CHAPTERS = [
     { name: 'The start' },
-    { name: 'Gate 5: the great wraith', level: 5, band: 1, magpie: 'wickhollow', flags: ['party', 'magpie'], done: BEEN,
-      where: ['bogmire-heart', [768, 980]], rest: ['bogmire', [1208, 281]], shards: 650 },
+    { name: 'Gate 5: the great wraith', level: 5, band: 1, magpie: 'wickhollow', flags: ['party', 'magpie'], done: ['first'],
+      where: ['bogmire', [70, 368], 'e'], rest: ['bogmire', [1208, 281]], shards: 650 },
     { name: 'Gate 10: Dawnroost', level: 10, band: 2, magpie: 'dawnroost', flags: ['party', 'magpie', 'lights', 'refit'],
-      done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp'), landings: ['bogmire', 'warmCamp', 'dawnroost'],
-      where: ['dawnroost-node', [768, 990]], rest: ['dawnroost', [340, 447]], shards: 2300 },
+      done: BEEN.concat('greatWraith', 'camp:warmCamp'), landings: ['bogmire', 'warmCamp', 'dawnroost'],
+      where: ['dawnroost', [645, 990]], rest: ['dawnroost', [340, 447]], shards: 2300 },
     { name: 'Gate 15: Halcyon', level: 15, band: 3, magpie: 'northCamp', flags: ['party', 'magpie', 'lights', 'refit', 'envoi', 'charge'],
       done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp', 'dawnroost', 'camp:northCamp'), landings: ['bogmire', 'warmCamp', 'dawnroost', 'northCamp'],
       where: ['crossroads', [768, 990]], rest: ['crossroads', [768, 990]], shards: 4500 },
-    { name: 'The finale', level: 20, band: 4, magpie: 'frozenCamp', flags: ['party', 'magpie', 'lights', 'refit', 'envoi', 'charge', 'stoop', 'shipyard', 'upgrade2'],
-      done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp', 'dawnroost', 'camp:northCamp', 'halcyon', 'visit:shipyard', 'camp:frozenCamp', 'visit:frozen-pass', 'visit:misthollow'),
+    { name: 'The approach to the finale', level: 20, band: 4, magpie: 'frozenCamp', flags: ['party', 'magpie', 'lights', 'refit', 'envoi', 'charge', 'stoop', 'shipyard', 'upgrade2'],
+      done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp', 'dawnroost', 'camp:northCamp', 'halcyon', 'visit:shipyard', 'camp:frozenCamp', 'visit:frozen-pass'),
       landings: ['bogmire', 'warmCamp', 'dawnroost', 'northCamp', 'shipyard', 'frozenCamp'], wilds: { 4: 5 },
-      where: ['moonwell', [775, 990]], rest: ['misthollow', [1000, 662]], shards: 300 },
+      where: ['misthollow', [768, 985]], rest: ['misthollow', [1000, 662]], shards: 300 },
   ];
   function chapterState(c) {
     const st = GameState.fresh();
@@ -70,15 +72,17 @@
     for (const l of c.landings || []) st.landings[l] = true;
     if (c.wilds) st.wilds = Object.assign({}, c.wilds);
     st.herbs = { moonpetal: 1, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 };
-    st.where = { mode: 'field', map: c.where[0], at: c.where[1], dir: 'n' };
+    st.where = { mode: 'field', map: c.where[0], at: c.where[1], dir: c.where[2] || 'n' };
     st.rest = { mode: 'field', map: c.rest[0], at: c.rest[1] };
     return st;
   }
-  // the Magpie's upgrades (rules.js MAGPIE), who makes them, and the story flag each sets
+  // the Magpie's upgrades (rules.js MAGPIE), who makes them, the story flag each sets, and where she's moored after it:
+  // each is fitted to her where it's made (the scenes: sunstone in her keel at Bogmire, the node's light into it at
+  // Dawnroost, her moon-sail on Ysmera's slip)
   const UPGRADES = [
-    { flag: 'refit', who: 'quill', after: 'lights', scene: 'refit' },
-    { flag: 'charge', who: 'brann', after: 'envoi', scene: 'charge' },
-    { flag: 'upgrade2', who: 'ysmera', after: 'shipyard', scene: 'upgrade2' },
+    { flag: 'refit', who: 'quill', after: 'lights', scene: 'refit', moor: 'bogmire' },
+    { flag: 'charge', who: 'brann', after: 'envoi', scene: 'charge', moor: 'dawnroost' },
+    { flag: 'upgrade2', who: 'ysmera', after: 'shipyard', scene: 'upgrade2', moor: 'shipyard' },
   ];
   // each place's ambience (handoff, section 8): the library's sounds, each now and then, quietly: [sound, every so many
   // seconds (from, to), how loud]
@@ -173,6 +177,7 @@
       isDone: (k) => !!st.done[k],
       onExit: (ex) => act(() => onExit(ex)), onEvent: (s) => act(() => onEvent(s)), onTalk: (p) => act(() => onTalk(p)),
       onSpot: (s) => act(() => onSpot(s)), onEncounter: (m) => act(() => wild(m.wild.band, m.wild.scene)), onMenu: () => act(menu),
+      goal: (id) => goalOn(id),
     });
     // ---------- the world map ----------
     const world = World.create(worldHost, {
@@ -180,7 +185,7 @@
       encounter: { get mean() { return 330 / settings.rate; }, get min() { return 190 / settings.rate; } },
       places: Object.fromEntries(Object.entries(PLACES).map(([id, p]) => [id, Object.assign({}, p, { hidden: () => (p.need && !p.need(st)) || (p.kind === 'node' && st.done[id]) })])),
       open: (b) => b <= st.band,
-      magpie: () => { const L = st.magpie && LANDINGS[st.magpie]; return L && L.world ? PLACES[L.world].at.map((v, i) => v + (i ? -26 : 34)) : null; },
+      magpie: () => magpieOnWorld(), goal: () => goalOnWorld(),
       regionName: (x, y, b) => (b === 1 ? (x < 1600 && y < 2250 ? 'The Gloamwood' : 'The Gloomfen') : REGION[b] || 'Aethermoor'),
       onEnter: (id) => act(() => enterPlace(id)), onEncounter: (b) => act(() => wild(b, GameFights.WILD_SCENE[b])),
       onMagpie: () => act(board), onMenu: () => act(menu),
@@ -197,6 +202,83 @@
     }
     setupMaps();
     const peopleFor = (m) => m.people0.filter((p) => !p.when || p.when());
+
+    // ---------- the next step, where the little arrow points (goal-arrow.js; Chris, October 3) ----------
+    // What the story wants next, read from the save: a person to talk to, a place to walk into, or the Magpie to board
+    function nextStep() {
+      const F = st.flags, D = st.done;
+      if (!D.first) return { map: 'wickhollow', event: 'first' };
+      if (!F.magpie) return { map: 'jetty', person: 'quill' };
+      if (!D.greatWraith) return { map: 'bogmire-heart', event: 'greatWraith' };
+      if (!F.refit) return { map: 'bogmire', person: 'quill' };
+      if (!D['camp:warmCamp'] && !D['visit:dawnroost']) return { magpie: true };
+      if (!D.dawnroost) return { map: 'dawnroost-node', event: 'dawnroost' };
+      if (!F.charge) return { map: 'dawnroost', person: 'brann' };
+      if (!D['camp:northCamp'] && !D.halcyon) return { magpie: true };
+      if (!D.halcyon) return { map: 'crossroads', event: 'halcyon' };
+      if (!F.upgrade2) return { map: 'shipyard', person: 'ysmera' };
+      if (!D['camp:frozenCamp'] && !D['visit:frozen-pass']) return { magpie: true };
+      if (!D.finale) return { map: 'moonwell', event: 'finale' };
+      return null;
+    }
+    // the roads on foot between the ground maps: from map `from`, the first exit on the shortest way to a map that
+    // passes test(id), or null when none does
+    function wayOut(from, test) {
+      const first = new Map([[from, null]]), q = [from];
+      for (let h = 0; h < q.length; h++) {
+        for (const ex of MAPS[q[h]].exits || []) {
+          if (ex.to === 'world' || first.has(ex.to) || !MAPS[ex.to]) continue;
+          const f = first.get(q[h]) || ex; first.set(ex.to, f);
+          if (test(ex.to)) return f;
+          q.push(ex.to);
+        }
+      }
+      return null;
+    }
+    // an exit as the arrow's goal: a little inside it, pointing out through it
+    function exitMark(ex) {
+      const r = ex.rect, edge = [[r[0], -1, 0], [1536 - r[2], 1, 0], [r[1], 0, -1], [1024 - r[3], 0, 1]].sort((a, b) => a[0] - b[0])[0];
+      return { x: (r[0] + r[2]) / 2 - edge[1] * 30, y: (r[1] + r[3]) / 2 - edge[2] * 30, kind: 'exit', out: Math.atan2(edge[2], edge[1]) };
+    }
+    // the step's person, event or Magpie on the map Io is on
+    function markOn(id, s) {
+      const m = MAPS[id];
+      if (s.person) { const p = (m.people || []).find((n) => n.id === s.person && !n.hidden); return p ? { x: p.at[0], y: p.at[1], kind: 'person' } : null; }
+      if (s.event) { const e = (m.spots || []).find((x) => x.kind === 'event' && x.id === s.event); return e ? { x: (e.rect[0] + e.rect[2]) / 2, y: (e.rect[1] + e.rect[3]) / 2, kind: 'event' } : null; }
+      const sp = (m.spots || []).find((x) => x.kind === 'magpie' && !(x.hide && x.hide())); return sp ? { x: sp.at[0], y: sp.at[1], kind: 'spot' } : null;
+    }
+    const magpieMap = () => { const L = st.magpie && LANDINGS[st.magpie]; return L && L.field ? L.field[0] : null; };
+    // on a ground map: the step itself when it's here; else the way there on foot; with no road there, the Magpie when
+    // she's moored on this side; else the way out to the world map
+    function goalOn(id) {
+      const s = nextStep(); if (!s || !MAPS[id]) return null;
+      const mag = magpieMap(), to = s.magpie ? mag : s.map;
+      if (to === id) return markOn(id, s);
+      let ex = to && wayOut(id, (m) => m === to);
+      if (!ex && !s.magpie && mag) { if (mag === id) return markOn(id, { magpie: true }); ex = wayOut(id, (m) => m === mag); }
+      if (ex) return exitMark(ex);
+      const out = (MAPS[id].exits || []).filter((e) => e.to === 'world'), P = field.P;
+      const d = (e) => Math.hypot((e.rect[0] + e.rect[2]) / 2 - P.x, (e.rect[1] + e.rect[3]) / 2 - P.y);
+      if (out.length) return exitMark(out.reduce((a, b) => (d(b) < d(a) ? b : a)));
+      ex = wayOut(id, (m) => (MAPS[m].exits || []).some((e) => e.to === 'world'));
+      return ex ? exitMark(ex) : null;
+    }
+    // where the Magpie sits on the world map when she's moored at a camp
+    const magpieOnWorld = () => { const L = st.magpie && LANDINGS[st.magpie]; return L && L.world ? PLACES[L.world].at.map((v, i) => v + (i ? -26 : 34)) : null; };
+    // on the world map: the Magpie at her camp; else the place that opens onto the step's own map; else the nearest open
+    // place that leads to it on foot
+    function goalOnWorld() {
+      const s = nextStep(); if (!s) return null;
+      if (s.magpie && magpieOnWorld()) return magpieOnWorld();
+      const to = s.magpie ? magpieMap() : s.map; if (!to) return null;
+      let best = null, bd = Infinity;
+      for (const id in PLACES) {
+        const p = PLACES[id];
+        if (!p.map || p.band > st.band || (p.need && !p.need(st)) || (p.map !== to && !wayOut(p.map, (m) => m === to))) continue;
+        const dd = (p.map === to ? 0 : 1e6) + Math.hypot(p.at[0] - world.P.x, p.at[1] - world.P.y); if (dd < bd) { bd = dd; best = p.at; }
+      }
+      return best;
+    }
 
     // ---------- running one thing at a time ----------
     function pauseAll() { field.pause(); world.pause(); }
@@ -305,7 +387,8 @@
       if (id === 'greatWraith') {
         await scene('greatWraith');
         const r = await battle('greatWraith');
-        if (r.outcome === 'win') { st.done.greatWraith = true; st.flags.lights = true; await goField('bogmire', [1212, 296], 's'); await scene('lights'); save(); }
+        // Quill flies the Magpie over by the fen's new light: she's tied up at the west dock (the lights scene)
+        if (r.outcome === 'win') { st.done.greatWraith = true; st.flags.lights = true; st.magpie = 'bogmire'; await goField('bogmire', [1212, 296], 's'); await scene('lights'); save(); }
         else await wake();
         return;
       }
@@ -390,7 +473,7 @@
       if (st.shards < M.shards) { await say([[U.who === 'ysmera' ? 'shipmaster' : U.who, M.name + ' takes ' + nf(M.shards) + ' shards of sunstone. You have ' + nf(st.shards) + '.']]); return; }
       const k = await ask(U.who === 'ysmera' ? 'shipmaster' : U.who, M.name + ': ' + nf(M.shards) + ' shards. You have ' + nf(st.shards) + '.', ['Pay', 'Not yet']);
       if (k) return;
-      st.shards -= M.shards; st.flags[U.flag] = true; st.band = Math.max(st.band, i + 2); sfx('upgrade');
+      st.shards -= M.shards; st.flags[U.flag] = true; st.band = Math.max(st.band, i + 2); st.magpie = U.moor; sfx('upgrade');
       await scene(U.scene); save();
     }
 
@@ -642,6 +725,7 @@
       const box = el('div', { class: 'title-box' }, titleEl);
       el('h1', null, box, 'Envoi on the Longest Night');
       const last = GS.latest();
+      if (opts.chapter != null && CHAPTERS[opts.chapter]) { demoTitle(box, CHAPTERS[opts.chapter], last); return; }
       if (last) { const c = el('button', { type: 'button', class: 'go' }, box, 'Continue'); c.addEventListener('click', () => { audioInit(); GS.use(last.slot); st = last.st; begin(false); }); el('p', { class: 'title-save' }, box, 'Slot ' + last.slot + ' · ' + saveLine(last.st)); }
       const n = el('button', { type: 'button', class: 'go' + (last ? ' alt' : '') }, box, 'New game');
       n.addEventListener('click', async () => {
@@ -668,9 +752,23 @@
         if (k === opts2.length) { const sv = await pasteCode(); if (sv) { st = sv; GS.save(st); titleEl.hidden = false; begin(false); return; } }
         titleEl.hidden = false;
       });
-      el('p', { class: 'title-help' }, box, 'Tap where Io should go, or hold to steer her, or use the arrows. Tap people and glowing things to talk to them or use them. Sound on.');
+      el('p', { class: 'title-help' }, box, 'Tap where Io should go, or hold to steer her, or use the arrows. Tap people and glowing things to talk to them or use them. The golden arrow shows where to go next. Sound on.');
       if (audioOn) music('title');
       setTimeout(() => (box.querySelector('button') || n).focus({ preventScroll: true }), 50);
+    }
+    // a page that plays one chapter (tools/make-demos.mjs, Game.start's chapter): begin it, or carry on from its save
+    function demoTitle(box, C, last) {
+      el('p', { class: 'title-save' }, box, C.name);
+      if (last) { const c = el('button', { type: 'button', class: 'go' }, box, 'Continue'); c.addEventListener('click', () => { audioInit(); GS.use(last.slot); st = last.st; begin(false); }); el('p', { class: 'title-save' }, box, saveLine(last.st)); }
+      const b = el('button', { type: 'button', class: 'go' + (last ? ' alt' : '') }, box, last ? 'Begin again' : 'Begin');
+      b.addEventListener('click', async () => {
+        audioInit();
+        if (last) { titleEl.hidden = true; const k = await ask(null, 'Begin ' + C.name.replace(/^The /, 'the ') + ' again? The game saved here will be lost.', ['Begin again', 'Back']); titleEl.hidden = false; if (k) return; }
+        GS.use(1); st = chapterState(C); if (C.level) GS.save(st); begin(!C.level);
+      });
+      el('p', { class: 'title-help' }, box, 'Tap where Io should go, or hold to steer her, or use the arrows. Tap people and glowing things to talk to them or use them. The golden arrow shows where to go next. Sound on.');
+      if (audioOn) music('title');
+      setTimeout(() => (box.querySelector('button') || b).focus({ preventScroll: true }), 50);
     }
     // which slot a new game or a chapter goes in: an empty one first; a full one is only lost if the player says so.
     // Resolves the slot's number, or 0 for Back
@@ -699,7 +797,8 @@
     // time played
     setInterval(() => { if (mode !== 'title' && !document.hidden) st.time += 1; }, 1000);
     if (opts.skipTitle) { audioOn = false; begin(!opts.state); } else showTitle();
-    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit };
+    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit,
+      get goal() { return mode === 'field' && field.map ? goalOn(field.map.id) : mode === 'world' ? goalOnWorld() : null; } };
     window.__game = api;
     return api;
   }

@@ -23,7 +23,9 @@
 //   shorter side; it sets the camera's closeness in place of zoom), showWalk (draws the walk areas, for checking them);
 //   the page may change ioH, pace, ioScreen and showWalk while it runs
 //   and the callbacks onExit(exit), onEvent(spot), onTalk(person), onSpot(spot), onEncounter(map), onMenu(), onStep(map, running),
-//   isDone(id) (an event or a well already used), src(path) (the art's URL)
+//   isDone(id) (an event or a well already used), src(path) (the art's URL), goal(mapId) -> null or { x, y, kind:
+//   'person' | 'spot' | 'event' | 'exit', out (an exit's outward angle) }: the story's next step, which the little arrow
+//   points to (goal-arrow.js) and the mini-map marks
 //   pose(name, seconds) -> Promise: the painted Io kneels ('kneel') or casts moonlight ('cast'), even in a scene
 // Needs makePixelIo (src/walk/pixel-io.js) and makeFolk (sprites.js; the pixel figures stand in for anyone without a
 // painted sheet, or until it loads). Defines window.Field.
@@ -91,7 +93,7 @@
     const P = { x: 0, y: 0, dir: 's', walkT: 0, moving: false, counter: 0, next: 0, run: 0, stepD: 0, vx: 0, vy: 0, walk: 0, lean: 0, turn: 0, blocked: 0, pose: null, poseT: 0, poseDur: 1, poseRes: null };
     const RUN = 0.5; // the run is half again her walk
     const ioH = () => opts.ioH || 42;
-    let map = null, img = null, grid = null, route = null, paused = false, lastExit = null, flash = 0;
+    let map = null, img = null, grid = null, route = null, paused = false, lastExit = null, flash = 0, goalNow = null;
     const cam = { z: opts.zoom || 0.7, x: 0, y: 0 };
     // the story's actors, Io's scripted walk, and where the camera looks (eased toward a scene's focus, then back to Io)
     const actors = [], ioWalk = { path: null, speed: 110, res: null }, look = { x: 0, y: 0, h: 0.55, on: false, focus: null };
@@ -430,6 +432,12 @@
       // the night's light: a little darker at the edges
       const vg = g.createRadialGradient(W / 2, H * 0.55, Math.min(W, H) * 0.35, W / 2, H * 0.55, Math.max(W, H) * 0.75);
       vg.addColorStop(0, 'rgba(5,3,14,0)'); vg.addColorStop(1, 'rgba(5,3,14,0.45)'); g.fillStyle = vg; g.fillRect(0, 0, W, H);
+      // the story's next step: the little arrow, hidden while a scene plays and once she is in reach of it
+      goalNow = !paused && opts.goal && window.GoalArrow ? opts.goal(map.id) : null;
+      if (goalNow && (goalNow.kind === 'exit' || Math.hypot(goalNow.x - P.x, (goalNow.y - P.y) * 1.3) >= REACH)) {
+        const ih = cam.z * ioH();
+        GoalArrow.draw(g, { x: (goalNow.x - cam.x) * cam.z, y: (goalNow.y - cam.y) * cam.z, over: goalNow.kind === 'person' ? ih * 1.05 : ih * 0.4, out: goalNow.out, ix: (P.x - cam.x) * cam.z, iy: (P.y - cam.y) * cam.z, ih, W, H, t });
+      }
       if (flash > 0) { g.fillStyle = 'rgba(5,3,14,' + flash.toFixed(3) + ')'; g.fillRect(0, 0, W, H); flash = Math.max(0, flash - 0.06); }
       // the action button names what is in reach
       const n = paused ? null : near();
@@ -470,6 +478,8 @@
       mg.fillStyle = 'rgba(120,180,255,.9)'; for (const ex of map.exits || []) mg.fillRect(ex.rect[0] * k - DPR, ex.rect[1] * k - DPR, Math.max(3 * DPR, (ex.rect[2] - ex.rect[0]) * k), Math.max(3 * DPR, (ex.rect[3] - ex.rect[1]) * k));
       mg.fillStyle = '#ffd36e'; for (const n of map.people || []) { mg.beginPath(); mg.arc(n.at[0] * k, n.at[1] * k, 2 * DPR, 0, Math.PI * 2); mg.fill(); }
       const pulse = 0.5 + 0.5 * Math.sin(t / 180);
+      // the story's next step, ringed in gold
+      if (goalNow) { mg.lineWidth = 1.5 * DPR; mg.strokeStyle = '#ffd36e'; mg.beginPath(); mg.arc(goalNow.x * k, goalNow.y * k, (4.5 + pulse * 1.5) * DPR, 0, Math.PI * 2); mg.stroke(); }
       mg.fillStyle = '#1a0c1d'; mg.beginPath(); mg.arc(P.x * k, P.y * k, (3.4 + pulse) * DPR, 0, Math.PI * 2); mg.fill();
       mg.fillStyle = '#ff5fb2'; mg.beginPath(); mg.arc(P.x * k, P.y * k, (2.2 + pulse) * DPR, 0, Math.PI * 2); mg.fill();
     }

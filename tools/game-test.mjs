@@ -181,8 +181,10 @@ try {
       await talkThrough(30000);
       await shot(step + '-after');
     } else if (step === 'chapters') {
-      // each gate's chapter from the title: Io on the gate's map at its entrance, the party at the gate's level, saved
-      const want = [null, ['bogmire-heart', 5], ['dawnroost-node', 10], ['crossroads', 15], ['moonwell', 20]];
+      // each gate's chapter from the title: Io in the town before the gate (the crossroads' own south road; Misthollow
+      // for the finale), the party at the gate's level, saved, after the town's arrival scene; and the little arrow
+      // pointing her on
+      const want = [null, ['bogmire', 5], ['dawnroost', 10], ['crossroads', 15], ['misthollow', 20]];
       for (let k = 1; k < want.length; k++) {
         await page.evaluate(() => { try { localStorage.clear(); } catch (e) { /* none */ } });
         await page.reload();
@@ -190,10 +192,11 @@ try {
         await page.click('.title-box button:text-is("Chapters")');
         await waitFor(() => document.querySelectorAll('.talk-choices button').length > 0, null, 10000, 'the chapters');
         await page.click('.talk-choices button:nth-child(' + (k + 1) + ')');
-        await waitFor((m) => window.__game && window.__game.mode === 'field' && window.__game.field.map && window.__game.field.map.id === m && !window.__game.busy, want[k][0], 30000, 'chapter ' + k);
-        const st = await page.evaluate(() => ({ level: window.__game.state.level, band: window.__game.state.band, flags: Object.keys(window.__game.state.flags).join(' '), saved: !!localStorage.getItem('envoi.save.v1') }));
-        if (st.level !== want[k][1] || !st.saved) throw new Error('chapter ' + k + ': ' + JSON.stringify(st));
-        log('  ' + want[k][0] + ': level ' + st.level + ', band ' + st.band + ', flags ' + st.flags);
+        await waitFor((m) => window.__game && window.__game.mode === 'field' && window.__game.field.map && window.__game.field.map.id === m, want[k][0], 30000, 'chapter ' + k);
+        await talkThrough(30000, () => !window.__game.busy);
+        const st = await page.evaluate(() => ({ level: window.__game.state.level, band: window.__game.state.band, flags: Object.keys(window.__game.state.flags).join(' '), saved: !!localStorage.getItem('envoi.save.v1'), goal: window.__game.goal }));
+        if (st.level !== want[k][1] || !st.saved || !st.goal) throw new Error('chapter ' + k + ': ' + JSON.stringify(st));
+        log('  ' + want[k][0] + ': level ' + st.level + ', band ' + st.band + ', flags ' + st.flags + '; the arrow: ' + st.goal.kind + ' at ' + Math.round(st.goal.x) + ', ' + Math.round(st.goal.y));
         await sleep(500); await shot('chapter-' + k);
       }
     } else if (step === 'saves') {
