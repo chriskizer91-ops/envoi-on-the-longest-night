@@ -170,14 +170,47 @@
       try { await fn(); } catch (e) { console.error(e); } finally { busy--; resumeAll(); }
     }
     const say = (lines) => (lines && lines.length ? talk.say(lines) : Promise.resolve());
-    // a story scene: its still (stills.js) behind the words when it has one, else the map behind them
+    // a story scene: its still (stills.js) behind the words when it has one; else the map behind them, with the scene's
+    // people walking on it (script.js: a line that is an object is a stage direction)
+    const isLine = (x) => typeof x === 'string' || Array.isArray(x);
     async function scene(id) {
       const still = (window.STILLS || {})[id];
-      if (!still) return say(S.scenes[id]);
+      if (!still) return stagePlay(S.scenes[id]);
       const card = el('div', { class: 'prologue' }, root); const img = el('img', { alt: '' }, card); img.src = src(still);
       await wait(0.1); card.classList.add('on'); await wait(0.8);
-      await say(S.scenes[id]);
+      await say((S.scenes[id] || []).filter(isLine));
       card.classList.add('out'); await wait(0.6); card.remove();
+    }
+    // the scene player (handoff, section 5): words, and between them the people who walk, stop and turn on the map.
+    // A direction: { map } (only on that map), { add: id, look, at, dir }, { walk: id, path, speed, wait },
+    // { io: path, speed }, { face: id or 'io', dir or to }, { focus: point, id, 'io' or null }, { wait: seconds },
+    // { until: id } (her walk ends), { remove: id }, { person: id, hide }, { keep: true } (the actors stay afterwards). A point is [x, y] on the map, 'io', an
+    // actor's id, or { near: 'io' or an id, dx, dy }. Off the field (a still, the world map) only the words play
+    async function stagePlay(lines) {
+      if (!lines || !lines.length) return;
+      const F = field.stage, walks = {};
+      let batch = [], staged = false, keep = false;
+      const flush = async () => { if (batch.length) { const b = batch; batch = []; await say(b); } };
+      const posOf = (who) => (who === 'io' ? [field.P.x, field.P.y] : (() => { const a = F.actor(who); return a ? [a.x, a.y] : null; })());
+      const pt = (p) => { if (Array.isArray(p)) return p; if (typeof p === 'string') return posOf(p); if (p && p.near) { const b = posOf(p.near); return b ? [b[0] + (p.dx || 0), b[1] + (p.dy || 0)] : null; } return null; };
+      const dirTo = (a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1]; return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : (dy > 0 ? 's' : 'n'); };
+      for (const ln of lines) {
+        if (isLine(ln)) { batch.push(ln); continue; }
+        if (mode !== 'field' || !field.map || (ln.map && ln.map !== field.map.id)) continue;
+        await flush(); staged = true;
+        if (ln.person) F.hidePerson(ln.person, ln.hide !== false);
+        if (ln.add) F.add(ln.add, ln.look, pt(ln.at), ln.dir);
+        if (ln.walk) { const path = ln.path.map(pt).filter(Boolean); const w = walks[ln.walk] = F.walk(ln.walk, path, ln.speed); if (ln.wait !== false) await w; }
+        if (ln.io) await F.io(ln.io.map(pt).filter(Boolean), ln.speed);
+        if (ln.face) { const me = posOf(ln.face), d = ln.dir || (me && pt(ln.to) ? dirTo(me, pt(ln.to)) : null); if (d) { if (ln.face === 'io') F.ioFace(d); else F.face(ln.face, d); } }
+        if ('focus' in ln) F.focus(ln.focus ? pt(ln.focus) : null);
+        if (ln.until && walks[ln.until]) await walks[ln.until];
+        if (ln.remove) F.remove(ln.remove);
+        if (ln.keep) keep = true; // the actors stay on the map after the words (the knight, until the fight)
+        if (typeof ln.wait === 'number' && !ln.walk) await wait(ln.wait);
+      }
+      await flush();
+      if (staged && !keep) F.clear();
     }
     async function ask(who, text, choices) { return talk.ask(who, text, choices); }
     function save() { st.where = mode === 'world' ? { mode: 'world', at: [Math.round(world.P.x), Math.round(world.P.y)], dir: world.P.dir } : { mode: 'field', map: field.map && field.map.id, at: [Math.round(field.P.x), Math.round(field.P.y)], dir: field.P.dir }; GS.save(st); }
@@ -206,7 +239,7 @@
       else if (id === 'dawnroost') await scene('dawnroostHome');
       else if (id === 'frozen-pass') await scene('frozen');
       else if (id === 'misthollow') await scene('misthollow');
-      else if (id === 'shipyard') { await say(SCRIPT.people.ysmera(st)); await scene('shipyard'); st.flags.shipyard = true; }
+      else if (id === 'shipyard') { await scene('shipyard'); st.flags.shipyard = true; }
       save();
     }
     async function onExit(ex) {
@@ -248,7 +281,9 @@
         return;
       }
       if (id === 'halcyon') {
+        await scene('ambush');
         const r = await battle('halcyon');
+        field.stage.clear();
         st.done.halcyon = true; st.flags.stoop = true; await scene('kestrel');
         // whichever way it ended, the party gets its breath back by the crossroads well
         GS.restore(st); await say(['The party rests by the crossroads well until their hands stop shaking.']); save();
@@ -614,7 +649,7 @@
     // time played
     setInterval(() => { if (mode !== 'title' && !document.hidden) st.time += 1; }, 1000);
     if (opts.skipTitle) { audioOn = false; begin(!opts.state); } else showTitle();
-    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit };
+    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit };
     window.__game = api;
     return api;
   }

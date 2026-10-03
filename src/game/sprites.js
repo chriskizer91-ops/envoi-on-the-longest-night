@@ -24,8 +24,12 @@
     aurosi: { h: 42, skin: 'pale', hair: ['#d8e0ff', '#aab6ec', '#7480c0'], hairStyle: 'long', ears: true, robe: ['#5d7fd0', '#4462a8', '#2c4074'], trim: '#e8ecff' },
     // an Aurosi gnome of the shipyard in a tall star-blue cap (Pim, Tock)
     gnome: { h: 27, wide: 1.2, skin: 'pale', hair: ['#f0eee6', '#cfcbbe', '#9a968a'], hairStyle: 'short', beard: true, ears: true, top: ['#a0603a', '#7e4a2a', '#55301a'], legs: ['#4a4a5a', '#363645', '#23232e'], hat: 'gnome', hatC: ['#5a72c8', '#4258a0', '#2b3b70'] },
-    // Sol, the last Ember Warden: copper hair, sun-gold plate over red, a red cloak
-    sol: { h: 40, skin: 'tan', hair: ['#e0703a', '#b8522a', '#7e3418'], hairStyle: 'tail', top: ['#e8c25a', '#c49a3a', '#86672a'], legs: ['#8a2a2a', '#6a1e1e', '#461212'], cloak: ['#c0392b', '#962a1f', '#641c14'], sword: true },
+    // Sol, the last Ember Warden: copper hair, sun-gold plate, the burnt-orange tabard, and the midnight-blue cape of her
+    // model (the red cloak became blue on October 3, to match it)
+    sol: { h: 40, skin: 'tan', hair: ['#e0703a', '#b8522a', '#7e3418'], hairStyle: 'tail', top: ['#e8c25a', '#c49a3a', '#86672a'], legs: ['#c0662e', '#9a4c20', '#663014'], cloak: ['#3b4f96', '#2b3a74', '#1b244c'], sword: true },
+    // Dame Halcyon, the Gloam Knight: blackened bronze plate, a tattered teal tabard, a long white braid, a closed helm with
+    // a slit of cold blue light for her eyes, and a dark cloak
+    halcyon: { h: 42, skin: 'pale', hair: ['#f4f0ea', '#d6d0c6', '#9e978c'], hairStyle: 'tail', top: ['#6e5e4a', '#4c4032', '#2c241c'], legs: ['#2f8f8a', '#22706c', '#14494a'], cloak: ['#2c3a40', '#1e282e', '#11181c'], sword: true, hat: 'helm', hatC: ['#5e5040', '#40362c', '#251f19'] },
     // a hooded figure in grey (spare townsfolk)
     hooded: { h: 39, skin: 'fair', hair: ['#6a5a4a', '#4a3e33', '#2e2620'], hairStyle: 'short', robe: ['#7a7a8a', '#5c5c6b', '#3c3c48'], hat: 'hood', hatC: ['#6e6e80', '#525264', '#363644'] },
   };
@@ -117,6 +121,11 @@
         if (!back) fill(g, inPoly(side ? [[hx, top + 1.4], [hx + headR + 2.6, top + 1.6], [hx + headR + 2.4, top + 2.6], [hx, top + 2.4]] : [[hx - headR + 1, top + 2], [hx + headR - 1, top + 2], [hx + headR - 0.4, top + 3], [hx - headR + 0.4, top + 3]]), hatC[2]);
       } else if (L.hat === 'hood') {
         fill(g, (x, y) => inEll(hx - (side ? 0.6 : 0), headCY - 0.2, headR + 1.2, headR + 1.2)(x, y) && (back || (side ? x < hx + headR * 0.2 || y < headCY - headR * 0.4 : Math.abs(x - cx) > headR * 0.62 || y < headCY - headR * 0.5)), tone3(hatC, hx - headR, hx + headR));
+      } else if (L.hat === 'helm') {
+        // a closed helm, a slit of cold blue for her eyes, and a crest of dark feathers
+        fill(g, (x, y) => inEll(hx - (side ? 0.4 : 0), headCY - 0.3, headR + 0.6, headR + 0.5)(x, y) && y < headCY + headR * 0.8, tone3(hatC, hx - headR, hx + headR));
+        if (!back) { const ey = Math.round(headCY + 0.4); if (side) { for (let x = Math.round(hx); x <= hx + headR - 0.4; x++) px(g, x, ey, '#9fd8ff'); } else for (let x = Math.round(cx - 3); x <= cx + 3; x++) px(g, x, ey, '#9fd8ff'); }
+        fill(g, inPoly(side ? [[hx - 1.2, top - 0.2], [hx + 1, top - 0.2], [hx - 2.6, top - 4.2], [hx - 4.4, top - 3.6]] : [[hx - 1.1, top - 0.2], [hx + 1.1, top - 0.2], [hx + 0.7, top - 4.8], [hx - 0.7, top - 4.8]]), '#1f2b2e');
       } else if (L.hat === 'gnome') {
         fill(g, inPoly([[hx - headR - 0.8, top + 2.2], [hx + headR + 0.8, top + 2.2], [hx + 1.2, top - 7.5], [hx - 0.6, top - 7]]), tone3(hatC, hx - headR, hx + headR));
         px(g, hx + 1, top - 8, '#ffe39a');

@@ -6,7 +6,11 @@
 // counter that starts a random fight when it passes a threshold, so fights come evenly: never two back to back.
 // The camera follows her; the mini-map in the corner shows the whole map, the view, the exits and the people.
 // Map coordinates are the paintings' own 1536 x 1024 pixels whatever size they ship at.
-// Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw() }
+// Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw(), stage }
+//   stage: the story's actors, walking on the map while a scene plays (handoff, section 5): add(id, look, [x, y], dir),
+//   walk(id, path, speed) -> Promise (path: points to walk through), face(id, dir), remove(id), clear(), io(path, speed)
+//   -> Promise (Io walks it, even while the field is paused for the scene), ioFace(dir), focus([x, y] or null) (the camera
+//   eases to a point, and back to Io), hidePerson(id, hide) (a townsperson steps out of their place to act)
 //   opts: maps, speed (map px a second), zoom, ioH (map px), encounter: { mean, min } (map px walked between fights),
 //   light(map) (the painting's brightness, 1 as painted),
 //   and the callbacks onExit(exit), onEvent(spot), onTalk(person), onSpot(spot), onEncounter(map), onMenu(), onStep(map, running),
@@ -63,6 +67,8 @@
     const P = { x: 0, y: 0, dir: 's', walkT: 0, moving: false, counter: 0, next: 0, run: 0, stepD: 0 };
     let map = null, img = null, grid = null, route = null, paused = false, lastExit = null, flash = 0;
     const cam = { z: opts.zoom || 0.7, x: 0, y: 0 };
+    // the story's actors, Io's scripted walk, and where the camera looks (eased toward a scene's focus, then back to Io)
+    const actors = [], ioWalk = { path: null, speed: 110, res: null }, look = { x: 0, y: 0, h: 0.55, on: false, focus: null };
     function layout() { cv.width = Math.round(root.clientWidth * DPR); cv.height = Math.round(root.clientHeight * DPR); }
 
     // ---------- where she can stand: inside a walk area and outside every block, a few pixels either side of her feet ----------
@@ -125,7 +131,7 @@
     // ---------- what is in reach ----------
     function things() {
       const out = [];
-      for (const n of map.people || []) out.push({ kind: 'person', ref: n, x: n.at[0], y: n.at[1], label: 'Talk to ' + n.name });
+      for (const n of map.people || []) if (!n.hidden) out.push({ kind: 'person', ref: n, x: n.at[0], y: n.at[1], label: 'Talk to ' + n.name });
       for (const s of map.spots || []) {
         if (s.kind === 'event' || (s.hide && s.hide())) continue;
         const used = s.kind === 'well' && opts.isDone && opts.isDone('well:' + s.id);
@@ -151,7 +157,7 @@
     // ---------- loading a map ----------
     function load(id, at, dir) {
       const m = opts.maps[id]; if (!m) throw new Error('no map ' + id);
-      map = m; m.id = id; route = null; target = null; held.clear(); lastExit = null; flash = 1;
+      map = m; m.id = id; route = null; target = null; held.clear(); lastExit = null; flash = 1; actors.length = 0; look.on = false; look.focus = null;
       P.x = (at || m.start)[0]; P.y = (at || m.start)[1]; P.dir = dir || 's'; P.walkT = 0;
       for (const n of m.people || []) n.face = n.face0 || 's';
       buildGrid();
@@ -178,6 +184,7 @@
       if (stopped) return;
       const dt = Math.min(0.05, (t - last) / 1000); last = t;
       if (map && img && !paused && !root.hidden) step(dt);
+      if (map && img && !root.hidden) stageStep(dt);
       if (map && img && !root.hidden) draw(t);
       requestAnimationFrame(frame);
     }
@@ -224,13 +231,56 @@
       }
       if (map.wild && P.counter >= P.next) { P.counter = 0; P.next = nextGap(); held.clear(); route = null; if (opts.onEncounter) opts.onEncounter(map); }
     }
+    // ---------- the story's actors ----------
+    function walkAlong(a, dt) {
+      if (!a.path || !a.path.length) return false;
+      const [tx, ty] = a.path[0], dx = tx - a.x, dy = ty - a.y, L = Math.hypot(dx, dy), sp = a.speed * dt;
+      if (L > 0.01) a.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : (dy > 0 ? 's' : 'n');
+      if (L <= sp) { a.x = tx; a.y = ty; a.path.shift(); if (!a.path.length) { a.path = null; const r = a.res; a.res = null; if (r) r(); return false; } }
+      else { a.x += dx / L * sp; a.y += dy / L * sp; }
+      a.walkT += dt * a.speed / 110; return true;
+    }
+    function stageStep(dt) {
+      for (const a of actors) { a.moving = walkAlong(a, dt); if (!a.moving) a.walkT = 0; }
+      if (ioWalk.path) {
+        const q = { x: P.x, y: P.y, dir: P.dir, path: ioWalk.path, speed: ioWalk.speed, res: ioWalk.res, walkT: P.walkT };
+        P.moving = walkAlong(q, dt); P.x = q.x; P.y = q.y; P.dir = q.dir; P.walkT = P.moving ? q.walkT : 0;
+        ioWalk.path = q.path; ioWalk.res = q.res;
+      }
+    }
+    const stage = {
+      add(id, lookId, at, dir) { stage.remove(id); actors.push({ id, look: lookId, x: at[0], y: at[1], dir: dir || 's', path: null, speed: 110, res: null, walkT: 0, moving: false }); },
+      walk(id, path, speed) {
+        const a = actors.find((x) => x.id === id); if (!a) return Promise.resolve();
+        if (a.res) a.res();
+        return new Promise((res) => { a.path = path.map((p) => p.slice()); a.speed = speed || 110; a.res = res; });
+      },
+      face(id, dir) { const a = actors.find((x) => x.id === id); if (a) a.dir = dir; },
+      remove(id) { const i = actors.findIndex((x) => x.id === id); if (i >= 0) { const a = actors[i]; actors.splice(i, 1); if (a.res) a.res(); } },
+      clear() { while (actors.length) stage.remove(actors[0].id); for (const n of (map && map.people) || []) n.hidden = false; look.focus = null; },
+      io(path, speed) { if (ioWalk.res) ioWalk.res(); return new Promise((res) => { ioWalk.path = path.map((p) => p.slice()); ioWalk.speed = speed || 110; ioWalk.res = res; }); },
+      ioFace(dir) { P.dir = dir; },
+      focus(at) { look.focus = at ? { x: at[0], y: at[1] } : null; if (at && !look.on) { look.on = true; look.x = P.x; look.y = P.y; } },
+      hidePerson(id, hide) { for (const n of (map && map.people) || []) if (n.id === id) n.hidden = !!hide; },
+      actor: (id) => actors.find((x) => x.id === id) || null,
+    };
+
     function draw(t) {
       const W = cv.width / DPR, H = cv.height / DPR;
       cam.z = (map.zoom || opts.zoom || 0.7) * Math.max(1, Math.min(W, H) / 700);
       const sk = cam.z * (opts.ioH || 42) / io.h;
       const vw = W / cam.z, vh = H / cam.z, mk = img.naturalWidth / MW;
-      cam.x = vw >= MW ? (MW - vw) / 2 : clamp(P.x - vw / 2, 0, MW - vw);
-      cam.y = vh >= MH ? (MH - vh) / 2 : clamp(P.y - vh * 0.55, 0, MH - vh);
+      // the camera follows Io; in a scene it eases to the scene's focus and back, then follows her again
+      let cx0 = P.x, cy0 = P.y;
+      if (look.on) {
+        // in a scene the point of interest sits higher (h), clear of the dialogue box along the bottom
+        const tg = look.focus || P, k = 1 - Math.exp(-(t - (look.t || t)) / 1000 * 3.2);
+        look.x += (tg.x - look.x) * k; look.y += (tg.y - look.y) * k; look.h += ((look.focus ? 0.4 : 0.55) - look.h) * k; cx0 = look.x; cy0 = look.y;
+        if (!look.focus && Math.hypot(look.x - P.x, look.y - P.y) < 2 && look.h > 0.545) { look.on = false; look.h = 0.55; }
+      }
+      look.t = t;
+      cam.x = vw >= MW ? (MW - vw) / 2 : clamp(cx0 - vw / 2, 0, MW - vw);
+      cam.y = vh >= MH ? (MH - vh) / 2 : clamp(cy0 - vh * (look.on ? look.h : 0.55), 0, MH - vh);
       g.setTransform(DPR, 0, 0, DPR, 0, 0);
       g.fillStyle = '#0b0912'; g.fillRect(0, 0, W, H);
       g.imageSmoothingEnabled = false;
@@ -249,7 +299,8 @@
         g.fillStyle = gr; g.beginPath(); g.arc(x, y - 6, r * 2.4, 0, Math.PI * 2); g.fill();
       }
       // the people and Io, back to front
-      const figs = (map.people || []).map((n) => ({ y: n.at[1], x: n.at[0], s: sprite(n.look), dir: n.face || 's', step: 0 }));
+      const figs = (map.people || []).filter((n) => !n.hidden).map((n) => ({ y: n.at[1], x: n.at[0], s: sprite(n.look), dir: n.face || 's', step: 0 }));
+      for (const a of actors) figs.push({ y: a.y, x: a.x, s: sprite(a.look), dir: a.dir, step: a.moving ? [1, 0, 2, 0][Math.floor(a.walkT / 0.1) % 4] : 0 });
       const stepF = P.moving ? [1, 0, 2, 0][Math.floor(P.walkT / 0.1) % 4] : 0;
       figs.push({ y: P.y, x: P.x, s: io, dir: P.dir, step: stepF, me: true });
       figs.sort((a, b) => a.y - b.y);
@@ -287,7 +338,7 @@
     layout(); const ro = new ResizeObserver(layout); ro.observe(root);
     requestAnimationFrame(frame);
     return {
-      root, P, cam, load, near, useNear,
+      root, P, cam, load, near, useNear, stage,
       get map() { return map; },
       pause() { paused = true; held.clear(); route = null; target = null; act.hidden = true; },
       resume() { paused = false; last = performance.now(); },

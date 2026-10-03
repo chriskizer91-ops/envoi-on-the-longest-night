@@ -931,3 +931,14 @@ The plan in `handoff.md` (section 2), built:
   - Devour carries its prey in its arms and hides her inside its shut flower;
   - charmed heroes walk a few steps toward the flower.
 - **The demo** is `demos/colossus.html`: Io and Sol at a level from 16 to 20 against it, on the frozen road.
+
+### Living battlefields, staging, and the walk
+
+- **Living battlefields** (`src/fx/battlefield.js`), in front of the paintings so they keep their look: each painting's own air (mist; fireflies in the woods and the fen; snow on the frozen road, the dead Moonwell and lightly at the crossroads; warm sparks off the Ember Line and Dawnroost's node), dust and turf where big blows land, birds or bats put up by roars, leaves or snow shaken down by heavy blows, and, for a boss's second phase, a red storm: a red wash down to the painting's skyline, embers, wind, rain and red lightning. It clears when the boss falls.
+- **Points at their real size:** the battle's camera is far off with a narrow lens, which left three.js's points (the hit sparks, embers and dust puffs) under a pixel. The screen now scales them from its zoom, so the hits throw visible sparks.
+- **The meadow as the Colossus's own arena** stays a later choice: it needs a frame-rate check on the Pixel 7a.
+- **Story staging:** a scene's people walk on the map while it plays. Sol runs in over the bridge, Quill walks Io to the skiff, the knight comes down the north road to the crossroads, and Ysmera meets them on the shipyard's bridge. The camera eases to the scene and back, framing it above the words. Halcyon has a walking figure now, and Sol's walking figure has her model's midnight-blue cape.
+- **The walk:** footsteps on each map's ground, a pace that builds to a run after a moment of walking (no button to hold), and each place's ambience from the music library's sounds.
+- **The first battle** shows two tips once: picking a command, and Trance.
+- **Set fights and the great foes** end on a longer fanfare; wild fights keep the short one.
+

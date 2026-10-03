@@ -154,7 +154,7 @@
       let ox = cam.cx * S2 - view.w / 2 + shake.x, oy = cam.cy * S2 - midY + shake.y;
       ox = clamp(ox, 0, IW * S2 - view.w); oy = clamp(oy, 0, IH * S2 - view.h);
       ox = Math.round(ox * DPR) / DPR; oy = Math.round(oy * DPR) / DPR;
-      camera.setViewOffset(IW * S2, IH * S2, ox, oy, view.w, view.h);
+      camera.setViewOffset(IW * S2, IH * S2, ox, oy, view.w, view.h); view.s2 = S2;
       // the painting is drawn into a canvas the size of the stage, only the part the camera shows (bench.js)
       const tf = ox + ',' + oy + ',' + S2.toFixed(5) + ',' + view.w + ',' + view.h + ',' + TOWN.ver;
       if (tf !== lastTf && paintImg.complete && paintImg.naturalWidth) {
@@ -2160,8 +2160,10 @@
       stepRime(rdt);
       stepTown(rdt);
 
-      FX.update(dt, clock.t);
-      if (BF) BF.update(dt, clock.t);
+      // a point's meters to three.js's point size, under this far, narrow camera at its zoom (the effects and battlefield.js)
+      const pointScale = IH * (view.s2 || 1) / (Math.max(1, view.h) * Math.tan(FOV / 2 * Math.PI / 180));
+      FX.update(dt, clock.t, pointScale);
+      if (BF) BF.update(dt, clock.t, pointScale);
       stepSky(rdt);
       if (FX.grp.children.length !== fxKids) { lightOnly(FX.grp); fxKids = FX.grp.children.length; }
       applyCam(rdt);

@@ -3,6 +3,8 @@
 // line is a placeholder written for Chris's lore conversation to replace; the story is the five lines at the top of the
 // lore answers, and nothing here comes from the retired Drowned Mother story. A line is [who, text] or a string
 // (narration); who is 'io', 'sol', 'shipmaster' (painted portraits) or a person's id (a pixel portrait).
+// A line that is an object is a stage direction for the scene player (game.js stagePlay): who walks in, where, and when
+// she turns. The lore conversation can change the words and leave the directions where they are.
 // Defines window.SCRIPT = { people, wells, scenes, cast }.
 (function () {
   'use strict';
@@ -77,7 +79,13 @@
     ],
     firstLost: ['Io wakes in her own bed, aching. Up in the square, the bridge lamps are still dark.'],
     sol: [
+      // Io steps clear of the Moonwell; Sol runs in over the stone bridge from the Thornwood
+      { map: 'wickhollow', io: [[800, 610]], speed: 90 },
+      { add: 'sol', look: 'sol', at: [1440, 382], dir: 'w' }, { focus: [1150, 470] },
+      { walk: 'sol', path: [[1280, 418], [1080, 428], [1050, 560], [862, 608]], speed: 190, wait: false },
       'Someone comes running over the bridge, a sword drawn and burning.',
+      { until: 'sol' },
+      { focus: { near: 'io', dx: 30 } }, { face: 'sol', to: 'io' }, { face: 'io', to: 'sol' },
       ['sol', 'Too late again. That one led me all the way from the Warm Roads.'],
       ['io', 'A Warden? I thought the Wardens were gone.'],
       ['sol', 'All but one. Sol, of Dawnroost. The Ember Line is going dark, and the dead are coming up out of the dark with it.'],
@@ -88,14 +96,24 @@
       ['io', 'Then we go and find it. Together?'],
       ['sol', 'Together. Bogmire’s lamps went out three nights ago. That’s where the trail goes.'],
       'Sol joins the party.',
+      { walk: 'sol', path: ['io'], speed: 70 }, { remove: 'sol' }, { focus: null },
       ['gretch', 'Quill keeps his old skiff at the jetty, down the steps west of the square. Ask him. He’ll grumble, but he’ll help.'],
     ],
     magpie: [
       ['quill', 'The Magpie? She’s not flown in years. The sunstone in her keel’s gone cold.'],
+      // Quill walks Io down the steps and along the pier to the skiff
+      { map: 'jetty', person: 'quill' }, { add: 'quill', look: 'sailor', at: [1150, 385], dir: 'w' },
+      ['quill', 'Come and look at her, then.'],
+      { focus: [790, 560] },
+      { walk: 'quill', path: [[800, 382], [800, 470], [805, 712]], speed: 90, wait: false },
+      { io: [[1060, 390], [760, 390], [758, 470], [752, 705]], speed: 92 }, { until: 'quill' },
+      { face: 'io', dir: 's' }, { face: 'quill', to: 'io' }, { focus: [775, 720] },
       ['quill', '…But she’ll lift, for you. Not far, mind, and not into the dark. There’s nothing to land by in the fen with Bogmire’s lamps out.'],
       ['io', 'Then we’ll walk the Thornwood to Bogmire, and bring their lights back.'],
       ['quill', 'Bring ’em back and I’ll fly her over to you. Bogmire’s shipwrights could refit her, with sunstone enough.'],
+      { walk: 'quill', path: [[800, 470], [800, 382], [1150, 385]], speed: 100, wait: false }, { focus: null },
       'The Thornwood road starts at the stone bridge east of the square.',
+      { until: 'quill' },
     ],
     thornwoodShut: [['io', 'Not alone, and not at night. Not into the Thornwood.']],
     bogmireDark: [
@@ -148,7 +166,19 @@
       ['sol', 'She stopped. She looked at me, and she stopped.'],
       'Sol has learned Kestrel Stoop.',
     ],
+    // before Halcyon's ambush: the knight comes down the north road and stops at the crossroads' heart
+    ambush: [
+      { map: 'crossroads', add: 'halcyon', look: 'halcyon', at: [770, 30], dir: 's' }, { focus: [768, 260] },
+      'Someone is coming down the north road, out of the dark.',
+      { walk: 'halcyon', path: [[770, 330], [768, 430]], speed: 60 },
+      { face: 'io', dir: 'n' }, { wait: 0.6 }, { keep: true },
+    ],
     shipyard: [
+      // Ysmera comes down from the slip to meet them on the bridge
+      { map: 'shipyard', person: 'ysmera' }, { add: 'ysmera', look: 'aurosi', at: [765, 500], dir: 's' }, { focus: [762, 700] },
+      { walk: 'ysmera', path: [[763, 600], [762, 690]], speed: 95, wait: false }, { io: [[760, 760]], speed: 100 }, { until: 'ysmera' },
+      { face: 'io', dir: 'n' }, { face: 'ysmera', dir: 's' },
+      ['shipmaster', 'A witch and the last of the Wardens, at my yard. Your little ship will need more than courage to fly north.'],
       ['shipmaster', 'You met a knight on the road. Dark armor, a black blade, a black sun on the hilt?'],
       ['sol', 'Yes.'],
       ['shipmaster', 'That is the Starless’s mark. Noctara’s. The knight serves her.'],
@@ -157,6 +187,7 @@
       ['sol', 'I heard. Halcyon serves Noctara.'],
       ['shipmaster', 'Noctara will be at Misthollow’s Moonwell on the longest night. It has gone dark already. If she eclipses the moon from there, the night won’t end.'],
       ['shipmaster', 'Your skiff can’t get over the peaks as she is. Bring me sunstone enough, and my gnomes will give her a moon-sail.'],
+      { walk: 'ysmera', path: [[763, 600], [765, 500]], speed: 100 },
     ],
     upgrade2: [
       'Ysmera’s gnomes rig the Magpie with a moon-sail of Aurosi silk.',

@@ -16,6 +16,9 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | The Bramble Horror, version 2 | `../3d-model-new-character-ideas/bramble-horror/` | In. The game's `../src/models/bramble.js` is the same model. It is a lone wild foe in all four bands |
 | The Bramble Colossus | `../3d-model-new-character-ideas/bramble-colossus/` | In: the last band's great wild foe, about one wild fight in twelve there, on the frozen road. Its fight on its own: `../demos/colossus.html` |
 | The wild meadow's life, on every painted battle: mist, fireflies, snow, dust and turf where big blows land, birds and bats put up by roars, leaves shaken down, a red storm for the Colossus's Wrath | `../src/fx/battlefield.js`, after `../3d-model-new-character-ideas/bramble-horror/meadow.js` | In |
+| The story's people walking in: Sol over the bridge, Quill to the skiff, the knight at the crossroads, Ysmera at the slip | `../src/game/script.js` (the stage directions), `../src/game/field.js` | In. The words are still placeholders |
+| Walking with sound: footsteps on each map's ground, a pace that builds to a run, each place's own ambience | `../src/game/game.js` | In |
+| Saves and settings: three save slots, a save code, word speed, larger text, music and effects volumes | `../src/game/state.js`, `../src/game/game.js` | In |
 | Chris's next mobs (at least two) | `../3d-model-new-character-ideas/<name>/` once he brings them | Waiting on Chris. Each one comes in the way the next section says |
 | The townsfolk's portraits and the story stills | Art requests 06 and 07 in `../docs/art-requests/` | Waiting on the art |
 | Every word of the story | `../src/game/script.js`, placeholders for now | Waiting on the lore conversation |

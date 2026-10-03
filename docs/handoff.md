@@ -81,9 +81,9 @@ The meadow in Chris's bench answers the fight: shockwaves roll through the grass
 
 ### 5. Story staging
 
-- **Actors in the scenes:** today the scenes are words over the map. Sol should run in over the bridge, Quill should walk Io to the skiff, Halcyon should step out of the dark at the crossroads and Ysmera should meet them at the slip, all as sprites walking on the map while they talk. That is a small script player: move this person there, face her, wait, say.
+- **Actors in the scenes:** **built (October 3, later)** for the four named here: a scene player in `src/game/field.js` and `game.js`, with stage directions in `script.js`, and a walking Halcyon. Today the other scenes are still words over the map. Sol should run in over the bridge, Quill should walk Io to the skiff, Halcyon should step out of the dark at the crossroads and Ysmera should meet them at the slip, all as sprites walking on the map while they talk. That is a small script player: move this person there, face her, wait, say.
 - **The stills** from request 07 for the nine big moments.
-- **A first-battle tip or two** (how to pick a command, what the gauges mean), shown once.
+- **A first-battle tip or two** (how to pick a command, what the gauges mean), shown once. **Built:** the command tip and the Trance tip.
 
 ### 6. The world between the stops
 
@@ -101,9 +101,9 @@ Today the party grows only by levels and the story's gifts (Harvest Moon, Envoi,
 ### 8. The field
 
 - **Walking behind things:** Io walks over the painted roofs, trees and arches. Each map needs a foreground mask (cut from the painting) drawn over her when she's behind it. The plan named it; it isn't built.
-- Footsteps and doors in sound; a soft step-in when a map loads.
-- A run (hold the action button) for long walks.
-- An ambient loop per place (wind on the pass, frogs in the fen, the forge at Dawnroost).
+- Footsteps and doors in sound; a soft step-in when a map loads. **Footsteps are built** (each map's ground: grass, stone or wood).
+- A run (hold the action button) for long walks. **Built differently:** the pace builds to a run after a moment of walking, so no button is needed.
+- An ambient loop per place (wind on the pass, frogs in the fen, the forge at Dawnroost). **Built** from the music library's own sounds, each coming back now and then.
 
 ### 9. Menus and saves
 

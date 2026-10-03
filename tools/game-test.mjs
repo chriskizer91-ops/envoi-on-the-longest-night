@@ -7,6 +7,7 @@
 //   walk:     Io walks the Wickhollow square with the arrow keys
 //   menu:     the menu opens on every tab and closes
 //   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load
+//   scenes:   the staged scenes play on their maps (Sol at the bridge, Quill at the jetty, the knight, Ysmera)
 //   save:     the save is written, and the title offers Continue
 //   wild:     a wild fight in the band (--band, at --level) is played to its end by the expert play style
 //   colossus: the Bramble Colossus is fought the same way (band 4); headless, a whole fight takes a long while
@@ -143,6 +144,33 @@ try {
       await page.click('.gmenu-foot button:text-is("Load it")');
       await waitFor(() => window.__game.mode === 'field' && !window.__game.busy, null, 30000, 'the loaded game');
       await shot('saves-loaded');
+    } else if (step === 'scenes') {
+      // the staged scenes: each one's people walk in on its map; a screenshot as they arrive, and at the scene's end
+      // as the story stands when each scene plays: the first fight won, Sol with Io, and so on
+      await page.evaluate(() => { const st = window.__game.state; st.done.first = true; Object.assign(st.flags, { party: true }); st.done.halcyon = true; });
+      const SC = [['sol', 'wickhollow', [780, 702]], ['magpie', 'jetty', [1100, 392]], ['ambush', 'crossroads', [768, 592]], ['shipyard', 'shipyard', [760, 985]]];
+      for (const [id, map, at] of SC) {
+        await page.evaluate(([m, a]) => { window.__game.goField(m, a); }, [map, at]);
+        // a first visit can play its own scene on arrival (the shipyard's): tap through it
+        await sleep(600); await talkThrough(90000, () => window.__game.mode === 'field' && !window.__game.busy);
+        await waitFor((m) => window.__game.field.map && window.__game.field.map.id === m && !window.__game.busy, map, 30000, 'the map ' + map);
+        await page.evaluate((x) => { window.__game.scene(x); }, id);
+        // let the first walk play, then tap through, taking a picture at the first line said with everyone in place
+        await sleep(1500);
+        let shotN = 0;
+        const end = Date.now() + 120000;
+        while (Date.now() < end) {
+          const st = await page.evaluate(() => ({ busy: window.__game.busy, open: !!document.querySelector('.talk') && !document.querySelector('.talk').hidden, actors: ['sol', 'quill', 'halcyon', 'ysmera'].filter((k) => window.__game.field.stage.actor(k)).length }));
+          if (!st.busy) break;
+          if (st.open) {
+            if (shotN < 2) { await sleep(400); await shot('scene-' + id + '-' + shotN++); }
+            await page.click('.talk-words'); await sleep(250); await page.click('.talk-words').catch(() => {});
+          }
+          await sleep(500);
+        }
+        await shot('scene-' + id + '-end');
+        log('  scene ' + id + ' played');
+      }
     } else if (step === 'save') {
       await page.evaluate(() => { window.__game.menu(); });
       await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');

@@ -5,7 +5,9 @@
 // up out of the painted trees and shake leaves (or snow) down; and a boss's second phase brings a red storm: embers
 // rising, wind, rain and red lightning (the screen tints the painting's sky; see onLightning).
 // three.js r128 (global THREE). makeBattlefield({ id, g(u, v) -> { x, z } on the floor, IW, IH, onLightning(k) })
-//   -> { grp, update(dt, t), impact({ x, z }, k), roar(k), shake(px), storm(v 0 to 1), dispose() }
+//   -> { grp, update(dt, t, pointScale), impact({ x, z }, k), roar(k), shake(px), storm(v 0 to 1), dispose() }
+// pointScale: what turns a point's size in meters into three.js's point size under the battle's far, narrow camera (the
+// screen works it out from its zoom), so snow and fireflies show at their real size however close the camera is.
 // Everything is a handful of draw calls: points for snow, fireflies, sparks, debris and embers, sprites for the mist and
 // the birds, and lines for the rain. Nothing here changes how a fight plays.
 function makeBattlefield(o) {
@@ -38,6 +40,7 @@ function makeBattlefield(o) {
   const keep = (x) => { disposables.push(x); return x; };
 
   // ---------- a pool of points: each with a place, a speed, a life and a color ----------
+  const sized = []; // [material, size in meters]: their sizes follow the camera (update's pointScale)
   function pool(n, size, opts) {
     const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), geo = keep(new THREE.BufferGeometry());
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
@@ -45,6 +48,7 @@ function makeBattlefield(o) {
     const pts = new THREE.Points(geo, mat); pts.frustumCulled = false; pts.renderOrder = opts.order || 4; grp.add(pts);
     const P = []; for (let i = 0; i < n; i++) { P.push({ x: 0, y: -99, z: 0, vx: 0, vy: 0, vz: 0, life: 0, max: 1, c: [1, 1, 1], ph: Math.random() * TAU, on: false }); pos[i * 3 + 1] = -99; }
     let next = 0;
+    sized.push([mat, size]);
     return {
       P, pts,
       spawn(p) { const q = P[next]; next = (next + 1) % n; Object.assign(q, { vx: 0, vy: 0, vz: 0, life: 0, max: 1, grav: 0, drag: 0, flut: 0 }, p, { on: true }); return q; },
@@ -80,16 +84,16 @@ function makeBattlefield(o) {
   for (let i = 0; i < Math.round(9 * (A.mist || 0)); i++) {
     const m = new THREE.Sprite(keep(new THREE.SpriteMaterial({ map: puffTex, color: 0xb8c0e8, transparent: true, depthWrite: false, opacity: 0 })));
     const s = rnd(5, 9); m.scale.set(s, s * 0.45, 1); m.renderOrder = 3;
-    m.userData = { x: rnd(X0, X1), z: rnd(Z0, Z1), y: rnd(0.5, 1.3), vx: 0, vz: 0, a: rnd(0.06, 0.12) * (0.6 + 0.6 * A.mist), drift: rnd(0.15, 0.4), ph: Math.random() * TAU };
+    m.userData = { x: rnd(X0, X1), z: rnd(Z0, Z1), y: rnd(0.5, 1.3), vx: 0, vz: 0, a: rnd(0.15, 0.26) * (0.6 + 0.6 * A.mist), drift: rnd(0.15, 0.4), ph: Math.random() * TAU };
     grp.add(m); mist.push(m);
   }
   // fireflies: little lights that wander and blink
-  const ff = A.fireflies ? pool(A.fireflies, 0.11, { add: true, order: 5 }) : null;
+  const ff = A.fireflies ? pool(A.fireflies, 0.14, { add: true, order: 5 }) : null;
   if (ff) for (const q of ff.P) Object.assign(q, { on: true, x: rnd(X0, X1), y: rnd(0.4, 2.4), z: rnd(Z0, Z1), c: A.ffColor || [1, 0.85, 0.4], max: 1e9, hx: 0, hz: 0 });
   // warm sparks off the Ember Line and the living node, rising and dying
   let sparkT = 0;
   // snow, falling the whole fight through
-  const snowN = Math.round(360 * (A.snow || 0)), snow = snowN ? pool(snowN, 0.075, { opacity: 0.95, order: 4 }) : null;
+  const snowN = Math.round(480 * (A.snow || 0)), snow = snowN ? pool(snowN, 0.1, { opacity: 0.95, order: 4 }) : null;
   if (snow) for (const q of snow.P) Object.assign(q, { on: true, x: rnd(X0 - 4, X1 + 4), y: rnd(0, 16), z: rnd(Z0 - 10, Z1), c: [0.92, 0.94, 1], max: 1e9, vy: -rnd(0.5, 1.1), flut: rnd(0.2, 0.6), ph: Math.random() * TAU });
 
   // ---------- the creatures in the trees: birds or bats, put up by a roar ----------
@@ -158,8 +162,9 @@ function makeBattlefield(o) {
   }
 
   // ---------- every frame ----------
-  function update(dt, t) {
+  function update(dt, t, pointScale) {
     if (!(dt > 0)) dt = 0;
+    if (pointScale > 0) for (const [mat, size] of sized) mat.size = size * pointScale;
     const wind = 0.4 + 2.6 * storm + 0.3 * Math.sin(t * 0.37);
     fallT = Math.max(0, fallT - dt); if (birdsT > -1) { birdsT += dt; if (birdsT > 6) birdsT = -9; }
     // the mist drifts, and settles back after a shockwave

@@ -53,11 +53,13 @@ function makeBattleFX() {
     function Pool(n, tex, size) {
       const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), vel = new Float32Array(n * 3), base = new Float32Array(n * 3), life = new Float32Array(n), max = new Float32Array(n), drag = new Float32Array(n), grav = new Float32Array(n);
       const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-      const pts = new THREE.Points(geo, new THREE.PointsMaterial({ size, map: tex, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+      const mat = new THREE.PointsMaterial({ size, map: tex, vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true });
+      const pts = new THREE.Points(geo, mat);
       pts.frustumCulled = false; pts.renderOrder = 8; grp.add(pts);
       for (let i = 0; i < n; i++) pos[i * 3 + 1] = -99;
       let next = 0;
       return {
+        mat, size,
         emit(p, color, count, o) {
           o = o || {};
           for (let c = 0; c < count; c++) {
@@ -309,7 +311,10 @@ function makeBattleFX() {
         embers.emit(q, [0.85, 0.9, 1], 5, { speed: 0.7, life: 0.5, spread: 0.45, grav: 0, drag: 2 });
       }, () => { drop(moon); drop(glow); drop(rg); });
     }
-    function update(dt, t) {
+    // pointScale (from the battle screen): its camera is far off with a narrow lens, which leaves three.js's points under a
+    // pixel at their sizes in meters; the screen says how much bigger they must be to show at their real size
+    function update(dt, t, pointScale) {
+      if (pointScale > 0) for (const P of [sparks, embers, puffs]) P.mat.size = P.size * pointScale;
       sparks.update(dt); embers.update(dt); puffs.update(dt);
       for (const l of lights) { if (l.t < l.dur) { l.t += dt; l.L.intensity = l.i * Math.max(0, 1 - l.t / l.dur); } else l.L.intensity = 0; }
       for (let i = anims.length - 1; i >= 0; i--) {
