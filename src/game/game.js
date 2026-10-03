@@ -38,7 +38,7 @@
     warmCamp: { name: 'The Warm Roads', band: 2, world: 'warmCamp', sky: [820, 1530] },
     dawnroost: { name: 'Dawnroost', band: 2, field: ['dawnroost', [1400, 330]], need: (st) => st.done['visit:dawnroost'], sky: [1365, 1085] },
     northCamp: { name: 'The northern wilds', band: 3, world: 'northCamp', sky: [1150, 590] },
-    shipyard: { name: 'The shipyard', band: 3, field: ['shipyard', [700, 520]], need: (st) => st.done['visit:shipyard'], sky: [2097, 580] },
+    shipyard: { name: 'The shipyard', band: 3, field: ['shipyard', [764, 290]], need: (st) => st.done['visit:shipyard'], sky: [2097, 580] },
     frozenCamp: { name: 'The northeast peaks', band: 4, world: 'frozenCamp', sky: [2760, 1090] },
   };
   // the Magpie's upgrades (rules.js MAGPIE), who makes them, and the story flag each sets
@@ -127,11 +127,12 @@
     async function fadeTo(on, s) { fade.style.transition = 'opacity ' + (s || 0.35) + 's'; fade.classList.toggle('on', on); await wait(s || 0.35); }
 
     // ---------- the ground maps ----------
-    // Io walks as Path Polish paints her (src/walk/painted-io.js), her height 15% of the screen's shorter side, at 1.9 of
-    // her heights a second; the pixel Io stands in until the painting loads
+    // Io walks as Path Polish paints her (src/walk/painted-io.js): 52 map px tall, her height 15% of the screen's shorter
+    // side, at 1.7 of her heights a second (Chris's settings on the Io on Foot page, October 3); the pixel Io stands in
+    // until the painting loads
     const paintedIo = makePaintedIo(src);
     const field = Field.create(fieldHost, {
-      maps: MAPS, src, speed: 110, zoom: 0.7, ioH: 42, paintedIo, pace: 1.9, ioScreen: 0.15,
+      maps: MAPS, src, speed: 110, zoom: 0.7, ioH: 52, paintedIo, pace: 1.7, ioScreen: 0.15,
       encounter: { get mean() { return 770 / settings.rate; }, get min() { return 440 / settings.rate; } },
       light: (m) => settings.light * (m.id === 'bogmire' && !st.flags.lights ? 0.55 : m.id === 'bogmire-heart' && !st.flags.lights ? 0.8 : 1),
       isDone: (k) => !!st.done[k],

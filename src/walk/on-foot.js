@@ -66,7 +66,7 @@
     function note(text) { say.textContent = text; say.hidden = false; clearTimeout(sayT); sayT = setTimeout(() => { say.hidden = true; }, 2600); }
 
     const steps = makeSteps();
-    const S = { ioH: 42, ioScreen: 0.15, pace: 1.9, showWalk: false, sound: 'off' };
+    const S = { ioH: 52, ioScreen: 0.15, pace: 1.7, showWalk: false, sound: 'off' }; // Chris's settings (October 3)
     const opts = {
       maps: MAPS, src: cfg.src, speed: 110, zoom: 0.7,
       get ioH() { return S.ioH; }, get ioScreen() { return S.ioScreen; }, get pace() { return S.pace; }, get showWalk() { return S.showWalk; },

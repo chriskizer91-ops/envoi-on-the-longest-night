@@ -10,10 +10,10 @@ import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
 const R = path.resolve(new URL('..', import.meta.url).pathname);
-const MIME = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg' };
+const MIME = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', avif: 'image/avif' };
 const SPLIT = process.argv.includes('--split'), used = new Set();
 function inlineArt(code) {
-  return code.replace(/"(art\/[^"]+\.(webp|png|jpe?g))"/g, (m, p, ext) => {
+  return code.replace(/"(art\/[^"]+\.(webp|png|jpe?g|avif))"/g, (m, p, ext) => {
     const f = path.join(R, p);
     if (!fs.existsSync(f)) return m;
     if (SPLIT) { used.add(p); return m; }

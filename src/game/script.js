@@ -106,7 +106,7 @@
       ['quill', 'Come and look at her, then.'],
       { focus: [790, 560] },
       { walk: 'quill', path: [[800, 382], [800, 470], [805, 712]], speed: 90, wait: false },
-      { io: [[1060, 390], [760, 390], [758, 470], [752, 705]], speed: 92 }, { until: 'quill' },
+      { io: [[1060, 386], [760, 386], [758, 470], [752, 705]], speed: 92 }, { until: 'quill' },
       { face: 'io', dir: 's' }, { face: 'quill', to: 'io' }, { focus: [775, 720] },
       ['quill', '…But she’ll lift, for you. Not far, mind, and not into the dark. There’s nothing to land by in the fen with Bogmire’s lamps out.'],
       ['io', 'Then we’ll walk the Thornwood to Bogmire, and bring their lights back.'],
