@@ -46,6 +46,10 @@
 @keyframes swirl{0%{opacity:0;transform:scale(.2) rotate(0)}40%{opacity:1}100%{opacity:1;transform:scale(3) rotate(540deg);background:#05030c}}
 .battle-layer{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;background:#05030c}
 .battle-layer #stage{flex:1 1 auto}
+/* a cutscene, over the battle being built under it; its last picture fades into the fight */
+.cutscene-layer{position:absolute;inset:0;z-index:30;background:#000;transition:opacity .8s ease}
+.cutscene-layer.is-gone{opacity:0;pointer-events:none}
+.cutscene-layer.is-over{z-index:39} /* watched again from the menu, over it */
 /* the crossing in the Magpie */
 .flight{position:absolute;inset:0;z-index:44;background:linear-gradient(180deg,#05030f,#1b1440 70%,#2a1f55);overflow:hidden;animation:fin .5s ease}
 .flight.out{animation:fout .5s ease forwards}

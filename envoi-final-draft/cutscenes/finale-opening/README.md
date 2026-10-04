@@ -149,7 +149,7 @@ node tools/shots.mjs /tmp/shots --q phone --size 915x412 at:7 shot:moon at:46 sh
 ## Still open
 
 - **Chris's phone:** whether Phone holds about 30 frames a second on the Pixel 7a, which the end card reports. If it doesn't, Light is a tap away on the end card.
-- **The quick intro's second rise**, and its two lines shown again (above, Into the game): for the game's session.
+- **The quick intro's second rise**, and its two lines shown again (above, Into the game): for the game's session. Done by the game's session on October 4, late evening: after the cutscene the foes start standing and the fight's lines aren't said again (`../README.md`, "Into the game").
 - **Halcyon's planted blade:** her model has no standing pose with the blade planted in the frost (only her defeat, kneeling on it, which belongs to the ending), so shot 4 shows her blade held up before her, from low, and rises to her eyes. A planted-blade stance would be a new move in her model, which this folder doesn't make.
 - **Noctara's rite:** she lifts her face to the eclipse with her own Blackout move (arms open, face up, the night opening in her lining, the dark pouring out round her), played once and released; in the cutscene it strikes nothing. If Blackout should be kept for the fight, a quieter move would be new to her model.
 - **Music:** a low drone of its own. The brief's other choices, the game's "Beneath the Stone" (`src/game/thareia-audio.js`) or Chris's songs, are for the game's session: the module doesn't start the game's own music, which is shared with the rest of the game.

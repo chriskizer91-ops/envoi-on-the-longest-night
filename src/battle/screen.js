@@ -1800,13 +1800,14 @@
         const told = cfg.introMsg && !quick, said = (x) => (typeof x === 'function' ? x(E.foes) : x);
         if (told) { $('skip').hidden = false; shot(IW / 2, IH * 0.4, 0, 1.4); UI.msg(said(cfg.introMsg)); await ws(2.6); }
         shotField(3);
+        // after a cutscene (cfg.standing) the foes already stand where it left them, so they don't rise a second time
         for (const f of foes) {
+          if (cfg.standing) { f.m.root.visible = true; if (f.m.reset) f.m.reset(); continue; }
           f.m.root.visible = true; f.m.play('appear', true);
           FX.burst(new THREE.Vector3(f.pos.x, f.tall * 0.6, f.pos.z), f.look.appearColor || (f.kind === 'wisp' ? [0.8, 0.6, 1] : [0.3, 1, 0.55]), 40, 2.6);
           await wait(0.25);
         }
-        SND.sfx.shriek(1.0); if (BF) BF.roar(foes.some((f) => f.tall > 3) ? 1.2 : 0.6);
-        await wait(0.6);
+        if (!cfg.standing) { SND.sfx.shriek(1.0); if (BF) BF.roar(foes.some((f) => f.tall > 3) ? 1.2 : 0.6); await wait(0.6); }
         if (told && cfg.introAfter && !S.skip) { UI.msg(said(cfg.introAfter), true); await ws(2.6); }
         UI.hideMsg(); $('skip').hidden = true;
       }

@@ -78,18 +78,22 @@ Words:   <the lines it shows, all placeholders>
 Open:    <anything for Chris or the game's session>
 ```
 
-## Into the game (for the game's session, when a slip comes back)
+## Into the game
 
-- Merge the branch after checking it touched only its folder (as `../model-studio/intake.md` does for models).
-- **The Colossus:** the first wild fight against it plays the cutscene, then the fight starts with its quick intro, since the cutscene has said its two lines. A flag in the save (`seen.colossus`) keeps it to once, and a setting can replay it.
-- **The finale:** the cutscene plays when Io walks into the dead Moonwell's court, then the fight starts with its quick intro. It plays again before each try only if Chris wants that; otherwise the second try goes straight in.
-- The game's Music, Effects and Surroundings volumes pass into `play`.
-- Check the size, then rebuild, test and publish the game and the chapter demos as usual.
+Both came back on October 4, late evening, and went in the same night, when Chris said "the cut scenes are done". For the next one, the game's session merges its branch after checking it touched only its folder (as `../model-studio/intake.md` does for models), loads its module in `../../putting-it-all-together/game.html` and names its fight in `src/game/game.js` (`cutsceneFor`). Then: the size, a rebuild, the tests, and the game and chapter demos published.
+
+How the two play (`src/game/game.js`, "the cutscenes"):
+
+- **The Colossus:** the first wild fight against one plays the cutscene, at the Colossus's own level. **The finale:** the cutscene plays before the first try. Each plays once a game (the save's `seen`, under the cutscene's id): a second Colossus, or another try at the finale, goes straight to the fight.
+- **The fight starts where the cutscene ends.** Its last picture stays over the battle while the battle builds, then fades into it. The battle starts with its quick intro, so the lines the cutscene has shown aren't said again, and with `standing`: the foes are already where the cutscene left them, so they don't rise a second time (`src/battle/screen.js`, `intro`). That answers both cutscenes' "quick intro, second rise" note.
+- **Skip** (the button, or Esc) still counts as seen. The game's Music, Effects and Surroundings volumes go in (its Normal is the cutscene's 1), and a phone gets Phone detail.
+- **Watch again:** once a game has shown one, the menu's Settings can play it again, over the menu.
+- **Size:** the modules are 0.40 and 0.45 MB inside the page. The published game is 14.4 MB with both (the build's measure), and a published page may be 16 MB at most, so little more fits inside it. Past that, the split build puts the art beside the page (`../../putting-it-all-together/README.md`, "Building and checking"). The file Chris keeps is 17.1 MB, with room up to 30.
 
 ## The board
 
 | Cutscene | Session | Page | In the game |
 |---|---|---|---|
-| The Colossus, first met | | | |
-| The finale's opening | | | |
-| Studies of Sol, Halcyon and Noctara (optional) | | | |
+| The Colossus, first met (45 s) | Branch `claude/lucid-ritchie-bt1e9z`, merged October 4 | https://claude.ai/artifact/GTMr6zTMt5iwoFt5uxG5nY | In (October 4, late evening): before the first Bramble Colossus |
+| The finale's opening (72 s) | The same branch | https://claude.ai/artifact/PTwiL7MmnCWkdwA54yHex9 | In (October 4, late evening): before the finale's first try |
+| Studies of Sol, Halcyon and Noctara (optional) | Not started | | |

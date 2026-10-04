@@ -132,7 +132,7 @@ node tools/shots.mjs /tmp/shots --q phone --size 915x412 at:6.9 shot:road at:37.
 ## Still open
 
 - **Chris's phone:** how fast it runs on the Pixel 7a, which the end card reports. If Phone is slow there, Light is a tap away on the end card.
-- **The quick intro's second rise** (above, Into the game): for the game's session.
+- **The quick intro's second rise** (above, Into the game): for the game's session. Done by the game's session on October 4, late evening: after the cutscene the foes start standing and the fight's lines aren't said again (`../README.md`, "Into the game").
 - **"Puts out an arm":** Sol has no move that holds an arm out to the side, so she uses her Kestrel reach (her hand raised toward it) and then her guard step in front of Io. A new move would be a change to Sol's model, which this folder doesn't make.
 - **Footsteps:** the cutscene has soft steps in the frost. Whether the game has footsteps at all is still Chris's call (`envoi-game-pass-3/README.md`); they are one line in `src/cast.js` to remove.
 - **The words** are the fight's placeholders, for the lore conversation.

@@ -1050,10 +1050,10 @@ Chris played pass three's pages and the game, and sent the last four battle pain
 
 ## October 4, 2026: herbs for the wilds
 
-- **The party carries up to nine of each herb and starts with three of each** (Chris: "you can carry more than one of each herb... start with three of each"). A new game and every chapter begin with three of each.
+- **The party carries up to nine of each herb and starts with three of each** (Chris: "you can carry more than one of each herb... start with three of each"). A new game and every chapter begin with three of each. (Up to 99 since that evening: "the bag limit on each item should be 99", below.)
 - **In a fight each herb can be used once** ("only use one in a battle"): the fight's Item menu shows how many the party carries, and a herb already used that fight stays on the list, greyed, "once a fight". So every fight is exactly as it was balanced (all 51 balance targets give the same numbers as before).
 - **Out of battle there's no limit** ("you need to be able to use lots in the wilds so you can grind"): from the menu's Herbs, as many as the party carries.
-- **Shops sell up to nine of each; a well's herb is kept unless Io carries nine,** when she trades it on for shards.
+- **Shops sell up to nine of each; a well's herb is kept unless Io carries nine,** when she trades it on for shards. (99 since that evening.)
 - **The journey simulation** starts with three of each, tops them up to three at each shop and spends none between fights, so it plays a little harder than a player who grinds with herbs. Every gate is still reached at its level (6, 11, 15 and 20); the attentive player's finale took a median of 20 tries in this run against 14 before. That fight is the same either way, so the difference is the dice. It's a long shot by design (won 2 to 10 times in a hundred).
 - **Chris finished his walking paths** (October 4): a second round on Dawnroost's living node, the dead Moonwell, the Thornwood and Wickhollow, with new spots to explore, among them a hidden nook behind the node's weapon stall. All in as he drew them.
 
@@ -1110,3 +1110,18 @@ Chris's rules for things to find, settled over three messages that evening; he l
 - **Pictures and cards** (on approving the list): each keepsake has a tiny PNG picture and a card, shown when she finds it and again in the inventory.
 - **The inventory never tells how many are left to find.** It shows only what has been found: no count, no empty places for the rest.
 - As with the two today, the balance never counts on them.
+
+## October 4, 2026, late evening: the places, the bag, the shops and the cutscenes
+
+Chris, in one message: "Those are all good locations also the bag limit on each item should be 99. Also make sure there is a shop in every town. Also the cut scenes are done."
+
+- **The keepsakes' places are approved.** The twelve found ones lie where Claude put them (`../envoi-final-draft/items/items.js`, `at`), with his Wickhollow nook for the Forge Horseshoe. With the list locked and the places approved, they're ready to go into the game.
+- **The bag holds up to 99 of each herb** (`rules.js` `CARRY`). The shops sell up to 99 of each, and a well's herb is kept unless Io already carries 99. A new game still starts with three of each, and a fight still lets each herb be used once, so every fight is as it was balanced. The keepsakes are one of a kind, so the limit is the herbs'.
+- **Every town has a herb shop,** and already did: Nettie in Wickhollow, Quill at the jetty, Old Wenna in Bogmire, Brann in Dawnroost, Pim at the shipyard and Sorrel in Misthollow. Each sells all five herbs at its band's price. Io's cottage is her home, and the three camps on the world map are rests, not towns.
+- **Both cutscenes are in the game,** as their sessions made them (`../envoi-final-draft/cutscenes/`):
+  - **The Colossus, first met** (45 seconds) plays the first time a Bramble Colossus comes out of the snow by the frozen road. **The finale's opening** (72 seconds) plays before the finale's first try. Each plays once a game: a second Colossus, or a try after a lost finale, goes straight to the fight.
+  - **The fight starts where the cutscene ends.** Its last picture stays while the battle builds under it, then fades into the fight. The foes are already standing where the cutscene left them (they don't rise a second time), and the fight skips the lines the cutscene has shown.
+  - **Skip** (the button, or Esc) skips it, and it still counts as seen. It plays at the game's Music, Effects and Surroundings volumes, and at Phone detail on a phone.
+  - **Watch again:** once a game has shown a cutscene, the menu's Settings can play it again.
+  - **Size** (the build's measure): the published game is 14.4 MB with both inside (13.6 MB before), close to the 16 MB a published page may be. The file Chris keeps is 17.1 MB of its 30.
+

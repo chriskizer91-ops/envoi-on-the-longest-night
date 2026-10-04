@@ -7,12 +7,17 @@
 //   new:      a new game starts, the prologue plays, and Io stands in her cottage
 //   walk:     Io walks up Wickhollow's south road with the arrow keys
 //   world:    Io walks the world map
-//   menu:     the menu opens on every tab and closes
+//   menu:     the menu opens on every tab and closes; Settings plays a cutscene again ("Watch again", once a game has
+//             shown it), over the menu, and Esc skips it
 //   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load
 //   scenes:   the staged scenes play on their maps (Sol at the bridge, Quill at the jetty, the knight, Ysmera)
 //   save:     the save is written, and the title offers Continue
 //   wild:     a wild fight in the band (--band, at --level) is played to its end by the expert play style
-//   colossus: the Bramble Colossus is fought the same way (band 4); headless, a whole fight takes a long while
+//   colossus: the Bramble Colossus is fought the same way (band 4); headless, a whole fight takes a long while. The first
+//             time, its cutscene plays first (envoi-final-draft/cutscenes/colossus-first-meeting/): the step sees it
+//             draw, skips it with Esc as a player can, and checks the fight starts with the Colossus already standing
+//   finale:   the finale's opening cutscene plays before the finale's first try, is skipped with Esc, and the fight starts
+//             with Noctara and Halcyon already standing; the fight isn't played out (run it last)
 //   keepsakes: Io walks by a tap up Chris's secret way over Wickhollow's roof to her keepsake, and down the Thornwood's
 //             dark trail to Sol's; each is found once, named in the Party tab, and counts in a fight
 //   songs:    Chris's songs play where they belong (the towns', the wilds'), each from where it was; the fights play
@@ -73,6 +78,16 @@ async function waitFor(fn, arg, ms, what) {
   catch (e) { await shot('timeout-' + what.replace(/\W+/g, '-')); throw new Error('timed out waiting for ' + what); }
 }
 // tap through the dialogue box until it closes (or until `until` is true)
+// a cutscene: wait until it draws, picture it, skip it with Esc as a player can, and wait for its fight to start
+async function throughCutscene(name) {
+  await waitFor(() => !!document.querySelector('.cutscene-layer canvas'), null, 120000, 'the ' + name + ' cutscene to draw');
+  await waitFor(() => { const b = document.querySelector('.cutscene-layer .cs-skip'); return !!b && !b.hidden; }, null, 120000, 'the ' + name + ' cutscene to play');
+  await new Promise((r) => setTimeout(r, 6000));
+  await shot(name + '-cutscene');
+  await page.keyboard.press('Escape');
+  await waitFor(() => !!window.__battle, null, 120000, 'the battle screen after the cutscene');
+  log('  its cutscene played, and was skipped with Esc');
+}
 async function talkThrough(ms, until) {
   const end = Date.now() + (ms || 60000);
   while (Date.now() < end) {
@@ -163,13 +178,28 @@ try {
       for (const tab of await page.$$eval('.gmenu-tabs button', (b) => b.map((x) => x.textContent))) {
         await page.click('.gmenu-tabs button:text-is("' + tab + '")'); await sleep(200); await shot('menu-' + tab.toLowerCase());
       }
+      // a cutscene the game has shown can be watched again from Settings, over the menu
+      if (await page.evaluate(() => !!(window.CUTSCENES && window.CUTSCENES['colossus-first-meeting']))) {
+        const had = await page.evaluate(() => { const st = window.__game.state, h = !!(st.seen && st.seen['colossus-first-meeting']); st.seen = Object.assign(st.seen || {}, { 'colossus-first-meeting': true }); return h; });
+        await page.click('.gmenu-tabs button:text-is("Settings")'); await sleep(200);
+        await page.click('.gmenu-body button:text-is("The Colossus, first met")');
+        await waitFor(() => { const b = document.querySelector('.cutscene-layer.is-over .cs-skip'); return !!b && !b.hidden; }, null, 120000, 'the cutscene to play again');
+        await sleep(8000); await shot('menu-watch-again');
+        await page.keyboard.press('Escape');
+        await waitFor(() => !document.querySelector('.cutscene-layer'), null, 5000, 'Esc to skip the cutscene');
+        if (!await page.evaluate(() => !!document.querySelector('.gmenu'))) throw new Error('the menu closed under the cutscene');
+        if (!had) await page.evaluate(() => { delete window.__game.state.seen['colossus-first-meeting']; });
+        log('  Settings plays a cutscene again, over the menu');
+      }
       await page.click('.gmenu-foot button:text-is("Close")');
       await waitFor(() => !document.querySelector('.gmenu'), null, 10000, 'the menu to close');
     } else if (step === 'wild' || step === 'colossus') {
       await page.evaluate(([L, b]) => { const st = window.__game.state; st.level = L; st.flags = Object.assign(st.flags, { party: true, refit: L > 5, envoi: L > 10, stoop: L > 15 }); st.band = Math.max(st.band, b); }, [level, band]);
       const kind = step === 'colossus' ? 'colossus' : 'wild';
       const opts = step === 'colossus' ? { band: 4, pack: ['colossus'] } : { band, scene: null };
+      const cut = step === 'colossus' && await page.evaluate(() => !!(window.CUTSCENES && window.CUTSCENES['colossus-first-meeting']) && !(window.__game.state.seen && window.__game.state.seen['colossus-first-meeting']));
       await page.evaluate(([k, o]) => { window.__game.battle(k === 'colossus' ? 'wild' : k, o); }, [kind, opts]);
+      if (cut) await throughCutscene('colossus');
       await waitFor(() => !!window.__battle, null, 60000, 'the battle screen');
       await page.evaluate((tb) => { window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
@@ -291,6 +321,15 @@ try {
       await musicRow.locator('button:text-is("Normal")').click();
       await page.click('.gmenu-foot button:text-is("Close")');
       await waitFor(() => !document.querySelector('.gmenu'), null, 10000, 'the menu to close');
+    } else if (step === 'finale') {
+      await page.evaluate(() => { const st = window.__game.state; st.level = 20; st.band = 4; st.flags = Object.assign(st.flags, { party: true, refit: true, envoi: true, charge: true, stoop: true, shipyard: true, upgrade2: true }); if (st.seen) delete st.seen['finale-opening']; });
+      await page.evaluate(() => { window.__game.battle('finale'); });
+      await throughCutscene('finale');
+      await waitFor(() => window.__battle && window.__battle.state === 'battle', null, 240000, 'the finale to begin');
+      const seen = await page.evaluate(() => !!(window.__game.state.seen && window.__game.state.seen['finale-opening']));
+      if (!seen) throw new Error('the finale cutscene isn’t marked seen');
+      await shot('finale-fight');
+      log('  the finale began after its cutscene, which won’t play again');
     } else if (step === 'chapters') {
       // each gate's chapter from the title: Io in the town before the gate (the crossroads' own south road; Misthollow
       // for the finale), the party at the gate's level, saved, after the town's arrival scene; and the little arrow

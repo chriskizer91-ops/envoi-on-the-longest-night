@@ -26,6 +26,8 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | The little golden arrow: where the story wants Io next, over the goal when it's in view, else beside her pointing the way, on the walking maps and the world map, and ringed on the mini-map | `../src/game/goal-arrow.js`; the next step and the way there in `../src/game/game.js` (`nextStep`, `goalOn`, `goalOnWorld`) | In (pass three) |
 | Saves and settings: three save slots, a save code, word speed, larger text, and the music, effects and surroundings volumes | `../src/game/state.js`, `../src/game/game.js` | In (the surroundings volume since October 4) |
 | Two hidden keepsakes, Chris's magic items: Io's on top of the red roof in Wickhollow (her Moonlore heals a quarter more), Sol's where the trail into the Thornwood's dark woods gives out (a tenth more HP, a tenth harder blows) | `../src/battle/rules.js` (`KEEPSAKES`), `../src/game/maps.js` (where), `../src/game/script.js` (the words) | In (October 4). The balance never counts on them. Their names wait for Chris |
+| The two cutscenes: the Colossus, first met, before the first Bramble Colossus; the finale's opening, before the finale's first try | `../envoi-final-draft/cutscenes/`, each made by its own session; loaded by `game.html`, played by `../src/game/game.js` | In (October 4, late evening, when Chris said they were done). Each plays once a game, and the fight starts with its foes standing where the cutscene left them. Skip or Esc skips it; Settings can play it again |
+| Herbs: up to 99 of each in the bag, three of each to start, each used once a fight; a herb shop in every town (Wickhollow, the jetty, Bogmire, Dawnroost, the shipyard, Misthollow) | `../src/battle/rules.js` (`CARRY`, `HERBS`), `../src/game/maps.js` (the shopkeepers) | In (99 since October 4, late evening, at Chris's word) |
 | Chris's next mobs: the wild growing more upset the closer the party comes to Noctara | `../3d-model-new-character-ideas/<name>/` once he brings them | Not yet (Chris). The Gloamwing and the Emberback stay out of the game. Each new one comes in the way the next section says |
 | Everyone else on the maps as paper dolls: Sol, Halcyon, Ysmera, Quill and Inkblot, and the fifteen townsfolk | Chris's art request 08 sheets, in `../reference/art/walkers/`, cut into `../art/walkers/` | In (pass three). The four who walk in scenes keep their walk; the townsfolk stand in one to three poses. 0.6 MB for all nineteen |
 | The new battles: 3D ground in front, a squeezed painting behind, for every fight | Chris's combat backgrounds (`../reference/art/battle-backgrounds/`, art request 11) and `../living-battlefields/` | Planned (pass three): `../envoi-game-pass-3/README.md` |
@@ -79,7 +81,7 @@ A 48k copy of the battle song (1.2 MB), the size Chris once said it shouldn't go
 
 ## Size
 
-The file Chris keeps may be up to 30 MB. Today it is 16.3 MB (October 4), with the songs inside; the published game is 13.6 MB, under the 16 MB a published page may be, with the songs (1.5 MB) as files beside it. `../envoi-game-pass-3/README.md` has the measured parts and where the size is heading (about 16 to 17 MB once the portraits, the stills and the new battles are in, and the world map's walking tiles are gone).
+The file Chris keeps may be up to 30 MB. Today it is 17.1 MB (October 4, late evening, with the two cutscenes), with the songs inside; the published game is 14.4 MB, under the 16 MB a published page may be, with the songs (1.5 MB) as files beside it. Little more fits inside the published page, so the next big piece goes in with the split build (below). `../envoi-game-pass-3/README.md` has the measured parts and where the size is heading (about 16 to 17 MB once the portraits, the stills and the new battles are in, and the world map's walking tiles are gone).
 
 ## Building and checking
 
@@ -92,7 +94,7 @@ node tools/game-test.mjs                                      # plays it headles
 node tools/balance.mjs                                        # every fight's balance targets; must meet all of them
 ```
 
-The published game keeps its songs beside it already (above). If the art pushes the page itself past 16 MB, it is published as a small page with its pictures as files beside it too. Today the page is 13.6 MB, so `--split` waits:
+The published game keeps its songs beside it already (above). If the art pushes the page itself past 16 MB, it is published as a small page with its pictures as files beside it too. Today the page is 14.4 MB (October 4, late evening), so `--split` still waits:
 
 ```sh
 node tools/build.mjs --min --split putting-it-all-together/game.html   # dist/game-split/: the page, art/, files.json

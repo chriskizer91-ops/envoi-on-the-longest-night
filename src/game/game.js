@@ -562,6 +562,40 @@
       const sw = el('div', { class: 'swirl' }, root); sfx('boss');
       await wait(0.85); return sw;
     }
+    // ---------- the cutscenes (envoi-final-draft/cutscenes/, each its own session's) ----------
+    // The Colossus the first time the party meets one in the wilds, and the finale's opening before its first try. Each
+    // plays once (st.seen); its fight then starts quick (the cutscene has shown its lines) with its foes already standing
+    // where the cutscene left them, and the cutscene's last picture fades into the fight. The game's three volumes go in
+    // as the cutscenes take them (Normal is 1)
+    const coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+    function cutsceneFor(kind, cfg) {
+      let id = null, level;
+      if (kind === 'finale') id = 'finale-opening';
+      else if (kind === 'wild' && cfg.fight) { const f = (cfg.fight().foes || [])[0]; if (f && f.id === 'colossus') { id = 'colossus-first-meeting'; level = f.level; } }
+      const C = id && window.CUTSCENES && window.CUTSCENES[id];
+      return C && !(st.seen && st.seen[id]) ? { id, C, level } : null;
+    }
+    function csOpts(level) {
+      const v = (x) => Math.min(1.25, (x || 0) / 0.75), o = { volume: { music: v(settings.music), effects: v(settings.sfx), surroundings: v(settings.amb) } };
+      if (coarse) o.quality = 'phone'; if (level) o.level = level;
+      return o;
+    }
+    async function cutscene(cs) {
+      st.seen = st.seen || {}; st.seen[cs.id] = true; save();
+      const box = el('div', { class: 'cutscene-layer' }, root);
+      try { await cs.C.play(box, csOpts(cs.level)); } catch (e) { /* a cutscene that can't play is passed over */ }
+      return box;
+    }
+    // the cutscene's last picture stays over the fight while it builds, then fades into it
+    function fadeStill(box) { setTimeout(() => { box.classList.add('is-gone'); setTimeout(() => box.remove(), 900); }, 1200); }
+    // one this game has shown, watched again from the menu's Settings: over the menu, which is still there after it
+    async function rewatch(id) {
+      const C = window.CUTSCENES && window.CUTSCENES[id]; if (!C) return;
+      const was = curMusic; music(null);
+      const box = el('div', { class: 'cutscene-layer is-over', tabindex: '-1' }, root); box.focus({ preventScroll: true });
+      try { await C.play(box, csOpts()); } catch (e) { /* passed over */ }
+      box.remove(); music(was);
+    }
     async function battle(kind, o) {
       preHerbs = Object.assign({}, st.herbs);
       AUD && music(null); const sw = await swirl();
@@ -571,7 +605,10 @@
       // the map under the battle stops drawing until the fight is over
       const was = mode; field.show(false); world.show(false);
       const cfg = GameFights.config(kind, st, o);
-      const r = await new Promise((res) => { cfg.game = { onEnd: res, onError: () => res({ outcome: 'error' }) }; cfg.sound = SND; layer.ctl = BattleScreen.start(cfg); });
+      // a cutscene first, when this fight has one that hasn't played
+      const cs = cutsceneFor(kind, cfg), still = cs ? await cutscene(cs) : null;
+      if (still) { cfg.quickIntro = true; cfg.standing = true; }
+      const r = await new Promise((res) => { cfg.game = { onEnd: res, onError: () => res({ outcome: 'error' }) }; cfg.sound = SND; layer.ctl = BattleScreen.start(cfg); if (still) fadeStill(still); });
       layer.ctl.stop(); layer.remove();
       if (was === 'field') field.show(true); else if (was === 'world') world.show(true);
       if (r.outcome !== 'error') GS.applyBattle(st, r);
@@ -689,6 +726,12 @@
       let fps = 30; try { const v = localStorage.getItem('envoi.fps'); if (v !== null) fps = +v; } catch (e) { /* default */ }
       const r = el('div', { class: 'gm-item' }, b); el('span', null, r, 'Battle frame rate'); const gp = el('div', { class: 'gm-pick' }, r);
       for (const [t, v] of [['30', 30], ['45', 45], ['60', 60], ['Screen', 0]]) { const x = el('button', { type: 'button', class: 'go small' + (fps === v ? '' : ' alt'), 'aria-pressed': String(fps === v) }, gp, t); x.addEventListener('click', () => { try { localStorage.setItem('envoi.fps', String(v)); } catch (e) { /* not kept */ } redraw(); }); }
+      // the cutscenes this game has shown, to watch again
+      const seen = Object.keys(st.seen || {}).filter((id) => window.CUTSCENES && window.CUTSCENES[id]);
+      if (seen.length) {
+        const r2 = el('div', { class: 'gm-item' }, b); el('span', null, r2, 'Watch again'); const g2 = el('div', { class: 'gm-pick' }, r2);
+        for (const id of seen) { const x = el('button', { type: 'button', class: 'go small alt' }, g2, window.CUTSCENES[id].title); x.addEventListener('click', async () => { await rewatch(id); x.focus({ preventScroll: true }); }); }
+      }
     }
 
     // ---------- the saves: three slots, and a save code to carry a game to another device or copy of the game ----------
