@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prologue in Io's Garden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="./cutscene.css">
+</head>
+<body>
+<div id="stage"><canvas id="gl" aria-label="Io's cottage garden in Wickhollow, at night"></canvas></div>
+
+<section id="load" class="cover">
+  <p class="eyebrow">A story scene test</p>
+  <h1>The longest night is coming</h1>
+  <p class="where">The prologue, in Io's garden</p>
+  <div class="meter" role="progressbar" aria-label="Getting the scene ready" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="loadBar"></i></div>
+  <p id="loadStep" class="step">Lighting the lanterns</p>
+</section>
+
+<section id="start" class="cover" hidden>
+  <p class="eyebrow">A story scene test</p>
+  <h1>The longest night is coming</h1>
+  <p class="where">The prologue, in Io's garden</p>
+  <p class="lede">The game's opening scene played the way the Bramble Colossus film is made: real 3D, a film camera, Io at her new detail, and the game's own dialogue box. About a minute, with sound.</p>
+  <div class="choices">
+    <button id="go" class="big primary" type="button">Play the scene <span>tap the box when Io speaks, as in the game</span></button>
+  </div>
+  <p class="small" id="startNote">Best with the phone turned sideways.</p>
+</section>
+
+<section id="titlecard" hidden aria-live="polite">
+  <p class="eyebrow">Envoi on the Longest Night</p>
+  <h2>The longest night is coming</h2>
+  <p class="where">Wickhollow</p>
+</section>
+
+<div id="caption" aria-live="polite"><p id="capWords" class="words"></p></div>
+
+<div id="talk" class="talk win" hidden role="dialog" aria-live="polite">
+  <div class="talk-face"><img id="talkFace" alt=""></div>
+  <div class="talk-words"><div id="talkWho" class="talk-who"></div><p id="talkSaid" class="talk-said"></p><div id="talkNext" class="talk-next" aria-hidden="true" hidden>&#9660;</div></div>
+</div>
+
+<button id="skip" type="button" hidden>Skip</button>
+
+<section id="endcard" hidden>
+  <p class="eyebrow">A story scene test</p>
+  <h2>That was the prologue</h2>
+  <dl id="endRows"></dl>
+  <div class="choices">
+    <button id="again" class="big primary" type="button">Watch again</button>
+    <button id="otherQ" class="big" type="button"></button>
+  </div>
+</section>
+
+<p id="hint" role="status" hidden></p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="./cinema.js"></script>
+<script src="./garden.js"></script>
+<script src="./io-cutscene.js"></script>
+<script src="./sounds.js"></script>
+<script src="./scenes.js"></script>
+<script src="./player.js"></script>
+</body>
+</html>
