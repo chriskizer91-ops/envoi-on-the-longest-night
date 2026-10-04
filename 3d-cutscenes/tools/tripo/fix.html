@@ -1,0 +1,178 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Face fix</title></head><body>
+<canvas id="c" width="64" height="64"></canvas>
+<script src="../../.cache/three.min.js"></script><script src="../../.cache/GLTFLoader.js"></script>
+<script>
+// Fixes a picture-to-3D model's face from the picture it was made from:
+//  1. finds the face's own smooth shape and presses onto it whatever lies across the face (hair) or is pressed into it
+//     (the grooves the generator made where it drew the glasses);
+//  2. smooths the face's surface;
+//  3. paints the picture onto the face and neck from the front (projection), only where the picture shows her face
+//     (P.skin, from mask.py), faded where the surface turns away; and where her face and neck turn away from the front,
+//     close to the picture's skin (P.skinFill.mask), gives her skin tone over the generator's smudges.
+// The picture frame: picture px = (A + Sx * x, B - Sy * y) for a model point (x, y); the model faces +z. fix.mjs runs it
+// and saves what it returns; the settings are in fix.json.
+const load = (u) => new Promise((ok, no) => new THREE.GLTFLoader().load(u, ok, undefined, no));
+const img = (u) => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = u; });
+const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+const b64 = (arr) => { const u = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+window.fix = async (P) => {
+  const R = new THREE.WebGLRenderer({ canvas: document.getElementById('c') });
+  const g = await load(P.glb); let mesh = null; g.scene.traverse((o) => { if (o.isMesh && !mesh) mesh = o; });
+  const geo = mesh.geometry, pos = geo.attributes.position.array, nor = geo.attributes.normal.array, idx0 = geo.index.array;
+  const V = pos.length / 3, T0 = idx0.length / 3, log = {};
+  const { A, B, Sx, Sy } = P.map, near = .01, far = 4, camZ = 2, RANGE = far - near;
+  const toPic = (x, y) => [A + Sx * x, B - Sy * y];
+  const ell = (px, py, e) => Math.hypot((px - e[0]) / e[2], (py - e[1]) / e[3]);
+  // ---- welded vertices (the generator splits vertices along texture seams) and their neighbours
+  const wmap = new Map(), weld = new Int32Array(V); let U = 0; const wrep = [];
+  for (let i = 0; i < V; i++) { const k = Math.round(pos[i * 3] * 2e5) + ',' + Math.round(pos[i * 3 + 1] * 2e5) + ',' + Math.round(pos[i * 3 + 2] * 2e5); let w = wmap.get(k); if (w === undefined) { w = U++; wmap.set(k, w); wrep.push(i); } weld[i] = w; }
+  log.vertices = V; log.welded = U; log.triangles = T0;
+  // ---- the face frame, zoomed: an orthographic camera over the mask's box, Z px per picture px
+  const fe = P.face, Z = P.zoom, fx0 = fe[0] - fe[2], fx1 = fe[0] + fe[2], fy0 = fe[1] - fe[3], fy1 = fe[1] + fe[3];
+  const FW = Math.round((fx1 - fx0) * Z), FH = Math.round((fy1 - fy0) * Z);
+  const fc = new THREE.OrthographicCamera((fx0 - A) / Sx, (fx1 - A) / Sx, (B - fy0) / Sy, (B - fy1) / Sy, near, far); fc.position.set(0, 0, camZ); fc.updateMatrixWorld(); fc.updateProjectionMatrix();
+  const rt = (w, h) => new THREE.WebGLRenderTarget(w, h, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true });
+  const depthMat = () => new THREE.ShaderMaterial({ side: THREE.DoubleSide, vertexShader: 'void main(){ gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: '#include <packing>\nvoid main(){ gl_FragColor = packDepthToRGBA(gl_FragCoord.z); }' });
+  const scene = new THREE.Scene(), work = new THREE.Mesh(geo, null); scene.add(work);
+  // packed depth read back and unpacked on the CPU with three's own weights (packing.glsl: UnpackDownscale / (256^3, 256^2, 256, 1))
+  const K = 255 / 256;
+  const cpuDepth = (r, w, h) => { const b = new Uint8Array(w * h * 4); R.readRenderTargetPixels(r, 0, 0, w, h, b); const d = new Float32Array(w * h);
+    for (let i = 0; i < w * h; i++) d[i] = (b[i * 4] / 255) * K / 16777216 + (b[i * 4 + 1] / 255) * K / 65536 + (b[i * 4 + 2] / 255) * K / 256 + (b[i * 4 + 3] / 255) * K; return d; };
+  const layer1 = rt(FW, FH), dm1 = depthMat();
+  // the frontmost depth over the face, seen from the picture's own viewpoint
+  const renderLayers = () => { work.material = dm1; R.setRenderTarget(layer1); R.setClearColor(0xffffff, 1); R.clear(); R.render(scene, fc); return [cpuDepth(layer1, FW, FH)]; };
+  // ---- 1. the face's own shape, and everything in front of it pressed onto it
+  // A quadratic z(px, py) is fitted to the frontmost depths over the face, robustly: first in its middle, then over the
+  // whole face, leaving out what stands well off the last fit (hair lying across it, the grooves the generator pressed in
+  // where it drew the glasses). Then every vertex over the face that lies in front of that shape (up to snapFront) or a
+  // little behind it (snapBehind) is moved onto it, fully in the middle and less toward the face's edge: hair across
+  // the face becomes face, and the grooves fill. Nothing is cut, so no holes open.
+  let [d1] = renderLayers();
+  const zOf = (d) => camZ - near - d * RANGE, pxOf = (x, y) => [fx0 + (x + .5) / Z, fy1 - (y + .5) / Z]; // readPixels rows run from the bottom
+  let coef = null;
+  const zFace = (px, py) => { const u = px - P.fit[0], w = py - P.fit[1]; return coef[0] + coef[1] * u + coef[2] * w + coef[3] * u * u + coef[4] * u * w + coef[5] * w * w; };
+  const fit = (region, tol) => {
+    const Mx = new Float64Array(36), vx = new Float64Array(6); let n = 0;
+    for (let y = 0; y < FH; y++) for (let x = 0; x < FW; x++) { const i = y * FW + x, [px, py] = pxOf(x, y); if (d1[i] >= .999 || ell(px, py, region) >= 1) continue;
+      const z = zOf(d1[i]); if (coef && Math.abs(z - zFace(px, py)) > tol) continue;
+      const u = px - P.fit[0], w = py - P.fit[1], f = [1, u, w, u * u, u * w, w * w]; n++;
+      for (let a = 0; a < 6; a++) { vx[a] += f[a] * z; for (let b = 0; b < 6; b++) Mx[a * 6 + b] += f[a] * f[b]; } }
+    const a = Array.from({ length: 6 }, (_, r) => [...Mx.slice(r * 6, r * 6 + 6), vx[r]]);
+    for (let c = 0; c < 6; c++) { let p = c; for (let r = c + 1; r < 6; r++) if (Math.abs(a[r][c]) > Math.abs(a[p][c])) p = r; [a[c], a[p]] = [a[p], a[c]];
+      for (let r = 0; r < 6; r++) if (r !== c) { const k = a[r][c] / a[c][c]; for (let q = c; q < 7; q++) a[r][q] -= k * a[c][q]; } }
+    coef = a.map((r, i) => r[6] / r[i]); return n;
+  };
+  log.fit = [fit(P.fit, 0)]; for (let k = 0; k < 3; k++) log.fit.push(fit(P.face, P.fitTol));
+  const diag = new Uint8ClampedArray(FW * FH * 4);
+  for (let y = 0; y < FH; y++) for (let x = 0; x < FW; x++) {
+    const i = y * FW + x, [px, py] = pxOf(x, y), o = ((FH - 1 - y) * FW + x) * 4, inF = ell(px, py, P.face) < 1; diag[o + 3] = 255;
+    if (d1[i] >= .999) { diag[o] = diag[o + 1] = diag[o + 2] = 40; continue; }
+    const dz = zOf(d1[i]) - zFace(px, py);
+    if (Math.abs(dz) <= P.fitTol) diag[o + 1] = inF ? 200 : 90; else if (dz > 0) diag[o] = inF ? 230 : 110; else diag[o + 2] = inF ? 230 : 110;
+  }
+  { const c = document.createElement('canvas'); c.width = FW; c.height = FH; c.getContext('2d').putImageData(new ImageData(diag, FW, FH), 0, 0); log.diag = c.toDataURL('image/png'); }
+  if (P.diagOnly) return { log };
+  const nbStart = new Int32Array(U + 1);
+  for (let t = 0; t < T0; t++) for (let k = 0; k < 3; k++) nbStart[weld[idx0[t * 3 + k]] + 1] += 2;
+  for (let i = 0; i < U; i++) nbStart[i + 1] += nbStart[i];
+  const nbList = new Int32Array(nbStart[U]), nf = nbStart.slice(0, U);
+  for (let t = 0; t < T0; t++) { const a = weld[idx0[t * 3]], b = weld[idx0[t * 3 + 1]], c = weld[idx0[t * 3 + 2]]; nbList[nf[a]++] = b; nbList[nf[a]++] = c; nbList[nf[b]++] = c; nbList[nf[b]++] = a; nbList[nf[c]++] = a; nbList[nf[c]++] = b; }
+  const wp = new Float64Array(U * 3); for (let w = 0; w < U; w++) { const i = wrep[w]; wp[w * 3] = pos[i * 3]; wp[w * 3 + 1] = pos[i * 3 + 1]; wp[w * 3 + 2] = pos[i * 3 + 2]; }
+  const touched = new Uint8Array(U); let nSnap = 0;
+  // the middle of the face, all of it, onto the face's shape (its grooves fill, its lumps go); then, out to the face's
+  // edge, only what stands in front of it (hair lying across it)
+  if (P.core) for (let w = 0; w < U; w++) {
+    const [px, py] = toPic(wp[w * 3], wp[w * 3 + 1]), e = ell(px, py, P.core.e); if (e >= P.core.f[1]) continue;
+    const zf = zFace(px, py), dz = wp[w * 3 + 2] - zf; if (dz > P.core.front || dz < -P.core.behind) continue;
+    const k = 1 - sm(P.core.f[0], P.core.f[1], e); if (k <= 0) continue;
+    wp[w * 3 + 2] += k * (zf - wp[w * 3 + 2]); touched[w] = 1; nSnap++;
+  }
+  for (let w = 0; w < U; w++) {
+    const [px, py] = toPic(wp[w * 3], wp[w * 3 + 1]), e = ell(px, py, P.face); if (e >= P.snap.f[1]) continue;
+    if (py < P.snap.yMin) continue; // not the bangs over the forehead
+    const zf = zFace(px, py), dz = wp[w * 3 + 2] - zf; if (dz > P.snap.front || dz < -P.snap.behind) continue;
+    const k = 1 - sm(P.snap.f[0], P.snap.f[1], e); if (k <= 0) continue;
+    wp[w * 3 + 2] += k * (zf - wp[w * 3 + 2]); touched[w] = 1; nSnap++;
+  }
+  log.snapped = nSnap;
+  const idx = idx0, T = T0;
+  // ---- 2. smooth the face's surface: Taubin smoothing of the visible face skin, fading out at the edge of a smaller ellipse
+  for (let i = 0; i < V; i++) { const w = weld[i]; if (!touched[w]) continue; pos[i * 3 + 2] = wp[w * 3 + 2]; }
+  geo.attributes.position.needsUpdate = true; geo.computeBoundingSphere();
+  [d1] = renderLayers();
+  const wt = new Float32Array(U); let nS = 0;
+  for (let w = 0; w < U; w++) {
+    const x = wp[w * 3], y = wp[w * 3 + 1], z = wp[w * 3 + 2], [px, py] = toPic(x, y), e = ell(px, py, P.smooth.e); if (e >= 1) continue;
+    const fxp = Math.floor((px - fx0) * Z), fyp = Math.floor((fy1 - py) * Z); if (fxp < 0 || fyp < 0 || fxp >= FW || fyp >= FH) continue;
+    const dz = (camZ - z - near) / RANGE; if (Math.abs(dz - d1[fyp * FW + fxp]) * RANGE > P.smooth.onSurface) continue;
+    wt[w] = 1 - sm(P.smooth.f[0], P.smooth.f[1], e); if (wt[w] > 0) nS++;
+  }
+  log.smoothed = nS;
+  const tmp = new Float64Array(U * 3);
+  for (let it = 0; it < P.smooth.iter; it++) for (const f of [P.smooth.lambda, P.smooth.mu]) {
+    for (let w = 0; w < U; w++) { if (!wt[w]) continue; let sx = 0, sy = 0, sz = 0; const n = nbStart[w + 1] - nbStart[w]; if (!n) continue;
+      for (let j = nbStart[w]; j < nbStart[w + 1]; j++) { const u = nbList[j]; sx += wp[u * 3]; sy += wp[u * 3 + 1]; sz += wp[u * 3 + 2]; }
+      const k = f * wt[w]; tmp[w * 3] = wp[w * 3] + k * (sx / n - wp[w * 3]); tmp[w * 3 + 1] = wp[w * 3 + 1] + k * (sy / n - wp[w * 3 + 1]); tmp[w * 3 + 2] = wp[w * 3 + 2] + k * (sz / n - wp[w * 3 + 2]); }
+    for (let w = 0; w < U; w++) if (wt[w]) { wp[w * 3] = tmp[w * 3]; wp[w * 3 + 1] = tmp[w * 3 + 1]; wp[w * 3 + 2] = tmp[w * 3 + 2]; }
+  }
+  // positions back to every copy of a welded vertex; new smooth normals there (area-weighted, over the welded surface)
+  for (let w = 0; w < U; w++) if (wt[w]) { touched[w] = 1; for (let j = nbStart[w]; j < nbStart[w + 1]; j++) touched[nbList[j]] = 1; }
+  { const t2 = touched.slice(); for (let w = 0; w < U; w++) if (t2[w]) for (let j = nbStart[w]; j < nbStart[w + 1]; j++) touched[nbList[j]] = 1; }
+  for (let i = 0; i < V; i++) { const w = weld[i]; if (!touched[w]) continue; pos[i * 3] = wp[w * 3]; pos[i * 3 + 1] = wp[w * 3 + 1]; pos[i * 3 + 2] = wp[w * 3 + 2]; }
+  const wn = new Float64Array(U * 3);
+  for (let t = 0; t < T; t++) { const a = weld[idx[t * 3]], b = weld[idx[t * 3 + 1]], c = weld[idx[t * 3 + 2]]; if (!touched[a] && !touched[b] && !touched[c]) continue;
+    const ux = wp[b * 3] - wp[a * 3], uy = wp[b * 3 + 1] - wp[a * 3 + 1], uz = wp[b * 3 + 2] - wp[a * 3 + 2], vx = wp[c * 3] - wp[a * 3], vy = wp[c * 3 + 1] - wp[a * 3 + 1], vz = wp[c * 3 + 2] - wp[a * 3 + 2];
+    const nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx; for (const w of [a, b, c]) { wn[w * 3] += nx; wn[w * 3 + 1] += ny; wn[w * 3 + 2] += nz; } }
+  for (let i = 0; i < V; i++) { const w = weld[i]; if (!touched[w]) continue; const l = Math.hypot(wn[w * 3], wn[w * 3 + 1], wn[w * 3 + 2]) || 1;
+    // keep the original facing where it disagrees in sign (a back face shares the position)
+    let nx = wn[w * 3] / l, ny = wn[w * 3 + 1] / l, nz = wn[w * 3 + 2] / l; if (nx * nor[i * 3] + ny * nor[i * 3 + 1] + nz * nor[i * 3 + 2] < 0) { nx = -nx; ny = -ny; nz = -nz; }
+    nor[i * 3] = nx; nor[i * 3 + 1] = ny; nor[i * 3 + 2] = nz; }
+  geo.attributes.position.needsUpdate = true; geo.attributes.normal.needsUpdate = true; geo.computeBoundingSphere();
+  // ---- 3. paint the picture onto the face and neck from the front. Where her face and neck turn away from the front
+  // (her face's sides, under her jaw), within a little of the picture's own skin and a little behind its frontmost
+  // surface, she gets her skin tone instead, over the generator's smudges.
+  const SF = P.skinFill;
+  // the model's own colour texture, unless another is given
+  const picI = await img(P.pic), texI = P.tex ? await img(P.tex) : mesh.material.map.image, PW = picI.width, PH = picI.height, TS = texI.width;
+  const asTex = (im) => { const t = new THREE.Texture(im); t.flipY = false; t.generateMipmaps = false; t.minFilter = t.magFilter = THREE.LinearFilter; t.needsUpdate = true; return t; };
+  // the picture, and which of its pixels may be painted on (its face, not the hair beside it)
+  const pic = asTex(picI), skin = asTex(await img(P.skin)), side = asTex(await img(SF.mask));
+  const pc = new THREE.OrthographicCamera((0 - A) / Sx, (PW - A) / Sx, B / Sy, (B - PH) / Sy, near, far); pc.position.set(0, 0, camZ); pc.updateMatrixWorld(); pc.updateProjectionMatrix();
+  const depRT = rt(PW, PH); work.material = dm1; R.setRenderTarget(depRT); R.setClearColor(0xffffff, 1); R.clear(); R.render(scene, pc);
+  const E = P.paint.map((p) => new THREE.Vector4(...p.e)), F = P.paint.map((p) => new THREE.Vector2(...p.f));
+  while (E.length < 4) { E.push(new THREE.Vector4(-1e4, -1e4, 1, 1)); F.push(new THREE.Vector2(.5, 1)); }
+  const uvVS = 'varying vec3 vP; varying vec3 vN; void main(){ vP = position; vN = normal; gl_Position = vec4(uv.x * 2.0 - 1.0, uv.y * 2.0 - 1.0, 0.0, 1.0); }';
+  const uvM = new THREE.ShaderMaterial({ side: THREE.DoubleSide, depthTest: false, depthWrite: false, blending: THREE.NoBlending,
+    uniforms: { pic: { value: pic }, skin: { value: skin }, side: { value: side }, sideDepth: { value: SF.depth / RANGE }, dep: { value: depRT.texture }, map: { value: new THREE.Vector4(A, B, Sx, Sy) }, size: { value: new THREE.Vector2(PW, PH) },
+      E: { value: E }, F: { value: F }, face: { value: new THREE.Vector2(...P.facing) }, zr: { value: new THREE.Vector3(camZ, near, far) }, bias: { value: P.bias / RANGE },
+      skinCol: { value: new THREE.Vector3(...SF.color.map((c) => c / 255)) } },
+    vertexShader: uvVS, fragmentShader: `#include <packing>
+uniform sampler2D pic, skin, side, dep; uniform vec4 map; uniform vec4 E[4]; uniform vec2 F[4]; uniform vec2 size, face; uniform vec3 zr, skinCol; uniform float bias, sideDepth;
+varying vec3 vP; varying vec3 vN;
+void main(){
+  vec2 pp = vec2(map.x + map.z * vP.x, map.y - map.w * vP.y), t = pp / size;
+  if (t.x < 0.0 || t.x > 1.0 || t.y < 0.0 || t.y > 1.0) { gl_FragColor = vec4(0.0); return; }
+  float d = (zr.x - vP.z - zr.y) / (zr.z - zr.y), dm = unpackRGBAToDepth(texture2D(dep, vec2(t.x, 1.0 - t.y)));
+  float m = 0.0; for (int k = 0; k < 4; k++) m = max(m, 1.0 - smoothstep(F[k].x, F[k].y, length((pp - E[k].xy) / E[k].zw)));
+  float w = step(d, dm + bias) * smoothstep(face.x, face.y, normalize(vN).z) * m * texture2D(skin, t).r;
+  float sd = texture2D(side, t).r * step(d, dm + sideDepth) * (1.0 - smoothstep(face.x, face.y, normalize(vN).z));
+  gl_FragColor = vec4(mix(skinCol, texture2D(pic, t).rgb, w), max(w, sd));
+}` });
+  const covM = new THREE.ShaderMaterial({ side: THREE.DoubleSide, depthTest: false, depthWrite: false, blending: THREE.NoBlending, vertexShader: uvVS, fragmentShader: 'void main(){ gl_FragColor = vec4(1.0); }' });
+  const uvRT = new THREE.WebGLRenderTarget(TS, TS, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: false });
+  const proj = new Uint8Array(TS * TS * 4), cov = new Uint8Array(TS * TS * 4), flat = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  work.material = uvM; R.setRenderTarget(uvRT); R.setClearColor(0x000000, 0); R.clear(); R.render(scene, flat); R.readRenderTargetPixels(uvRT, 0, 0, TS, TS, proj);
+  work.material = covM; R.clear(); R.render(scene, flat); R.readRenderTargetPixels(uvRT, 0, 0, TS, TS, cov); R.setRenderTarget(null);
+  for (let it = 0; it < P.dilate; it++) { const src = proj.slice();
+    for (let y = 1; y < TS - 1; y++) for (let x = 1; x < TS - 1; x++) { const i = y * TS + x; if (cov[i * 4] || src[i * 4 + 3]) continue; let r = 0, g2 = 0, b = 0, a = 0, k = 0;
+      for (const j of [i - 1, i + 1, i - TS, i + TS]) if (src[j * 4 + 3]) { r += src[j * 4]; g2 += src[j * 4 + 1]; b += src[j * 4 + 2]; a = Math.max(a, src[j * 4 + 3]); k++; }
+      if (k) { proj[i * 4] = r / k; proj[i * 4 + 1] = g2 / k; proj[i * 4 + 2] = b / k; proj[i * 4 + 3] = a; } } }
+  const cv = document.createElement('canvas'); cv.width = cv.height = TS; const cx = cv.getContext('2d'); cx.drawImage(texI, 0, 0);
+  const id = cx.getImageData(0, 0, TS, TS), o = id.data; let painted = 0;
+  for (let i = 0; i < TS * TS; i++) { const a = proj[i * 4 + 3] / 255; if (!a) continue; painted++; for (let c = 0; c < 3; c++) o[i * 4 + c] = o[i * 4 + c] * (1 - a) + proj[i * 4 + c] * a; }
+  cx.putImageData(id, 0, 0); log.painted = painted;
+  return { log, tex: cv.toDataURL('image/jpeg', P.quality || .93), pos: b64(pos), nor: b64(nor), idx: b64(idx) };
+};
+window.__ready = true;
+</script></body></html>

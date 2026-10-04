@@ -53,6 +53,33 @@ A face built from formulas, as above, only gets so close to a drawing. On Octobe
 2. **Setup, for Claude to call Meshy from a cloud session:** a Meshy plan with API access (the free plan has no API keys of its own); the key stored in the environment's settings as the variable `MESHY_API_KEY`, never in the chat or the repository; and `api.meshy.ai`, `assets.meshy.ai` and `docs.meshy.ai` allowed under the environment's Network access, which blocks them by default. A session started after that sees the key. Without any of this, Chris can use Meshy's website himself and send the `.glb` file it gives him.
 3. **Then:** the three views to Meshy's multi-image-to-3D, its rigging and a walk and an idle, the model saved here (`meshy/`), made small enough for a phone, and loaded in a page like this one with three.js r128's GLTFLoader (in the `three@0.128.0` npm package, `examples/js/loaders/GLTFLoader.js`). She would be shown in the garden through the film camera, beside the paper doll and the cutscene Io, at Light, Phone and Laptop detail. If her face comes back soft, the paper doll's eyes, brows and mouth get painted onto her texture.
 
+## A 3D Io from Tripo: a test
+
+**The test:** https://claude.ai/artifact/7AnhS82gsiHgkaMWTYtfHS (private). `Io_From_Tripo.html` is its source, and its model files are in `tripo/`.
+
+On October 4 Chris made the front view in `art-requests/io-turnaround.md` (`art-requests/io-front.webp`) and turned it into a 3D model on Tripo's free plan (its H2.5 model, a 4K texture). Tripo got her figure, hat, coat and boots well, but drew her face smudged: the glasses painted onto her skin as wavy lines, one eye smeared, a lock of hair laid across it, and grooves pressed into her face.
+
+The face is fixed from Chris's own picture, since Tripo made the model from it:
+
+1. The model is lined up with the picture by her eyes, nose, mouth and chin, to within about 3 of the picture's pixels.
+2. The smooth shape of her face is fitted to the model. The lock of hair across her eye is pressed into it and the grooves are smoothed out.
+3. The picture's face (eyes, glasses, brows, nose, smile, blush) and neck are painted onto her from the front. The sides of her face and under her jaw, where Tripo smudged dark paint, get her skin tone.
+
+Still as Tripo made it: hair lighter and pinker than in the picture, a brighter pink coat, glasses painted on rather than real, and no skeleton, so she can't move yet. 502,524 triangles; 7.8 MB as the page loads her, after compression.
+
+```sh
+# Tripo's download as .cache/io-tripo-free.glb; also in .cache: GLTFLoader.js (three@0.128.0, examples/js/loaders) and
+# meshopt_decoder.mjs (the meshoptimizer npm package); Python with numpy and Pillow
+python3 tools/tripo/mask.py art-requests/io-front.webp tools/tripo        # which of the picture's pixels may be painted
+node tools/tripo/fix.mjs tools/tripo/fix.json /tmp/io-fixed               # press, smooth and paint (4096 texture)
+python3 tools/tripo/glb.py .cache/io-tripo-free.glb /tmp/io-fixed /tmp/io-fixed.glb
+npx @gltf-transform/cli meshopt /tmp/io-fixed.glb /tmp/io-after.glb --level medium --quantize-texcoord 16 --quantize-position 16 --quantize-normal 10
+python3 tools/tripo/glb2json.py /tmp/io-after.glb tripo io-after         # .json and .jpg: artifacts don't serve .glb
+node tools/tripo/shoot.mjs ../../.cache/io-tripo-free.glb /tmp/shots 500x500 'face:{"y":0.845,"dist":0.36,"anime":true}'
+```
+
+`fix.json` holds the lining up (`map`: picture pixel = (A + Sx·x, B − Sy·y) for a model point) and every region in the picture's pixels, so a new model from the same picture needs only a new `map`, measured from four or five points on her face.
+
 ## How a scene is written
 
 `scenes.js` holds the prologue as a list of shots. One of them, as it is there:
@@ -122,7 +149,10 @@ The game already switches to a 3D screen for its battles, so a cutscene screen w
 | `tools/shots.mjs` | Headless pictures of the built page at any moment of the scene, through its test hooks |
 | `tools/face.html`, `tools/face.mjs` | Headless close-ups of Io's face, the study's beside the cutscene's, in the garden's night light or plain light |
 | `renders/` | Stills from the scene |
-| `art-requests/io-turnaround.md` | The picture prompt for a 3D Io from Meshy or a 3D artist: Io standing still, front, side and back |
+| `art-requests/io-turnaround.md` | The picture prompt for a 3D Io from Meshy, Tripo or a 3D artist (front, side and back, or the front alone), with the free-plan steps for both |
+| `art-requests/io-front.webp` | The front view Chris made from it |
+| `Io_From_Tripo.html`, `tripo/` | The Tripo test page's source and its two models (the fixed one and Tripo's own), each a `.json` with its texture beside it |
+| `tools/tripo/` | The face fix and its tools: `mask.py`, `fix.html` + `fix.mjs` + `fix.json`, `glb.py`, `glb2json.py`, and `view.html` + `shoot.mjs` for pictures; `serve.mjs` serves this folder to them |
 
 The copies come from the branches `claude/confident-albattani-nhdy6e` (the studies) and `claude/practical-franklin-l1ctf9` (the portrait), as they were on October 4, 2026.
 
@@ -141,6 +171,7 @@ For Io's face: `node tools/face.mjs /tmp/face 'after:{"who":"cut","look":"night"
 ## Still open
 
 - **Chris's phone:** how fast it runs there, which the end card reports.
+- **The Tripo test:** her hair and coat colours, real glasses, and a skeleton so she can move (above). Whether Tripo's paid plan is worth it for the final model.
 - **Io's face:** the veil and the ears (above). Her looking about is her own, so in the close-up she may face the camera or look past it; at Phone detail she happens to look a little aside.
 - **The words** are the script's placeholders; the staging (Io at her door, the lamps by the bridge seen from the garden) is new and only a proposal.
 - **The garden** is built at a lower level of detail than Io (its trees in particular); the Io study notes the same.
