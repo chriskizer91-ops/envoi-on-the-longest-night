@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Envoi Map Editor</title>
+<link rel="stylesheet" href="../../src/game/game.css">
+<link rel="stylesheet" href="../../envoi-game-pass-3/map-paths/map-paths.css">
+<link rel="stylesheet" href="./map-editor.css">
+</head>
+<body>
+<!-- The map editor (the final draft, October 4, 2026): Chris's one tool for the game's walking maps. Walking paths is the
+     Walking Paths page (envoi-game-pass-3/map-paths/) as it was; Keepsakes puts the twenty keepsakes
+     (../items/items.js) where they are found. In this folder the art loads from ../../art; the build
+     (node tools/build.mjs envoi-final-draft/map-editor/map-editor.html) puts it inside the page. -->
+<div class="mp me" id="mp" data-mode="paths">
+  <header class="mp-bar">
+    <div class="mp-brand">
+      <h1>Map editor</h1>
+      <span>Envoi on the Longest Night · walking paths and keepsakes</span>
+    </div>
+    <div class="mp-bar-tools">
+      <div class="me-modes" role="group" aria-label="What you are working on">
+        <button type="button" id="me-mode-paths" aria-pressed="true">Walking paths</button>
+        <button type="button" id="me-mode-keepsakes" aria-pressed="false">Keepsakes</button>
+      </div>
+      <span class="mp-gap" aria-hidden="true"></span>
+      <button type="button" id="mp-undo" title="Undo (Ctrl+Z)">Undo</button>
+      <button type="button" id="mp-redo" title="Redo (Ctrl+Shift+Z)">Redo</button>
+      <span class="mp-gap" aria-hidden="true"></span>
+      <button type="button" id="mp-zoom-out" title="Zoom out (−)" aria-label="Zoom out">−</button>
+      <button type="button" id="mp-fit" title="Show the whole painting (0)">Whole painting</button>
+      <button type="button" id="mp-zoom-in" title="Zoom in (+)" aria-label="Zoom in">+</button>
+      <span class="mp-gap" aria-hidden="true"></span>
+      <button type="button" id="mp-walk" class="mp-primary" aria-pressed="false" title="Walk Io here (F2)">Walk it</button>
+    </div>
+  </header>
+
+  <main class="mp-main">
+    <div class="mp-stagecol">
+      <div class="mp-stage" id="mp-stage">
+        <canvas class="mp-cv" id="mp-cv" tabindex="0" aria-label="The painting, with Io's walking paths and the keepsakes drawn over it"></canvas>
+        <div class="mp-walk-host" id="mp-walk-host" hidden></div>
+        <div class="mp-plate" id="mp-plate"><span id="mp-plate-name"></span><span class="mp-chip" id="mp-plate-chip" hidden></span><span class="mp-chip" id="me-plate-items" hidden></span></div>
+        <div class="mp-readout" id="mp-readout" hidden></div>
+        <div class="mp-note" id="mp-note" role="status" aria-live="polite" hidden></div>
+        <div class="me-found" id="me-found" hidden>
+          <div class="me-found-card" role="dialog" aria-labelledby="me-found-name">
+            <p class="me-found-kicker">Found</p>
+            <canvas class="me-pic" id="me-found-pic" aria-hidden="true"></canvas>
+            <h3 id="me-found-name"></h3>
+            <p class="me-found-who" id="me-found-who"></p>
+            <ul class="me-helps" id="me-found-helps"></ul>
+            <button type="button" id="me-found-ok">OK</button>
+          </div>
+        </div>
+      </div>
+      <p class="mp-help" id="mp-help"></p>
+    </div>
+
+    <aside class="mp-panel" aria-label="Maps, tools and keepsakes">
+      <section class="mp-sec" data-for="paths">
+        <h2>Draw and change</h2>
+        <div class="mp-tools" role="group" aria-label="What a click on the painting does">
+          <button type="button" data-tool="select" aria-pressed="true">Pick and move</button>
+          <button type="button" data-tool="walk"><i class="mp-sw walk"></i>+ Green: new walk area</button>
+          <button type="button" data-tool="front"><i class="mp-sw front"></i>+ Purple: new front</button>
+          <button type="button" data-tool="block"><i class="mp-sw block"></i>+ Red: new block</button>
+        </div>
+        <p class="mp-small">Green ground can go anywhere she should walk, secret ways too (up a tree, over a roof). Purple paints the picture over her where she walks behind it. Click round the shape point by point; click the first point again, or press Enter, to finish.</p>
+        <div class="mp-picked" id="mp-picked"></div>
+        <div class="mp-row">
+          <button type="button" id="mp-smooth" title="Round the picked shape's corners to follow the painted curves">Smooth</button>
+          <button type="button" id="mp-delete" title="Delete the picked point or shape (Delete)">Delete</button>
+        </div>
+      </section>
+
+      <section class="mp-sec" data-for="keepsakes">
+        <h2>The keepsake you picked</h2>
+        <div class="ip-card" id="me-card"></div>
+      </section>
+
+      <section class="mp-sec" data-for="keepsakes">
+        <h2>The twenty keepsakes</h2>
+        <p class="mp-small" id="me-count"></p>
+        <div class="ip-groups" id="me-groups"></div>
+      </section>
+
+      <section class="mp-sec">
+        <h2>Maps</h2>
+        <ul class="mp-maps" id="mp-maps"></ul>
+      </section>
+
+      <section class="mp-sec">
+        <h2>Show on the painting</h2>
+        <div class="mp-layers">
+          <label><input type="checkbox" id="mp-l-walk"><i class="mp-sw walk"></i>Walk areas: where her feet can go</label>
+          <label><input type="checkbox" id="mp-l-block"><i class="mp-sw block"></i>Blocks: cut out of the walk areas</label>
+          <label><input type="checkbox" id="mp-l-front"><i class="mp-sw front"></i>Fronts: drawn over Io behind them</label>
+          <label><input type="checkbox" id="mp-l-exits"><i class="mp-sw exit"></i>Exits, and where she arrives</label>
+          <label><input type="checkbox" id="mp-l-people"><i class="mp-sw people"></i>People and spots</label>
+          <label><input type="checkbox" id="mp-l-items"><i class="mp-sw items"></i>Keepsakes</label>
+          <label><input type="checkbox" id="mp-l-names"><i class="mp-sw items"></i>Every keepsake’s name</label>
+          <label><input type="checkbox" id="mp-l-reach"><i class="mp-sw reach"></i>Where Io can reach</label>
+        </div>
+        <div class="mp-reach" id="mp-reach"></div>
+        <label class="mp-check"><input type="checkbox" id="mp-showpaths">Show the paths while she walks</label>
+      </section>
+
+      <section class="mp-sec">
+        <h2>Send to Claude</h2>
+        <p class="mp-small" id="mp-kept"></p>
+        <p class="mp-small" id="mp-send-wait">Checking whether this page can send to Claude…</p>
+        <div class="mp-row" id="mp-send-row" hidden>
+          <button type="button" id="mp-send-all" class="mp-primary">Send everything new</button>
+          <button type="button" id="mp-send-one">Send this map’s paths</button>
+        </div>
+        <div class="mp-row" id="mp-save-row">
+          <a class="mp-btn" id="mp-download" href="#" download="envoi-map-editor.json" hidden>Download my work</a>
+          <button type="button" id="mp-copy">Copy my work</button>
+        </div>
+        <p class="mp-status" id="mp-status" role="status" aria-live="polite"></p>
+        <textarea class="mp-copybox" id="mp-copybox" rows="6" readonly hidden aria-label="Your work, ready to copy"></textarea>
+      </section>
+    </aside>
+  </main>
+</div>
+<script src="../../src/walk/pixel-io.js"></script>
+<script src="../../src/walk/painted-io.js"></script>
+<script src="../../src/walk/walkers.js"></script>
+<script src="../../src/walk/painted-folk.js"></script>
+<script src="../../src/game/sprites.js"></script>
+<script src="../../src/game/maps.js"></script>
+<script src="../../src/game/field.js"></script>
+<script src="../../envoi-game-pass-3/map-paths/edits-core.js"></script>
+<script src="../items/items.js"></script>
+<script src="./map-editor.js"></script>
+</body>
+</html>

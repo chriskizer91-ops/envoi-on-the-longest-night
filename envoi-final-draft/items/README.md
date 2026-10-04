@@ -2,7 +2,7 @@
 
 **Locked by Chris on October 4, 2026 (evening).** These are the twenty things Io and Sol can find, each with a still picture. They put them on and take them off on a new Items page, and each gives its wearer two small, lasting helps. The data is `items.js` and the pictures are art request 14 (`../../docs/art-requests/14-keepsake-items.md`).
 
-**Next:** Chris places the keepsakes himself, with one tool that is both the map editor and the item placer. He will ask for it. The Item Places page (`../item-places/`) still shows an earlier draft of this list and is to be replaced by that tool. **Nothing here is in the game yet.**
+**Next:** Chris places the keepsakes himself with the map editor (`../map-editor/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5), one tool for both the walking paths and the keepsakes. **Nothing here is in the game yet.**
 
 ## Chris's rules
 
@@ -11,6 +11,8 @@
 3. **The same totals as today.** Together the main helps reach what the two hidden keepsakes give today: Io's Lunar Mend and Waxing Light heal 25% more, and Sol has 10% more HP and her blows land 10% harder. The two hidden ones keep a quarter of that and stay the strongest.
 4. **Where they come from.** Four are gifts from townsfolk. The first time the party beats a Bramble Colossus, in the last band's wilds, it gives each hero one. The two hidden ones stay where they are, and Chris places the other twelve on the maps.
 5. **Names** say what each thing is and where it's found.
+6. **Pictures and cards** (Chris, on approving the list): each keepsake has a tiny PNG picture and a card. The card shows when she finds it, and again when the player looks in the inventory.
+7. **The inventory never tells how many are left to find.** It shows only what has been found: no count of the twenty, no empty places for the rest.
 
 ## The twenty
 
@@ -77,8 +79,8 @@ Several looks borrow from Chris's Aethermoor relics. `items.js` names each one: 
 ## Putting them in the game, once Chris has placed them
 
 1. **The rules:** `ITEMS` in `src/battle/rules.js`, taken from `items.js`, with each help worked into the battle engine and the maps. The two keepsakes in the game today become the Crescent Locket and the Warden's Brooch above, cut to a quarter, at the same moment.
-2. **Finding them:** the twelve lie as glints where Chris put them, like the two hidden ones today. The gifts come in the givers' words, and the Colossus's two come after the party first beats one. Finding one shows its picture, its name, and who can wear it.
-3. **The Items page:** a new tab in the menu, with Io's and Sol's keepsakes side by side, each with its picture. Tap one to see it, put it on, take it off, or hand a shared one to the other hero.
+2. **Finding them:** the twelve lie as glints where Chris put them, like the two hidden ones today. The gifts come in the givers' words, and the Colossus's two come after the party first beats one. Finding one shows its card: its tiny picture, its name, who can wear it, and its two helps. The map editor's walk already shows this card.
+3. **The inventory:** a new Items tab in the menu, with Io's and Sol's keepsakes side by side, each with its tiny picture. Tap one to see its card, put it on, take it off, or hand a shared one to the other hero. It lists only what has been found, and nothing in it tells how many are still out there.
 4. **The save** keeps what was found and who wears what. A save that already has the two keepsakes keeps them.
-5. **The pictures:** art request 14. Until they come, each keepsake shows a small drawn stand-in.
+5. **The pictures:** art request 14, each made into a tiny PNG. Until they come, each keepsake shows a small drawn stand-in, as the map editor does.
 6. **A demo page on Chris's phone first,** as always, then the game.

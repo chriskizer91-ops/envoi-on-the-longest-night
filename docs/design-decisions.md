@@ -1105,5 +1105,7 @@ Chris's rules for things to find, settled over three messages that evening; he l
 - **The two hidden keepsakes are cut to a quarter** of what they give now and stay the strongest. The Warden's Brooch keeps a quarter of both its helps.
 - **Four are gifts from townsfolk,** and the first fight with the Bramble Colossus, in the last band's wilds, gives each hero one.
 - **Names say what each thing is and where it's found.** They can come from the other games or be made up; Chris prefers what and where.
-- **Chris places them himself,** with one tool that is both the map editor and the item placer (he asked for it, once he has seen the list).
+- **Chris places them himself,** with one tool that is both the map editor and the item placer (`../envoi-final-draft/map-editor/`).
+- **Pictures and cards** (on approving the list): each keepsake has a tiny PNG picture and a card, shown when she finds it and again in the inventory.
+- **The inventory never tells how many are left to find.** It shows only what has been found: no count, no empty places for the rest.
 - As with the two today, the balance never counts on them.

@@ -25,7 +25,7 @@ The Bogstriders keep their name and file. The rest are new.
 5. Generate each two to four times and keep the one that is clearest when you look at it small.
 6. Save them in `reference/art/items/` under the file names below.
 
-What happens next: Claude shrinks each picture to 256 × 256 (about 10 to 20 KB each, so about 300 KB for all twenty, well inside the game's 30 MB) and shows it on the Items page, and in the moment each one is found.
+What happens next: Claude makes a tiny PNG of each picture (256 × 256, about 1 MB for all twenty, well inside the game's 30 MB). It shows on the keepsake's card when Io finds it, and again in the inventory.
 
 | # | Keepsake | File | Who can wear it |
 |---|---|---|---|

@@ -117,7 +117,7 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 
 `items/README.md` has the twenty keepsakes Chris locked on October 4, evening: things to find, each with a still picture, that Io and Sol put on and take off on a new Items page. Six are Io's alone, six Sol's alone, and eight either can wear, so one hero can wear fourteen if the party finds them all. Each has a main help (a small share of healing, damage or max HP) and one other help, in fights or outside them. Together the main helps reach what the two hidden keepsakes give today, and the hidden two keep a quarter of it. Four are gifts from townsfolk, the first Bramble Colossus gives each hero one, and Chris places the other twelve himself. The pictures are art request 14 (`../docs/art-requests/14-keepsake-items.md`).
 
-**Next:** one tool that is both the map editor and the item placer, which Chris will ask for. The Item Places page (`item-places/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5) still shows an earlier draft of the list and is to be replaced by it. Nothing is in the game until he has placed them.
+**The map editor** (`map-editor/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5) is where he places them: one tool for the walking paths and the keepsakes, published in the Item Places page's place. Each keepsake will have a tiny PNG picture and a card, shown when it's found and in the inventory, and the inventory never tells how many are left to find. Nothing is in the game until he has placed them.
 
 ## For the next session working on the game
 
@@ -135,5 +135,6 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 | `cutscenes/` | The cutscene plan, a brief for each, and their sessions' folders |
 | `../docs/art-requests/13-wild-creatures.md` | The image prompts for the ten creature families |
 | `items/` | The twenty keepsakes: the list (`items.js`) and the plan |
-| `item-places/` | The Item Places page (an earlier draft of the list), to be replaced by one tool that edits the maps and places the keepsakes |
+| `map-editor/` | The map editor: the walking paths and the keepsakes in one tool, with its test |
+| `item-places/` | The Item Places page, which placed an earlier draft of the list (the map editor took its place and its link) |
 | `../docs/art-requests/14-keepsake-items.md` | The image prompts for the twenty keepsakes' pictures |
