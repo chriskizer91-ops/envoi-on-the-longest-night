@@ -15,7 +15,7 @@ October 3, 2026. The game plays from the title to the ending in one page (https:
    - the five well letters;
    - every story scene, the ending's words included.
 3. **Art requests 06 and 07:** sixteen townsfolk portraits and nine story stills. Each goes in with one line in `src/game/stills.js`.
-4. **The songs** are in (October 4, when Chris asked): Moonlit Forest Path for the towns, Herbal Decay for the wilds, Herbal Decay Battle for the battles (`src/game/songs.js`). The synthesized pieces keep the rest (the title, the marsh, the ruins, the flight, the ending).
+4. **The songs** are in (October 4, when Chris asked): Moonlit Forest Path for the towns, Herbal Decay for the wilds (`src/game/songs.js`). The fights keep their original battle music at his word, so Herbal Decay Battle stays out. The synthesized pieces keep the rest (the title, the marsh, the ruins, the flight, the ending).
 5. **The Bramble Colossus** (`reference/demos/bramble-colossus-bench.html`): built as the plan below says (`demos/colossus.html`). Changes are still welcome: its name, where it lives, its moves.
 6. **Art request 08:** a walk sheet for each of nineteen people, so everyone on the maps is a painted paper doll like Io. `node tools/cut-sheet.mjs` cuts each sheet into the game's walker.
 7. **The next mobs** for the wilds (at least two), the way `putting-it-all-together/README.md` says.

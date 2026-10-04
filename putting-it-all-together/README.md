@@ -31,7 +31,7 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | The new battles: 3D ground in front, a squeezed painting behind, for every fight | Chris's combat backgrounds (`../reference/art/battle-backgrounds/`, art request 11) and `../living-battlefields/` | Planned (pass three): `../envoi-game-pass-3/README.md` |
 | The townsfolk's portraits and the story stills | Art requests 06 and 07 in `../docs/art-requests/` | Waiting on the art. Until the portraits come, the dialogue box shows each paper doll's head and shoulders (`../art/portraits/folk/`, cut by `node tools/cut-sheet.mjs ... --portrait art/portraits/folk`) |
 | Every word of the story | `../src/game/script.js`, placeholders for now | Waiting on the lore conversation |
-| Chris's three songs: Moonlit Forest Path for the towns, Herbal Decay for the wilds, Herbal Decay Battle for the battles | `../art/music/`, from his Game Music Squeezer page (a 48k copy of the battle song in `../reference/music/`), played by `../src/game/songs.js` | In (October 4, when Chris asked for them). Inside the file he keeps; beside the published pages as files |
+| Chris's songs: Moonlit Forest Path for the towns, Herbal Decay for the wilds (his Herbal Decay Battle is out: the fights keep their original battle music, at his word) | `../art/music/`, from his Game Music Squeezer page (a 48k copy of the battle song in `../reference/music/`), played by `../src/game/songs.js` | In (October 4, when Chris asked for them). Inside the file he keeps; beside the published pages as files |
 | The file Chris keeps, which works offline | `tools/build.mjs --offline` | In: three.js and the fonts are inside it, and it plays with the internet blocked. It may grow to 30 MB (Chris); the size section below keeps count |
 | The game in Mooncart | Mooncart builds this repository with `node tools/build.mjs`, which makes the game too (`dist/game.html`) | Ready. Mooncart takes the repository's main branch (today `claude/admiring-hawking-p7m87n`), so the game reaches it once this branch is merged there |
 
@@ -71,14 +71,15 @@ A 48k copy of the battle song (1.2 MB), the size Chris once said it shouldn't go
 
 **In the game since October 4** (Chris: "The three compressed songs are needed to go in"), by `../src/game/songs.js`:
 
-- the towns' song in Wickhollow, the jetty, Dawnroost and the shipyard; the wilds' in the Thornwood, the crossroads, the frozen pass and over the world map; the battles' in every fight;
+- the towns' song in Wickhollow, the jetty, Dawnroost and the shipyard; the wilds' in the Thornwood, the crossroads, the frozen pass and over the world map;
+- the fights keep their original battle music (Chris: "replace the battle mp3 with the original battle music, the towns and overworld MP3s can still be used"), so Herbal Decay Battle stays here, out of the game;
 - the made-up music keeps the title and Io's cottage, the marsh, the ruins, the flight and the ending;
-- each as loud as the made-up music it replaces, under the Music volume; a town or wild song carries on where it left off, the battle song starts from the top each fight;
-- the build puts them inside the page (`dist/game.html`, the file Chris keeps, Mooncart's copy), but leaves them beside the copy to publish (`dist/game.artifact.html`, and the demos made from it), listed in `dist/game.songs.json`, so a published page stays under 16 MB. Publish those three files with the page, at the same paths.
+- each as loud as the made-up music it replaces, under the Music volume; a song carries on where it left off;
+- the build puts them inside the page (`dist/game.html`, the file Chris keeps, Mooncart's copy), but leaves them beside the copy to publish (`dist/game.artifact.html`, and the demos made from it), listed in `dist/game.songs.json`, so a published page stays under 16 MB. Publish those two files with the page, at the same paths.
 
 ## Size
 
-The file Chris keeps may be up to 30 MB. Today it is 17.4 MB (October 4), with the songs inside; the published game is 13.6 MB, under the 16 MB a published page may be, with the songs (2.3 MB) as files beside it. `../envoi-game-pass-3/README.md` has the measured parts and where the size is heading (about 16 to 17 MB once the portraits, the stills and the new battles are in, and the world map's walking tiles are gone).
+The file Chris keeps may be up to 30 MB. Today it is 16.3 MB (October 4), with the songs inside; the published game is 13.6 MB, under the 16 MB a published page may be, with the songs (1.5 MB) as files beside it. `../envoi-game-pass-3/README.md` has the measured parts and where the size is heading (about 16 to 17 MB once the portraits, the stills and the new battles are in, and the world map's walking tiles are gone).
 
 ## Building and checking
 

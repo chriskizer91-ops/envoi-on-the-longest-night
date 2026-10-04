@@ -1063,11 +1063,12 @@ Chris asked what polish is left, and for these: his three songs in; the songs' v
 
 ### The songs
 
-- **In, where he placed them:** Moonlit Forest Path in the four towns (Wickhollow, the jetty, Dawnroost, the shipyard); Herbal Decay in the wilds (the Thornwood, the crossroads, the frozen pass) and over the world map; Herbal Decay Battle in every fight, the story's set fights included. The made-up music keeps the rest: the title and Io's cottage, the marsh, the ruins (the fen's heart, the living node, Misthollow, the Moonwell), the flight and the ending.
-- A town or wild song carries on where it left off, after a fight or a visit elsewhere; the battle song starts from the top each fight. They fade in and out, pause while the game is out of sight (another app, the phone locked), and stream from the file as they play rather than being unpacked whole, so they cost little memory.
-- **Each plays as loud as the made-up music it replaces.** Measured (ffmpeg's EBU R128 loudness), the songs are about 9 dB louder as mastered than the made-up music at Normal, so at Normal they play at about a third of full volume, and Loud and Soft move them with the rest. The made-up battle theme was much quieter than the map music, under the battle's sounds; Herbal Decay Battle plays as loud as the map music instead, so it's heard (question 25).
+- **In, where he placed them:** Moonlit Forest Path in the four towns (Wickhollow, the jetty, Dawnroost, the shipyard); Herbal Decay in the wilds (the Thornwood, the crossroads, the frozen pass) and over the world map. The made-up music keeps the rest: the title and Io's cottage, the marsh, the ruins (the fen's heart, the living node, Misthollow, the Moonwell), the flight and the ending.
+- **The fights keep their original battle music** (Chris, later the same day: "replace the battle mp3 with the original battle music, the towns and overworld MP3s can still be used"): the theme from the Night square demo (`src/battle/sound.js`), at its own level under the battle's sounds, as before the songs. Herbal Decay Battle played in every fight for an afternoon; it stays in `art/music/` (and its 48k copy in `reference/music/`), out of the game. Question 25 is answered by it.
+- A town or wild song carries on where it left off, after a fight or a visit elsewhere. They fade in and out, pause while the game is out of sight (another app, the phone locked), and stream from the file as they play rather than being unpacked whole, so they cost little memory.
+- **Each plays as loud as the made-up music it replaces.** Measured (ffmpeg's EBU R128 loudness), the songs are about 9 dB louder as mastered than the made-up music at Normal, so at Normal they play at about a third of full volume, and Loud and Soft move them with the rest.
 - If a song can't play (an old browser), the made-up music plays in its place.
-- **Size:** the file Chris keeps has the songs inside: 17.4 MB, under his 30 MB. With them the published game and the demos would pass a published page's 16 MB, so on those pages the songs are three files beside the page (2.3 MB), and the page itself stays 13.6 MB.
+- **Size:** the file Chris keeps has the songs inside: 16.3 MB, under his 30 MB. With them the published game and the demos would pass a published page's 16 MB, so on those pages the songs are two files beside the page (1.5 MB), and the page itself stays 13.6 MB.
 
 ### Three volumes
 
@@ -1091,4 +1092,4 @@ Chris asked what polish is left, and for these: his three songs in; the songs' v
 
 - **Beating the game unlocks Chapters** (Chris: "if you beat the game that unlocks chapter selection once we finalize the game"). Until the game is finished, Chapters stays on the title from the start, so each part can be tried.
 - **How, when it's time:** winning the finale already marks the save (`flags.ending`, set before the ending plays), so the title can offer Chapters once any slot holds a beaten game. A mark of its own on the device, set at the same moment, would keep Chapters open even after that save is overwritten.
-- Chris has the whole game as one file (the offline build, songs inside) to keep and play anywhere.
+- Chris has the whole game as one file (the offline build, songs inside) to keep and play anywhere: sent October 4 with all three songs, and again the same day with the fights' original battle music.

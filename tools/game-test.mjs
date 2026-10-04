@@ -15,8 +15,8 @@
 //   colossus: the Bramble Colossus is fought the same way (band 4); headless, a whole fight takes a long while
 //   keepsakes: Io walks by a tap up Chris's secret way over Wickhollow's roof to her keepsake, and down the Thornwood's
 //             dark trail to Sol's; each is found once, named in the Party tab, and counts in a fight
-//   songs:    Chris's songs play where they belong (the towns', the wilds', the battles'), each from where it was, and
-//             the made-up music where they don't; Music Off quietens them (run after title or new)
+//   songs:    Chris's songs play where they belong (the towns', the wilds'), each from where it was; the fights play
+//             their own theme, and the made-up music plays everywhere else; Music Off quietens them (run after title or new)
 // Each step saves a screenshot in --out (tools/.cache/game-test by default). Exits 1 on any page error.
 // three.js r128 comes from npm into tools/.cache, since the CDN is unreachable from the sandbox; the fonts are skipped.
 // --offline tests the file Chris keeps (node tools/build.mjs --min --offline putting-it-all-together/game.html):
@@ -256,8 +256,10 @@ try {
       const wildAt = s.songs.wilds.at;
       await page.evaluate(() => { window.__game.battle('wild', { band: 1, scene: null }); });
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
-      s = await hear('battle', 'a fight');
-      if (s.songs.battle.at > 30) throw new Error('the battle song did not start from the top: ' + s.songs.battle.at);
+      await sleep(2500); s = await songs();
+      const theme = await page.evaluate(() => window.__game.battleTheme);
+      if (s.playing || !s.songs.wilds.paused || !theme) throw new Error('a fight should play its own theme, and no song: ' + JSON.stringify(s) + ', theme ' + theme);
+      log('  a fight: the battle theme, no song');
       await page.evaluate((tb) => { for (const f of window.__battle.engine.foes) window.__battle.weaken(5, f.key); window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
       await waitFor(() => window.__battle && window.__battle.state === 'over' && !document.getElementById('end').hidden, null, 900000, 'the fight to end');
       await page.click('#again');
@@ -265,8 +267,6 @@ try {
       await talkThrough(30000);
       s = await hear('wilds', 'back in the Thornwood');
       if (s.songs.wilds.at < wildAt) throw new Error('the wilds song started again instead of going on: ' + s.songs.wilds.at + ' < ' + wildAt);
-      await sleep(1500); s = await songs();
-      if (!s.songs.battle.paused || s.songs.battle.at !== 0) throw new Error('the battle song did not stop and go back to the top ' + JSON.stringify(s));
       await page.evaluate(() => { window.__game.goField('cottage', [838, 520]); });
       await waitFor(() => window.__game.field.map.id === 'cottage' && !window.__game.busy, null, 30000, 'the cottage');
       s = await hear('title', 'the cottage');

@@ -94,14 +94,14 @@ Each demo is the whole game opening at its chapter, saving as it goes; its title
 20. **The editor's drawing tools come first:** + Green, + Purple and + Red, in the layers' colours, at the top of its panel.
 21. **Chris's second round of walking paths** (October 4): Dawnroost's living node, the dead Moonwell, the Thornwood and Wickhollow, with new places to explore, among them a hidden nook behind the node's weapon stall.
 22. **Herbs for the wilds** (October 4): up to nine of each, three of each to start, each used once a fight, as many as you have out of battle. The fights are exactly as balanced as before.
-23. **Chris's three songs are in** (October 4): Moonlit Forest Path in the towns, Herbal Decay in the wilds and over the world map, Herbal Decay Battle in every fight, each as loud as the made-up music it replaces (`../src/game/songs.js`). The made-up music keeps the title, the marsh, the ruins, the flight and the ending. On the published pages the songs are three files beside the page.
+23. **Chris's songs are in** (October 4): Moonlit Forest Path in the towns, Herbal Decay in the wilds and over the world map, each as loud as the made-up music it replaces (`../src/game/songs.js`). The fights keep their original battle music, at his word (his Herbal Decay Battle is out of the game). The made-up music keeps the title, the marsh, the ruins, the flight and the ending. On the published pages the songs are two files beside the page.
 24. **Three volumes:** Music, Effects and Surroundings (each place's own crickets, wind and water), each from Off to Loud.
 25. **Two hidden keepsakes,** Chris's magic items: Io's on top of the red roof in Wickhollow (her Moonlore heals a quarter more), Sol's where the trail into the Thornwood's dark woods gives out (a tenth more HP and a tenth harder blows). Nothing points to them; the balance never counts on them. Their names wait for Chris (`../docs/questions/open.md`, 24).
 26. **A tap walks Io along narrow ways too,** Chris's secret paths included: a tap on the roof's glint takes her up the tree and along the ridge. The Walking Paths editor's reach check follows narrow ways the same way, so its orange marks only ground she can't reach at all.
 
 ## The size, measured
 
-The file Chris keeps (offline, one file): **17.4 MB** with the songs inside (October 4), from 14.4 MB without them. The published game is 13.6 MB, under the 16 MB a published page may be, with the songs as three files beside it (2.3 MB).
+The file Chris keeps (offline, one file): **16.3 MB** with the songs inside (October 4), from 14.4 MB without them. The published game is 13.6 MB, under the 16 MB a published page may be, with the songs as two files beside it (1.5 MB).
 
 | In the file today | MB |
 |---|---|
@@ -111,7 +111,7 @@ The file Chris keeps (offline, one file): **17.4 MB** with the songs inside (Oct
 | Code: three.js 0.6, the models 0.7, the game 0.4 | 1.7 |
 | Paper dolls (19) and their faces | 0.9 |
 | Title picture, portraits, fonts, the skiff | 1.1 |
-| Chris's three songs (inside the file he keeps; beside the published page) | 3.0 |
+| Chris's two songs (inside the file he keeps; beside the published page) | 1.9 |
 
 Where it is heading, with everything Chris has asked for:
 
@@ -161,4 +161,4 @@ Random fights happen on the wilderness scenes, as in the Thornwood today, and th
    - the lore conversation (every word is a placeholder);
    - art requests 06 (portraits) and 07 (stills);
    - the footsteps (none, soft steps, or a cloak swish);
-   - the keepsakes' names, and the battle song's loudness (`../docs/questions/open.md`, 24 and 25).
+   - the keepsakes' names (`../docs/questions/open.md`, 24).

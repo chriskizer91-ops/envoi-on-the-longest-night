@@ -1,9 +1,10 @@
-// songs.js: Chris's three songs (art/music/, sent October 3; "The three compressed songs are needed to go in", October
-// 4): Moonlit Forest Path in the towns, Herbal Decay in the wilds and over the world map, and Herbal Decay Battle in
-// every fight. Each loops from an <audio> element, streamed as it plays rather than decoded whole, and fades in and out.
-// A town or wild song carries on where it left off; the battle song starts from the top each fight. The songs pause
-// while the game is out of sight. The made-up music (thareia-audio.js) keeps the rest: the title, the marsh, the ruins
-// and the flight.
+// songs.js: Chris's songs (art/music/, sent October 3; "The three compressed songs are needed to go in", October 4):
+// Moonlit Forest Path in the towns, and Herbal Decay in the wilds and over the world map. Each loops from an <audio>
+// element, streamed as it plays rather than decoded whole, fades in and out, and carries on where it left off after a
+// fight or a visit elsewhere. The songs pause while the game is out of sight. The made-up music (thareia-audio.js) keeps
+// the rest: the title, the marsh, the ruins and the flight; and the fights keep their original battle theme (sound.js),
+// at Chris's word: "replace the battle mp3 with the original battle music" (October 4). His Herbal Decay Battle stays in
+// art/music/, out of the game.
 // Songs.create({ src, ctx, onFail }) -> { has(id), play(id), stop(fade), playing(), setVolume(v), state() }
 //   src: an art path to its address (game.js's); ctx: the game's AudioContext, only for browsers that won't turn an
 //   <audio> element down (iPhones); onFail(id): a song couldn't be played, so the made-up music takes its place
@@ -12,13 +13,10 @@
 (function () {
   'use strict';
   // each song, and how loud it plays at Normal: as loud as the made-up music it stands in for. Measured with ffmpeg's
-  // ebur128 (October 4): the songs are -14.5, -16.1 and -14.7 LUFS; the made-up town and travel pieces -23.2 and -23.8
-  // at Normal. The battle song plays as loud as the music on the maps: the made-up battle theme sat far under the
-  // battle's effects (-36.4 LUFS), too quiet for a song.
+  // ebur128 (October 4): the songs are -14.5 and -16.1 LUFS; the made-up town and travel pieces -23.2 and -23.8 at Normal
   const SONGS = {
     town: { file: "art/music/towns-moonlit-forest-path.webm", level: 0.37 },
     wilds: { file: "art/music/wilds-herbal-decay.webm", level: 0.41 },
-    battle: { file: "art/music/battle-herbal-decay.webm", level: 0.33, fresh: true },
   };
   const FADE = 0.8; // seconds
   // some browsers (iPhones) keep an <audio> element's volume at 1 whatever it's set to
@@ -74,15 +72,14 @@
       if (cur === id) return true;
       if (cur) stop(FADE);
       cur = id;
-      const a = audio(id);
-      if (SONGS[id].fresh && a.paused) a.currentTime = 0;
+      audio(id);
       go(id);
       return true;
     }
     function stop(secs) {
       if (!cur) return;
       const id = cur; cur = null;
-      fade(id, 0, secs == null ? FADE : secs, () => { if (cur !== id) { A[id].pause(); if (SONGS[id].fresh) A[id].currentTime = 0; } });
+      fade(id, 0, secs == null ? FADE : secs, () => { if (cur !== id) A[id].pause(); });
     }
     function setVolume(v) { vol = v; if (cur) fade(cur, target(cur), 0.1); }
     document.addEventListener('visibilitychange', () => {

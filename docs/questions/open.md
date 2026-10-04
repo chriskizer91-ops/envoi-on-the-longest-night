@@ -30,7 +30,7 @@ New questions, if any come up while the game is built, go here.
     - **Io's, "the Crescent Locket":** a little silver locket with a crescent on its lid, under a loose slate at the end of the red roof's ridge in Wickhollow (Chris's secret way). Her Lunar Mend and Waxing Light heal a quarter more.
     - **Sol's, "the Warden's Brooch":** an old sunstone brooch in dark bronze, still warm, where the trail into the Thornwood's dark woods gives out. Sol knows it for a Warden's ("A long way from the waystation") and wears it home for them. She has a tenth more HP, and her blows land a tenth harder.
     - What are they really called, and who left them there? Is a fallen Warden's brooch in the Thornwood all right for the lore?
-25. **The battle song's loudness.** Chris's three songs play as loud as the made-up music they replace on the maps. The made-up battle theme was much quieter than the map music (it sat under the battle's sounds), but Herbal Decay Battle plays as loud as the map music, so it's heard. Is that right, or should it sit lower under the fighting?
+25. **The battle song's loudness.** Chris's three songs play as loud as the made-up music they replace on the maps. The made-up battle theme was much quieter than the map music (it sat under the battle's sounds), but Herbal Decay Battle plays as loud as the map music, so it's heard. Is that right, or should it sit lower under the fighting? Answered October 4: the fights keep the original battle music, and Herbal Decay Battle is out of the game (`design-decisions.md`, "The songs").
 
 ## New character ideas
 

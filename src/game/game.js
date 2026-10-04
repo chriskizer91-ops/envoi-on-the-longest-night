@@ -1,8 +1,8 @@
 // game.js: the game itself (plan phase 5), joining the pieces: the title, the ground maps (field.js), the world map
 // (world.js), the dialogue box (talk.js), the battles (the battle screen in its game mode, with fights.js), the story's
 // beats and words (script.js), the menus, the herb shops, the rests and the save (state.js), and the music: Chris's
-// three songs in the towns, the wilds and the battles (songs.js), and his library from 20-min everywhere else
-// (thareia-audio.js).
+// songs in the towns and the wilds (songs.js), his library from 20-min everywhere else (thareia-audio.js), and the
+// battles' own theme (sound.js).
 // The story runs on flags in the save: party (Sol has joined), magpie (Quill's skiff is Io's), lights (Bogmire's lamps
 // are back), refit, envoi, charge, stoop, shipyard, upgrade2, ending. The highest band the Magpie can reach (st.band)
 // opens the world map's bands; the rest lie under cold mist.
@@ -134,14 +134,10 @@
     // ---------- sound ----------
     let audioOn = false, curMusic = null;
     const SND = window.makeBattleSound();
-    // Chris's songs (songs.js): the towns' and the wilds' here, the battles' through the battle screen's sound. Where a
-    // song can't play, the made-up music plays instead
+    // Chris's songs (songs.js) in the towns and the wilds; the fights keep their own theme. Where a song can't play, the
+    // made-up music plays instead
     const SONG = { town: 'town', travel: 'wilds' };
-    const songs = window.Songs.create({
-      src, ctx: () => AUD.sfxContext(),
-      onFail: (id) => { if (id === 'battle') SND.songFailed(); else { const m = curMusic; curMusic = null; music(m); } },
-    });
-    SND.setSong({ ok: () => songs.has('battle'), play: () => songs.play('battle'), stop: (fade) => songs.stop(fade) });
+    const songs = window.Songs.create({ src, ctx: () => AUD.sfxContext(), onFail: () => { const m = curMusic; curMusic = null; music(m); } });
     function audioInit() { if (audioOn) return; audioOn = true; try { AUD.sfxInit(); SND.init(); applySound(); } catch (e) { /* no audio */ } }
     // the music's, the effects' and the places' volumes, each from off to loud, on the maps and in the battles alike
     function applySound() {
@@ -845,7 +841,7 @@
     // time played
     setInterval(() => { if (mode !== 'title' && !document.hidden) st.time += 1; }, 1000);
     if (opts.skipTitle) { audioOn = false; begin(!opts.state); } else showTitle();
-    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit, songs, get music() { return songs.playing() || AUD.musicPlaying(); },
+    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit, songs, get music() { return songs.playing() || AUD.musicPlaying(); }, get battleTheme() { return SND.musicOn; },
       get goal() { return mode === 'field' && field.map ? goalOn(field.map.id) : mode === 'world' ? goalOnWorld() : null; } };
     window.__game = api;
     return api;
