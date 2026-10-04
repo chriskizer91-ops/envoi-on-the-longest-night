@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The New Battles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/battle/screen.css">
+<style>
+/* the fight list over the stage: every fight of the game, its painting as its picture */
+#wrap{position:relative;flex:1 1 auto;min-height:0;display:flex}
+#wrap #stage{flex:1 1 auto;background-size:cover;background-position:50% 42%}
+#pick{z-index:20;background:rgba(8,5,12,.62)}
+.pcard{width:100%;max-width:920px;margin:auto;padding:12px 14px 14px;text-align:left}
+.pcard h2{margin:0 0 3px;font-family:"IM Fell English",Georgia,serif;font-weight:400;font-size:24px;line-height:1.1}
+.pcard .lead{margin:0 0 10px;font-size:13.5px;line-height:1.4;color:#dfe4ff}
+.pbody{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:12px;align-items:start}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:6px}
+.fb{appearance:none;border:1px solid rgba(214,222,255,.3);background:rgba(10,12,34,.5);color:var(--wt);border-radius:7px;padding:0 0 4px;text-align:left;overflow:hidden;display:flex;flex-direction:column;min-height:44px;font:inherit}
+.fb img{display:block;width:100%;height:40px;object-fit:cover;object-position:50% 58%;opacity:.85}
+.fb .n{font-size:12.5px;font-weight:700;line-height:1.15;padding:4px 6px 0}
+.fb .w{font-size:11px;color:var(--dim);line-height:1.2;padding:1px 6px 0}
+.fb[aria-checked="true"]{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.fb[aria-checked="true"] img{opacity:1}
+.popts{display:flex;flex-direction:column;gap:8px}
+.pwhere{font-size:13px;line-height:1.4;color:#dfe4ff}
+.pwhere b{display:block;font-family:"IM Fell English",Georgia,serif;font-weight:400;font-size:19px;color:var(--wt);margin-bottom:2px}
+.popts label{display:grid;grid-template-columns:5.6em 1fr auto;gap:8px;align-items:center;font-size:13.5px;color:#dfe4ff}
+.popts input[type=range]{width:100%;accent-color:var(--gold);min-height:28px}
+.popts output{font-weight:700;font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
+.popts select{font:inherit;font-size:13.5px;color:var(--wt);background:rgba(10,12,34,.55);border:1px solid rgba(214,222,255,.35);border-radius:6px;min-height:36px;padding:4px 8px;grid-column:2/4;min-width:0}
+.popts select option{background:#1c2040}
+.pbtns{display:flex;gap:8px;flex-wrap:wrap}
+.pbtns .go{flex:1 1 0;min-width:110px}
+.pbtns .go small{display:block;font-size:11px;font-weight:400;opacity:.8}
+.plast{margin:0;font-size:12.5px;color:var(--dim);min-height:1em}
+@media (max-width:640px){.pbody{grid-template-columns:1fr}.plist{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}}
+@media (max-height:480px){.pcard{padding:9px 11px 11px}.pcard h2{font-size:20px}.pcard .lead{display:none}.fb img{height:30px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>The New Battles</h1>
+  <div class="hbtns">
+    <button type="button" class="hbtn" id="fights" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 6h16v2H4Zm0 5h16v2H4Zm0 5h16v2H4Z"/></svg><span>Fights</span></button>
+    <button type="button" class="hbtn" id="fps"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4a9 9 0 0 0-9 9 8.9 8.9 0 0 0 1.8 5.4l1.6-1.2A7 7 0 1 1 19 13a6.9 6.9 0 0 1-1.4 4.2l1.6 1.2A8.9 8.9 0 0 0 21 13a9 9 0 0 0-9-9Zm4.2 4.4-5 4.1a1.6 1.6 0 1 0 2.2 2.2l4.1-5Z"/></svg><span>fps</span></button>
+    <button type="button" class="hbtn" id="snd" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9H3Zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Zm-2.5-8.8v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6Z"/></svg><span>Sound on</span></button>
+  </div>
+</header>
+<div id="wrap">
+  <main id="stage" aria-label="Battle"></main>
+  <div id="pick" class="overlay">
+    <div class="pcard win">
+      <h2>Every fight, in its place</h2>
+      <p class="lead">Chris’s paintings far off, live 3D ground in front that answers every blow, at his settings: 30 frames a second, the 3D at 3/4 sharpness, the paintings at Strong. Pick a fight, then play it, or watch it play itself.</p>
+      <div class="pbody">
+        <div class="plist" id="plist" role="radiogroup" aria-label="Which fight"></div>
+        <div class="popts">
+          <div class="pwhere" id="pwhere" aria-live="polite"></div>
+          <label for="plevel"><span>Party level</span><input type="range" id="plevel" min="1" max="20" step="1" value="3"><output id="plevelOut" for="plevel">3</output></label>
+          <label for="pfoes" id="pfoesL"><span>Foes</span><select id="pfoes"></select></label>
+          <label for="pweather" id="pweatherL"><span>Weather</span><select id="pweather">
+            <option value="roll">As it comes</option><option value="clear">A clear night</option><option value="rain">Rain</option><option value="storm">A storm</option>
+          </select></label>
+          <div class="pbtns">
+            <button type="button" class="go" id="pplay">Play<small>you pick every move</small></button>
+            <button type="button" class="go alt" id="pwatch">Watch<small>it plays itself</small></button>
+          </div>
+          <p class="plast" id="plast"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/stage/night-square.js"></script>
+<script src="../src/stage/arena-river-glade.js"></script>
+<script src="../src/stage/arena-warm-roads-moor.js"></script>
+<script src="../src/stage/arena-eldergrove.js"></script>
+<script src="../src/stage/arena-frostmere.js"></script>
+<script src="../src/stage/arena-bogmire.js"></script>
+<script src="../src/stage/arena-dawnroost.js"></script>
+<script src="../src/stage/arena-crossroads.js"></script>
+<script src="../src/stage/arena-dead-moonwell.js"></script>
+<script src="../src/models/witch.js"></script>
+<script src="../src/models/sol.js"></script>
+<script src="../src/models/wraith.js"></script>
+<script src="../src/models/wisp.js"></script>
+<script src="../src/models/bramble.js"></script>
+<script src="../src/models/colossus.js"></script>
+<script src="../src/models/halcyon.js"></script>
+<script src="../src/models/noctara.js"></script>
+<script src="../src/models/lunara.js"></script>
+<script src="../src/models/envoi.js"></script>
+<script src="../src/fx/battle-fx.js"></script>
+<script src="../src/fx/battlefield.js"></script>
+<script src="../src/fx/arena.js"></script>
+<script src="../src/fx/io-spells.js"></script>
+<script src="../src/battle/rules.js"></script>
+<script src="../src/battle/engine.js"></script>
+<script src="../src/battle/sim.js"></script>
+<script src="../src/battle/sound.js"></script>
+<script src="../src/battle/screen.js"></script>
+<script src="../src/game/fights.js"></script>
+<script>
+// The new battles (pass three, "Next: the new battles"): every fight of the game in its place's arena, as Colossus in
+// the Meadow is fought: Chris's painting of the place far off, live 3D ground in front (src/fx/arena.js, the places in
+// src/stage/arena-*.js). The fights are the game's own (src/game/fights.js, with opts.arena), with the party as the
+// story has it at the level picked, so every move, rule, menu and word is the game's. Watch lets the battle play itself
+// (the expert play style). The first fight keeps the Night square's own painting. Test hooks: window.__arena.
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const RL = window.BattleRules, SIM = window.BattleSim, AR = window.ARENAS;
+  const src = (p) => (p.startsWith('data:') ? p : '../' + p);
+  // three of each herb, as a new game and every chapter start
+  const herbs = () => Object.fromEntries(Object.keys(RL.HERBS).map((id) => [id, RL.START_HERBS]));
+  // the story's flags as the party has them at a level (the chapters', src/game/game.js)
+  const storyAt = (L) => ({ party: true, magpie: true, lights: L > 5, refit: L > 5, envoi: L > 10, charge: L > 10, stoop: L > 15, shipyard: L > 15, upgrade2: L > 15 });
+  const party = (L, flags) => ({ level: L, xp: 0, hp: { io: null, sol: null }, mp: null, herbs: herbs(), flags, keepsakes: {} });
+  const NAME = { wisp: ['a wisp', 'wisps'], wraith: ['a wraith', 'wraiths'], frostWisp: ['a frost wisp', 'frost wisps'] };
+  const NUM = ['', 'one', 'two', 'three'];
+  function packName(pack) {
+    const n = {}; for (const id of pack) n[id] = (n[id] || 0) + 1;
+    const s = Object.keys(n).map((id) => (n[id] > 1 ? NUM[n[id]] + ' ' + NAME[id][1] : NAME[id][0])).join(' and ');
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+  const FORMS = [['bramble', 'The Classic Horror'], ['brambleAmbush', 'A Low Ambush'], ['brambleTowering', 'A Towering Reach'], ['brambleAncient', 'An Ancient Crown']];
+  const FIGHTS = [
+    { id: 'first', name: 'The first fight', kind: 'first', scene: 'night-square', levels: [1, 3], level: 1, party: (L) => party(L, {}),
+      note: 'Io alone against the wraith that crosses the bridge, as the game begins. It keeps the Night square’s own painting: its camera looks down on the square from high above, so no ground of ours can stand in front of it.' },
+    { id: 'band1', name: 'Band 1 wilds', kind: 'wild', band: 1, arena: 'river-glade', levels: [1, 5], level: 3, note: 'Wisps and wraiths in the Gloamwood, levels 1 to 5.' },
+    { id: 'band2', name: 'Band 2 wilds', kind: 'wild', band: 2, arena: 'warm-roads-moor', levels: [6, 10], level: 8, note: 'Wisps and wraiths along the Ember Line, levels 6 to 10.' },
+    { id: 'band3', name: 'Band 3 wilds', kind: 'wild', band: 3, arena: 'eldergrove', levels: [11, 15], level: 13, note: 'Wraiths and frost wisps in the northwest forests, levels 11 to 15. One fight in five there is the Bramble Horror.' },
+    { id: 'band4', name: 'Band 4 wilds', kind: 'wild', band: 4, arena: 'frostmere', levels: [16, 20], level: 18, note: 'Frost wisps and wraiths below the Ironspire Peaks, levels 16 to 20. Now and then, the Bramble Colossus.' },
+    { id: 'horror', name: 'The Bramble Horror', kind: 'wild', band: 3, arena: 'eldergrove', forms: true, levels: [11, 15], level: 14, note: 'A blackberry thicket that was never a thicket, in band 3, alone.' },
+    { id: 'colossus', name: 'The Bramble Colossus', kind: 'wild', band: 4, arena: 'frostmere', pack: ['colossus'], levels: [16, 20], level: 19, note: 'The last band’s great wild foe, as big as a house. At half its HP, its Wrath: a red storm.' },
+    { id: 'gate5', name: 'Gate 5', kind: 'greatWraith', arena: 'bogmire', levels: [5, 8], level: 6, flags: () => ({ party: true, magpie: true }), note: 'The great wraith, with Bogmire’s stolen lamplight burning in its ribs. Every lamp in the town is dark until it falls.' },
+    { id: 'gate10', name: 'Gate 10', kind: 'dawnroost', arena: 'dawnroost', levels: [10, 13], level: 11, flags: () => ({ party: true, magpie: true, lights: true, refit: true }), note: 'Three wraiths drawn to Dawnroost’s living node. Envoi is made when they fall.' },
+    { id: 'gate15', name: 'Gate 15', kind: 'halcyon', arena: 'crossroads', levels: [15, 20], level: 17, flags: () => ({ party: true, magpie: true, lights: true, refit: true, envoi: true, charge: true }), note: 'Halcyon’s ambush at the crossroads. She retreats at a fifth of her HP, or spares them.' },
+    { id: 'finale', name: 'The finale', kind: 'finale', arena: 'dead-moonwell', levels: [17, 20], level: 20, flags: () => storyAt(20), note: 'Noctara the Starless and Halcyon at the dead Moonwell, on the longest night. The stars come back if it is won.' },
+  ];
+  for (const F of FIGHTS) {
+    F.where = F.arena ? AR[F.arena].name : 'The Night square';
+    F.image = F.arena ? AR[F.arena].image : window.SCENES[F.scene].image;
+    if (!F.party) F.party = (L) => party(L, F.flags ? F.flags(L) : storyAt(L));
+  }
+  let cur = FIGHTS[1], ctl = null, SND = null;
+  const PICKED = {}; // the level and foes picked for each fight, kept while the page is open
+
+  // ---------- the list ----------
+  function buildList() {
+    for (const F of FIGHTS) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'fb'; b.setAttribute('role', 'radio'); b.dataset.id = F.id;
+      const img = document.createElement('img'); img.alt = ''; img.src = src(F.image); img.loading = 'lazy';
+      const n = document.createElement('span'); n.className = 'n'; n.textContent = F.name;
+      const w = document.createElement('span'); w.className = 'w'; w.textContent = F.id === 'gate5' ? 'The great wraith' : F.id === 'gate10' ? 'Dawnroost’s node' : F.id === 'gate15' ? 'Halcyon' : F.where;
+      b.append(img, n, w); b.addEventListener('click', () => choose(F));
+      $('plist').appendChild(b);
+    }
+  }
+  function choose(F) {
+    cur = F; const P = PICKED[F.id] || {};
+    for (const b of $('plist').children) b.setAttribute('aria-checked', String(b.dataset.id === F.id));
+    $('stage').style.backgroundImage = 'url("' + src(F.image) + '")'; // its painting, behind the list
+    $('pwhere').innerHTML = '';
+    const t = document.createElement('b'); t.textContent = F.name + ' · ' + F.where; $('pwhere').appendChild(t); $('pwhere').appendChild(document.createTextNode(F.note));
+    const lv = $('plevel'); lv.min = F.levels[0]; lv.max = F.levels[1]; lv.value = P.level || F.level; $('plevelOut').textContent = lv.value;
+    lv.disabled = F.levels[0] === F.levels[1];
+    // the foes: any pack the band can bring (as the wilds roll it), or one of them; the Horror's four forms
+    const sel = $('pfoes'); sel.textContent = '';
+    const opt = (v, t2) => { const o = document.createElement('option'); o.value = v; o.textContent = t2; sel.appendChild(o); };
+    if (F.kind === 'wild' && !F.pack && !F.forms) { opt('roll', 'As the wilds roll them'); SIM.BAND_PACKS[F.band].filter((p) => p[0] !== 'bramble?').forEach((p, i) => opt('p' + i, packName(p))); }
+    else if (F.forms) { opt('roll', 'Any of its four forms'); for (const [id, nm] of FORMS) opt(id, nm); }
+    $('pfoesL').hidden = !sel.children.length; if (P.foes && [...sel.options].some((o) => o.value === P.foes)) sel.value = P.foes;
+    $('pweatherL').hidden = !F.arena; if (P.weather) $('pweather').value = P.weather;
+  }
+  function keep() { PICKED[cur.id] = { level: +$('plevel').value, foes: $('pfoes').value, weather: $('pweather').value }; }
+
+  // ---------- a fight ----------
+  // the header's buttons get fresh listeners from each fight, so each fight starts with clean ones
+  function freshButton(id) { const b = $(id), c = b.cloneNode(true); b.replaceWith(c); return c; }
+  function start(watch, o) {
+    keep(); o = o || {};
+    const F = cur, L = o.level || +$('plevel').value, opts = { arena: !!F.arena };
+    if (F.kind === 'wild') {
+      opts.band = F.band;
+      const v = o.foes || $('pfoes').value;
+      if (F.pack) opts.pack = F.pack;
+      else if (F.forms) opts.pack = v && v !== 'roll' ? [v] : ['bramble?'];
+      else if (v && v !== 'roll') opts.pack = SIM.BAND_PACKS[F.band].filter((p) => p[0] !== 'bramble?')[+v.slice(1)];
+    }
+    const w = o.weather || $('pweather').value; if (F.arena && w !== 'roll') opts.weather = w;
+    const cfg = GameFights.config(F.kind, F.party(L), opts);
+    SND = SND || window.makeBattleSound(); cfg.sound = SND;
+    if (watch) cfg.auto = typeof watch === 'string' ? watch : 'expert';
+    cfg.game = { onEnd: (r) => end(r), onError: () => end({ outcome: 'error' }) };
+    freshButton('fps'); const snd = freshButton('snd');
+    snd.setAttribute('aria-pressed', String(!SND.muted)); snd.querySelector('span').textContent = SND.muted ? 'Sound off' : 'Sound on';
+    $('stage').innerHTML = BattleScreen.markup();
+    $('stage').setAttribute('aria-label', F.name + ' at ' + F.where);
+    $('pick').hidden = true; $('fights').hidden = false;
+    ctl = BattleScreen.start(cfg);
+    return cfg;
+  }
+  const TITLE = { win: 'Won', lose: 'Lost', fled: 'Got away', retreat: 'Halcyon retreated', error: 'This battle needs WebGL, which isn’t available here' };
+  function end(r) {
+    if (ctl) { ctl.stop(); ctl = null; }
+    $('stage').innerHTML = ''; $('fights').hidden = true; $('pick').hidden = false;
+    $('plast').textContent = r ? (TITLE[r.outcome] || r.outcome) + ': ' + cur.name + ', at ' + cur.where + '.' : '';
+    const b = [...$('plist').children].find((x) => x.dataset.id === cur.id); if (b) b.focus({ preventScroll: true });
+  }
+
+  buildList(); choose(cur);
+  $('plevel').addEventListener('input', () => { $('plevelOut').textContent = $('plevel').value; });
+  $('pplay').addEventListener('click', () => start(false));
+  $('pwatch').addEventListener('click', () => start(true));
+  $('fights').addEventListener('click', () => end(null));
+  // test hooks for headless checks: pick a fight by its id and start it (watch: a play style, or false)
+  window.__arena = {
+    FIGHTS, get fight() { return cur; }, get running() { return !!ctl; },
+    start(id, o) { o = o || {}; choose(FIGHTS.find((F) => F.id === id)); return start(o.watch === undefined ? 'expert' : o.watch, o); },
+    stop() { end(null); },
+  };
+})();
+</script>
+</body>
+</html>
