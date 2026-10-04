@@ -68,8 +68,12 @@ for (const doc of docs) {
         lit(shape, name); i++; continue;
       }
       const [ei, m] = where[k], e = entries[ei];
+      // a shape the page took from the tracing must still be that shape in maps.js (edits made on an older tracing
+      // can differ): if it isn't, it is written out as the page has it
+      const same = (j, mm) => JSON.stringify(field === 'front' ? [e.shapes[mm].pts, e.shapes[mm].base] : e.shapes[mm]) === JSON.stringify(field === 'front' ? [doc.front[j].pts, doc.front[j].base] : doc[field][j]);
+      if (!same(i, m)) { if (m === 0) out.push(...e.lead); lit(field === 'front' ? doc.front[i] : doc[field][i], m === 0 ? e.tail : ''); i++; continue; }
       // the whole entry kept, in order: its lines as they are
-      if (m === 0 && from.slice(i, i + e.n).every((x, j) => x === k + j)) { out.push(...e.lead, ...e.lines); i += e.n; continue; }
+      if (m === 0 && from.slice(i, i + e.n).every((x, j) => x === k + j && same(i + j, j))) { out.push(...e.lead, ...e.lines); i += e.n; continue; }
       // part of an entry kept: that shape alone
       if (m === 0) out.push(...e.lead);
       const lampM = e.code.match(/^\.\.\.lamp(Fronts|Blocks)\(([A-Z_]+)\)$/);
