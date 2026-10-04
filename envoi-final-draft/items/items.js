@@ -1,172 +1,190 @@
-// items.js: the twenty keepsakes Io and Sol can find, as proposed for Chris to place and approve (October 4, 2026).
-// Chris's rules: pull them from the Thareia or Aethermoor games' loot; six only Io can wear, six only Sol can wear, and
-// eight either can wear, so one hero could wear fourteen and leave the other her own six. Sixteen of them reach the same
-// totals the two hidden keepsakes give today (Io's healing 25% more, Sol's HP and blows 10% each), in sizes that differ
-// from 1% to 6.25%; the two hidden ones are among the sixteen and keep a quarter of each total (each cut to a quarter
-// of what it gave). The other four are special, on top of the totals: a Trance item for each hero (20% faster, and
-// nothing else) and two rings that help in other ways.
+// items.js: the twenty keepsakes Io and Sol can find, locked by Chris on October 4, 2026 (evening). He places them
+// himself next; nothing here is in the game until he has.
 //
-// Every name, look and line is a relic of Chris's Aethermoor games, read from chriskizer91-ops/New-game:
-// game/src/data/relics.js on branch claude/cool-ptolemy-uc93gg (Hearth & Heirloom), and the Thareia copy,
-// thareia/game/src/data/relics.js on claude/tender-babbage-4wiplk (the Fawnrest Heartstone is Thareia's own). The two
-// rings are rings there too. They are brought into this story: here it is Noctara's cold that troubles the world, never
-// the Rot, and the lines that told of drowned people are rewritten.
+// Chris's rules, as he gave them that evening:
+// - six only Io can wear, six only Sol can wear, eight either can wear (one hero could wear fourteen);
+// - every keepsake has one main help, a small share of healing, damage or max HP, and one other help, either in fights
+//   (Trance fills faster: two keepsakes each; starting a fight with Heat) or outside them (more shards; not walking faster);
+// - together the main helps reach what the two hidden keepsakes give today (Io's Lunar Mend and Waxing Light heal 25%
+//   more; Sol has 10% more HP, and her blows land 10% harder); the two hidden ones keep a quarter of that and stay the
+//   strongest, so the Warden's Brooch keeps both its halves;
+// - four are gifts from townsfolk, and the first fight with the Bramble Colossus gives each hero one;
+// - names say what each thing is and where it is found.
 //
-// wear: 'io' | 'sol' | 'either'. fx, in percent: heal (Io's Lunar Mend and Waxing Light heal more), hp (more HP),
-// might (blows, and on Io her spells, land harder), trance (the Trance gauge fills faster), power (on Io more MP, on
-// Sol her Heat builds faster), regen (at the start of each of her turns she heals this share of her HP). special: one
-// of the four on top of the totals. home: a walking map (src/game/maps.js) where it might lie, or null when its
-// proposed place isn't a walking map yet. at: where the two hidden ones lie today. Defines window.LOOT = { ITEMS, TOTALS }.
+// Several looks still borrow from Chris's Aethermoor relics (chriskizer91-ops/New-game, game/src/data/relics.js on
+// claude/cool-ptolemy-uc93gg, and thareia/game/src/data/relics.js on claude/tender-babbage-4wiplk; `from` names the relic).
+//
+// wear: 'io' | 'sol' | 'either'. source: 'hidden' (lies hidden where it is today), 'gift' (giver gives it), 'fight'
+// (the first Bramble Colossus gives it), 'found' (lies on a walking map, where Chris puts it). home: the walking map
+// (src/game/maps.js) it belongs to, or null. at: where the two hidden ones lie. main and also: the two helps as numbers,
+// in percent unless named: heal (Io's Lunar Mend and Waxing Light heal more), hp (more max HP), might (her blows, and on
+// Io her spells, land harder); trance (her Trance fills faster), heat (Sol starts each fight with this much Heat),
+// herbHeal (the herbs she uses in a fight heal more), mp (more max MP), mpBack and hpBack (after each fight she gets this
+// share back), regen (at the start of each of her turns she heals this share of her max HP), sunder (Sunder lasts this
+// many turns longer), stoop (Kestrel Stoop lands harder), shards (fights give more shards), herbPrice (herbs cost less
+// in the shops), glint (hidden things glint brighter on the maps), flee (running from a pack works this often, out of
+// 1), bigBlows (the big blows a foe warns of hit her softer), frost (Frost slows her for this much less of the time).
+// does and also: the same in words; inFight: whether the other help works in fights (true) or outside them (false).
+// Defines window.LOOT = { ITEMS, TOTALS }.
 (function (G) {
   'use strict';
   const ITEMS = [
-    // ---------- only Io: five add to her healing, one is her Trance item ----------
+    // ---------- only Io: each makes her Lunar Mend and Waxing Light heal more ----------
     {
-      id: 'orrery', name: 'The Orrery of Hours', from: 'Aethermoor, Codex No. 26', wear: 'io', secret: true, fx: { heal: 6.25 },
-      does: 'Lunar Mend and Waxing Light heal 6.25% more',
-      where: 'Hidden on top of the red roof in Wickhollow (where Io’s hidden keepsake lies today)', band: 1, home: 'wickhollow', at: [458, 562],
-      look: 'a little brass orrery the size of a locket, on a gold chain: a pale moon on its outer ring, and round it tiny topaz stars',
-      line: 'It hums the hour it was made in. That hour hasn’t happened yet: the hour the stars come back.',
+      id: 'crescent-locket', name: 'The Crescent Locket', wear: 'io', secret: true, source: 'hidden',
+      main: { heal: 6.25 }, also: { trance: 10 }, inFight: true,
+      does: 'Lunar Mend and Waxing Light heal 6.25% more', alsoDoes: 'Her Trance fills 10% faster',
+      where: 'Hidden on top of the red roof in Wickhollow, at the end of Chris’s secret way', band: 1, home: 'wickhollow', at: [458, 562],
+      look: 'a little silver locket with a crescent moon on its lid, on a fine silver chain',
     },
     {
-      id: 'hexbane-shawl', name: 'Nettie’s Hexbane Shawl', from: 'Aethermoor, Codex No. 66', wear: 'io', fx: { heal: 3.75 },
-      does: 'Lunar Mend and Waxing Light heal 3.75% more',
-      where: 'Wickhollow: Nettie knots it for Io, for a small favour', band: 1, home: 'wickhollow',
-      look: 'a shawl of grey bog-cotton tied all over with little knots, small bone charms on cords, a moss-green trim',
-      line: 'Knotted by Nettie from bog-cotton, one knot for every curse she ever undid.',
+      id: 'knotted-shawl', name: 'Nettie’s Knotted Shawl', wear: 'io', source: 'gift', giver: 'nettie',
+      main: { heal: 2.5 }, also: { herbHeal: 10 }, inFight: true,
+      does: 'Lunar Mend and Waxing Light heal 2.5% more', alsoDoes: 'The herbs she uses in a fight heal 10% more',
+      where: 'Nettie gives it to Io in Wickhollow as she sets out', band: 1, home: 'wickhollow',
+      look: 'a shawl of grey bog-cotton tied all over with little knots, small bone and wood charms on cords, a moss-green trim',
+      from: 'Aethermoor, Codex No. 66 (Nettie’s Hexbane Shawl)',
     },
     {
-      id: 'mosswatch-lantern', name: 'The Mosswatch Lantern', from: 'Aethermoor, Codex No. 15', wear: 'io', fx: { heal: 4.5 },
-      does: 'Lunar Mend and Waxing Light heal 4.5% more',
-      where: 'Mosswatch Tower, on the southwest coast (a place still to come)', band: 1, home: null,
-      look: 'a bronze and black-iron lantern with topaz glass, moss on its cap, a warm ember light inside',
-      line: 'The watchkeepers carried it up the stair every dusk for three hundred years. It has never once gone out.',
+      id: 'fen-heart-lamp', name: 'The Fen-Heart Lamp', wear: 'io', source: 'found',
+      main: { heal: 3 }, also: { mpBack: 5 }, inFight: false,
+      does: 'Lunar Mend and Waxing Light heal 3% more', alsoDoes: 'After each fight she gets back 5% of her MP',
+      where: 'The fen’s dark heart, still burning where the great wraith sat (after gate 5)', band: 1, home: 'bogmire-heart',
+      look: 'a small old hand lamp of black iron and brass, fen mud and a strand of reed on it, a warm steady flame inside',
     },
     {
-      id: 'first-seed', name: 'The First Seed', from: 'Aethermoor, Codex No. 23', wear: 'io', fx: { heal: 5 },
-      does: 'Lunar Mend and Waxing Light heal 5% more',
-      where: 'Eldergrove, at the root of its oldest tree (a place still to come)', band: 3, home: null,
-      look: 'a seed the size of a walnut, dark wood veined with gold, set in gold on a chain of wooden beads, one tiny green bud',
-      line: 'The seed Eldergrove’s eldest tree grew from, kept at its root for nine hundred years. It is still, very faintly, alive.',
+      id: 'moonglass', name: 'Ysmera’s Moonglass', wear: 'io', source: 'gift', giver: 'ysmera',
+      main: { heal: 3.75 }, also: { mp: 10 }, inFight: true,
+      does: 'Lunar Mend and Waxing Light heal 3.75% more', alsoDoes: 'She has 10% more MP',
+      where: 'Ysmera gives it to Io at the shipyard', band: 3, home: 'shipyard',
+      look: 'a round lens of pale, pearly moon-glass with a soft glow inside, in a slender silver setting on a silver chain',
     },
     {
-      id: 'fawnrest-heartstone', name: 'The Fawnrest Heartstone', from: 'Thareia, Codex No. 75', wear: 'io', fx: { heal: 5.5 },
-      does: 'Lunar Mend and Waxing Light heal 5.5% more',
-      where: 'The White Hart of Fawnrest leaves it at Io’s feet when the frost cracks off it', band: 3, home: null,
-      look: 'a heart of topaz set in bronze, a warm light inside it, on a bronze chain',
-      line: 'The shrine’s warm stone, that the white hart kept. It still holds the heat of the spring under Fawnrest.',
+      id: 'pass-bell', name: 'The Pass Bell', wear: 'io', source: 'found',
+      main: { heal: 4 }, also: { trance: 10 }, inFight: true,
+      does: 'Lunar Mend and Waxing Light heal 4% more', alsoDoes: 'Her Trance fills 10% faster',
+      where: 'In the snow beside the road on the frozen pass', band: 4, home: 'frozen-pass',
+      look: 'a small bronze hand-bell rimed with frost, a silver handle and clapper, a fine crack in it glowing pale blue-white',
+      from: 'Aethermoor, Codex No. 40 (the Veilbell)',
     },
     {
-      id: 'veilbell', name: 'The Veilbell', from: 'Aethermoor, Codex No. 40', wear: 'io', special: true, fx: { trance: 20 },
-      does: 'Io’s Trance fills 20% faster',
-      where: 'Peak’s Veil, the monastery in the clouds (a place still to come)', band: 4, home: null,
-      look: 'a small bronze hand-bell rimed with frost, a silver handle and clapper, a fine crack in it glowing pale blue',
-      line: 'Cast from the great bell’s first crack. At Peak’s Veil they rang it every evening for the dead, so their moths could find the way up.',
+      id: 'heart-seed', name: 'The Colossus Heart-Seed', wear: 'io', source: 'fight',
+      main: { heal: 5.5 }, also: { regen: 1 }, inFight: true,
+      does: 'Lunar Mend and Waxing Light heal 5.5% more', alsoDoes: 'At the start of each of her turns she heals 1% of her HP',
+      where: 'The first Bramble Colossus gives it, when the party first beats one in the last band’s wilds', band: 4, home: null,
+      look: 'a seed the size of a plum, a dark bark-like husk veined with warm glowing ember light, bramble tendrils curled round it, one tiny green shoot',
     },
-    // ---------- only Sol: five add to her HP and blows, one is her Trance item ----------
+    // ---------- only Sol: each gives her more HP or harder blows ----------
     {
-      id: 'wardens-seal', name: 'The Warden’s Seal', from: 'Aethermoor, Codex No. 4', wear: 'sol', secret: true, fx: { hp: 2.5, might: 2.5 },
-      does: 'Sol has 2.5% more HP, and her blows land 2.5% harder',
-      where: 'Hidden where the trail into the Thornwood’s dark woods gives out (where Sol’s hidden keepsake lies today)', band: 1, home: 'thornwood', at: [1284, 816],
-      look: 'a round gold seal with a sun in relief, gold rays, a topaz at its heart, worn as a brooch; still warm',
-      line: 'Pressed into the wax of every oath the Wardens ever swore.',
-    },
-    {
-      id: 'vale-gauntlets', name: 'The Vale Gauntlets', from: 'Aethermoor, Codex No. 24', wear: 'sol', fx: { might: 1 },
-      does: 'Sol’s blows land 1% harder',
-      where: 'Dawnroost: on a peg over one of the forty bunks in the Wardens’ hall; Marta tells Sol to take them', band: 2, home: 'dawnroost',
-      look: 'silver plate gauntlets with gold trim, a name engraved on every knuckle-plate, a stormglass gem at each cuff',
-      line: 'Every knuckle-plate is engraved with somebody she beat.',
+      id: 'wardens-brooch', name: 'The Warden’s Brooch', wear: 'sol', secret: true, source: 'hidden',
+      main: { hp: 2.5, might: 2.5 }, also: { trance: 10 }, inFight: true,
+      does: 'She has 2.5% more HP, and her blows land 2.5% harder', alsoDoes: 'Her Trance fills 10% faster',
+      where: 'Hidden where the trail into the Thornwood’s dark woods gives out', band: 1, home: 'thornwood', at: [1284, 816],
+      look: 'an old sunstone brooch in dark bronze, a sun with straight and wavy rays, the stone still glowing warm',
     },
     {
-      id: 'sunstone-lantern', name: 'The Sunstone Lantern', from: 'Aethermoor, Codex No. 28', wear: 'sol', special: true, fx: { trance: 20 },
-      does: 'Sol’s Trance fills 20% faster',
-      where: 'Inside one of the Warm Roads’ dark nodes, once Sol relights it', band: 2, home: null,
-      look: 'a sunstone the size of a fist caged in brass and bronze, warm amber light spilling out, a topaz on the cap',
-      line: 'A sunstone the size of a fist, caged in brass. It never learned to set.',
+      id: 'hall-gauntlets', name: 'The Wardens’ Hall Gauntlets', wear: 'sol', source: 'gift', giver: 'marta',
+      main: { might: 1.5 }, also: { sunder: 1 }, inFight: true,
+      does: 'Her blows land 1.5% harder', alsoDoes: 'Her Sunder lasts a turn longer',
+      where: 'Marta gives them to Sol at Dawnroost, from a peg over one of the forty bunks in the Wardens’ hall', band: 2, home: 'dawnroost',
+      look: 'bronze plate gauntlets with gold trim, a small gold sun on each cuff, every knuckle-plate engraved',
+      from: 'Aethermoor, Codex No. 24 (the Vale Gauntlets)',
     },
     {
-      id: 'watchkeepers-kettle', name: 'The Watchkeeper’s Kettle', from: 'Aethermoor, Codex No. 16', wear: 'sol', fx: { hp: 1 },
-      does: 'Sol has 1% more HP',
-      where: 'The shipyard: Old Gil’s, from his years keeping watch', band: 3, home: 'shipyard',
-      look: 'a dented iron kettle-helm with bronze trim and rivets, storm runes round the brim, a little bronze weather vane on top',
-      line: 'Dented by every hailstorm it ever saw. It hums when weather is coming.',
+      id: 'node-sunstone', name: 'The Node Sunstone', wear: 'sol', source: 'found',
+      main: { might: 1 }, also: { heat: 10 }, inFight: true,
+      does: 'Her blows land 1% harder', alsoDoes: 'She starts each fight with 10 Heat',
+      where: 'Dawnroost’s living node, once Sol has relit it (after gate 10)', band: 2, home: 'dawnroost-node',
+      look: 'a rough chip of sunstone the size of a walnut, glowing warm amber, wrapped in bronze wire on a leather cord',
     },
     {
-      id: 'ironvein-bracers', name: 'The Ironvein Bracers', from: 'Aethermoor, Codex No. 43', wear: 'sol', fx: { might: 3 },
-      does: 'Sol’s blows land 3% harder',
-      where: 'Misthollow, where they were forged (Misthollow is Ironhold on Chris’s map)', band: 4, home: 'misthollow',
-      look: 'black-iron bracers with glowing ember veins, bronze bands and a ruby at each cuff',
-      line: 'Forged at Ironhold for someone with small wrists and a big grudge.',
+      id: 'crossroads-pennant', name: 'The Crossroads Pennant', wear: 'sol', source: 'found',
+      main: { hp: 1 }, also: { trance: 10 }, inFight: true,
+      does: 'She has 1% more HP', alsoDoes: 'Her Trance fills 10% faster',
+      where: 'Tied to the stone ring at the northern crossroads', band: 3, home: 'crossroads',
+      look: 'a torn, wind-worn scrap of a Wardens’ pennant, burnt-orange cloth with a gold sun, frayed edges, tied with cord',
     },
     {
-      id: 'roc-feather-cloak', name: 'The Roc-Feather Cloak', from: 'Aethermoor, Codex No. 44', wear: 'sol', fx: { hp: 3 },
-      does: 'Sol has 3% more HP',
-      where: 'The Thunder-Roc’s eyrie at Stormwatch, left behind when it rises into the storm (a place still to come)', band: 4, home: null,
-      look: 'a cloak of huge storm-grey feathers with pale edges over dark leather, a silver clasp with a stormglass gem',
-      line: 'A shepherd’s cloak of the Thunder-Roc’s own moulted feathers. It sheds rain, snow and arrows.',
+      id: 'hearth-coal', name: 'Ede’s Hearth-Coal', wear: 'sol', source: 'gift', giver: 'ede',
+      main: { hp: 1.5 }, also: { heat: 10 }, inFight: true,
+      does: 'She has 1.5% more HP', alsoDoes: 'She starts each fight with 10 Heat',
+      where: 'Ede gives it to Sol at Misthollow’s inn, from the fire they keep lit “for spite”', band: 4, home: 'misthollow',
+      look: 'a glowing coal in a little cage of black iron on a chain, bright orange embers, a thin curl of smoke',
     },
-    // ---------- either: two rings that help in other ways, and six that add HP or blows to whoever wears them ----------
     {
-      id: 'mire-pearl', name: 'The Mire Pearl', from: 'Aethermoor, Codex No. 17', wear: 'either', special: true, fx: { regen: 1 },
-      does: 'At the start of each of her turns she heals 1% of her HP',
-      where: 'Gorrow, the Mire-King, in his crown of reeds at Willowmurk (a place still to come)', band: 1, home: null,
+      id: 'colossus-thorn', name: 'The Colossus Thorn', wear: 'sol', source: 'fight',
+      main: { might: 2 }, also: { stoop: 10 }, inFight: true,
+      does: 'Her blows land 2% harder', alsoDoes: 'Kestrel Stoop lands 10% harder',
+      where: 'The first Bramble Colossus gives it, when the party first beats one in the last band’s wilds', band: 4, home: null,
+      look: 'a thorn as long as a dagger, glossy black-green, its broad base wrapped in leather as a grip',
+    },
+    // ---------- either: each gives whoever wears it more HP, or harder blows (on Io, her spells) ----------
+    {
+      id: 'forge-horseshoe', name: 'The Forge Horseshoe', wear: 'either', source: 'found',
+      main: { hp: 1 }, also: { shards: 5 }, inFight: false,
+      does: 'She has 1% more HP', alsoDoes: 'Fights give 5% more shards',
+      where: 'By Hilde’s forge in Wickhollow', band: 1, home: 'wickhollow',
+      look: 'an iron horseshoe still faintly glowing warm at its edges, sooty, its nail holes empty',
+    },
+    {
+      id: 'jetty-coin', name: 'The Jetty Coin', wear: 'either', source: 'found',
+      main: { might: 1 }, also: { herbPrice: 10 }, inFight: false,
+      does: 'Her blows and spells land 1% harder', alsoDoes: 'Herbs cost 10% less in the shops',
+      where: 'Between the boards of the jetty where the Magpie is moored', band: 1, home: 'jetty',
+      look: 'an old bronze coin, clipped unevenly and worn smooth, a little boat on its face, on a short cord',
+      from: 'Aethermoor, Codex No. 53 (Hodge’s Unfair Toll)',
+    },
+    {
+      id: 'frog-ring', name: 'The Thornwood Frog-Ring', wear: 'either', source: 'found',
+      main: { hp: 1 }, also: { hpBack: 5 }, inFight: false,
+      does: 'She has 1% more HP', alsoDoes: 'After each fight she gets back 5% of her HP',
+      where: 'In the Thornwood’s stream, by the moon stone', band: 1, home: 'thornwood',
       look: 'a finger ring of verdigris bronze shaped like a frog’s toes, gripping a warm, damp pearl, strands of reed round it',
-      line: 'Grown in the throat of the oldest frog in the fen. It is warm, and never quite dry.',
+      from: 'Aethermoor, Codex No. 17 (the Mire Pearl)',
     },
     {
-      id: 'hag-stone', name: 'The Hag-Stone', from: 'Aethermoor, Codex No. 57', wear: 'either', special: true, fx: { power: 10 },
-      does: 'More of her own power: on Io, 10% more MP; on Sol, her Heat builds 10% faster',
-      where: 'Bogmire: Old Wenna keeps it in a jar', band: 1, home: 'bogmire',
-      look: 'a finger ring of pitted bog-iron set with a small grey stone with a hole worn through it, tied on with twine',
-      line: 'Look through the hole and you see what is really there.',
-    },
-    {
-      id: 'unfair-toll', name: 'Hodge’s Unfair Toll', from: 'Aethermoor, Codex No. 53', wear: 'either', fx: { might: 1 },
-      does: 'Her blows and spells land 1% harder',
-      where: 'Rotbridge: win the ferryman’s toll game (a place still to come)', band: 1, home: null,
-      look: 'a clipped bronze coin worn smooth, on an iron chain',
-      line: 'Hodge charges what he likes. Now so do you.',
-    },
-    {
-      id: 'bogstriders', name: 'The Bogstriders', from: 'Aethermoor, Codex No. 54', wear: 'either', fx: { hp: 1 },
-      does: 'She has 1% more HP',
+      id: 'hag-stone', name: 'The Bogmire Hag-Stone', wear: 'either', source: 'found',
+      main: { might: 1 }, also: { glint: 1 }, inFight: false,
+      does: 'Her blows and spells land 1% harder', alsoDoes: 'Hidden things glint brighter on the maps',
       where: 'Bogmire', band: 1, home: 'bogmire',
-      look: 'dark leather boots on splayed willow-wood soles, reed laces, moss at the tops',
-      line: 'Boots for a country where the ground is only a rumour.',
+      look: 'a smooth grey stone with a round hole worn through it, on a loop of rough twine, a faint silvery light through the hole',
+      from: 'Aethermoor, Codex No. 57 (the Hag-Stone)',
     },
     {
-      id: 'sunstone-heart', name: 'The Sunstone Heart', from: 'Aethermoor, Codex No. 34', wear: 'either', fx: { hp: 1 },
-      does: 'She has 1% more HP',
-      where: 'In Old Snag’s wallow on the Warm Roads’ moor: the mud is warm because of it', band: 2, home: null,
-      look: 'a heart-shaped amber sunstone set in gold, its veins glowing like embers, on a gold chain',
-      line: 'It beats.',
+      id: 'bogstriders', name: 'The Bogstriders', wear: 'either', source: 'found',
+      main: { hp: 1 }, also: { flee: 2 / 3 }, inFight: true,
+      does: 'She has 1% more HP', alsoDoes: 'Running from a pack works 2 times in 3, not 1 in 2',
+      where: 'Bogmire', band: 1, home: 'bogmire',
+      look: 'dark leather boots on wide, splayed willow-wood soles, reed laces, moss at the tops',
+      from: 'Aethermoor, Codex No. 54 (the Bogstriders)',
     },
     {
-      id: 'lightfingers', name: 'Lightfingers', from: 'Thareia, Codex No. 77', wear: 'either', fx: { might: 1 },
-      does: 'Her blows and spells land 1% harder',
-      where: 'The shipyard: lost in the cove below the slips', band: 3, home: 'shipyard',
-      look: 'dark leather gloves with the fingertips worn away, frost-blue stitching, a silver cuff band with a sapphire, a gold coin tucked in the cuff',
-      line: 'The fingertips are worn through from counting other people’s coin.',
+      id: 'kettle-helm', name: 'The Dawnroost Kettle-Helm', wear: 'either', source: 'found',
+      main: { hp: 1 }, also: { bigBlows: 10 }, inFight: true,
+      does: 'She has 1% more HP', alsoDoes: 'The big blows a foe warns of hit her 10% softer',
+      where: 'Dawnroost', band: 2, home: 'dawnroost',
+      look: 'a dented iron kettle-helm with bronze trim and rivets, a little bronze weather vane on top',
+      from: 'Aethermoor, Codex No. 16 (the Watchkeeper’s Kettle)',
     },
     {
-      id: 'hushweave-cowl', name: 'The Hushweave Cowl', from: 'Aethermoor, Codex No. 52', wear: 'either', fx: { hp: 1.5 },
-      does: 'She has 1.5% more HP',
-      where: 'Frostmere Lake, under the ice (a place still to come)', band: 4, home: null,
-      look: 'a hood woven of something pale and fine that isn’t wool, frost-white with silver spirals, a pearl at the clasp',
-      line: 'Woven under the ice by someone who was listening. Wear it and you hear a heartbeat, very slow, very far down.',
+      id: 'dockhand-gloves', name: 'The Dockhand’s Gloves', wear: 'either', source: 'found',
+      main: { might: 1 }, also: { shards: 10 }, inFight: false,
+      does: 'Her blows and spells land 1% harder', alsoDoes: 'Fights give 10% more shards',
+      where: 'Lost in the shipyard’s cove, below the slips', band: 3, home: 'shipyard',
+      look: 'dark leather gloves with the fingertips worn through, frost-blue stitching, a silver band at each cuff',
+      from: 'Thareia, Codex No. 77 (Lightfingers)',
     },
     {
-      id: 'thornwreath', name: 'The Thornwreath', from: 'Aethermoor, Codex No. 11 (and Thareia No. 78)', wear: 'either', fx: { might: 1.5 },
-      does: 'Her blows and spells land 1.5% harder',
-      where: 'The Bramble Colossus, the first time it falls', band: 4, home: null,
-      look: 'a crown of black bramble canes and bark, thorns, small green buds and red berries, moss',
-      line: 'It grew round the Colossus’s heart while nobody was looking, and it has not stopped growing.',
+      id: 'misthollow-cowl', name: 'The Misthollow Cowl', wear: 'either', source: 'found',
+      main: { hp: 1 }, also: { frost: 50 }, inFight: true,
+      does: 'She has 1% more HP', alsoDoes: 'Frost slows her for half as long',
+      where: 'Misthollow', band: 4, home: 'misthollow',
+      look: 'a hood of something pale and fine, frost-white with silver spirals, a pearl at the clasp',
+      from: 'Aethermoor, Codex No. 52 (the Hushweave Cowl)',
     },
   ];
-  // the totals the sixteen reach: what the two hidden keepsakes gave on October 4 (Io's Lunar Mend and Waxing Light
-  // heal 25% more; Sol has 10% more HP, and her blows land 10% harder). The two hidden ones keep a quarter of each. HP and
-  // blows reach Sol's totals when she wears all the shared ones; a shared one Io wears gives Io its HP or spells instead
+  // what the main helps reach together: what the two hidden keepsakes gave on October 4. HP and blows reach Sol's totals
+  // when she wears all the shared ones; a shared one Io wears gives Io its HP or spells instead
   const TOTALS = { heal: 25, hp: 10, might: 10, hidden: 0.25 };
   G.LOOT = { ITEMS, TOTALS };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

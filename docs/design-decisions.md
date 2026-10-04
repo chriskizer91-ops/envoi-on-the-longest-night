@@ -1096,12 +1096,14 @@ Chris asked what polish is left, and for these: his three songs in; the songs' v
 
 ## October 4, 2026, evening: the twenty keepsakes
 
-Chris's rules for things to find. `../envoi-final-draft/items/README.md` has the list, which stays a proposal until he has placed the keepsakes and agreed it.
+Chris's rules for things to find, settled over three messages that evening; he locked the list they made the same night. `../envoi-final-draft/items/README.md` has the list, and `items.js` its data.
 
-- **Twenty keepsakes** from his Aethermoor and Thareia loot, each with a still picture (no animation), put on and taken off on a new Items page. Wearing one gives its wearer its help.
+- **Twenty keepsakes,** each with a still picture (no animation), put on and taken off on a new Items page.
 - **Six only Io can wear, six only Sol, and eight either.** There's no limit on how many one hero wears, so one can wear fourteen if the party finds all twenty.
-- **The two hidden keepsakes are cut to a quarter** of what they give now, and stay the two strongest.
-- **Sixteen reach today's totals:** between them, the sixteen make Io's Lunar Mend and Waxing Light heal 25% more, and give Sol 10% more HP and blows that land 10% harder, the same as the two hidden keepsakes do today. The two hidden ones are among the sixteen. The sizes differ ("some of them might be 1% of something... some of them might be 3%").
-- **Four are special,** on top of the totals: one for each hero that makes her Trance fill 20% faster, "and that's all it does", and two rings that help in other ways.
-- **Chris places them himself** on the Item Places page (`../envoi-final-draft/item-places/`).
+- **Two helps each.** Every keepsake has one main help, a small share of healing, damage or max HP, and one other help, in fights or outside them. In fights: Trance fills faster (two keepsakes for each hero), and starting a fight with Heat. Outside: more shards is good; walking faster isn't.
+- **The same totals as today.** Together the main helps reach what the two hidden keepsakes give today: Io's Lunar Mend and Waxing Light heal 25% more, and Sol has 10% more HP and her blows land 10% harder. The sizes differ ("some of them might be 1% of something... some of them might be 3%").
+- **The two hidden keepsakes are cut to a quarter** of what they give now and stay the strongest. The Warden's Brooch keeps a quarter of both its helps.
+- **Four are gifts from townsfolk,** and the first fight with the Bramble Colossus, in the last band's wilds, gives each hero one.
+- **Names say what each thing is and where it's found.** They can come from the other games or be made up; Chris prefers what and where.
+- **Chris places them himself,** with one tool that is both the map editor and the item placer (he asked for it, once he has seen the list).
 - As with the two today, the balance never counts on them.

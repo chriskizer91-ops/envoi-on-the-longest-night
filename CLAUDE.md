@@ -27,4 +27,4 @@
 - The whole game is put together in `putting-it-all-together/`: its page, and a README listing every piece, where it comes from and its state. Chris's songs went in on October 4, when he asked for them.
 - Pass three (from October 3, evening) keeps its decisions, pages and plans in `envoi-game-pass-3/`, one folder per page. Chris edits things on his laptop.
 - The final draft (October 4, evening) is in `envoi-final-draft/`: Chris's file as he keeps it, the review, and the model studio (`envoi-final-draft/model-studio/`), through which modeling sessions Chris starts build new creatures in their own folders and hand them back to the game's session. Cutscenes are made the same way, from the briefs in `envoi-final-draft/cutscenes/`.
-- The twenty keepsakes (October 4, evening) are planned in `envoi-final-draft/items/`. Chris places them on the Item Places page (`envoi-final-draft/item-places/`), and they go into the game only after he has.
+- The twenty keepsakes Chris locked (October 4, evening) are in `envoi-final-draft/items/`. He places them himself, with one tool that is both the map editor and the item placer, and they go into the game only after he has.

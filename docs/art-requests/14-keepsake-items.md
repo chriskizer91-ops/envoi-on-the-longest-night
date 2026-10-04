@@ -2,9 +2,19 @@
 
 October 4, 2026, for the final draft's polish (`../../envoi-final-draft/`). One still picture for each of the twenty keepsakes Io and Sol can find. The list, who can wear each one and what it does are in `../../envoi-final-draft/items/README.md` (the data is `../../envoi-final-draft/items/items.js`).
 
-**Why:** Chris's plan (October 4): twenty things to find, each with a still picture (no animation), shown on a new Items page where each hero puts them on and takes them off. Each one gives its wearer a small, lasting help in fights.
+**Why:** Chris's plan (October 4): twenty things to find, each with a still picture (no animation), shown on a new Items page where each hero puts them on and takes them off.
 
-**Where these come from:** every name, look and line is a relic of Chris's own Aethermoor games (and two of Thareia's), brought into this story. The pictures follow the looks those games gave them. None of it is canon until Chris says so.
+**This is the locked list** (Chris, October 4, evening). Each name says what the keepsake is and where it's found, and several looks borrow from his Aethermoor relics. None of the words is canon until the lore conversation.
+
+**If you made pictures from the first version of this request,** five of them still fit under their new names. Rename the files:
+
+- `item-hexbane-shawl.png` → `item-knotted-shawl.png`
+- `item-unfair-toll.png` → `item-jetty-coin.png`
+- `item-mire-pearl.png` → `item-frog-ring.png`
+- `item-watchkeepers-kettle.png` → `item-kettle-helm.png`
+- `item-hushweave-cowl.png` → `item-misthollow-cowl.png`
+
+The Bogstriders keep their name and file. The rest are new.
 
 ## How to make them
 
@@ -19,26 +29,26 @@ What happens next: Claude shrinks each picture to 256 × 256 (about 10 to 20 KB 
 
 | # | Keepsake | File | Who can wear it |
 |---|---|---|---|
-| 1 | ★ The Orrery of Hours (hidden) | `item-orrery.png` | Io |
-| 2 | Nettie's Hexbane Shawl | `item-hexbane-shawl.png` | Io |
-| 3 | The Mosswatch Lantern | `item-mosswatch-lantern.png` | Io |
-| 4 | The First Seed | `item-first-seed.png` | Io |
-| 5 | The Fawnrest Heartstone | `item-fawnrest-heartstone.png` | Io |
-| 6 | The Veilbell | `item-veilbell.png` | Io |
-| 7 | ★ The Warden's Seal (hidden) | `item-wardens-seal.png` | Sol |
-| 8 | The Vale Gauntlets | `item-vale-gauntlets.png` | Sol |
-| 9 | The Sunstone Lantern | `item-sunstone-lantern.png` | Sol |
-| 10 | The Watchkeeper's Kettle | `item-watchkeepers-kettle.png` | Sol |
-| 11 | The Ironvein Bracers | `item-ironvein-bracers.png` | Sol |
-| 12 | The Roc-Feather Cloak | `item-roc-feather-cloak.png` | Sol |
-| 13 | The Mire Pearl (a ring) | `item-mire-pearl.png` | Either |
-| 14 | The Hag-Stone (a ring) | `item-hag-stone.png` | Either |
-| 15 | Hodge's Unfair Toll | `item-unfair-toll.png` | Either |
-| 16 | The Bogstriders | `item-bogstriders.png` | Either |
-| 17 | The Sunstone Heart | `item-sunstone-heart.png` | Either |
-| 18 | Lightfingers | `item-lightfingers.png` | Either |
-| 19 | The Hushweave Cowl | `item-hushweave-cowl.png` | Either |
-| 20 | The Thornwreath | `item-thornwreath.png` | Either |
+| 1 | ★ The Crescent Locket (hidden) | `item-crescent-locket.png` | Io |
+| 2 | Nettie's Knotted Shawl | `item-knotted-shawl.png` | Io |
+| 3 | The Fen-Heart Lamp | `item-fen-heart-lamp.png` | Io |
+| 4 | Ysmera's Moonglass | `item-moonglass.png` | Io |
+| 5 | The Pass Bell | `item-pass-bell.png` | Io |
+| 6 | The Colossus Heart-Seed | `item-heart-seed.png` | Io |
+| 7 | ★ The Warden's Brooch (hidden) | `item-wardens-brooch.png` | Sol |
+| 8 | The Wardens' Hall Gauntlets | `item-hall-gauntlets.png` | Sol |
+| 9 | The Node Sunstone | `item-node-sunstone.png` | Sol |
+| 10 | The Crossroads Pennant | `item-crossroads-pennant.png` | Sol |
+| 11 | Ede's Hearth-Coal | `item-hearth-coal.png` | Sol |
+| 12 | The Colossus Thorn | `item-colossus-thorn.png` | Sol |
+| 13 | The Forge Horseshoe | `item-forge-horseshoe.png` | Either |
+| 14 | The Jetty Coin | `item-jetty-coin.png` | Either |
+| 15 | The Thornwood Frog-Ring | `item-frog-ring.png` | Either |
+| 16 | The Bogmire Hag-Stone | `item-hag-stone.png` | Either |
+| 17 | The Bogstriders | `item-bogstriders.png` | Either |
+| 18 | The Dawnroost Kettle-Helm | `item-kettle-helm.png` | Either |
+| 19 | The Dockhand's Gloves | `item-dockhand-gloves.png` | Either |
+| 20 | The Misthollow Cowl | `item-misthollow-cowl.png` | Either |
 
 ## Rules for all of them
 
@@ -60,135 +70,143 @@ Each prompt below is the style lock followed by its own paragraph.
 
 ## Only Io can wear these
 
-**1. ★ The Orrery of Hours** (`item-orrery.png`), the hidden one. Make this first.
+**1. ★ The Crescent Locket** (`item-crescent-locket.png`), the hidden one. Make this first.
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Orrery of Hours: a tiny old brass orrery no bigger than a locket, hanging from a fine gold chain that curls round it. Three thin brass rings nest inside one another at different angles, each engraved with fine hour marks. A small pale pearly moon rides on the outer ring, and tiny topaz stars sit on the inner rings, each catching a point of warm light. A faint white starlight shimmer surrounds it: it is one of the two rarest keepsakes in the world.
+The Crescent Locket: a little old silver locket, round and slightly worn, on a fine silver chain that curls round it. On its lid a crescent moon in raised silver, with a tiny pale moonstone at the crescent's inner curve. The silver is rubbed bright at the edges where a thumb has opened it many times. A faint white starlight shimmer surrounds it: it is one of the two rarest keepsakes in the world.
 ```
 
-**2. Nettie's Hexbane Shawl** (`item-hexbane-shawl.png`)
+**2. Nettie's Knotted Shawl** (`item-knotted-shawl.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-Nettie's Hexbane Shawl: a soft shawl of pale grey bog-cotton, loosely folded so its fringed ends hang down, tied all over with small hand-made knots, no two alike. Little charms of carved pale bone and wood hang from it on short cords: a tiny ring, a bead, a small carved leaf. A woven moss-green trim runs along its edges. Homespun, warm and a little worn, made with care by a village wise-woman.
+Nettie's Knotted Shawl: a soft shawl of pale grey bog-cotton, loosely folded so its fringed ends hang down, tied all over with small hand-made knots, no two alike. Little charms of carved pale bone and wood hang from it on short cords: a tiny ring, a bead, a small carved leaf. A woven moss-green trim runs along its edges. Homespun, warm and a little worn, made with care by a village herb-witch.
 ```
 
-**3. The Mosswatch Lantern** (`item-mosswatch-lantern.png`)
+**3. The Fen-Heart Lamp** (`item-fen-heart-lamp.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Mosswatch Lantern: an old hand lantern of bronze and black iron with a ring on top to carry it by, and four panes of warm topaz-coloured glass. A cushion of soft green moss has grown over its domed cap. A steady ember-orange flame burns inside, lighting the glass from within and glowing on its worn frame. Three hundred years of use show: rounded edges, small dents, metal rubbed bright where hands have held it.
+The Fen-Heart Lamp: a small old hand lamp of black iron and brass with a ring on top to carry it by and four panes of warm amber glass, a smear of dark fen mud on its base and a strand of green reed caught round its handle. A steady warm flame burns inside, glowing through the glass and onto its worn frame. It has kept burning through a long dark night.
 ```
 
-**4. The First Seed** (`item-first-seed.png`)
+**4. Ysmera's Moonglass** (`item-moonglass.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The First Seed: a seed the size of a walnut, of dark polished wood veined with fine lines of gold, held in a simple gold setting and hung on a short chain of small round wooden beads. From its top one tiny fresh green bud is just opening. It looks ancient and very faintly alive: the gold veins glow with the softest warm light.
+Ysmera's Moonglass: a round lens of pale, pearly moon-glass the size of a large coin, with a soft silvery-white glow living inside it, held in a slender silver setting of curling leaf shapes and hung on a fine silver chain. Delicate, graceful craft of the moon's people.
 ```
 
-**5. The Fawnrest Heartstone** (`item-fawnrest-heartstone.png`)
+**5. The Pass Bell** (`item-pass-bell.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Fawnrest Heartstone: a heart-shaped stone of clear golden topaz in a bronze setting worked with a tiny pattern of deer antlers, on a bronze chain. A warm glow lives deep inside it, like the heat of a hidden spring.
+The Pass Bell: a small bronze hand-bell rimed with frost, with a slender silver handle and a silver clapper showing under its rim. A fine crack runs down one side of the bell, and a soft pale blue-white light glows from inside the crack. Crystals of frost and a little snow cling to its rim, and a thin breath of cold mist curls off it.
 ```
 
-**6. The Veilbell** (`item-veilbell.png`)
+**6. The Colossus Heart-Seed** (`item-heart-seed.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Veilbell: a small bronze hand-bell rimed with frost, with a slender silver handle and a silver clapper showing under its rim. A fine crack runs down one side of the bell, and a soft pale blue-white light glows from inside the crack. Crystals of frost cling to its rim, and a thin breath of cold mist curls off it.
+The Colossus Heart-Seed: a seed the size of a plum, its husk dark and rough like old bark, split by veins of warm glowing ember-orange light as if a slow fire beats inside it. A few thin bramble tendrils with small thorns curl round it, and one tiny fresh green shoot rises from its top. A faint warm steam rises off it.
 ```
 
 ---
 
 ## Only Sol can wear these
 
-**7. ★ The Warden's Seal** (`item-wardens-seal.png`), the hidden one. Make this second, with the Orrery attached for the style.
+**7. ★ The Warden's Brooch** (`item-wardens-brooch.png`), the hidden one. Make this second, with the Locket attached for the style.
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Warden's Seal: a round gold seal the size of a large coin, worn as a brooch, with a heavy pin behind it. On its face a blazing sun in raised relief, its straight and wavy rays running out to a finely engraved rim, and a deep topaz set at the sun's heart. The gold is warm and glows faintly from within, as if it has just been held in a hand. A faint white starlight shimmer surrounds it: it is one of the two rarest keepsakes in the world.
+The Warden's Brooch: an old round brooch of dark bronze the size of a large coin, with a heavy pin behind it. On its face a sun with straight and wavy rays in raised relief, and at its heart a sunstone that still glows warm amber, as if the brooch has just been held in a hand. Worn smooth at the edges by years of wear. A faint white starlight shimmer surrounds it: it is one of the two rarest keepsakes in the world.
 ```
 
-**8. The Vale Gauntlets** (`item-vale-gauntlets.png`)
+**8. The Wardens' Hall Gauntlets** (`item-hall-gauntlets.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Vale Gauntlets: a pair of silver plate gauntlets with gold trim, lying one across the other. Every knuckle-plate is covered in fine engraved flourishes, and at each cuff sits a stormglass gem, smoky grey-blue with a tiny swirl of cloud inside. Polished, but scratched and dented from many fights.
+The Wardens' Hall Gauntlets: a pair of bronze plate gauntlets with gold trim, lying one across the other, a small gold sun on each cuff and every knuckle-plate covered in fine engraved flourishes. Polished, but scratched and dented from many fights, and a little dusty from hanging a long time on a peg.
 ```
 
-**9. The Sunstone Lantern** (`item-sunstone-lantern.png`)
+**9. The Node Sunstone** (`item-node-sunstone.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Sunstone Lantern: a glowing sunstone the size of a fist, held in an open cage of brass and bronze bars with a ring on top, and a small topaz set in its cap. Warm golden-amber light pours out between the bars like a small sunrise and glints on the brass. The stone glows like a coal that never cools.
+The Node Sunstone: a rough-cut chip of sunstone the size of a walnut, glowing a warm golden amber from within like a small piece of noon, wrapped in a cage of twisted bronze wire and hung on a dark leather cord. Its light glints on the wire.
 ```
 
-**10. The Watchkeeper's Kettle** (`item-watchkeepers-kettle.png`)
+**10. The Crossroads Pennant** (`item-crossroads-pennant.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Watchkeeper's Kettle: a dented iron kettle-helm, a round open-faced helmet shaped like an upturned kettle with a wide brim, trimmed with bronze and rows of rivets. Simple zigzag storm marks are scratched round the brim, and a little bronze weather vane shaped like an arrow stands on top. Dented by a lifetime of hailstorms, it still shines where it was polished.
+The Crossroads Pennant: a torn scrap of an old pennant of burnt-orange cloth with a gold sun stitched on it, its edges frayed and faded by wind and weather, tied in a loose knot with a length of rough cord, a little frost in its folds.
 ```
 
-**11. The Ironvein Bracers** (`item-ironvein-bracers.png`)
+**11. Ede's Hearth-Coal** (`item-hearth-coal.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Ironvein Bracers: a pair of small, close-fitting black-iron bracers, side by side, with veins of glowing ember-orange running through the iron like cracks in cooling lava. Bronze bands at each end and a red ruby set at each cuff. Heavy, hot and fierce.
+Ede's Hearth-Coal: a single glowing coal held in a little round cage of black iron bars on a short iron chain. Its embers burn bright orange and gold, a thin curl of smoke rises from it, and warm light spills between the bars.
 ```
 
-**12. The Roc-Feather Cloak** (`item-roc-feather-cloak.png`)
+**12. The Colossus Thorn** (`item-colossus-thorn.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Roc-Feather Cloak: a short cloak, folded and draped, made of huge storm-grey feathers with pale silvery edges layered over a lining of dark leather. At the collar, a silver clasp set with a stormglass gem, smoky grey-blue with a swirl of cloud inside. A few raindrops bead on the feathers and roll off.
+The Colossus Thorn: a single huge thorn as long as a dagger, curved and glossy black-green and sharp as a blade, its broad base wrapped in dark leather as a grip. A thin rime of frost on its tip, and a small sprig of bramble with one red berry still caught at its base.
 ```
 
 ---
 
 ## Either can wear these
 
-**13. The Mire Pearl** (`item-mire-pearl.png`)
+**13. The Forge Horseshoe** (`item-forge-horseshoe.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Mire Pearl: a finger ring of old verdigris-crusted bronze whose setting is shaped like a frog's splayed toes, gripping a large warm pearl with a soft cream and pond-gold sheen, damp and glistening. A few strands of reed wind round the band, and a tiny bead of water clings to the pearl.
+The Forge Horseshoe: an old iron horseshoe, sooty and dark, still glowing faintly orange-warm along its edges as if just out of the forge, its nail holes empty. A little hammered, a little crooked, and lucky.
 ```
 
-**14. The Hag-Stone** (`item-hag-stone.png`)
+**14. The Jetty Coin** (`item-jetty-coin.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Hag-Stone: a finger ring with a band of pitted dark bog-iron, set with a smooth grey river stone the size of a hazelnut that has a round hole worn clean through it by water. The stone is tied onto the band with a loop of rough brown twine. Through the hole glows a faint silvery light, as if something else can be seen through it. Small, plain and very old.
+The Jetty Coin: a single old bronze coin, clipped unevenly round its edge and worn smooth by thumbs, threaded on a short loop of cord through a hole near its rim. On its face, the worn-away shape of a little boat. A tiny bead of lake water on it.
 ```
 
-**15. Hodge's Unfair Toll** (`item-unfair-toll.png`)
+**15. The Thornwood Frog-Ring** (`item-frog-ring.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-Hodge's Unfair Toll: a single old bronze coin, clipped unevenly round its edge and worn smooth by thumbs, hanging from a short length of dark iron chain through a hole near its rim. On its face, the worn-away shape of a little ferry boat. A cheeky, slightly crooked thing.
+The Thornwood Frog-Ring: a finger ring of old verdigris-crusted bronze whose setting is shaped like a frog's splayed toes, gripping a large warm pearl with a soft cream and pond-gold sheen, damp and glistening. A few strands of reed wind round the band, and a tiny bead of water clings to the pearl.
 ```
 
-**16. The Bogstriders** (`item-bogstriders.png`)
+**16. The Bogmire Hag-Stone** (`item-hag-stone.png`)
+
+```text
+A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
+
+The Bogmire Hag-Stone: a smooth grey river stone the size of a plum with a round hole worn clean through it by water, hung on a loop of rough brown twine. Through the hole glows a faint silvery light, as if something else can be seen through it. Small, plain and very old.
+```
+
+**17. The Bogstriders** (`item-bogstriders.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
@@ -196,34 +214,26 @@ A single fantasy keepsake painted as an item picture for a JRPG's inventory, in 
 The Bogstriders: a pair of dark leather boots standing side by side, each strapped onto a wide, splayed sole of pale willow wood shaped a little like a duck's foot, so the wearer can walk on mud without sinking. Laces of plaited green reed, tufts of moss at the tops, and dried mud on the soles. Well loved.
 ```
 
-**17. The Sunstone Heart** (`item-sunstone-heart.png`)
+**18. The Dawnroost Kettle-Helm** (`item-kettle-helm.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Sunstone Heart: a heart-shaped amber sunstone in a gold setting, hanging from a gold chain. Veins of brighter light glow through the stone like embers in a coal, brightest at its centre, as if it were beating. Warm light spills from it onto the gold.
+The Dawnroost Kettle-Helm: a dented iron kettle-helm, a round open-faced helmet shaped like an upturned kettle with a wide brim, trimmed with bronze and rows of rivets. Simple zigzag storm marks are scratched round the brim, and a little bronze weather vane shaped like an arrow stands on top. Dented by a lifetime of hailstorms, it still shines where it was polished.
 ```
 
-**18. Lightfingers** (`item-lightfingers.png`)
+**19. The Dockhand's Gloves** (`item-dockhand-gloves.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-Lightfingers: a pair of soft dark leather gloves with the fingertips worn right through, stitched with frost-blue thread. A silver band at each cuff set with a small sapphire, and a single gold coin tucked into one cuff. Supple, well used and a little sly.
+The Dockhand's Gloves: a pair of dark leather gloves with the fingertips worn right through, stitched with frost-blue thread, a plain silver band at each cuff. Supple, rope-scuffed and well used.
 ```
 
-**19. The Hushweave Cowl** (`item-hushweave-cowl.png`)
+**20. The Misthollow Cowl** (`item-misthollow-cowl.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Hushweave Cowl: a hood of something pale and fine that isn't quite wool, frost-white and faintly shimmering, woven with spirals of silver thread, its folds draped softly. A single pearl fastens it at the throat, and a faint cold mist clings to its hem.
-```
-
-**20. The Thornwreath** (`item-thornwreath.png`)
-
-```text
-A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
-
-The Thornwreath: a crown woven of black bramble canes and strips of bark, bristling with thorns, with small fresh green buds, a few bright red berries and tufts of moss tucked in. It looks alive and still growing: a tiny new shoot curls out from one side.
+The Misthollow Cowl: a hood of something pale and fine that isn't quite wool, frost-white and faintly shimmering, woven with spirals of silver thread, its folds draped softly. A single pearl fastens it at the throat, and a faint cold mist clings to its hem.
 ```

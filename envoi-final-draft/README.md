@@ -115,9 +115,9 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 
 ## The twenty keepsakes
 
-`items/README.md` has Chris's plan from October 4, evening: twenty things to find, each with a still picture, that Io and Sol put on and take off on a new Items page. Six are Io's alone, six Sol's alone, and eight either can wear, so one hero can wear fourteen if the party finds them all. Sixteen of them reach the totals the two hidden keepsakes give today (Io's healing 25% more, Sol's HP and blows 10% each), in sizes from 1% to 6.25%, with the two hidden ones among them, cut to a quarter. The other four are special: a Trance item for each hero, and two rings. Every name, look and line is one of Chris's Aethermoor or Thareia relics, brought into this story (`items/items.js`).
+`items/README.md` has the twenty keepsakes Chris locked on October 4, evening: things to find, each with a still picture, that Io and Sol put on and take off on a new Items page. Six are Io's alone, six Sol's alone, and eight either can wear, so one hero can wear fourteen if the party finds them all. Each has a main help (a small share of healing, damage or max HP) and one other help, in fights or outside them. Together the main helps reach what the two hidden keepsakes give today, and the hidden two keep a quarter of it. Four are gifts from townsfolk, the first Bramble Colossus gives each hero one, and Chris places the other twelve himself. The pictures are art request 14 (`../docs/art-requests/14-keepsake-items.md`).
 
-Chris places them himself on **Item Places** (`item-places/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5), a version of the Walking Paths page that checks each spot with the game's own walking rules and lets him walk Io to it; his places come back through the page's database. The pictures are art request 14 (`../docs/art-requests/14-keepsake-items.md`). Nothing is in the game until he has placed them and agreed the list (`../docs/questions/open.md`, 30 to 32).
+**Next:** one tool that is both the map editor and the item placer, which Chris will ask for. The Item Places page (`item-places/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5) still shows an earlier draft of the list and is to be replaced by it. Nothing is in the game until he has placed them.
 
 ## For the next session working on the game
 
@@ -135,5 +135,5 @@ Chris places them himself on **Item Places** (`item-places/`, https://claude.ai/
 | `cutscenes/` | The cutscene plan, a brief for each, and their sessions' folders |
 | `../docs/art-requests/13-wild-creatures.md` | The image prompts for the ten creature families |
 | `items/` | The twenty keepsakes: the list (`items.js`) and the plan |
-| `item-places/` | The Item Places page, where Chris puts the keepsakes on the maps |
+| `item-places/` | The Item Places page (an earlier draft of the list), to be replaced by one tool that edits the maps and places the keepsakes |
 | `../docs/art-requests/14-keepsake-items.md` | The image prompts for the twenty keepsakes' pictures |
