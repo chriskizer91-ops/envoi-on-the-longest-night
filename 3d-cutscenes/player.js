@@ -1,10 +1,10 @@
-// player.js: plays a story scene from scenes.js as a film. It builds Io's garden (garden.js), the high-detail Io
-// (io.js) and the film camera (cinema.js), then runs the scene's shots: the camera's moves, focus and exposure, who
-// walks where and does what, the narration in a lower third and spoken lines in the game's dialogue box, and the
-// night's sounds (sounds.js). A spoken line can wait for a tap, as the game's box does: the camera holds, the people
-// keep breathing. Everything Io does is her own motion, unchanged: her idle, her walk and her moves; the scene only
-// says where she walks and when. Detail: ?q=light|phone|laptop (a phone starts at phone). ?test drives frames from
-// window.__cs instead of the clock, for headless pictures.
+// player.js: plays a story scene from scenes.js as a film. It builds Io's garden (garden.js), the high-detail Io with
+// her face made like the paper doll's (io-cutscene.js) and the film camera (cinema.js), then runs the scene's shots:
+// the camera's moves, focus and exposure, who walks where and does what, the narration in a lower third and spoken
+// lines in the game's dialogue box, and the night's sounds (sounds.js). A spoken line can wait for a tap, as the game's
+// box does: the camera holds, the people keep breathing. Everything Io does is her own motion, unchanged: her idle, her
+// walk and her moves; the scene only says where she walks and when. Detail: ?q=light|phone|laptop (a phone starts at
+// phone). ?test drives frames from window.__cs instead of the clock, for headless pictures.
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
@@ -41,7 +41,7 @@
       E.lamps = makeFarLamps(E.world.scene); makeDoorway(E.world.scene);
     }],
     ['Dressing Io', () => {
-      const t = performance.now(); E.io = makeIo({ detail: QP.detail, shadows: true }); E.ms.model = performance.now() - t;
+      const t = performance.now(); E.io = makeIoCutscene({ detail: QP.detail, shadows: true }); E.ms.model = performance.now() - t;
       E.world.scene.add(E.io.root, E.io.fx);
       E.actors = { io: makeActor('io', E.io, SC.cast.io) };
       let tris = 0; E.io.root.traverse((o) => { if (o.isMesh) { const g = o.geometry; tris += (g.index ? g.index.count : g.attributes.position.count) / 3; } }); E.ioTris = tris;
@@ -328,7 +328,7 @@
     const f = fps.time > 2 ? Math.round(fps.frames / fps.time) : 0;
     const info = E.renderer.info.render, rows = [
       ['On this screen', f ? 'about ' + f + ' frames a second' + (fps.worst < 99 ? ' (the slowest moment ' + Math.round(fps.worst) + ')' : '') + ', at ' + QP.name + ' detail' : 'skipped before it could be measured, at ' + QP.name + ' detail'],
-      ['Io', 'the high-detail Io, ' + Math.round(E.ioTris / 1000) + ' thousand triangles at this detail, walking and looking about with her own moves'],
+      ['Io', 'the high-detail Io with her face made like her paper doll’s, ' + Math.round(E.ioTris / 1000) + ' thousand triangles at this detail, walking and looking about with her own moves'],
       ['The scene', 'the game’s own prologue words, still placeholders, in seven shots. The shots are a short written list, so a new scene is mostly a new list'],
       ['Made from', 'Io’s garden, the Bramble Colossus film camera and its night sounds, all already in the project']
     ];

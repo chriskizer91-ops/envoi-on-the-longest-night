@@ -724,7 +724,22 @@ function makeGarden(renderer, opts) {
 
 </script>
 <script>
-/* 3d-cutscenes/io.js */
+/* 3d-cutscenes/io-cutscene.js */
+// io-cutscene.js: Io for the story scenes. Defines makeIoCutscene(opts) only. It is the main-character study's Io
+// (io.js, below unchanged unless marked "cutscene:") with her face, and the look round it, made like Chris's paper doll
+// and painted art, because a film's close-ups show her face where the battles never do (Chris, October 4, 2026):
+//  - a face that narrows to a small chin instead of a round ball, on a slimmer neck;
+//  - almond eyes no taller than the paper doll's, under a heavy upper lash line that is the top of the eye (the skin
+//    over the resting lid reads as her face, not as a band of lid), with a flick at the outer corner and a fine lower line;
+//  - thin dark brows just above her glasses, a small closed smile with a tint of rose, and rosier cheeks;
+//  - her hat lower and tipped back less, its brim over bangs that sweep to one side and end at her brows;
+//  - her hair darker, with an ash shine rather than a golden one, wavier and fuller, with locks framing her face;
+//  - her black top up to her collarbones.
+// Her bones, her proportions below the head, the rest of her clothes and every move are the study's (and the game's);
+// the battles keep the game's own Io. state.blink: false holds her eyes open (for pictures); state.lids: 0 to 1 lowers
+// her lids (sleepy, sad, closed).
+//
+// What follows is the study's own description:
 // io.js: Io, the Witch, as a main-character study (the laptop reference). three.js r128 (global THREE).
 // Defines makeIo(opts) only, with the same interface, bones, moves, hit times and anchors as the game's model
 // (src/models/witch.js, makeWitch), so it can stand in for it unchanged.
@@ -747,7 +762,7 @@ function makeGarden(renderer, opts) {
 // opts: { detail .25 to 1 (1, the default, is the laptop reference; .5 is about a third of its triangles; .25 is near the
 //         game's budget), shadows (true: she casts and takes shadows), linear (default true: colours are painted for a
 //         linear, tone-mapped renderer with an environment; false for the game's plain one) }
-function makeIo(opts) {
+function makeIoCutscene(opts) {
  'use strict';
  // Units are meters, Y up, facing +Z, her feet on the ground at the origin. Her right side is -X: the dagger hand.
  opts = opts || {};
@@ -1036,10 +1051,15 @@ function makeIo(opts) {
   return tex(c);
  })();
 
+ // cutscene: where her nose and lips are on the shaped face, in the sphere's own elevations, for painting them. The
+ // same shaping as jaw() further down (which needs the head's size, not known yet here): keep the two together.
+ const jawYn = (el) => { let y = Math.sin(el); if (y < -0.08) { const u = (-y - 0.08) / 0.92; y = -0.08 - 0.92 * u * (1 - 0.3 * Math.pow(u, 0.8)); } return y; };
+ const elForYn = (yn) => { let a = -1.55, b = 1.55; for (let i = 0; i < 40; i++) { const m = (a + b) / 2; if (jawYn(m) < yn) a = m; else b = m; } return (a + b) / 2; };
+ const FACE_NOSE = elForYn(-0.043 / 0.159), FACE_MOUTH = elForYn(-0.07 / 0.159);
  // her face's skin, in the head's own sphere UVs: her skin tone, the blush she always wears (the game model's two pink
  // discs, now in the skin, soft at their edges), a warmer nose tip, and a faint unevenness, with pores in its relief
  const FACE = (() => {
-  const W = 1024 * TS, H = 512 * TS, base = new THREE.Color('#f0b894'), blush = new THREE.Color('#ff8a8a'), shade = new THREE.Color('#eaa585');
+  const W = 1024 * TS, H = 512 * TS, base = new THREE.Color('#f0b894'), blush = new THREE.Color('#ff8a8a'), shade = new THREE.Color('#eaa585'), lipC = new THREE.Color('#d8737f');
   const nz = noise2(24, 21), nz2 = noise2(90, 23);
   const az0 = (x) => { const ph = x / W * TAU; return Math.atan2(-Math.cos(ph), Math.sin(ph)); };
   const c = perPixel(W, H, (x, y, o) => {
@@ -1048,11 +1068,13 @@ function makeIo(opts) {
    const v = (nz(x / W, y / H) - .5) * .05; r += v; gg += v * .8; b += v * .7;
    // blush: a soft oval on each cheek
    for (const sd of [-1, 1]) {
-    const dx = (az - sd * .56) * Math.cos(el) / .175, dy = (el + .3) / .094, d = Math.hypot(dx, dy), a = .4 * (1 - sm(.2, 1.35, d));
+    const dx = (az - sd * .5) * Math.cos(el) / .16, dy = (el + .36) / .1, d = Math.hypot(dx, dy), a = .5 * (1 - sm(.2, 1.35, d)); // cutscene: on the shaped cheeks, and a little rosier
     r = lerp(r, blush.r, a); gg = lerp(gg, blush.g, a); b = lerp(b, blush.b, a);
    }
    // the nose tip, warmer
-   { const d = Math.hypot(az * Math.cos(el) / .06, (el + .245) / .05), a = .55 * (1 - sm(.3, 1.2, d)); r = lerp(r, shade.r, a); gg = lerp(gg, shade.g, a); b = lerp(b, shade.b, a); }
+   { const d = Math.hypot(az * Math.cos(el) / .05, (el - FACE_NOSE) / .05), a = .5 * (1 - sm(.3, 1.2, d)); r = lerp(r, shade.r, a); gg = lerp(gg, shade.g, a); b = lerp(b, shade.b, a); }
+   // cutscene: the rose of her lips, mostly the lower one, under the line of her smile
+   { const d = Math.hypot(az * Math.cos(el) / .1, (el - FACE_MOUTH + .028) / .03), a = .5 * (1 - sm(.25, 1.1, d)); r = lerp(r, lipC.r, a); gg = lerp(gg, lipC.g, a); b = lerp(b, lipC.b, a); }
    // a little warmth under the brows and round the jaw, where skin is thinner and in shade
    { const a = .18 * sm(-.55, -.85, el) + .08 * sm(.5, .9, Math.abs(az) / 1.6); r = lerp(r, shade.r * .95, a); gg = lerp(gg, shade.g * .9, a); b = lerp(b, shade.b * .9, a); }
    o[0] = cl(r, 0, 1) * 255; o[1] = cl(gg, 0, 1) * 255; o[2] = cl(b, 0, 1) * 255;
@@ -1106,7 +1128,7 @@ function makeIo(opts) {
  const NOISE = 'float ioH(vec3 p){p=fract(p*.3183099+.1);p*=17.;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}\n';
  const KEYS = ['skin', 'hair', 'glit', 'fur', 'rim', 'glow', 'tr', 'star', 'dark'];
  function patch(m, o) {
-  const key = 'io1-' + KEYS.map((k) => (o[k] ? k + o[k] : '')).join('');
+  const key = 'io1c-' + KEYS.map((k) => (o[k] ? k + o[k] : '')).join(''); // cutscene: io1c, its own programs apart from the study's
   m.onBeforeCompile = (sh) => {
    Object.assign(sh.uniforms, { uTime: U.time, uGlow: U.glow, uGlowC: U.glowC, uTrance: U.trance, uTrC: U.trC, uRim: U.rim, uRimC: U.rimC, uSSS: U.sss, uGlitC: U.glitC });
    if (o.star) sh.uniforms.starMap = { value: STARMAP };
@@ -1123,7 +1145,7 @@ function makeIo(opts) {
     ' float id = floor(vHU.y * 4096.), nz = ioH(vec3(id, 3.1, 7.7)), sp = .55 + .9 * ioH(vec3(floor(vHU.x * 40.), id, 1.));\n' +
     ' vec3 T1 = normalize(T + N * (-.1 + .08 * nz)), T2 = normalize(T + N * (.16 + .12 * nz)); float a = dot(T1, H), b = dot(T2, H);\n' +
     ' float s1 = pow(sqrt(max(0., 1. - a * a)), 160.), s2 = pow(sqrt(max(0., 1. - b * b)), 34.); float dif = clamp(dot(N, dl.direction) * .55 + .45, 0., 1.);\n' +
-    ' return dl.color * dif * (s1 * .1 * vec3(1., .96, .92) + s2 * .45 * base * vec3(1.35, .85, .7)) * sp; }\n';
+    ' return dl.color * dif * (s1 * .1 * vec3(1., .96, .92) + s2 * .4 * base * vec3(1.06, 1., 1.02)) * sp; }\n'; // cutscene: an ash shine, not a golden one, as the paper doll's hair has
    if (o.glit) fn += 'vec3 ioGlit(IncidentLight dl, GeometricContext g) { vec3 c = floor(vDP * ' + (+o.glit).toFixed(1) + '); float h = ioH(c); if (h < .62) return vec3(0.);\n' +
     ' vec3 j = vec3(ioH(c + 1.7), ioH(c + 3.1), ioH(c + 5.3)) - .5; vec3 n = normalize(g.normal + j * 1.6); float s = pow(max(dot(n, normalize(dl.direction + g.viewDir)), 0.), 600.);\n' +
     ' return dl.color * s * 14. * uGlitC; }\n';
@@ -1165,8 +1187,13 @@ function makeIo(opts) {
   face: patch(std({ map: FACE.map, normalMap: FACE.normal, normalScale: nv2(.08), roughness: .5 }), { skin: 1, rim: .5, glow: 1 }),
   skin: patch(std({ color: C('#f0b894'), normalMap: SKIN, normalScale: nv2(.22), roughness: .55 }), { skin: 1, rim: .5, glow: 1 }),
   lid: patch(std({ color: C('#f0b894'), roughness: .5 }), { skin: 1, glow: 1 }),
+  // cutscene: the skin over the top of her eye while her lid rests, as her face's
+  lidSkin: patch(std({ color: C('#f0b894'), roughness: .5 }), { skin: 1, rim: .5, glow: 1 }),
   skinShade: patch(std({ color: C('#eaa585'), normalMap: SKIN, normalScale: nv2(.2), roughness: .6 }), { skin: 1, rim: .5, glow: 1 }),
   lip: patch(phys({ color: C('#c85a6e'), roughness: .34, clearcoat: .6, clearcoatRoughness: .22 }), { skin: .6, glow: 1 }),
+  // cutscene: the line of her closed smile, and her brows, matte so they read as dark strokes under any light
+  brow: patch(std({ vertexColors: true, color: C('#5a4a4c'), roughness: .95, envMapIntensity: 0 }), { glow: 1 }),
+  mouth: patch(phys({ color: C('#6f2c38'), roughness: .45, clearcoat: .3, clearcoatRoughness: .3 }), { glow: 1 }),
   nail: patch(phys({ color: C('#4a1850'), roughness: .22, clearcoat: 1, clearcoatRoughness: .06 }), { glow: 1 }),
   hair: patch(std({ vertexColors: true, roughness: .7, envMapIntensity: .15 }), { hair: 1, glow: 1, tr: .45 }),
   lash: patch(std({ vertexColors: true, roughness: .55, envMapIntensity: .4 }), { glow: 1 }),
@@ -1234,7 +1261,9 @@ function makeIo(opts) {
  const hairA = bone('hairA', headB, 0, -0.085, -0.14), hairB = bone('hairB', hairA, 0, -0.17, -0.03), hairC = bone('hairC', hairB, 0, -0.17, -0.005);
  const sideL1 = bone('sideL1', headB, 0.125, -0.02, 0.05), sideL2 = bone('sideL2', sideL1, 0.005, -0.1, 0.005);
  const sideR1 = bone('sideR1', headB, -0.125, -0.02, 0.05), sideR2 = bone('sideR2', sideR1, -0.005, -0.1, 0.005);
- const hatB = bone('hat', headB, 0.0, 0.1, -0.012); hatB.rotation.set(-0.2, 0, 0.07);
+ // cutscene: her hat sits lower and tipped back less than the study's, as the paper doll wears it: under its brim her
+ // bangs fall to her brows, just above her glasses (the study's showed a band of forehead there)
+ const hatB = bone('hat', headB, 0.0, 0.085, -0.011); hatB.rotation.set(-0.12, 0, 0.07);
  const hatA1 = bone('hatA', hatB, 0, 0.25, -0.02), hatA2 = bone('hatB', hatA1, -0.035, 0.1, -0.035);
  root.updateMatrixWorld(true);
  const bw = (b) => { const v = new THREE.Vector3(); b.getWorldPosition(v); return [v.x, v.y, v.z]; };
@@ -1555,7 +1584,10 @@ function makeIo(opts) {
  // ---------- the body: every part where the game model has it, at its size, drawn finer ----------
  const SMP = DET > .6 ? 4 : 2;                       // points added between each pair of a profile
  const Tp = part(wTorso);
- Tp.add(uvs(lathe(smoothP([[0.118, 1.13], [0.126, 1.16], [0.13, 1.19], [0.12, 1.22], [0.098, 1.25], [0.07, 1.28], [0.05, 1.3]], SMP), Q(96, 24), null, 0.78, undefined, undefined, 1.22), 6, 2), M.skin);
+ // cutscene: her black top comes up to her collarbones, as the paper doll's does, so only her neck and a little of her
+ // chest show between her coat's lapels (the study's showed a wide pale breast that ran on into her face)
+ Tp.add(uvs(lathe(smoothP([[0.118, 1.13], [0.126, 1.16], [0.13, 1.19], [0.125, 1.212]], SMP), Q(96, 24), null, 0.78, undefined, undefined, 1.22), 6, 2), M.bodice);
+ Tp.add(uvs(lathe(smoothP([[0.125, 1.212], [0.12, 1.22], [0.098, 1.25], [0.07, 1.28], [0.05, 1.3]], SMP), Q(96, 24), null, 0.78, undefined, undefined, 1.22), 6, 2), M.skin);
  const bust = (r, y, a) => r + 0.016 * Math.exp(-(((y - 1.085) / 0.035) ** 2)) * Math.max(0, Math.cos(a)) ** 2;
  Tp.add(uvs(lathe(smoothP([[0.112, 0.86], [0.1, 0.9], [0.094, 0.95], [0.1, 1.0], [0.114, 1.04], [0.126, 1.08], [0.128, 1.11], [0.124, 1.14], [0.12, 1.165], [0.104, 1.17]], SMP), Q(144, 32), bust, 0.82, undefined, undefined, 1.05), 10, 5), M.bodice);
  Tp.build(root);
@@ -1762,29 +1794,50 @@ function makeIo(opts) {
 
  // ---------- head: the game model's round face, one smooth sculpt ----------
  const Nk = part();
- Nk.add(uvs(new THREE.CylinderGeometry(0.041, 0.047, 0.14, Q(48, 16), 4, true), 4, 1), M.skin, [0, 1.3, -0.005]);
+ // cutscene: a slimmer neck, in the shade of her chin
+ Nk.add(uvs(new THREE.CylinderGeometry(0.035, 0.041, 0.14, Q(48, 16), 4, true), 4, 1), M.skinShade, [0, 1.3, -0.005]);
  Nk.build(neck, bw(neck));
  const head = new THREE.Group(); headB.add(head); STATIC.add(head);
  const HR = 0.15, HS = [1.0, 1.06, 0.97];
- const headPt = (az, el, k) => [HR * HS[0] * Math.sin(az) * Math.cos(el) * k, HR * HS[1] * Math.sin(el) * k, HR * HS[2] * Math.cos(az) * Math.cos(el) * k];
+ // cutscene: the top of her head, all under her lowered hat, drawn in a little so it fits inside the hat's band; her
+ // hair is placed on the same shape
+ const cranK = (y) => 1 - 0.12 * sm(0.02, 0.07, y);
+ const headPt = (az, el, k) => { const y = HR * HS[1] * Math.sin(el), f = cranK(y); return [HR * HS[0] * Math.sin(az) * Math.cos(el) * k * f, y * k, HR * HS[2] * Math.cos(az) * Math.cos(el) * k * f]; };
+ // cutscene: the paper doll's face, not a round ball. Below her eyes the face is shortened (the chin rises from the
+ // sphere's bottom to about 10 cm under her eyes, where the paper doll has it) and narrowed, the cheeks staying full to
+ // her nose before the jaw tapers to a small chin, which comes a little forward. Above her eyes nothing changes, so
+ // her hat, hair and glasses sit as they did.
  function jaw(x, y, z) {
-  if (y < -0.1) { const k = 1 - 0.3 * Math.pow((-y - 0.1) / 0.9, 1.4); x *= k; z *= lerp(1, k, 0.6); }
-  return [x * HR * HS[0], y * HR * HS[1], z * HR * HS[2]];
+  if (y < -0.08) {
+   const u = (-y - 0.08) / 0.92, k = 1 - 0.5 * sm(0.02, 0.75, u) - 0.22 * sm(0.5, 1, u);
+   y = -0.08 - 0.92 * u * (1 - 0.3 * Math.pow(u, 0.8));
+   x *= k; z *= z > 0 ? lerp(1, k, 0.42) + 0.1 * u * u : lerp(1, k, 0.75);
+  }
+  const f = cranK(y * HR * HS[1]);
+  return [x * HR * HS[0] * f, y * HR * HS[1], z * HR * HS[2] * f];
  }
+ const jawAt = (az, el) => jaw(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el));
+ // the elevation on her face's middle line that comes out at height y (head space), once the jaw has shaped it
+ function elFor(y) { let a = -1.55, b = 1.55; for (let i = 0; i < 40; i++) { const m = (a + b) / 2; if (jawAt(0, m)[1] < y) a = m; else b = m; } return (a + b) / 2; }
+ const _fa = new THREE.Vector3(), _fe = new THREE.Vector3();
  function frameAt(az, el, off) {
-  const p = jaw(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el));
-  const a = HR * HS[0], b = HR * HS[1], c = HR * HS[2];
-  _bz.set(p[0] / (a * a), p[1] / (b * b), p[2] / (c * c)).normalize();
+  const p = jawAt(az, el);
+  // the surface's facing, measured on the shaped face itself (the jaw bends it below her eyes)
+  const pa = jawAt(az + 1e-3, el), pe = jawAt(az, el + 1e-3);
+  _fa.set(pa[0] - p[0], pa[1] - p[1], pa[2] - p[2]); _fe.set(pe[0] - p[0], pe[1] - p[1], pe[2] - p[2]);
+  _bz.crossVectors(_fa, _fe).normalize();
   _bx.crossVectors(YA, _bz).normalize(); _by.crossVectors(_bz, _bx);
   _bm.makeBasis(_bx, _by, _bz);
   return { p: [p[0] + _bz.x * off, p[1] + _bz.y * off, p[2] + _bz.z * off], q: new THREE.Quaternion().setFromRotationMatrix(_bm) };
  }
  // the sculpt: her nose is now part of the face (the game model's small nose, the same size and place, risen out of the
  // skin rather than set on it), with cheeks a touch fuller under the blush
+ // cutscene: where the paper doll has her nose, mouth and brows, measured down from her eyes in the shaped face
+ const NOSE_EL = elFor(-0.043), MOUTH_EL = elFor(-0.07), BROW_EL = 0.295;
  const hg = new THREE.SphereGeometry(1, Q(160, 40), Q(120, 30)), hpos = hg.attributes.position;
  for (let i = 0; i < hpos.count; i++) {
   const ux = hpos.getX(i), uy = hpos.getY(i), uz = hpos.getZ(i), az = Math.atan2(ux, uz), el = Math.asin(cl(uy, -1, 1));
-  let bump = .0062 * Math.exp(-((az / .062) ** 2) * Math.cos(el) - (((el + .245) / .046) ** 2)) * (uz > 0 ? 1 : 0);
+  let bump = .0052 * Math.exp(-((az / .056) ** 2) * Math.cos(el) - (((el - NOSE_EL) / .05) ** 2)) * (uz > 0 ? 1 : 0);
   for (const sd of [-1, 1]) bump += .0016 * Math.exp(-(((az - sd * .5) / .26) ** 2) - (((el + .32) / .16) ** 2));
   const p = jaw(ux, uy, uz), k = 1 + bump / Math.hypot(p[0], p[1], p[2]);
   hpos.setXYZ(i, p[0] * k, p[1] * k, p[2] * k);
@@ -1802,79 +1855,102 @@ function makeIo(opts) {
   const b0 = headPt(sd * 1.5, -0.12, 0.96), b1 = [sd * 0.157, -0.005, -0.02], b2 = [sd * 0.168, 0.038, -0.04];
   Hd.add(uvs(strand([b0, b1, b2], Q(32, 12), Q(20, 10), (t) => 0.017 * Math.pow(1 - t, 0.7) + 0.0015, 0.42, () => headC), 1, 1), M.skin);
   Hd.add(uvs(strand([headPt(sd * 1.5, -0.1, 0.985), [sd * 0.16, -0.002, -0.02], [sd * 0.168, 0.035, -0.038]], Q(28, 10), Q(16, 8), (t) => 0.011 * Math.pow(1 - t, 0.8), 0.35, () => headC), 1, 1), M.skinShade);
-  // the brow: the game model's arc, as a soft band thicker at its inner end, with single hairs combed out along it
-  const fb = frameAt(sd * 0.31, 0.2, 0.0015), fq = qz(fb.q, -sd * 0.08), F = { p: fb.p, q: fq };
-  const arc = (s, rad) => { const th = PI * .29 + s * PI * .42; return atFrame(F, [rad * Math.cos(th), rad * Math.sin(th) * .55, 0]); };
-  const inner = (s) => (sd < 0 ? s : 1 - s);
-  const bpts = []; for (let s = 0; s <= 1.0001; s += .1) bpts.push(arc(s, .033));
-  Hd.addWorld(lockStrands(bpts, 1, Q(24, 10), Q(8, 4), () => 0, 1, null, DARK, { thick: .0034, jitter: 0, short: .001 }), M.lash);
-  for (let k = 0; k < Q(34, 10); k++) {
-   const s = r2(), w = .0025 * (1 - .6 * inner(s)), out = sd < 0 ? -1 : 1, s2b = cl(s + out * -.06 * (sd < 0 ? -1 : 1), 0, 1);
-   const a = arc(s, .033 - .0016 + (r2() - .5) * w), b = arc(cl(s + (sd < 0 ? .05 : -.05), 0, 1), .033 + .0012 + (r2() - .5) * w * .5);
-   void s2b; void out;
-   const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + .0006, (a[2] + b[2]) / 2 + .0006];
-   fibre(Hd, M.lash, [a, m, b], .00055 + .0004 * (1 - inner(s)), DARK);
-  }
+  // cutscene: the brow as the paper doll draws it, one thin dark stroke just above her glasses: thicker at its inner
+  // end, arching, tapering to its outer end. (The study's brow sat behind her glasses' rim and under her bangs.)
+  // In the face's frame +x is toward her left, so a brow runs from inner (-sd) to outer (+sd).
+  const fb = frameAt(sd * 0.29, BROW_EL, 0.0022), F = { p: fb.p, q: qz(fb.q, -sd * 0.05) };
+  const bpts = [];
+  for (let k = 0; k <= 12; k++) { const s = k / 12, x = sd * lerp(-0.021, 0.023, s), y = 0.0062 * Math.sin(PI * cl(s * 0.86 + 0.1, 0, 1)) - 0.0038 * s * s; bpts.push(atFrame(F, [x, y, 0])); }
+  Hd.addWorld(lockStrands(bpts, 1, Q(28, 12), Q(8, 4), () => 0, 1, null, DARK, { thick: .0036, jitter: 0, short: .001 }), M.brow);
  }
- { const f = frameAt(0, -0.42, 0.0005); Hd.add(new THREE.TorusGeometry(0.017, 0.003, Q(12, 6), Q(48, 16), Math.PI * 0.62).rotateZ(Math.PI * 1.19), M.lip, f.p, null, null, f.q); }
- { const f = frameAt(0, -0.47, -0.0005); Hd.add(new THREE.SphereGeometry(1, Q(32, 12), Q(20, 8)), M.lip, f.p, null, [0.0085, 0.0036, 0.004], f.q); }
+ // cutscene: her mouth, a small closed smile (the paper doll's): a fine dark-rose line, lifting at its corners and a
+ // little more at her left one; the rose of her lips is painted into her skin (FACE)
+ {
+  const f = frameAt(0, MOUTH_EL, 0.0007), mp = [];
+  for (let k = 0; k <= 10; k++) { const s = k / 10 * 2 - 1; mp.push(atFrame(f, [s * 0.0158, 0.0042 * s * s - 0.0011 + 0.0008 * s, 0.0004 * (1 - s * s)])); }
+  Hd.addWorld(uvs(strand(mp, Q(24, 10), Q(8, 5), (t) => 0.00035 + 0.00085 * Math.pow(Math.sin(PI * t), 0.6), 0.55, null), 1, 1), M.mouth);
+ }
  Hd.build(head);
 
  // eyes: shaded whites, a painted iris that looks around, a wet cornea over it that reflects the night, the game model's
  // two highlights, real lids for blinking, a lash line with single lashes and the two long flicks at the outer corner.
  // The whites, irises and highlights never move within an eye, so they sit in head space and are shared by both eyes.
- const SX = 0.03, SY = 0.036, SZ = 0.0078;
+ // cutscene: the paper doll's eyes. Wider than tall (the study's were taller than wide, which made them a doll's), the
+ // iris big and slightly taller than wide so it reaches the lower lash line, the upper lid resting a little lowered
+ // over the iris's top (LID_REST), a heavy dark upper lash line thickest at the outer corner, where it runs on past the
+ // eye and flicks up, and a fine lower line under its outer half. Blinking, the gaze and the two highlights work as
+ // before.
+ const SX = 0.0315, SY = 0.025, SZ = 0.007, EH = SY * 1.06, LID_REST = 0.15, IRX = 0.0184, IRY = 0.0215;
  const zS = (x, y) => SZ * Math.sqrt(Math.max(0, 1 - (x / SX) ** 2 - (y / SY) ** 2));
- const eyes = [], whiteG = [], shineG = [], irisE = [], darkE = part();
+ const eyes = [], whiteG = [], shineG = [], irisE = [], darkE = part(), lidSk = part();
  for (const sd of [-1, 1]) {
   const f = frameAt(sd * 0.34, -0.07, -0.003);
   const eg = new THREE.Group(); eg.position.set(f.p[0], f.p[1], f.p[2]); eg.quaternion.copy(f.q); head.add(eg); eg.updateMatrix(); STATIC.add(eg);
   const sg = new THREE.SphereGeometry(1, Q(64, 24), Q(40, 16)); sg.scale(SX, SY, SZ);
-  vcol(sg, (x, y, z, o) => { const k = 1 - 0.32 * sm(0.006, 0.034, y) - 0.06 * sm(-0.018, -0.036, y) - .05 * sm(.6, 1, Math.abs(x) / SX); o[0] = o[1] = lin1(k); o[2] = lin1(Math.min(1, k * 1.02)); });
+  // the white, in the lid's shade along its top and a little greyer at its corners
+  vcol(sg, (x, y, z, o) => { const k = 1 - 0.4 * sm(0.0, 0.017, y) - 0.06 * sm(-0.012, -0.021, y) - .07 * sm(.55, 1, Math.abs(x) / SX); o[0] = o[1] = lin1(k); o[2] = lin1(Math.min(1, k * 1.03)); });
   whiteG.push(sg.applyMatrix4(eg.matrix));
   const ig = new THREE.RingGeometry(0, 1, Q(72, 32), Q(14, 5)), ip = ig.attributes.position, base = new Float32Array(ip.count * 2);
-  for (let i = 0; i < ip.count; i++) { base[i * 2] = ip.getX(i) * 0.0215; base[i * 2 + 1] = ip.getY(i) * 0.028; }
+  for (let i = 0; i < ip.count; i++) { base[i * 2] = ip.getX(i) * IRX; base[i * 2 + 1] = ip.getY(i) * IRY; }
   irisE.push({ ig, base, n: ip.count, m: eg.matrix.clone(), q: eg.quaternion.clone() });
-  shineG.push(merge([place(new THREE.SphereGeometry(0.0062, Q(24, 10), Q(16, 8)), [-0.0075, 0.0085, 0.0098]), place(new THREE.SphereGeometry(0.0033, Q(16, 8), Q(12, 6)), [0.007, -0.0135, 0.0092])]).applyMatrix4(eg.matrix));
-  // the lower lash line and a few short lower lashes
-  const low = (s, rr2) => { const th = PI * 1.25 + s * PI * .5; return [rr2 * 1.02 * Math.cos(th), -0.002 + rr2 * 1.2 * Math.sin(th), 0.004]; };
-  const lpts = []; for (let s = 0; s <= 1.0001; s += .1) lpts.push(low(s, .0285));
-  darkE.addWorld(xform(lockStrands(lpts, 1, Q(20, 8), Q(6, 4), () => 0, 1, null, LASHLOW, { thick: .0015, jitter: 0, short: .001 }), eg.matrix), M.lash);
-  for (let k = 0; k < Q(10, 4); k++) {
-   const s = .15 + .8 * (k + .5) / 10 * (sd < 0 ? 1 : 1), a = low(s, .0285), b = low(s + sd * .02, .0335 + .002 * r2());
-   fibre(darkE, M.lash, [a, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, .0055], [b[0], b[1], .006]].map((p) => _p3.set(p[0], p[1], p[2]).applyMatrix4(eg.matrix).toArray()), .00045, LASHLOW);
-  }
+  // the highlights: a big one high on her right of the iris, a small one low on her left (both eyes alike, as drawn)
+  const hl = (x, y, r) => place(new THREE.SphereGeometry(r, Q(24, 10), Q(16, 8)), [x, y, zS(x, y) + r * .35]);
+  shineG.push(merge([hl(-0.0065, 0.0053, 0.0051), hl(0.0062, -0.0099, 0.0026)]).applyMatrix4(eg.matrix));
+  // the lower line: fine, under the outer half of the eye, thicker at the outer corner
+  const lpts = []; for (let k = 0; k <= 12; k++) { const a = lerp(-0.32, -1.72, k / 12), x = sd * SX * 1.04 * Math.cos(a), y = SY * 1.05 * Math.sin(a); lpts.push([x, y, zS(x * .97, y * .97) + .0009]); }
+  darkE.addWorld(xform(lockStrands(lpts, 1, Q(20, 8), Q(6, 4), () => 0, 1, null, LASHLOW, { thick: .0011, jitter: 0, short: .001 }), eg.matrix), M.lash);
   const dome = new THREE.SphereGeometry(1, Q(64, 24), Q(20, 8), 0, TAU, 0, Math.PI / 2); dome.rotateX(Math.PI / 2);
-  const lid = new THREE.Group(); lid.position.set(0, 0.038, 0); eg.add(lid);
-  const LD = part(); LD.add(dome, M.lid, [0, -0.038, 0], null, [0.0325, 0.038, 0.0105]); LD.build(lid);
-  const lowL = new THREE.Group(); lowL.position.set(0, -0.038, 0); eg.add(lowL);
-  const LW = part(); LW.add(dome, M.lid, [0, 0.038, 0], null, [0.0325, 0.038, 0.0105]); LW.build(lowL);
-  // the upper lashes: the game model's lash line, a tapering band along the lid's edge, with lashes sweeping up and out,
-  // longer toward the outer corner, and its two long flicks
+  const lid = new THREE.Group(); lid.position.set(0, EH, 0); eg.add(lid);
+  const LD = part(); LD.add(dome, M.lid, [0, -EH, 0], null, [SX * 1.08, EH, SZ * 1.4]); LD.build(lid);
+  const lowL = new THREE.Group(); lowL.position.set(0, -EH, 0); eg.add(lowL);
+  const LW = part(); LW.add(dome, M.lid, [0, EH, 0], null, [SX * 1.08, EH, SZ * 1.4]); LW.build(lowL);
+  // the upper lash line, riding on the lid's edge: drawn from the outer corner (thickest) to the inner, flat along the
+  // top and dropping at the corners, running on past the outer corner; then the flick, and three short lashes there
   const lash = new THREE.Group(); eg.add(lash);
-  const LS = part();
-  const up = (s, rad) => { const th = PI * .03 + s * PI * .94; return [rad * 1.04 * Math.cos(th), -0.0366 + rad * 1.22 * Math.sin(th), 0.0035]; };
-  const upts = []; for (let s = 0; s <= 1.0001; s += .05) upts.push(up(s, .03));
-  LS.addWorld(lockStrands(upts, 1, Q(40, 12), Q(8, 4), () => 0, 1, null, LASH, { thick: .0034, jitter: 0, short: .001 }), M.lash);
-  for (let k = 0; k < Q(36, 8); k++) {
-   const s = (k + r2() * .6) / 36, outer = sd < 0 ? 1 - s : s, a = up(s, .03), th = PI * .03 + s * PI * .94;
-   const dx = Math.cos(th) + sd * .5 * outer, dy = Math.sin(th) * 1.2 + .25, dl = Math.hypot(dx, dy), l = (.0025 + .0055 * outer * outer) * (.75 + .5 * r2());
-   const b = [a[0] + dx / dl * l * .8, a[1] + dy / dl * l * .8 + l * .25, a[2] + l * .55], m = [a[0] + dx / dl * l * .45, a[1] + dy / dl * l * .45, a[2] + l * .45];
-   fibre(LS, M.lash, [a, m, b], .00028 + .0002 * outer, LASH);
+  const LS = part(), REST_Y = EH - 2 * EH * (0.02 + 0.8 * LID_REST), D = REST_Y + SY * 0.12;
+  const upAt = (xn) => { const x = sd * xn * SX, ye = REST_Y - D * Math.pow(Math.min(1, Math.abs(xn)), 2.3) - (Math.abs(xn) > 1 ? (Math.abs(xn) - 1) * SY * 0.9 : 0); return [x, ye - REST_Y, zS(Math.min(Math.abs(x), SX * .98) * Math.sign(x), Math.max(-SY * .98, Math.min(SY * .98, ye))) + .0014]; };
+  const upts = []; for (let k = 0; k <= 22; k++) upts.push(upAt(lerp(1.12, -0.97, k / 22)));
+  LS.addWorld(lockStrands(upts, 1, Q(44, 14), Q(8, 4), () => 0, 1, null, LASH, { thick: .0037, jitter: 0, short: .001 }), M.lash);
+  {
+   const a = upAt(1.12), b = [a[0] + sd * .0062, a[1] + .0046, a[2] - .0004], m = [(a[0] + b[0]) / 2 + sd * .0008, (a[1] + b[1]) / 2 - .0006, a[2]];
+   LS.addWorld(lockStrands([a, m, b], 1, Q(14, 6), Q(8, 4), () => 0, 1, null, LASH, { thick: .0022, jitter: 0, short: .001 }), M.lash);
   }
-  for (const [x, y, ang, len, r0] of [[sd * 0.0395, -0.024, -sd * 1.05, .02, .0045], [sd * 0.036, -0.011, -sd * 1.45, .015, .0034]]) {
-   // a flick: the game model's cone, now curving a little up at its tip
-   const dir = [-Math.sin(ang), Math.cos(ang)], a = [x - dir[0] * len / 2, y - dir[1] * len / 2, .004], b = [x + dir[0] * len / 2, y + dir[1] * len / 2 + .002, .0045];
-   LS.addWorld(lockStrands([a, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, .0048], b], 1, Q(14, 6), Q(8, 4), () => 0, 1, null, LASH, { thick: r0 * .82, jitter: 0, short: .001 }), M.lash);
+  for (const [xn, len, ang] of [[0.98, .0052, 0.9], [0.84, .0046, 0.7], [0.7, .0036, 0.5]]) {
+   const a = upAt(xn), dx = sd * Math.cos(ang), dy = Math.sin(ang);
+   LS.addWorld(lockStrands([a, [a[0] + dx * len * .5, a[1] + dy * len * .5, a[2] + .0006], [a[0] + dx * len, a[1] + dy * len * 1.05, a[2] + .0009]], 1, 6, Q(5, 3), () => 0, 1, null, LASH, { thick: .0011, jitter: 0, short: .001 }), M.lash);
   }
   LS.build(lash);
+  // cutscene: the skin above her lash line while her lid rests. It covers the eye from the line up to the eye's edge (so
+  // no white shows above the line, even at the corners where the line drops), lies just over the eye's own curve, and is
+  // shaded as her face round it is (its facing is the face's, not the eye's bulge), so it reads as part of her face
+  // rather than a pale band of lid. The lid itself only shows as it closes, to blink or to lower her eyes.
+  {
+   const NX = Q(36, 14), NY = Q(6, 3), zC = (x, y) => SZ * 1.25 * Math.sqrt(Math.max(0, 1 - (x / (SX * .96)) ** 2 - (y / (SY * .96)) ** 2));
+   const P = [], N = [], I = [];
+   for (let i = 0; i <= NX; i++) {
+    const xn = lerp(-0.99, 1, i / NX), x = sd * xn * SX, y0 = REST_Y - D * Math.pow(Math.abs(xn), 2.3);
+    const y1 = Math.max(y0 + .0005, SY * Math.sqrt(Math.max(0, 1 - xn * xn)) + .0006);
+    for (let j = 0; j <= NY; j++) {
+     const y = lerp(y0, y1, j / NY);
+     P.push(x, y, Math.max(zS(x, y), zC(x, y)) + .0004);
+     _v.set(x / HR, y / HR, 1).normalize(); N.push(_v.x, _v.y, _v.z);
+    }
+   }
+   for (let i = 0; i < NX; i++) for (let j = 0; j < NY; j++) {
+    const a = i * (NY + 1) + j, b = a + NY + 1;
+    if (sd > 0) I.push(a, b, a + 1, b, b + 1, a + 1); else I.push(a, a + 1, b, b, a + 1, b + 1);
+   }
+   const g = new THREE.BufferGeometry();
+   g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3)); g.setIndex(I);
+   lidSk.addWorld(g.applyMatrix4(eg.matrix), M.lidSkin);
+  }
   // the cornea: clear, catching the night and the lamps; hidden with the highlights when the eye closes
-  const cg = new THREE.SphereGeometry(1, Q(48, 16), Q(16, 6), 0, TAU, 0, Math.PI / 2); cg.rotateX(Math.PI / 2); cg.scale(SX * .96, SY * .96, .0094);
+  const cg = new THREE.SphereGeometry(1, Q(48, 16), Q(16, 6), 0, TAU, 0, Math.PI / 2); cg.rotateX(Math.PI / 2); cg.scale(SX * .96, SY * .96, SZ * 1.25);
   const cornea = new THREE.Mesh(cg, M.cornea); cornea.renderOrder = 3; eg.add(cornea);
-  lid.visible = lowL.visible = false;
+  lowL.visible = false;
   eyes.push({ lid, low: lowL, lash, cornea });
  }
- darkE.build(head);
+ darkE.build(head); lidSk.build(head);
  head.add(new THREE.Mesh(merge(whiteG), plain(M.eyeW)));
  const irisG = merge(irisE.map((e) => e.ig)), irisMesh = new THREE.Mesh(irisG, plain(M.iris));
  irisMesh.frustumCulled = false; head.add(irisMesh);
@@ -1930,21 +2006,23 @@ function makeIo(opts) {
  // place, wave and shade (the darker or the lighter of her two browns) as there.
  hs = SEED.hair;
  const strand0 = strandId;
- const HAIR1 = C('#56383a'), HAIR2 = C('#7a5a55'), CORE = .62;
+ const HAIR1 = C('#2b2024'), HAIR2 = C('#4a3f3e'), CORE = .62; // cutscene: darker and ashier, as the paper doll's
  const lockMat = () => (hr() < 0.62 ? HAIR1 : HAIR2);
  const coreCol = (g, c) => vcol(g, (x, y, z, o) => { o[0] = c.r * CORE; o[1] = c.g * CORE; o[2] = c.b * CORE; });
  const HQ = { K: (n) => Q(n * 2, 4), N: (n) => Q(Math.round(n * .7), 8), RS: 3 };
  const Hc = part();
  const capG = new THREE.SphereGeometry(1, Q(96, 24), Q(48, 12), 0, TAU, 0, Math.PI * 0.56); capG.rotateX(-0.45);
+ { const cp = capG.attributes.position; for (let i = 0; i < cp.count; i++) { const f = cranK(cp.getY(i) * HR * HS[1] * 1.05 + 0.003); cp.setX(i, cp.getX(i) * f); cp.setZ(i, cp.getZ(i) * f); } capG.computeVertexNormals(); } // cutscene
  M.cap = patch(std({ color: C('#4c3134'), roughness: .72, side: THREE.DoubleSide }), { glow: 1 }); M.cap.name = 'cap';
  Hc.add(capG, M.cap, [0, 0.003, -0.004], null, [HR * HS[0] * 1.05, HR * HS[1] * 1.05, HR * HS[2] * 1.06]);
- function wavy(pts, amp, freq, ph, cen, n) {
+ function wavy(pts, amp, freq, ph, cen, n, side) { // cutscene: side, the main wave out to the side rather than front to back
   const cv = new THREE.CatmullRomCurve3(pts.map((p) => new THREE.Vector3(p[0], p[1], p[2])));
   const out = [], T = new THREE.Vector3(), O = new THREE.Vector3(), S = new THREE.Vector3(), P = new THREE.Vector3();
   for (let i = 0; i <= n; i++) {
    const u = i / n; cv.getPointAt(u, P); cv.getTangentAt(u, T);
    O.subVectors(P, cen(P)); O.addScaledVector(T, -O.dot(T)).normalize(); S.crossVectors(T, O).normalize();
-   const w = amp * u * Math.sin(freq * u + ph), w2 = amp * 0.6 * u * Math.sin(freq * u + ph + 1.4);
+   let w = amp * u * Math.sin(freq * u + ph), w2 = amp * 0.6 * u * Math.sin(freq * u + ph + 1.4);
+   if (side) { const t = w; w = w2 * 0.6; w2 = t; }
    out.push([P.x + S.x * w + O.x * w2, P.y + S.y * w + O.y * w2, P.z + S.z * w + O.z * w2]);
   }
   return out;
@@ -1954,13 +2032,30 @@ function makeIo(opts) {
   P.addWorld(coreCol(strand(pts, TSg, RSg, (t) => rFn(t) * .92, flat, cen), col), M.hair);
   P.addWorld(lockStrands(pts, K, N, HQ.RS, rFn, flat, cen, col, o), M.hair);
  }
- const PART = 0.18;
+ // cutscene: the paper doll's bangs. Swept from a part on her left across to her right, wavy, ending at her brows in
+ // the middle (so her brows show, as the paper doll's do), longer toward her right temple, their tips curling out.
+ // The random stream is drawn in the same order as before, so the hair after the bangs is as it was.
+ const PART = 0.3;
  for (let i = 0; i < 12; i++) {
-  const az = -0.88 + i * (1.76 / 11) + (hr() - 0.5) * 0.05, side = az > PART ? 1 : -1;
-  const endEl = 0.12 + hr() * 0.13 - (Math.abs(az) > 0.62 ? 0.32 : 0);
-  const p0 = headPt(PART + (az - PART) * 0.3, 1.2, 0.97), p1 = headPt(az + side * 0.08, 0.62, 1.13), p2 = headPt(az + side * 0.17, endEl, 1.11);
-  const pts = wavy([p0, p1, p2], 0.009, 7, hr() * 6, () => headC, 10), col = lockMat();
-  lock(Hc, pts, Q(44, 11), Q(10, 5), (t) => 0.021 * Math.pow(1 - t, 0.7) + 0.0015, 0.5, () => headC, col, HQ.K(26), HQ.N(26), { jitter: .3 });
+  const az = -0.95 + i * (1.6 / 11) + (hr() - 0.5) * 0.05, past = az > PART;
+  const toR = sm(0.2, -0.8, az), e0 = hr();
+  const endEl = past ? 0.4 + e0 * 0.04 : 0.355 + e0 * 0.05 - 0.4 * toR * toR;
+  const sweep = past ? 0.1 : -0.2 * (1 - 0.4 * toR);
+  const p0 = headPt(PART + (az - PART) * 0.25, 1.15, 0.97), p1 = headPt(az + sweep * 0.35, 0.7, 1.12), p2 = headPt(az + sweep, endEl, 1.1 + 0.02 * toR);
+  const tip = headPt(az + sweep * 1.3, endEl + 0.05, 1.17 + 0.02 * toR);
+  const pts = wavy([p0, p1, p2, tip], 0.011, 6, hr() * 6, () => headC, 12), col = lockMat();
+  lock(Hc, pts, Q(48, 12), Q(10, 5), (t) => 0.019 * Math.pow(1 - t, 0.6) + 0.0015, 0.5, () => headC, col, HQ.K(26), HQ.N(28), { jitter: .3 });
+ }
+ // cutscene: the locks that frame her face, as the paper doll's do: from under her hat at each temple, down past her
+ // glasses and along her cheek to below her chin, a little out from her face, wavy, curling out at the end. They ride
+ // on her head (they are short enough not to need springs).
+ const jawOut = (az, el, out) => { const p = jawAt(az, el); return [p[0] * out, p[1] * out, p[2] * out]; };
+ for (const sd of [-1, 1]) for (let k = 0; k < 3; k++) {
+  const a0 = sd * (0.74 + k * 0.13), len = 1 - 0.12 * k;
+  // (from her cheek they hang straight down past her jaw, rather than following it in under her chin)
+  const p2 = jawOut(a0 + sd * 0.03, -0.3, 1.12 + 0.02 * k);
+  const pts = [headPt(a0, 0.66, 1.03), jawOut(a0 + sd * 0.05, 0.22, 1.1), p2, [p2[0] * 1.02 + sd * 0.003, p2[1] - 0.06 * len, p2[2] - 0.012], [p2[0] * 1.05 + sd * 0.014, p2[1] - 0.105 * len, p2[2] - 0.028]];
+  lock(Hc, wavy(pts, 0.02, 6, r2() * 6, () => headC, 16, true), Q(60, 14), Q(10, 5), (t) => 0.016 * Math.pow(1 - t, 0.5) + 0.0018, 0.55, () => headC, r2() < 0.62 ? HAIR1 : HAIR2, HQ.K(22), HQ.N(36), { jitter: .35 });
  }
  const tie = [0, -0.085, -0.14];
  for (let i = 0; i < 13; i++) {
@@ -1968,9 +2063,9 @@ function makeIo(opts) {
   const p0 = headPt(az, 1.32, 0.97), p1 = headPt(az, 0.55, 1.13), p2 = [tie[0] + Math.sin(az) * 0.025, tie[1] + 0.02, tie[2] + 0.012];
   lock(Hc, [p0, p1, p2], Q(40, 10), Q(10, 5), (t) => 0.032 * (1 - 0.5 * t), 0.42, () => headC, lockMat(), HQ.K(30), HQ.N(22), { jitter: .2, short: .05 });
  }
- // a few stray hairs lifting off the crown
+ // a few stray hairs lifting off the crown (cutscene: only at her sides and back, so none falls across her face)
  for (let k = 0; k < Q(24, 4); k++) {
-  const az = rr(-2.6, 2.6), p0 = headPt(az, rr(.6, 1.2), 1.1), p1 = headPt(az + rr(-.2, .2), rr(.2, .7), 1.2 + rr(0, .05)), p2 = headPt(az + rr(-.3, .3), rr(-.2, .4), 1.18 + rr(0, .08));
+  const a0 = rr(-2.6, 2.6), az = (a0 < 0 ? -1 : 1) * lerp(1.3, 2.6, Math.abs(a0) / 2.6), p0 = headPt(az, rr(.6, 1.2), 1.1), p1 = headPt(az + rr(-.2, .2), rr(.2, .7), 1.2 + rr(0, .05)), p2 = headPt(az + rr(-.3, .3), rr(-.2, .4), 1.18 + rr(0, .08));
   Hc.addWorld(lockStrands([p0, p1, p2], 1, Q(12, 6), 3, () => 0, 1, null, r2() < .6 ? HAIR1 : HAIR2, { thick: .0005, jitter: 0, short: .001 }), M.hair);
  }
  Hc.build(head);
@@ -1980,10 +2075,19 @@ function makeIo(opts) {
  for (const sd of [-1, 1]) {
   for (let k = 0; k < 5; k++) {
    const az = sd * (0.72 + k * 0.16);
+   // (cutscene: the paper doll's hair is fuller; three more locks per side follow these, drawn from the second stream)
    const p0 = headPt(az, 0.72, 0.99), p1 = headPt(az, 0.15, 1.2), p2 = headPt(az - sd * 0.02, -0.45, 1.3 + k * 0.02);
-   const p3 = [p2[0] + sd * (0.02 + k * 0.006), p2[1] - 0.1 - hr() * 0.04, p2[2] - 0.02 - k * 0.008];
-   const pts = wavy([p0, p1, p2, p3].map(Wd), 0.016, 9, hr() * 6, () => sideCen, 12), col = lockMat();
-   lock(Hs, pts, Q(60, 14), Q(10, 5), (t) => 0.024 * Math.pow(1 - t, 0.55) + 0.002, 0.5, () => sideCen, col, HQ.K(28), HQ.N(34), { jitter: .35 });
+   const p3 = [p2[0] + sd * (0.07 + k * 0.012), p2[1] - 0.16 - hr() * 0.05, p2[2] - 0.02 - k * 0.01]; // cutscene: longer, spreading over her shoulders
+   // cutscene: wavier and fuller, as the paper doll's long hair is
+   const pts = wavy([p0, p1, p2, p3].map(Wd), 0.05, 5, hr() * 6, () => sideCen, 18, true), col = lockMat();
+   lock(Hs, pts, Q(64, 14), Q(10, 5), (t) => 0.031 * Math.pow(1 - t, 0.5) + 0.003, 0.5, () => sideCen, col, HQ.K(32), HQ.N(40), { jitter: .45 });
+  }
+  for (let k = 0; k < 3; k++) {
+   const az = sd * (0.8 + k * 0.2);
+   const p0 = headPt(az, 0.6, 1.0), p1 = headPt(az, 0.05, 1.22), p2 = headPt(az - sd * 0.03, -0.5, 1.34 + k * 0.03);
+   const p3 = [p2[0] + sd * (0.08 + k * 0.015), p2[1] - 0.15 - r2() * 0.06, p2[2] - 0.03 - k * 0.012];
+   const pts = wavy([p0, p1, p2, p3].map(Wd), 0.055, 4.6, r2() * 6, () => sideCen, 18, true);
+   lock(Hs, pts, Q(64, 14), Q(10, 5), (t) => 0.03 * Math.pow(1 - t, 0.5) + 0.003, 0.5, () => sideCen, r2() < 0.62 ? HAIR1 : HAIR2, HQ.K(30), HQ.N(40), { jitter: .45 });
   }
  }
  for (let i = 0; i < 28; i++) {
@@ -2279,6 +2383,7 @@ function makeIo(opts) {
  const st = { init: false, px: 0, pz: 0, vx: 0, vz: 0, ax: 0, az: 0, prevYaw: 0, yawRate: 0, acc: 0, hp: new THREE.Vector3(), hv: new THREE.Vector3(), ha: new THREE.Vector3() };
  let lookYaw = 0, lookPitch = 0, lookTY = 0, lookTP = 0, lookTimer = 1.5, blinkIn = 1.5 + hr() * 2, blinkT = -1;
  let trK = 0, act = null, glowK = 0, dashV = 0, liftV = 0, moonKv = 0, trailOn = 0, guardOn = false, gW = 0, trance = 0, glowTint = 0;
+ let blinkOn = true, lidsV = 0; // cutscene: state.blink and state.lids
  const PH = 1 / 120;
  const spring = (s, target, h, K, C) => { s.v += (K * (target - s.x) - C * s.v) * h; s.x += s.v * h; };
  const _hp = new THREE.Vector3(), _hq = new THREE.Quaternion(), _t1 = new THREE.Vector3(), _t2 = new THREE.Vector3(), _wq = new THREE.Quaternion();
@@ -2477,7 +2582,7 @@ function makeIo(opts) {
    lookTimer -= dt;
    if (lookTimer <= 0) {
     if (hr() < 0.3) { lookTY = 0.32; lookTP = 0.12; } else { lookTY = (hr() - 0.5) * 1.1; lookTP = (hr() - 0.55) * 0.25; }
-    lookTimer = 2.2 + hr() * 3; if (blinkT < 0 && hr() < 0.6) blinkT = 0;
+    lookTimer = 2.2 + hr() * 3; if (blinkT < 0 && hr() < 0.6 && blinkOn) blinkT = 0;
    }
   }
   const kl = 1 - Math.exp(-idt * (P ? 9 : 4));
@@ -2485,19 +2590,23 @@ function makeIo(opts) {
   neck.rotation.set(lookPitch * 0.4, lookYaw * 0.35 - chest.rotation.y * 0.5, 0);
   headB.rotation.set(lookPitch * 0.6 + 0.015 * wb * Math.abs(s) - lean * 0.3 + V('hp', 0), lookYaw * 0.5 - chest.rotation.y * 0.35 - pelvis.rotation.y * 0.3,
    -chest.rotation.z * 0.5 - pelvis.rotation.z * 0.5 + Math.sin(t * 0.7) * 0.025 * (1 - wb));
-  if (blinkT < 0) { blinkIn -= dt; if (blinkIn <= 0) blinkT = 0; }
+  if (blinkT < 0 && blinkOn) { blinkIn -= dt; if (blinkIn <= 0) blinkT = 0; }
   let close = 0;
   if (blinkT >= 0) { blinkT += dt; const bu = blinkT / 0.16; if (bu >= 1) { blinkT = -1; blinkIn = 1.8 + hr() * 3.2; } else close = Math.sin(Math.PI * Math.min(1, bu * 1.1)); }
   if (P && P.shut) close = Math.max(close, win(u, P.shut[0], P.shut[1], 0.06));
-  const eyeX = cl((lookTY - lookYaw) * 0.018 + lookYaw * 0.007, -0.007, 0.007), eyeY = cl(-lookPitch * 0.018, -0.005, 0.004);
+  // cutscene: the same gaze, moving the iris a little less in the smaller eye
+  const eyeX = cl((lookTY - lookYaw) * 0.012 + lookYaw * 0.0048, -0.0048, 0.0048), eyeY = cl(-lookPitch * 0.011, -0.003, 0.0024);
   setIris(eyeX, eyeY);
   const hlOn = [false, false];
   eyes.forEach((e, i) => {
-   const cc = (P && P.wink && i === 1) ? Math.max(close, sm(P.wink, P.wink + 0.08, u)) : close;
-   e.lid.visible = e.low.visible = cc > 0.01;
-   e.lid.scale.set(1, 0.085 + (0.8 - 0.085) * cc, 0.45 + 0.55 * cc);
+   let cc = (P && P.wink && i === 1) ? Math.max(close, sm(P.wink, P.wink + 0.08, u)) : close;
+   cc = Math.max(cc, lidsV);
+   // cutscene: the upper lid rests a little lowered (LID_REST) and closes from there; the lash line rides its edge
+   const c2 = LID_REST + (1 - LID_REST) * cc;
+   e.low.visible = cc > 0.01; e.lid.visible = cc > 0.01; // cutscene: at rest the lid is the skin over the eye (lidSk)
+   e.lid.scale.set(1, 0.02 + 0.8 * c2, 0.5 + 0.5 * c2);
    e.low.scale.set(1, 0.015 + 0.225 * cc, 0.45 + 0.55 * cc);
-   e.lash.position.y = 0.038 - 0.076 * e.lid.scale.y;
+   e.lash.position.set(0, EH - 2 * EH * e.lid.scale.y, SZ * 0.6 * cc);
    e.lash.scale.y = 1 - 0.85 * cc;
    hlOn[i] = cc < 0.35;
   });
@@ -2678,6 +2787,9 @@ function makeIo(opts) {
  // state: trance (0 to 1) brings in the starlight cloak, ghost wings and crescent aura (the same as m.trance)
  const state = {};
  Object.defineProperty(state, 'trance', { enumerable: true, get: () => trance, set: (v) => { trance = cl(v, 0, 1); } });
+ // cutscene: blink (false holds her eyes open), lids (0 to 1: how far her lids are lowered, for a sleepy or sad look)
+ Object.defineProperty(state, 'blink', { enumerable: true, get: () => blinkOn, set: (v) => { blinkOn = v !== false; if (!blinkOn) blinkT = -1; } });
+ Object.defineProperty(state, 'lids', { enumerable: true, get: () => lidsV, set: (v) => { lidsV = cl(+v || 0, 0, 1); } });
  // a party member does not fade; at 0 she is hidden, anything above shows her
  let fade = 1;
  function setFade(f) {
@@ -3193,8 +3305,8 @@ function makeScenes() {
       // down the path to her lantern
       { id: 'walk', d: 8, cam: { from: [0.45, 1.05, 3.9], to: [0.4, 1.2, 3.1], at: 'io.chest', fov: [30, 28], ease: 'o', shake: .1 },
         focus: 'io.chest', ap: .9, exp: 1.5, do: [[0.2, 'io', 'walk', [[0, -3.4], [0.05, -0.1]], 1.05]] },
-      // her face in the lantern light
-      { id: 'face', d: 5.5, cam: { rel: 'io', from: [0.55, 1.62, 1.38], to: [0.42, 1.6, 1.1], at: ['io.head', 0, 0.07, 0], fov: [26, 25], ease: 'io', shake: .08 },
+      // her face in the lantern light, close and nearly level with her eyes, so her face shows under her hat's brim
+      { id: 'face', d: 5.5, cam: { rel: 'io', from: [0.36, 1.43, 1.05], to: [0.28, 1.42, 0.88], at: ['io.head', 0, 0.005, 0], fov: [26, 25], ease: 'io', shake: .08 },
         focus: 'io.eye', ap: 1.1, exp: 1.5 },
       // over her shoulder: the lamps by the bridge, far off, flickering
       { id: 'lamps', d: 9, lamps: true, cam: { rel: 'io', from: [-0.72, 1.86, -2.05], to: [-0.62, 1.82, -1.82], at: [17.5, 3.1, 34], fov: [26, 24], ease: 'io', shake: .07 },
@@ -3214,13 +3326,13 @@ function makeScenes() {
 </script>
 <script>
 /* 3d-cutscenes/player.js */
-// player.js: plays a story scene from scenes.js as a film. It builds Io's garden (garden.js), the high-detail Io
-// (io.js) and the film camera (cinema.js), then runs the scene's shots: the camera's moves, focus and exposure, who
-// walks where and does what, the narration in a lower third and spoken lines in the game's dialogue box, and the
-// night's sounds (sounds.js). A spoken line can wait for a tap, as the game's box does: the camera holds, the people
-// keep breathing. Everything Io does is her own motion, unchanged: her idle, her walk and her moves; the scene only
-// says where she walks and when. Detail: ?q=light|phone|laptop (a phone starts at phone). ?test drives frames from
-// window.__cs instead of the clock, for headless pictures.
+// player.js: plays a story scene from scenes.js as a film. It builds Io's garden (garden.js), the high-detail Io with
+// her face made like the paper doll's (io-cutscene.js) and the film camera (cinema.js), then runs the scene's shots:
+// the camera's moves, focus and exposure, who walks where and does what, the narration in a lower third and spoken
+// lines in the game's dialogue box, and the night's sounds (sounds.js). A spoken line can wait for a tap, as the game's
+// box does: the camera holds, the people keep breathing. Everything Io does is her own motion, unchanged: her idle, her
+// walk and her moves; the scene only says where she walks and when. Detail: ?q=light|phone|laptop (a phone starts at
+// phone). ?test drives frames from window.__cs instead of the clock, for headless pictures.
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
@@ -3257,7 +3369,7 @@ function makeScenes() {
       E.lamps = makeFarLamps(E.world.scene); makeDoorway(E.world.scene);
     }],
     ['Dressing Io', () => {
-      const t = performance.now(); E.io = makeIo({ detail: QP.detail, shadows: true }); E.ms.model = performance.now() - t;
+      const t = performance.now(); E.io = makeIoCutscene({ detail: QP.detail, shadows: true }); E.ms.model = performance.now() - t;
       E.world.scene.add(E.io.root, E.io.fx);
       E.actors = { io: makeActor('io', E.io, SC.cast.io) };
       let tris = 0; E.io.root.traverse((o) => { if (o.isMesh) { const g = o.geometry; tris += (g.index ? g.index.count : g.attributes.position.count) / 3; } }); E.ioTris = tris;
@@ -3544,7 +3656,7 @@ function makeScenes() {
     const f = fps.time > 2 ? Math.round(fps.frames / fps.time) : 0;
     const info = E.renderer.info.render, rows = [
       ['On this screen', f ? 'about ' + f + ' frames a second' + (fps.worst < 99 ? ' (the slowest moment ' + Math.round(fps.worst) + ')' : '') + ', at ' + QP.name + ' detail' : 'skipped before it could be measured, at ' + QP.name + ' detail'],
-      ['Io', 'the high-detail Io, ' + Math.round(E.ioTris / 1000) + ' thousand triangles at this detail, walking and looking about with her own moves'],
+      ['Io', 'the high-detail Io with her face made like her paper doll’s, ' + Math.round(E.ioTris / 1000) + ' thousand triangles at this detail, walking and looking about with her own moves'],
       ['The scene', 'the game’s own prologue words, still placeholders, in seven shots. The shots are a short written list, so a new scene is mostly a new list'],
       ['Made from', 'Io’s garden, the Bramble Colossus film camera and its night sounds, all already in the project']
     ];

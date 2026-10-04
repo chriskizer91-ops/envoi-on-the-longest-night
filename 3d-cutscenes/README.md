@@ -6,12 +6,14 @@ Claude's own folder, started October 4, 2026, when Chris asked whether the style
 
 ![The seven shots, on a phone held sideways](renders/prologue-shots.jpg)
 
+In the test Io now has her cutscene face, made like her paper doll's ([below](#ios-face-in-cutscenes)).
+
 ## The short answer
 
 Yes, it works, and the test above is the game's own prologue made that way. How easy each scene is depends on three things:
 
 - **The camera and the film's look carry over as they are.** The Bramble film is a list of shots written as data (where the camera starts and ends, what it looks at, what is in focus, who moves, which words show), played by a small player, through the film camera (`cinema.js`: depth of field, bloom, moonlight shafts, a film grade, letterbox). This test uses the same camera unchanged and the same kind of shot list, extended to people who walk and talk.
-- **The game's people are ready for it.** Every model in the game shares one interface, and the film player only uses that interface. The high-detail Io from `3d-model-main-characters/` plays here with her own walk, idle and looking about, nothing new. The game's own models (Sol, Halcyon, Noctara, Lunara, Envoi) can stand in the same light, as the Io study's side-by-side picture shows.
+- **The game's people are ready for it.** Every model in the game shares one interface, and the film player only uses that interface. The high-detail Io from `3d-model-main-characters/` plays here, with her face made like her paper doll's (below) and her own walk, idle and looking about. The game's own models (Sol, Halcyon, Noctara, Lunara, Envoi) can stand in the same light, as the Io study's side-by-side picture shows.
 - **The places are the work.** A film camera that goes anywhere needs the place built in 3D all round. Two exist so far: Io's garden (`garden.js`, from the Io study) and the Frostmere meadow (`frostmere.js`, from the field study). The game's other places are paintings, which look right only from the one spot they were painted from.
 
 So a scene in a place that exists is mostly a new shot list. A scene somewhere new needs that place built first, about as much work as the garden was. The townsfolk (Quill, Ysmera, the gnomes, Mayor Gretch) have no 3D models at all; they are paper dolls.
@@ -19,12 +21,29 @@ So a scene in a place that exists is mostly a new shot list. A scene somewhere n
 ## What the test shows
 
 - **The prologue,** with the game's own words from `src/game/script.js` (still placeholders for the lore conversation), in seven shots and about a minute: the moon in a sky with no stars, tilting down to Io small at her door (the picture art request 07 asks for in its first still), the empty sky, Io at her lit door, her walk down the path, her face in the lantern light, the lamps by the bridge flickering far off past the gate (one goes out), and Io out through the gate toward the square.
-- **Io as the game keeps her.** She does only what the game's Io does: her idle, her walk and her looking about. The scene only says where she walks and when.
+- **Io moving as the game keeps her,** with her cutscene face. She does only what the game's Io does: her idle, her walk and her looking about. The scene only says where she walks and when.
 - **The game's dialogue box.** Narration shows as film captions; Io's line comes up in the game's own box with her painted portrait, and waits for a tap, as the game does. The camera holds and she keeps breathing while it waits. A **Skip** button ends the scene.
 - **Sound** made in code, from the field study: wind in the trees and a tawny owl.
 - **How fast it ran.** The end card says how many frames a second the phone drew, at which detail, and offers a lighter or sharper version.
 
 New in the place, for the scene only: the open doorway's warm light (the garden draws it just behind the wall, where the wall hides it), and four distant lamps with a warm haze, the lamps by the bridge.
+
+## Io's face in cutscenes
+
+![Before and after: the 3D Io until now and her cutscene face, in her garden's night light (top) and in plain light](renders/face-before-after.jpg)
+
+Chris asked (October 4, 2026) that any prologue or cutscene give Io a face as close as possible to her paper doll's, because a film's close-ups show her face, which the battles never do. So this folder has a cutscene Io, `io-cutscene.js`: the high-detail Io with her face, and the look round it, redone:
+
+- her face narrows to a small chin instead of being a round ball;
+- almond eyes with a heavy dark upper lash line that is the top of the eye, a flick at the outer corner and a fine lower line;
+- thin dark brows just above her glasses, a small closed smile with a touch of rose, and rosier cheeks;
+- her hat sits lower, its brim over bangs that sweep to one side and end at her brows;
+- darker hair with an ash shine, wavier, with locks framing her face;
+- her black top comes up to her collarbones, as on the paper doll.
+
+Her bones, body, clothes and every move stay the same, so she walks, breathes, blinks and looks about exactly as before. **The battles keep the game's Io:** nothing outside this folder changes. The project's rule that the Witch's model keeps exactly how she looks still holds for the game; this face is for cutscenes only, at Chris's request. If Chris keeps it, `docs/design-decisions.md` should say so; this folder doesn't edit files outside itself.
+
+Not done yet: the sheer veil that hangs from her hat's brim in the painted scenes, and the pointed ears the paper doll shows (the 3D Io has never had them, so that is Chris's call). Her quick blinks look right, but lids held lowered for a long time (sleepy or sad) still look a little puffy.
 
 ## How a scene is written
 
@@ -68,15 +87,15 @@ A mix is likely best: a few key scenes as in the test, in places worth building 
 
 | Detail | Io | Drawn each frame | Picture |
 |---|---|---|---|
-| Light | 142,000 triangles | about 0.9 million triangles | 70% sharpness, no lantern shadow |
-| Phone (a phone's first choice) | 294,000 triangles | about 1.7 million triangles | 80% sharpness |
-| Laptop | 1,089,000 triangles | about 4.9 million triangles | full sharpness |
+| Light | 153,000 triangles | about 0.95 million triangles | 70% sharpness, no lantern shadow |
+| Phone (a phone's first choice) | 330,000 triangles | about 1.8 million triangles | 80% sharpness |
+| Laptop | 1,231,000 triangles | about 5.3 million triangles | full sharpness |
 
 Io is drawn three times a frame: once for the picture and once for each of her two shadows (the moon and her lantern). The game's battles draw up to five models of about 100,000 triangles at 30 frames a second, so a scene of two or three people at Light or Phone detail is in the same range, plus the film camera's work on the picture. The end card measures the real number on Chris's phone; the headless test browser draws on the processor, so its numbers mean nothing for a phone.
 
 ## Fitting it into the game
 
-The game already switches to a 3D screen for its battles, so a cutscene screen would work the same way: when the story reaches a scene that has a film, hide the walking map, build the place and the people, play the shots with the words from `script.js`, and return to the map. The film camera renders in its own light (tone mapped, with shadows), so the game's models are put in it the way the Io study puts the game's Io beside its own: their colours turned linear.
+The game already switches to a 3D screen for its battles, so a cutscene screen would work the same way: when the story reaches a scene that has a film, hide the walking map, build the place and the people (Io as her cutscene self, which has the same interface as the game's Io), play the shots with the words from `script.js`, and return to the map. The film camera renders in its own light (tone mapped, with shadows), so the game's models are put in it the way the Io study puts the game's Io beside its own: their colours turned linear.
 
 ## Files
 
@@ -87,11 +106,13 @@ The game already switches to a 3D screen for its battles, so a cutscene screen w
 | `cutscene.html`, `cutscene.css` | The page's source; the dialogue box copies the game's (`src/game/game.css`, `src/battle/screen.css`) |
 | `Prologue_In_Ios_Garden.html` | The built page, one file to open in a browser |
 | `cinema.js` | The film camera, copied unchanged from `3d-model-field-studies/bramble-colossus/cinema.js` |
-| `io.js`, `garden.js` | Io and her garden, copied unchanged from `3d-model-main-characters/io/` |
+| `io-cutscene.js` | The cutscene Io: `io.js` with her face made like her paper doll's, each change marked "cutscene:" in it |
+| `io.js`, `garden.js` | Io and her garden, copied unchanged from `3d-model-main-characters/io/`. The scene builds the garden and the cutscene Io; `io.js` stays for the before-and-after pictures |
 | `sounds.js` | The night's sounds, copied unchanged from `3d-model-field-studies/bramble-colossus/sounds.js` |
 | `portrait-io.webp` | Io's painted portrait, copied from `art/portraits/` |
 | `tools/build.mjs` | Builds the page: `node tools/build.mjs [artifactOut]` (from this folder) |
 | `tools/shots.mjs` | Headless pictures of the built page at any moment of the scene, through its test hooks |
+| `tools/face.html`, `tools/face.mjs` | Headless close-ups of Io's face, the study's beside the cutscene's, in the garden's night light or plain light |
 | `renders/` | Stills from the scene |
 
 The copies come from the branches `claude/confident-albattani-nhdy6e` (the studies) and `claude/practical-franklin-l1ctf9` (the portrait), as they were on October 4, 2026.
@@ -104,11 +125,14 @@ node tools/build.mjs                    # writes Prologue_In_Ios_Garden.html
 node tools/shots.mjs /tmp/shots --q phone --size 915x412 at:8.6 shot:opening hold:60 shot:waits
 ```
 
-`shots.mjs` needs Playwright and three.js r128 in `.cache/three.min.js` (`npm pack three@0.128.0`, then take `build/three.min.js`; git ignores `.cache/`). `at:<seconds>` plays the scene to that moment, `hold:60` plays to the first line that waits for a tap, `end` shows the end card. `?q=light|phone|laptop` on the page's address picks the detail.
+For Io's face: `node tools/face.mjs /tmp/face 'after:{"who":"cut","look":"night","dist":1.05,"yaw":-18}' 'before:{"who":"study","look":"night","dist":1.05,"yaw":-18}'` (the options are listed at the top of `tools/face.html`).
+
+`shots.mjs` and `face.mjs` need Playwright and three.js r128 in `.cache/three.min.js` (`npm pack three@0.128.0`, then take `build/three.min.js`; git ignores `.cache/`). `at:<seconds>` plays the scene to that moment, `hold:60` plays to the first line that waits for a tap, `end` shows the end card. `?q=light|phone|laptop` on the page's address picks the detail.
 
 ## Still open
 
 - **Chris's phone:** how fast it runs there, which the end card reports.
+- **Io's face:** the veil and the ears (above). Her looking about is her own, so in the close-up she may face the camera or look past it; at Phone detail she happens to look a little aside.
 - **The words** are the script's placeholders; the staging (Io at her door, the lamps by the bridge seen from the garden) is new and only a proposal.
 - **The garden** is built at a lower level of detail than Io (its trees in particular); the Io study notes the same.
 - **Next, if Chris wants:** a second scene with two people, such as Sol arriving or Halcyon sparing them, either in a place built in 3D or over its painting, to compare the two ways side by side.

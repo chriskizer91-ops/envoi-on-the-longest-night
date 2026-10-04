@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Io's Face Bench</title>
+<style>html, body { margin: 0; height: 100%; background: #05030c; } canvas { display: block; width: 100%; height: 100%; }</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<script src="../.cache/three.min.js"></script>
+<script src="../cinema.js"></script>
+<script src="../garden.js"></script>
+<script src="../io.js"></script>
+<script src="../io-cutscene.js"></script>
+<script>
+// face.html: Io's face up close, for headless comparison pictures (tools/face.mjs): the study's Io (io.js) or the
+// cutscene Io (io-cutscene.js), in her garden's night light or its plain grey studio, through the film camera.
+// ?detail=.5 builds lighter models. window.__face.shot({ who: 'study' | 'cut', look: 'night' | 'studio', yaw, pitch,
+// dist, fov, up, act, actAt, frames, blink, lids, hide }) poses the camera round her head (yaw in degrees, 0 in front,
+// positive toward her left), draws, and returns what it drew: her triangles and where her head and eye anchors are.
+// blink: true lets her blink (off by default, so pictures compare); lids: 0 to 1 lowers the cutscene Io's lids;
+// hide: material names left out of the picture (e.g. ["frame", "lens", "lensTint"] for no glasses).
+(function () {
+  'use strict';
+  const Qs = new URLSearchParams(location.search), DET = +(Qs.get('detail') || 1);
+  const canvas = document.getElementById('gl');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, stencil: false });
+  renderer.setPixelRatio(1); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setSize(innerWidth, innerHeight, false);
+  const world = makeGarden(renderer, { quality: 'high' }); world.look('night');
+  const camera = new THREE.PerspectiveCamera(26, innerWidth / innerHeight, .02, 3000);
+  const cine = makeCinema(renderer, { scale: 1, msaa: 4 }); cine.sun(world.moonDir);
+  cine.set({ exposure: 1.45, bloom: .4, rays: 0, grain: .015, vignette: .2, split: .06, saturation: 1, aperture: .25, maxBlur: 10 });
+  const models = {}, ms = {};
+  let t0 = performance.now(); models.study = makeIo({ detail: DET, shadows: true }); ms.study = performance.now() - t0;
+  t0 = performance.now(); models.cut = makeIoCutscene({ detail: DET, shadows: true }); ms.cut = performance.now() - t0;
+  let cur = null, t = 0;
+  const v = new THREE.Vector3();
+  function use(who) {
+    if (cur === models[who]) return;
+    if (cur) world.scene.remove(cur.root, cur.fx);
+    cur = models[who]; world.scene.add(cur.root, cur.fx);
+    cur.root.position.set(0, 0, 0); cur.root.rotation.y = 0;
+  }
+  function settle(n, act, actAt, blink, lids) {
+    cur.reset();
+    cur.state.blink = !!blink; // the cutscene Io can hold her eyes open for a picture (the study's ignores this)
+    cur.state.lids = lids || 0; // and lower her lids (0 to 1)
+    for (let i = 0; i < n; i++) {
+      t += 1 / 30;
+      if (act && i === Math.max(0, n - Math.round((actAt || 0) * 30) - 1)) cur.play(act, true);
+      cur.animate(0, 0, t, 1 / 30); world.update(t, 1 / 30);
+    }
+  }
+  window.__face = {
+    ready: true, ms,
+    shot(o) {
+      o = o || {};
+      use(o.who || 'cut');
+      world.look(o.look || 'night');
+      cine.set({ exposure: (o.look || 'night') === 'studio' ? 1.05 : 1.5 });
+      // the same moment of her idle for every picture: start her breathing and looking about from the beginning
+      t = 0; settle(o.frames || 45, o.act, o.actAt, o.blink, o.lids);
+      // hide: material names whose meshes are left out of this picture (e.g. ["frame", "lens", "lensTint"])
+      cur.root.traverse((x) => { if (x.isMesh && x.material && x.material.name) x.visible = !(o.hide || []).includes(x.material.name); });
+      const m = world.lights.moon; m.target.position.set(0, .9, 0); m.position.copy(world.moonDir).multiplyScalar(20).add(m.target.position);
+      cur.anchor(o.at || 'head', v); v.y += o.up === undefined ? .02 : o.up;
+      const yaw = (o.yaw || 0) * Math.PI / 180, pitch = (o.pitch || 0) * Math.PI / 180, d = o.dist || .7;
+      camera.position.set(v.x + Math.sin(yaw) * Math.cos(pitch) * d, v.y + Math.sin(pitch) * d, v.z + Math.cos(yaw) * Math.cos(pitch) * d);
+      camera.lookAt(v); camera.fov = o.fov || 26; camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+      cine.params.focus = d;
+      renderer.info.reset(); cine.render(world.scene, camera, 1 / 30); renderer.getContext().finish();
+      let tris = 0; cur.root.traverse((x) => { if (x.isMesh) { const g = x.geometry; tris += (g.index ? g.index.count : g.attributes.position.count) / 3; } });
+      cur.anchor('head', v); const head = v.toArray().map((x) => +x.toFixed(3)); cur.anchor('eye', v);
+      return { who: o.who || 'cut', tris: Math.round(tris), head, eye: v.toArray().map((x) => +x.toFixed(3)) };
+    }
+  };
+})();
+</script>
+</body>
+</html>

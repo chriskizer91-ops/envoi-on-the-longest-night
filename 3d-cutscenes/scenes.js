@@ -40,8 +40,8 @@ function makeScenes() {
       // down the path to her lantern
       { id: 'walk', d: 8, cam: { from: [0.45, 1.05, 3.9], to: [0.4, 1.2, 3.1], at: 'io.chest', fov: [30, 28], ease: 'o', shake: .1 },
         focus: 'io.chest', ap: .9, exp: 1.5, do: [[0.2, 'io', 'walk', [[0, -3.4], [0.05, -0.1]], 1.05]] },
-      // her face in the lantern light
-      { id: 'face', d: 5.5, cam: { rel: 'io', from: [0.55, 1.62, 1.38], to: [0.42, 1.6, 1.1], at: ['io.head', 0, 0.07, 0], fov: [26, 25], ease: 'io', shake: .08 },
+      // her face in the lantern light, close and nearly level with her eyes, so her face shows under her hat's brim
+      { id: 'face', d: 5.5, cam: { rel: 'io', from: [0.36, 1.43, 1.05], to: [0.28, 1.42, 0.88], at: ['io.head', 0, 0.005, 0], fov: [26, 25], ease: 'io', shake: .08 },
         focus: 'io.eye', ap: 1.1, exp: 1.5 },
       // over her shoulder: the lamps by the bridge, far off, flickering
       { id: 'lamps', d: 9, lamps: true, cam: { rel: 'io', from: [-0.72, 1.86, -2.05], to: [-0.62, 1.82, -1.82], at: [17.5, 3.1, 34], fov: [26, 24], ease: 'io', shake: .07 },
