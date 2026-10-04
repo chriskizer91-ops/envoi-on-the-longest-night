@@ -112,6 +112,7 @@ body { height: 100%; margin: 0; background: var(--night); color: var(--ink); fon
 .mp-panel .mp-reset.is-armed { border-color: var(--bad); color: var(--bad); }
 
 .mp-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+.mp-tools button { display: flex; align-items: center; justify-content: center; gap: 7px; min-width: 0; white-space: normal; text-align: left; line-height: 1.25; }
 .mp-picked { min-height: 3.2em; margin-bottom: 8px; padding: 8px 10px; border-radius: 7px; background: rgba(0, 0, 0, 0.25); color: var(--ink-soft); font-size: 13px; line-height: 1.45; }
 .mp-picked b { color: var(--ink); font-weight: 600; }
 .mp-picked small { display: block; margin-top: 3px; color: var(--dim); font-size: 12px; }

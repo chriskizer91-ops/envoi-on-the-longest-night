@@ -821,7 +821,7 @@
   function renderUndo() { const h = H(cur); $('mp-undo').disabled = !h.u.length && !drawing; $('mp-redo').disabled = !h.r.length || !!drawing; }
   const k = (s) => '<kbd>' + s + '</kbd>';
   const HELP = {
-    edit: ['Drag a point to move it', 'Double-click an edge to add a point', k('Delete') + ' removes the picked point or shape', 'Click a shape, then drag it to move it', k('Wheel') + ' zoom', 'Drag empty space, ' + k('Space') + '+drag or ' + k('←') + k('↑') + k('↓') + k('→') + ' to look around', k('Shift') + '+arrows nudge', k('Ctrl') + k('Z') + ' undo, ' + k('Ctrl') + k('Shift') + k('Z') + ' redo', k('Esc') + ' let go', k('F2') + ' walk it'],
+    edit: ['+ Green or + Purple (beside the painting) draws a new shape anywhere', 'Drag a point to move it', 'Double-click an edge to add a point', k('Delete') + ' removes the picked point or shape', 'Click a shape, then drag it to move it', k('Wheel') + ' zoom', 'Drag empty space, ' + k('Space') + '+drag or ' + k('←') + k('↑') + k('↓') + k('→') + ' to look around', k('Shift') + '+arrows nudge', k('Ctrl') + k('Z') + ' undo, ' + k('Ctrl') + k('Shift') + k('Z') + ' redo', k('Esc') + ' let go', k('F2') + ' walk it'],
     draw: ['Click to put down points', 'Click the first point or press ' + k('Enter') + ' to finish', k('Backspace') + ' takes back the last point', k('Esc') + ' cancels', 'Hold ' + k('Space') + ' and drag to move around', k('Wheel') + ' zoom'],
     walk: [k('←') + k('↑') + k('↓') + k('→') + ' or ' + k('W') + k('A') + k('S') + k('D') + ' walk', 'Click the painting to walk there, or hold to steer her', k('Esc') + ' or ' + k('F2') + ' back to editing', 'Exits, talking and fights do nothing here'],
   };

@@ -78,10 +78,24 @@ try {
   await shot('03-drag-point');
 
   log('add a point: double-click an edge');
-  const n0 = w.walk[0].length, a = w.walk[0][0], b = w.walk[0][1], q = [a[0] + (b[0] - a[0]) * 0.35, a[1] + (b[1] - a[1]) * 0.35];
+  // an edge of the square's walk area in view, long enough, its 35% point clear of every other shape and their edges
+  // (Chris's tracing has shapes close together, so the edge is found rather than fixed)
+  const n0 = w.walk[0].length, rect = await ev(() => { const r = document.getElementById('mp-cv').getBoundingClientRect(); return [r.left, r.top, r.right, r.bottom]; });
+  const inside = (c, poly) => { let o = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > c[1]) !== (yj > c[1]) && c[0] < (xj - xi) * (c[1] - yi) / (yj - yi) + xi) o = !o; } return o; };
+  const segD = (c, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], L2 = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((c[0] - a[0]) * dx + (c[1] - a[1]) * dy) / L2)); return Math.hypot(c[0] - a[0] - t * dx, c[1] - a[1] - t * dy); };
+  const others = w.walk.slice(1).concat(w.block, w.front.map((f) => f.pts));
+  let ek = -1, q = null;
+  for (let k = 1; k < n0 - 1 && ek < 0; k++) {
+    const a = w.walk[0][k], b = w.walk[0][k + 1], c = [a[0] + (b[0] - a[0]) * 0.35, a[1] + (b[1] - a[1]) * 0.35], sc = await toScreen(c);
+    if (Math.hypot(b[0] - a[0], b[1] - a[1]) < 40 || sc[0] < rect[0] + 20 || sc[0] > rect[2] - 20 || sc[1] < rect[1] + 20 || sc[1] > rect[3] - 20) continue;
+    if (others.some((poly) => inside(c, poly) || poly.some((v, i) => segD(c, v, poly[(i + 1) % poly.length]) < 14))) continue;
+    if (w.walk[0].some((v) => Math.hypot(v[0] - c[0], v[1] - c[1]) < 12)) continue;
+    ek = k; q = c;
+  }
+  check(ek > 0, 'an edge in view to add a point to: ' + (ek > 0 ? 'edge ' + ek + ', at ' + q.map(Math.round) : 'none found'));
   const sq = await toScreen(q); await page.mouse.dblclick(sq[0], sq[1]); await sleep(150);
   w = await W();
-  check(w.walk[0].length === n0 + 1, 'the edge has a new point (' + n0 + ' → ' + w.walk[0].length + ' points), at ' + JSON.stringify(w.walk[0][1]));
+  check(w.walk[0].length === n0 + 1, 'the edge has a new point (' + n0 + ' → ' + w.walk[0].length + ' points), at ' + JSON.stringify(w.walk[0][ek + 1]));
   await shot('04-add-point');
 
   log('undo and redo');
@@ -107,7 +121,8 @@ try {
   log('draw a new block');
   const nb = w.block.length;
   await page.click('[data-tool="block"]'); await sleep(80);
-  for (const p of [[880, 326], [924, 326], [930, 358], [884, 362]]) await clickMap(p);
+  // across the foot of the lane up the big house's west side
+  for (const p of [[262, 372], [298, 372], [298, 392], [262, 392]]) await clickMap(p);
   await page.keyboard.press('Enter'); await sleep(150);
   w = await W();
   check(w.block.length === nb + 1 && w.block[nb].length === 4, 'Enter closes it: a new block of 4 points (' + JSON.stringify(w.block[nb]) + ')');
@@ -120,21 +135,21 @@ try {
   check(Math.abs(w.people[0].at[0] - nettie[0] - 14) <= 1 && Math.abs(w.people[0].at[1] - nettie[1] - 16) <= 1, 'Nettie moved from ' + nettie + ' to ' + w.people[0].at);
   await shot('08-move-person');
 
-  log('the reach check: the new block cuts off the north of the square');
+  log('the reach check: the new block cuts off the lane up the big house\'s west side');
   await page.click('label:has(#mp-l-reach)'); await sleep(700);
   let reachText = await ev(() => document.getElementById('mp-reach').textContent);
   check(/cut off from the rest/.test(reachText), 'the reach check warns: “' + reachText.trim() + '”');
   await shot('09-reach-cut-off');
 
   log('zoom in, and drag the whole block somewhere harmless');
-  const sb = await toScreen([900, 345]); await page.mouse.move(sb[0], sb[1]);
+  const sb = await toScreen([340, 410]); await page.mouse.move(sb[0], sb[1]);
   for (let i = 0; i < 3; i++) { await page.mouse.wheel(0, -300); await sleep(60); }
   await sleep(150);
-  await clickMap([886, 350]);
+  await clickMap([280, 382]);
   check(JSON.stringify(await ev(() => MapPaths.sel)) === JSON.stringify({ kind: 'block', i: nb }), 'a click inside the new block picks it');
-  await dragMap([886, 350], [726, 370]); await sleep(500);
+  await dragMap([280, 382], [440, 442]); await sleep(500);
   w = await W();
-  check(JSON.stringify(w.block[nb]) === JSON.stringify([[720, 346], [764, 346], [770, 378], [724, 382]]), 'the block moved whole: ' + JSON.stringify(w.block[nb]));
+  check(JSON.stringify(w.block[nb]) === JSON.stringify([[422, 432], [458, 432], [458, 452], [422, 452]]), 'the block moved whole: ' + JSON.stringify(w.block[nb]));
   reachText = await ev(() => document.getElementById('mp-reach').textContent);
   check(/reach everything/.test(reachText), 'and the reach check is happy again: “' + reachText.trim() + '”');
   await shot('10-block-moved');
