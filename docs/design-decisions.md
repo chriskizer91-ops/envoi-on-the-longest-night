@@ -1086,3 +1086,9 @@ Chris asked what polish is left, and for these: his three songs in; the songs' v
 - **A tap now walks Io along a narrow way too,** so a tap on the glint on the roof takes her up the tree and along the ridge to it. A tap's route was planned on 12 px squares, so it needed ground about 24 px wide; where the ground is narrower (she needs 12 px), a finer search in 4 px steps, on the same rule as her feet, finds the way, and from a narrow way back to the rest.
 - She slows into a sharp turn, as she does at a walk's end, and steps over a sliver of wall under 4 px wide where two shapes meet in a notch (as two of the roof path's strokes do). Blocks such as a lamp post's foot are far wider, so they stay solid.
 - **This replaces the note of October 3** that a narrow secret way had to be walked with the pad or by holding to steer. The path editor's reach check follows narrow ways too, so its orange now marks only ground she can't reach at all; today no map has any.
+
+### Chapters, once the game is finished
+
+- **Beating the game unlocks Chapters** (Chris: "if you beat the game that unlocks chapter selection once we finalize the game"). Until the game is finished, Chapters stays on the title from the start, so each part can be tried.
+- **How, when it's time:** winning the finale already marks the save (`flags.ending`, set before the ending plays), so the title can offer Chapters once any slot holds a beaten game. A mark of its own on the device, set at the same moment, would keep Chapters open even after that save is overwritten.
+- Chris has the whole game as one file (the offline build, songs inside) to keep and play anywhere.

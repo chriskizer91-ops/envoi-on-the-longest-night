@@ -80,6 +80,16 @@ Small things that would make it nicer, none started:
 - **Room for the art:** the battle paintings and the world map could be squeezed to AVIF as the walking maps were, with a comparison page for Chris first.
 - **Mooncart:** the game reaches it only once this branch is merged into the repository's default branch, which is Chris's call.
 
+### When the game is finished
+
+Decided for the finished game, not to build before then:
+
+- **Chapters unlocks once the game is beaten** (Chris, October 4). Until then it stays on the title from the start. The finale's win already sets `flags.ending` in the save; give the device a mark of its own at the same moment, so Chapters stays open if that save is overwritten (`design-decisions.md`, "Chapters, once the game is finished").
+
+### The file Chris keeps
+
+Sent to him on October 4 as `Envoi-on-the-Longest-Night.html` (17.4 MB): the offline build (`node tools/build.mjs --min --offline putting-it-all-together/game.html`), with three.js, the fonts and the songs inside, and Chapters on the title. It keeps its own saves; a save code (Menu, Saves) carries a game between it and the published page. Send him a new one after any round he wants to keep.
+
 ## When things arrive
 
 ### A new paper doll (a new townsperson, or a sheet redone)
