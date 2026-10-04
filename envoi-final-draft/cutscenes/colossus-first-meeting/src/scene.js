@@ -76,7 +76,7 @@ function cutsceneScene() {
     { id: 'handover', d: 6, cam: { battle: true, from: [-9.5, 6.2, 21], at: [-2.6, 2.4, 1.6], fov: [30, 30], glide: [0, 4.6] },
       focus: 'sol.chest', ap: [[0, .45], [4, 0]], exp: 1.4, bars: [[0, 1], [4.2, 0]], shadow: [-3, 0, 3],
       do: [[.1, 'colossus', 'state', 'open', [[0, .9], [2.6, 0]]], [.2, 'colossus', 'target', 'io'], [.3, 'io', 'guard', false], [.3, 'io', 'face', YAW.io, 2.2], [.6, 'sol', 'guard', false], [.6, 'sol', 'face', YAW.sol, 2.2],
-        [.8, 'sol', 'state', 'heat', [[0, .78], [3, .15]]], [1, 'snd', 'wind', .42]] }
+        [.8, 'sol', 'state', 'heat', [[0, .78], [3, 0]]], [1, 'snd', 'wind', .42]] }
   ];
 
   return {
@@ -92,12 +92,13 @@ function cutsceneScene() {
       sol: { model: 'sol', at: [-6.05, 27.7], yaw: Math.PI, breathAt: 1.9, state: { heat: 0 } }
     },
     shots,
-    // where everyone stands when it hands over, also when it is skipped: as the fight stands them
+    // where everyone stands when it hands over, also when it is skipped: as the fight stands them (the fight starts Sol's
+    // Heat at nothing, src/battle/screen.js resetHeroes)
     handover: {
       // (in the fight, while it waits, it is turned on Io: src/battle/screen.js aims every foe at her by default)
       colossus: { pose: 'base', state: { open: 0 }, target: 'io' },
       io: { at: IO, yaw: YAW.io },
-      sol: { at: SOL, yaw: YAW.sol, state: { heat: .15 } }
+      sol: { at: SOL, yaw: YAW.sol, state: { heat: 0 } }
     },
     // the fight's framing: its painting camera, the battle's origin in the place, and everyone standing in it (their
     // heights and the Colossus's width are the fight's: src/game/fights.js FOE_LOOK and hero)

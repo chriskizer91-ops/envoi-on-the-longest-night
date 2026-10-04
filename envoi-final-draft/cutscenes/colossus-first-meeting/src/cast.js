@@ -25,6 +25,7 @@ function cutsceneCast() {
     return m;
   }
   // Sol's blade sets its glow every frame in the game's colours; here they are turned linear after each frame as well
+  // (its two materials are found by their colours before filmLight turns them linear)
   function solBlade(m) {
     const mats = { edge: null, steel: null };
     m.root.traverse((o) => {
@@ -86,7 +87,7 @@ function cutsceneCast() {
     },
     sol: {
       kind: 'person', stride: 4.2, mouth: [0, -.1, .1], steps: 'step',
-      make: (q) => { const m = filmLight(makeSol({ detail: { light: .5, phone: .5, laptop: 1 }[q] || .5 })); m.blade = solBlade(m); return m; },
+      make: (q) => { const raw = makeSol({ detail: { light: .5, phone: .5, laptop: 1 }[q] || .5 }), blade = solBlade(raw); const m = filmLight(raw); m.blade = blade; return m; },
       after(m) { if (m.blade.edge) m.blade.edge.emissive.convertSRGBToLinear(); if (m.blade.steel) m.blade.steel.emissive.convertSRGBToLinear(); }
     }
   };
