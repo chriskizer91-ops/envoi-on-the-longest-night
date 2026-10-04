@@ -1,0 +1,58 @@
+[
+  {
+    "index": 11,
+    "title": "Warm Roads Moorland",
+    "filename": "11-verdant-wilds-warm-roads-moor.png",
+    "fight": "Band 2 wilds, levels 6 to 10: Warm Roads in the western Verdant Wilds",
+    "width": 1448,
+    "height": 1086,
+    "format": "PNG",
+    "size_bytes": 2654385,
+    "sha256": "496e6ab930e030fa21871467e2521aab3680b2d1d21436d7f9f41111fad3fc58",
+    "candidate_count": 2,
+    "selected_variant": 2,
+    "selection_reason": "Variant 2: dimmer cold waymarker, even open moor foreground, and amber road confined to the middle distance."
+  },
+  {
+    "index": 12,
+    "title": "Dawnroost's Living Node",
+    "filename": "12-thornhollow-dawnroost-living-node.png",
+    "fight": "Gate 10: three wraiths at Dawnroost (Thornhollow on the map)",
+    "width": 1448,
+    "height": 1086,
+    "format": "PNG",
+    "size_bytes": 2600005,
+    "sha256": "9cc611a407d366e05879ca27102a9083edc6ca64f6364e97c6c98d13c9c604e5",
+    "candidate_count": 2,
+    "selected_variant": 1,
+    "selection_reason": "Variant 1: closer moon placement, dark outpost windows, and a lower dais behind the open yard."
+  },
+  {
+    "index": 13,
+    "title": "The Northern Crossroads",
+    "filename": "13-northern-crossroads.png",
+    "fight": "Gate 15: Halcyon ambush at the northern crossroads",
+    "width": 1448,
+    "height": 1086,
+    "format": "PNG",
+    "size_bytes": 2815651,
+    "sha256": "494718729de1f493e34cffaec9beb3847d32aacdbcfdf96e3c3d371dfad15b61",
+    "candidate_count": 2,
+    "selected_variant": 1,
+    "selection_reason": "Variant 1: closer dominant mountain silhouette, better separation between moon and ridge, and unobstructed frosted ground."
+  },
+  {
+    "index": 14,
+    "title": "The Dead Moonwell",
+    "filename": "14-ironhold-misthollow-dead-moonwell.png",
+    "fight": "Finale at level 20: Noctara and Halcyon at the dead Moonwell in Misthollow (Ironhold on the map)",
+    "width": 1448,
+    "height": 1086,
+    "format": "PNG",
+    "size_bytes": 2627412,
+    "sha256": "88159c98d33dc9c0135f6c685a19ed893f5b7704aa381759fbe06ee38ff552b0",
+    "candidate_count": 3,
+    "selected_variant": 3,
+    "selection_reason": "Variant 3: distant towers, visible black basin, carved moths and crescents, and uninterrupted frosted plaza."
+  }
+]

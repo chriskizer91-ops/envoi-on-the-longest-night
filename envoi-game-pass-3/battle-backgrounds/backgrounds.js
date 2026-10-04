@@ -7,18 +7,16 @@
   'use strict';
   const $ = (id) => document.getElementById(id);
   const V = window.BG_VERSIONS || {};
-  // which painting goes with which fight, matched to the world map (art request 11)
+  // which painting goes with which fight, matched to the world map (art request 11): the game's eight
   const PLACES = [
-    { id: '01', name: 'Wickhollow River Glade', use: 'Band 1 wilds, levels 1 to 5', used: true },
-    { id: '02', name: 'Eldergrove Clearing', use: 'Band 3 wilds, levels 11 to 15', used: true },
-    { id: '05', name: 'Frostmere Lake', use: 'Band 4 wilds, and the Colossus', used: true },
-    { id: '03', name: 'Bogmire Lantern Banks', use: 'Gate 5: the great wraith', used: true },
-    { id: '06', name: 'Ironhold High Pass', use: 'The finale, until the dead Moonwell comes', used: true },
-    { id: '04', name: 'Misthollow Drowned City', use: 'Not used: the sunken ruins stay out of the story' },
-    { id: '07', name: 'Sandspire Steppe', use: 'Not used: under mist all game' },
-    { id: '08', name: 'Miragewell Oasis', use: 'Not used: under mist all game' },
-    { id: '09', name: 'Hearthstone Shore', use: 'Not used: under mist all game' },
-    { id: '10', name: 'Hearthsea Headland', use: 'Not used: under mist all game' },
+    { id: '01', name: 'Wickhollow River Glade', use: 'Band 1 wilds, levels 1 to 5' },
+    { id: '11', name: 'Warm Roads Moorland', use: 'Band 2 wilds, levels 6 to 10' },
+    { id: '02', name: 'Eldergrove Clearing', use: 'Band 3 wilds, levels 11 to 15' },
+    { id: '05', name: 'Frostmere Lake', use: 'Band 4 wilds, and the Colossus' },
+    { id: '03', name: 'Bogmire Lantern Banks', use: 'Gate 5: the great wraith' },
+    { id: '12', name: 'Dawnroost’s Living Node', use: 'Gate 10: the three wraiths' },
+    { id: '13', name: 'The Northern Crossroads', use: 'Gate 15: Halcyon’s ambush' },
+    { id: '14', name: 'The Dead Moonwell', use: 'The finale: Noctara and Halcyon' },
   ].filter((p) => V[p.id]);
   const LEVELS = [
     { id: 'q60', name: 'Best', tip: 'Quality 60, full size: as good as it gets' },
@@ -30,7 +28,7 @@
     { id: 'h15', name: 'Small', tip: '1024 pixels wide, quality 15' },
     { id: 't15', name: 'Tiny', tip: '724 pixels wide, quality 15' },
   ];
-  const state = { place: '05', level: 'q30', code: false, holding: false };
+  const state = { place: '05', level: 'q20', code: false, holding: false }; // Strong: Chris's pick (October 3)
   const KB = (b) => (b < 10240 ? (b / 1024).toFixed(1) : Math.round(b / 1024)) + ' KB';
   const MB = (b) => (b / 1048576).toFixed(2) + ' MB';
   function wbtn(t, small) {
@@ -62,21 +60,19 @@
     for (const b of $('squeezeSeg').querySelectorAll('.wbtn')) b.setAttribute('aria-pressed', String(b.dataset.id === state.level));
     $('bgCode').setAttribute('aria-pressed', String(state.code));
     const p = PLACES.find((x) => x.id === state.place), lv = LEVELS.find((x) => x.id === state.level);
-    const used = PLACES.filter((x) => x.used), set = used.reduce((s, x) => s + V[x.id][state.level][1], 0);
-    // the four new paintings (art request 11) will weigh about what these do
-    const each = set / used.length, eight = set + each * 4 - V['06'][state.level][1];
+    const eight = PLACES.reduce((s, x) => s + V[x.id][state.level][1], 0);
     const old = V[state.place].q60[1];
     $('bgRead').innerHTML = state.code
       ? '<b>The code’s own painting</b>: drawn when the page opens, so it costs nothing in the file.'
       : '<b>' + p.name + '</b> · ' + p.use + '<br><b>' + KB(V[state.place][state.level][1]) + '</b> at “' + lv.name + '” (' + lv.tip.toLowerCase()
-        + '), against ' + KB(old) + ' at its best.<br>All eight of the game’s backgrounds at this squeeze: about <b>' + MB(eight)
+        + '), against ' + KB(old) + ' at its best.<br>All eight of the game’s backgrounds at this squeeze: <b>' + MB(eight)
         + '</b>; the nine old battle paintings take 2.21 MB.';
     const tag = $('tagDesc'); if (tag) tag.textContent = state.code ? 'The meadow painted in code' : 'At ' + p.name + ' \u00b7 ' + p.use;
   }
 
   function build() {
     for (const p of PLACES) {
-      const b = wbtn(p.name, p.use); b.dataset.id = p.id; if (!p.used) b.classList.add('unused');
+      const b = wbtn(p.name, p.use); b.dataset.id = p.id;
       b.addEventListener('click', () => { state.place = p.id; state.code = false; render(); show(); });
       $('places').appendChild(b);
     }
