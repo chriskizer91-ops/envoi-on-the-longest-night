@@ -1,0 +1,91 @@
+/* cutscene.css: a story scene played as a film. The look of the Bramble Colossus field study (one dark cinema screen,
+   the words in a lower third), with the game's own dialogue box (src/game/game.css and the battle screen's window
+   colours) for the lines a character speaks, so the scene shows how it would sit inside the game. */
+:root {
+  --ink: #05030c;            /* the screen behind the film: the game's own night */
+  --veil: rgba(12, 10, 20, .74);
+  --frost: #e3e6f2;
+  --mist: #a7a9c2;
+  --line: rgba(227, 230, 242, .16);
+  --anther: #dcb767;
+  --display: "IM Fell English", "Iowan Old Style", Georgia, serif;
+  --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* the game's window and dialogue box: src/battle/screen.css and src/game/game.css */
+  --w1: rgba(70, 78, 128, .95); --w2: rgba(28, 32, 62, .95); --wb: rgba(214, 222, 255, .92); --wt: #f4f6ff;
+  --who: #ffd88f; --nudge: #ffc46e; --face-bg: #151236; --face-line: rgba(214, 222, 255, .55);
+  --chip: rgba(18, 16, 40, .55); --chip-line: rgba(214, 222, 255, .4); --shade: rgba(5, 3, 12, .9);
+  /* one look on purpose: the game's night, whatever the device's theme */
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; overflow: hidden; background: var(--ink); color: var(--frost); font-family: var(--body); -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--anther); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+#stage { position: fixed; inset: 0; }
+#gl { display: block; width: 100%; height: 100%; touch-action: manipulation; }
+
+/* covers: loading and the start */
+.cover { position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: .5rem; overflow-y: auto;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, 9vw) max(16px, env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(90deg, var(--shade) 0%, rgba(5, 3, 12, .6) 50%, rgba(5, 3, 12, .15) 85%); z-index: 20; }
+#load { background: var(--ink); }
+.eyebrow { margin: 0; font-size: .76rem; letter-spacing: .22em; text-transform: uppercase; color: var(--anther); }
+.cover h1, #titlecard h2, #endcard h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(2rem, 6.5vw, 5rem); line-height: 1; letter-spacing: -.01em; text-wrap: balance; }
+.where { margin: 0; font-family: var(--display); font-style: italic; font-size: clamp(1.05rem, 2vw, 1.45rem); color: var(--mist); }
+.lede { max-width: 34rem; margin: .6rem 0 .3rem; font-size: 1.02rem; line-height: 1.5; }
+.small, .step { margin: 0; font-size: .85rem; color: var(--mist); }
+.meter { width: min(22rem, 70vw); height: 2px; margin-top: 1.2rem; background: var(--line); overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: var(--anther); transition: width .4s ease; }
+.choices { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: .5rem; }
+.big { display: flex; flex-direction: column; align-items: flex-start; gap: .15rem; min-height: 48px; padding: .75rem 1.1rem; border: 1px solid var(--line); border-radius: 2px; background: var(--veil); font-size: 1.02rem; font-weight: 700; text-align: left; }
+.big span { font-weight: 400; font-size: .8rem; color: var(--mist); }
+.big.primary { border-color: var(--anther); }
+.big:hover { border-color: var(--frost); }
+
+/* the title over the opening shot, and the narration in a lower third */
+#titlecard { position: fixed; left: max(16px, 8vw); top: 46%; transform: translateY(-50%); display: flex; flex-direction: column; gap: .45rem; z-index: 6; pointer-events: none; text-shadow: 0 2px 30px rgba(0, 0, 0, .7); animation: fadein 2.2s ease both; }
+#caption { position: fixed; left: 50%; bottom: max(7vh, 30px); transform: translateX(-50%); width: min(52rem, calc(100% - 32px)); text-align: center; z-index: 6; pointer-events: none; }
+#caption .words { margin: 0; font-family: var(--display); font-style: italic; font-size: clamp(1.08rem, 2.1vw, 1.5rem); line-height: 1.42; color: var(--frost);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .95), 0 0 24px rgba(0, 0, 0, .8); opacity: 0; transition: opacity .7s ease; text-wrap: balance; }
+#caption.on .words { opacity: 1; }
+
+/* the game's dialogue box (src/game/game.css, .talk), over the film */
+.win { background: linear-gradient(180deg, var(--w1), var(--w2)); border: 2px solid var(--wb); border-radius: 7px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .55), 0 4px 16px rgba(0, 0, 0, .5); color: var(--wt); text-shadow: 0 1px 0 rgba(0, 0, 0, .7); }
+.talk { position: fixed; left: max(8px, env(safe-area-inset-left, 0px)); right: max(8px, env(safe-area-inset-right, 0px)); bottom: max(8px, env(safe-area-inset-bottom, 0px)); display: flex; gap: 12px; align-items: stretch; padding: 8px; z-index: 30; cursor: pointer; max-height: 48%; min-height: 96px; max-width: 980px; margin: 0 auto; animation: fadein .35s ease both; }
+.talk-face { flex: 0 0 auto; width: min(28vw, 132px); aspect-ratio: 1; border-radius: 6px; border: 1px solid var(--face-line); overflow: hidden; background: var(--face-bg); }
+.talk-face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.talk-words { position: relative; flex: 1 1 auto; min-width: 0; padding: 2px 22px 4px 2px; overflow: auto; }
+.talk-who { font-family: var(--display); font-style: italic; font-size: 19px; color: var(--who); margin-bottom: 4px; }
+.talk-said { margin: 0; font-size: 16px; line-height: 1.42; }
+.talk-next { position: absolute; right: 4px; bottom: 2px; font-size: 12px; color: var(--nudge); animation: nudge 1s ease-in-out infinite; }
+@keyframes nudge { 50% { transform: translateY(3px); } }
+
+#skip { position: fixed; top: max(10px, env(safe-area-inset-top, 0px)); right: max(10px, env(safe-area-inset-right, 0px)); z-index: 12; min-height: 36px; padding: 0 14px; border: 1px solid var(--chip-line); border-radius: 18px; background: var(--chip); font-size: 14px; font-weight: 700; opacity: .75; }
+#skip:hover { opacity: 1; }
+
+/* the end */
+#endcard { position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: .7rem; overflow-y: auto; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, 9vw) max(16px, env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(90deg, rgba(5, 3, 12, .94), rgba(5, 3, 12, .6) 70%, rgba(5, 3, 12, .3)); z-index: 18; animation: fadein 1.2s ease both; }
+dl { margin: 0; max-width: 40rem; display: grid; grid-template-columns: auto 1fr; gap: .45rem 1rem; font-size: .95rem; line-height: 1.4; }
+dt { color: var(--mist); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; padding-top: .2rem; }
+dd { margin: 0; min-width: 0; }
+#hint { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); margin: 0; padding: .5rem .9rem; background: var(--veil); border: 1px solid var(--anther); font-size: .86rem; z-index: 25; max-width: calc(100% - 32px); }
+
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+.test *, .test *::before { animation: none !important; transition: none !important; } /* headless pictures: no fading in */
+/* a phone held sideways: smaller words, so the picture keeps the screen */
+@media (max-height: 460px) {
+  .cover h1, #titlecard h2, #endcard h2 { font-size: clamp(1.7rem, 7vh, 2.6rem); }
+  .lede { font-size: .92rem; margin: .3rem 0; }
+  .big { padding: .55rem .9rem; }
+  dl { font-size: .86rem; gap: .3rem .8rem; }
+  #caption .words { font-size: 1.02rem; }
+  .talk { min-height: 84px; }
+  .talk-face { width: min(20vw, 84px); }
+  .talk-said { font-size: 15px; }
+  .talk-who { font-size: 17px; }
+}
