@@ -1,6 +1,6 @@
 # Next Session: Where the Work Stands
 
-October 3, 2026, end of the evening session that started **pass three**. Read this first. Then:
+October 3, 2026, late evening (into October 4): the session that started **pass three**, through Chris's notes on its pages and five chapter demos. Read this first. Then:
 
 - `../envoi-game-pass-3/README.md`: everything from pass three: Chris's decisions, the pages, the measured sizes, and the plans for the new battles and for walking without the world map.
 - `docs/handoff.md` lists what the game still wants (written before pass three; the pass-three README supersedes it where they differ).
@@ -17,8 +17,13 @@ October 3, 2026, end of the evening session that started **pass three**. Read th
 
 | Page | Link |
 |---|---|
-| The game (version 5: paper dolls, Chapters, smoother walking) | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
-| Battle Backgrounds: Chris's paintings behind live 3D ground, with squeeze, weather and phone controls | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw |
+| Demo: Envoi from the Start | https://claude.ai/artifact/XxzzKkZS7Qdiitn9c6kk5s |
+| Demo: Envoi at Gate 5 (dark Bogmire, before the great wraith) | https://claude.ai/artifact/Bst5rMEnacT67FCoB7NUam |
+| Demo: Envoi at Gate 10 (Dawnroost, before its living node) | https://claude.ai/artifact/P5aNRec8gbhiVWrYBUQReT |
+| Demo: Envoi at Gate 15 (the crossroads, before Halcyon) | https://claude.ai/artifact/64ZUCdHakdVWA6mubZCwCA |
+| Demo: Envoi before the Finale (the foot of Misthollow) | https://claude.ai/artifact/LqvFuBB9BpvkCUiixc1ZS2 |
+| The game (version 6: the arrow, full-size towns, paper-doll faces, the fixes) | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
+| Battle Backgrounds: the game's eight paintings behind live 3D ground, at Chris's picks | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw |
 | Wilderness Walk: Io on Chris's wilderness path, nine squeezes | https://claude.ai/artifact/BcRjgVynWymYim84Yb7STk |
 | Walking Paths: the laptop editor for the maps' paths (its edits come back through its database, collection `edits`) | https://claude.ai/artifact/8BmLZd8sJjYBQ6kRbX2enm |
 | Io on Foot: her walk, with sliders and the footstep ideas | https://claude.ai/artifact/G1B5cMkYzBq4RiausDAAQj |
@@ -39,23 +44,25 @@ October 3, 2026, end of the evening session that started **pass three**. Read th
 - the Bramble Horror in band 3 only;
 - smoother walking (hold to steer, tap to walk, a one-thumb pad, corners, straight tapped walks), and the fix that makes taps reach the walking map at all;
 - the Battle Backgrounds page and art request 11; the Wilderness Walk page.
-- **Size:** the file Chris keeps is 12.2 MB (from 15.0); the published game is 11.5 MB.
+- then, after Chris's notes on those: the battle menu fixed (casting blacked it out); no lines across Io; the walking maps back at full size (towns quality 45, wilds 20); the little golden arrow to the story's next step (`src/game/goal-arrow.js`), with the Magpie moored where the script says; paper-doll faces in the dialogue box; battles' 3D at 3/4 sharpness; the four last battle paintings in; chapters starting just before each gate; and five demo pages (`tools/make-demos.mjs`).
+- **Size:** the file Chris keeps is 14.4 MB; the published game (and each demo) is 13.6 MB, under the 16 MB a published page may be.
 
 ## Waiting on Chris
 
-1. **The battle squeeze** (Battle Backgrounds page) and **the wilderness squeeze** (Wilderness Walk page).
-2. **Art request 11:** four battle paintings (band 2's Warm Roads, Dawnroost's node, the northern crossroads, the dead Moonwell).
-3. **The walking plan** without the world map, and whether the wilderness scenes are at night (`questions/open.md`, 20 and 21). Art request 12 follows his answer.
-4. **His map path edits**, sent from the Walking Paths page.
-5. **The lore conversation:** every word of the script is still a placeholder.
-6. **Art requests 06 and 07** (townsfolk portraits, story stills), and the footsteps.
-7. **The songs** go in only when the whole build is finished, unless he says sooner.
+1. **The five demos:** his notes from playing each, from just before its gate on to the next.
+2. **The walking plan** without the world map, and whether the wilderness scenes are at night (`questions/open.md`, 20 and 21). Art request 12 follows his answer.
+3. **His map path edits**, sent from the Walking Paths page (he was starting on them).
+4. **The lore conversation:** every word of the script is still a placeholder.
+5. **Art requests 06 and 07** (townsfolk portraits, story stills), and the footsteps.
+6. **The songs** go in only when the whole build is finished, unless he says sooner.
 
 ## Next for Claude
 
-1. **The new battles** (pass-three README, "Next: the new battles"): the living field with a ground for each place, the battle screen using it, a phone setting; demo page first.
-2. **Walking without the world map**, once Chris agrees the plan: the wilderness scenes as ground maps, the Magpie's landings at the camps, and the world map's walking taken out.
-3. **His map path edits**, when he sends them: `../envoi-game-pass-3/map-paths/README.md` says how to read, check and apply them.
+1. **The new battles** (pass-three README, "Next: the new battles"): every painting and Chris's settings are in (Strong, 30 frames a second, 3/4 sharpness). The living field takes a ground and weather for each place, the battle screen uses it; a demo page with every fight first, then the game.
+2. **His notes on the demos**, as they come.
+3. **Walking without the world map**, once Chris agrees the plan.
+4. **His map path edits**, when he sends them: `../envoi-game-pass-3/map-paths/README.md` says how to read, check and apply them.
+5. **The 20 frames a second freeze** on the Battle Backgrounds page is unexplained (the test browser can't pace like his phone). 20 is off the page and the game never offered it; if the new battles freeze or go black on his phone, look here first.
 
 ## When things arrive
 
@@ -109,6 +116,7 @@ When the published game passes 16 MB:
 |---|---|
 | Once per new container | `npm install --prefix tools` |
 | Build the game | `node tools/build.mjs --min putting-it-all-together/game.html` |
+| The five chapter demos | after building the game, `node tools/make-demos.mjs` (dist/demo-*.artifact.html, to publish at the demo links above) |
 | Play it headless | `node tools/game-test.mjs` (must end with "game test passed") |
 | The file Chris keeps | `node tools/build.mjs --min --offline putting-it-all-together/game.html`, then `node tools/game-test.mjs --offline` (plays with the internet blocked) |
 | The walking maps | `node tools/check-maps.mjs` (every map must print ✓) |
@@ -117,7 +125,7 @@ When the published game passes 16 MB:
 
 The game test's steps:
 
-- `--steps` picks them from title, new, walk, world, menu, saves, scenes, save, wild and colossus.
+- `--steps` picks them from title, new, walk, controls, world, menu, saves, scenes, save, chapters, wild and colossus. The chapters step checks each chapter's town, its arrival scene and the arrow.
 - `--size 915x412` is a Pixel 7a held sideways.
 
 ## Lessons from this session

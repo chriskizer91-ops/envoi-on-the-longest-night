@@ -14,7 +14,7 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | The game, from the title to the ending | `game.html` here, built from `../src/` | In. It has been played through headless with no errors, and Chris has played it on his phone |
 | Io on foot, painted as in Path Polish: her walk sheet, the cape's ripple, the lean, the breath, kneeling at wells and casting at the Moonwell | `../src/walk/painted-io.js`, from Chris's `follow-me-down-witch-way` (`versions/path-polish/game`) | In, on the ground maps and the world map, at Chris's settings: 52 map px tall, 15% of the screen, pace 1.7. The 3D model stays for the battles. Her own page: `../demos/io-on-foot.html` |
 | Where she can walk: every map traced close to the painted ground, with lamp posts, trees and the well's frame drawn over her when she walks behind them | `../src/game/maps.js` (check with `node tools/trace-overlay.mjs` and `node tools/check-maps.mjs`) | In, on all thirteen maps |
-| The walking maps, squeezed: Chris's pick "75% light" (1152 px, AVIF), 1.1 MB for all thirteen instead of 3.6 MB | `../art/walk/`, made from `../reference/art/walk/` with `node tools/compress.mjs --avif` | In |
+| The walking maps, at full size (1536 px, AVIF): the towns and gates at quality 45 (Chris found the town too compressed at "75% light"), the three wild maps at quality 20 (his "100% extra light" for wilderness); 2.66 MB for all thirteen | `../art/walk/`, made from `../reference/art/walk/` with `node tools/compress.mjs --avif --q 45` (wilds `--q 20`) | In (pass three) |
 | Io, Sol, Lunara, Envoi, the wisps, the wraiths, Halcyon, Noctara | `../src/models/` | In, all polished |
 | The Bramble Horror, version 2 | `../3d-model-new-character-ideas/bramble-horror/` | In. The game's `../src/models/bramble.js` is the same model. A lone wild foe in band 3 only, levels 11 to 15, in all four forms (Chris, pass three) |
 | The Bramble Colossus | `../3d-model-new-character-ideas/bramble-colossus/` | In: the last band's great wild foe, about one wild fight in twelve there, on the frozen road. Its fight on its own: `../demos/colossus.html` |
@@ -22,12 +22,13 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | The story's people walking in: Sol over the bridge, Quill to the skiff, the knight at the crossroads, Ysmera at the slip | `../src/game/script.js` (the stage directions), `../src/game/field.js` | In. The words are still placeholders |
 | Walking with sound: each place's own ambience, and a pace that builds to a run | `../src/game/game.js` | In. The footsteps are gone (Chris didn't like them); `io-on-foot.html` has two other ideas to try by ear |
 | Walking by hand: hold anywhere to steer her, tap or click to walk there in straight lines, a one-thumb pad, slipping round corners | `../src/game/field.js` | In (pass three), after Witch Way's pad and walker |
-| Chapters: start at the beginning, gate 5, gate 10, gate 15 or the finale, with the party as the story leaves it there | `../src/game/game.js` (`CHAPTERS`) | In (pass three) |
+| Chapters: start at the beginning, or just before gate 5, 10 or 15 in the town on its doorstep, or at the foot of Misthollow before the finale, with the party as the story leaves it there | `../src/game/game.js` (`CHAPTERS`); a demo page per chapter from `node tools/make-demos.mjs` | In (pass three) |
+| The little golden arrow: where the story wants Io next, over the goal when it's in view, else beside her pointing the way, on the walking maps and the world map, and ringed on the mini-map | `../src/game/goal-arrow.js`; the next step and the way there in `../src/game/game.js` (`nextStep`, `goalOn`, `goalOnWorld`) | In (pass three) |
 | Saves and settings: three save slots, a save code, word speed, larger text, music and effects volumes | `../src/game/state.js`, `../src/game/game.js` | In |
 | Chris's next mobs: the wild growing more upset the closer the party comes to Noctara | `../3d-model-new-character-ideas/<name>/` once he brings them | Not yet (Chris). The Gloamwing and the Emberback stay out of the game. Each new one comes in the way the next section says |
 | Everyone else on the maps as paper dolls: Sol, Halcyon, Ysmera, Quill and Inkblot, and the fifteen townsfolk | Chris's art request 08 sheets, in `../reference/art/walkers/`, cut into `../art/walkers/` | In (pass three). The four who walk in scenes keep their walk; the townsfolk stand in one to three poses. 0.6 MB for all nineteen |
 | The new battles: 3D ground in front, a squeezed painting behind, for every fight | Chris's combat backgrounds (`../reference/art/battle-backgrounds/`, art request 11) and `../living-battlefields/` | Planned (pass three): `../envoi-game-pass-3/README.md` |
-| The townsfolk's portraits and the story stills | Art requests 06 and 07 in `../docs/art-requests/` | Waiting on the art |
+| The townsfolk's portraits and the story stills | Art requests 06 and 07 in `../docs/art-requests/` | Waiting on the art. Until the portraits come, the dialogue box shows each paper doll's head and shoulders (`../art/portraits/folk/`, cut by `node tools/cut-sheet.mjs ... --portrait art/portraits/folk`) |
 | Every word of the story | `../src/game/script.js`, placeholders for now | Waiting on the lore conversation |
 | Chris's three songs: Moonlit Forest Path for the towns, Herbal Decay for the wilds, Herbal Decay Battle for the battles | `../art/music/`, from his Game Music Squeezer page (a 48k copy of the battle song in `../reference/music/`) | Here, saved. They go in last of all, once the whole build is finished |
 | The file Chris keeps, which works offline | `tools/build.mjs --offline` | In: three.js and the fonts are inside it, and it plays with the internet blocked. It may grow to 30 MB (Chris); the size section below keeps count |
@@ -69,7 +70,7 @@ A 48k copy of the battle song (1.2 MB), the size Chris once said it shouldn't go
 
 ## Size
 
-The file Chris keeps may be up to 30 MB. Today it is 15.0 MB, with the walking maps squeezed to his "75% light". The songs, the paper dolls, the portraits and the stills would bring it to about 29 MB (`../docs/handoff.md`, size and delivery, has the sums). The battle paintings and the world map could be squeezed the same way if more room is needed.
+The file Chris keeps may be up to 30 MB. Today it is 14.4 MB (October 3, late), with the paper dolls in and the walking maps back at full size; the published game is 13.6 MB, under the 16 MB a published page may be. `../envoi-game-pass-3/README.md` has the measured parts and where the size is heading (about 17 MB with the songs, the portraits, the stills and the new battles).
 
 ## Building and checking
 
@@ -104,4 +105,4 @@ Both builds write `dist/game.html`. The published page is built without `--offli
 
 The walking maps: `node tools/trace-overlay.mjs wickhollow out.png 1600 --grid 25 --crop 600,200,400,400` draws a map's walk areas (green), blocks (red) and fronts (violet) over the painting, close up; `node tools/check-maps.mjs` checks that every exit, person and spot can be reached.
 
-A paper-doll sheet from art request 08: `node tools/cut-sheet.mjs reference/art/walkers/<id>-walk.png <id>` cuts it into the game's walker (`art/walkers/<id>.webp`).
+A paper-doll sheet from art request 08: `node tools/cut-sheet.mjs reference/art/walkers/<id>-walk.png <id> --avif --q 45 --portrait art/portraits/folk` cuts it into the game's walker (`art/walkers/<id>.avif`) and its portrait for the dialogue box; then `node tools/walkers-index.mjs` lists both.

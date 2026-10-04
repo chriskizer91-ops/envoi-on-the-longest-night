@@ -2,6 +2,8 @@
 
 For the new battles (pass three, October 3, 2026): 3D ground near the camera, with a painting of the place far off behind it, as in **Colossus in the Meadow**. Chris's combat backgrounds pack (Parts 1 and 2) gave ten paintings; they are kept as they came in `../../reference/art/battle-backgrounds/`, with the packs' notes and prompts in `packs/`.
 
+**Done (October 3, late evening):** all four new paintings arrived (11 to 14) and are kept as they came beside the first ten, with their pack's notes, prompts and manifest in `packs/part-3/`. Every fight has its painting now. Chris's squeeze for them is "Strong" (AVIF quality 20, full size): the eight the game uses take 0.24 MB together.
+
 ## Which painting goes with which fight
 
 Matched to where each fight happens on the world map (the game's places on the D&D map: `design-decisions.md`, "Place names").
@@ -9,13 +11,13 @@ Matched to where each fight happens on the world map (the game's places on the D
 | Fight | Where it happens | Painting |
 |---|---|---|
 | Band 1 wilds, levels 1 to 5 | the Gloamwood round Wickhollow, and the Thornwood | **01 Wickhollow River Glade** |
-| Band 2 wilds, levels 6 to 10 | the Warm Roads, in the western forests and riverlands | **New: 11 Warm Roads Moorland** (none of the ten is there) |
+| Band 2 wilds, levels 6 to 10 | the Warm Roads, in the western forests and riverlands | **11 Warm Roads Moorland** (new; none of the ten is there) |
 | Band 3 wilds, levels 11 to 15 | the northwest forests round the northern camp, where Eldergrove is | **02 Eldergrove First-Age Clearing** |
 | Band 4 wilds, levels 16 to 20, and the Bramble Colossus | the frozen pass, by Frostmere Lake | **05 Frostmere Lakeside Meadow** |
 | Gate 5: the great wraith | Bogmire's dark heart | **03 Bogmire Lantern Banks** (not in Chris's count of seven, but it is Bogmire exactly) |
-| Gate 10: three wraiths at the living node | Dawnroost (Thornhollow on the map) | **New: 12 Dawnroost's Living Node** |
-| Gate 15: Halcyon's ambush | the northern crossroads | **New: 13 The Northern Crossroads** |
-| The finale: Noctara and Halcyon | the dead Moonwell in Misthollow (Ironhold on the map) | **New: 14 The Dead Moonwell**; until it comes, **06 Ironhold High Pass** shows Misthollow's mountain fortress |
+| Gate 10: three wraiths at the living node | Dawnroost (Thornhollow on the map) | **12 Dawnroost's Living Node** (new) |
+| Gate 15: Halcyon's ambush | the northern crossroads | **13 The Northern Crossroads** (new) |
+| The finale: Noctara and Halcyon | the dead Moonwell in Misthollow (Ironhold on the map) | **14 The Dead Moonwell** (new; 06 Ironhold High Pass stood in for it until it came) |
 
 Not used: **04 Misthollow Drowned City** is the fen's sunken ruins, which stay out of the story; **07 and 08** (the eastern wastes) and **09 and 10** (the Hearthsea) are under mist all game.
 

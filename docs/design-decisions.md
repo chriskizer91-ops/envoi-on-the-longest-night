@@ -1017,3 +1017,32 @@ Chris played the put-together game and set the next pass. Everything from that s
 ### Chapters
 
 - **The title offers Chapters:** the start, gate 5, gate 10, gate 15 and the finale, each with the party as the story leaves it there, so a later part can be tried without playing up to it.
+
+## October 3, 2026, late evening: Chris's notes on pass three
+
+Chris played pass three's pages and the game, and sent the last four battle paintings. Everything below is in the game, and in five chapter demos (`../envoi-game-pass-3/README.md` has the links).
+
+### Battles
+
+- **The battle backgrounds' squeeze is "Strong":** AVIF at quality 20, full size. All of them hold up at it behind the live 3D ground; the game's eight take 0.24 MB together.
+- **30 frames a second**, as the game already does by default. On Chris's phone the Battle Backgrounds page froze and went black at 20; the cause wasn't found (the test browser can't pace like the phone), so 20 is off that page, and the game never offered it.
+- **The 3D draws at 3/4 sharpness** (Chris could hardly tell it from full). In the battle screen this is the 3D layer's pixel ratio; the painting behind stays sharp, since it costs one picture a camera move.
+- **Every fight has its painting now.** Art request 11's four arrived: 11 the Warm Roads moorland (band 2's wilds), 12 Dawnroost's living node (gate 10), 13 the northern crossroads (gate 15) and 14 the dead Moonwell (the finale). 06 Ironhold High Pass is no longer needed for the finale.
+- **The new battles come next, as their own demo page first:** Chris's paintings far off, the live ground in front with a ground and weather for each place, every fight of the game playable there; then the game.
+
+### Walking
+
+- **The walking maps go back to full size.** Chris found the town too compressed. At phone scale the old 75%-size maps were blocky and smeared, and quality 20 at full size still smears cobbles. So the ten towns and gates are full size at AVIF quality 45, and the three wild maps (the Thornwood, the crossroads, the frozen pass) full size at quality 20, Chris's "100% extra light" pick for wilderness scenes. 2.66 MB for all thirteen.
+- **A little golden arrow shows Io where to go next** (Chris: "a little arrow that tells her where to walk in town whenever she gets a quest"). While the goal is in view the arrow bobs over it (a person's head, a place, or just inside the way out, pointing out); otherwise it stands beside Io, pointing the way. The mini-map rings the goal, and the world map shows it the same way. The goal is the story's next step, read from the save: the square, Quill at the jetty, the fen's heart, Quill's refit, the Magpie, the living node, Brann, the crossroads, Ysmera, the Magpie again, the Moonwell. On another map it points to the exit on the way there, or to the Magpie or the world map when no road leads there on foot.
+- **The Magpie is moored where the script says:** after the lights Quill says she's tied up at Bogmire's west dock, so she is; and each upgrade is fitted to her where it's made, so afterwards she's moored at Bogmire, Dawnroost or the shipyard.
+- **Io's paper doll had thin lines across her** where the bands of her cape's ripple met. A technical fix: the bands are put together on a canvas of her own in whole pixel rows, then drawn once. How she looks and moves is unchanged.
+
+### The dialogue box
+
+- **The townsfolk speak with their paper doll's face** (Chris: the old woman at the start showed her old pixel figure). The head and shoulders of each paper doll's front pose, cut from Chris's original sheet, until their painted portraits come (art request 06). Io, Sol and Ysmera keep their paintings.
+- **Casting in battle blacked out the menu:** the title screen's style also caught the battle menu's heading. Fixed.
+
+### Chapters and demos
+
+- **Each gate's chapter starts just before its gate, in the town on its doorstep:** Bogmire (dark), Dawnroost, the crossroads' south road (the crossroads is the gate), and, for the finale, the foot of Misthollow. The town's arrival scene plays, and the arrow points the way.
+- **Five demo pages,** one per chapter, each the whole game opening at its chapter, so Chris can play from just before a gate on to the next: the start, gate 5, gate 10, gate 15, and the approach to the finale.
