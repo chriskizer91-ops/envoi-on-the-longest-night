@@ -152,9 +152,14 @@
     }, 500);
 
     // ---------- the people's portraits and the dialogue box ----------
+    // the painted portraits (art request 05, and stills.js's as they come); everyone else with a paper doll shows its
+    // head and shoulders (walkers.js) until their painting comes (Chris, October 3)
+    const castName = (id) => (S.cast[id] ? S.cast[id].name : id);
     const talk = Talk.create(root, {
-      portraits: Object.assign({ io: { name: 'Io', src: "art/portraits/portrait-io.webp" }, sol: { name: 'Sol', src: "art/portraits/portrait-sol.webp" }, shipmaster: { name: 'Ysmera Brightkeel', src: "art/portraits/portrait-shipmaster-a.webp" } },
-        Object.fromEntries(Object.entries(window.PORTRAITS || {}).map(([id, p]) => [id, { name: S.cast[id] ? S.cast[id].name : id, src: p }]))),
+      portraits: Object.assign(
+        Object.fromEntries(Object.entries(window.WALKERS || {}).filter(([, w]) => w.portrait).map(([id, w]) => [id, { name: castName(id), src: w.portrait }])),
+        { io: { name: 'Io', src: "art/portraits/portrait-io.webp" }, sol: { name: 'Sol', src: "art/portraits/portrait-sol.webp" }, shipmaster: { name: 'Ysmera Brightkeel', src: "art/portraits/portrait-shipmaster-a.webp" } },
+        Object.fromEntries(Object.entries(window.PORTRAITS || {}).map(([id, p]) => [id, { name: castName(id), src: p }]))),
       people: (id) => S.cast[id] || null, src, speed: () => settings.text,
     });
     const toast = el('div', { class: 'toast win', hidden: '' }, root);

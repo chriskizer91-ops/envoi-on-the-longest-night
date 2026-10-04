@@ -1,6 +1,7 @@
 // talk.js: the dialogue box (plan phase 5: "when anyone speaks, their painted portrait appears beside the words"). Io,
-// Sol and Ysmera have painted portraits (art request 05); everyone else shows a pixel portrait, their walking sprite's
-// head and shoulders blown up, until their paintings come. Words appear a few letters at a time; a tap, Enter or Space
+// Sol and Ysmera have painted portraits (art request 05); the townsfolk show their paper doll's head and shoulders (the
+// game passes them in with the portraits) until their paintings come; anyone else, a pixel portrait, their walking
+// sprite's head and shoulders blown up. Words appear a few letters at a time; a tap, Enter or Space
 // shows the rest, then goes on. A line with no speaker is narration. Choices are buttons under the words.
 // Talk.create(host, { portraits: { id: { name, src } }, people: (id) -> { name, look } | null, src(path), speed() -> 0 to 2 })
 //   -> { say(lines) -> Promise, ask(who, text, choices) -> Promise<index>, busy }

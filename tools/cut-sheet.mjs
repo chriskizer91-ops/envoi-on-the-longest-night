@@ -2,14 +2,16 @@
 // a plain green background) into the game's walker: every figure found on the sheet by itself, then laid out again in
 // even cells with its feet on one line, at the size the phone needs, as WebP or AVIF, with a small JSON beside it.
 // Usage: node tools/cut-sheet.mjs <sheet.png> <out-name> [--height 170] [--ratio 1] [--q 85] [--avif] [--still]
-//        [--out art/walkers] [--preview x.png]
+//        [--out art/walkers] [--preview x.png] [--portrait art/portraits/folk] [--portrait-drop 0]
 //   out-name: the walker's id (art/walkers/<id>.webp or .avif, and <id>.json); --height: the tallest figure's height in the
 //   output for an adult; --ratio: the person's height beside Io's (art request 08's manifests: a girl .75, a gnome .667),
 //   so a smaller person's sheet is cut smaller too; --avif writes AVIF (its quality runs lower for the same look: 50 is
 //   about WebP's 85); --still keeps only standing poses, for someone who stands in their place and turns to talk but
 //   never walks (Chris, October 3): toward the viewer, and to the left and the right where the sheet has a side frame
 //   with the feet together (a side that only strides keeps the pose toward the viewer); --preview also writes the cut
-//   frames on a dark ground
+//   frames on a dark ground; --portrait also writes <dir>/<id>.avif, the head and shoulders of the pose toward the
+//   viewer at the sheet's own size, for the dialogue box (until the person's painted portrait comes, art request 06);
+//   --portrait-drop moves it down by that share of the figure's height, for a hat so tall it pushes the face out (Tock)
 // The JSON: { cols: 6, rows: 4, order: s, w, e, n (toward the viewer, left, right, away), cell: [w, h], foot: [x, y]
 // (the feet's spot in each cell), h: the tallest figure's height, heights: each frame's, fig: the middle frame height
 // (what the game scales to the person's height on the map), ratio, stand: each row's standing frame (its feet closest
@@ -21,7 +23,7 @@ const require = createRequire(new URL('./package.json', import.meta.url));
 const sharp = require('sharp');
 
 const args = process.argv.slice(2), pos = [];
-let height = 170, ratio = 1, q = 85, avif = false, still = false, outDir = 'art/walkers', preview = '';
+let height = 170, ratio = 1, q = 85, avif = false, still = false, outDir = 'art/walkers', preview = '', portraitDir = '', drop = 0;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--height') height = +args[++i];
   else if (args[i] === '--ratio') ratio = +args[++i];
@@ -30,6 +32,8 @@ for (let i = 0; i < args.length; i++) {
   else if (args[i] === '--still') still = true;
   else if (args[i] === '--out') outDir = args[++i];
   else if (args[i] === '--preview') preview = args[++i];
+  else if (args[i] === '--portrait') portraitDir = args[++i];
+  else if (args[i] === '--portrait-drop') drop = +args[++i];
   else pos.push(args[i]);
 }
 const [file, id] = pos;
@@ -135,3 +139,22 @@ const meta = still ? { cols, rows, still: faces, cell: [cw, ch], foot, h: Math.r
 fs.writeFileSync(path.join(outDir, id + '.json'), JSON.stringify(meta));
 if (preview) await sharp(await sheet.clone().png().toBuffer()).flatten({ background: '#2a2338' }).png().toFile(preview);
 console.log(out, (cw * cols) + 'x' + (ch * rows), (fs.statSync(out).size / 1024).toFixed(0) + ' KB', 'cell ' + cw + 'x' + ch, 'feet at ' + foot.join(','), 'standing frames ' + stand.join(','));
+
+// 5. the portrait (--portrait): the head and shoulders of the standing pose toward the viewer, a square from just over
+// the top of the figure, 46% of its height, centred on the figure's own pixels in those rows (a neighbour's stray parts
+// stay out), at the sheet's own size
+if (portraitDir) {
+  const f = figs[stand[0]], fh = f.y1 - f.y0 + 1, side = Math.round(fh * 0.46), top = Math.max(0, f.y0 + Math.round(fh * (drop - 0.02)));
+  let sx = 0, n = 0;
+  for (let y = top; y < Math.min(H, top + side); y++) for (let x = f.x0; x <= f.x1; x++) { const i = y * W + x; if (solid[i] && f.parts.includes(label[i])) { sx += x; n++; } }
+  const left = Math.round((n ? sx / n : (f.x0 + f.x1) / 2) - side / 2), buf = Buffer.alloc(side * side * 4);
+  for (let y = 0; y < side; y++) for (let x = 0; x < side; x++) {
+    const X = left + x, Y = top + y; if (X < 0 || Y < 0 || X >= W || Y >= H) continue;
+    const i = Y * W + X; if (solid[i] && !f.parts.includes(label[i])) continue;
+    data.copy(buf, (y * side + x) * 4, i * 4, i * 4 + 4);
+  }
+  fs.mkdirSync(portraitDir, { recursive: true });
+  const pout = path.join(portraitDir, id + '.avif');
+  await sharp(buf, { raw: { width: side, height: side, channels: 4 } }).avif({ quality: 55, effort: 6 }).toFile(pout);
+  console.log(pout, side + 'x' + side, (fs.statSync(pout).size / 1024).toFixed(1) + ' KB');
+}
