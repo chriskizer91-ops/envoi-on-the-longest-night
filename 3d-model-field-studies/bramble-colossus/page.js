@@ -155,7 +155,7 @@
   function sfx(name, g) { if (snd && soundOn && snd.ready) { try { snd.play(name, { gain: g === undefined ? 1 : g }); } catch (e) { /* a sound it does not have */ } } }
   function startSound() {
     if (snd || TEST || typeof makeFightSound !== 'function') return;
-    try { snd = makeFightSound(); snd.init(); snd.ambience({ wind: .55, gust: .35, rain: 0, wrath: 0, night: .25 }); } catch (e) { snd = null; }
+    try { snd = makeFightSound(); snd.init(); snd.ambience({ wind: .55, gust: .35, rain: 0, wrath: 0, night: 0 }); } catch (e) { snd = null; }
   }
   function setSound(on) { soundOn = on; $('soundBtn').setAttribute('aria-pressed', String(on)); $('soundBtn').textContent = on ? 'Sound on' : 'Sound off'; if (snd) snd.setMuted(!on); }
   let voice = null;
@@ -207,7 +207,7 @@
     const s = f.s, st = ft - s.start, pst = prev - s.start;
     // moves and sounds on cue
     for (const [t, name] of s.act || []) if (pst < t && st >= t && prev >= firedTo - 1e-6) { if (name === 'taste') E.model.taste(); else E.model.play(name, true); }
-    for (const [t, name, g] of s.sound || []) if (pst < t && st >= t) { if (name === 'wind' && snd) snd.ambience({ wind: g, gust: .35, rain: 0, wrath: 0, night: .25 }); }
+    for (const [t, name, g] of s.sound || []) if (pst < t && st >= t) { if (name === 'wind' && snd) snd.ambience({ wind: g, gust: .35, rain: 0, wrath: 0, night: 0 }); }
     clock.slow = keyed(s.slow, st, 1);
     const env = s.env || {};
     if (env.xray) E.model.state.xray = keyed(env.xray, st, 0);

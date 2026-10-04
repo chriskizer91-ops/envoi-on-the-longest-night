@@ -2,7 +2,7 @@
 
 The Bramble Colossus built again at laptop detail, thinking about what it is in the world, and shown as a short nature film with an **Explore** mode. Its body, rig, moves, hit times and anchors are the game's (`../../3d-model-new-character-ideas/bramble-colossus/colossus.js`, which is also `src/models/colossus.js`), so this model can stand in for it. Everything you see is new: its geometry, textures, materials, effects and the place it lives.
 
-**The page:** `Bramble_Colossus_Field_Study.html` in this folder, one file; open it in Chrome, Edge, Firefox or Safari on a laptop, with sound. It is also published as a private page (link in the handoff note once Chris has it).
+**The page:** https://claude.ai/artifact/NuZgcibtA6gy3RDYv4EH44 (private; made for a laptop, with sound). `Bramble_Colossus_Field_Study.html` in this folder is the same page as one file, to open in Chrome, Edge, Firefox or Safari.
 
 - **Watch the film:** about four minutes in eight chapters. Space pauses, the left and right arrows jump between chapters, and the strip along the bottom starts any chapter. **Narrator** reads the words aloud with the computer's own voice.
 - **Explore it yourself:** drag to turn round it, scroll to come closer, right-drag (or Shift and drag) to slide, double-click for the front view. Every move is a button. Labels name its parts; click one to go to it. You can show its roots under the meadow, hold its bud open, put it in its Wrath, stand a person beside it for scale, change the frost, wind and mist, slow time down, and set the depth of field. **Under the hood** shows the numbers and sets the detail (Medium, High, Max).

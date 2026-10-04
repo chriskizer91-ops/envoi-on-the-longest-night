@@ -8,7 +8,7 @@ They are reference models: a measure of how far a browser page can go, made for 
 
 | Study | Folder | Page | State |
 |---|---|---|---|
-| The Bramble Colossus | `bramble-colossus/` | see its README | Version 1, October 4, 2026 |
+| The Bramble Colossus | `bramble-colossus/` | https://claude.ai/artifact/NuZgcibtA6gy3RDYv4EH44 | Version 1, October 4, 2026 |
 
 ## What goes in a study's folder
 
