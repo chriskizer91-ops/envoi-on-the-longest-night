@@ -97,7 +97,8 @@
 
     // the phone's levers
     const F = window.__fight, base = Math.min(2, window.devicePixelRatio || 1);
-    for (const n of [20, 24, 30, 60]) {
+    // 20 is gone: on Chris's phone it froze and went black (October 3); he keeps 30, as the game does
+    for (const n of [24, 30, 60]) {
       const b = wbtn(String(n), n === 30 ? 'the game' : n === 60 ? 'smoothest' : 'easier'); b.dataset.n = n;
       b.addEventListener('click', () => { F.cap = n; for (const x of $('capSeg').querySelectorAll('.wbtn')) x.setAttribute('aria-pressed', String(+x.dataset.n === n)); });
       $('capSeg').appendChild(b);
@@ -110,8 +111,9 @@
       });
       $('sharpSeg').appendChild(b);
     }
+    // the game's own: 30 frames a second, at 3/4 sharpness (Chris, October 3)
     $('capSeg').querySelector('[data-n="30"]').setAttribute('aria-pressed', 'true');
-    $('sharpSeg').querySelector('[data-k="1"]').setAttribute('aria-pressed', 'true');
+    $('sharpSeg').querySelector('[data-k="0.75"]').click();
     render(); show();
   }
 

@@ -44,6 +44,9 @@
     const IW = SC.width, IH = SC.height, A = IW / IH, FOV = SC.fov, PITCH = SC.pitch * Math.PI / 180, PXM = SC.ppm;
     const DIST = (IH / 2) / (PXM * Math.tan(FOV / 2 * Math.PI / 180));
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    // the 3D layer draws at 3/4 of that (Chris, October 3: he could hardly tell it from full, and it spares the phone's
+    // drawing); the painting behind it stays at full sharpness, which costs one picture a camera move
+    const GL_DPR = DPR * 0.75;
     // the frame rate: the screen's own (measured), or a cap of 60, 45 or 30 frames a second for phones that stutter in
     // the busiest moments. Frames are paced to the screen's refreshes, so 45 and 30 stay even on a 90 Hz phone. The
     // choice is kept in this browser; fps counts the fight's frames for the end card
@@ -2232,7 +2235,7 @@
       for (const id of ['cold', 'dark']) if (!$(id)) { const d = el('div', { id, class: 'fill', 'aria-hidden': 'true' }); stage.insertBefore(d, $('flash')); }
       if (!$('sky')) stage.insertBefore(el('div', { id: 'sky', class: 'fill', 'aria-hidden': 'true' }), glCanvas);
       renderer = new THREE.WebGLRenderer({ canvas: glCanvas, alpha: true, antialias: true });
-      renderer.setPixelRatio(DPR); renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(GL_DPR); renderer.setClearColor(0x000000, 0);
       scene = new THREE.Scene();
       shadowTex = radialTex('rgba(10,4,16,0.62)', 'rgba(10,4,16,0.3)', 'rgba(10,4,16,0)');
       lightTex = radialTex('rgba(255,255,255,1)', 'rgba(255,255,255,0.28)');
