@@ -34,7 +34,7 @@
     },
     {
       id: 'mosswatch-lantern', name: 'The Mosswatch Lantern', from: 'Aethermoor, Codex No. 15', wear: 'io', worth: 1.875,
-      does: 'Lunar Mend and Waxing Light heal 2% more',
+      does: 'Lunar Mend and Waxing Light cost 5% less MP',
       where: 'Mosswatch Tower, on the southwest coast (a place still to come)', band: 1, home: null,
       look: 'a bronze and black-iron lantern with topaz glass, moss on its cap, a warm ember light inside',
       line: 'The watchkeepers carried it up the stair every dusk for three hundred years. It has never once gone out.',
@@ -48,7 +48,7 @@
     },
     {
       id: 'first-seed', name: 'The First Seed', from: 'Aethermoor, Codex No. 23', wear: 'io', worth: 1.875,
-      does: 'Io heals a little at the start of each of her turns',
+      does: 'Nightbloom Briars hold a foe longer: its next turn comes later',
       where: 'Eldergrove, at the root of its oldest tree (a place still to come)', band: 3, home: null,
       look: 'a seed the size of a walnut, dark wood veined with gold, set in gold on a chain of wooden beads, one tiny green bud',
       line: 'The seed Eldergrove’s eldest tree grew from, kept at its root for nine hundred years. It is still, very faintly, alive.',
@@ -70,8 +70,8 @@
     },
     {
       id: 'vale-gauntlets', name: 'The Vale Gauntlets', from: 'Aethermoor, Codex No. 24', wear: 'sol', worth: 1.875,
-      does: 'Sol’s blows land 2% harder',
-      where: 'Dawnroost: Tamsin’s mother’s, a Warden who went north; Tamsin gives them to Sol', band: 2, home: 'dawnroost',
+      does: 'Sol’s Sunder lasts one turn longer',
+      where: 'Dawnroost: on a peg over one of the forty bunks in the Wardens’ hall; Marta tells Sol to take them', band: 2, home: 'dawnroost',
       look: 'silver plate gauntlets with gold trim, a name engraved on every knuckle-plate, a stormglass gem at each cuff',
       line: 'Every knuckle-plate is engraved with somebody she beat.',
     },
@@ -92,7 +92,7 @@
     {
       id: 'ironvein-bracers', name: 'The Ironvein Bracers', from: 'Aethermoor, Codex No. 43', wear: 'sol', worth: 1.875,
       does: 'Sol’s Heat builds 10% faster',
-      where: 'Misthollow’s forge (Misthollow is Ironhold on Chris’s map)', band: 4, home: 'misthollow',
+      where: 'Misthollow, where they were forged (Misthollow is Ironhold on Chris’s map)', band: 4, home: 'misthollow',
       look: 'black-iron bracers with glowing ember veins, bronze bands and a ruby at each cuff',
       line: 'Forged at Ironhold for someone with small wrists and a big grudge.',
     },
@@ -120,7 +120,7 @@
     },
     {
       id: 'bogstriders', name: 'The Bogstriders', from: 'Aethermoor, Codex No. 54', wear: 'either', worth: 1.875,
-      does: 'Her turns come 1% sooner, and grabs and roots hold her for less time. On the maps she walks a little faster',
+      does: 'Her turns come 1% sooner, and when she is grabbed she keeps a little of her turn. On the maps the party walks a little faster',
       where: 'Bogmire', band: 1, home: 'bogmire',
       look: 'dark leather boots on splayed willow-wood soles, reed laces, moss at the tops',
       line: 'Boots for a country where the ground is only a rumour.',
@@ -134,7 +134,7 @@
     },
     {
       id: 'fawnrest-heartstone', name: 'The Fawnrest Heartstone', from: 'Thareia, Codex No. 75', wear: 'either', worth: 1.875,
-      does: '4% more MP',
+      does: 'More of her own power: on Io, 4% more MP; on Sol, her Heat builds 4% faster',
       where: 'The White Hart of Fawnrest leaves it at Io’s feet when the frost cracks off it', band: 3, home: null,
       look: 'a heart of topaz set in bronze, a warm light inside it, on a bronze chain',
       line: 'The shrine’s warm stone, that the white hart kept. It still holds the heat of the spring under Fawnrest.',

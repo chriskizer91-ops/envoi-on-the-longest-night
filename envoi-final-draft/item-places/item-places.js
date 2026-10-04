@@ -328,7 +328,7 @@
     h.title = it.secret ? 'One of the two hidden ones' : '';
     const meta = el('div', { class: 'ip-meta' }, card);
     const who = el('span', { class: 'mp-chip' }, meta, WEAR[it.wear]); who.style.color = C[it.wear]; who.style.borderColor = rgba(C[it.wear], 0.55);
-    if (it.secret) el('span', { class: 'mp-chip' }, meta, 'Hidden: a quarter of every item’s power');
+    if (it.secret) el('span', { class: 'mp-chip' }, meta, 'Hidden: the two hold a quarter of all the help');
     el('span', { class: 'mp-chip' }, meta, 'Band ' + it.band);
     el('p', { class: 'ip-does' }, card, it.does + '.');
     el('p', { class: 'ip-line' }, card, '“' + it.line + '”');

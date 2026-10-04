@@ -94,7 +94,7 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 
    Their walking scenes would join art request 12 once Chris answers questions 20 and 21.
 3. **Field notes.** A menu tab where Io notes every creature the party has calmed and every place it has found, with how many of each. It makes the finding count, and needs no art.
-4. **Errands and keepsakes.** Townsfolk asks tied to the creatures and places, and a keepsake from each great creature: Old Snag's Warden hatchet for Sol, the White Hart's bell for Io. As with the two keepsakes now, the balance never counts on them.
+4. **Errands and keepsakes.** Townsfolk asks tied to the creatures and places, and **the twenty keepsakes** (Chris's plan, October 4, evening): `items/README.md`. Each great creature leaves one of them, and as with the two hidden now, the balance never counts on any.
 5. **The new battles,** as pass three planned them: 3D ground in front, Chris's paintings far off behind.
 6. **Small polish:**
    - auto-advance for the words;
@@ -103,7 +103,7 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
    - quicker fight starts, by keeping the heroes built between fights;
    - a door's sound when a map changes;
    - packs framed a little closer on the phone.
-7. **On Chris's side:** the lore conversation (every word), the sheets for art request 13, art requests 06 and 07, and questions 20, 21 and 24 to 28 in `../docs/questions/open.md`.
+7. **On Chris's side:** the lore conversation (every word), the sheets for art request 13, the keepsakes' places (the Item Places page) and pictures (art request 14), art requests 06 and 07, and questions 20, 21 and 24 to 32 in `../docs/questions/open.md`.
 
 ## The model studio
 
@@ -112,6 +112,12 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 ## Cutscenes
 
 `cutscenes/README.md` answers Chris's question from October 4, evening: yes, the game can have cutscenes like the field study's film, shorter (under a minute before a fight) and lighter (a Phone detail that holds 30 frames a second). It has a brief and a starter message for two, each made by its own session in its own folder: **the Colossus, first met** (the first time the party meets it beside the frozen road) and **the finale's opening** (the camera coming in from far off onto Io and Sol, Noctara and Halcyon at the dead Moonwell). To give those sessions what they build on, this branch now also carries `3d-cutscenes/` (from `claude/quirky-newton-dr3w1q`), and `3d-model-field-studies/` and `3d-model-main-characters/` (from `claude/confident-albattani-nhdy6e`). Chris's Colossus battle page is kept in `../reference/demos/bramble-colossus-battle.html`.
+
+## The twenty keepsakes
+
+`items/README.md` has Chris's plan from October 4, evening: twenty things to find, each with a still picture, that Io and Sol put on and take off on a new Items page. Six are Io's alone, six Sol's alone, and eight either can wear, so one hero can wear fourteen if the party finds them all. The two hidden keepsakes keep a quarter of what they give now, and together they hold a quarter of all the help; the other eighteen share the other three quarters. Every name, look and line is one of Chris's Aethermoor or Thareia relics, brought into this story (`items/items.js`).
+
+Chris places them himself on **Item Places** (`item-places/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5), a version of the Walking Paths page that checks each spot with the game's own walking rules and lets him walk Io to it; his places come back through the page's database. The pictures are art request 14 (`../docs/art-requests/14-keepsake-items.md`). Nothing is in the game until he has placed them and agreed the list (`../docs/questions/open.md`, 30 to 32).
 
 ## For the next session working on the game
 
@@ -128,3 +134,6 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 | `model-studio/` | The model studio: the briefs, the return slip, the intake |
 | `cutscenes/` | The cutscene plan, a brief for each, and their sessions' folders |
 | `../docs/art-requests/13-wild-creatures.md` | The image prompts for the ten creature families |
+| `items/` | The twenty keepsakes: the list (`items.js`) and the plan |
+| `item-places/` | The Item Places page, where Chris puts the keepsakes on the maps |
+| `../docs/art-requests/14-keepsake-items.md` | The image prompts for the twenty keepsakes' pictures |

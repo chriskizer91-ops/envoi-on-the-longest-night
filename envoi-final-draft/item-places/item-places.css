@@ -27,9 +27,10 @@
 .mp-chip.is-reward { border-color: rgba(127, 231, 255, 0.5); background: rgba(127, 231, 255, 0.08); color: var(--reach); }
 .mp-chip.is-out { border-color: rgba(255, 157, 157, 0.5); background: rgba(255, 90, 100, 0.08); color: var(--bad); }
 
-.ip-card { display: grid; gap: 8px; padding: 10px 12px; border-radius: 8px; background: rgba(0, 0, 0, 0.25); color: var(--ink-soft); font-size: 13px; line-height: 1.45; }
+.ip-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 10px 12px; border-radius: 8px; background: rgba(0, 0, 0, 0.25); color: var(--ink-soft); font-size: 13px; line-height: 1.45; }
 .ip-card h3 { margin: 0; font: italic 400 19px/1.2 var(--serif); color: #fff4dc; text-wrap: balance; }
 .ip-card .ip-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ip-card .ip-meta .mp-chip { max-width: 100%; white-space: normal; }
 .ip-card .ip-does { margin: 0; color: var(--ink); }
 .ip-card .ip-line { margin: 0; color: var(--dim); font-style: italic; }
 .ip-card .ip-from { margin: 0; color: var(--dim); font-size: 12px; }

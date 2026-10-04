@@ -4,6 +4,8 @@ October 4, 2026: the session that started **pass three** (October 3, evening), t
 
 - **Newest, October 4, evening: the final draft.** Chris sent the file he keeps and called it the final draft. `../envoi-final-draft/README.md` has it, a review of the game, how to spend the rest of the 30 MB, art request 13 (the wild's own creatures) and the model studio, where modeling sessions Chris starts build new creatures in their own folders and hand them back. That work is on the branch `ccr-31761774-76j8j3`: this game, from `claude/practical-franklin-l1ctf9`, with the new folder on top. Later that evening: `../envoi-final-draft/cutscenes/` (briefs for two cutscenes, the Colossus first met and the finale's opening), and this branch took in `3d-cutscenes/`, `3d-model-field-studies/` and `3d-model-main-characters/` from their branches, so a session started from it has them all. The game itself didn't change: it still builds byte for byte the file Chris keeps.
 
+- **Newer still, October 4, evening: the twenty keepsakes.** Chris's plan for things to find: twenty keepsakes from his Aethermoor and Thareia loot, each with a still picture, worn on a new Items page (six Io's, six Sol's, eight for either; the two hidden ones cut to a quarter). `../envoi-final-draft/items/README.md` has the list and the plan. Chris places them on the Item Places page (`../envoi-final-draft/item-places/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5), whose places come back through its database (collection `places`). Their pictures are art request 14, and their questions are `questions/open.md` 30 to 32. Nothing is in the game until he has placed them.
+
 - `../envoi-game-pass-3/README.md`: everything from pass three: Chris's decisions, the pages, the measured sizes, and the plans for the new battles and for walking without the world map.
 - `docs/handoff.md` lists what the game still wants (written before pass three; the pass-three README supersedes it where they differ).
 - `putting-it-all-together/README.md` lists every piece of the game, where it comes from and its state.
@@ -66,7 +68,7 @@ Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: t
 3. **More map path edits**, whenever he sends them (both his rounds are in the game).
 4. **The lore conversation:** every word of the script is still a placeholder.
 5. **Art requests 06 and 07** (townsfolk portraits, story stills), and the footsteps.
-6. **The keepsakes' names and words** (`questions/open.md`, 24).
+6. **The keepsakes' names and words** (`questions/open.md`, 24, and 30 to 32 for the twenty), their places on the Item Places page, and their pictures (art request 14).
 
 ## Next for Claude
 
@@ -74,7 +76,8 @@ Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: t
 2. **His notes on the demos**, as they come.
 3. **Walking without the world map**, once Chris agrees the plan.
 4. **His map path edits**, when he sends more: list `edits` on the Walking Paths page with `ArtifactData` (`out_dir`), `check-edits.mjs`, then `apply-edits.mjs`, `check-maps`, build, `make-demos`, test, publish (`../envoi-game-pass-3/map-paths/README.md`). His shapes go in as drawn: secret ways and orange patches are meant.
-5. **The 20 frames a second freeze** on the Battle Backgrounds page is unexplained (the test browser can't pace like his phone). 20 is off the page and the game never offered it; if the new battles freeze or go black on his phone, look here first.
+5. **The twenty keepsakes,** once Chris has sent his places (list `places` on the Item Places page with `ArtifactData`): the rules, the balance simulator's numbers, the Items page, the glints on the maps, and the two hidden keepsakes cut to a quarter at the same moment (`../envoi-final-draft/items/README.md`, "Putting them in the game"). A demo page first.
+6. **The 20 frames a second freeze** on the Battle Backgrounds page is unexplained (the test browser can't pace like his phone). 20 is off the page and the game never offered it; if the new battles freeze or go black on his phone, look here first.
 
 ### Polish still open (told to Chris on October 4)
 
