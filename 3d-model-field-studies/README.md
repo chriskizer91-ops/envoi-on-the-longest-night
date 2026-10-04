@@ -1,0 +1,39 @@
+# 3D Model Field Studies
+
+Claude's own folder, started October 4, 2026, when Chris asked for a 3D model folder of my own: everything else in the repository is read here, and nothing outside this folder is changed by it.
+
+Each study takes one of the game's creatures and builds it again as well as code-built 3D in a single HTML file can draw on a laptop, thinking about what the creature is in the world of *Envoi on the Longest Night*. Each is shown as a short nature film, like a natural-history documentary, with an **Explore** mode for turning it round, labelling its parts and playing every move.
+
+They are reference models: a measure of how far a browser page can go, made for a laptop rather than a phone. Each keeps the game's model interface and moves, so it can stand in for the game's version later, and each has a `detail` setting that brings it back down toward the phone budget.
+
+| Study | Folder | Page | State |
+|---|---|---|---|
+| The Bramble Colossus | `bramble-colossus/` | The film: https://claude.ai/artifact/NuZgcibtA6gy3RDYv4EH44; In motion, the short: https://claude.ai/artifact/67kPPSanmHLhMKx77iMezn | Version 2, October 4, 2026: its own sounds, a sound check, and the short |
+
+## What goes in a study's folder
+
+| Path | What it is |
+|---|---|
+| `README.md` | What the study shows, what is new about the creature, its numbers, and what is still open |
+| `<id>.js` | The model: one function `make<Name>(opts)`, three.js r128, no imports. Built from the parts in `model/` |
+| `model/` | The model's source in numbered parts (`00-head.js` to `99-interface.js`), joined by `node model/join.mjs` |
+| `<place>.js` | The creature's habitat, built in 3D |
+| `cinema.js` | The film camera: high dynamic range, depth of field, bloom, moonlight shafts and a film grade |
+| `film.js`, `motion.js` | The films: their chapters, shots, moves and words, as data (`motion.js` is a short one, with a route it walks) |
+| `sounds.js` | Every sound, made in code |
+| `field-study.html`, `in-motion.html`, `page.js`, `field-study.css` | The pages' source |
+| `*_Field_Study.html`, `*_In_Motion.html` | The built pages, each one file to open in a browser |
+| `renders/` | Stills from the film and Explore |
+
+## Building a study's page
+
+From the repository's top folder:
+
+```sh
+node 3d-model-field-studies/bramble-colossus/model/join.mjs
+node tools/build.mjs 3d-model-field-studies/bramble-colossus/field-study.html 3d-model-field-studies/bramble-colossus/in-motion.html
+cp dist/field-study.html 3d-model-field-studies/bramble-colossus/Bramble_Colossus_Field_Study.html
+cp dist/in-motion.html 3d-model-field-studies/bramble-colossus/Bramble_Colossus_In_Motion.html
+```
+
+`dist/<name>.artifact.html` is the same page without its outer document tags, for publishing.

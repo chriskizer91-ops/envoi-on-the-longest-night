@@ -71,3 +71,16 @@ Answered in pass three (October 3, evening): neither the Emberback nor the Gloam
    - What do Moonlure and Hush do in a fight? Its bench shows them as a lure and a silence on the whole party ("Lured", "Hushed"), with no damage.
    - Beaten, it falls, its sac splits and every soul it swallowed flies free to the Moon. Does it stay down after that, or fly off? Its bench lets it rise again only so it can be fought again.
    - Its sheets show its sac a warm ivory, where the art request asked for moon-silver. The model follows the sheets. Is that right?
+
+## Field studies
+
+Asked October 4, 2026, by the session that started `../../3d-model-field-studies/` (Claude's own folder of reference models, each shown as a short nature film). Nothing here changes the game until Chris says so.
+
+29. **The Bramble Colossus, as the field study shows it** (`../../3d-model-field-studies/bramble-colossus/`). The film needed to say what it is and how it lives, so it shows these, all new except where noted:
+    - **Its warm heart** keeps the frost off a ring round it, about 20 m across from its middle (the handoff's *Thornheart* idea, made visible): inside, green grass and the small white flowers of the Frostmere painting in the middle of winter; outside, frost. Its breath steams in the cold. Right?
+    - **Its roots run on under the meadow** to about 20 m, carrying its warmth, and the frost stops where they end. Each heartbeat runs out along them.
+    - **It fruits all winter**, green, red and black berries on the same canes, as a lure on the longest nights.
+    - **It feels its prey through its roots**, warmth and footsteps, since it has no eyes.
+    - **It grows from a thicket like the Bramble Horror** over a century or more. Is the Horror its young?
+    - **Moths are left out** on purpose: a pale moth is a soul going home, so it neither hunts nor eats them.
+    - **The film's words** (`film.js`) are a first draft for the lore conversation.

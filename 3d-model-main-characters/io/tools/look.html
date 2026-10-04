@@ -1,0 +1,97 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#1d1a26}canvas{display:block}</style></head><body>
+<script>
+// look.html: renders a model for checking, headless. Query: ?src=a.js,b.js&fn=makeIo&opts={}&light=game|night|studio&w=&h=
+// game: the battle's lights (Model Build Spec), plain colours. night: linear colours, ACES, a moon that casts shadows, a
+// lamp and a painted night for reflections (close to the study page without its film camera). studio: flat grey light.
+const Q = new URLSearchParams(location.search);
+const files = ['../../.cache/three.min.js'].concat((Q.get('src') || '../io.js').split(','));
+(function load(i) { if (i >= files.length) return start(); const s = document.createElement('script'); s.src = files[i]; s.onload = () => load(i + 1); s.onerror = () => { window.__err = 'load ' + files[i]; }; document.body.appendChild(s); })(0);
+function start() {
+  try { start2(); } catch (e) { window.__err = String(e && e.stack || e); }
+}
+function start2() {
+  const W = +(Q.get('w') || 1200), H = +(Q.get('h') || 900), LIGHT = Q.get('light') || 'night';
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(W, H); document.body.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  if (LIGHT === 'game') {
+    renderer.setClearColor(0x26212f, 1);
+    scene.add(new THREE.HemisphereLight(0x756aa8, 0x33262f, 1.1));
+    const moon = new THREE.DirectionalLight(0xb8c0ff, 0.62); moon.position.set(-5, 9, -12); scene.add(moon);
+    const fill = new THREE.DirectionalLight(0xffdcc0, 0.42); fill.position.set(2, 5, 10); scene.add(fill);
+    for (const x of [-4, 4]) { const p = new THREE.PointLight(0xffb46a, 1.0, 8, 2); p.position.set(x, 2.4, 3); scene.add(p); }
+  } else {
+    renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = +(Q.get('exp') || 1);
+    renderer.shadowMap.enabled = !Q.has('noshadow'); renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const L = (r, g, b) => new THREE.Color(Math.pow(r, 2.2), Math.pow(g, 2.2), Math.pow(b, 2.2));
+    const studio = LIGHT === 'studio';
+    renderer.setClearColor(studio ? L(.5, .5, .52) : L(.11, .1, .16), 1);
+    // a painted night to reflect: a dark violet sky, a bright moon, warm windows low on one side
+    const es = new THREE.Scene();
+    // (MeshBasicMaterial only: a ShaderMaterial in PMREMGenerator.fromScene comes out wrong in SwiftShader)
+    const sg = new THREE.SphereGeometry(50, 48, 24), sp = sg.attributes.position, scol = new Float32Array(sp.count * 3);
+    for (let i = 0; i < sp.count; i++) {
+      const h = sp.getY(i) / 50, up = Math.max(0, Math.min(1, h / .5)), dn = Math.max(0, Math.min(1, -h / .3));
+      let c = [.03 + .07 * (1 - up), .025 + .045 * (1 - up), .06 + .1 * (1 - up)]; c = c.map((v, k) => v * (1 - dn) + [.03, .025, .03][k] * dn);
+      if (studio) c = [.55 * (.75 + .35 * h), .55 * (.75 + .35 * h), .56 * (.75 + .35 * h)];
+      scol.set(c, i * 3);
+    }
+    sg.setAttribute('color', new THREE.BufferAttribute(scol, 3));
+    es.add(new THREE.Mesh(sg, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide })));
+    if (!studio) {
+      const disc = (r, col, k, p) => { const d = new THREE.Mesh(new THREE.CircleGeometry(r, 32), new THREE.MeshBasicMaterial({ color: new THREE.Color(col[0], col[1], col[2]).multiplyScalar(k) })); d.position.set(p[0], p[1], p[2]); d.lookAt(0, 0, 0); es.add(d); };
+      disc(1.6, [.9, .95, 1], 30, [-20, 22, -26]); disc(7, [.25, .27, .4], .4, [-20.5, 22.5, -26.5]);
+      disc(1.2, [1, .55, .22], 4, [36, 5, 22]); disc(.9, [1, .55, .22], 4, [30, 4, 30]);
+    }
+    if (!Q.has('noenv')) { const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(es, 0, .1, 100).texture; pm.dispose(); }
+    if (studio) {
+      scene.add(new THREE.HemisphereLight(L(.9, .9, .95), L(.4, .38, .4), 1.2));
+      const k = new THREE.DirectionalLight(0xffffff, 1.6); k.position.set(2, 4, 6); scene.add(k);
+      k.castShadow = true; k.shadow.mapSize.set(2048, 2048); Object.assign(k.shadow.camera, { left: -1.4, right: 1.4, top: 1.4, bottom: -1.4, near: .5, far: 20 }); k.shadow.bias = -.0004; k.shadow.normalBias = .01; k.target.position.set(0, .95, 0); scene.add(k.target);
+    } else {
+      scene.add(new THREE.HemisphereLight(L(.36, .36, .55), L(.16, .12, .14), .5));
+      const moon = new THREE.DirectionalLight(L(.78, .84, 1), 1.5); moon.position.set(-4, 6.5, -5); scene.add(moon); moon.target.position.set(0, .95, 0); scene.add(moon.target);
+      moon.castShadow = true; moon.shadow.mapSize.set(2048, 2048); Object.assign(moon.shadow.camera, { left: -1.4, right: 1.4, top: 1.4, bottom: -1.4, near: .5, far: 20 }); moon.shadow.bias = -.0008; moon.shadow.normalBias = .02;
+      const lamp = new THREE.SpotLight(L(1, .78, .55), 2.2, 12, .7, .8, 2); lamp.position.set(2.2, 2.4, 2.6); lamp.target.position.set(0, 1.1, 0); scene.add(lamp, lamp.target);
+      lamp.castShadow = true; lamp.shadow.mapSize.set(1024, 1024); lamp.shadow.bias = -.001; lamp.shadow.normalBias = .02;
+      const fill = new THREE.DirectionalLight(L(.75, .68, .85), .3); fill.position.set(-1, 2, 6); scene.add(fill);
+    }
+    const ground = new THREE.Mesh(new THREE.CircleGeometry(3, 64), new THREE.MeshStandardMaterial({ color: studio ? L(.45, .45, .47) : L(.2, .17, .2), roughness: .9 }));
+    ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+  }
+  const make = window[Q.get('fn') || 'makeIo'];
+  const opts = Q.get('opts') ? JSON.parse(Q.get('opts')) : {};
+  const t0 = performance.now(); const m = make(opts); window.__buildMs = performance.now() - t0;
+  scene.add(m.root); if (m.fx) scene.add(m.fx); window.__m = m; window.__scene = scene; window.__renderer = renderer;
+  if (LIGHT !== 'game') m.root.traverse((o) => { if (o.isMesh && !(o.material && o.material.transparent)) { o.castShadow = true; o.receiveShadow = true; } });
+  let t = 0;
+  const step = (n, walk) => { for (let i = 0; i < n; i++) { t += 1 / 60; m.animate(t * (walk ? 4.4 * 1.4 : 0), walk || 0, t, 1 / 60); } };
+  window.__step = step;
+  step(90);
+  const cam = new THREE.PerspectiveCamera(20, W / H, 0.05, 200);
+  window.__view = (v) => {
+    const s = v.split(':'), kind = s[0];
+    const yaw = { front: 0, left: -Math.PI / 2, back: Math.PI, right: Math.PI / 2, three: 0.62, threeb: 2.5 }[s[1] || kind] || 0;
+    m.root.rotation.y = yaw;
+    if (kind === 'act') { m.reset(); step(30); m.play(s[2], true); step(Math.round(+s[3] * 60) || 1); }
+    else if (kind === 'walk') { step(Math.round(+(s[2] || 1) * 60), 1); }
+    else step(2);
+    const look = (fov, p, d, dy) => { cam.fov = fov; cam.updateProjectionMatrix(); cam.position.set(p.x, p.y + (dy || 0), p.z + d); cam.lookAt(p.x, p.y, p.z); };
+    if (kind === 'face') look(12, m.anchor('head', new THREE.Vector3()).add(new THREE.Vector3(0, .02, 0)), 2.2, .05);
+    else if (kind === 'bust') look(16, new THREE.Vector3(0, 1.42, 0), 2.6, .08);
+    else if (kind === 'hands') look(18, new THREE.Vector3(0, .95, 0), 2.3, .1);
+    else if (kind === 'feet') look(16, new THREE.Vector3(0, .25, 0), 2.6, .15);
+    else if (kind === 'cam') { const a = s[1].split(',').map(Number), b = s[2].split(',').map(Number); cam.fov = +(s[3] || 20); cam.updateProjectionMatrix(); cam.position.set(a[0], a[1], a[2]); cam.lookAt(b[0], b[1], b[2]); }
+    else look(20, new THREE.Vector3(0, .98, 0), 6.2, .25);
+    renderer.render(scene, cam);
+    return true;
+  };
+  window.__info = () => {
+    renderer.info.reset(); renderer.info.autoReset = false; renderer.render(scene, cam);
+    let tris = 0, verts = 0, meshes = 0; const mats = new Set(), bones = new Set();
+    m.root.traverse((o) => { if (o.isBone) bones.add(o); if (o.isMesh) { meshes++; const g = o.geometry; tris += (g.index ? g.index.count : g.attributes.position.count) / 3; verts += g.attributes.position.count; mats.add(o.material); } });
+    return { tris: Math.round(tris), verts, meshes, mats: mats.size, bones: bones.size, calls: renderer.info.render.calls, frameTris: renderer.info.render.triangles, textures: renderer.info.memory.textures, buildMs: Math.round(window.__buildMs) };
+  };
+  window.__ready = true;
+}
+</script></body></html>
