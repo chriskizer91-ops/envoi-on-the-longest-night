@@ -56,11 +56,12 @@
 <script src="../src/game/script.js"></script>
 <script src="../src/game/stills.js"></script>
 <script src="../src/game/thareia-audio.js"></script>
+<script src="../src/game/songs.js"></script>
 <script src="../src/game/fly.js"></script>
 <script src="../src/game/game.js"></script>
 <script>
-// The game (plan phase 5). In this folder the art loads from ../art; the build inlines it, or with --split leaves it
-// beside the page (ART_BASE ''). A chapter's demo page (tools/make-demos.mjs) sets ENVOI_CHAPTER first.
+// The game (plan phase 5). In this folder the art and the songs load from ../art; the build inlines them, or leaves
+// them beside the page (ART_BASE ''): the songs in the published copy, everything with --split. A chapter's demo page (tools/make-demos.mjs) sets ENVOI_CHAPTER first.
 Game.start({ src: (p) => (p.startsWith('data:') ? p : (window.ART_BASE != null ? window.ART_BASE : '../') + p), chapter: window.ENVOI_CHAPTER });
 </script>
 </body>

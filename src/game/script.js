@@ -65,6 +65,21 @@
     crosswell: { letter: ['A letter weighted under a stone on the well’s rim:', '“To my love at the yard: the cold is coming down the road early this year. Light the lamps. I’ll find my way. — Ennis.”'], gift: { herb: 'mugwort' } },
     mistwell: { letter: ['Under the ice, a letter in a jar:', '“To the Moon. Please come back. — the children of Misthollow.”'], gift: { herb: 'nightrose' } },
   };
+  // the two hidden keepsakes (rules.js KEEPSAKES; Chris, October 4), as each is found; name: its name in rules.js
+  const keepsakes = {
+    io: (name) => [
+      'Tucked under a loose slate at the very end of the ridge: a little silver locket, a crescent moon worked into its lid.',
+      ['io', 'Whoever hid this didn’t want it found from the ground.'],
+      'It is cold as moonlight in her hand, and her Moonlore hums through it.',
+      'Io keeps ' + name + '. Her Lunar Mend and Waxing Light heal a quarter more.',
+    ],
+    sol: (name) => [
+      'Where the trail gives out, sunk in the moss among the thorns: an old brooch, a sunstone set in dark bronze. It is still warm.',
+      ['sol', 'A Warden’s brooch. A long way from the waystation.'],
+      ['sol', 'I’ll wear it home for them.'],
+      'Sol pins on ' + name + '. She has a tenth more HP, and her blows land a tenth harder.',
+    ],
+  };
   // the story's scenes, by name
   const scenes = {
     prologue: [
@@ -211,5 +226,5 @@
     noMagpie: [['io', 'The Magpie is moored at Wickhollow’s jetty.']],
     bogmireLanding: [['quill', 'Not to Bogmire, not till its lamps are lit. There’s nothing to land by.']],
   };
-  window.SCRIPT = { people, wells, scenes, cast };
+  window.SCRIPT = { people, wells, keepsakes, scenes, cast };
 })();

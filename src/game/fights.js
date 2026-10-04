@@ -5,7 +5,7 @@
 // flags, with one of each herb it carries to use (the menu shows how many it carries). GameFights.config(kind, party,
 // opts) -> the cfg for BattleScreen.start, without `game` (the game adds it).
 //   kind: 'first' | 'wild' | 'greatWraith' | 'dawnroost' | 'halcyon' | 'finale'
-//   party: { level, xp, hp: { io, sol }, mp, herbs, flags } (hp and mp null mean full)
+//   party: { level, xp, hp: { io, sol }, mp, herbs, flags, keepsakes } (hp and mp null mean full; keepsakes: the hidden ones found)
 //   opts: { band, scene, seen, pack } for a wild fight (seen: the band's wild fights so far; pack: a set pack, for tests)
 // Needs rules.js, sim.js, the models and the stage scenes. Defines window.GameFights.
 (function () {
@@ -49,12 +49,19 @@
     if (id === 'noctara') return makeNoctara({});
     throw new Error('no foe ' + id);
   }
-  // the party as the engine takes it: each hero's level, HP and MP as they stand
+  // the party as the engine takes it: each hero's level, HP and MP as they stand, and the keepsake she carries, if
+  // it's been found (rules.js KEEPSAKES)
+  const keepsakeOf = (P, id) => (P.keepsakes && P.keepsakes[id] && RL().KEEPSAKES[id]) || null;
   function partyOf(P, solo) {
     const p = [{ id: 'io', level: P.level }];
     if (P.hp && P.hp.io != null) p[0].hp = P.hp.io;
     if (P.mp != null) p[0].mp = P.mp;
-    if (!solo && P.flags && P.flags.party) { const s = { id: 'sol', level: P.level }; if (P.hp && P.hp.sol != null) s.hp = P.hp.sol; p.push(s); }
+    if (keepsakeOf(P, 'io')) p[0].healMul = keepsakeOf(P, 'io').heal;
+    if (!solo && P.flags && P.flags.party) {
+      const s = { id: 'sol', level: P.level }; if (P.hp && P.hp.sol != null) s.hp = P.hp.sol;
+      if (keepsakeOf(P, 'sol')) { s.hpMul = keepsakeOf(P, 'sol').hp; s.dmgMul = keepsakeOf(P, 'sol').damage; }
+      p.push(s);
+    }
     return p;
   }
   const base = (scene, P, solo) => {

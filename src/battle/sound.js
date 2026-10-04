@@ -1,9 +1,11 @@
 // sound.js: the battle's music and sound effects, all synthesized in the browser. Imported unchanged from
 // reference/demos/night-square-shadow-wraith.html (its SND module): a D minor battle theme at 132 BPM and the swish, hit,
 // fire, boom, chime, blade, heal, guard, moon, shriek, grasp, eclipse, menu, select, trance, victory and defeat effects.
-// Added for the game: a longer fanfare for set fights, and setVolumes(music, effects) for the game's two volume settings.
-// Defines makeBattleSound() -> { init, sfx, startMusic, stopMusic, setMuted, setMusicOff, muted }. Call init() from a tap or a click:
-// browsers only start audio after the player touches the page.
+// Added for the game: a longer fanfare for set fights, setVolumes(music, effects) for the game's volume settings, and
+// setSong(song), a song to play instead of the theme (the game's: Chris's Herbal Decay Battle, songs.js), as
+// { ok(), play(), stop(fade) }; songFailed() goes back to the theme if the song can't play.
+// Defines makeBattleSound() -> { init, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes, setSong, songFailed,
+// muted }. Call init() from a tap or a click: browsers only start audio after the player touches the page.
 function makeBattleSound() {
   'use strict';
   let ctx = null, master = null, sfxBus = null, musBus = null, noiseBuf = null, muted = false, musOn = false, timer = 0, fadeTO = 0, nextT = 0, step = 0;
@@ -77,9 +79,15 @@ function makeBattleSound() {
       nextT += SPB; step++;
     }
   }
-  let musicOff = false;
-  function startMusic() { if (!ctx || musOn || musicOff) return; clearTimeout(fadeTO); clearInterval(timer); musOn = true; nextT = ctx.currentTime + 0.05; step = 0; musBus.gain.cancelScheduledValues(ctx.currentTime); musBus.gain.setValueAtTime(0.3 * musVol, ctx.currentTime); timer = setInterval(schedule, 25); }
-  function stopMusic(fade) { if (!ctx || !musOn) return; musOn = false; const t = ctx.currentTime; musBus.gain.setValueAtTime(musBus.gain.value, t); musBus.gain.linearRampToValueAtTime(0.0001, t + (fade || 0.8)); fadeTO = setTimeout(() => { clearInterval(timer); }, (fade || 0.8) * 1000 + 50); }
+  let musicOff = false, song = null, songOn = false;
+  function startMusic() {
+    if (!ctx || musOn || musicOff) return;
+    if (song && song.ok()) { musOn = songOn = true; song.play(); return; }
+    clearTimeout(fadeTO); clearInterval(timer); musOn = true; nextT = ctx.currentTime + 0.05; step = 0; musBus.gain.cancelScheduledValues(ctx.currentTime); musBus.gain.setValueAtTime(0.3 * musVol, ctx.currentTime); timer = setInterval(schedule, 25); }
+  function stopMusic(fade) {
+    if (!ctx || !musOn) return; musOn = false;
+    if (songOn) { songOn = false; song.stop(fade || 0.8); return; }
+    const t = ctx.currentTime; musBus.gain.setValueAtTime(musBus.gain.value, t); musBus.gain.linearRampToValueAtTime(0.0001, t + (fade || 0.8)); fadeTO = setTimeout(() => { clearInterval(timer); }, (fade || 0.8) * 1000 + 50); }
   function setMuted(m) { muted = m; if (master) master.gain.setTargetAtTime(m ? 0 : 0.6, ctx.currentTime, 0.05); }
   // the game's sound setting can keep the battle theme quiet while the effects play
   function setMusicOff(m) { musicOff = m; if (m) stopMusic(0.3); }
@@ -92,5 +100,7 @@ function makeBattleSound() {
     if (musOn) musBus.gain.setTargetAtTime(0.3 * musVol, ctx.currentTime, 0.05);
   }
   let vols = null;
-  return { init() { init(); if (vols) setVolumes(vols[0], vols[1]); }, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes, get muted() { return muted; } };
+  function setSong(s) { song = s; }
+  function songFailed() { if (songOn) { songOn = musOn = false; startMusic(); } }
+  return { init() { init(); if (vols) setVolumes(vols[0], vols[1]); }, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes, setSong, songFailed, get muted() { return muted; } };
 }

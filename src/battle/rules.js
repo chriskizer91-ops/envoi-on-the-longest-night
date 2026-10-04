@@ -263,6 +263,17 @@
     nightrose: { name: 'Nightrose', revive: 0.25, target: 'fallen', price: 120 },
   };
 
+  // ---------- the two hidden keepsakes, Chris's magic items (October 4) ----------
+  // One for Io and one for Sol, hidden off the paths: Io's up on the red roof in Wickhollow, Sol's at the end of a trail
+  // deep in the Thornwood. Finding one makes the game a little easier; not finding them changes nothing, since the
+  // balance (the simulator, the fight tables, the journey) never counts on them. heal: Io's own Moonlore heals (Lunar
+  // Mend and Waxing Light, in a fight and out of one), not the herbs' or Lunara's; hp and damage: Sol's max HP and every
+  // blow she lands. The names wait for Chris's (docs/questions/open.md)
+  const KEEPSAKES = {
+    io: { name: 'the Crescent Locket', heal: 1.25, what: 'her Moonlore heals a quarter more' },
+    sol: { name: 'the Warden’s Brooch', hp: 1.1, damage: 1.1, what: 'a tenth more HP, and her blows land a tenth harder' },
+  };
+
   // ---------- experience and shards ----------
   // to go from level L to L+1 (Chris, October 2): about 79 wild fights from level 2 to 20, with about 40% of them in the
   // last band. The first band levels 20% quicker; from level 3 each level asks 2% more than the curve; from 16 on, each
@@ -286,5 +297,5 @@
   // a big blow: a single hit this strong at level 1 (or stronger) on the Colossus's bare heart breaks its Siren Bloom
   const BIG_BLOW = 450;
 
-  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, START_HERBS, BATTLE_USE, xpNeed, grows, herbPrice, MAGPIE, WILD_REWARD, BIG_BLOW };
+  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, START_HERBS, BATTLE_USE, KEEPSAKES, xpNeed, grows, herbPrice, MAGPIE, WILD_REWARD, BIG_BLOW };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

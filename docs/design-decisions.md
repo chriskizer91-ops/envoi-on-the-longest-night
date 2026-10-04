@@ -1056,3 +1056,33 @@ Chris played pass three's pages and the game, and sent the last four battle pain
 - **Shops sell up to nine of each; a well's herb is kept unless Io carries nine,** when she trades it on for shards.
 - **The journey simulation** starts with three of each, tops them up to three at each shop and spends none between fights, so it plays a little harder than a player who grinds with herbs. Every gate is still reached at its level (6, 11, 15 and 20); the attentive player's finale took a median of 20 tries in this run against 14 before. That fight is the same either way, so the difference is the dice. It's a long shot by design (won 2 to 10 times in a hundred).
 - **Chris finished his walking paths** (October 4): a second round on Dawnroost's living node, the dead Moonwell, the Thornwood and Wickhollow, with new spots to explore, among them a hidden nook behind the node's weapon stall. All in as he drew them.
+
+## October 4, 2026: polish
+
+Chris asked what polish is left, and for these: his three songs in; the songs' volume apart from the surroundings'; a magic item each for Io and Sol, hidden, that makes the game a little easier without changing its difficulty (Io's on top of the red roof, Sol's in the spooky woods). He loves the chapters on the title and the save slots; both stay as built.
+
+### The songs
+
+- **In, where he placed them:** Moonlit Forest Path in the four towns (Wickhollow, the jetty, Dawnroost, the shipyard); Herbal Decay in the wilds (the Thornwood, the crossroads, the frozen pass) and over the world map; Herbal Decay Battle in every fight, the story's set fights included. The made-up music keeps the rest: the title and Io's cottage, the marsh, the ruins (the fen's heart, the living node, Misthollow, the Moonwell), the flight and the ending.
+- A town or wild song carries on where it left off, after a fight or a visit elsewhere; the battle song starts from the top each fight. They fade in and out, pause while the game is out of sight (another app, the phone locked), and stream from the file as they play rather than being unpacked whole, so they cost little memory.
+- **Each plays as loud as the made-up music it replaces.** Measured (ffmpeg's EBU R128 loudness), the songs are about 9 dB louder as mastered than the made-up music at Normal, so at Normal they play at about a third of full volume, and Loud and Soft move them with the rest. The made-up battle theme was much quieter than the map music, under the battle's sounds; Herbal Decay Battle plays as loud as the map music instead, so it's heard (question 25).
+- If a song can't play (an old browser), the made-up music plays in its place.
+- **Size:** the file Chris keeps has the songs inside: 17.4 MB, under his 30 MB. With them the published game and the demos would pass a published page's 16 MB, so on those pages the songs are three files beside the page (2.3 MB), and the page itself stays 13.6 MB.
+
+### Three volumes
+
+- **Music, Effects and Surroundings,** each Off, Soft, Normal or Loud: the music is the songs and the made-up music; the effects the menus, the battles and the story's sounds; the surroundings each place's own sounds now and then (crickets, the owl, wind, the river, the forge). A game saved before keeps the surroundings where its effects were, until changed.
+
+### Two hidden keepsakes
+
+- **Io's,** on top of the red roof in Wickhollow, at the end of Chris's secret way up the tree and along the ridge: her Lunar Mend and Waxing Light heal a quarter more, in a fight and from the menu (not the herbs, not Lunara's Embrace).
+- **Sol's,** in the spooky woods, where the trail south of the Thornwood's road gives out among the thorns: a tenth more HP, and her blows land a tenth harder. The Thornwood opens only once Sol is with Io, so she's there to find it.
+- **Hidden:** nothing points to them (the arrow never does). Each only twinkles faintly now and then, and the action button says "Something glinting" when Io is beside it. Found once and carried for good; the Party tab names what each carries.
+- **The difficulty doesn't change:** the balance and the journey never count on them. All 51 balance targets give the same numbers as before, and the whole-journey simulation the same results. Finding them makes the game easier, as Chris wants.
+- **In the code they are keepsakes** (`rules.js` `KEEPSAKES`), since the Bramble Colossus's Siren Bloom already "charms". Their names are made up until Chris names them (question 24).
+
+### Walking narrow ways by a tap
+
+- **A tap now walks Io along a narrow way too,** so a tap on the glint on the roof takes her up the tree and along the ridge to it. A tap's route was planned on 12 px squares, so it needed ground about 24 px wide; where the ground is narrower (she needs 12 px), a finer search in 4 px steps, on the same rule as her feet, finds the way, and from a narrow way back to the rest.
+- She slows into a sharp turn, as she does at a walk's end, and steps over a sliver of wall under 4 px wide where two shapes meet in a notch (as two of the roof path's strokes do). Blocks such as a lamp post's foot are far wider, so they stay solid.
+- **This replaces the note of October 3** that a narrow secret way had to be walked with the pad or by holding to steer. The path editor's reach check follows narrow ways too, so its orange now marks only ground she can't reach at all; today no map has any.

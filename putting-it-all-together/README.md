@@ -21,16 +21,17 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | The wild meadow's life, on every painted battle: mist, fireflies, snow, dust and turf where big blows land, birds and bats put up by roars, leaves shaken down, a red storm for the Colossus's Wrath | `../src/fx/battlefield.js`, after `../3d-model-new-character-ideas/bramble-horror/meadow.js` | In |
 | The story's people walking in: Sol over the bridge, Quill to the skiff, the knight at the crossroads, Ysmera at the slip | `../src/game/script.js` (the stage directions), `../src/game/field.js` | In. The words are still placeholders |
 | Walking with sound: each place's own ambience, and a pace that builds to a run | `../src/game/game.js` | In. The footsteps are gone (Chris didn't like them); `io-on-foot.html` has two other ideas to try by ear |
-| Walking by hand: hold anywhere to steer her, tap or click to walk there in straight lines, a one-thumb pad, slipping round corners | `../src/game/field.js` | In (pass three), after Witch Way's pad and walker |
+| Walking by hand: hold anywhere to steer her, tap or click to walk there in straight lines, a one-thumb pad, slipping round corners | `../src/game/field.js` | In (pass three), after Witch Way's pad and walker. Since October 4 a tap follows narrow ways too, Chris's secret paths included |
 | Chapters: start at the beginning, or just before gate 5, 10 or 15 in the town on its doorstep, or at the foot of Misthollow before the finale, with the party as the story leaves it there | `../src/game/game.js` (`CHAPTERS`); a demo page per chapter from `node tools/make-demos.mjs` | In (pass three) |
 | The little golden arrow: where the story wants Io next, over the goal when it's in view, else beside her pointing the way, on the walking maps and the world map, and ringed on the mini-map | `../src/game/goal-arrow.js`; the next step and the way there in `../src/game/game.js` (`nextStep`, `goalOn`, `goalOnWorld`) | In (pass three) |
-| Saves and settings: three save slots, a save code, word speed, larger text, music and effects volumes | `../src/game/state.js`, `../src/game/game.js` | In |
+| Saves and settings: three save slots, a save code, word speed, larger text, and the music, effects and surroundings volumes | `../src/game/state.js`, `../src/game/game.js` | In (the surroundings volume since October 4) |
+| Two hidden keepsakes, Chris's magic items: Io's on top of the red roof in Wickhollow (her Moonlore heals a quarter more), Sol's where the trail into the Thornwood's dark woods gives out (a tenth more HP, a tenth harder blows) | `../src/battle/rules.js` (`KEEPSAKES`), `../src/game/maps.js` (where), `../src/game/script.js` (the words) | In (October 4). The balance never counts on them. Their names wait for Chris |
 | Chris's next mobs: the wild growing more upset the closer the party comes to Noctara | `../3d-model-new-character-ideas/<name>/` once he brings them | Not yet (Chris). The Gloamwing and the Emberback stay out of the game. Each new one comes in the way the next section says |
 | Everyone else on the maps as paper dolls: Sol, Halcyon, Ysmera, Quill and Inkblot, and the fifteen townsfolk | Chris's art request 08 sheets, in `../reference/art/walkers/`, cut into `../art/walkers/` | In (pass three). The four who walk in scenes keep their walk; the townsfolk stand in one to three poses. 0.6 MB for all nineteen |
 | The new battles: 3D ground in front, a squeezed painting behind, for every fight | Chris's combat backgrounds (`../reference/art/battle-backgrounds/`, art request 11) and `../living-battlefields/` | Planned (pass three): `../envoi-game-pass-3/README.md` |
 | The townsfolk's portraits and the story stills | Art requests 06 and 07 in `../docs/art-requests/` | Waiting on the art. Until the portraits come, the dialogue box shows each paper doll's head and shoulders (`../art/portraits/folk/`, cut by `node tools/cut-sheet.mjs ... --portrait art/portraits/folk`) |
 | Every word of the story | `../src/game/script.js`, placeholders for now | Waiting on the lore conversation |
-| Chris's three songs: Moonlit Forest Path for the towns, Herbal Decay for the wilds, Herbal Decay Battle for the battles | `../art/music/`, from his Game Music Squeezer page (a 48k copy of the battle song in `../reference/music/`) | Here, saved. They go in last of all, once the whole build is finished |
+| Chris's three songs: Moonlit Forest Path for the towns, Herbal Decay for the wilds, Herbal Decay Battle for the battles | `../art/music/`, from his Game Music Squeezer page (a 48k copy of the battle song in `../reference/music/`), played by `../src/game/songs.js` | In (October 4, when Chris asked for them). Inside the file he keeps; beside the published pages as files |
 | The file Chris keeps, which works offline | `tools/build.mjs --offline` | In: three.js and the fonts are inside it, and it plays with the internet blocked. It may grow to 30 MB (Chris); the size section below keeps count |
 | The game in Mooncart | Mooncart builds this repository with `node tools/build.mjs`, which makes the game too (`dist/game.html`) | Ready. Mooncart takes the repository's main branch (today `claude/admiring-hawking-p7m87n`), so the game reaches it once this branch is merged there |
 
@@ -66,11 +67,18 @@ Chris sent his three songs on October 3, already compressed for the game, and th
 | Herbal Decay | the wilds | `wilds-herbal-decay.webm` (24k stereo, 3:52, 788 KB) |
 | Herbal Decay Battle | the battles | `battle-herbal-decay.webm` (32k stereo, 3:20, 824 KB) |
 
-A 48k copy of the battle song (1.2 MB), the size Chris once said it shouldn't go below, is in `../reference/music/`, in case the 32k one sounds thin. As Chris asked, they go in last, once the whole build is finished. The made-up music keeps the title, the bosses and the ending.
+A 48k copy of the battle song (1.2 MB), the size Chris once said it shouldn't go below, is in `../reference/music/`, in case the 32k one sounds thin.
+
+**In the game since October 4** (Chris: "The three compressed songs are needed to go in"), by `../src/game/songs.js`:
+
+- the towns' song in Wickhollow, the jetty, Dawnroost and the shipyard; the wilds' in the Thornwood, the crossroads, the frozen pass and over the world map; the battles' in every fight;
+- the made-up music keeps the title and Io's cottage, the marsh, the ruins, the flight and the ending;
+- each as loud as the made-up music it replaces, under the Music volume; a town or wild song carries on where it left off, the battle song starts from the top each fight;
+- the build puts them inside the page (`dist/game.html`, the file Chris keeps, Mooncart's copy), but leaves them beside the copy to publish (`dist/game.artifact.html`, and the demos made from it), listed in `dist/game.songs.json`, so a published page stays under 16 MB. Publish those three files with the page, at the same paths.
 
 ## Size
 
-The file Chris keeps may be up to 30 MB. Today it is 14.4 MB (October 3, late), with the paper dolls in and the walking maps back at full size; the published game is 13.6 MB, under the 16 MB a published page may be. `../envoi-game-pass-3/README.md` has the measured parts and where the size is heading (about 17 MB with the songs, the portraits, the stills and the new battles).
+The file Chris keeps may be up to 30 MB. Today it is 17.4 MB (October 4), with the songs inside; the published game is 13.6 MB, under the 16 MB a published page may be, with the songs (2.3 MB) as files beside it. `../envoi-game-pass-3/README.md` has the measured parts and where the size is heading (about 16 to 17 MB once the portraits, the stills and the new battles are in, and the world map's walking tiles are gone).
 
 ## Building and checking
 
@@ -83,7 +91,7 @@ node tools/game-test.mjs                                      # plays it headles
 node tools/balance.mjs                                        # every fight's balance targets; must meet all of them
 ```
 
-Once the game is over a published page's 16 MB (with the songs and the art), it is published as a small page with its pictures as files beside it. Today it fits on one page (14.3 MB), so `--split` waits:
+The published game keeps its songs beside it already (above). If the art pushes the page itself past 16 MB, it is published as a small page with its pictures as files beside it too. Today the page is 13.6 MB, so `--split` waits:
 
 ```sh
 node tools/build.mjs --min --split putting-it-all-together/game.html   # dist/game-split/: the page, art/, files.json

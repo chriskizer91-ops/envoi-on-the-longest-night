@@ -2,8 +2,9 @@
 // read-only), joined unchanged into one plain script for the game: 100 sound effects and nine pieces of music, all
 // made in code with Web Audio. Only the module wrapping changed (no import or export).
 // Defines window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, setVolume }.
-// Additions for the game (October 3, 2026): setVolume(music, effects), the game's two volume settings (0 to 1; 0.75 is
-// the library's own level), and a gain for playSfx, for its quieter sounds (footsteps, a place's ambience).
+// Additions for the game (October 3 and 4, 2026): setVolume(music, effects, surroundings), the game's volume settings
+// (0 to 1; 0.75 is the library's own level), and for playSfx a gain, for its quieter sounds, and a bus: 'amb' for a
+// place's own sounds (crickets, wind, water), which follow the surroundings volume instead of the effects'.
 (function () {
 'use strict';
 /* ---------- sounds.js ---------- */
@@ -21,7 +22,7 @@ const hz = f => {
 const rnd = (a, b) => a + Math.random() * (b - a);
 
 let AC = null, OUT = null, REV = null, NOISE = null, BUS = null, BUSREV = null, ECHO = null;
-const VOL = { music: 1, sfx: 1 }; // the game's volume settings (setVolume)
+const VOL = { music: 1, sfx: 1, amb: 1 }; // the game's volume settings (setVolume)
 function sfxInit(given) {
   if (AC && !given) { if (AC.state === 'suspended') AC.resume(); return AC; }
   AC = given || new (window.AudioContext || window.webkitAudioContext)();
@@ -347,10 +348,10 @@ function withBus(bus, rev, echo, fn) { const b = BUS, r = BUSREV, e = ECHO; BUS 
 const sfxNodes = () => ({ AC, OUT, REV });
 
 // Play one sound at its measured level (LEVEL, written by tools/level.mjs from offline renders), on a bus of its own.
-function playSfx(sound, t, gain) {
+function playSfx(sound, t, gain, bus) {
   const e = typeof sound === 'string' ? S.find(x => x.id === sound) : sound;
   if (!e || !AC) return;
-  const k = (LEVEL[e.id] ?? 1) * VOL.sfx * (gain ?? 1); // gain: the game's quieter sounds (footsteps, a place's ambience)
+  const k = (LEVEL[e.id] ?? 1) * (bus === 'amb' ? VOL.amb : VOL.sfx) * (gain ?? 1); // gain: the game's quieter sounds (a place's ambience)
   BUS = AC.createGain(); BUS.gain.value = k; BUS.connect(OUT);
   BUSREV = AC.createGain(); BUSREV.gain.value = k; BUSREV.connect(REV);
   try { e.play(t ?? AC.currentTime + .02); } finally { BUS = null; BUSREV = null; }
@@ -626,8 +627,8 @@ function musicPlay(id, o = {}) {
 }
 
 // the game's volumes: the music now playing follows at once
-function setVolume(music, effects) {
-  VOL.music = music / .75; VOL.sfx = effects / .75;
+function setVolume(music, effects, surroundings) {
+  VOL.music = music / .75; VOL.sfx = effects / .75; VOL.amb = (surroundings ?? effects) / .75;
   if (cur && AC) { cur.bus.gain.setTargetAtTime(.9 * VOL.music, AC.currentTime, .05); cur.rev.gain.setTargetAtTime(.9 * VOL.music, AC.currentTime, .05); }
 }
 

@@ -84,8 +84,10 @@
   }
 
   // ---------- what she can reach (tools/check-maps.mjs, in plain words) ----------
-  // the field's 12 px grid of cells she can stand in, walked from the nearest cell to where a new walk starts. Returns
-  // the grid, the cells reached, and each thing she can't reach: { kind, i, at, text }
+  // the field's 12 px grid of cells she can stand in, walked from the nearest cell to where a new walk starts; then, if
+  // anything is left out, the narrow ways the grid can't see (field.js's fine search: 4 px steps on the same rule, no
+  // cutting corners), which she walks by a tap as well as with the pad (October 4). Returns the grid, the cells reached,
+  // and each thing she can't reach: { kind, i, at, text }
   function reach(MAPS, id, w) {
     const S = standTest(w).stand, N = GW * GH, grid = new Uint8Array(N), seen = new Uint8Array(N);
     for (let j = 0; j < GH; j++) for (let i = 0; i < GW; i++) { const x = i * CELL + 6, y = j * CELL + 6; grid[j * GW + i] = S(x, y) && S(x, y - 5) && S(x, y + 5) && S(x - 5, y) && S(x + 5, y) ? 1 : 0; }
@@ -97,9 +99,29 @@
       const q = [s0]; seen[s0] = 1;
       for (let h = 0; h < q.length; h++) { const c = q[h], ci = c % GW, cj = (c - ci) / GW; for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const i = ci + di, j = cj + dj; if (i < 0 || j < 0 || i >= GW || j >= GH) continue; const n = j * GW + i; if (grid[n] && !seen[n]) { seen[n] = 1; q.push(n); } } }
     }
+    const gridReach = (x, y, r) => { for (let c = 0; c < N; c++) if (seen[c] && Math.hypot(cx(c) - x, (cy(c) - y) * 1.3) < r) return true; return false; };
+    const gridRect = (rc) => { for (let c = 0; c < N; c++) if (seen[c]) { const x = cx(c), y = cy(c); if (x >= rc[0] - 14 && x <= rc[2] + 14 && y >= rc[1] - 14 && y <= rc[3] + 14) return true; } return false; };
+    let fine = null; // the points the narrow ways reach, found only when the grid leaves something out
+    const short = s0 >= 0 && (w.people.some((n) => !gridReach(n.at[0], n.at[1], REACH)) || w.spots.some((sp) => (sp.rect ? !gridRect(sp.rect) : !gridReach(sp.at[0], sp.at[1], REACH))) ||
+      w.exits.some((ex) => !gridRect(ex.rect)) || grid.some((v, c) => v && !seen[c]));
+    if (short) {
+      const F = 4, x0 = cx(s0), y0 = cy(s0), key = (i, j) => (i + 512) * 1024 + j + 512, ok = new Map(), was = new Set([key(0, 0)]), q = [[0, 0]];
+      const can = (i, j) => { const k = key(i, j); let v = ok.get(k); if (v === undefined) ok.set(k, v = S(x0 + i * F, y0 + j * F)); return v; };
+      fine = [[x0, y0]];
+      for (let h = 0; h < q.length; h++) {
+        const [ci, cj] = q[h];
+        for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]]) {
+          const i = ci + di, j = cj + dj, k = key(i, j);
+          if (was.has(k) || !can(i, j) || (di && dj && (!can(ci + di, cj) || !can(ci, cj + dj)))) continue;
+          was.add(k); q.push([i, j]);
+          const x = x0 + i * F, y = y0 + j * F, c = Math.min(GH - 1, Math.floor(y / CELL)) * GW + Math.min(GW - 1, Math.floor(x / CELL));
+          fine.push([x, y]); if (grid[c]) seen[c] = 1; // an open cell reached along a narrow way
+        }
+      }
+    }
     let reached = 0; for (let c = 0; c < N; c++) reached += seen[c];
-    const reachable = (x, y, r) => { for (let c = 0; c < N; c++) if (seen[c] && Math.hypot(cx(c) - x, (cy(c) - y) * 1.3) < r) return true; return false; };
-    const inRectReach = (rc) => { for (let c = 0; c < N; c++) if (seen[c]) { const x = cx(c), y = cy(c); if (x >= rc[0] - 14 && x <= rc[2] + 14 && y >= rc[1] - 14 && y <= rc[3] + 14) return true; } return false; };
+    const reachable = (x, y, r) => gridReach(x, y, r) || (!!fine && fine.some(([px, py]) => Math.hypot(px - x, (py - y) * 1.3) < r));
+    const inRectReach = (rc) => gridRect(rc) || (!!fine && fine.some(([x, y]) => x >= rc[0] - 14 && x <= rc[2] + 14 && y >= rc[1] - 14 && y <= rc[3] + 14));
     const inExit = (r, x, y) => x >= r[0] - 8 && x <= r[2] + 8 && y >= r[1] - 8 && y <= r[3] + 8;
     const problems = [], add = (kind, i, at, text) => problems.push({ kind, i, at, text });
     if (s0 < 0) add('start', 0, w.start, 'There is nowhere on this map she can stand.');

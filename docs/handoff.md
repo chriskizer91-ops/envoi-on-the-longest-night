@@ -15,7 +15,7 @@ October 3, 2026. The game plays from the title to the ending in one page (https:
    - the five well letters;
    - every story scene, the ending's words included.
 3. **Art requests 06 and 07:** sixteen townsfolk portraits and nine story stills. Each goes in with one line in `src/game/stills.js`.
-4. **The songs** are here (`art/music/`): Moonlit Forest Path for the towns, Herbal Decay for the wilds, Herbal Decay Battle for the battles. They go in last, once the build is finished, unless Chris wants them sooner. The synthesized pieces keep the rest (the title, the bosses, the ending).
+4. **The songs** are in (October 4, when Chris asked): Moonlit Forest Path for the towns, Herbal Decay for the wilds, Herbal Decay Battle for the battles (`src/game/songs.js`). The synthesized pieces keep the rest (the title, the marsh, the ruins, the flight, the ending).
 5. **The Bramble Colossus** (`reference/demos/bramble-colossus-bench.html`): built as the plan below says (`demos/colossus.html`). Changes are still welcome: its name, where it lives, its moves.
 6. **Art request 08:** a walk sheet for each of nineteen people, so everyone on the maps is a painted paper doll like Io. `node tools/cut-sheet.mjs` cuts each sheet into the game's walker.
 7. **The next mobs** for the wilds (at least two), the way `putting-it-all-together/README.md` says.
@@ -97,7 +97,7 @@ The meadow in Chris's bench answers the fight: shockwaves roll through the grass
 
 Today the party grows only by levels and the story's gifts (Harvest Moon, Envoi, Kestrel Stoop). A light layer would make the wilds' rewards matter more. Two options, which need Chris's call:
 
-- **Charms** found at wells and landmarks and given by side errands: one worn by each hero, with a small effect (+10% HP, Heat starts at 20, Lunar Mend costs less).
+- **Charms** found at wells and landmarks and given by side errands: one worn by each hero, with a small effect (+10% HP, Heat starts at 20, Lunar Mend costs less). **Built differently (October 4):** two hidden keepsakes, one each, that the balance never counts on (`design-decisions.md`, "polish").
 - **Moonlore Io learns from the letters:** each letter she gathers teaches a small spell.
 
 ### 8. The field
@@ -111,11 +111,11 @@ Today the party grows only by levels and the story's gifts (Harvest Moon, Envoi,
 
 - **Three save slots,** and a save code to copy and paste, to move a game between devices or between the two halves of a split demo (each published page keeps its own save). **Built.**
 - Text speed, auto-advance and larger text. **Word speed and larger text are built;** auto-advance isn't.
-- Separate volume for music and effects. **Built.**
+- Separate volume for music and effects. **Built,** and a third for each place's own sounds (October 4).
 
 ### 10. Sound
 
-- Chris's songs where he wants them.
+- Chris's songs where he wants them. **Built (October 4).**
 - A victory fanfare at the end of every fight, a short one for wild fights.
 
 ## Size and delivery

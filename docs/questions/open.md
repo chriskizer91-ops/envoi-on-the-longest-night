@@ -21,8 +21,16 @@ New questions, if any come up while the game is built, go here.
 
 20. **Walking without the world map.** Today the world map carries band 2's and band 3's wild walking and the camps where the Magpie lands. The plan in `../../envoi-game-pass-3/README.md` makes each band's wilds a short run of painted wilderness scenes (about three in band 2, three in band 3, one or two in band 4). Is that the right shape and number?
 21. **Night or day for the wilderness scenes?** Every map in the game is at night (the story is one long night); Chris's example path is by day.
-22. **The squeezes:** which level for the battle backgrounds (the Battle Backgrounds page), and which for the wilderness scenes (the Wilderness Walk page)?
-23. **Gate 5's painting:** Chris counted seven backgrounds (four wilds, gates 10 and 15, the finale). Gate 5, the great wraith, also needs one; 03 Bogmire Lantern Banks fits it exactly. And the first fight: keep the Night square's painting?
+22. **The squeezes:** which level for the battle backgrounds (the Battle Backgrounds page), and which for the wilderness scenes (the Wilderness Walk page)? Answered October 3, late evening: "Strong" for the battle backgrounds, and "100% extra light" for wilderness scenes (`design-decisions.md`).
+23. **Gate 5's painting:** Chris counted seven backgrounds (four wilds, gates 10 and 15, the finale). Gate 5, the great wraith, also needs one; 03 Bogmire Lantern Banks fits it exactly. And the first fight: keep the Night square's painting? In the game since October 3, late evening: 03 for gate 5, the Night square for the first fight.
+
+## Polish (October 4)
+
+24. **The two hidden keepsakes' names and words.** Chris asked for a magic item each for Io and Sol, hidden, that make the game a little easier without changing its difficulty. They are in, with names made up for them until Chris names them (`src/battle/rules.js` `KEEPSAKES`, and what's said when each is found in `src/game/script.js` `keepsakes`):
+    - **Io's, "the Crescent Locket":** a little silver locket with a crescent on its lid, under a loose slate at the end of the red roof's ridge in Wickhollow (Chris's secret way). Her Lunar Mend and Waxing Light heal a quarter more.
+    - **Sol's, "the Warden's Brooch":** an old sunstone brooch in dark bronze, still warm, where the trail into the Thornwood's dark woods gives out. Sol knows it for a Warden's ("A long way from the waystation") and wears it home for them. She has a tenth more HP, and her blows land a tenth harder.
+    - What are they really called, and who left them there? Is a fallen Warden's brooch in the Thornwood all right for the lore?
+25. **The battle song's loudness.** Chris's three songs play as loud as the made-up music they replace on the maps. The made-up battle theme was much quieter than the map music (it sat under the battle's sounds), but Herbal Decay Battle plays as loud as the map music, so it's heard. Is that right, or should it sit lower under the fighting?
 
 ## New character ideas
 

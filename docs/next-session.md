@@ -1,6 +1,6 @@
 # Next Session: Where the Work Stands
 
-October 3, 2026, late evening (into October 4): the session that started **pass three**, through Chris's notes on its pages and five chapter demos. Read this first. Then:
+October 4, 2026: the session that started **pass three** (October 3, evening), through Chris's notes on its pages, five chapter demos, his walking paths, herbs for the wilds, and a polish round: his songs, three volumes and two hidden keepsakes. Read this first. Then:
 
 - `../envoi-game-pass-3/README.md`: everything from pass three: Chris's decisions, the pages, the measured sizes, and the plans for the new battles and for walking without the world map.
 - `docs/handoff.md` lists what the game still wants (written before pass three; the pass-three README supersedes it where they differ).
@@ -22,7 +22,7 @@ October 3, 2026, late evening (into October 4): the session that started **pass 
 | Demo: Envoi at Gate 10 (Dawnroost, before its living node) | https://claude.ai/artifact/P5aNRec8gbhiVWrYBUQReT |
 | Demo: Envoi at Gate 15 (the crossroads, before Halcyon) | https://claude.ai/artifact/64ZUCdHakdVWA6mubZCwCA |
 | Demo: Envoi before the Finale (the foot of Misthollow) | https://claude.ai/artifact/LqvFuBB9BpvkCUiixc1ZS2 |
-| The game (version 6: the arrow, full-size towns, paper-doll faces, the fixes) | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
+| The game (version 10: Chris's songs, three volumes, the two hidden keepsakes, herbs for the wilds, his walking paths) | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
 | Battle Backgrounds: the game's eight paintings behind live 3D ground, at Chris's picks | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw |
 | Wilderness Walk: Io on Chris's wilderness path, nine squeezes | https://claude.ai/artifact/BcRjgVynWymYim84Yb7STk |
 | Walking Paths: the laptop editor for the maps' paths (its edits come back through its database, collection `edits`) | https://claude.ai/artifact/8BmLZd8sJjYBQ6kRbX2enm |
@@ -32,6 +32,8 @@ October 3, 2026, late evening (into October 4): the session that started **pass 
 | Colossus in the Meadow: the living battlefield's first fight | https://claude.ai/artifact/KCMQSy3QksJbZ4ikquxYVj |
 
   To update a page from a new session, pass its link as `url` to the Artifact tool. A publish to a page this conversation hasn't read is refused once and hands back the live copy; check it holds nothing your build lacks, then publish again.
+
+  **The game and the five demos carry Chris's songs as three files beside the page.** Publish each with `files` mapping `art/music/<song>.webm` to the same path (the three are listed in `dist/game.songs.json`); a page published without them plays the made-up music instead.
 
 ## What pass three did (so far)
 
@@ -45,7 +47,9 @@ October 3, 2026, late evening (into October 4): the session that started **pass 
 - smoother walking (hold to steer, tap to walk, a one-thumb pad, corners, straight tapped walks), and the fix that makes taps reach the walking map at all;
 - the Battle Backgrounds page and art request 11; the Wilderness Walk page.
 - then, after Chris's notes on those: the battle menu fixed (casting blacked it out); no lines across Io; the walking maps back at full size (towns quality 45, wilds 20); the little golden arrow to the story's next step (`src/game/goal-arrow.js`), with the Magpie moored where the script says; paper-doll faces in the dialogue box; battles' 3D at 3/4 sharpness; the four last battle paintings in; chapters starting just before each gate; and five demo pages (`tools/make-demos.mjs`).
-- **Size:** the file Chris keeps is 14.4 MB; the published game (and each demo) is 13.6 MB, under the 16 MB a published page may be.
+- then, on October 4: Chris's two rounds of walking paths, secret ways included, and the editor's drawing tools first; herbs for the wilds (carry nine, start with three, one of each a fight);
+- and the polish round: Chris's three songs (`src/game/songs.js`), three volumes (Music, Effects, Surroundings), two hidden keepsakes (Io's on the red roof, Sol's in the Thornwood's dark woods; the balance never counts on them), and taps that walk Io along narrow ways (`design-decisions.md`, "October 4, 2026: polish").
+- **Size:** the file Chris keeps is 17.4 MB with the songs inside; the published game (and each demo) is 13.6 MB, under the 16 MB a published page may be, with the songs beside it.
 
 ## Waiting on Chris
 
@@ -54,7 +58,7 @@ October 3, 2026, late evening (into October 4): the session that started **pass 
 3. **More map path edits**, whenever he sends them (both his rounds are in the game).
 4. **The lore conversation:** every word of the script is still a placeholder.
 5. **Art requests 06 and 07** (townsfolk portraits, story stills), and the footsteps.
-6. **The songs** go in only when the whole build is finished, unless he says sooner.
+6. **The keepsakes' names and words, and the battle song's loudness** (`questions/open.md`, 24 and 25).
 
 ## Next for Claude
 
@@ -63,6 +67,18 @@ October 3, 2026, late evening (into October 4): the session that started **pass 
 3. **Walking without the world map**, once Chris agrees the plan.
 4. **His map path edits**, when he sends more: list `edits` on the Walking Paths page with `ArtifactData` (`out_dir`), `check-edits.mjs`, then `apply-edits.mjs`, `check-maps`, build, `make-demos`, test, publish (`../envoi-game-pass-3/map-paths/README.md`). His shapes go in as drawn: secret ways and orange patches are meant.
 5. **The 20 frames a second freeze** on the Battle Backgrounds page is unexplained (the test browser can't pace like his phone). 20 is off the page and the game never offered it; if the new battles freeze or go black on his phone, look here first.
+
+### Polish still open (told to Chris on October 4)
+
+Small things that would make it nicer, none started:
+
+- **Auto-advance** for the words (the one reading setting not built).
+- **Footsteps** again, if Chris likes one of `demos/io-on-foot.html`'s two ideas (soft steps, a cloak's swish), and a door's sound when a map changes.
+- **Quicker fights to start:** every battle builds its models from scratch; keeping the heroes, Lunara and Envoi built between fights would cut the wait, if it shows on the phone.
+- **More to find:** more wells, letters and nodes, and the D&D map's named places as landmarks (`docs/handoff.md`, section 6); more townsfolk with lines that change with the story, and Inkblot on Quill's shoulder (section 4).
+- **More of the story staged,** with the people walking on the map while they talk, as the four big scenes already are (section 5).
+- **Room for the art:** the battle paintings and the world map could be squeezed to AVIF as the walking maps were, with a comparison page for Chris first.
+- **Mooncart:** the game reaches it only once this branch is merged into the repository's default branch, which is Chris's call.
 
 ## When things arrive
 
@@ -88,18 +104,17 @@ Follow the eight steps in `putting-it-all-together/README.md`:
 7. a demo page in `demos/`;
 8. one line in `game.html`.
 
-### The songs (last)
+### The songs (in since October 4)
 
 | File | Where it plays |
 |---|---|
-| `art/music/towns-moonlit-forest-path.webm` | the towns: maps whose `MUSIC` in `game.js` is `'town'` |
+| `art/music/towns-moonlit-forest-path.webm` | the towns: maps whose `MUSIC` in `game.js` is `'town'` (`SONG` maps it to the song) |
 | `art/music/wilds-herbal-decay.webm` | the wilds: `'travel'` (the Thornwood, the crossroads, the frozen pass, the world map) |
-| `art/music/battle-herbal-decay.webm` | the battles: `src/battle/sound.js` `startMusic` |
+| `art/music/battle-herbal-decay.webm` | the battles: `src/battle/sound.js` `setSong`, which plays it in place of the battle theme |
 
-- All three are Opus files.
+- `src/game/songs.js` loops each from an `<audio>` element, at the level measured to match the made-up music (`SONGS[id].level`, at Normal), fades, and pauses while the page is hidden. A song that can't play hands over to the made-up music.
+- **The build** puts the songs inside `dist/game.html` (and the `--offline` file), and leaves them beside `dist/game.artifact.html` (ART_BASE `''`), listed in `dist/game.songs.json`. `make-demos.mjs` copies both, so each demo's published copy wants the songs beside it too. `--split` puts them in `files.json` with the pictures.
 - A 48k copy of the battle song is in `reference/music/`, in case the 32k one sounds thin.
-- **The build:** `tools/build.mjs` inlines only images today. Extend it for `.webm` (`data:audio/webm`) and the `--split` copy.
-- **Playing them:** loop them through an `<audio>` element or Web Audio, under the music volume setting. The made-up music keeps the rest (the title, the marsh, the ruins, the flight, the bosses), unless Chris says otherwise.
 
 ### More room, if it's needed
 
@@ -125,7 +140,7 @@ When the published game passes 16 MB:
 
 The game test's steps:
 
-- `--steps` picks them from title, new, walk, controls, world, menu, saves, scenes, save, chapters, wild and colossus. The chapters step checks each chapter's town, its arrival scene and the arrow.
+- `--steps` picks them from title, new, walk, controls, world, menu, saves, scenes, save, chapters, keepsakes, songs, wild and colossus. The chapters step checks each chapter's town, its arrival scene and the arrow; keepsakes walks Io by taps up the roof and down the Thornwood's trail to both and checks them in a fight; songs checks each song plays where it should, from where it was.
 - `--size 915x412` is a Pixel 7a held sideways.
 
 ## Lessons from this session
@@ -135,6 +150,8 @@ The game test's steps:
 - **Art paths** in the scripts must be in double quotes (`"art/..."`) for the build to put the pictures inside the page.
 - **Chris's PNGs** can carry a content-credentials block that sharp won't read. `compress.mjs`, `trace-overlay.mjs` and `cut-sheet.mjs` strip it.
 - **Sibling repositories** are read-only. When copying from one, name the source repository and path in the commit message (CLAUDE.md).
+- **Headless walking tests:** start Io on ground she can stand on (`goField` doesn't move her off a bad point), mark the square's first scene done (`state.done.first`) or she walks into it, and hold off the wilds' random fights with `field.setCounter(-1e6)`.
+- **Measuring music:** `ffmpeg -i <file> -af ebur128 -f null -` gives a song's loudness; the made-up music can be rendered offline with an `OfflineAudioContext` (`ThareiaAudio.musicPlay(id, { ctx, at: 0, until })`) and measured the same way.
 
 ## Chris's preferences, from this session
 

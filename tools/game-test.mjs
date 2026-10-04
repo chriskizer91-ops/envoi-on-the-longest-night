@@ -13,6 +13,10 @@
 //   save:     the save is written, and the title offers Continue
 //   wild:     a wild fight in the band (--band, at --level) is played to its end by the expert play style
 //   colossus: the Bramble Colossus is fought the same way (band 4); headless, a whole fight takes a long while
+//   keepsakes: Io walks by a tap up Chris's secret way over Wickhollow's roof to her keepsake, and down the Thornwood's
+//             dark trail to Sol's; each is found once, named in the Party tab, and counts in a fight
+//   songs:    Chris's songs play where they belong (the towns', the wilds', the battles'), each from where it was, and
+//             the made-up music where they don't; Music Off quietens them (run after title or new)
 // Each step saves a screenshot in --out (tools/.cache/game-test by default). Exits 1 on any page error.
 // three.js r128 comes from npm into tools/.cache, since the CDN is unreachable from the sandbox; the fonts are skipped.
 // --offline tests the file Chris keeps (node tools/build.mjs --min --offline putting-it-all-together/game.html):
@@ -180,6 +184,113 @@ try {
       log('  after the fight: ' + JSON.stringify(r));
       await talkThrough(30000);
       await shot(step + '-after');
+    } else if (step === 'keepsakes') {
+      const walk = async (x, y, what) => {
+        const t1 = Date.now();
+        await page.evaluate(([x, y]) => window.__game.field.walkTo(x, y), [x, y]);
+        await waitFor(([x, y]) => { const P = window.__game.field.P; return Math.hypot(P.x - x, P.y - y) < 14; }, [x, y], 40000, what);
+        log('  ' + what + ' by a tap, in ' + ((Date.now() - t1) / 1000).toFixed(1) + ' s');
+      };
+      const pick = async (id, what) => {
+        const label = await page.evaluate(() => (window.__game.field.near() || {}).label);
+        if (label !== 'Something glinting') throw new Error('nothing to pick up ' + what + ': ' + label);
+        await page.keyboard.press('Enter');
+        await talkThrough(30000, '!window.__game.busy && !!window.__game.state.keepsakes && !!window.__game.state.keepsakes.' + id);
+        const after = await page.evaluate(() => (window.__game.field.near() || {}).label);
+        if (after === 'Something glinting') throw new Error('the keepsake ' + what + ' is still there once found');
+      };
+      await page.evaluate(() => { const g = window.__game; g.state.flags.party = true; g.state.done.first = true; g.goField('wickhollow', [700, 440]); });
+      await waitFor(() => window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 30000, 'the square');
+      await walk(458, 562, 'up the tree and along the roof');
+      await shot('keepsake-roof');
+      await pick('io', 'on the roof');
+      await walk(700, 440, 'back down to the square');
+      await page.evaluate(() => { window.__game.goField('thornwood', [800, 540]); });
+      await waitFor(() => window.__game.field.map.id === 'thornwood' && !window.__game.busy, null, 30000, 'the Thornwood');
+      await page.evaluate(() => window.__game.field.setCounter(-1e6)); // no wild fight on the way
+      await walk(1284, 816, 'down the dark trail');
+      await shot('keepsake-woods');
+      await pick('sol', 'in the woods');
+      await page.evaluate(() => { window.__game.menu(); });
+      await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');
+      await page.click('.gmenu-tabs button:text-is("Party")'); await sleep(300);
+      const party = await page.$eval('.gmenu-body', (b) => b.textContent);
+      if (!party.includes('Carries the Crescent Locket') || !party.includes('Carries the Warden’s Brooch')) throw new Error('the Party tab does not name the keepsakes: ' + party);
+      await shot('keepsake-party');
+      await page.click('.gmenu-foot button:text-is("Close")');
+      await waitFor(() => !document.querySelector('.gmenu'), null, 10000, 'the menu to close');
+      // in a fight: Sol's max HP and her blows a tenth more, Io's Moonlore heals a quarter more
+      await page.evaluate(() => { window.__game.battle('wild', { band: 1, scene: null }); });
+      await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
+      const hs = await page.evaluate(() => {
+        const RL = window.BattleRules, E = window.__battle.engine, L = window.__game.state.level, sol = E.heroes.find((h) => h.id === 'sol'), io = E.heroes.find((h) => h.id === 'io');
+        return { solHp: sol.maxHp, want: Math.round(RL.HEROES.sol.hp * RL.scale(L) * 1.1), dmg: sol.boostDmg, heal: io.boostHeal, state: window.GameState.maxHp(window.__game.state, 'sol') };
+      });
+      if (hs.solHp !== hs.want || hs.state !== hs.want || hs.dmg !== 1.1 || hs.heal !== 1.25) throw new Error('the keepsakes do not count in the fight: ' + JSON.stringify(hs));
+      log('  in a fight: Sol ' + hs.solHp + ' HP, blows x' + hs.dmg + ', Io heals x' + hs.heal);
+      await page.evaluate((tb) => { for (const f of window.__battle.engine.foes) window.__battle.weaken(5, f.key); window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
+      await waitFor(() => window.__battle && window.__battle.state === 'over' && !document.getElementById('end').hidden, null, 900000, 'the fight to end');
+      await page.click('#again');
+      await waitFor(() => !document.querySelector('.battle-layer'), null, 60000, 'the battle to close');
+      await talkThrough(30000);
+    } else if (step === 'songs') {
+      const songs = () => page.evaluate(() => window.__game.songs.state());
+      const near = (a, b) => Math.abs(a - b) < 0.02;
+      async function hear(want, what) {
+        await sleep(2500);
+        const s = await songs(), m = await page.evaluate(() => window.__game.music);
+        if (m !== want) throw new Error(what + ': playing ' + m + ', not ' + want + ' ' + JSON.stringify(s));
+        if (s.playing && (s.songs[s.playing].paused || !(s.songs[s.playing].at > 0.5))) throw new Error(what + ': the song is not playing ' + JSON.stringify(s));
+        log('  ' + what + ': ' + want + (s.playing ? ' at ' + s.songs[s.playing].at.toFixed(1) + ' s, level ' + s.songs[s.playing].level.toFixed(2) : ' (made-up)'));
+        return s;
+      }
+      await page.evaluate(() => { const g = window.__game; g.audioInit(); g.state.flags.party = true; g.goField('wickhollow', [780, 940]); });
+      await waitFor(() => window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 30000, 'the square');
+      let s = await hear('town', 'Wickhollow');
+      if (!near(s.songs.town.level, 0.37)) throw new Error('the town song is not at its level: ' + s.songs.town.level);
+      const townAt = s.songs.town.at;
+      await page.evaluate(() => { window.__game.goField('thornwood', [60, 456]); });
+      await waitFor(() => window.__game.field.map.id === 'thornwood' && !window.__game.busy, null, 30000, 'the Thornwood');
+      s = await hear('wilds', 'the Thornwood');
+      if (!s.songs.town.paused || s.songs.town.at < townAt) throw new Error('the town song did not stop where it was ' + JSON.stringify(s));
+      const wildAt = s.songs.wilds.at;
+      await page.evaluate(() => { window.__game.battle('wild', { band: 1, scene: null }); });
+      await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
+      s = await hear('battle', 'a fight');
+      if (s.songs.battle.at > 30) throw new Error('the battle song did not start from the top: ' + s.songs.battle.at);
+      await page.evaluate((tb) => { for (const f of window.__battle.engine.foes) window.__battle.weaken(5, f.key); window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
+      await waitFor(() => window.__battle && window.__battle.state === 'over' && !document.getElementById('end').hidden, null, 900000, 'the fight to end');
+      await page.click('#again');
+      await waitFor(() => !document.querySelector('.battle-layer'), null, 60000, 'the battle to close');
+      await talkThrough(30000);
+      s = await hear('wilds', 'back in the Thornwood');
+      if (s.songs.wilds.at < wildAt) throw new Error('the wilds song started again instead of going on: ' + s.songs.wilds.at + ' < ' + wildAt);
+      await sleep(1500); s = await songs();
+      if (!s.songs.battle.paused || s.songs.battle.at !== 0) throw new Error('the battle song did not stop and go back to the top ' + JSON.stringify(s));
+      await page.evaluate(() => { window.__game.goField('cottage', [838, 520]); });
+      await waitFor(() => window.__game.field.map.id === 'cottage' && !window.__game.busy, null, 30000, 'the cottage');
+      s = await hear('title', 'the cottage');
+      if (!s.songs.wilds.paused) throw new Error('the wilds song still plays in the cottage');
+      // Music Off and back on, from the menu's settings
+      await page.evaluate(() => { window.__game.goField('wickhollow', [780, 940]); });
+      await waitFor(() => window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 30000, 'the square');
+      await hear('town', 'Wickhollow again');
+      await page.evaluate(() => { window.__game.menu(); });
+      await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');
+      await page.click('.gmenu-tabs button:text-is("Settings")');
+      const musicRow = page.locator('.gm-item', { has: page.locator('span:text-is("Music")') });
+      await musicRow.locator('button:text-is("Off")').click(); await sleep(1500);
+      s = await songs();
+      if (!s.songs.town.paused) throw new Error('Music Off left the song playing ' + JSON.stringify(s));
+      await musicRow.locator('button:text-is("Loud")').click(); await sleep(1500);
+      s = await songs();
+      if (s.songs.town.paused || !near(s.songs.town.level, 0.37 / 0.75)) throw new Error('Music Loud did not bring the song back louder ' + JSON.stringify(s));
+      log('  Music off, then loud: level ' + s.songs.town.level.toFixed(2));
+      const surround = await page.$$eval('.gm-item span', (x) => x.map((e) => e.textContent).filter((t) => t === 'Surroundings').length);
+      if (!surround) throw new Error('no Surroundings volume in the settings');
+      await musicRow.locator('button:text-is("Normal")').click();
+      await page.click('.gmenu-foot button:text-is("Close")');
+      await waitFor(() => !document.querySelector('.gmenu'), null, 10000, 'the menu to close');
     } else if (step === 'chapters') {
       // each gate's chapter from the title: Io in the town before the gate (the crossroads' own south road; Misthollow
       // for the finale), the party at the gate's level, saved, after the town's arrival scene; and the little arrow

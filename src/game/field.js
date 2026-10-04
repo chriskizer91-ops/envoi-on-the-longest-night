@@ -3,7 +3,8 @@
 // until her art loads, or when no painted Io is given:
 // the arrow keys, the d-pad (one thumb rolls round it to any of eight ways, as on Witch Way's pad) or the map itself:
 // press and hold to steer her toward the finger or the mouse, or tap or click to walk her there round the walls, by a
-// path found on a coarse grid of the walk areas and straightened (Chris: directing her and tapping to walk are one).
+// path found on a coarse grid of the walk areas and straightened (Chris: directing her and tapping to walk are one), or
+// on the narrow ways the grid is too coarse to see (his secret paths, up a tree and along a roof's ridge) by a finer search.
 // Walking into a corner, she slips sideways round it, as Witch Way's walker does. The townsfolk stand in their places (sprites.js) and turn to her when she talks to them. The action
 // button names what is in reach: a person to talk to, a well, a rest, something to look at, the Magpie. Exits take her
 // to the next map, event areas start a story beat or a set fight once, and in the wilds every step fills a hidden
@@ -116,10 +117,49 @@
       // open all the way
       for (let j = 0; j < GH; j++) for (let i = 0; i < GW; i++) { const x = i * CELL + CELL / 2, y = j * CELL + CELL / 2, h = CELL / 2 - 1; grid[j * GW + i] = canStand(x, y) && canStand(x, y - h) && canStand(x, y + h) && canStand(x - h, y) && canStand(x + h, y) ? 1 : 0; }
     }
-    // breadth-first from her cell to the open cell nearest the tap; the path is smoothed to the cells where it turns
+    const openAt = (x, y) => !!grid[clamp(Math.floor(y / CELL), 0, GH - 1) * GW + clamp(Math.floor(x / CELL), 0, GW - 1)];
+    // the fine search, for the narrow ways the grid can't see (a way under 22 px wide has no open cell, though her feet
+    // fit a 12 px one): an A* search in 4 px steps from (x0, y0) to (tx, ty), on the same rule as her feet, giving up
+    // after FINE_MAX steps. Returns the points along the way, ending at (tx, ty), or null
+    const FINE = 4, FINE_MAX = 20000, DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+    function fineWay(x0, y0, tx, ty) {
+      const key = (i, j) => (i + 1024) * 2048 + j + 1024, ok = new Map(), from = new Map(), cost = new Map();
+      const can = (i, j) => { const k = key(i, j); let v = ok.get(k); if (v === undefined) ok.set(k, v = canStand(x0 + i * FINE, y0 + j * FINE)); return v; };
+      const gi = (tx - x0) / FINE, gj = (ty - y0) / FINE;
+      const est = (i, j) => { const a = Math.abs(i - gi), b = Math.abs(j - gj); return Math.max(a, b) + 0.414 * Math.min(a, b); };
+      const heap = []; // [estimate, cost, i, j], the smallest estimate first
+      const push = (n) => { let c = heap.length; heap.push(n); while (c) { const p = (c - 1) >> 1; if (heap[p][0] <= n[0]) break; heap[c] = heap[p]; c = p; } heap[c] = n; };
+      const pop = () => {
+        const top = heap[0], last = heap.pop();
+        if (heap.length) { let c = 0; for (;;) { let m = c * 2 + 1; if (m >= heap.length) break; if (m + 1 < heap.length && heap[m + 1][0] < heap[m][0]) m++; if (heap[m][0] >= last[0]) break; heap[c] = heap[m]; c = m; } heap[c] = last; }
+        return top;
+      };
+      push([est(0, 0), 0, 0, 0]); cost.set(key(0, 0), 0); from.set(key(0, 0), null);
+      for (let n = 0; heap.length && n < FINE_MAX; n++) {
+        const [, c0, ci, cj] = pop(), k0 = key(ci, cj);
+        if (c0 > cost.get(k0)) continue; // a step already reached a shorter way
+        if (Math.abs(ci - gi) <= 1.5 && Math.abs(cj - gj) <= 1.5) {
+          const pts = [[tx, ty]];
+          for (let c = from.get(k0), at = [ci, cj]; at; at = c, c = c && from.get(key(c[0], c[1]))) if (at[0] || at[1]) pts.push([x0 + at[0] * FINE, y0 + at[1] * FINE]);
+          return pts.reverse();
+        }
+        for (const [di, dj] of DIRS) {
+          const i = ci + di, j = cj + dj;
+          if (!can(i, j) || (di && dj && (!can(ci + di, cj) || !can(ci, cj + dj)))) continue; // no cutting corners
+          const c = c0 + (di && dj ? 1.414 : 1), k = key(i, j), was = cost.get(k);
+          if (was !== undefined && c >= was) continue;
+          cost.set(k, c); from.set(k, [ci, cj]); push([c + est(i, j), c, i, j]);
+        }
+      }
+      return null;
+    }
+    // breadth-first from her cell to the open cell nearest the tap; the path is smoothed to the cells where it turns.
+    // When she stands on a narrow way, or the tap lands on one, the fine search finds the way instead
     function findRoute(tx, ty) {
       const si = clamp(Math.floor(P.x / CELL), 0, GW - 1), sj = clamp(Math.floor(P.y / CELL), 0, GH - 1);
       let ti = clamp(Math.floor(tx / CELL), 0, GW - 1), tj = clamp(Math.floor(ty / CELL), 0, GH - 1);
+      const narrow = !openAt(P.x, P.y) && canStand(P.x, P.y);
+      if (narrow || (!grid[tj * GW + ti] && canStand(tx, ty))) { const f = fineWay(P.x, P.y, tx, ty); if (f) return straighten(f); }
       if (!grid[tj * GW + ti]) { // the nearest open cell to the tap
         let best = null, bd = 1e9;
         for (let r = 1; r < 12 && !best; r++) for (let j = tj - r; j <= tj + r; j++) for (let i = ti - r; i <= ti + r; i++) {
@@ -128,6 +168,7 @@
         }
         if (!best) return null; [ti, tj] = best; tx = ti * CELL + CELL / 2; ty = tj * CELL + CELL / 2;
       }
+      if (narrow) { const f = fineWay(P.x, P.y, tx, ty); return f ? straighten(f) : null; } // from a narrow way to the grid
       const prev = new Int32Array(GW * GH).fill(-1), start = sj * GW + si, goal = tj * GW + ti;
       const q = [start]; prev[start] = start;
       for (let h = 0; h < q.length; h++) {
@@ -146,9 +187,9 @@
       if (pts.length) pts[pts.length - 1] = [tx, ty];
       return straighten(pts);
     }
-    // a straight line she can walk all the way along
+    // a straight line she can walk all the way along (looked at every 2 px, fine enough for the corners of a narrow way)
     function clearLine(x0, y0, x1, y1) {
-      const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 6);
+      const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 2);
       for (let i = 1; i <= n; i++) if (!canStand(x0 + (x1 - x0) * i / n, y0 + (y1 - y0) * i / n)) return false;
       return true;
     }
@@ -238,6 +279,9 @@
       return Math.max(E.min, E.mean * (0.55 + Math.random() * 0.9)) / rate;
     }
 
+    // the way turns by more than about 50 degrees at b, going from (ax, ay) through b to c
+    const sharpTurn = (ax, ay, b, c) => { const ux = b[0] - ax, uy = b[1] - ay, vx = c[0] - b[0], vy = c[1] - b[1], d = Math.hypot(ux, uy) * Math.hypot(vx, vy); return d > 0 && (ux * vx + uy * vy) / d < 0.64; };
+
     // ---------- the loop ----------
     let last = performance.now(), stopped = false;
     function frame(t) {
@@ -267,7 +311,8 @@
           if (!route.length) { route = null; dx = dy = 0; if (target) { const tt = target; target = null; const n = near(); if (n && n.ref === tt.ref) useNear(); } }
           else { [wx, wy] = route[0]; dx = wx - P.x; dy = wy - P.y; }
         }
-        last = !!route && route.length === 1;
+        // she slows into the end of the walk, and into a sharp turn, which on a narrow way she would otherwise overrun
+        last = !!route && (route.length === 1 || sharpTurn(P.x, P.y, route[0], route[1]));
       }
       const L = Math.hypot(dx, dy), h = ioH();
       const pace = 1 + RUN * clamp((P.run - 0.8) / 0.8, 0, 1), top = (opts.pace ? opts.pace * h : speed) * pace;
@@ -280,11 +325,15 @@
       if (!L && Math.hypot(P.vx, P.vy) < 2) { P.vx = 0; P.vy = 0; }
       const mx = P.vx * dt, my = P.vy * dt, x0 = P.x, y0 = P.y;
       if (mx || my) {
-        // slide along walls: the whole step, or the part of it that's open
+        // slide along walls: the whole step; a longer one, of up to 4 px, over a sliver of wall (where two walk areas meet
+        // in a sharp notch, as Chris's roof path does); or the part of it that's open
+        const ml = Math.hypot(mx, my), over = () => (ml < 4 ? [2, 3, 4].find((d) => d > ml && canStand(P.x + mx / ml * d, P.y + my / ml * d)) : 0);
+        let d;
         if (canStand(P.x + mx, P.y + my)) { P.x += mx; P.y += my; }
+        else if ((d = over())) { P.x += mx / ml * d; P.y += my / ml * d; }
         else if (mx && canStand(P.x + mx, P.y)) { P.x += mx; P.vy = 0; }
         else if (my && canStand(P.x, P.y + my)) { P.y += my; P.vx = 0; }
-        else if (dirs.size || steering) {
+        else if (dirs.size || steering || route) {
           // walking straight into a corner: she slips sideways round it, toward the nearer opening within a few pixels,
           // at her own pace (Witch Way's walker.js, slide)
           const sp = top * dt, L2 = Math.hypot(mx, my) || 1, ux = mx / L2, uy = my / L2;
@@ -398,8 +447,9 @@
       for (const s of things()) {
         if (s.kind === 'person') continue;
         const x = (s.x - cam.x) * cam.z, y = (s.y - cam.y) * cam.z;
-        const c = s.kind === 'rest' ? '255,214,140' : s.kind === 'magpie' ? '160,200,255' : s.used ? '200,200,220' : '255,240,200';
-        const r = (s.used ? 4 : 6) + pulse * 3;
+        const c = s.kind === 'rest' ? '255,214,140' : s.kind === 'magpie' ? '160,200,255' : s.kind === 'keepsake' ? '215,230,255' : s.used ? '200,200,220' : '255,240,200';
+        // a hidden keepsake only twinkles now and then, and small
+        const r = s.kind === 'keepsake' ? 2 + 4 * Math.pow(Math.max(0, Math.sin(t / 700)), 6) : (s.used ? 4 : 6) + pulse * 3;
         const gr = g.createRadialGradient(x, y - 6, 0, x, y - 6, r * 2.4); gr.addColorStop(0, 'rgba(' + c + ',' + (s.used ? 0.35 : 0.8) + ')'); gr.addColorStop(1, 'rgba(' + c + ',0)');
         g.fillStyle = gr; g.beginPath(); g.arc(x, y - 6, r * 2.4, 0, Math.PI * 2); g.fill();
       }

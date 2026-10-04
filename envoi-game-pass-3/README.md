@@ -13,7 +13,7 @@ Started October 3, 2026, in the evening, after Chris played the put-together gam
 | Envoi at Gate 10 | https://claude.ai/artifact/P5aNRec8gbhiVWrYBUQReT | Dawnroost, just before its living node, and on to the crossroads |
 | Envoi at Gate 15 | https://claude.ai/artifact/64ZUCdHakdVWA6mubZCwCA | The northern crossroads, just before Halcyon, and on to Misthollow |
 | Envoi before the Finale | https://claude.ai/artifact/LqvFuBB9BpvkCUiixc1ZS2 | The foot of Misthollow, on the way up to the dead Moonwell |
-| The game | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w | The whole game, with everything above; Chapters on its title |
+| The game | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w | The whole game, with everything above; Chapters on its title, Chris's songs, and two keepsakes hidden for finding |
 | Battle Backgrounds | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw | The game's eight battle paintings far off, live 3D ground in front: Strong squeeze, 30 frames a second, 3/4 sharpness, as Chris chose |
 | Wilderness Walk | https://claude.ai/artifact/BcRjgVynWymYim84Yb7STk | Io on Chris's wilderness path example, with nine squeezes of the painting (he chose "100% extra light") |
 | Walking Paths | https://claude.ai/artifact/8BmLZd8sJjYBQ6kRbX2enm | The laptop editor for where Io can walk on all 13 maps: drag the paths over each painting, walk her on the change, and send the edits to Claude |
@@ -94,10 +94,14 @@ Each demo is the whole game opening at its chapter, saving as it goes; its title
 20. **The editor's drawing tools come first:** + Green, + Purple and + Red, in the layers' colours, at the top of its panel.
 21. **Chris's second round of walking paths** (October 4): Dawnroost's living node, the dead Moonwell, the Thornwood and Wickhollow, with new places to explore, among them a hidden nook behind the node's weapon stall.
 22. **Herbs for the wilds** (October 4): up to nine of each, three of each to start, each used once a fight, as many as you have out of battle. The fights are exactly as balanced as before.
+23. **Chris's three songs are in** (October 4): Moonlit Forest Path in the towns, Herbal Decay in the wilds and over the world map, Herbal Decay Battle in every fight, each as loud as the made-up music it replaces (`../src/game/songs.js`). The made-up music keeps the title, the marsh, the ruins, the flight and the ending. On the published pages the songs are three files beside the page.
+24. **Three volumes:** Music, Effects and Surroundings (each place's own crickets, wind and water), each from Off to Loud.
+25. **Two hidden keepsakes,** Chris's magic items: Io's on top of the red roof in Wickhollow (her Moonlore heals a quarter more), Sol's where the trail into the Thornwood's dark woods gives out (a tenth more HP and a tenth harder blows). Nothing points to them; the balance never counts on them. Their names wait for Chris (`../docs/questions/open.md`, 24).
+26. **A tap walks Io along narrow ways too,** Chris's secret paths included: a tap on the roof's glint takes her up the tree and along the ridge. The Walking Paths editor's reach check follows narrow ways the same way, so its orange marks only ground she can't reach at all.
 
 ## The size, measured
 
-The file Chris keeps (offline, one file): **14.4 MB** (October 3, late), from 15.0 MB at the start of pass three and 12.2 MB before the walking maps went back to full size. The published game is 13.6 MB, under the 16 MB a published page may be.
+The file Chris keeps (offline, one file): **17.4 MB** with the songs inside (October 4), from 14.4 MB without them. The published game is 13.6 MB, under the 16 MB a published page may be, with the songs as three files beside it (2.3 MB).
 
 | In the file today | MB |
 |---|---|
@@ -107,19 +111,19 @@ The file Chris keeps (offline, one file): **14.4 MB** (October 3, late), from 15
 | Code: three.js 0.6, the models 0.7, the game 0.4 | 1.7 |
 | Paper dolls (19) and their faces | 0.9 |
 | Title picture, portraits, fonts, the skiff | 1.1 |
+| Chris's three songs (inside the file he keeps; beside the published page) | 3.0 |
 
 Where it is heading, with everything Chris has asked for:
 
 | Change | MB |
 |---|---|
-| Chris's three songs | +3.0 |
 | Sixteen townsfolk portraits and nine story stills, squeezed | +2.1 to 3.1 |
 | The new battles: the eight backgrounds at Strong (0.24 MB) and the living field's code, in place of the nine old paintings | about −2.5 |
 | No walking on the world map: its walking tiles go (the flight keeps its own map), and about eight wilderness scenes come in at "100% extra light" | about −1.1 |
 | New wild creatures, later (about 65 KB each) | about +0.4 |
-| **About** | **17 MB of the 30 MB limit** |
+| **About** | **16 to 17 MB of the 30 MB limit** |
 
-Past 16 MB the published copy goes out as a small page with its pictures beside it (`node tools/build.mjs --min --split`), which is already built.
+The published copy already keeps the songs beside the page. If the pictures push it past 16 MB too, it goes out as a small page with everything beside it (`node tools/build.mjs --min --split`), which is already built.
 
 ## Next: the new battles
 
@@ -157,4 +161,4 @@ Random fights happen on the wilderness scenes, as in the Thornwood today, and th
    - the lore conversation (every word is a placeholder);
    - art requests 06 (portraits) and 07 (stills);
    - the footsteps (none, soft steps, or a cloak swish);
-   - the songs, which go in last.
+   - the keepsakes' names, and the battle song's loudness (`../docs/questions/open.md`, 24 and 25).

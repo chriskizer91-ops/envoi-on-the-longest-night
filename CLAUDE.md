@@ -24,5 +24,5 @@
 - Lore questions go to Chris in `docs/questions/`; he answers them in a separate lore conversation.
 - When new art is needed, write the image prompts as markdown files in `docs/art-requests/` for Chris to generate.
 - New character ideas Chris brings go in `3d-model-new-character-ideas/`, one folder each, with what he brought kept untouched in its `original/`. They aren't canon until he places them.
-- The whole game is put together in `putting-it-all-together/`: its page, and a README listing every piece, where it comes from and its state. Chris's songs go in last, once the whole build is finished.
+- The whole game is put together in `putting-it-all-together/`: its page, and a README listing every piece, where it comes from and its state. Chris's songs went in on October 4, when he asked for them.
 - Pass three (from October 3, evening) keeps its decisions, pages and plans in `envoi-game-pass-3/`, one folder per page. Chris edits things on his laptop.

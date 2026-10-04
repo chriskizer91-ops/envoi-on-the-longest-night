@@ -9,6 +9,8 @@
 //     foes: [{ id: 'wraith', level: 3 }, { id: 'wisp', level: 2 }], flags: { party: true }, herbs: { moonpetal: 2 }, seed: 7 });
 //   let s = B.turn();           // runs the gauges to the next turn: { type: 'choose' | 'auto' | 'end', unit, log }
 //   B.choose('flame', 'wraith'); // the hero's command and its target; returns that action's log
+// A hero may also come with hpMul, dmgMul and healMul: a hidden keepsake the game's party has found (rules.js KEEPSAKES),
+// which the balance never counts on.
 (function (G) {
   'use strict';
   // mulberry32: small, fast and the same everywhere
@@ -39,7 +41,7 @@
       const d = HE[s.id], L = s.level, k = RL.scale(L);
       const u = {
         side: 'hero', id: s.id, key: s.id, name: d.name, def: d, level: L, fill: d.atb,
-        maxHp: Math.round(d.hp * k), maxMp: Math.round(d.mp * RL.mpScale(L)),
+        maxHp: Math.round(d.hp * k * (s.hpMul || 1)), maxMp: Math.round(d.mp * RL.mpScale(L)), boostDmg: s.dmgMul || null, boostHeal: s.healMul || null,
         atb: s.atb || 0, heat: s.heat || 0, trance: s.trance || 0, tranceReady: false, inTrance: false, tranceLeft: 0, heatBefore: 0,
         defending: false, guarding: false, severed: false, moonNext: false, hovering: null, lured: null, charmed: null, charm: 1,
       };
@@ -117,6 +119,7 @@
       if (burn) n *= HE.sol.sunburn.damage;
       if (f.sunder > 0) n *= ST.sunder;
       if (a.side === 'hero') n *= 1 + B.might; // Ember-star Lily
+      if (a.side === 'hero' && a.boostDmg) n *= a.boostDmg; // Sol's keepsake
       // the Bramble Colossus's heart: while its bud is open, every blow on it lands double
       const weak = !!(f.open && f.def.heart && a.side === 'hero');
       if (weak) n *= f.def.heart;
@@ -493,10 +496,12 @@
           break;
         }
         case 'guard': h.guarding = true; break;
-        case 'mend':
-          if (h.inTrance) for (const a of living('hero')) heal(h, a, d.heal); else heal(h, tgt, d.heal);
+        case 'mend': {
+          const n = h.boostHeal ? d.heal * h.boostHeal : d.heal; // Io's keepsake
+          if (h.inTrance) for (const a of living('hero')) heal(h, a, n); else heal(h, tgt, n);
           break;
-        case 'waxing': for (const a of living('hero')) heal(h, a, d.heal); break;
+        }
+        case 'waxing': for (const a of living('hero')) heal(h, a, h.boostHeal ? d.heal * h.boostHeal : d.heal); break;
         case 'moonsteel':
           if (alive(tgt)) { if (!tgt.inTrance) tgt.heat = Math.min(HE.sol.heat.max, tgt.heat + d.heat); tgt.moonNext = true; emit({ t: 'heat', to: tgt.key, n: d.heat }); }
           break;

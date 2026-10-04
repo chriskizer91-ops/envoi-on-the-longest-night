@@ -1,7 +1,8 @@
 // game.js: the game itself (plan phase 5), joining the pieces: the title, the ground maps (field.js), the world map
 // (world.js), the dialogue box (talk.js), the battles (the battle screen in its game mode, with fights.js), the story's
-// beats and words (script.js), the menus, the herb shops, the rests and the save (state.js), and the music (Chris's
-// library from 20-min, thareia-audio.js; the battles keep the Night square's own theme).
+// beats and words (script.js), the menus, the herb shops, the rests and the save (state.js), and the music: Chris's
+// three songs in the towns, the wilds and the battles (songs.js), and his library from 20-min everywhere else
+// (thareia-audio.js).
 // The story runs on flags in the save: party (Sol has joined), magpie (Quill's skiff is Io's), lights (Bogmire's lamps
 // are back), refit, envoi, charge, stoop, shipyard, upgrade2, ending. The highest band the Magpie can reach (st.band)
 // opens the world map's bands; the rest lie under cold mist.
@@ -117,10 +118,15 @@
     const root = el('div', { class: 'game' }, host);
     const fieldHost = el('div', { class: 'layer' }, root), worldHost = el('div', { class: 'layer' }, root);
     let st = opts.state || GS.fresh();
-    // music and effects: 0 (off) to 1; text: how fast the words come (0 for all at once); big: larger text
-    const settings = { rate: 1, light: 1, music: 0.75, sfx: 0.75, text: 1, big: false };
-    try { Object.assign(settings, JSON.parse(localStorage.getItem('envoi.settings') || '{}')); } catch (e) { /* defaults */ }
+    // music, effects and amb (the places' own sounds: crickets, wind, water): 0 (off) to 1; text: how fast the words
+    // come (0 for all at once); big: larger text
+    const settings = { rate: 1, light: 1, music: 0.75, sfx: 0.75, amb: 0.75, text: 1, big: false };
+    let kept = {};
+    try { kept = JSON.parse(localStorage.getItem('envoi.settings') || '{}') || {}; } catch (e) { /* defaults */ }
+    Object.assign(settings, kept);
     if (settings.sound) { if (settings.sound === 'off') settings.music = settings.sfx = 0; else if (settings.sound === 'music') settings.music = 0; delete settings.sound; }
+    // the places' sounds followed the effects' volume until they had one of their own (October 4)
+    if (kept.amb == null && (kept.sfx != null || kept.sound)) settings.amb = settings.sfx;
     root.classList.toggle('big-text', !!settings.big);
     const keepSettings = () => { try { localStorage.setItem('envoi.settings', JSON.stringify(settings)); } catch (e) { /* not kept */ } };
     let mode = 'title', busy = 0;
@@ -128,27 +134,44 @@
     // ---------- sound ----------
     let audioOn = false, curMusic = null;
     const SND = window.makeBattleSound();
+    // Chris's songs (songs.js): the towns' and the wilds' here, the battles' through the battle screen's sound. Where a
+    // song can't play, the made-up music plays instead
+    const SONG = { town: 'town', travel: 'wilds' };
+    const songs = window.Songs.create({
+      src, ctx: () => AUD.sfxContext(),
+      onFail: (id) => { if (id === 'battle') SND.songFailed(); else { const m = curMusic; curMusic = null; music(m); } },
+    });
+    SND.setSong({ ok: () => songs.has('battle'), play: () => songs.play('battle'), stop: (fade) => songs.stop(fade) });
     function audioInit() { if (audioOn) return; audioOn = true; try { AUD.sfxInit(); SND.init(); applySound(); } catch (e) { /* no audio */ } }
-    // the music's and the effects' volumes, each from off to loud, in the map's sounds and the battles' alike
+    // the music's, the effects' and the places' volumes, each from off to loud, on the maps and in the battles alike
     function applySound() {
       try {
-        AUD.setVolume(settings.music, settings.sfx); SND.setVolumes(settings.music, settings.sfx);
-        SND.setMuted(!settings.music && !settings.sfx); SND.setMusicOff(!settings.music); if (!settings.music) AUD.musicStop(0.4);
+        AUD.setVolume(settings.music, settings.sfx, settings.amb); SND.setVolumes(settings.music, settings.sfx); songs.setVolume(settings.music);
+        SND.setMuted(!settings.music && !settings.sfx); SND.setMusicOff(!settings.music); if (!settings.music) { AUD.musicStop(0.4); songs.stop(0.4); }
       } catch (e) { /* no audio */ }
     }
-    function music(id) { if (!audioOn || !settings.music) { curMusic = id; return; } if (curMusic === id && AUD.musicPlaying() === id) return; curMusic = id; try { if (id) AUD.musicPlay(id); else AUD.musicStop(0.6); } catch (e) { /* no audio */ } }
+    function music(id) {
+      if (!audioOn || !settings.music) { curMusic = id; return; }
+      const song = id && SONG[id] && songs.has(SONG[id]) ? SONG[id] : null;
+      if (curMusic === id && (song ? songs.playing() === song : AUD.musicPlaying() === id)) return;
+      curMusic = id;
+      try {
+        if (song) { AUD.musicStop(0.6); songs.play(song); } else { songs.stop(0.6); if (id) AUD.musicPlay(id); else AUD.musicStop(0.6); }
+      } catch (e) { /* no audio */ }
+    }
     function sfx(id, gain) { if (!audioOn || !settings.sfx) return; try { AUD.playSfx(id, undefined, gain); } catch (e) { /* no audio */ } }
+    function amb(id, gain) { if (!audioOn || !settings.amb) return; try { AUD.playSfx(id, undefined, gain, 'amb'); } catch (e) { /* no audio */ } }
     // the place's ambience: each of its sounds comes back now and then, while Io is walking there
     const ambNext = {};
     setInterval(() => {
-      if (!audioOn || !settings.sfx || busy || document.hidden) return;
+      if (!audioOn || !settings.amb || busy || document.hidden) return;
       const id = mode === 'field' ? field.map && field.map.id : mode === 'world' ? 'world' : null, list = id && AMBIENCE[id];
       if (!list) return;
       const now = performance.now() / 1000;
       for (const [snd, a, b, v] of list) {
         const k = id + ':' + snd;
         if (ambNext[k] == null) ambNext[k] = now + a * Math.random();
-        else if (now >= ambNext[k]) { ambNext[k] = now + a + Math.random() * (b - a); sfx(snd, v); }
+        else if (now >= ambNext[k]) { ambNext[k] = now + a + Math.random() * (b - a); amb(snd, v); }
       }
     }, 500);
 
@@ -203,7 +226,13 @@
         wickhollow: { spots: [{ kind: 'event', id: 'first', rect: [560, 450, 1075, 690], once: 'first' }] },
       };
       for (const id in extra) { const m = MAPS[id]; if (m._extra) continue; m._extra = true; m.people = (m.people || []).concat(extra[id].people || []); m.spots = (m.spots || []).concat(extra[id].spots || []); }
-      for (const id in MAPS) { const m = MAPS[id]; m.people0 = m.people0 || m.people || []; for (const s of m.spots || []) if (s.kind === 'magpie') s.hide = () => !(st.magpie && LANDINGS[st.magpie].field && LANDINGS[st.magpie].field[0] === id); }
+      for (const id in MAPS) {
+        const m = MAPS[id]; m.people0 = m.people0 || m.people || [];
+        for (const s of m.spots || []) {
+          if (s.kind === 'magpie') s.hide = () => !(st.magpie && LANDINGS[st.magpie].field && LANDINGS[st.magpie].field[0] === id);
+          if (s.kind === 'keepsake') s.hide = () => !!(st.keepsakes && st.keepsakes[s.id]); // gone once found
+        }
+      }
       MAPS.jetty.people0.forEach((p) => { if (p.id === 'quill') p.when = () => !st.flags.lights; });
     }
     setupMaps();
@@ -443,6 +472,7 @@
       if (s.kind === 'rest') { await say([s.note]); await rest(s.label); return; }
       if (s.kind === 'look') { await say([s.note]); return; }
       if (s.kind === 'magpie') { await board(); return; }
+      if (s.kind === 'keepsake') { await keepsake(s.id); return; }
       if (s.kind === 'well') {
         const W = S.wells[s.id];
         if (st.done['well:' + s.id] || !W) { await say(['The water lies still and dark.']); return; }
@@ -457,6 +487,15 @@
         } else if (g.shards) { st.shards += g.shards; sfx('coins'); await say(['Left with it: ' + g.shards + ' sunstone shards. Io keeps the letter to send with hers.']); }
         st.letters = (st.letters || 0) + 1; save();
       }
+    }
+    // a hidden keepsake (rules.js KEEPSAKES; Chris, October 4): found once and carried for good (the Party tab names it)
+    async function keepsake(id) {
+      const K = RL.KEEPSAKES[id]; st.keepsakes = st.keepsakes || {};
+      if (st.keepsakes[id] || !K) return;
+      await field.pose('kneel', 1.9);
+      sfx('secret');
+      await say(S.keepsakes[id](K.name));
+      st.keepsakes[id] = true; save();
     }
     const bandHere = () => (mode === 'world' ? world.bandAt(world.P.x, world.P.y) || 1 : (field.map && field.map.band) || 1);
     async function rest(name) {
@@ -609,6 +648,8 @@
         const c = el('div', { class: 'gm-hero' }, b); el('h3', null, c, RL.HEROES[id].name);
         bar(c, 'HP', GS.hpOf(st, id), GS.maxHp(st, id), 'hp');
         if (id === 'io') bar(c, 'MP', GS.mpOf(st), GS.maxMp(st), 'mp');
+        const K = st.keepsakes && st.keepsakes[id] && RL.KEEPSAKES[id];
+        if (K) el('p', { class: 'gm-note' }, c, 'Carries ' + K.name + ': ' + K.what + '.');
       }
       el('p', { class: 'gm-note' }, b, 'Played ' + clock(st.time) + ' · ' + st.wins + ' fights won · The Magpie: ' + (st.flags.magpie ? 'band ' + st.band + (st.magpie ? ', at ' + LANDINGS[st.magpie].name : '') : 'not yet yours'));
     }
@@ -640,11 +681,12 @@
       }
     }
     function setup(b, redraw) {
-      const row = (label, opts2, key) => { const r = el('div', { class: 'gm-item' }, b); el('span', null, r, label); const g = el('div', { class: 'gm-pick' }, r); for (const [t, v] of opts2) { const x = el('button', { type: 'button', class: 'go small' + (settings[key] === v ? '' : ' alt'), 'aria-pressed': String(settings[key] === v) }, g, t); x.addEventListener('click', () => { const was = settings[key]; settings[key] = v; keepSettings(); if (key === 'music' || key === 'sfx') { applySound(); if (key === 'music' && v && !was) { const m = curMusic; curMusic = null; music(m); } else if (key === 'sfx' && v) sfx('ui-confirm'); } if (key === 'big') root.classList.toggle('big-text', !!v); redraw(); }); } };
+      const row = (label, opts2, key) => { const r = el('div', { class: 'gm-item' }, b); el('span', null, r, label); const g = el('div', { class: 'gm-pick' }, r); for (const [t, v] of opts2) { const x = el('button', { type: 'button', class: 'go small' + (settings[key] === v ? '' : ' alt'), 'aria-pressed': String(settings[key] === v) }, g, t); x.addEventListener('click', () => { const was = settings[key]; settings[key] = v; keepSettings(); if (key === 'music' || key === 'sfx' || key === 'amb') { applySound(); if (key === 'music' && v && !was) { const m = curMusic; curMusic = null; music(m); } else if (key === 'sfx' && v) sfx('ui-confirm'); else if (key === 'amb' && v) amb('crickets', 0.5); } if (key === 'big') root.classList.toggle('big-text', !!v); redraw(); }); } };
       row('Random fights', [['Fewer', 0.6], ['Normal', 1], ['More', 1.5]], 'rate');
       row('Map light', [['Dim', 0.85], ['Normal', 1], ['Bright', 1.2]], 'light');
       row('Music', [['Off', 0], ['Soft', 0.4], ['Normal', 0.75], ['Loud', 1]], 'music');
       row('Effects', [['Off', 0], ['Soft', 0.4], ['Normal', 0.75], ['Loud', 1]], 'sfx');
+      row('Surroundings', [['Off', 0], ['Soft', 0.4], ['Normal', 0.75], ['Loud', 1]], 'amb');
       row('Words', [['Slow', 0.5], ['Normal', 1], ['Fast', 2], ['All at once', 0]], 'text');
       row('Text size', [['Normal', false], ['Large', true]], 'big');
       // the battles' frame rate, kept where the battle screen reads it (30 by default, Chris)
@@ -803,7 +845,7 @@
     // time played
     setInterval(() => { if (mode !== 'title' && !document.hidden) st.time += 1; }, 1000);
     if (opts.skipTitle) { audioOn = false; begin(!opts.state); } else showTitle();
-    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit,
+    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit, songs, get music() { return songs.playing() || AUD.musicPlaying(); },
       get goal() { return mode === 'field' && field.map ? goalOn(field.map.id) : mode === 'world' ? goalOnWorld() : null; } };
     window.__game = api;
     return api;
