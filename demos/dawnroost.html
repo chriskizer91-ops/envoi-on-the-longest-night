@@ -99,7 +99,7 @@ BattleScreen.start({
   makeLunara: () => makeLunara({}),
   makeEnvoi: () => makeEnvoi({}),
   fight: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }], flags: { party: true, refit: true }, herbs: Object.assign({}, BattleSim.BAGS.gate) }),
-  pickNote: (L) => 'The wraiths are level 12' + (L < 10 ? ': the party is well behind them. ' : L >= 12 ? ': the party has caught up with them. ' : ', two levels above the party. ') + 'Io has Harvest Moon. The party carries one of each herb: Moonpetal, Lavender, Silver Mugwort, Ember-star Lily and Nightrose.',
+  pickNote: (L) => 'The wraiths are level 12' + (L < 10 ? ': the party is well behind them. ' : L >= 12 ? ': the party has caught up with them. ' : ', two levels above the party. ') + 'Io has Harvest Moon. The party has one of each herb to use in a fight: Moonpetal, Lavender, Silver Mugwort, Ember-star Lily and Nightrose.',
   introMsg: 'Dawnroost’s living node still burns, and its light has drawn the wraiths.',
   introAfter: 'Three wraiths, stronger than any the party has met, rise around the node.',
   attackText: () => 'The wraiths close in!',

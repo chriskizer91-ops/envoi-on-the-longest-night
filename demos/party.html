@@ -118,7 +118,7 @@ BattleScreen.start({
     // each foe rolls a level in the band's range, as wild foes do (1 to 5, 6 to 10, 11 to 15, 16 to 20)
     foes: PACKS[p].foes.map((id) => ({ id, level: BattleSim.wildLevel(BattleSim.bandOf(L), Math.random) })),
     flags: { party: true, refit: L > 5, envoi: L > 10, stoop: L > 15 },
-    // one of each herb: the party can't carry more (Chris, October 3)
+    // one of each herb: each can be used once a fight (Chris, October 3 and 4)
     herbs: { moonpetal: 1, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 },
     ends: { canFlee: true },
   }),

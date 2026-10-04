@@ -13,9 +13,11 @@
   let SLOT = 1;
   try { SLOT = Math.min(SLOTS, Math.max(1, Math.round(+localStorage.getItem('envoi.slot')) || 1)); } catch (e) { /* storage blocked: slot 1 */ }
   const RL = () => window.BattleRules;
+  // a new game's herbs: three of each (Chris, October 4)
+  const startHerbs = () => Object.fromEntries(Object.keys(RL().HERBS).map((id) => [id, RL().START_HERBS]));
   function fresh() {
     return {
-      v: 1, level: 1, xp: 0, shards: 0, hp: { io: null, sol: null }, mp: null, herbs: {}, flags: {}, done: {}, band: 1,
+      v: 1, level: 1, xp: 0, shards: 0, hp: { io: null, sol: null }, mp: null, herbs: startHerbs(), flags: {}, done: {}, band: 1,
       where: { mode: 'field', map: 'cottage', at: null, dir: 's' }, rest: { mode: 'field', map: 'cottage', at: [838, 520] },
       landings: { wickhollow: true }, time: 0, fights: 0, wins: 0,
     };
@@ -56,11 +58,15 @@
     return ups;
   }
   function restore(st) { st.hp = { io: null, sol: null }; st.mp = null; }
-  // after a fight: HP, MP and herbs as the battle left them; a win gives its experience and shards. A hero who fell in
-  // a fight the party won gets back up with a little HP
+  // after a fight: HP and MP as the battle left them, and the herbs it used taken from those carried (the fight had at
+  // most BATTLE_USE of each: fights.js); a win gives its experience and shards. A hero who fell in a fight the party won
+  // gets back up with a little HP
   function applyBattle(st, r) {
     st.fights++;
-    st.herbs = Object.assign({}, r.herbs);
+    for (const id in RL().HERBS) {
+      const had = Math.min(st.herbs[id] || 0, RL().BATTLE_USE), left = Math.min(had, (r.herbs && r.herbs[id]) || 0);
+      if (had > left) st.herbs[id] = (st.herbs[id] || 0) - (had - left);
+    }
     for (const h of r.heroes) { if (h.id === 'io') { st.hp.io = h.hp; st.mp = h.mp; } else st.hp.sol = h.hp; }
     let ups = 0;
     if (r.outcome === 'win' || r.outcome === 'retreat') {

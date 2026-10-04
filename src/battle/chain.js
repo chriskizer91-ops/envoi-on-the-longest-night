@@ -1,7 +1,9 @@
 // chain.js: plays the whole journey (src/game/story.js) in order with a play style (plan phase 3): every walk's wild fights,
 // the rests and shops, the gates and the Magpie's upgrades, carrying each hero's HP, MP and herbs from fight to fight.
 // Out of battle Io heals with her Moonlore while her MP lasts; a party worn down walks back to its last rest (a couple
-// more encounters on the way). A lost fight wakes the party at its last rest; a lost gate is tried again; Halcyon's ambush
+// more encounters on the way). The party starts with three of each herb and tops them up to three at each shop; a fight
+// uses each herb once at most (rules.js BATTLE_USE). It spends no herbs between fights, as a player grinding might,
+// which only makes the journey a little harder than it plays. A lost fight wakes the party at its last rest; a lost gate is tried again; Halcyon's ambush
 // goes on either way. Where a gate asks for a higher level, or an upgrade for more shards, the player walks the wilds
 // near the last rest until they have it (grinding). Needs rules.js, engine.js, sim.js and story.js. Defines
 // globalThis.BattleChain = { run(policy, seed), runMany(policy, n) }.
@@ -13,7 +15,7 @@
     const RL = G.BattleRules, S = G.BattleSim, E = G.BattleEngine, ST = G.STORY;
     const rand = E.rng((seed || 1) * 7919 + 13), pol = S.POLICIES[policy];
     const P = {
-      level: 1, xp: 0, shards: 0, herbs: {}, flags: {}, hp: { io: null, sol: null }, mp: null, rest: null, band: 1,
+      level: 1, xp: 0, shards: 0, herbs: Object.fromEntries(Object.keys(RL.HERBS).map((id) => [id, RL.START_HERBS])), flags: {}, hp: { io: null, sol: null }, mp: null, rest: null, band: 1,
       wild: 0, grind: 0, back: 0, losses: 0, wildLosses: 0, fled: 0, gateTries: {}, fightTime: 0, steps: [],
     };
     const maxHp = (id) => Math.round(RL.HEROES[id].hp * RL.scale(P.level));
@@ -37,6 +39,8 @@
       if (P.flags.party) p.push({ id: 'sol', level: P.level, hp: hpOf('sol') });
       return p;
     }
+    // what a fight may use: each herb the party carries, once (rules.js BATTLE_USE)
+    const bag = () => { const o = {}; for (const id in P.herbs) if (P.herbs[id] > 0) o[id] = Math.min(P.herbs[id], RL.BATTLE_USE); return o; };
     // one fight with the party as it stands; returns the engine's result
     function fight(setup) {
       const B = E.create(Object.assign({ seed: Math.floor(rand() * 4294967296) }, setup));
@@ -44,7 +48,7 @@
       while ((s = B.turn()).type !== 'end') { if (s.type === 'choose') { const [id, t] = pol(B, s, rand); B.choose(id, t); } if (++guard > 20000) break; }
       const r = B.result();
       P.fightTime += r.time + r.turns * 0.8;
-      P.herbs = Object.assign({}, r.herbs);
+      for (const id in setup.herbs || {}) { const used = setup.herbs[id] - ((r.herbs && r.herbs[id]) || 0); if (used > 0) P.herbs[id] -= used; }
       for (const h of r.heroes) { if (h.id === 'io') { P.hp.io = h.hp; P.mp = h.mp; } else P.hp.sol = h.hp; }
       if (r.outcome === 'win' || r.outcome === 'retreat') gain(r.xp, r.shards);
       return r;
@@ -72,7 +76,7 @@
     const seen = {};
     function wildSetup(band) {
       const pack = S.wildPack(band, rand, seen[band] || 0); seen[band] = (seen[band] || 0) + 1;
-      return { party: party(), foes: pack.map((id) => ({ id: S.formOf(id, band, rand), level: S.wildLevel(band, rand) })), flags: Object.assign({}, P.flags), herbs: Object.assign({}, P.herbs), ends: { canFlee: true }, reward: RL.WILD_REWARD };
+      return { party: party(), foes: pack.map((id) => ({ id: S.formOf(id, band, rand), level: S.wildLevel(band, rand) })), flags: Object.assign({}, P.flags), herbs: bag(), ends: { canFlee: true }, reward: RL.WILD_REWARD };
     }
     // one random encounter in a band's wilds; a loss wakes the party at its last rest
     function encounter(band, kind) {
@@ -82,12 +86,12 @@
       if (r.outcome !== 'win') { P.losses++; P.wildLosses++; goRest(); return; }
       if (!fieldHeal()) { P.back++; P.wild += 0; for (let i = 0; i < 2; i++) { const r2 = fight(wildSetup(band)); P[kind]++; if (r2.outcome !== 'win') { P.losses++; P.wildLosses++; break; } fieldHeal(); } goRest(); }
     }
+    // a player tops each herb up to three, as the game starts them, cheapest need first
     function buy(band) {
       const order = ['moonpetal', 'nightrose', 'mugwort', 'lavender', 'emberLily'];
       for (const id of order) {
-        if ((P.herbs[id] || 0) >= RL.CARRY) continue;
         const price = RL.herbPrice(id, band);
-        if (P.shards >= price) { P.shards -= price; P.herbs[id] = (P.herbs[id] || 0) + 1; }
+        while ((P.herbs[id] || 0) < Math.min(RL.CARRY, RL.START_HERBS) && P.shards >= price) { P.shards -= price; P.herbs[id] = (P.herbs[id] || 0) + 1; }
       }
     }
     const note = (what) => P.steps.push({ what, level: P.level, xp: P.xp, shards: P.shards, wild: P.wild, grind: P.grind, losses: P.losses, time: P.fightTime });
@@ -120,7 +124,7 @@
         for (;;) {
           tries++;
           const f = S.FIGHTS[st.fight].setup(P.level, rand);
-          const setup = Object.assign({}, f, { party: st.fight === 'first' ? [{ id: 'io', level: P.level }] : party(), herbs: Object.assign({}, P.herbs) });
+          const setup = Object.assign({}, f, { party: st.fight === 'first' ? [{ id: 'io', level: P.level }] : party(), herbs: bag() });
           if (st.fight !== 'first') setup.flags = Object.assign({}, f.flags, P.flags);
           r = fight(setup);
           if (r.outcome === 'win' || r.outcome === 'retreat' || st.story || tries >= (opts.maxTries || 60)) break;

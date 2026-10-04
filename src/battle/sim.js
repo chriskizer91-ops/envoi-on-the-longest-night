@@ -40,7 +40,8 @@
     if (band === COLOSSUS.band && (seen == null || seen >= COLOSSUS.after) && rand() < COLOSSUS.chance) return ['colossus'];
     const packs = BAND_PACKS[band]; return packs[Math.floor(rand() * packs.length)];
   }
-  // the party carries one of each herb (Chris, October 3); out in the wilds it has the common three
+  // in a fight the party may use each herb once (Chris, October 3 and 4: it carries more, up to nine of each, for the
+  // wilds); in a wild fight it has the common three
   const BAGS = {
     wild: { moonpetal: 1, mugwort: 1, nightrose: 1 },
     gate: { moonpetal: 1, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 },

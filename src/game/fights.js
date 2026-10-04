@@ -1,8 +1,9 @@
 // fights.js: every fight in the game as a battle screen config (src/battle/screen.js, in its game mode). The story's set
 // fights carry the words and settings of their demo pages (first-fight, great-wraith, dawnroost, halcyon-ambush,
 // finale); wild fights roll a pack from the band (BattleSim.wildPack: the band's packs, the Bramble Horror among them,
-// and in the last band, now and then, the Bramble Colossus) at levels in the band's range and play on the band's painting. The party comes in as it stands: its level, HP, MP, herbs and the story's
-// flags. GameFights.config(kind, party, opts) -> the cfg for BattleScreen.start, without `game` (the game adds it).
+// and in the last band, now and then, the Bramble Colossus) at levels in the band's range and play on the band's painting. The party comes in as it stands: its level, HP, MP and the story's
+// flags, with one of each herb it carries to use (the menu shows how many it carries). GameFights.config(kind, party,
+// opts) -> the cfg for BattleScreen.start, without `game` (the game adds it).
 //   kind: 'first' | 'wild' | 'greatWraith' | 'dawnroost' | 'halcyon' | 'finale'
 //   party: { level, xp, hp: { io, sol }, mp, herbs, flags } (hp and mp null mean full)
 //   opts: { band, scene, seen, pack } for a wild fight (seen: the band's wild fights so far; pack: a set pack, for tests)
@@ -65,7 +66,12 @@
     };
   };
   const flagsOf = (P, extra) => Object.assign({}, P.flags, extra || {});
-  const herbsOf = (P) => Object.assign({}, P.herbs || {});
+  // a fight may use each herb once (rules.js BATTLE_USE), whatever the party carries; the menu shows what it carries
+  const bagOf = (P) => {
+    const herbs = {}, have = P.herbs || {};
+    for (const id in have) if (have[id] > 0) herbs[id] = Math.min(have[id], window.BattleRules.BATTLE_USE);
+    return { herbs, carried: Object.assign({}, have) };
+  };
 
   function config(kind, P, opts) {
     opts = opts || {};
@@ -81,7 +87,7 @@
       const lone = foes[0].id.startsWith('bramble');
       if (lone) { const at = PLACES[scene]; c.heroes[0].home = [at.io[0] + 40, at.io[1] - 50]; if (c.heroes[1]) c.heroes[1].home = [at.sol[0] + 40, at.sol[1] - 50]; c.slots = [at.slots[0]]; }
       return Object.assign(c, {
-        fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), herbs: herbsOf(P), ends: { canFlee: true }, reward: window.BattleRules.WILD_REWARD }),
+        fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), ...bagOf(P), ends: { canFlee: true }, reward: window.BattleRules.WILD_REWARD }),
         introMsg: lone ? (fs) => (fs[0].id === 'brambleAmbush' ? 'A low blackberry thicket grows over the road, heavy with fruit.' : 'A blackberry thicket stands by the road, lusher than it should be, and heavy with fruit.') : undefined,
         introAfter: lone ? (fs) => (fs[0].id === 'brambleAmbush' ? 'It was never a thicket. It strikes before anyone can move.' : fs[0].id === 'brambleAncient' ? 'The ground heaves. Old woody horns rise out of its crown: an Ancient Crown.' : 'The ground heaves, its roots flare, and its canes rise toward the party.') : undefined,
         quickIntro: !lone,
@@ -101,7 +107,7 @@
           menu: 'Io’s Turn gauge is full: pick a command, then its target. While anyone acts or chooses, every gauge waits.',
           trance: 'On her next turn her power wakes: Moonlore costs half, and Moonlight strikes with all of it.',
         },
-        fight: () => ({ party: [Object.assign(partyOf(P, true)[0], { atb: 0.6 })], foes: [{ id: 'wraith', level: 1, atb: 0.15 }], flags: {}, herbs: herbsOf(P) }),
+        fight: () => ({ party: [Object.assign(partyOf(P, true)[0], { atb: 0.6 })], foes: [{ id: 'wraith', level: 1, atb: 0.15 }], flags: {}, ...bagOf(P) }),
         attackText: () => 'The Shadow Wraith attacks!',
         winMoth: 'A pale moth rises from the empty robe and drifts down into the Moonwell.',
         winText: 'The wraith’s robe falls empty, and its soul goes home at last as a pale moth. The Moonwell shines again.',
@@ -112,7 +118,7 @@
       const c = base('bogmire-boardwalk', P);
       c.heroes[0].home = [590, 790]; if (c.heroes[1]) c.heroes[1].home = [680, 852]; c.slots = [[920, 645]];
       return Object.assign(c, {
-        fight: () => ({ party: partyOf(P), foes: [{ id: 'greatWraith', level: 5 }], flags: flagsOf(P), herbs: herbsOf(P) }),
+        fight: () => ({ party: partyOf(P), foes: [{ id: 'greatWraith', level: 5 }], flags: flagsOf(P), ...bagOf(P) }),
         introMsg: 'Every lamp and window in Bogmire has gone dark…',
         introAfter: 'The great wraith rises out of the fen, the town’s stolen lamplight burning in its ribs.',
         attackText: () => 'The great wraith attacks!',
@@ -127,7 +133,7 @@
       c.heroes[0].home = [530, 700]; c.heroes[1].home = [615, 760]; c.slots = [[805, 645], [880, 600], [875, 722]];
       c.makeEnvoi = () => makeEnvoi({});
       return Object.assign(c, {
-        fight: () => ({ party: partyOf(P), foes: [{ id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }], flags: flagsOf(P), herbs: herbsOf(P) }),
+        fight: () => ({ party: partyOf(P), foes: [{ id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }], flags: flagsOf(P), ...bagOf(P) }),
         introMsg: 'Dawnroost’s living node still burns, and its light has drawn the wraiths.',
         introAfter: 'Three wraiths, stronger than any the party has met, rise around the node.',
         attackText: () => 'The wraiths close in!',
@@ -147,7 +153,7 @@
       c.heroes[0].home = [560, 690]; c.heroes[1].home = [645, 752]; c.slots = [[895, 622]];
       return Object.assign(c, {
         alias: { halcyon: 'The Gloam Knight' },
-        fight: () => ({ party: partyOf(P), foes: [{ id: 'halcyon' }], flags: flagsOf(P, { kestrel: true }), herbs: herbsOf(P), ends: { retreat: { foe: 'halcyon', below: 0.2 } } }),
+        fight: () => ({ party: partyOf(P), foes: [{ id: 'halcyon' }], flags: flagsOf(P, { kestrel: true }), ...bagOf(P), ends: { retreat: { foe: 'halcyon', below: 0.2 } } }),
         introMsg: 'The road north to the shipyard crosses an old ruined crossroads. Someone is waiting there.',
         introAfter: 'A knight in dark armor steps out of the dark, her blade already drawn.',
         attackText: () => 'The knight attacks!',
@@ -172,7 +178,7 @@
       c.heroes[0].home = [560, 762]; c.heroes[1].home = [630, 812]; c.slots = [[750, 690], [828, 642]];
       c.foeLook = Object.assign({}, FOE_LOOK, { halcyon: Object.assign({}, FOE_LOOK.halcyon, { downAct: 'kneel', downNote: 'Halcyon falls to one knee on her planted blade, and stays there.' }) });
       return Object.assign(c, {
-        fight: () => { const f = S.FIGHTS.finale.setup(P.level); return Object.assign(f, { party: partyOf(P), flags: flagsOf(P, f.flags), herbs: herbsOf(P) }); },
+        fight: () => { const f = S.FIGHTS.finale.setup(P.level); return Object.assign(f, { party: partyOf(P), flags: flagsOf(P, f.flags), ...bagOf(P) }); },
         finale: true,
         introMsg: 'The dead Moonwell gives no light at all, and the moon is going out.',
         introAfter: 'Noctara the Starless waits at the well, and Halcyon stands at her side.',
@@ -200,7 +206,7 @@
     const scene = COLOSSUS_AT[opts.scene] ? opts.scene : 'frozen-road', at = COLOSSUS_AT[scene], c = base(scene, P);
     c.heroes[0].home = at.io; if (c.heroes[1]) c.heroes[1].home = at.sol; c.slots = [at.slot];
     return Object.assign(c, {
-      fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), herbs: herbsOf(P), ends: { canFlee: true }, reward: window.BattleRules.WILD_REWARD }),
+      fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), ...bagOf(P), ends: { canFlee: true }, reward: window.BattleRules.WILD_REWARD }),
       introMsg: 'Beside the frozen road stands a thicket as big as a house, green where nothing else is. The snow round it has melted.',
       introAfter: 'The ground splits. It heaves itself up out of the earth, and a great thorned bud opens on a glowing heart: a Bramble Colossus.',
       attackText: () => 'The Bramble Colossus attacks!',

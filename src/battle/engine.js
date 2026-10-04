@@ -28,7 +28,7 @@
     const rand = rng(setup.seed == null ? Math.floor(Math.random() * 4294967296) : setup.seed);
     const B = {
       t: 0, gaugeT: 0, turns: 0, units: [], heroes: [], foes: [], queue: [], over: null, cur: null, log: [],
-      herbs: Object.assign({}, setup.herbs || {}), flags: Object.assign({}, setup.flags || {}), ends: setup.ends || {},
+      herbs: Object.assign({}, setup.herbs || {}), carried: setup.carried ? Object.assign({}, setup.carried) : null, flags: Object.assign({}, setup.flags || {}), ends: setup.ends || {},
       lunara: 0, envoi: 0, ward: false, frost: 0, frostLate: null, kestrelUsed: false, might: 0, act: 0, rand, tune,
       stats: { dealt: 0, taken: 0, healed: 0, low: 1, downs: 0, herbsUsed: 0, summons: [] },
     };
@@ -412,13 +412,19 @@
         add('guard', {});
         if (B.ends.canFlee) add('flee', {});
       }
-      for (const id in B.herbs) {
-        if (!(B.herbs[id] > 0)) continue;
+      // in the game (setup.carried) every herb carried is listed in order, and one already used this fight shows as
+      // spent (rules.js BATTLE_USE); elsewhere, the bag's herbs as they come
+      for (const id of B.carried ? Object.keys(RL.HERBS) : Object.keys(B.herbs)) {
+        if (!(B.herbs[id] > 0)) {
+          if (B.carried && B.carried[id] > 0) out.push({ id: 'herb:' + id, herb: id, name: RL.HERBS[id].name + ' (' + B.carried[id] + ')', kind: 'item', ok: false, why: 'once a fight', targets: [] });
+          continue;
+        }
         const d = RL.HERBS[id];
         let t = d.target === 'ally' || d.target === 'allies' ? allies : d.target === 'fallen' ? fallen : d.target === 'io' ? allies.filter((k) => k === 'io') : allies.filter((k) => k === 'sol');
         if (d.target === 'allies' || d.target === 'party') t = [];
         const ok = d.target === 'fallen' ? fallen.length > 0 : d.target === 'party' ? !B.might : d.target === 'allies' || t.length > 0;
-        out.push({ id: 'herb:' + id, herb: id, name: d.name + ' (' + B.herbs[id] + ')', kind: 'item', ok, why: ok ? '' : d.target === 'party' ? 'already used' : 'nobody to use it on', targets: t });
+        // the count is what the party carries when the game says (setup.carried), though the fight may use only its bag
+        out.push({ id: 'herb:' + id, herb: id, name: d.name + ' (' + (B.carried ? B.carried[id] : B.herbs[id]) + ')', kind: 'item', ok, why: ok ? '' : d.target === 'party' ? 'already used' : 'nobody to use it on', targets: t });
       }
       return out;
     }
@@ -446,7 +452,7 @@
     }
     function useHerb(h, id, tgt) {
       const d = RL.HERBS[id];
-      B.herbs[id]--; B.stats.herbsUsed++;
+      B.herbs[id]--; B.stats.herbsUsed++; if (B.carried) B.carried[id]--;
       emit({ t: 'herb', who: h.key, herb: id, name: d.name, to: tgt ? tgt.key : null });
       if (d.revive) { if (tgt && !alive(tgt)) revive(tgt, d.revive); return; }
       if (d.heal) { if (d.target === 'allies') for (const a of living('hero')) heal(h, a, d.heal); else heal(h, tgt, d.heal); return; }

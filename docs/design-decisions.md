@@ -1047,3 +1047,12 @@ Chris played pass three's pages and the game, and sent the last four battle pain
 
 - **Each gate's chapter starts just before its gate, in the town on its doorstep:** Bogmire (dark), Dawnroost, the crossroads' south road (the crossroads is the gate), and, for the finale, the foot of Misthollow. The town's arrival scene plays, and the arrow points the way.
 - **Five demo pages,** one per chapter, each the whole game opening at its chapter, so Chris can play from just before a gate on to the next: the start, gate 5, gate 10, gate 15, and the approach to the finale.
+
+## October 4, 2026: herbs for the wilds
+
+- **The party carries up to nine of each herb and starts with three of each** (Chris: "you can carry more than one of each herb... start with three of each"). A new game and every chapter begin with three of each.
+- **In a fight each herb can be used once** ("only use one in a battle"): the fight's Item menu shows how many the party carries, and a herb already used that fight stays on the list, greyed, "once a fight". So every fight is exactly as it was balanced (all 51 balance targets give the same numbers as before).
+- **Out of battle there's no limit** ("you need to be able to use lots in the wilds so you can grind"): from the menu's Herbs, as many as the party carries.
+- **Shops sell up to nine of each; a well's herb is kept unless Io carries nine,** when she trades it on for shards.
+- **The journey simulation** starts with three of each, tops them up to three at each shop and spends none between fights, so it plays a little harder than a player who grinds with herbs. Every gate is still reached at its level (6, 11, 15 and 20); the attentive player's finale took a median of 20 tries in this run against 14 before. That fight is the same either way, so the difference is the dice. It's a long shot by design (won 2 to 10 times in a hundred).
+- **Chris finished his walking paths** (October 4): a second round on Dawnroost's living node, the dead Moonwell, the Thornwood and Wickhollow, with new spots to explore, among them a hidden nook behind the node's weapon stall. All in as he drew them.

@@ -44,7 +44,7 @@
   };
   // the chapters: the start, and each gate with the party as the story leaves it there (story.js's path), for trying a
   // later part without playing up to it (Chris, October 3). Each starts just before its gate, in the town on its
-  // doorstep (the crossroads' gate is the crossroads itself, so that one starts on its south road), with one of each
+  // doorstep (the crossroads' gate is the crossroads itself, so that one starts on its south road), with three of each
   // herb and the shards for the band's Magpie upgrade; the town's first-arrival scene plays, and losing wakes the
   // party at the town's rest. The last one starts at the foot of Misthollow, on the approach to the finale.
   const BEEN = ['first', 'visit:bogmire'];
@@ -63,6 +63,7 @@
       landings: ['bogmire', 'warmCamp', 'dawnroost', 'northCamp', 'shipyard', 'frozenCamp'], wilds: { 4: 5 },
       where: ['misthollow', [768, 985]], rest: ['misthollow', [1000, 662]], shards: 300 },
   ];
+  const RLs = () => window.BattleRules;
   function chapterState(c) {
     const st = GameState.fresh();
     if (!c.level) return st;
@@ -71,7 +72,7 @@
     for (const d of c.done) st.done[d] = true;
     for (const l of c.landings || []) st.landings[l] = true;
     if (c.wilds) st.wilds = Object.assign({}, c.wilds);
-    st.herbs = { moonpetal: 1, lavender: 1, mugwort: 1, emberLily: 1, nightrose: 1 };
+    st.herbs = Object.fromEntries(Object.keys(RLs().HERBS).map((id) => [id, RLs().START_HERBS]));
     st.where = { mode: 'field', map: c.where[0], at: c.where[1], dir: c.where[2] || 'n' };
     st.rest = { mode: 'field', map: c.rest[0], at: c.rest[1] };
     return st;
@@ -452,7 +453,7 @@
         if (g.herb) {
           const H = RL.HERBS[g.herb];
           if ((st.herbs[g.herb] || 0) < RL.CARRY) { st.herbs[g.herb] = (st.herbs[g.herb] || 0) + 1; sfx('chest'); await say(['Left with it: a ' + H.name + '. Io takes it, and keeps the letter to send with hers.']); }
-          else { const sh = RL.herbPrice(g.herb, bandHere()); st.shards += sh; sfx('coins'); await say(['Left with it: a ' + H.name + ', but Io carries one already. She trades it on for ' + sh + ' shards, and keeps the letter to send with hers.']); }
+          else { const sh = RL.herbPrice(g.herb, bandHere()); st.shards += sh; sfx('coins'); await say(['Left with it: a ' + H.name + ', but Io can’t carry another. She trades it on for ' + sh + ' shards, and keeps the letter to send with hers.']); }
         } else if (g.shards) { st.shards += g.shards; sfx('coins'); await say(['Left with it: ' + g.shards + ' sunstone shards. Io keeps the letter to send with hers.']); }
         st.letters = (st.letters || 0) + 1; save();
       }
@@ -613,7 +614,7 @@
     }
     function pickHero(b, then) { const r = el('div', { class: 'gm-pick' }, b); for (const id of heroes()) { const x = el('button', { type: 'button', class: 'go alt' }, r, RL.HEROES[id].name); x.addEventListener('click', () => then(id)); } }
     function herbs(b, redraw) {
-      el('p', { class: 'gm-top' }, b, 'The party carries one of each herb at most. The Ember-star Lily only works in a fight.');
+      el('p', { class: 'gm-top' }, b, 'The party carries up to ' + RL.CARRY + ' of each herb. In a fight each can be used once; out here, as many as you have. The Ember-star Lily only works in a fight.');
       for (const id of Object.keys(RL.HERBS)) {
         const H = RL.HERBS[id], n = st.herbs[id] || 0, r = el('div', { class: 'gm-item' }, b);
         el('span', null, r, H.name); el('b', null, r, n ? '×' + n : 'none');
@@ -703,13 +704,13 @@
         const body = el('div', { class: 'gmenu-body' }, card);
         const band = bandHere();
         function draw() {
-          body.textContent = ''; el('p', { class: 'gm-top' }, body, nf(st.shards) + ' sunstone shards. One of each herb at most.');
+          body.textContent = ''; el('p', { class: 'gm-top' }, body, nf(st.shards) + ' sunstone shards. Up to ' + RL.CARRY + ' of each herb; in a fight, each can be used once.');
           const what = { moonpetal: 'heals one', lavender: 'heals both', mugwort: 'Io’s MP', emberLily: 'blows 10% harder for a fight', nightrose: 'brings one back' };
           for (const id of Object.keys(RL.HERBS)) {
             const H = RL.HERBS[id], price = RL.herbPrice(id, band), have = st.herbs[id] || 0, r = el('div', { class: 'gm-item' }, body);
-            const nm = el('span', null, r, H.name); el('small', null, nm, ' ' + what[id]);
+            const nm = el('span', null, r, H.name + ' ×' + have); el('small', null, nm, ' ' + what[id]);
             el('b', null, r, nf(price));
-            const bt = el('button', { type: 'button', class: 'go small' }, r, have >= RL.CARRY ? 'Have one' : 'Buy');
+            const bt = el('button', { type: 'button', class: 'go small' }, r, have >= RL.CARRY ? 'Full' : 'Buy');
             bt.disabled = have >= RL.CARRY || st.shards < price;
             bt.addEventListener('click', () => { st.shards -= price; st.herbs[id] = have + 1; sfx('ui-buy'); save(); draw(); });
           }

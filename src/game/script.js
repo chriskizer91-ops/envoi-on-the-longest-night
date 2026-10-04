@@ -25,7 +25,7 @@
       : !F(st).ending ? [['gretch', 'Word came that Bogmire’s lamps are lit again. We’ve lit ours every night for you since.']]
       : [['gretch', 'The stars are back. I stood in the square half the night just looking at them.']]),
     nettie: (st) => (!F(st).party ? [['nettie', 'Herbs, Io? Moonpetal and Mugwort, fresh. Though you’ll want them more than I will, tonight.']]
-      : [['nettie', 'One of each, that’s all a body can carry and still run. Moonpetal for hurts, Lavender for the both of you, Mugwort for your MP, the Lily for courage, Nightrose for the worst.']]),
+      : [['nettie', 'Fill your satchel, but in a fight you’ll only have the hands for one of each. Moonpetal for hurts, Lavender for the both of you, Mugwort for your MP, the Lily for courage, Nightrose for the worst.']]),
     hilde: (st) => (!F(st).party ? [['hilde', 'I banked the forge high tonight. Wraiths don’t like a fire. Or so my mother said.']]
       : [['hilde', 'A Warden! I thought I’d never see that sun on a breastplate again. Mind the edge on that blade, girl. It’s good steel.'], ['sol', 'It was my teacher’s before it was mine.']]),
     quill: (st) => (!F(st).party ? [['quill', 'Evening, witch. Lamps by the bridge are going out. You’d best see to it before Inkblot starts fretting.']]
@@ -40,7 +40,7 @@
       : [['pell', 'The lights came home! I saw them fly over the water like fireflies, every one to its own window.']]),
     marta: (st) => (!F(st).envoi ? [['marta', 'Sol? Little Sol? Look at you. You’re all that’s come home.'], ['sol', 'I know, Marta.'], ['marta', 'The hall’s still made up. Forty bunks. Sleep in any of them.']]
       : [['marta', 'The node’s light is in that ship of yours now. Go on north, both of you. And come back.']]),
-    brann: (st) => [['brann', 'Herbs from the road, and the last of the summer’s Lavender. One of each, Warden’s rule.']],
+    brann: (st) => [['brann', 'Herbs from the road, and the last of the summer’s Lavender. One of each in a fight, Warden’s rule. On the road, as many as you can carry.']],
     tamsin: (st) => (!F(st).envoi ? [['tamsin', 'Are you a real Warden? Marta says there aren’t any more.'], ['sol', 'There’s one.']]
       : [['tamsin', 'I saw the wyrm made of letters! It folded right up into nothing.']]),
     ysmera: (st) => (!F(st).shipyard ? [['shipmaster', 'A witch and the last of the Wardens, at my yard. Your little ship will need more than courage to fly north.']]

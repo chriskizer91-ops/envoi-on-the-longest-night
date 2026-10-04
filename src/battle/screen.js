@@ -1702,7 +1702,7 @@
       if (which === 'moonlore') return ['mend', 'waxing', 'moonsteel', 'harvest'].map(item).filter(Boolean).concat([back]);
       if (which === 'summon') return ['lunara', 'envoi'].map((id) => { const o = s.options.find((x) => x.id === id); return o ? { id, label: o.name, tag: o.ok ? 'Once' : o.why, disabled: !o.ok } : null; }).filter(Boolean).concat([back]);
       if (which === 'arts') return ['flareCut', 'sunder', 'emberRush', 'solarCrest', 'stoopRise'].map(item).filter(Boolean).concat([back]);
-      if (which === 'item') return s.options.filter((o) => o.herb).map((o) => ({ id: o.id, label: o.name, disabled: !o.ok })).concat([back]);
+      if (which === 'item') return s.options.filter((o) => o.herb).map((o) => ({ id: o.id, label: o.name, tag: o.ok ? '' : o.why, disabled: !o.ok })).concat([back]);
       return menuMain(s);
     }
     const SUB = { witchcraft: 'Witchcraft', moonlore: 'Moonlore', summon: 'Summon', arts: 'Sword Arts', item: 'Item' };

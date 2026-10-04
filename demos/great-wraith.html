@@ -99,7 +99,7 @@ BattleScreen.start({
   makeFoe: (id, level) => makeWraith({ level, great: true }),
   makeLunara: () => makeLunara({}),
   fight: (L) => ({ party: [{ id: 'io', level: L }, { id: 'sol', level: L }], foes: [{ id: 'greatWraith', level: 5 }], flags: { party: true }, herbs: Object.assign({}, BattleSim.BAGS.gate) }),
-  pickNote: (L) => 'The great wraith is level 5' + (L < 5 ? ': the party is behind it, so this is hard. ' : L > 5 ? ': the party is ahead of it. ' : ', like the party. ') + 'The party carries one of each herb: Moonpetal, Lavender, Silver Mugwort, Ember-star Lily and Nightrose.',
+  pickNote: (L) => 'The great wraith is level 5' + (L < 5 ? ': the party is behind it, so this is hard. ' : L > 5 ? ': the party is ahead of it. ' : ', like the party. ') + 'The party has one of each herb to use in a fight: Moonpetal, Lavender, Silver Mugwort, Ember-star Lily and Nightrose.',
   introMsg: 'Every lamp and window in Bogmire has gone dark…',
   introAfter: 'The great wraith rises out of the fen, the town’s stolen lamplight burning in its ribs.',
   attackText: () => 'The great wraith attacks!',
