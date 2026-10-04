@@ -44,3 +44,19 @@ As Meshy's own help pages described it in October 2026; the buttons may be named
 8. **Send Claude** the `.glb` file and the picture you used.
 
 Models made on the free plan are shared under the CC BY 4.0 licence rather than kept private. That is fine for a test. For the model the game keeps, one paid month would give a private model, Meshy's newest model, and the side and back views.
+
+## Making the model on Tripo's free plan
+
+Chris made the front view (`io-front.webp`, 1024 × 1536, from the prompt above) and tried Tripo Studio (studio.tripo3d.ai) first. The settings for a free test, October 4, 2026:
+
+- **HD Model**, with the front view uploaded. Not **Generate Multi-Views** (members only; it would invent her side and back).
+- **AI Model: H2.5 – Legacy.** Tripo's pages say a free account can download (export) only H2.5 models, up to 15 a month; H3.0 and H3.1 can be made but not downloaded.
+- Under **General Settings**, the **Geometry & Texture** row opens the rest (Tripo keeps them for next time):
+  - **AI Complete: off.** It reworks the picture before building, and this one is already clean.
+  - **Texture: on. Texture Quality: 2K:** enough for a phone, a smaller file, and fewer credits than 4K.
+  - **Remove Lighting: off** for the first try, so she keeps the picture's painted look.
+  - **PBR: off.** She is painted, not metal; PBR adds extra maps and credits, and the pages light her their own way.
+  - **Topology: Triangle.** The pages draw triangles anyway, and Tripo's quad option can change the download to FBX.
+  - **Polycount: 50,000**, the most it allows. Claude can make her lighter later, but not add detail back.
+- **Members Only:** Generate in Parts off, 8K Texture off. Privacy stays Public on the free plan, and free models are shared under CC BY 4.0.
+- After **Generate**, turn her round, and download her as **GLB**. Rig can wait until the model looks right.
