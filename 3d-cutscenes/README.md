@@ -45,6 +45,14 @@ Her bones, body, clothes and every move stay the same, so she walks, breathes, b
 
 Not done yet: the sheer veil that hangs from her hat's brim in the painted scenes, and the pointed ears the paper doll shows (the 3D Io has never had them, so that is Chris's call). Her quick blinks look right, but lids held lowered for a long time (sleepy or sad) still look a little puffy.
 
+### Next, if Chris goes ahead: a 3D Io from Meshy
+
+A face built from formulas, as above, only gets so close to a drawing. On October 4 Chris asked whether Claude could use Meshy, which builds a 3D model from pictures, has an API for programs, and can also give a model a skeleton and animations. The plan:
+
+1. **Pictures:** Chris makes the turnaround in `art-requests/io-turnaround.md` (front, side and back of Io standing still, painted cleanly). The paper doll's pixel-art frames are too small and too busy for it.
+2. **Setup, for Claude to call Meshy from a cloud session:** a Meshy plan with API access (the free plan has no API keys of its own); the key stored in the environment's settings as the variable `MESHY_API_KEY`, never in the chat or the repository; and `api.meshy.ai`, `assets.meshy.ai` and `docs.meshy.ai` allowed under the environment's Network access, which blocks them by default. A session started after that sees the key. Without any of this, Chris can use Meshy's website himself and send the `.glb` file it gives him.
+3. **Then:** the three views to Meshy's multi-image-to-3D, its rigging and a walk and an idle, the model saved here (`meshy/`), made small enough for a phone, and loaded in a page like this one with three.js r128's GLTFLoader (in the `three@0.128.0` npm package, `examples/js/loaders/GLTFLoader.js`). She would be shown in the garden through the film camera, beside the paper doll and the cutscene Io, at Light, Phone and Laptop detail. If her face comes back soft, the paper doll's eyes, brows and mouth get painted onto her texture.
+
 ## How a scene is written
 
 `scenes.js` holds the prologue as a list of shots. One of them, as it is there:
@@ -114,6 +122,7 @@ The game already switches to a 3D screen for its battles, so a cutscene screen w
 | `tools/shots.mjs` | Headless pictures of the built page at any moment of the scene, through its test hooks |
 | `tools/face.html`, `tools/face.mjs` | Headless close-ups of Io's face, the study's beside the cutscene's, in the garden's night light or plain light |
 | `renders/` | Stills from the scene |
+| `art-requests/io-turnaround.md` | The picture prompt for a 3D Io from Meshy or a 3D artist: Io standing still, front, side and back |
 
 The copies come from the branches `claude/confident-albattani-nhdy6e` (the studies) and `claude/practical-franklin-l1ctf9` (the portrait), as they were on October 4, 2026.
 
