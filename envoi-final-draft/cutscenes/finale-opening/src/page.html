@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Finale's Opening</title>
+<style>
+/*FONTS*/
+/*CSS*/
+</style>
+</head>
+<body>
+<div id="stage" aria-label="The cutscene"></div>
+
+<section id="load" class="cover" aria-live="polite">
+  <p class="eyebrow">A cutscene · Envoi on the Longest Night</p>
+  <h1>The finale’s opening</h1>
+  <p class="where">Misthollow’s dead Moonwell, on the longest night</p>
+  <div class="meter" role="progressbar" aria-label="Getting the cutscene ready" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="loadBar"></i></div>
+  <p id="loadStep" class="step">Lighting the moon</p>
+</section>
+
+<section id="start" class="cover" hidden>
+  <p class="eyebrow">A cutscene · Envoi on the Longest Night</p>
+  <h1>The finale’s opening</h1>
+  <p class="where">Misthollow’s dead Moonwell, on the longest night</p>
+  <p class="lede">Down out of a sky with no stars, past the moon going out, onto the dead Moonwell, where Noctara the Starless waits with Halcyon at her side, as Io and Sol come up the stair. It ends where the last fight begins, on the fight’s own framing, so the battle can take over from the same picture.</p>
+  <div class="detail" role="group" aria-labelledby="detailLabel">
+    <span id="detailLabel" class="label">Detail</span>
+    <button type="button" class="seg" id="qLight" data-q="light" aria-pressed="false">Light</button>
+    <button type="button" class="seg" id="qPhone" data-q="phone" aria-pressed="false">Phone</button>
+    <button type="button" class="seg" id="qLaptop" data-q="laptop" aria-pressed="false">Laptop</button>
+  </div>
+  <div class="choices">
+    <button id="go" class="big primary" type="button">Play it <span id="goNote">about 72 seconds, with sound</span></button>
+  </div>
+  <p class="small" id="startNote">Best with the phone turned sideways. Skip ends it at any moment.</p>
+</section>
+
+<section id="endcard" hidden>
+  <p class="eyebrow">A cutscene · Envoi on the Longest Night</p>
+  <h2 id="endTitle">That was the finale’s opening</h2>
+  <dl id="endRows"></dl>
+  <div class="choices">
+    <button id="again" class="big primary" type="button">Watch again <span>it gets ready again first</span></button>
+    <button id="otherQ" class="big" type="button"></button>
+  </div>
+</section>
+
+<p id="oops" class="oops" role="alert" hidden></p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="./finale-opening.js"></script>
+<script src="./page.js"></script>
+</body>
+</html>
