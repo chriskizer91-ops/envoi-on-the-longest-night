@@ -333,24 +333,24 @@ try {
   const P = () => ev(() => JSON.parse(JSON.stringify(MapEditor.places)));
   let pl = await P();
   check(JSON.stringify(pl['crescent-locket']) === JSON.stringify({ map: 'wickhollow', x: 458, y: 562 }) && JSON.stringify(pl['wardens-brooch']) === JSON.stringify({ map: 'thornwood', x: 1284, y: 816 }), 'the two hidden ones start where they lie in the game today');
-  check(Object.keys(pl).length === 2, 'and nothing else is placed yet');
+  const lyingAt = await ev(() => LOOT.ITEMS.filter((it) => it.source === 'hidden' || it.source === 'found').map((it) => [it.id, it.home, it.at]));
+  check(lyingAt.length === 14 && lyingAt.every(([id, home, a]) => pl[id] && pl[id].map === home && pl[id].x === a[0] && pl[id].y === a[1]) && Object.keys(pl).length === 14, 'all fourteen that lie on a map start where the list puts them');
+  check(await ev(() => [...Array(1)].every(() => ['wickhollow', 'jetty', 'thornwood', 'bogmire', 'bogmire-heart', 'dawnroost', 'dawnroost-node', 'crossroads', 'shipyard', 'frozen-pass', 'misthollow'].every((m) => MapEditor.outOf(m).size === 0))), 'and Io can reach every one of them');
   await page.click('#me-mode-keepsakes'); await sleep(200);
   check(await ev(() => MapEditor.mode) === 'keepsakes' && await ev(() => getComputedStyle(document.querySelector('[data-for="paths"]')).display) === 'none', 'Keepsakes shows its part of the panel, and hides the path tools');
   check(await ev(() => document.querySelectorAll('#me-groups .ip-item').length) === 20, 'the list has all twenty');
   check(await ev(() => !!document.querySelector('#me-card canvas.me-pic') && /Crescent Locket/.test(document.querySelector('#me-card h3').textContent)), 'the card shows the picked one, with its stand-in picture');
   await shot('30-keepsakes');
-  // the Hag-Stone: not placed yet; Go to Bogmire, then put it beside where a new walk starts there
-  await page.click('#me-groups .ip-item >> text=The Bogmire Hag-Stone'); await sleep(200);
-  check(/Not placed yet/.test(await ev(() => document.querySelector('#me-card .ip-state').textContent)), 'the Hag-Stone is not placed yet');
-  await page.click('#me-card button >> text=Go to Bogmire'); await page.waitForFunction(() => MapEditor.painted && MapEditor.map === 'bogmire', null, { timeout: 10000 }); await sleep(200);
-  check(await ev(() => MapEditor.map) === 'bogmire', 'Go to Bogmire opens Bogmire');
+  // the Hag-Stone: picking it in the list opens Bogmire, where it lies; then put it beside where a new walk starts there
+  await page.click('#me-groups .ip-item >> text=The Bogmire Hag-Stone'); await page.waitForFunction(() => MapEditor.painted && MapEditor.map === 'bogmire', null, { timeout: 10000 }); await sleep(200);
+  check(await ev(() => MapEditor.map) === 'bogmire' && /Lies on Bogmire/.test(await ev(() => document.querySelector('#me-card .ip-state').textContent)), 'picking the Hag-Stone opens Bogmire, where it lies');
   const st = (await W()).start;
-  await page.click('#me-card button >> text=Put it on this map'); await sleep(100);
+  await page.click('#me-card button >> text=Put it somewhere else here'); await sleep(100);
   await clickMap([st[0], st[1] - 10]); await sleep(250);
   pl = await P();
   check(pl['hag-stone'] && pl['hag-stone'].map === 'bogmire' && Math.abs(pl['hag-stone'].x - st[0]) <= 2 && Math.abs(pl['hag-stone'].y - (st[1] - 10)) <= 2, 'a click on the painting puts it there: ' + JSON.stringify(pl['hag-stone']));
   check(await ev(() => !MapEditor.outOf('bogmire').has('hag-stone')) && /Io can reach it/.test(await ev(() => document.querySelector('#me-card .ip-state').textContent)), 'and Io can reach it there');
-  check(await ev(() => document.querySelector('#mp-maps li.is-current .me-n').textContent) === '1 keepsake', 'the maps list counts it');
+  check(await ev(() => document.querySelector('#mp-maps li.is-current .me-n').textContent) === '2 keepsakes', 'the maps list counts Bogmire’s two');
   // the Bogstriders: somewhere she can't reach, then dragged back
   await page.click('#me-groups .ip-item >> text=The Bogstriders'); await sleep(150);
   let outAt = null;
@@ -370,7 +370,7 @@ try {
   check(Math.abs((await P()).bogstriders.x - (st[0] + 30)) <= 3, 'Ctrl+Shift+Z moves it again');
   await page.click('#mp-cv', { position: { x: 5, y: 5 } }); await sleep(80);
   await page.keyboard.press('Delete'); await sleep(200);
-  check(!(await P()).bogstriders, 'Delete takes the picked one off the map');
+  check((await P()).bogstriders === null, 'Delete takes the picked one off the map');
   await page.keyboard.press('Control+z'); await sleep(200);
   check(!!(await P()).bogstriders, 'and Ctrl+Z puts it back');
   // a note on the Hag-Stone, then walking her to it, and its card

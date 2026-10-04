@@ -15,8 +15,11 @@
 // claude/cool-ptolemy-uc93gg, and thareia/game/src/data/relics.js on claude/tender-babbage-4wiplk; `from` names the relic).
 //
 // wear: 'io' | 'sol' | 'either'. source: 'hidden' (lies hidden where it is today), 'gift' (giver gives it), 'fight'
-// (the first Bramble Colossus gives it), 'found' (lies on a walking map, where Chris puts it). home: the walking map
-// (src/game/maps.js) it belongs to, or null. at: where the two hidden ones lie. main and also: the two helps as numbers,
+// (the first Bramble Colossus gives it), 'found' (lies on a walking map, found by exploring a town or walking, and
+// fighting, through the wilds). home: the walking map (src/game/maps.js) it lies on, or null. at: where it lies there, in
+// the painting's 1536 x 1024 pixels: the two hidden ones where they lie today, the twelve found ones where Claude put
+// them on October 4 at Chris's word (each away from the main way through, somewhere Io can reach), for him to move as
+// he likes in the map editor. main and also: the two helps as numbers,
 // in percent unless named: heal (Io's Lunar Mend and Waxing Light heal more), hp (more max HP), might (her blows, and on
 // Io her spells, land harder); trance (her Trance fills faster), heat (Sol starts each fight with this much Heat),
 // herbHeal (the herbs she uses in a fight heal more), mp (more max MP), mpBack and hpBack (after each fight she gets this
@@ -49,7 +52,7 @@
       id: 'fen-heart-lamp', name: 'The Fen-Heart Lamp', wear: 'io', source: 'found',
       main: { heal: 3 }, also: { mpBack: 5 }, inFight: false,
       does: 'Lunar Mend and Waxing Light heal 3% more', alsoDoes: 'After each fight she gets back 5% of her MP',
-      where: 'The fen’s dark heart, still burning where the great wraith sat (after gate 5)', band: 1, home: 'bogmire-heart',
+      where: 'The fen’s dark heart, still burning at the top of the square where the great wraith sat (after gate 5)', band: 1, home: 'bogmire-heart', at: [775, 215],
       look: 'a small old hand lamp of black iron and brass, fen mud and a strand of reed on it, a warm steady flame inside',
     },
     {
@@ -63,7 +66,7 @@
       id: 'pass-bell', name: 'The Pass Bell', wear: 'io', source: 'found',
       main: { heal: 4 }, also: { trance: 10 }, inFight: true,
       does: 'Lunar Mend and Waxing Light heal 4% more', alsoDoes: 'Her Trance fills 10% faster',
-      where: 'In the snow beside the road on the frozen pass', band: 4, home: 'frozen-pass',
+      where: 'The frozen pass: in the snow under the lamp beside the road', band: 4, home: 'frozen-pass', at: [615, 625],
       look: 'a small bronze hand-bell rimed with frost, a silver handle and clapper, a fine crack in it glowing pale blue-white',
       from: 'Aethermoor, Codex No. 40 (the Veilbell)',
     },
@@ -94,14 +97,14 @@
       id: 'node-sunstone', name: 'The Node Sunstone', wear: 'sol', source: 'found',
       main: { might: 1 }, also: { heat: 10 }, inFight: true,
       does: 'Her blows land 1% harder', alsoDoes: 'She starts each fight with 10 Heat',
-      where: 'Dawnroost’s living node, once Sol has relit it (after gate 10)', band: 2, home: 'dawnroost-node',
+      where: 'Dawnroost’s living node, at the top of the west stair, once Sol has relit the node (after gate 10)', band: 2, home: 'dawnroost-node', at: [205, 135],
       look: 'a rough chip of sunstone the size of a walnut, glowing warm amber, wrapped in bronze wire on a leather cord',
     },
     {
       id: 'crossroads-pennant', name: 'The Crossroads Pennant', wear: 'sol', source: 'found',
       main: { hp: 1 }, also: { trance: 10 }, inFight: true,
       does: 'She has 1% more HP', alsoDoes: 'Her Trance fills 10% faster',
-      where: 'Tied to the stone ring at the northern crossroads', band: 3, home: 'crossroads',
+      where: 'The northern crossroads: tied to a waymark far down the east road', band: 3, home: 'crossroads', at: [1395, 470],
       look: 'a torn, wind-worn scrap of a Wardens’ pennant, burnt-orange cloth with a gold sun, frayed edges, tied with cord',
     },
     {
@@ -123,14 +126,14 @@
       id: 'forge-horseshoe', name: 'The Forge Horseshoe', wear: 'either', source: 'found',
       main: { hp: 1 }, also: { shards: 5 }, inFight: false,
       does: 'She has 1% more HP', alsoDoes: 'Fights give 5% more shards',
-      where: 'By Hilde’s forge in Wickhollow', band: 1, home: 'wickhollow',
+      where: 'Wickhollow: in the nook behind the house by the east bridge', band: 1, home: 'wickhollow', at: [1195, 690],
       look: 'an iron horseshoe still faintly glowing warm at its edges, sooty, its nail holes empty',
     },
     {
       id: 'jetty-coin', name: 'The Jetty Coin', wear: 'either', source: 'found',
       main: { might: 1 }, also: { herbPrice: 10 }, inFight: false,
       does: 'Her blows and spells land 1% harder', alsoDoes: 'Herbs cost 10% less in the shops',
-      where: 'Between the boards of the jetty where the Magpie is moored', band: 1, home: 'jetty',
+      where: 'The jetty: at the far end of the lakeshore walk, under the willows', band: 1, home: 'jetty', at: [470, 372],
       look: 'an old bronze coin, clipped unevenly and worn smooth, a little boat on its face, on a short cord',
       from: 'Aethermoor, Codex No. 53 (Hodge’s Unfair Toll)',
     },
@@ -138,7 +141,7 @@
       id: 'frog-ring', name: 'The Thornwood Frog-Ring', wear: 'either', source: 'found',
       main: { hp: 1 }, also: { hpBack: 5 }, inFight: false,
       does: 'She has 1% more HP', alsoDoes: 'After each fight she gets back 5% of her HP',
-      where: 'In the Thornwood’s stream, by the moon stone', band: 1, home: 'thornwood',
+      where: 'The Thornwood: where the north-east trail gives out, past the moon stone', band: 1, home: 'thornwood', at: [1380, 190],
       look: 'a finger ring of verdigris bronze shaped like a frog’s toes, gripping a warm, damp pearl, strands of reed round it',
       from: 'Aethermoor, Codex No. 17 (the Mire Pearl)',
     },
@@ -146,7 +149,7 @@
       id: 'hag-stone', name: 'The Bogmire Hag-Stone', wear: 'either', source: 'found',
       main: { might: 1 }, also: { glint: 1 }, inFight: false,
       does: 'Her blows and spells land 1% harder', alsoDoes: 'Hidden things glint brighter on the maps',
-      where: 'Bogmire', band: 1, home: 'bogmire',
+      where: 'Bogmire: out along the north-west boardwalk', band: 1, home: 'bogmire', at: [540, 240],
       look: 'a smooth grey stone with a round hole worn through it, on a loop of rough twine, a faint silvery light through the hole',
       from: 'Aethermoor, Codex No. 57 (the Hag-Stone)',
     },
@@ -154,7 +157,7 @@
       id: 'bogstriders', name: 'The Bogstriders', wear: 'either', source: 'found',
       main: { hp: 1 }, also: { flee: 2 / 3 }, inFight: true,
       does: 'She has 1% more HP', alsoDoes: 'Running from a pack works 2 times in 3, not 1 in 2',
-      where: 'Bogmire', band: 1, home: 'bogmire',
+      where: 'Bogmire: at the east end of the southern boardwalk', band: 1, home: 'bogmire', at: [1420, 750],
       look: 'dark leather boots on wide, splayed willow-wood soles, reed laces, moss at the tops',
       from: 'Aethermoor, Codex No. 54 (the Bogstriders)',
     },
@@ -162,7 +165,7 @@
       id: 'kettle-helm', name: 'The Dawnroost Kettle-Helm', wear: 'either', source: 'found',
       main: { hp: 1 }, also: { bigBlows: 10 }, inFight: true,
       does: 'She has 1% more HP', alsoDoes: 'The big blows a foe warns of hit her 10% softer',
-      where: 'Dawnroost', band: 2, home: 'dawnroost',
+      where: 'Dawnroost: at the west end of the wall-walk above the Wardens’ hall', band: 2, home: 'dawnroost', at: [215, 232],
       look: 'a dented iron kettle-helm with bronze trim and rivets, a little bronze weather vane on top',
       from: 'Aethermoor, Codex No. 16 (the Watchkeeper’s Kettle)',
     },
@@ -170,7 +173,7 @@
       id: 'dockhand-gloves', name: 'The Dockhand’s Gloves', wear: 'either', source: 'found',
       main: { might: 1 }, also: { shards: 10 }, inFight: false,
       does: 'Her blows and spells land 1% harder', alsoDoes: 'Fights give 10% more shards',
-      where: 'Lost in the shipyard’s cove, below the slips', band: 3, home: 'shipyard',
+      where: 'The shipyard: at the end of the west dock, down in the cove', band: 3, home: 'shipyard', at: [170, 640],
       look: 'dark leather gloves with the fingertips worn through, frost-blue stitching, a silver band at each cuff',
       from: 'Thareia, Codex No. 77 (Lightfingers)',
     },
@@ -178,7 +181,7 @@
       id: 'misthollow-cowl', name: 'The Misthollow Cowl', wear: 'either', source: 'found',
       main: { hp: 1 }, also: { frost: 50 }, inFight: true,
       does: 'She has 1% more HP', alsoDoes: 'Frost slows her for half as long',
-      where: 'Misthollow', band: 4, home: 'misthollow',
+      where: 'Misthollow: at the end of the balcony bridge, up the west stairs', band: 4, home: 'misthollow', at: [135, 245],
       look: 'a hood of something pale and fine, frost-white with silver spirals, a pearl at the clasp',
       from: 'Aethermoor, Codex No. 52 (the Hushweave Cowl)',
     },

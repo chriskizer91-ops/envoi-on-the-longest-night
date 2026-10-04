@@ -18,7 +18,7 @@ A switch at the top picks what the painting is for.
 
 - **The twenty in a list,** by who can wear them, each with its two helps. The picked one's card shows its stand-in picture (until art request 14's pictures come), who can wear it, where it comes from, its main help and its other help, and where it lies.
 - **Putting one on a map:** pick it, press **Put it on this map**, then click the painting. Drag a glint to move it. Delete or **Not placed** takes it off. Shift and the arrows nudge it. Undo and redo work here too, apart from the maps' own.
-- **The fourteen that lie on a map** are the two hidden ones and the twelve found there. The two hidden ones start where they lie in the game today. The four gifts and the Colossus's two have nothing to place: their cards say who gives them.
+- **The fourteen that lie on a map** are the two hidden ones and the twelve found there. Each starts where the list puts it (`items.js` `at`): the two hidden ones where they lie in the game today, the twelve where Claude placed them at Chris's word, away from the main ways through. A keepsake he takes off a map stays off. The four gifts and the Colossus's two have nothing to place: their cards say who gives them.
 - **A red ring** means Io can't get near enough to pick it up. The check uses the paths as Chris has drawn them, so drawing her a way there in Walking paths clears it. In Walking paths, "Where Io can reach" lists the keepsakes she can't reach, too.
 - **Every keepsake's name** is a layer, and so are the keepsakes themselves.
 - **A note** for each keepsake: where exactly, or anything else.

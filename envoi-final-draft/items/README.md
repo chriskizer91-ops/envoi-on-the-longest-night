@@ -26,7 +26,7 @@
 | 2 | Nettie's Knotted Shawl | Grey bog-cotton tied with little charms. Nettie gives it to Io as she sets out | +2.5% healing | The herbs she uses in a fight heal 10% more |
 | 3 | The Fen-Heart Lamp | A small lamp still burning where the great wraith sat, at the fen's dark heart | +3% healing | After each fight she gets back 5% of her MP (outside fights) |
 | 4 | Ysmera's Moonglass | A lens of moon-glass on a silver chain. Ysmera gives it to Io at the shipyard | +3.75% healing | 10% more MP |
-| 5 | The Pass Bell | A frost-rimed bronze hand-bell in the snow on the frozen pass | +4% healing | Trance fills 10% faster |
+| 5 | The Pass Bell | A frost-rimed bronze hand-bell in the snow under the lamp on the frozen pass | +4% healing | Trance fills 10% faster |
 | 6 | The Colossus Heart-Seed | A warm seed from its heart, from the first Bramble Colossus | +5.5% healing | At the start of each of her turns she heals 1% of her HP |
 
 ### Only Sol: each gives her more HP or harder blows
@@ -35,8 +35,8 @@
 |---|---|---|---|---|
 | 7 | ★ The Warden's Brooch | An old sunstone brooch, still warm. Hidden where the trail into the Thornwood's dark woods gives out | +2.5% HP and +2.5% damage | Trance fills 10% faster |
 | 8 | The Wardens' Hall Gauntlets | From a peg over one of the forty bunks. Marta gives them to Sol at Dawnroost | +1.5% damage | Her Sunder lasts a turn longer |
-| 9 | The Node Sunstone | A warm chip from the node's court, once Sol has relit it | +1% damage | She starts each fight with 10 Heat |
-| 10 | The Crossroads Pennant | A scrap of a Wardens' pennant tied to the stone ring at the northern crossroads | +1% HP | Trance fills 10% faster |
+| 9 | The Node Sunstone | A warm chip of the node's sunstone at the top of its west stair, once Sol has relit it | +1% damage | She starts each fight with 10 Heat |
+| 10 | The Crossroads Pennant | A scrap of a Wardens' pennant tied to a waymark far down the crossroads' east road | +1% HP | Trance fills 10% faster |
 | 11 | Ede's Hearth-Coal | A coal from the inn fire they keep lit "for spite". Ede gives it to Sol at Misthollow | +1.5% HP | She starts each fight with 10 Heat |
 | 12 | The Colossus Thorn | A thorn as long as a dagger, from the first Bramble Colossus | +2% damage | Kestrel Stoop lands 10% harder |
 
@@ -44,14 +44,14 @@
 
 | # | Keepsake | What it is, and where | Main help | Other help |
 |---|---|---|---|---|
-| 13 | The Forge Horseshoe | Still warm, by Hilde's forge in Wickhollow | +1% HP | Fights give 5% more shards (outside fights) |
-| 14 | The Jetty Coin | An old clipped coin between the jetty's boards | +1% damage | Herbs cost 10% less in the shops (outside fights) |
-| 15 | The Thornwood Frog-Ring | A bronze ring shaped like a frog's toes gripping a pearl, in the stream by the moon stone | +1% HP | After each fight she gets back 5% of her HP (outside fights) |
-| 16 | The Bogmire Hag-Stone | A stone with a hole worn through it, on twine | +1% damage | Hidden things glint brighter on the maps (outside fights) |
-| 17 | The Bogstriders | Boots on wide willow soles for walking on mud, in Bogmire | +1% HP | Running from a pack works 2 times in 3, not 1 in 2 |
-| 18 | The Dawnroost Kettle-Helm | A dented iron helm with a little weather vane on top | +1% HP | The big blows a foe warns of hit her 10% softer |
-| 19 | The Dockhand's Gloves | Worn through at the fingertips, lost in the shipyard's cove | +1% damage | Fights give 10% more shards (outside fights) |
-| 20 | The Misthollow Cowl | A pale, frost-white hood with silver spirals | +1% HP | Frost slows her for half as long |
+| 13 | The Forge Horseshoe | Still warm from Hilde's forge, in the nook behind the house by Wickhollow's east bridge | +1% HP | Fights give 5% more shards (outside fights) |
+| 14 | The Jetty Coin | An old clipped coin at the far end of the jetty's lakeshore walk | +1% damage | Herbs cost 10% less in the shops (outside fights) |
+| 15 | The Thornwood Frog-Ring | A bronze ring shaped like a frog's toes gripping a pearl, where the Thornwood's north-east trail gives out | +1% HP | After each fight she gets back 5% of her HP (outside fights) |
+| 16 | The Bogmire Hag-Stone | A stone with a hole worn through it, on twine, out along Bogmire's north-west boardwalk | +1% damage | Hidden things glint brighter on the maps (outside fights) |
+| 17 | The Bogstriders | Boots on wide willow soles for walking on mud, at the east end of Bogmire's southern boardwalk | +1% HP | Running from a pack works 2 times in 3, not 1 in 2 |
+| 18 | The Dawnroost Kettle-Helm | A dented iron helm with a little weather vane on top, on Dawnroost's wall-walk | +1% HP | The big blows a foe warns of hit her 10% softer |
+| 19 | The Dockhand's Gloves | Worn through at the fingertips, at the end of the shipyard's west dock, in the cove | +1% damage | Fights give 10% more shards (outside fights) |
+| 20 | The Misthollow Cowl | A pale, frost-white hood with silver spirals, at the end of Misthollow's balcony bridge | +1% HP | Frost slows her for half as long |
 
 ## The totals
 
@@ -72,7 +72,8 @@
 - **Hidden (2):** the Crescent Locket and the Warden's Brooch, where they lie in the game today. Their names are the ones the game already uses.
 - **Gifts (4):** Nettie (Wickhollow, band 1), Marta (Dawnroost, band 2), Ysmera (the shipyard, band 3) and Ede (Misthollow, band 4).
 - **The first Bramble Colossus (2):** the Colossus Heart-Seed for Io and the Colossus Thorn for Sol.
-- **Found on the maps (12), placed by Chris:** the Fen-Heart Lamp (the fen's dark heart), the Pass Bell (the frozen pass), the Node Sunstone (Dawnroost's living node), the Crossroads Pennant (the northern crossroads), and the eight shared ones (Wickhollow, the jetty, the Thornwood, Bogmire twice, Dawnroost, the shipyard, Misthollow). The places named are where each name says it is found. Chris decides the exact spot, and can move any of them.
+- **Found on the maps (12):** the Fen-Heart Lamp (the fen's dark heart), the Pass Bell (the frozen pass), the Node Sunstone (Dawnroost's living node), the Crossroads Pennant (the northern crossroads), and the eight shared ones (Wickhollow, the jetty, the Thornwood, Bogmire twice, Dawnroost, the shipyard, Misthollow). Claude placed them on October 4 at Chris's word: "put them [in] place, not necessarily hidden, but you have to walk around the wilds and fight creatures to find items, and explore the towns". Each lies on the place its name gives, away from the main way through: at the end of a side walk, a dead-end boardwalk, the top of a stair, the far end of a wild trail or road. None is hidden behind the painting, and Io can reach every one. `items.js` has each spot (`at`), and Chris can move any of them in the map editor.
+- **Early in the game:** 8 of the 14 that lie on a map are in the first part of the game, from Wickhollow to the fen's dark heart, since most of its places are there.
 
 Several looks borrow from Chris's Aethermoor relics. `items.js` names each one: the Knotted Shawl, the Pass Bell, the Hall Gauntlets, the Jetty Coin, the Frog-Ring, the Hag-Stone, the Bogstriders, the Kettle-Helm, the Dockhand's Gloves and the Misthollow Cowl. They come from `New-game` (`game/src/data/relics.js` on `claude/cool-ptolemy-uc93gg`, and `thareia/game/src/data/relics.js` on `claude/tender-babbage-4wiplk`). What each giver says, and each keepsake's own words, wait for the lore conversation (`../../docs/questions/open.md`, 32).
 

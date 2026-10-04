@@ -110,8 +110,9 @@
 
   // ---------- the keepsakes: where each one that lies on a map is ----------
   // Fourteen of the twenty lie on a map: the two hidden ones and the twelve found there. places[id] is { map, x, y }, or
-  // null for a hidden one Chris took off its map; the gifts and the Colossus's two have none. notes[id]: his own words
-  // about any of the twenty. The two hidden ones start where they lie in the game today
+  // null for one Chris took off its map; the gifts and the Colossus's two have none. notes[id]: his own words about any
+  // of the twenty. Each starts where the list puts it (items.js `at`): the two hidden ones where they lie in the game
+  // today, the twelve where Claude put them, away from the main ways through
   const lies = (it) => it.source === 'hidden' || it.source === 'found';
   const kw = { places: {}, notes: {} };
   (function loadKeepsakes() {
@@ -120,12 +121,12 @@
     for (const id of Object.keys(places)) {
       const it = BY[id], p = places[id];
       if (!it || !lies(it)) continue;
-      if (p === null && it.source === 'hidden') kw.places[id] = null;
+      if (p === null && it.at) kw.places[id] = null;
       else if (ok(p)) kw.places[id] = { map: p.map, x: clamp(Math.round(p.x), 0, MW), y: clamp(Math.round(p.y), 0, MH) };
     }
     const notes = d && typeof d === 'object' && d.notes && typeof d.notes === 'object' ? d.notes : {};
     for (const id of Object.keys(notes)) if (BY[id] && typeof notes[id] === 'string') kw.notes[id] = notes[id];
-    for (const it of ITEMS) if (it.source === 'hidden' && it.at && MAPS[it.home] && !(it.id in kw.places)) kw.places[it.id] = { map: it.home, x: it.at[0], y: it.at[1] };
+    for (const it of ITEMS) if (lies(it) && it.at && MAPS[it.home] && !(it.id in kw.places)) kw.places[it.id] = { map: it.home, x: it.at[0], y: it.at[1] };
   })();
   const placeOf = (id) => kw.places[id] || null;
   const onMap = (id, map) => { const p = placeOf(id); return !!p && p.map === map; };
@@ -1016,7 +1017,7 @@
   }
   function unplace(id) {
     const it = BY[id]; if (!it || !placeOf(id)) return;
-    keepSnap(); if (it.source === 'hidden') kw.places[id] = null; else delete kw.places[id]; armed = false;
+    keepSnap(); if (it.at) kw.places[id] = null; else delete kw.places[id]; armed = false;
     keepChanged(it.name + ' is off the map. Undo puts it back.');
   }
   // Shift and an arrow key: the picked keepsake moves one pixel; a run of nudges is one undo

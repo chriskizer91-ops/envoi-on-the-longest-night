@@ -1106,6 +1106,7 @@ Chris's rules for things to find, settled over three messages that evening; he l
 - **Four are gifts from townsfolk,** and the first fight with the Bramble Colossus, in the last band's wilds, gives each hero one.
 - **Names say what each thing is and where it's found.** They can come from the other games or be made up; Chris prefers what and where.
 - **Chris places them himself,** with one tool that is both the map editor and the item placer (`../envoi-final-draft/map-editor/`).
+- **Where the found ones lie** (Chris, later that evening: "put them [in] place, not necessarily hidden, but you have to walk around the wilds and fight creatures to find items, and explore the towns"): each on the place its name gives, away from the main way through, so they're found by exploring the towns and by walking, and fighting, through the wilds. Claude placed them; Chris moves any he likes in the map editor. He also wanted the finds early in the game, and 8 of the 14 that lie on a map are in the first part, from Wickhollow to the fen's dark heart.
 - **Pictures and cards** (on approving the list): each keepsake has a tiny PNG picture and a card, shown when she finds it and again in the inventory.
 - **The inventory never tells how many are left to find.** It shows only what has been found: no count, no empty places for the rest.
 - As with the two today, the balance never counts on them.
