@@ -2,10 +2,13 @@
 
 The Bramble Colossus built again at laptop detail, thinking about what it is in the world, and shown as a short nature film with an **Explore** mode. Its body, rig, moves, hit times and anchors are the game's (`../../3d-model-new-character-ideas/bramble-colossus/colossus.js`, which is also `src/models/colossus.js`), so this model can stand in for it. Everything you see is new: its geometry, textures, materials, effects and the place it lives.
 
-**The page:** https://claude.ai/artifact/NuZgcibtA6gy3RDYv4EH44 (private; made for a laptop, with sound). `Bramble_Colossus_Field_Study.html` in this folder is the same page as one file, to open in Chrome, Edge, Firefox or Safari.
+**The film:** https://claude.ai/artifact/NuZgcibtA6gy3RDYv4EH44 (private; made for a laptop, with sound). `Bramble_Colossus_Field_Study.html` in this folder is the same page as one file, to open in Chrome, Edge, Firefox or Safari.
 
-- **Watch the film:** about four minutes in eight chapters. Space pauses, the left and right arrows jump between chapters, and the strip along the bottom starts any chapter. **Narrator** reads the words aloud with the computer's own voice.
-- **Explore it yourself:** drag to turn round it, scroll to come closer, right-drag (or Shift and drag) to slide, double-click for the front view. Every move is a button. Labels name its parts; click one to go to it. You can show its roots under the meadow, hold its bud open, put it in its Wrath, stand a person beside it for scale, change the frost, wind and mist, slow time down, and set the depth of field. **Under the hood** shows the numbers and sets the detail (Medium, High, Max).
+**In motion, the short:** https://claude.ai/artifact/67kPPSanmHLhMKx77iMezn, and `Bramble_Colossus_In_Motion.html` here. A minute and a half with no words: the Colossus standing tall, as the battle shows it, creeping across the meadow and striking (below).
+
+- **Watch the film:** about four minutes in eight chapters. Space pauses, the left and right arrows jump between chapters, and the strip along the bottom starts any chapter. The words are on screen; the narrator is off for now (Chris, October 4: hold off on a voice until a better one can be made).
+- **Sound check** (on the start screen and in the bar along the bottom): every sound, to play, switch off and set how loud; the levels stay on that computer.
+- **Explore it yourself:** drag to turn round it, scroll to come closer, right-drag (or Shift and drag) to slide, double-click for the front view. Every move is a button. Labels name its parts; click one to go to it. You can show its roots under the meadow, hold its bud open, put it in its Wrath, stand a person beside it for scale, **let it wander** (it turns, creeps somewhere new inside its ring, stops and tastes the air, and the camera follows), change the frost, wind and mist, slow time down, and set the depth of field. **Under the hood** shows the numbers and sets the detail (Medium, High, Max).
 
 ![The film](renders/film.jpg)
 
@@ -52,6 +55,29 @@ What the film shows comes from the lore and the game, and where it needed more, 
 
 The words are a first draft for Chris's lore conversation: what the film says is in `film.js`, as plain data.
 
+## In motion
+
+Chris, October 4, after the film: a shorter, more dynamic version, the Colossus moving and doing a few of its moves, and the larger Colossus of the battle page (`Bramble_Colossus_Battle.html`) rather than the hill of brambles the film mostly shows. It is the same creature: the short shows it standing in its battle stance the whole way, at the battle's level 10 (darker, longer thorns, veins that glow at rest).
+
+| Part | What happens |
+|---|---|
+| It wakes | Frost on a bunch of its fruit, one cane lifting to taste the air; the title over it, standing in the meadow; every cane rises |
+| On the move | It creeps 12 m across the meadow on its six legs, the tips tearing their roots free and planting again: alongside it in the grass, head on as it comes, from high in front with the green ring moving with it, low by a leg as it stops and turns |
+| The hunt | Siren Bloom close up; Thorn Lance in slow motion; Maelstrom; Hammerfall, slowed as it falls |
+| The long night | It stands against the moon, the bud parted on its heart; wolves on the pass |
+
+Its walk is the game's own creep (`animate(phase, walk)`, 4.2 of phase a metre, as the battle drives it); the page moves it along a route (`motion.js`), and its warm ring and the moon's shadow follow it. It walks toward the moon so its front is lit.
+
+![In motion](renders/in-motion.jpg)
+
+## Sound
+
+All in `sounds.js`, made in code when the page starts its sound (the project has no recordings of nature), about 1.5 s to make on a laptop, through one reverb shaped like a snowy meadow ringed by forest. Each sound is placed left or right, near or far, by where it is in the picture.
+
+- **The Bramble's own sounds are organic**, wood, leaves, soil, roots and air, nothing that roars (it has no throat): canes creaking as they bend, its leaves, a leg coming down through the frost, roots tearing free as a leg lifts, its heartbeat (only heard close to), steam breathed out of the bud, the whole thicket straining, a cane swung, a cane into the ground, Hammerfall, the flower opening, swallowing, Thornwood, the thorn volley, fire on it, and Felled. Each move plays its own (`SOUNDS` in `page.js`).
+- **The night is quiet and sparse**: wind in the spruce that comes in gusts and dies away to nothing (it follows the Wind slider), and now and then an eagle owl, a tawny owl, the lake ice singing or booming, redwings passing over, a tree cracking in the frost, wolves far off. They fall silent while it hunts, and for a while after it does something loud.
+- **What changed (Chris, October 4):** the steady hiss under the first version was the living battlefield's wind loop, from `sfx.js`; it is gone, and the field study no longer uses `sfx.js` at all.
+
 ## Numbers
 
 | | This model | The game's model |
@@ -66,7 +92,7 @@ The words are a first draft for Chris's lore conversation: what the film says is
 
 The whole scene at High: about 3.8 million triangles a frame counting the moon's shadow and the lake's reflection (the bramble 1 M, and again for its shadow; the grass 0.8 M; the forest 0.7 M, part of it again in the lake; the ranges 0.15 M), 55 draw calls, then the film camera's passes. Medium draws about a third of that and at a lower resolution, for laptops without a separate graphics card; Max adds grass and trees and a sharper picture.
 
-The page is 0.33 MB as one file. three.js r128 comes from cdnjs, as for every page in the project.
+Each page is about 0.33 MB as one file. three.js r128 comes from cdnjs, as for every page in the project.
 
 ## Integration card
 
@@ -95,12 +121,15 @@ To use it in the game, build it at detail .25 with `linear: false` and `shadows:
 | `frostmere.js` | The meadow by Frostmere: sky and moon, the ranges, forest, lake with its reflections, ground, grass and flowers that answer the frost and the warm ring, stones, mist, ice in the air, and the height fog |
 | `cinema.js` | The film camera |
 | `film.js` | The film's chapters, shots, moves and words |
-| `field-study.html`, `page.js`, `field-study.css` | The page's source. It also loads the living battlefield's sounds (`../../living-battlefields/sfx.js`), all made in code |
-| `Bramble_Colossus_Field_Study.html` | The built page |
-| `renders/` | Stills from the film |
+| `motion.js` | The short, In motion: its route and shots |
+| `sounds.js` | Every sound, made in code: the Bramble's and the night's |
+| `field-study.html`, `in-motion.html`, `page.js`, `field-study.css` | The two pages' source (they share `page.js` and the stylesheet) |
+| `Bramble_Colossus_Field_Study.html`, `Bramble_Colossus_In_Motion.html` | The built pages |
+| `renders/` | Stills from the film and the short |
 
 ## Still open
 
 - **The new ideas** above (the warm ring, roots under the meadow, winter fruit, sensing through its roots, the Horror as its young): `../../docs/questions/open.md`, 24.
 - **The words** of the film are a draft for the lore conversation.
+- **A narrator**, if a better voice can be made; until then the words are on screen only.
 - **Next, if Chris wants:** the Bramble Horror and the Bramble Ancient at the same detail, as the rest of the family; the young thicket beside it in the film; birds roosting in its mane; a dawn.

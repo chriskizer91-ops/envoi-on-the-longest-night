@@ -4,8 +4,10 @@
 // A shot: { d: seconds, cam: { from, to, at, at2 (or anchor names: 'heart', 'bud', 'hit', 'chest', 'crown', 'fruit',
 //   'impact'), fov: [from, to], ease, shake (handheld, 0 to 1), orbit: { c, r, h, a0, a1 } }, focus: meters or an anchor,
 //   ap: aperture, exp: exposure, slow: [[t, timescale], ...], act: [[t, move], ...], env: { xray, frost, open, wrath:
-//   [[t, value], ...] }, say: [[t0, t1, words], ...], card: [t0, t1, card id], sound: [[t, name, gain], ...],
-//   bars: letterbox (0 to .12), fade: [[t, 0 to 1], ...] }
+//   [[t, value], ...] }, say: [[t0, t1, words], ...], card: [t0, t1, card id], night: [[t, sound, { pan, far, pick }], ...]
+//   (one of the night's sounds, sounds.js, on cue), bars: letterbox (0 to .12), fade: [[t, 0 to 1], ...] }
+// A chapter with quiet: true silences the night's calls while it lasts (the meadow holds its breath while the Bramble
+// hunts); the wind goes on. route (optional) moves it: [[film seconds, x, z, heading], ...].
 // The narration is a proposal for Chris: what the field study says about the creature is drawn from the lore so far and
 // the handoff's Thornheart idea, and is not canon until he says so (README.md lists what is new).
 function makeFilm() {
@@ -15,7 +17,7 @@ function makeFilm() {
       id: 'title', title: 'Frostmere', kicker: 'Below the frozen pass', setup: { pose: 'rest', frost: 1, xray: 0, open: 0 },
       shots: [
         { d: 15, cam: { from: [160, 60, -40], to: [40, 22, 70], at: [40, 20, -400], at2: [0, 4, 0], fov: [42, 36], ease: 'io' }, focus: 400, ap: .05, exp: 1.2, bars: .1,
-          fade: [[0, 0], [3, 1]], title: [2.2, 12.5], sound: [[0, 'wind', .6]] }
+          fade: [[0, 0], [3, 1]], title: [2.2, 12.5], night: [[3.5, 'ice', { pan: .5, far: .6 }], [9, 'owl', { pan: -.7, far: .75 }]] }
       ]
     },
     {
@@ -46,11 +48,11 @@ function makeFilm() {
         { d: 12, cam: { from: [-3, 6.05, -6.7], to: [-2.2, 5.85, -5.4], at: 'bunch6', fov: [22, 19], ease: 'io', shake: .12 }, focus: 'bunch6', ap: 2.6, exp: 1.4,
           say: [[.5, 11.5, 'And it fruits. Green, red and black on the same cane, all winter long, every drupelet glossy in the moonlight.']] },
         { d: 12, cam: { from: [4, 1.2, -9], to: [6, 1.6, -7], at: [0, 2.4, 0], fov: [34, 32], ease: 'io', shake: .1 }, focus: 'crown', ap: 1.1, exp: 1.3,
-          say: [[.5, 11.5, 'Warmth, light and food on the longest nights of the year. For anything cold and hungry there is nowhere else like it.']] }
+          say: [[.5, 11.5, 'Warmth, light and food on the longest nights of the year. For anything cold and hungry there is nowhere else like it.']], night: [[2.5, 'redwings', { pan: -.6, far: .45 }]] }
       ]
     },
     {
-      id: 'wake', title: 'It wakes', kicker: 'Chapter four', setup: { pose: 'rest', frost: 1, xray: 0, open: 0, prey: 'camera' },
+      id: 'wake', title: 'It wakes', kicker: 'Chapter four', quiet: true, setup: { pose: 'rest', frost: 1, xray: 0, open: 0, prey: 'camera' },
       shots: [
         { d: 11, cam: { from: [1.5, 1.55, 17], to: [.6, 1.6, 10.5], at: [0, 2.6, 0], fov: [44, 44], ease: 'l', shake: .45, walk: true }, focus: 'crown', ap: .6, exp: 1.3, act: [[6.5, 'alert']],
           say: [[.5, 6, 'It has no eyes and no face.'], [6.5, 10.8, 'It feels warmth, and footsteps, through its roots.']] },
@@ -59,7 +61,7 @@ function makeFilm() {
       ]
     },
     {
-      id: 'bloom', title: 'The bloom', kicker: 'Chapter five', setup: { pose: 'base', frost: 1, xray: 0, open: 0, prey: 'mark' },
+      id: 'bloom', title: 'The bloom', kicker: 'Chapter five', quiet: true, setup: { pose: 'base', frost: 1, xray: 0, open: 0, prey: 'mark' },
       shots: [
         { d: 13, cam: { from: [13, 3.4, 9.5], to: [10.8, 3.9, 8], at: [.3, 6.2, .8], fov: [28, 25], ease: 'io', shake: .12 }, focus: 'heart', ap: .7, exp: 1.25, act: [[1, 'bloom']], env: { open: [[0, 0], [3.3, 0], [3.8, 1]] },
           say: [[.5, 6.5, 'First, it opens.'], [6.8, 12.8, 'The flower spreads, the heart shows, and a sweet glowing dust drifts out over the meadow.']] },
@@ -68,7 +70,7 @@ function makeFilm() {
       ]
     },
     {
-      id: 'strike', title: 'The strike', kicker: 'Chapter six', setup: { pose: 'base', frost: 1, xray: 0, open: 0, prey: 'mark' },
+      id: 'strike', title: 'The strike', kicker: 'Chapter six', quiet: true, setup: { pose: 'base', frost: 1, xray: 0, open: 0, prey: 'mark' },
       shots: [
         { d: 11, cam: { from: [-15, 2.2, 6], to: [-14, 2.4, 7], at: [0, 4, 4.5], fov: [40, 40], ease: 'l', shake: .1 }, focus: [0, 3, 5], ap: .4, exp: 1.25, act: [[3, 'lance']], slow: [[3.2, 1], [3.5, .18], [5.2, .18], [5.8, 1]], card: [6, 10.5, 'arm'],
           say: [[.5, 3, 'Its arms are canes nine metres long.'], [5.8, 10.8, 'The lead arm draws back, and spears down faster than an eye can follow.']] },
@@ -91,7 +93,7 @@ function makeFilm() {
         { d: 14, cam: { from: [-10, 3, -12], to: [-13, 4, -16], at: [0, 2.6, 0], fov: [36, 38], ease: 'io' }, focus: 'crown', ap: .5, exp: 1.25, act: [[1, 'rest']],
           say: [[.5, 6.5, 'By morning it is a hill of brambles again.'], [7, 13.5, 'The meadow stays green. The frost waits at the edge of its roots.']] },
         { d: 16, cam: { from: [30, 9, 46], to: [70, 26, 110], at: [0, 3, 0], fov: [40, 44], ease: 'io' }, focus: 60, ap: .05, exp: 1.2, bars: .1,
-          fade: [[11, 1], [16, 0]], say: [[.5, 9, 'And the longest night is still coming.']], end: [10, 16] }
+          fade: [[11, 1], [16, 0]], say: [[.5, 9, 'And the longest night is still coming.']], end: [10, 16], night: [[1.5, 'wolves', { pan: .5, far: .95 }]] }
       ]
     }
   ];

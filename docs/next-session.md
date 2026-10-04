@@ -37,6 +37,8 @@ October 3, 2026, late evening (into October 4): the session that started **pass 
 
 Chris asked for a 3D model folder of Claude's own: `../3d-model-field-studies/`. Each study builds one creature again as well as a laptop browser can draw it, and shows it as a short nature film with an Explore mode. The first is **the Bramble Colossus** (`../3d-model-field-studies/bramble-colossus/`, https://claude.ai/artifact/NuZgcibtA6gy3RDYv4EH44): the game's rig and moves with new geometry, textures and materials (999k triangles at detail 1, 98k at .25), in the meadow by Frostmere. Chris has more ideas for it once he has seen it. Its lore questions are `questions/open.md`, 24.
 
+Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: the Bramble's own organic ones and a quiet night; the steady hiss of the battlefield's wind loop is gone), there is a **sound check**, the narrator is off until a better voice can be made, and there is a short, **In motion** (https://claude.ai/artifact/67kPPSanmHLhMKx77iMezn): the Colossus standing tall as the battle page shows it, creeping across the meadow, then Thorn Lance, Maelstrom and Hammerfall. Chris also asked for "one of the Bramble Colossus as well, this larger version, the one in `Bramble_Colossus_Battle.html`": the short is the answer so far (the same creature, shown standing and at the battle's level), and what more he wants from it is still to be asked.
+
 ## What pass three did (so far)
 
 `../envoi-game-pass-3/README.md` has the list. In short:

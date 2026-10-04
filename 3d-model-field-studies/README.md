@@ -8,7 +8,7 @@ They are reference models: a measure of how far a browser page can go, made for 
 
 | Study | Folder | Page | State |
 |---|---|---|---|
-| The Bramble Colossus | `bramble-colossus/` | https://claude.ai/artifact/NuZgcibtA6gy3RDYv4EH44 | Version 1, October 4, 2026 |
+| The Bramble Colossus | `bramble-colossus/` | The film: https://claude.ai/artifact/NuZgcibtA6gy3RDYv4EH44; In motion, the short: https://claude.ai/artifact/67kPPSanmHLhMKx77iMezn | Version 2, October 4, 2026: its own sounds, a sound check, and the short |
 
 ## What goes in a study's folder
 
@@ -19,9 +19,10 @@ They are reference models: a measure of how far a browser page can go, made for 
 | `model/` | The model's source in numbered parts (`00-head.js` to `99-interface.js`), joined by `node model/join.mjs` |
 | `<place>.js` | The creature's habitat, built in 3D |
 | `cinema.js` | The film camera: high dynamic range, depth of field, bloom, moonlight shafts and a film grade |
-| `film.js` | The film: its chapters, shots, moves and words, as data |
-| `field-study.html`, `page.js`, `field-study.css` | The page's source |
-| `*_Field_Study.html` | The built page, one file to open in a browser |
+| `film.js`, `motion.js` | The films: their chapters, shots, moves and words, as data (`motion.js` is a short one, with a route it walks) |
+| `sounds.js` | Every sound, made in code |
+| `field-study.html`, `in-motion.html`, `page.js`, `field-study.css` | The pages' source |
+| `*_Field_Study.html`, `*_In_Motion.html` | The built pages, each one file to open in a browser |
 | `renders/` | Stills from the film and Explore |
 
 ## Building a study's page
@@ -30,8 +31,9 @@ From the repository's top folder:
 
 ```sh
 node 3d-model-field-studies/bramble-colossus/model/join.mjs
-node tools/build.mjs 3d-model-field-studies/bramble-colossus/field-study.html
+node tools/build.mjs 3d-model-field-studies/bramble-colossus/field-study.html 3d-model-field-studies/bramble-colossus/in-motion.html
 cp dist/field-study.html 3d-model-field-studies/bramble-colossus/Bramble_Colossus_Field_Study.html
+cp dist/in-motion.html 3d-model-field-studies/bramble-colossus/Bramble_Colossus_In_Motion.html
 ```
 
-`dist/field-study.artifact.html` is the same page without its outer document tags, for publishing.
+`dist/<name>.artifact.html` is the same page without its outer document tags, for publishing.

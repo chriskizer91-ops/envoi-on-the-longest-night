@@ -1,8 +1,9 @@
 // page.js: the field study page. It builds the meadow (frostmere.js), the colossus (colossus.js) and the camera
 // (cinema.js), then either plays the film (film.js: shots, moves, words) or lets the viewer explore: orbit, labels on
 // its parts, every move, its roots, the night's frost and wind, slow motion, and the numbers behind the picture.
-// Sounds come from the living battlefield's sfx.js, all made in code. Built for a laptop; ?q=medium|high|max sets the
-// detail, ?test drives frames from the test hooks (window.__fs) instead of the clock.
+// It can walk: a film may give it a route, and in Explore it can wander. Its sounds and the night's come from sounds.js,
+// all made in code, with a sound check to try each one. Built for a laptop; ?q=medium|high|max sets the detail, ?test
+// drives frames from the test hooks (window.__fs) instead of the clock (add &sound to let it make sound).
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
@@ -28,7 +29,7 @@
     }],
     ['Growing the meadow', () => { const t = performance.now(); E.world = makeFrostmere(E.renderer, { quality: QUALITY }); E.ms.world = performance.now() - t; }],
     ['Growing the bramble', () => {
-      const t = performance.now(); E.model = makeBrambleColossus({ shadows: true, detail: QP.detail }); E.ms.model = performance.now() - t;
+      const t = performance.now(); E.model = makeBrambleColossus({ shadows: true, detail: QP.detail, level: film.level || 1 }); E.ms.model = performance.now() - t;
       E.world.scene.add(E.model.root, E.model.fx); E.world.setWarm(E.model.root.position, 20);
     }],
     ['Setting up the camera', () => {
@@ -80,9 +81,11 @@
     if (mode === 'film' && !clock.paused) filmStep(realDt);
     if (mode === 'explore') orbitStep(realDt);
     // its prey: the camera itself in some shots, else a point before it
+    moveStep(realDt, simDt);
     if (prey === 'camera') { const c = E.camera.position; m.state.target = { x: c.x, y: Math.max(1.1, c.y - .3), z: c.z }; } else m.state.target = null;
-    m.animate(0, 0, clock.sim, simDt);
+    m.animate(mv.phase, mv.walk, clock.sim, simDt);
     watchModel();
+    if (snd) { snd.setQuiet(mode === 'film' && !!chapNow && !!chapNow.quiet); if (!(mode === 'film' && clock.paused)) snd.tick(realDt); }
     applyShake(realDt);
     if (noDraw) { if (shakeOff) E.camera.quaternion.copy(shakeOff); return; }
     w.update(clock.sim, simDt, E.camera);
@@ -109,6 +112,44 @@
     requestAnimationFrame(loop);
   }
 
+  // ---------- where it stands: still, or creeping across the meadow ----------
+  // film.route, if the film has one: [[film seconds, x, z, heading], ...], easing from each key to the next. In Explore it
+  // can wander: turn toward somewhere new inside its ring, creep there, stop and taste the air. Its legs step as far as it
+  // goes (the model's own creep, as the battle drives it: 4.2 of phase a metre) and its warm ring follows it, slowly.
+  const mv = { x: 0, z: 0, yaw: 0, phase: 0, walk: 0, wander: false, goal: null, wait: 1.5, warm: V3() };
+  const angD = (a, b) => Math.atan2(Math.sin(b - a), Math.cos(b - a));
+  function routeAt(t) {
+    const R = film.route; if (!R || !R.length) return [0, 0, 0];
+    if (t <= R[0][0]) return R[0].slice(1);
+    for (let i = 0; i < R.length - 1; i++) { const a = R[i], b = R[i + 1]; if (t < b[0]) { const u = EASE.io((t - a[0]) / (b[0] - a[0])); return [lerp(a[1], b[1], u), lerp(a[2], b[2], u), a[3] + angD(a[3], b[3]) * u]; } }
+    return R[R.length - 1].slice(1);
+  }
+  function wanderStep(dt) {
+    if (E.model.action || dt <= 0) return;
+    if (!mv.goal) { mv.wait -= dt; if (mv.wait > 0) return; const a = Math.random() * Math.PI * 2, r = 2 + Math.random() * 6; mv.goal = [Math.sin(a) * r, Math.cos(a) * r]; }
+    const dx = mv.goal[0] - mv.x, dz = mv.goal[1] - mv.z, d = Math.hypot(dx, dz), turn = angD(mv.yaw, Math.atan2(dx, dz));
+    if (d > .3 && Math.abs(turn) > .3) mv.yaw += Math.sign(turn) * Math.min(Math.abs(turn), .4 * dt);
+    else { if (d > .3) mv.yaw += turn * Math.min(1, dt * .8); const st = Math.min(d, (.8 * sm(0, 1.5, d) + .06) * dt); mv.x += Math.sin(mv.yaw) * st; mv.z += Math.cos(mv.yaw) * st; }
+    if (d < .12) { mv.goal = null; mv.wait = 3 + Math.random() * 5; E.model.taste(); bsfx('creak', .4); bsfx('rustle', .3); }
+  }
+  function moveStep(rdt, sdt) {
+    const m = E.model, px = mv.x, pz = mv.z, pyaw = mv.yaw;
+    if (mode === 'film') { const r = routeAt(ft); mv.x = r[0]; mv.z = r[1]; mv.yaw = r[2]; }
+    else if (mode === 'explore' && mv.wander) wanderStep(sdt);
+    const d = Math.hypot(mv.x - px, mv.z - pz), dy = Math.abs(angD(pyaw, mv.yaw)), jump = d > 3 || dy > 1, go = jump ? 0 : d + dy * 2.4, dt = mode === 'film' ? rdt : sdt;
+    if (!jump) { const p0 = mv.phase; mv.phase += go * 4.2; stepSounds(p0, mv.phase); }
+    if (dt > 0) mv.walk = go / dt > .05 ? 1 : 0;
+    m.root.position.set(mv.x, E.world.heightAt(mv.x, mv.z), mv.z); m.root.rotation.y = mv.yaw;
+    if (jump) mv.warm.copy(m.root.position); else mv.warm.lerp(m.root.position, 1 - Math.exp(-rdt / 4));
+    E.world.setWarm(mv.warm);
+    if (mode === 'explore' && !jump) { orbit.gt.x += mv.x - px; orbit.gt.z += mv.z - pz; orbit.target.x += mv.x - px; orbit.target.z += mv.z - pz; }
+  }
+  // its legs step in two sets: as a set comes down its tips go into the frost, as it lifts they tear their roots free
+  function stepSounds(p0, p1) {
+    if (E.model.action || mv.walk < .5) return;
+    for (const g of [0, Math.PI]) { const a = Math.sin(p0 + g), b = Math.sin(p1 + g); if (a > 0 && b <= 0) bsfx('step', .8); else if (a <= 0 && b > 0) bsfx('pull', .55); }
+  }
+
   // ---------- poses, prey ----------
   let prey = 'mark';
   function pose(name, settle) {
@@ -120,24 +161,36 @@
 
   // ---------- what the model does: sounds, shockwaves through the grass, tremors ----------
   let lastAct = '', lastProg = -1, lastBeat = 0;
+  // the sounds of each move, at points through it (sounds.js: wood, leaves, soil, roots and air, nothing that roars)
   const SOUNDS = {
-    appear: [[0, 'rumble', 1], [.6, 'roar', 1]], alert: [[.05, 'creak', .9], [.2, 'rustle', .7]], bloom: [[.25, 'bloom', 1], [.4, 'pollen', .8]],
-    lance: [[.3, 'swoosh', .8]], slam: [[.1, 'growl', .9], [.36, 'creak', .8]], whirl: [[.2, 'whirl', 1]], volley: [[.38, 'whip', 1], [.5, 'whip', 1]],
-    devour: [[.18, 'grab', 1]], briar: [[.3, 'rumble', .9]], enrage: [[.4, 'roar', 1]], hurt: [[0, 'growl', .7]], burn: [[0, 'sizzle', 1]], die: [[.48, 'crash', 1]], rest: [[0, 'creak', .5]]
+    appear: [[0, 'shoots', .8], [.12, 'groan', 1], [.42, 'step', 1], [.45, 'step', .8], [.58, 'groan', .7], [.62, 'rustle', 1], [.66, 'breath', .8]],
+    alert: [[.04, 'creak', .8], [.12, 'rustle', .8]],
+    bloom: [[.08, 'bloom', 1], [.4, 'breath', .5]],
+    lance: [[.04, 'creak', .7], [.3, 'swish', .9], [.44, 'impact', 1], [.66, 'pull', .8]],
+    slam: [[.06, 'groan', .55], [.3, 'creak', .7], [.42, 'swish', 1], [.5, 'heavy', 1], [.6, 'impact', .45], [.72, 'pull', .7]],
+    whirl: [[.1, 'creak', .7], [.3, 'swish', .8], [.3, 'rustle', .8], [.42, 'swish', .9], [.54, 'swish', .9], [.66, 'swish', .8], [.78, 'rustle', .6]],
+    volley: [[.2, 'creak', .7], [.36, 'swish', .9], [.48, 'swish', .9], [.56, 'thorns', 1]],
+    devour: [[.14, 'swish', .8], [.2, 'creak', .8], [.42, 'creak', .7], [.5, 'gulp', 1], [.66, 'gulp', .8], [.76, 'gulp', .7], [.88, 'breath', .7]],
+    briar: [[.2, 'creak', .7], [.3, 'impact', .8], [.44, 'shoots', 1], [.66, 'creak', .7]],
+    enrage: [[.05, 'groan', 1], [.4, 'rustle', 1], [.42, 'breath', 1]],
+    hurt: [[0, 'creak', .8], [.05, 'rustle', .7]], block: [[0, 'rustle', .6], [.1, 'creak', .5]],
+    burn: [[0, 'sizzle', 1], [.05, 'creak', .8], [.1, 'rustle', .7]],
+    rest: [[0, 'creak', .5], [.25, 'rustle', .5], [.5, 'breath', .45]],
+    die: [[.09, 'crash', 1]]
   };
-  const HITS = { lance: ['smash', 1, 'impact'], slam: ['slam', 1.7, 'impact'], whirl: ['whip', .5, 'ring'], volley: ['thorns', .6, 'impact'], devour: ['gulp', .3, 'held'], briar: ['shoots', 1.1, 'impact'] };
-  const _v = V3();
+  // what a hit does to the meadow: how hard, and where (its impact point, a ring round it, or nothing)
+  const HITS = { lance: [1, 'impact'], slam: [1.7, 'impact'], whirl: [.5, 'ring'], volley: [.6, 'impact'], devour: [.3, 'held'], briar: [1.1, 'impact'] };
+  const _v = V3(), _v2 = V3();
   function watchModel() {
     const m = E.model, a = m.action, p = m.progress;
     if (a && (a !== lastAct || p < lastProg)) { lastProg = -1e-6; } // a move has started
     if (a) {
-      for (const [u, name, g] of SOUNDS[a] || []) if (lastProg < u && p >= u) sfx(name, g);
+      for (const [u, name, g] of SOUNDS[a] || []) if (lastProg < u && p >= u) bsfx(name, g, name === 'heavy' || name === 'impact' ? m.anchor('impact', _v2) : null);
       const def = m.ACTIONS[a], H = HITS[a];
       for (const h of def.hits) if (lastProg < h && p >= h) {
-        if (H) sfx(H[0], .9);
-        const k = H ? H[1] : .6;
-        if (!H || H[2] === 'impact') { m.anchor('impact', _v); E.world.impact(_v.x, _v.z, k); }
-        else if (H[2] === 'ring') E.world.impact(m.root.position.x, m.root.position.z, k);
+        const k = H ? H[0] : .6;
+        if (!H || H[1] === 'impact') { m.anchor('impact', _v); E.world.impact(_v.x, _v.z, k); }
+        else if (H[1] === 'ring') E.world.impact(m.root.position.x, m.root.position.z, k);
         const d = E.camera.position.distanceTo(_v.set(0, 2, 6)); shake.k = Math.max(shake.k, k * cl(16 / d, .3, 1.2)); shake.t = 0;
         if (a === 'lance' || a === 'slam') clock.hitstop = .08;
       }
@@ -146,34 +199,71 @@
       }
     }
     lastAct = a; lastProg = a ? p : -1;
-    // its heartbeat, heard close to
-    if (m.beats !== lastBeat) { lastBeat = m.beats; const d = E.camera.position.distanceTo(m.anchor('heart', _v)); if (d < 22) sfx('heartbeat', cl(1.3 - d / 18, .08, 1)); }
+    // its heartbeat, heard only close to
+    if (m.beats !== lastBeat) { lastBeat = m.beats; const d = E.camera.position.distanceTo(m.anchor('heart', _v)), g = cl(1.15 - d / 14, 0, .9); if (g > .05) bsfx('heart', g, _v); }
   }
 
-  // ---------- sound and the narrator ----------
-  let snd = null, soundOn = true, voiceOn = false;
-  function sfx(name, g) { if (snd && soundOn && snd.ready) { try { snd.play(name, { gain: g === undefined ? 1 : g }); } catch (e) { /* a sound it does not have */ } } }
+  // ---------- sound: the Bramble's own and the night's (sounds.js) ----------
+  let snd = null, soundOn = true;
+  const SKEY = 'fs-sound-1';
   function startSound() {
-    if (snd || TEST || typeof makeFightSound !== 'function') return;
-    try { snd = makeFightSound(); snd.init(); snd.ambience({ wind: .55, gust: .35, rain: 0, wrath: 0, night: 0 }); } catch (e) { snd = null; }
+    if (snd || (TEST && !Qs.has('sound')) || typeof makeFieldSounds !== 'function') return;
+    try {
+      snd = makeFieldSounds(); try { snd.load(JSON.parse(store.get(SKEY) || 'null')); } catch (e) { /* nothing saved */ }
+      snd.init(); snd.setMuted(!soundOn); snd.setWind(+$('sWind').value);
+    } catch (e) { snd = null; }
   }
+  function saveSound() { if (snd) store.set(SKEY, JSON.stringify(snd.settings())); }
   function setSound(on) { soundOn = on; $('soundBtn').setAttribute('aria-pressed', String(on)); $('soundBtn').textContent = on ? 'Sound on' : 'Sound off'; if (snd) snd.setMuted(!on); }
-  let voice = null;
-  function pickVoice() {
-    if (!('speechSynthesis' in window)) return null;
-    const vs = speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang));
-    const pref = ['Daniel', 'Google UK English Male', 'Arthur', 'Microsoft Ryan', 'Microsoft George', 'Oliver', 'Alex', 'Google UK English Female', 'Samantha'];
-    for (const p of pref) { const v = vs.find((x) => x.name.indexOf(p) >= 0); if (v) return v; }
-    return vs[0] || null;
+  // one of the Bramble's sounds, placed for the ears: left or right in the picture, and nearer or further
+  const _s = V3();
+  function bsfx(name, g, at) {
+    if (!snd || !soundOn) return;
+    if (at) _s.copy(at); else _s.copy(E.model.root.position).setY(E.model.root.position.y + 2.5);
+    _s.applyMatrix4(E.camera.matrixWorldInverse); const d = _s.length();
+    snd.bramble(name, { gain: (g === undefined ? 1 : g) * cl(16 / Math.max(d, 1), .45, 1.15), pan: cl(_s.x / Math.max(d, 4) * 1.5, -.85, .85), far: cl((d - 10) / 60, 0, 1) });
   }
-  function say(text) {
-    if (!voiceOn || !('speechSynthesis' in window)) return;
-    try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); voice = voice || pickVoice(); if (voice) u.voice = voice; u.rate = .9; u.pitch = .92; speechSynthesis.speak(u); } catch (e) { /* no voice here */ }
+
+  // ---------- the sound check: every sound, to play, switch off and set how loud ----------
+  let checkOpen = false, checkWasPaused = false;
+  function openCheck() {
+    if (!soundOn) setSound(true);
+    startSound(); checkOpen = true; $('check').hidden = false; checkWasPaused = clock.paused;
+    if (mode === 'film') { clock.paused = true; setPlayIcon(); }
+    if (snd) snd.setHold(true);
+    fillCheck(); $('checkClose').focus();
   }
-  function setVoice(on) {
-    voiceOn = on && 'speechSynthesis' in window; $('voiceBtn').setAttribute('aria-pressed', String(voiceOn)); $('voiceBtn').textContent = voiceOn ? 'Narrator on' : 'Narrator off';
-    if (!voiceOn && 'speechSynthesis' in window) speechSynthesis.cancel();
-    if (!('speechSynthesis' in window)) $('voiceBtn').hidden = true;
+  function closeCheck() {
+    if (!checkOpen) return; checkOpen = false; $('check').hidden = true; if (snd) snd.setHold(false);
+    if (mode === 'film' && !checkWasPaused) { clock.paused = false; setPlayIcon(); }
+    saveSound();
+  }
+  function fillCheck() {
+    const st = $('checkState');
+    if (!snd) { st.textContent = 'This browser cannot make sound here.'; return; }
+    if (!$('checkBramble').children.length) {
+      for (const l of snd.list) (l.fam === 'bramble' ? $('checkBramble') : $('checkNight')).appendChild(checkRow(l));
+      $('gBramble').addEventListener('input', (e) => snd.setGroup('bramble', +e.target.value));
+      $('gNight').addEventListener('input', (e) => snd.setGroup('night', +e.target.value));
+    }
+    syncCheck();
+    st.textContent = snd.ready ? '' : 'Making the sounds\u2026';
+    if (!snd.ready) setTimeout(() => { if (checkOpen) fillCheck(); }, 300);
+  }
+  function checkRow(l) {
+    const row = document.createElement('div'); row.className = 'ck'; row.dataset.id = l.id;
+    row.innerHTML = (l.bed ? '<span class="play always" title="Always there">~</span>' : '<button type="button" class="play" aria-label="Play: ' + l.name + '">&#9654;</button>') +
+      '<div class="ckt"><b>' + l.name + '</b><small>' + l.desc + '</small></div>' +
+      '<label class="ckon"><input type="checkbox"> On</label><input class="lv" type="range" min="0" max="1.5" step="0.01" aria-label="How loud: ' + l.name + '">';
+    const pb = row.querySelector('button.play');
+    if (pb) pb.addEventListener('click', () => { if (!snd || !snd.ready) return; if (l.fam === 'bramble') snd.bramble(l.id, { far: .05, force: true }); else snd.night(l.id, { pan: 0, far: .45 }); });
+    row.querySelector('.ckon input').addEventListener('change', (e) => { snd.setOn(l.id, e.target.checked); row.classList.toggle('off', !e.target.checked); });
+    row.querySelector('.lv').addEventListener('input', (e) => snd.setLevel(l.id, +e.target.value));
+    return row;
+  }
+  function syncCheck() {
+    $('gBramble').value = snd.group('bramble'); $('gNight').value = snd.group('night');
+    document.querySelectorAll('#check .ck').forEach((row) => { const id = row.dataset.id, on = snd.on(id); row.querySelector('.ckon input').checked = on; row.classList.toggle('off', !on); row.querySelector('.lv').value = snd.level(id); });
   }
 
   // ---------- the film ----------
@@ -206,8 +296,8 @@
     const f = shotAt(ft); if (f !== shotNow) enterShot(f);
     const s = f.s, st = ft - s.start, pst = prev - s.start;
     // moves and sounds on cue
-    for (const [t, name] of s.act || []) if (pst < t && st >= t && prev >= firedTo - 1e-6) { if (name === 'taste') E.model.taste(); else E.model.play(name, true); }
-    for (const [t, name, g] of s.sound || []) if (pst < t && st >= t) { if (name === 'wind' && snd) snd.ambience({ wind: g, gust: .35, rain: 0, wrath: 0, night: 0 }); }
+    for (const [t, name] of s.act || []) if (pst < t && st >= t && prev >= firedTo - 1e-6) { if (name === 'taste') { E.model.taste(); bsfx('creak', .45); bsfx('rustle', .35); } else E.model.play(name, true); }
+    for (const [t, id, o] of s.night || []) if (pst < t && st >= t && snd) { if (id === 'hush') snd.hush(o); else snd.night(id, o); }
     clock.slow = keyed(s.slow, st, 1);
     const env = s.env || {};
     if (env.xray) E.model.state.xray = keyed(env.xray, st, 0);
@@ -219,11 +309,16 @@
     updateChapters();
   }
   const _a = V3(), _b = V3(), _c = V3(), _d = V3();
-  function resolve(x, out) { if (Array.isArray(x)) return out.fromArray(x); if (typeof x === 'string') return E.model.anchor(x, out); return out.set(0, 3, 0); }
+  // a point in a shot: [x, y, z] in the meadow, or in its own frame when the camera rides with it (rel), or an anchor's name
+  const _Y = V3(0, 1, 0);
+  function resolve(x, out, rel) {
+    if (Array.isArray(x)) { out.fromArray(x); if (rel) out.applyAxisAngle(_Y, mv.yaw).add(E.model.root.position); return out; }
+    if (typeof x === 'string') return E.model.anchor(x, out); return out.set(0, 3, 0);
+  }
   function filmCamera(s, st) {
-    const c = s.cam, u = cl(st / s.d, 0, 1), e = (EASE[c.ease] || EASE.io)(u), cam = E.camera;
-    if (c.orbit) { const o = c.orbit, an = lerp(o.a0, o.a1, e); cam.position.set(o.c[0] + Math.sin(an) * o.r, o.c[1] + o.h, o.c[2] + Math.cos(an) * o.r); _b.fromArray(o.c); }
-    else { cam.position.fromArray(c.from).lerp(_a.fromArray(c.to), e); resolve(c.at, _b); if (c.at2) _b.lerp(resolve(c.at2, _c), e); }
+    const c = s.cam, u = cl(st / s.d, 0, 1), e = (EASE[c.ease] || EASE.io)(u), cam = E.camera, rel = !!c.rel;
+    if (c.orbit) { const o = c.orbit, an = lerp(o.a0, o.a1, e) + (rel ? mv.yaw : 0); resolve(o.c, _b, rel); cam.position.set(_b.x + Math.sin(an) * o.r, _b.y + o.h, _b.z + Math.cos(an) * o.r); }
+    else { resolve(c.from, cam.position, rel); cam.position.lerp(resolve(c.to, _a, rel), e); resolve(c.at, _b, rel); if (c.at2) _b.lerp(resolve(c.at2, _c, rel), e); }
     // a handheld drift, and a walk's sway when the camera is the prey stepping closer
     const hk = c.shake || 0, t = clock.real;
     if (c.walk) { cam.position.y += Math.abs(Math.sin(t * 3.6)) * .05 - .025; cam.position.x += Math.sin(t * 1.8) * .04; }
@@ -231,12 +326,12 @@
     if (hk > 0) { _e.set((Math.sin(t * .9) * .6 + Math.sin(t * 2.3 + 1) * .3 + Math.sin(t * 5.1) * .1) * hk * .012, (Math.sin(t * .7 + 2) * .6 + Math.sin(t * 1.9) * .4) * hk * .014, Math.sin(t * .5 + 3) * hk * .006); _q.setFromEuler(_e); cam.quaternion.multiply(_q); }
     if (cam.view && cam.view.enabled) cam.clearViewOffset();
     cam.fov = c.fov ? lerp(c.fov[0], c.fov[1], e) : 36; cam.updateProjectionMatrix();
-    focusTo(s.focus, cam);
+    focusTo(s.focus, cam, 0, rel);
   }
   let focusD = 12;
-  function focusTo(f, cam, rate) {
+  function focusTo(f, cam, rate, rel) {
     let d;
-    if (typeof f === 'number') d = f; else d = cam.position.distanceTo(resolve(f || [0, 3, 0], _d));
+    if (typeof f === 'number') d = f; else d = cam.position.distanceTo(resolve(f || [0, 3, 0], _d, rel));
     focusD += (d - focusD) * (1 - Math.exp(-(rate || 5) * (1 / 60))); if (Math.abs(focusD - d) > d * .5) focusD = d;
     E.cine.params.focus = focusD;
   }
@@ -254,10 +349,10 @@
     let w = null; for (const x of s.say || []) if (st >= x[0] && st < x[1]) w = x;
     if (w !== sayNow) {
       sayNow = w; const cap = $('caption');
-      if (w) { $('capWords').textContent = w[2]; cap.classList.add('on'); say(w[2]); } else cap.classList.remove('on');
+      if (w) { $('capWords').textContent = w[2]; cap.classList.add('on'); } else cap.classList.remove('on');
     }
-    const kick = f.c.id !== 'title' && st < 6 && f.si === 0; $('caption').classList.toggle('kick', kick || !!w);
-    $('capKick').textContent = f.c.id === 'title' ? '' : f.c.kicker + ' · ' + f.c.title;
+    const kick = !film.wordless && f.c.id !== 'title' && st < 6 && f.si === 0; $('caption').classList.toggle('kick', kick || !!w);
+    $('capKick').textContent = f.c.id === 'title' || film.wordless ? '' : f.c.kicker + ' · ' + f.c.title;
     if (s.card) { const on = st >= s.card[0] && st < s.card[1]; if (on && $('card').hidden) showCard(s.card[2]); if (!on && !$('card').hidden) clearCard(); }
   }
   function showCard(id) { const c = film.cards[id]; if (!c) return; $('cardTitle').textContent = c.title; $('cardRows').innerHTML = c.rows.map((r) => '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>').join(''); $('card').hidden = false; }
@@ -310,7 +405,7 @@
     cv.addEventListener('wheel', (e) => { if (mode !== 'explore') return; e.preventDefault(); orbit.gd = cl(orbit.gd * Math.exp(e.deltaY * .0012), 1.2, 140); }, { passive: false });
     cv.addEventListener('dblclick', () => { if (mode === 'explore') frontView(); });
   }
-  function frontView() { orbit.gt.set(0, 3.6, 0); orbit.gd = 21; orbit.gth = -1.2 + Math.round((orbit.gth + 1.2) / (Math.PI * 2)) * Math.PI * 2; orbit.gph = 1.32; }
+  function frontView() { const th = mv.yaw - 1.2; orbit.gt.set(mv.x, 3.6, mv.z); orbit.gd = 21; orbit.gth = th + Math.round((orbit.gth - th) / (Math.PI * 2)) * Math.PI * 2; orbit.gph = 1.32; }
   const MOVES = [['rest', 'Rest', 'a hill of brambles'], ['alert', 'Wake', 'every cane rises'], ['taste', 'Taste the air', 'one cane lifts'], ['bloom', 'Siren Bloom', 'the flower opens'],
     ['lance', 'Thorn Lance', 'one arm spears down'], ['slam', 'Hammerfall', 'both arms as one club'], ['whirl', 'Maelstrom', 'every cane whirls'], ['volley', 'Thorn Volley', 'thorns flung high'],
     ['devour', 'Devour', 'lifted into the flower'], ['briar', 'Thornwood', 'shoots from the soil'], ['enrage', 'Wrath', 'its second phase'], ['burn', 'Scorch', 'its fear of fire'],
@@ -321,7 +416,7 @@
       const b = document.createElement('button'); b.type = 'button'; b.innerHTML = name + '<small>' + note + '</small>';
       b.addEventListener('click', () => {
         const m = E.model;
-        if (id === 'taste') { if (m.action === 'rest' || !m.action) m.taste(); return; }
+        if (id === 'taste') { if (m.action === 'rest' || !m.action) { m.taste(); bsfx('creak', .45); bsfx('rustle', .35); } return; }
         if (id === 'die' && m.action === 'die') { m.play('appear', true); return; }
         if (id === 'enrage') { m.play('enrage', true); setTimeout(() => { m.state.wrath = 1; $('tWrath').checked = true; }, 1400); return; }
         m.play(id, true);
@@ -351,7 +446,7 @@
       box.appendChild(el); labEls.push({ id, el });
     }
   }
-  function labelPos(id, out) { if (id === 'roots') return out.set(9, .2, 7); return E.model.anchor(id, out); }
+  function labelPos(id, out) { if (id === 'roots') return E.model.root.localToWorld(out.set(9, .2, 7)); return E.model.anchor(id, out); }
   const _p = V3();
   function labelsStep() {
     const show = mode === 'explore' && $('tLabels').checked;
@@ -410,7 +505,10 @@
     $('modeBtn').addEventListener('click', () => (mode === 'explore' ? toFilm() : toExplore()));
     $('play').addEventListener('click', togglePause);
     $('soundBtn').addEventListener('click', () => { startSound(); setSound(!soundOn); });
-    $('voiceBtn').addEventListener('click', () => setVoice(!voiceOn));
+    $('checkBtn').addEventListener('click', openCheck); $('goCheck').addEventListener('click', openCheck);
+    $('checkClose').addEventListener('click', closeCheck);
+    $('checkReset').addEventListener('click', () => { if (snd) { snd.reset(); syncCheck(); } });
+    $('tWander').addEventListener('change', (e) => { mv.wander = e.target.checked; mv.goal = null; mv.wait = .5; if (mv.wander && E.model.action === 'rest') E.model.play('alert', true); });
     $('fullBtn').addEventListener('click', () => { const d = document; try { if (d.fullscreenElement) d.exitFullscreen(); else d.documentElement.requestFullscreen().catch(() => {}); } catch (e) { /* not here */ } });
     $('tXray').addEventListener('change', (e) => { E.model.state.xray = e.target.checked ? 1 : 0; });
     $('tOpen').addEventListener('change', (e) => { E.model.state.open = e.target.checked ? 1 : 0; });
@@ -419,7 +517,7 @@
     $('tAuto').addEventListener('change', (e) => { orbit.auto = e.target.checked; });
     $('tStats').addEventListener('change', (e) => { $('stats').hidden = !e.target.checked; });
     $('sFrost').addEventListener('input', (e) => { const v = +e.target.value; E.world.set({ frost: v }); E.model.state.frost = .55 * v; });
-    $('sWind').addEventListener('input', (e) => { const v = +e.target.value; E.world.set({ wind: { x: v, z: v * .33 } }); E.model.state.wind = { x: v * .6, z: v * .2 }; });
+    $('sWind').addEventListener('input', (e) => { const v = +e.target.value; E.world.set({ wind: { x: v, z: v * .33 } }); E.model.state.wind = { x: v * .6, z: v * .2 }; if (snd) snd.setWind(v); });
     $('sMist').addEventListener('input', (e) => { E.world.set({ mist: +e.target.value }); });
     document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => { clock.userSlow = +b.dataset.slow; document.querySelectorAll('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); }));
     $('resetView').addEventListener('click', frontView);
@@ -427,7 +525,9 @@
     $('quality').value = QUALITY;
     $('quality').addEventListener('change', (e) => { store.set('fs-quality', e.target.value); const u = new URL(location.href); u.searchParams.set('q', e.target.value); location.href = u.toString(); });
     document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && checkOpen) { closeCheck(); return; }
       if (e.target && /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+      if (checkOpen) return;
       if (e.code === 'Space' && mode !== 'start') { e.preventDefault(); togglePause(); }
       if (e.key === 'e' || e.key === 'E') { if (mode === 'film') toExplore(); else if (mode === 'explore') toFilm(); }
       if (mode === 'film' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { const i = film.chapters.indexOf(chapNow) + (e.key === 'ArrowRight' ? 1 : -1); const c = film.chapters[cl(i, 0, film.chapters.length - 1)]; $('endcard').hidden = true; seek(c.start); }
@@ -438,12 +538,12 @@
     let idleT = 0; const wake = () => { $('bar').classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => { if (mode === 'film' && !clock.paused) $('bar').classList.add('idle'); }, 2600); };
     document.addEventListener('pointermove', wake); document.addEventListener('keydown', wake);
   }
-  function togglePause() { clock.paused = !clock.paused; setPlayIcon(); if (clock.paused && 'speechSynthesis' in window) speechSynthesis.pause(); else if ('speechSynthesis' in window) speechSynthesis.resume(); }
+  function togglePause() { if (checkOpen) return; clock.paused = !clock.paused; setPlayIcon(); }
 
   function ready() {
     $('loadBar').style.width = '100%';
     $('load').hidden = true; $('start').hidden = false; mode = 'start';
-    buildChapters(); buildMoves(); buildLabels(); bindUI(); bindOrbit(); setVoice(false);
+    buildChapters(); buildMoves(); buildLabels(); bindUI(); bindOrbit();
     // behind the start screen: a slow drift over the meadow
     startDrift();
     if (!TEST) requestAnimationFrame(loop);
@@ -459,6 +559,7 @@
     // play the film from the start of the shot that holds t up to t without drawing, then draw (the moves happen)
     at(t, draw) { driftOnly = false; mode = 'film'; $('start').hidden = true; const f = shotAt(t); seek(f.s.start); while (ft < t - 1e-6) frame(Math.min(1 / 30, t - ft), undefined, true); if (draw !== false) return this.step(1, 1 / 30); return { ft }; },
     explore() { $('start').hidden = true; toExplore(); },
+    get snd() { return snd; }, startSound() { startSound(); return !!snd; }, openCheck, closeCheck, mv,
     sim(sec) { for (let t = 0; t < sec; t += 1 / 30) frame(1 / 30, undefined, true); return true; },
     step(n, dt) { for (let i = 0; i < (n || 1); i++) frame(dt || 1 / 30); E.renderer.getContext().finish(); return { ft, mode, calls: E.renderer.info.render.calls, tris: E.renderer.info.render.triangles }; },
     view(v) { // Explore only: set the orbit directly
