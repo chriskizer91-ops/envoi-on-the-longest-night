@@ -1093,3 +1093,15 @@ Chris asked what polish is left, and for these: his three songs in; the songs' v
 - **Beating the game unlocks Chapters** (Chris: "if you beat the game that unlocks chapter selection once we finalize the game"). Until the game is finished, Chapters stays on the title from the start, so each part can be tried.
 - **How, when it's time:** winning the finale already marks the save (`flags.ending`, set before the ending plays), so the title can offer Chapters once any slot holds a beaten game. A mark of its own on the device, set at the same moment, would keep Chapters open even after that save is overwritten.
 - Chris has the whole game as one file (the offline build, songs inside) to keep and play anywhere: sent October 4 with all three songs, and again the same day with the fights' original battle music.
+
+## October 4, 2026, evening: the twenty keepsakes
+
+Chris's rules for things to find. `../envoi-final-draft/items/README.md` has the list, which stays a proposal until he has placed the keepsakes and agreed it.
+
+- **Twenty keepsakes** from his Aethermoor and Thareia loot, each with a still picture (no animation), put on and taken off on a new Items page. Wearing one gives its wearer its help.
+- **Six only Io can wear, six only Sol, and eight either.** There's no limit on how many one hero wears, so one can wear fourteen if the party finds all twenty.
+- **The two hidden keepsakes are cut to a quarter** of what they give now, and stay the two strongest.
+- **Sixteen reach today's totals:** between them, the sixteen make Io's Lunar Mend and Waxing Light heal 25% more, and give Sol 10% more HP and blows that land 10% harder, the same as the two hidden keepsakes do today. The two hidden ones are among the sixteen. The sizes differ ("some of them might be 1% of something... some of them might be 3%").
+- **Four are special,** on top of the totals: one for each hero that makes her Trance fill 20% faster, "and that's all it does", and two rings that help in other ways.
+- **Chris places them himself** on the Item Places page (`../envoi-final-draft/item-places/`).
+- As with the two today, the balance never counts on them.

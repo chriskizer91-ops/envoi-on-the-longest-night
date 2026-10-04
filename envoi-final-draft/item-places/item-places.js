@@ -31,6 +31,8 @@
   };
   const rgba = (hex, a) => { let h = hex.replace('#', ''); if (h.length === 3) h = h.split('').map((c) => c + c).join(''); const n = parseInt(h, 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; };
   const WEAR = { io: 'Only Io', sol: 'Only Sol', either: 'Either' };
+  // ★ the two hidden ones (a quarter of the totals), ✦ the four specials (on top of them)
+  const mark = (it) => (it.secret ? '★ ' : it.special ? '✦ ' : '');
   const GROUPS = [['io', 'Only Io can wear these', 6], ['sol', 'Only Sol can wear these', 6], ['either', 'Either can wear these', 8]];
 
   // ---------- the work: where each item is ----------
@@ -155,7 +157,7 @@
     for (const it of itemsOn(cur)) {
       const p = placeOf(it.id), x = X(p.x), y = Y(p.y), picked = it.id === ui.pick;
       glint(x, y, picked ? 11 : 9, C[it.wear], !!it.secret, picked, out.has(it.id));
-      if (picked || L.names) tag((it.secret ? '★ ' : '') + it.name, x + 14, y - 8, out.has(it.id) ? C.bad : C[it.wear]);
+      if (picked || L.names) tag(mark(it) + it.name, x + 14, y - 8, out.has(it.id) ? C.bad : C[it.wear]);
     }
     g.strokeStyle = 'rgba(214,222,255,0.28)'; g.lineWidth = 1; g.strokeRect(X(0) - 0.5, Y(0) - 0.5, MW * z + 1, MH * z + 1);
   }
@@ -250,7 +252,7 @@
       isDone: () => false,
       onExit: (ex) => note('The way out to ' + E.placeName(MAPS, ex.to) + '. On this page she stays on this map.'),
       onTalk: (p) => note(p.name + ' is here. Talking is off on this page.'),
-      onSpot: (s) => { const it = s.item && BY[s.item]; note(it ? (it.secret ? '★ ' : '') + it.name + ' (' + WEAR[it.wear].toLowerCase() + '): ' + it.does + '.' : (s.label || s.kind) + ': nothing happens on this page.'); },
+      onSpot: (s) => { const it = s.item && BY[s.item]; note(it ? mark(it) + it.name + ' (' + WEAR[it.wear].toLowerCase() + '): ' + it.does + '.' : (s.label || s.kind) + ': nothing happens on this page.'); },
       onMenu: () => stopWalk(),
     };
     try {
@@ -302,6 +304,7 @@
         el('i', { class: 'ip-dot ' + wear, 'aria-hidden': 'true' }, b);
         const name = el('span', { class: 'ip-name' }, b);
         if (it.secret) el('span', { class: 'ip-star', title: 'One of the two hidden ones' }, name, '★ ');
+        if (it.special) el('span', { class: 'ip-star ip-special', title: 'One of the four specials, on top of the totals' }, name, '✦ ');
         name.appendChild(document.createTextNode(it.name));
         const chip = el('span', { class: 'mp-chip' }, b);
         const where = el('span', { class: 'ip-where' }, b, it.does);
@@ -324,11 +327,12 @@
   function renderCard() {
     const it = BY[ui.pick], card = $('ip-card'), s = stateOf(it), p = placeOf(it.id);
     card.textContent = '';
-    const h = el('h3', null, card, (it.secret ? '★ ' : '') + it.name);
-    h.title = it.secret ? 'One of the two hidden ones' : '';
+    const h = el('h3', null, card, mark(it) + it.name);
+    h.title = it.secret ? 'One of the two hidden ones' : it.special ? 'One of the four specials' : '';
     const meta = el('div', { class: 'ip-meta' }, card);
     const who = el('span', { class: 'mp-chip' }, meta, WEAR[it.wear]); who.style.color = C[it.wear]; who.style.borderColor = rgba(C[it.wear], 0.55);
-    if (it.secret) el('span', { class: 'mp-chip' }, meta, 'Hidden: the two hold a quarter of all the help');
+    if (it.secret) el('span', { class: 'mp-chip' }, meta, 'Hidden: a quarter of the totals');
+    if (it.special) el('span', { class: 'mp-chip' }, meta, 'Special: on top of the totals');
     el('span', { class: 'mp-chip' }, meta, 'Band ' + it.band);
     el('p', { class: 'ip-does' }, card, it.does + '.');
     el('p', { class: 'ip-line' }, card, '“' + it.line + '”');

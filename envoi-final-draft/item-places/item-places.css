@@ -22,6 +22,7 @@
 .ip-dot.sol, .ip-sw-sol { background: var(--wear-sol); }
 .ip-dot.either, .mp-sw.ip-sw-item { background: var(--wear-either); }
 .ip-star { color: var(--secret); font-size: 12px; }
+.ip-star.ip-special { color: var(--reach); }
 
 .mp-chip.is-placed { border-color: rgba(141, 255, 176, 0.5); background: rgba(141, 255, 176, 0.1); color: var(--good); }
 .mp-chip.is-reward { border-color: rgba(127, 231, 255, 0.5); background: rgba(127, 231, 255, 0.08); color: var(--reach); }

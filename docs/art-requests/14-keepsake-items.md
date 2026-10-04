@@ -22,8 +22,8 @@ What happens next: Claude shrinks each picture to 256 × 256 (about 10 to 20 KB 
 | 1 | ★ The Orrery of Hours (hidden) | `item-orrery.png` | Io |
 | 2 | Nettie's Hexbane Shawl | `item-hexbane-shawl.png` | Io |
 | 3 | The Mosswatch Lantern | `item-mosswatch-lantern.png` | Io |
-| 4 | The Hag-Stone | `item-hag-stone.png` | Io |
-| 5 | The First Seed | `item-first-seed.png` | Io |
+| 4 | The First Seed | `item-first-seed.png` | Io |
+| 5 | The Fawnrest Heartstone | `item-fawnrest-heartstone.png` | Io |
 | 6 | The Veilbell | `item-veilbell.png` | Io |
 | 7 | ★ The Warden's Seal (hidden) | `item-wardens-seal.png` | Sol |
 | 8 | The Vale Gauntlets | `item-vale-gauntlets.png` | Sol |
@@ -31,11 +31,11 @@ What happens next: Claude shrinks each picture to 256 × 256 (about 10 to 20 KB 
 | 10 | The Watchkeeper's Kettle | `item-watchkeepers-kettle.png` | Sol |
 | 11 | The Ironvein Bracers | `item-ironvein-bracers.png` | Sol |
 | 12 | The Roc-Feather Cloak | `item-roc-feather-cloak.png` | Sol |
-| 13 | The Mire Pearl | `item-mire-pearl.png` | Either |
-| 14 | Hodge's Unfair Toll | `item-unfair-toll.png` | Either |
-| 15 | The Bogstriders | `item-bogstriders.png` | Either |
-| 16 | The Sunstone Heart | `item-sunstone-heart.png` | Either |
-| 17 | The Fawnrest Heartstone | `item-fawnrest-heartstone.png` | Either |
+| 13 | The Mire Pearl (a ring) | `item-mire-pearl.png` | Either |
+| 14 | The Hag-Stone (a ring) | `item-hag-stone.png` | Either |
+| 15 | Hodge's Unfair Toll | `item-unfair-toll.png` | Either |
+| 16 | The Bogstriders | `item-bogstriders.png` | Either |
+| 17 | The Sunstone Heart | `item-sunstone-heart.png` | Either |
 | 18 | Lightfingers | `item-lightfingers.png` | Either |
 | 19 | The Hushweave Cowl | `item-hushweave-cowl.png` | Either |
 | 20 | The Thornwreath | `item-thornwreath.png` | Either |
@@ -84,20 +84,20 @@ A single fantasy keepsake painted as an item picture for a JRPG's inventory, in 
 The Mosswatch Lantern: an old hand lantern of bronze and black iron with a ring on top to carry it by, and four panes of warm topaz-coloured glass. A cushion of soft green moss has grown over its domed cap. A steady ember-orange flame burns inside, lighting the glass from within and glowing on its worn frame. Three hundred years of use show: rounded edges, small dents, metal rubbed bright where hands have held it.
 ```
 
-**4. The Hag-Stone** (`item-hag-stone.png`)
-
-```text
-A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
-
-The Hag-Stone: a smooth grey river stone the size of a plum, with a round hole worn clean through it by water. It hangs from a ring of pitted dark bog-iron, tied on with a loop of rough brown twine. Through the hole glows a faint silvery light, as if something else can be seen through it. Small, plain and very old.
-```
-
-**5. The First Seed** (`item-first-seed.png`)
+**4. The First Seed** (`item-first-seed.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
 The First Seed: a seed the size of a walnut, of dark polished wood veined with fine lines of gold, held in a simple gold setting and hung on a short chain of small round wooden beads. From its top one tiny fresh green bud is just opening. It looks ancient and very faintly alive: the gold veins glow with the softest warm light.
+```
+
+**5. The Fawnrest Heartstone** (`item-fawnrest-heartstone.png`)
+
+```text
+A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
+
+The Fawnrest Heartstone: a heart-shaped stone of clear golden topaz in a bronze setting worked with a tiny pattern of deer antlers, on a bronze chain. A warm glow lives deep inside it, like the heat of a hidden spring.
 ```
 
 **6. The Veilbell** (`item-veilbell.png`)
@@ -169,10 +169,18 @@ The Roc-Feather Cloak: a short cloak, folded and draped, made of huge storm-grey
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
-The Mire Pearl: a large warm pearl with a soft cream and pond-gold sheen, damp and glistening, gripped by a ring of old verdigris-crusted bronze shaped like a frog's splayed toes. A few strands of reed wind round the ring, and a tiny bead of water clings to the pearl.
+The Mire Pearl: a finger ring of old verdigris-crusted bronze whose setting is shaped like a frog's splayed toes, gripping a large warm pearl with a soft cream and pond-gold sheen, damp and glistening. A few strands of reed wind round the band, and a tiny bead of water clings to the pearl.
 ```
 
-**14. Hodge's Unfair Toll** (`item-unfair-toll.png`)
+**14. The Hag-Stone** (`item-hag-stone.png`)
+
+```text
+A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
+
+The Hag-Stone: a finger ring with a band of pitted dark bog-iron, set with a smooth grey river stone the size of a hazelnut that has a round hole worn clean through it by water. The stone is tied onto the band with a loop of rough brown twine. Through the hole glows a faint silvery light, as if something else can be seen through it. Small, plain and very old.
+```
+
+**15. Hodge's Unfair Toll** (`item-unfair-toll.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
@@ -180,7 +188,7 @@ A single fantasy keepsake painted as an item picture for a JRPG's inventory, in 
 Hodge's Unfair Toll: a single old bronze coin, clipped unevenly round its edge and worn smooth by thumbs, hanging from a short length of dark iron chain through a hole near its rim. On its face, the worn-away shape of a little ferry boat. A cheeky, slightly crooked thing.
 ```
 
-**15. The Bogstriders** (`item-bogstriders.png`)
+**16. The Bogstriders** (`item-bogstriders.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
@@ -188,20 +196,12 @@ A single fantasy keepsake painted as an item picture for a JRPG's inventory, in 
 The Bogstriders: a pair of dark leather boots standing side by side, each strapped onto a wide, splayed sole of pale willow wood shaped a little like a duck's foot, so the wearer can walk on mud without sinking. Laces of plaited green reed, tufts of moss at the tops, and dried mud on the soles. Well loved.
 ```
 
-**16. The Sunstone Heart** (`item-sunstone-heart.png`)
+**17. The Sunstone Heart** (`item-sunstone-heart.png`)
 
 ```text
 A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
 
 The Sunstone Heart: a heart-shaped amber sunstone in a gold setting, hanging from a gold chain. Veins of brighter light glow through the stone like embers in a coal, brightest at its centre, as if it were beating. Warm light spills from it onto the gold.
-```
-
-**17. The Fawnrest Heartstone** (`item-fawnrest-heartstone.png`)
-
-```text
-A single fantasy keepsake painted as an item picture for a JRPG's inventory, in the spirit of Final Fantasy IX's art: richly hand-painted with crisp clean edges and fine detail in its materials (worn metal, glass, cloth, wood, stone), not photoreal, not pixel art, not anime cel shading. The one object alone, in the middle, filling about two thirds of the frame, in a gentle three-quarter view from slightly above, with a strong clear silhouette that still reads when shrunk very small. Night lighting: soft cool moonlight from the upper left and a warm amber glow from below right. A plain deep indigo background (#151236) with a soft dark vignette and nothing else on it. No hands, no people, no table, no frame, no text, no letters. Square, 1:1, at least 1024 by 1024.
-
-The Fawnrest Heartstone: a heart-shaped stone of clear golden topaz in a bronze setting worked with a tiny pattern of deer antlers, on a bronze chain. A warm glow lives deep inside it, like the heat of a hidden spring.
 ```
 
 **18. Lightfingers** (`item-lightfingers.png`)
