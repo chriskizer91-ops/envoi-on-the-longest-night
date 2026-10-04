@@ -32,6 +32,14 @@ New questions, if any come up while the game is built, go here.
     - What are they really called, and who left them there? Is a fallen Warden's brooch in the Thornwood all right for the lore?
 25. **The battle song's loudness.** Chris's three songs play as loud as the made-up music they replace on the maps. The made-up battle theme was much quieter than the map music (it sat under the battle's sounds), but Herbal Decay Battle plays as loud as the map music, so it's heard. Is that right, or should it sit lower under the fighting? Answered October 4: the fights keep the original battle music, and Herbal Decay Battle is out of the game (`design-decisions.md`, "The songs").
 
+## The final draft (October 4, evening)
+
+Asked by the session that reviewed the final draft (`../../envoi-final-draft/README.md`). None of it blocks the art: Chris can make the sheets first and answer as he goes.
+
+26. **The wild's own creatures** (art request 13, `../art-requests/13-wild-creatures.md`). Ten families, most of them Chris's own from his Aethermoor games, brought into this story as creatures of the wild that Noctara's cold has upset: the Thornhound (the Rime Wolf in the peaks), the Glowcap, the Mire Toad and Gorrow the Mire-King, the Moor Boar and Old Snag, the Moss Bear, the White Hart of Fawnrest, the Thunder-Roc of Stormwatch, the Ember Beetle, the Blackwater Gar and Old Jaws, and the Veilcat. Are these the right ones, with the right names, and is wave 1 the right place to start?
+27. **How a beaten creature of the wild leaves.** Lore answer 21 says defeat is release, not death, and the moth rising is for souls. So these aren't killed: the fight goes out of them and they leave. A hound slinks off, a Glowcap sits down and puts down roots, a toad sinks back into the water, the White Hart's frost cracks off and it walks back into the trees, the Thunder-Roc rises into the storm. Is that right for all of them?
+28. **Great creatures at the D&D map's named places.** Each band gets a great creature as an optional fight in a lair: Gorrow at Willowmurk and Old Jaws under Rotbridge (band 1), Old Snag on the Warm Roads' moor (band 2), the White Hart at Fawnrest Shrine (band 3), the Thunder-Roc at Stormwatch (band 4). Each lair has things to find, and each great creature leaves a keepsake that the balance never counts on, like the two hidden now: Old Snag's hatchet for Sol (a Warden's, with the sun on it), the White Hart's bell for Io. Should the places be visited like this, and is a Warden's hatchet in Old Snag's shoulder all right for the lore?
+
 ## New character ideas
 
 Asked October 3 by the session that polished them in `../../3d-model-new-character-ideas/`, at the same time as the game was being built. Where the game has already answered, the answer is noted.
