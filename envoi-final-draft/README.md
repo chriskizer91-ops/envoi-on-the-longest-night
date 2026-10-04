@@ -109,6 +109,10 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 
 `model-studio/README.md` has the whole loop. In short: Chris generates a creature's two sheets, starts a new session with that creature's starter message and the sheets, plays with its bench page on his phone until he's happy, and brings its return slip back to the game's session, which puts the creature into the game. Each modeling session works only in its own folder, so several can run at once. The same loop builds anything else the game needs, from a blank brief.
 
+## Cutscenes
+
+`cutscenes/README.md` answers Chris's question from October 4, evening: yes, the game can have cutscenes like the field study's film, shorter (under a minute before a fight) and lighter (a Phone detail that holds 30 frames a second). It has a brief and a starter message for two, each made by its own session in its own folder: **the Colossus, first met** (the first time the party meets it beside the frozen road) and **the finale's opening** (the camera coming in from far off onto Io and Sol, Noctara and Halcyon at the dead Moonwell). To give those sessions what they build on, this branch now also carries `3d-cutscenes/` (from `claude/quirky-newton-dr3w1q`), and `3d-model-field-studies/` and `3d-model-main-characters/` (from `claude/confident-albattani-nhdy6e`). Chris's Colossus battle page is kept in `../reference/demos/bramble-colossus-battle.html`.
+
 ## For the next session working on the game
 
 1. `../docs/next-session.md` is still where the game stands; this folder is the newest work on top of it.
@@ -122,4 +126,5 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 | `Envoi-on-the-Longest-Night.html` | The final draft, as Chris keeps it |
 | `renders/` | Screenshots from the phone-size playthrough |
 | `model-studio/` | The model studio: the briefs, the return slip, the intake |
+| `cutscenes/` | The cutscene plan, a brief for each, and their sessions' folders |
 | `../docs/art-requests/13-wild-creatures.md` | The image prompts for the ten creature families |
