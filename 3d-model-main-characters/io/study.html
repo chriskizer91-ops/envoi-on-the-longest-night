@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Io, the Witch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="./study.css">
+</head>
+<body>
+<div id="stage"><canvas id="gl" aria-label="Io, the Witch, in her cottage garden in Wickhollow, at night"></canvas></div>
+<div id="labels" aria-hidden="true"></div>
+
+<section id="load" class="cover">
+  <p class="eyebrow">Main characters, No. 1</p>
+  <h1>Io, the Witch</h1>
+  <p class="where">Her cottage garden, Wickhollow</p>
+  <div class="meter" role="progressbar" aria-label="Getting her ready" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="loadBar"></i></div>
+  <p id="loadStep" class="step">Lighting the lanterns</p>
+</section>
+
+<section id="start" class="cover" hidden>
+  <p class="eyebrow">Main characters, No. 1</p>
+  <h1>Io, the Witch</h1>
+  <p class="where">Her cottage garden, Wickhollow</p>
+  <p class="lede">The game’s Io, exactly as she looks and moves, built again at the detail of the Bramble Colossus: every lock of her hair in fine strands, velvet and embroidered stars, a sculpted face, real metal and glass.</p>
+  <div class="choices">
+    <button id="goTour" class="big primary" type="button">Take the tour <span>a minute and a half, a close look at each part</span></button>
+    <button id="goExplore" class="big" type="button">Explore her yourself <span>turn round her, light her, play her moves</span></button>
+  </div>
+  <p class="small" id="startNote">Made for a laptop; it runs lighter on a phone. Drag to look round; pinch or scroll to come closer.</p>
+</section>
+
+<section id="titlecard" hidden aria-live="polite">
+  <p class="eyebrow">Main characters, No. 1</p>
+  <h2>Io, the Witch</h2>
+  <p class="where">Her cottage garden, Wickhollow</p>
+</section>
+
+<div id="caption" aria-live="polite"><p id="capKick" class="kicker"></p><p id="capWords" class="words"></p></div>
+
+<section id="endcard" hidden>
+  <p class="eyebrow">Main characters, No. 1</p>
+  <h2>Io, the Witch</h2>
+  <dl id="sheetRows"></dl>
+  <div class="choices"><button id="again" class="big" type="button">Tour again</button><button id="endExplore" class="big primary" type="button">Explore her yourself</button></div>
+</section>
+
+<nav id="bar" aria-label="Tour controls" hidden>
+  <button id="play" class="icon" type="button" aria-label="Pause">&#10074;&#10074;</button>
+  <div id="steps" role="list"></div>
+  <button id="toExplore" type="button">Explore</button>
+</nav>
+
+<button id="drawerBtn" type="button" hidden aria-controls="explore" aria-expanded="true">Explore</button>
+<aside id="explore" hidden aria-label="Explore">
+  <header><h2>Explore</h2><button id="backTour" type="button">The tour</button></header>
+  <section>
+    <h3>Her moves</h3>
+    <div id="moves" class="grid"></div>
+  </section>
+  <section>
+    <h3>See</h3>
+    <div class="toggles">
+      <label><input id="tLabels" type="checkbox" checked> Labels on her parts</label>
+      <label><input id="tWalk" type="checkbox"> Walk the path</label>
+      <label><input id="tGuard" type="checkbox"> Guard</label>
+      <label><input id="tTrance" type="checkbox"> Lunar Trance</label>
+      <label><input id="tOld" type="checkbox"> Beside the game’s Io</label>
+      <label><input id="tAuto" type="checkbox"> Slow turn</label>
+    </div>
+  </section>
+  <section>
+    <h3>Close up</h3>
+    <div class="grid" id="closeups"></div>
+  </section>
+  <section>
+    <h3>The light</h3>
+    <div class="seg" role="group" aria-label="Light" id="lightSeg"><button type="button" data-look="night" aria-pressed="true">Her lantern</button><button type="button" data-look="moon" aria-pressed="false">Moon only</button><button type="button" data-look="studio" aria-pressed="false">Studio</button></div>
+    <label class="slider" for="sWind">Breeze <input id="sWind" type="range" min="0" max="2" step="0.01" value="0.6"></label>
+  </section>
+  <section>
+    <h3>Camera</h3>
+    <div class="seg" role="group" aria-label="Speed" id="speedSeg"><button type="button" data-slow="1" aria-pressed="true">Real time</button><button type="button" data-slow="0.5" aria-pressed="false">Half</button><button type="button" data-slow="0.2" aria-pressed="false">Slow</button></div>
+    <label class="slider" for="sAp">Depth of field <input id="sAp" type="range" min="0" max="3" step="0.05" value="0.8"></label>
+  </section>
+  <section>
+    <h3>Under the hood</h3>
+    <label class="slider" for="quality">Detail <select id="quality"><option value="medium">Medium</option><option value="high">High</option><option value="max">Max</option></select></label>
+    <label><input id="tStats" type="checkbox"> Show the numbers</label>
+  </section>
+</aside>
+
+<pre id="stats" hidden></pre>
+<p id="hint" role="status" hidden></p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="./io.js"></script>
+<script src="../../src/models/witch.js"></script>
+<script src="./garden.js"></script>
+<script src="./cinema.js"></script>
+<script src="./page.js"></script>
+</body>
+</html>
