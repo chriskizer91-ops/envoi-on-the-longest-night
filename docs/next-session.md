@@ -33,6 +33,10 @@ October 3, 2026, late evening (into October 4): the session that started **pass 
 
   To update a page from a new session, pass its link as `url` to the Artifact tool. A publish to a page this conversation hasn't read is refused once and hands back the live copy; check it holds nothing your build lacks, then publish again.
 
+## Claude's field studies (October 4)
+
+Chris asked for a 3D model folder of Claude's own: `../3d-model-field-studies/`. Each study builds one creature again as well as a laptop browser can draw it, and shows it as a short nature film with an Explore mode. The first is **the Bramble Colossus** (`../3d-model-field-studies/bramble-colossus/`): the game's rig and moves with new geometry, textures and materials (999k triangles at detail 1, 98k at .25), in the meadow by Frostmere. Chris has more ideas for it once he has seen it. Its lore questions are `questions/open.md`, 24.
+
 ## What pass three did (so far)
 
 `../envoi-game-pass-3/README.md` has the list. In short:

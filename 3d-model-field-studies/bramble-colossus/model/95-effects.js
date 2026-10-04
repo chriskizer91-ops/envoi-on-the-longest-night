@@ -216,12 +216,12 @@
   {
    const wnd = state.wind || { x: .35, z: .1 }, br = Math.max(0, state.breath === undefined ? 1 : +state.breath) * U.frost.value * 1.6;
    const so = sm(.1, .9, P.op);
-   fxS.acc.steam += dt * br * fk * (9 + 26 * so + 18 * cl(P.feed, 0, 1.5) + 10 * cl(P.dust, 0, 1)) * (name === 'die' ? 1 - sm(.7, .9, u) : 1);
+   fxS.acc.steam += dt * br * fk * (9 + 10 * so + 12 * cl(P.feed, 0, 1.5) + 10 * cl(P.dust, 0, 1)) * (name === 'die' ? 1 - sm(.7, .9, u) : 1);
    while (fxS.acc.steam >= 1) {
-    fxS.acc.steam -= 1; const fromBud = rnd() < .2 + .5 * so;
+    fxS.acc.steam -= 1; const fromBud = rnd() < .15 + .25 * so;
     if (fromBud) heart.localToWorld(_a.set(rr(-.4, .4), rr(.6, 1.3), rr(-.4, .4))); else mass.localToWorld(_a.set(...[rr(-1, 1), 0, rr(-1, 1)].map((v, i) => (i === 1 ? 0 : v * CR * .8)))).setY(root.position.y + rr(.3, 1.2) * CH * SZ);
-    C1.copy(STEAMC).lerp(STEAMH, fromBud ? .25 + .5 * so : .05);
-    emit(STM, _a.x, _a.y, _a.z, wnd.x * rr(.3, .8) + rr(-.08, .08), rr(.25, .55) * (fromBud ? 1.3 : 1), wnd.z * rr(.3, .8) + rr(-.08, .08), rr(3.5, 6), C1, rr(.1, .2), rr(.5, .9) * SZ, rr(2, 3.6) * SZ, .25, .06, rr(-.2, .2), .12);
+    C1.copy(STEAMC).lerp(STEAMH, fromBud ? .08 + .12 * so : .03);
+    emit(STM, _a.x, _a.y, _a.z, wnd.x * rr(.3, .8) + rr(-.08, .08), rr(.25, .55) * (fromBud ? 1.3 : 1), wnd.z * rr(.3, .8) + rr(-.08, .08), rr(3.5, 6), C1, rr(.07, .14), rr(.4, .8) * SZ, rr(1.6, 3) * SZ, .25, .06, rr(-.2, .2), .12);
    }
   }
   stepP(LF, dt, .1, t); stepP(DU, dt, .3, t); stepP(MO, dt, .2, t); stepP(CHP, dt, .05, t); stepP(FL, dt, .12, t); stepP(STM, dt, .3, t);

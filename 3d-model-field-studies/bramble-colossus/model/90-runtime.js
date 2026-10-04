@@ -8,7 +8,7 @@
  // the idle cane that tastes the air (TW), the pulse running out along the veins (VW), where a held prey belongs, the char
  // fire leaves, the heartbeat (HB the time since the last one, beat its swell) and how far into its wrath it is
  const TW = { k: -1, t: 0, dur: 2, wait: 2.2, e: 0 }, VW = { t: 9, s: 0 }, held = V3();
- let charV = 0, holdV = 0, idleW = 1, playN = 0, curN = 0, lastN = 0, HB = 0, beat = 0, wrathV = 0, spInit = false;
+ let charV = 0, holdV = 0, idleW = 1, playN = 0, curN = 0, lastN = 0, HB = 0, beat = 0, wrathV = 0, spInit = false, beatN = 0;
  function play(name, force) {
   let def = ACTS[name]; if (!def) return false;
   const gone = FIN.fade < .02 && (!actv || actv.name === 'die');
@@ -84,14 +84,14 @@
   const tg = state.target; if (tg) _tg.set(tg.x, tg.y, tg.z); else root.localToWorld(_tg.set(0, 1.1, REACH * SZ));
   _sd.set(_tg.x - rx, 0, _tg.z - rz); const tl = _sd.length() || 1; _sd.set(_sd.z / tl, 0, -_sd.x / tl);
   // idle: every couple of seconds one cane lifts its tip and tastes the air, swaying, then settles (more often in its wrath)
-  idleW += ((actv ? 0 : 1 - gW) - idleW) * (dt > 0 ? 1 - Math.exp(-dt * 3) : 0);
+  idleW += ((actv && !(actv.def.hold && actv.t >= actv.def.dur) ? 0 : 1 - gW) - idleW) * (dt > 0 ? 1 - Math.exp(-dt * 3) : 0);
   if (dt > 0) {
    if (TW.k < 0) { TW.wait -= dt; if (TW.wait <= 0) { const live = CANES.filter((c) => c.cutJ < 0); if (live.length) { TW.k = live[(rnd2() * live.length) | 0].k; TW.t = 0; TW.dur = r2(2, 3); } else TW.wait = 1; } }
    else { TW.t += dt; if (TW.t >= TW.dur) { TW.k = -1; TW.wait = r2(.8, 2.6) * (1 - .5 * wrathV); } }
   }
   TW.e = TW.k < 0 ? 0 : Math.pow(Math.sin(PI * cl(TW.t / TW.dur, 0, 1)), 2) * idleW * (1 - walkS);
   // the heartbeat: a double beat every 1.7 s (quicker in its wrath); while it waits, each one runs out along its veins
-  if (dt > 0) { HB += dt; const per = 1.7 - .55 * wrathV; if (HB > per) { HB -= per; if (!actv && P.fade > .9) pulse(.35 + .35 * TIER + .5 * wrathV); } }
+  if (dt > 0) { HB += dt; const per = 1.7 - .55 * wrathV; if (HB > per) { HB -= per; if (P.fade > .9) beatN++; if (!actv && P.fade > .9) pulse(.35 + .35 * TIER + .5 * wrathV); } }
   beat = (Math.exp(-Math.pow((HB - .08) / .06, 2)) + .6 * Math.exp(-Math.pow((HB - .32) / .07, 2))) * P.pulse;
   // the physics substeps this frame, for the springs of the canes, the spire and the fruit
   const nSteps = Math.min(8, Math.floor((st.acc + dt) / PH)); st.acc = nSteps === 8 ? 0 : st.acc + dt - nSteps * PH;

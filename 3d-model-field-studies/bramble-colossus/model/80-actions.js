@@ -22,7 +22,7 @@
   cg('LM', .85, 2.7, .7, .32, .8, 0), cg('H', .75, 1.1, .6, -.25, 1.1, 0), cg('F', 1.2, 2.2, .6, .12, 1, 0), cg('S', 1.1, 2.5, .4, 0, 1, 0), cg('B', 1.05, 2.5, .45, -.1, 1, 0));
  const KEYS = Object.keys(BASE);
  // resting, disguised: a hill of brambles, the spire bowed over the mound with its bud hidden in the leaves
- const REST = K(cg('LM', -.1, 1.5, .5, .4, .2), cg('H', .25, 1.7, .5, .2, .2), cg('FSB', .7, 1.9, .4, -.04, .2), { coil: 2, y: -.15, sq: .1, pulse: .35, rust: .45, sp: .9, sb: 1.9, ss: .2, sk: 0, op: 0, hb: .08, glow: 0 });
+ const REST = K(cg('LM', -.1, 1.5, .5, .4, .2), cg('H', .25, 1.7, .5, .2, .2), cg('FSB', .7, 1.9, .4, -.04, .2), { coil: 2, y: -.15, sq: .1, pulse: .35, rust: .45, sp: .9, sb: 1.9, ss: .2, sk: 0, op: 0, hb: .32, glow: 0 });
  // alert: the spire straightens and leans at its prey, the bud parts on the heart's glow, every cane rises toward it
  const ALERT = K(cg('LM', .95, 1.3, 1.4, .45, .45), cg('H', 1.1, .3, .3, -.3, .5), cg('F', 1.32, 1.35, 1.55, .32, .45), cg('S', 1.28, 1.45, 1.45, .4, .45), cg('B', 1.22, 1.65, 1.2, .3, .45),
   { y: .06, lean: -.04, sq: -.04, sp: .2, sb: .3, sk: 1, op: .34, hb: .95, glow: .4, rust: 1.6, feed: .25 });

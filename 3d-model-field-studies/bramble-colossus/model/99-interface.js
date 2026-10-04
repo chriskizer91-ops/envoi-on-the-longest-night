@@ -14,8 +14,11 @@
    case 'held': return out.copy(held); // where a held prey's chest belongs; see holding and inside
    case 'snare': case 'impact': { const tg = state.target; return tg ? out.set(tg.x, root.position.y, tg.z) : root.localToWorld(out.set(0, 0, REACH * SZ)); }
    case 'feet': return out.copy(root.position);
+   case 'hitmid': return canePt(LEAD, .62, out);                             // halfway out along the lead arm, among its hooks
+   case 'fruit': { const C = CANES.find((c) => c.g === 'F' && c.bunch1 && c.cutJ < 0) || LEAD; return (C.bunch1 || C.chain[NS]).localToWorld(out.set(0, -.25 * SZ, 0)); }
    default: { // 'chest' and anything else: the front of the spire, halfway up
     const m = /^cane(\d+)$/.exec(name); if (m && CANES[+m[1]]) return tipW(CANES[+m[1]], out);
+    const mb = /^bunch(\d+)$/.exec(name); if (mb && BERRIES[+mb[1]]) return BERRIES[+mb[1]].bone.localToWorld(out.set(0, -.3, 0));
     return SP[3].localToWorld(out.set(0, 0, .5));
    }
   }
@@ -26,6 +29,9 @@
  fx.traverse((o) => { if (o.isMesh || o.isPoints) draws++; });
  return {
   root, fx, animate, play, ACTIONS, anchor, sever, regrow,
+  // one cane lifts its tip and tastes the air, as it does by itself now and then at rest (k: which cane, or any)
+  taste(k) { const live = CANES.filter((c) => c.cutJ < 0); if (!live.length) return; TW.k = (k !== undefined && CANES[k] && CANES[k].cutJ < 0) ? k : live[(rnd2() * live.length) | 0].k; TW.t = 0; TW.dur = r2(2.4, 3.2); },
+  get beats() { return beatN; },                 // counts its heartbeats, for sound
   guard(on) { gOn = !!on; },
   reset() { actv = null; gOn = false; gW = 0; Object.assign(FIN, BASE); regrow(); state.wilt = 0; charV = 0; VW.t = 9; HB = 0; for (const C of CANES) C.sp = null; spInit = false; for (const S of TVS) S.t = -1; for (let i = 0; i < NTV; i++) TV.setMatrixAt(i, M0); TV.instanceMatrix.needsUpdate = true; },
   get busy() { return !!actv && !(actv.def.hold && actv.t >= actv.def.dur - 1e-6); },

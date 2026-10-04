@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Bramble Colossus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="./field-study.css">
+</head>
+<body>
+<div id="stage"><canvas id="gl" aria-label="The Bramble Colossus in the meadow at Frostmere, at night"></canvas></div>
+<div id="labels" aria-hidden="true"></div>
+
+<section id="load" class="cover">
+  <p class="eyebrow">Field study No. 1</p>
+  <h1>The Bramble Colossus</h1>
+  <p class="where">Frostmere, below the frozen pass</p>
+  <div class="meter" role="progressbar" aria-label="Preparing the meadow" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="loadBar"></i></div>
+  <p id="loadStep" class="step">Painting the sky</p>
+</section>
+
+<section id="start" class="cover" hidden>
+  <p class="eyebrow">Field study No. 1</p>
+  <h1>The Bramble Colossus</h1>
+  <p class="where">Frostmere, below the frozen pass</p>
+  <p class="lede">A blackberry thicket that hunts, grown over a century into something as big as a house. A short film about what it is and how it lives, and the model itself to walk round.</p>
+  <div class="choices">
+    <button id="goFilm" class="big primary" type="button">Watch the film <span>about four minutes, with sound</span></button>
+    <button id="goExplore" class="big" type="button">Explore it yourself <span>turn it, light it, make it move</span></button>
+  </div>
+  <p class="small">Made for a laptop. Drag to look round in Explore; Space pauses.</p>
+</section>
+
+<section id="titlecard" hidden aria-live="polite">
+  <p class="eyebrow">Field study No. 1</p>
+  <h2>The Bramble Colossus</h2>
+  <p class="where">Frostmere, below the frozen pass</p>
+</section>
+
+<div id="caption" aria-live="polite"><p id="capKick" class="kicker"></p><p id="capWords" class="words"></p></div>
+
+<aside id="card" hidden><h3 id="cardTitle"></h3><dl id="cardRows"></dl></aside>
+
+<section id="endcard" hidden>
+  <p class="eyebrow">Field notes</p>
+  <h2 id="sheetName">Bramble Colossus</h2>
+  <dl id="sheetRows"></dl>
+  <div class="choices"><button id="again" class="big" type="button">Watch again</button><button id="endExplore" class="big primary" type="button">Explore it yourself</button></div>
+</section>
+
+<nav id="bar" aria-label="Film controls" hidden>
+  <button id="play" class="icon" type="button" aria-label="Pause">&#10074;&#10074;</button>
+  <div id="chapters" role="list"></div>
+  <span id="clock" class="clock">0:00</span>
+  <div class="tools">
+    <button id="modeBtn" type="button">Explore</button>
+    <button id="soundBtn" type="button" aria-pressed="true">Sound on</button>
+    <button id="voiceBtn" type="button" aria-pressed="false">Narrator off</button>
+    <button id="fullBtn" type="button">Full screen</button>
+  </div>
+</nav>
+
+<aside id="explore" hidden aria-label="Explore">
+  <header><h2>Explore</h2><button id="backFilm" type="button">Back to the film</button></header>
+  <section>
+    <h3>Its moves</h3>
+    <div id="moves" class="grid"></div>
+  </section>
+  <section>
+    <h3>See</h3>
+    <div class="toggles">
+      <label><input id="tLabels" type="checkbox" checked> Labels</label>
+      <label><input id="tXray" type="checkbox"> Roots under the meadow</label>
+      <label><input id="tOpen" type="checkbox"> Bud held open</label>
+      <label><input id="tWrath" type="checkbox"> Wrath</label>
+      <label><input id="tScale" type="checkbox"> A person, for scale</label>
+      <label><input id="tAuto" type="checkbox"> Slow turn</label>
+    </div>
+  </section>
+  <section>
+    <h3>The night</h3>
+    <label class="slider" for="sFrost">Frost <input id="sFrost" type="range" min="0" max="1" step="0.01" value="1"></label>
+    <label class="slider" for="sWind">Wind <input id="sWind" type="range" min="0" max="2" step="0.01" value="0.6"></label>
+    <label class="slider" for="sMist">Mist <input id="sMist" type="range" min="0" max="1" step="0.01" value="0.28"></label>
+  </section>
+  <section>
+    <h3>Camera</h3>
+    <div class="seg" role="group" aria-label="Speed"><button type="button" data-slow="1" aria-pressed="true">Real time</button><button type="button" data-slow="0.5" aria-pressed="false">Half</button><button type="button" data-slow="0.2" aria-pressed="false">Slow</button></div>
+    <label class="slider" for="sAp">Depth of field <input id="sAp" type="range" min="0" max="3" step="0.05" value="0.6"></label>
+    <div class="row"><button id="resetView" type="button">Front view</button><button id="preyBtn" type="button">Its prey: in front</button></div>
+  </section>
+  <section>
+    <h3>Under the hood</h3>
+    <label class="slider" for="quality">Detail <select id="quality"><option value="medium">Medium</option><option value="high">High</option><option value="max">Max</option></select></label>
+    <label><input id="tStats" type="checkbox"> Show the numbers</label>
+  </section>
+</aside>
+
+<pre id="stats" hidden></pre>
+<p id="hint" role="status" hidden></p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="./colossus.js"></script>
+<script src="./frostmere.js"></script>
+<script src="./cinema.js"></script>
+<script src="../../living-battlefields/sfx.js"></script>
+<script src="./film.js"></script>
+<script src="./page.js"></script>
+</body>
+</html>
