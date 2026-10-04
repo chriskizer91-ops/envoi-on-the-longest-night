@@ -51,7 +51,7 @@ October 3, 2026, late evening (into October 4): the session that started **pass 
 
 1. **The five demos:** his notes from playing each, from just before its gate on to the next.
 2. **The walking plan** without the world map, and whether the wilderness scenes are at night (`questions/open.md`, 20 and 21). Art request 12 follows his answer.
-3. **His map path edits**, sent from the Walking Paths page (he was starting on them).
+3. **More map path edits**, whenever he sends them (his first round is in the game; he means to do another pass with the + Green and + Purple tools).
 4. **The lore conversation:** every word of the script is still a placeholder.
 5. **Art requests 06 and 07** (townsfolk portraits, story stills), and the footsteps.
 6. **The songs** go in only when the whole build is finished, unless he says sooner.
@@ -61,7 +61,7 @@ October 3, 2026, late evening (into October 4): the session that started **pass 
 1. **The new battles** (pass-three README, "Next: the new battles"): every painting and Chris's settings are in (Strong, 30 frames a second, 3/4 sharpness). The living field takes a ground and weather for each place, the battle screen uses it; a demo page with every fight first, then the game.
 2. **His notes on the demos**, as they come.
 3. **Walking without the world map**, once Chris agrees the plan.
-4. **His map path edits**, when he sends them: `../envoi-game-pass-3/map-paths/README.md` says how to read, check and apply them.
+4. **His map path edits**, when he sends more: list `edits` on the Walking Paths page with `ArtifactData` (`out_dir`), `check-edits.mjs`, then `apply-edits.mjs`, `check-maps`, build, `make-demos`, test, publish (`../envoi-game-pass-3/map-paths/README.md`). His shapes go in as drawn: secret ways and orange patches are meant.
 5. **The 20 frames a second freeze** on the Battle Backgrounds page is unexplained (the test browser can't pace like his phone). 20 is off the page and the game never offered it; if the new battles freeze or go black on his phone, look here first.
 
 ## When things arrive

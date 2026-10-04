@@ -90,6 +90,8 @@ Each demo is the whole game opening at its chapter, saving as it goes; its title
 16. **Battles at 3/4 sharpness** (the 3D; the painting behind stays sharp), 30 frames a second as before.
 17. **Every fight has its painting:** the four last battle backgrounds are in, and the Battle Backgrounds page shows the game's eight at Chris's picks.
 18. **Chapters start just before each gate,** in the town on its doorstep, and **five demo pages** open at them (`../tools/make-demos.mjs`).
+19. **Chris's walking paths are in** (his first round from the Walking Paths page: eleven maps, new ground on five), secret ways included: the path up a house and over its roof into Wickhollow's square, and the Thornwood's paths up from the moon stone. They're applied exactly as he drew them (`map-paths/apply-edits.mjs`), and the game and the demos carry them.
+20. **The editor's drawing tools come first:** + Green, + Purple and + Red, in the layers' colours, at the top of its panel.
 
 ## The size, measured
 
@@ -148,7 +150,7 @@ Random fights happen on the wilderness scenes, as in the Thornwood today, and th
 
 1. **The five demos:** play each from just before its gate on to the next, and say what to change.
 2. **The walking plan** above, and whether the wilderness scenes are at night (`../docs/questions/open.md`, 20 and 21). Art request 12 follows his answer.
-3. **The map paths:** his edits, sent from the Walking Paths page.
+3. **More map paths** whenever he likes: the editor's + Green and + Purple draw new ground and fronts anywhere; sent edits go in the same way.
 4. Still open from before:
    - the lore conversation (every word is a placeholder);
    - art requests 06 (portraits) and 07 (stills);
