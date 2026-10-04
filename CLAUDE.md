@@ -26,3 +26,4 @@
 - New character ideas Chris brings go in `3d-model-new-character-ideas/`, one folder each, with what he brought kept untouched in its `original/`. They aren't canon until he places them.
 - The whole game is put together in `putting-it-all-together/`: its page, and a README listing every piece, where it comes from and its state. Chris's songs went in on October 4, when he asked for them.
 - Pass three (from October 3, evening) keeps its decisions, pages and plans in `envoi-game-pass-3/`, one folder per page. Chris edits things on his laptop.
+- The final draft (October 4, evening) is in `envoi-final-draft/`: Chris's file as he keeps it, the review, and the model studio (`envoi-final-draft/model-studio/`), through which modeling sessions Chris starts build new creatures in their own folders and hand them back to the game's session.
