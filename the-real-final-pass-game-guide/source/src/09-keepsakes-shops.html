@@ -1,0 +1,150 @@
+
+<!-- ======================= KEEPSAKES ======================= -->
+<section class="page" id="keepsakes" data-tab="Keepsakes" style="--tab:#b86e00">
+  <div class="head"><div class="kicker">Collector’s checklist · All twenty, and where they hide</div><h2>The keepsakes</h2><p class="deck">Keepsakes are the game’s equipment: small charms with one main help and one extra. Fourteen lie on the maps as a faint “Something glinting,” four are gifts, and two come out of the first Bramble Colossus you fell.</p><span class="pg">P. 44</span></div>
+  <div class="page-in">
+    <div class="cols">
+      <div class="text">
+        <ul class="tight">
+          <li><b>No slots.</b> Each hero can wear as many as she likes.</li>
+          <li>New finds go on straight away. Io-only and Sol-only charms go to their owner; “either” charms go to Sol once she has joined.</li>
+          <li>Move “either” charms under Menu → Items. Tap one for its card.</li>
+          <li><b>Nothing can be missed for good.</b> Every keepsake is still there after the ending. Chapters start you with none.</li>
+        </ul>
+        <div class="counter" id="kcount"><span class="big" id="kn">0/20</span><span class="bar"><i id="kbar"></i></span><button type="button" id="kreset">Clear ticks</button></div>
+        <p class="small" style="margin-top:6px">Tick them off as you go. Your ticks stay on this device only.</p>
+      </div>
+      <div style="display:grid;gap:14px;align-content:start">
+        <figure class="shot"><div class="frame"><img src="{{img:shots/card-keepsake-1.webp}}" alt="The Crescent Locket's card" loading="lazy" width="800" height="450"></div><figcaption><span class="num">1</span><span>A keepsake card: who wears it, what it does in and out of fights, and where it was found.</span></figcaption></figure>
+      </div>
+    </div>
+    <div class="cols even">
+      <div class="box item"><span class="lbl">Best combos</span>
+        <ul class="tight small" style="color:var(--ink)">
+          <li><b>Faster Trance:</b> Io with the Crescent Locket and Pass Bell (+20%); Sol with the Warden’s Brooch and Crossroads Pennant (+20%).</li>
+          <li><b>Hot start:</b> the Node Sunstone and Ede’s Hearth-Coal put Sol at 20 Heat when every fight begins.</li>
+          <li><b>Rich run:</b> the Forge Horseshoe and Dockhand’s Gloves add 15% shards to every win.</li>
+          <li><b>All of Io’s healing charms</b> together add exactly +25% to Lunar Mend and Waxing Light.</li>
+          <li><b>Sol in everything</b> “either” plus her own: +10% HP and +10% damage.</li>
+        </ul></div>
+      <div class="box secret"><span class="lbl">Secret · Treasure finder</span><p>Glints are tiny and only flare every few seconds. The <b>Bogmire Hag-Stone</b>, worn by either hero, makes every hidden keepsake shine steadily and much brighter. Shared helps like this (shards, herb prices, glints, fleeing) count from whoever wears them.</p></div>
+    </div>
+
+    <h3 class="sect">The list, in the order you’ll find them</h3>
+    <div class="keeps">
+      <div class="keep" data-k="crescent-locket"><img src="{{img:keep/crescent-locket.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4 class="sec">The Crescent Locket ★</h4><div class="meta">Io · Hidden · Wickhollow · Part I</div><p>Lunar Mend and Waxing Light heal 6.25% more. Her Trance fills 10% faster.</p><p class="where">On the red roof just south of Nettie’s stall, at the end of Chris’s secret way. Before the first fight if you like.</p></div><label class="chk"><input type="checkbox" id="k-crescent-locket" aria-label="Got the Crescent Locket">Got it</label></div>
+      <div class="keep" data-k="jetty-coin"><img src="{{img:keep/jetty-coin.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Jetty Coin</h4><div class="meta">Either · Found · The jetty · Part I</div><p>Her blows and spells land 1% harder. Herbs cost 10% less in shops.</p><p class="where">The far west end of the waterfront walk, under the willows. Before the first fight if you like.</p></div><label class="chk"><input type="checkbox" id="k-jetty-coin" aria-label="Got the Jetty Coin">Got it</label></div>
+      <div class="keep" data-k="forge-horseshoe"><img src="{{img:keep/forge-horseshoe.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Forge Horseshoe</h4><div class="meta">Either · Found · Wickhollow · Part I</div><p>She has 1% more HP. Fights give 5% more shards.</p><p class="where">After the first fight: the nook behind the house by the east bridge. Down the lane on its west side, past the door and bench, east behind the bushes.</p></div><label class="chk"><input type="checkbox" id="k-forge-horseshoe" aria-label="Got the Forge Horseshoe">Got it</label></div>
+      <div class="keep" data-k="knotted-shawl"><img src="{{img:keep/knotted-shawl.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>Nettie’s Knotted Shawl</h4><div class="meta">Io · Gift · Wickhollow · Part I</div><p>Lunar Mend and Waxing Light heal 2.5% more. The herbs she uses in a fight heal 10% more.</p><p class="where">Talk to Nettie once Sol has joined.</p></div><label class="chk"><input type="checkbox" id="k-knotted-shawl" aria-label="Got the Knotted Shawl">Got it</label></div>
+      <div class="keep" data-k="frog-ring"><img src="{{img:keep/frog-ring.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Thornwood Frog-Ring</h4><div class="meta">Either · Found · The Thornwood · Part I</div><p>She has 1% more HP. After each fight she gets back 5% of her HP.</p><p class="where">Past the moon stone, at the end of the north-east trail.</p></div><label class="chk"><input type="checkbox" id="k-frog-ring" aria-label="Got the Frog-Ring">Got it</label></div>
+      <div class="keep" data-k="wardens-brooch"><img src="{{img:keep/wardens-brooch.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4 class="sec">The Warden’s Brooch ★</h4><div class="meta">Sol · Hidden · The Thornwood · Part I</div><p>She has 2.5% more HP and her blows land 2.5% harder. Her Trance fills 10% faster.</p><p class="where">The dead end of the dark south trail, which drops off the road’s lower arm east of the bridge.</p></div><label class="chk"><input type="checkbox" id="k-wardens-brooch" aria-label="Got the Warden's Brooch">Got it</label></div>
+      <div class="keep" data-k="hag-stone"><img src="{{img:keep/hag-stone.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Bogmire Hag-Stone</h4><div class="meta">Either · Found · Bogmire · Part I</div><p>Her blows and spells land 1% harder. Hidden things glint brighter on the maps.</p><p class="where">Up the north-west house’s stair, east along its porch and bridge. It hangs on a post.</p></div><label class="chk"><input type="checkbox" id="k-hag-stone" aria-label="Got the Hag-Stone">Got it</label></div>
+      <div class="keep" data-k="bogstriders"><img src="{{img:keep/bogstriders.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Bogstriders</h4><div class="meta">Either · Found · Bogmire · Part I</div><p>She has 1% more HP. Running from a pack works 2 times in 3, not 1 in 2.</p><p class="where">Down the east side from the east boardwalk, at the end of the south-east dock.</p></div><label class="chk"><input type="checkbox" id="k-bogstriders" aria-label="Got the Bogstriders">Got it</label></div>
+      <div class="keep" data-k="fen-heart-lamp"><img src="{{img:keep/fen-heart-lamp.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Fen-Heart Lamp</h4><div class="meta">Io · Found · The fen’s dark heart · Part I</div><p>Lunar Mend and Waxing Light heal 3% more. After each fight she gets back 5% of her MP.</p><p class="where">After the great wraith: the top of the square, by the drowned hall’s door.</p></div><label class="chk"><input type="checkbox" id="k-fen-heart-lamp" aria-label="Got the Fen-Heart Lamp">Got it</label></div>
+      <div class="keep" data-k="hall-gauntlets"><img src="{{img:keep/hall-gauntlets.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Wardens’ Hall Gauntlets</h4><div class="meta">Sol · Gift · Dawnroost · Part II</div><p>Her blows land 1.5% harder. Her Sunder lasts a turn longer.</p><p class="where">Talk to Marta at the Warden hall.</p></div><label class="chk"><input type="checkbox" id="k-hall-gauntlets" aria-label="Got the Hall Gauntlets">Got it</label></div>
+      <div class="keep" data-k="kettle-helm"><img src="{{img:keep/kettle-helm.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Dawnroost Kettle-Helm</h4><div class="meta">Either · Found · Dawnroost · Part II</div><p>She has 1% more HP. The big blows a foe warns of hit her 10% softer.</p><p class="where">Just inside the north gate, west along the wall-walk behind the hall, to its end.</p></div><label class="chk"><input type="checkbox" id="k-kettle-helm" aria-label="Got the Kettle-Helm">Got it</label></div>
+      <div class="keep" data-k="node-sunstone"><img src="{{img:keep/node-sunstone.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Node Sunstone</h4><div class="meta">Sol · Found · The living node · Part II</div><p>Her blows land 1% harder. She starts each fight with 10 Heat.</p><p class="where">After the three wraiths: the top of the west stair.</p></div><label class="chk"><input type="checkbox" id="k-node-sunstone" aria-label="Got the Node Sunstone">Got it</label></div>
+      <div class="keep" data-k="crossroads-pennant"><img src="{{img:keep/crossroads-pennant.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Crossroads Pennant</h4><div class="meta">Sol · Found · The crossroads · Part III</div><p>She has 1% more HP. Her Trance fills 10% faster.</p><p class="where">After the ambush: tied to a waymark far down the east road.</p></div><label class="chk"><input type="checkbox" id="k-crossroads-pennant" aria-label="Got the Crossroads Pennant">Got it</label></div>
+      <div class="keep" data-k="moonglass"><img src="{{img:keep/moonglass.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>Ysmera’s Moonglass</h4><div class="meta">Io · Gift · The shipyard · Part III</div><p>Lunar Mend and Waxing Light heal 3.75% more. She has 10% more MP.</p><p class="where">Talk to Ysmera again after her first scene.</p></div><label class="chk"><input type="checkbox" id="k-moonglass" aria-label="Got the Moonglass">Got it</label></div>
+      <div class="keep" data-k="dockhand-gloves"><img src="{{img:keep/dockhand-gloves.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Dockhand’s Gloves</h4><div class="meta">Either · Found · The shipyard · Part III</div><p>Her blows and spells land 1% harder. Fights give 10% more shards.</p><p class="where">West from the bunkhouse yard, down the terrace stairs to the cove, out to the end of the west pier.</p></div><label class="chk"><input type="checkbox" id="k-dockhand-gloves" aria-label="Got the Dockhand's Gloves">Got it</label></div>
+      <div class="keep" data-k="pass-bell"><img src="{{img:keep/pass-bell.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Pass Bell</h4><div class="meta">Io · Found · The frozen pass · Part IV</div><p>Lunar Mend and Waxing Light heal 4% more. Her Trance fills 10% faster.</p><p class="where">Half buried in snow under the lamp on the west verge, across the road from the sled camp.</p></div><label class="chk"><input type="checkbox" id="k-pass-bell" aria-label="Got the Pass Bell">Got it</label></div>
+      <div class="keep" data-k="hearth-coal"><img src="{{img:keep/hearth-coal.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>Ede’s Hearth-Coal</h4><div class="meta">Sol · Gift · Misthollow · Part IV</div><p>She has 1.5% more HP. She starts each fight with 10 Heat.</p><p class="where">Talk to Ede at the Lantern House.</p></div><label class="chk"><input type="checkbox" id="k-hearth-coal" aria-label="Got the Hearth-Coal">Got it</label></div>
+      <div class="keep" data-k="misthollow-cowl"><img src="{{img:keep/misthollow-cowl.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Misthollow Cowl</h4><div class="meta">Either · Found · Misthollow · Part IV</div><p>She has 1% more HP. Frost slows her for half as long.</p><p class="where">From the upper square’s west end, up the west stairs, then west along the balcony bridge to its end.</p></div><label class="chk"><input type="checkbox" id="k-misthollow-cowl" aria-label="Got the Misthollow Cowl">Got it</label></div>
+      <div class="keep" data-k="heart-seed"><img src="{{img:keep/heart-seed.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Colossus Heart-Seed</h4><div class="meta">Io · Won in a fight · Band 4 wilds · Part IV</div><p>Lunar Mend and Waxing Light heal 5.5% more. At the start of each of her turns she heals 1% of her HP.</p><p class="where">Beat your first Bramble Colossus (from the 4th band-4 wild fight on, 1 in 12).</p></div><label class="chk"><input type="checkbox" id="k-heart-seed" aria-label="Got the Heart-Seed">Got it</label></div>
+      <div class="keep" data-k="colossus-thorn"><img src="{{img:keep/colossus-thorn.webp}}" alt="" loading="lazy" width="64" height="64"><div><h4>The Colossus Thorn</h4><div class="meta">Sol · Won in a fight · Band 4 wilds · Part IV</div><p>Her blows land 2% harder. Kestrel Stoop lands 10% harder.</p><p class="where">Comes with the Heart-Seed from the same first win.</p></div><label class="chk"><input type="checkbox" id="k-colossus-thorn" aria-label="Got the Colossus Thorn">Got it</label></div>
+    </div>
+  </div>
+  <div class="foot"><span>GAMEWYRM · Strategy Special</span><span>The keepsakes · 44–45</span></div>
+</section>
+
+<!-- ======================= SHOPS & LEVELS ======================= -->
+<section class="page" id="shops" data-tab="Shops" style="--tab:#0c6b3e">
+  <div class="head"><div class="kicker">The herbalist’s ledger · What to buy, where to buy it</div><h2>Herbs, shops &amp; levels</h2><p class="deck">Every shop in the game is an herb stall, and every one sells the same five herbs for sunstone shards. You can carry 99 of each, but in a fight each kind can only be used once.</p><span class="pg">P. 46</span></div>
+  <div class="page-in">
+    <div class="cols">
+      <div class="text">
+        <div class="tbl"><table>
+          <thead><tr><th>Herb</th><th>Does</th></tr></thead>
+          <tbody>
+            <tr><td><b>Moonpetal</b></td><td>Heals one hero for 1.2× a Lunar Mend.</td></tr>
+            <tr><td><b>Lavender</b></td><td>Heals both for 1.2× a Waxing Light.</td></tr>
+            <tr><td><b>Silver Mugwort</b></td><td>Gives Io back 40 MP, more at higher levels (121 at level 20).</td></tr>
+            <tr><td><b>Ember-star Lily</b></td><td>Every blow the party lands is 10% harder for the rest of the fight, summons included. Battle only.</td></tr>
+            <tr><td><b>Nightrose</b></td><td>Brings a fallen hero back at 25% HP.</td></tr>
+          </tbody>
+        </table></div>
+        <h3 class="sect">Prices by shop</h3>
+        <p class="small">In brackets: with the Jetty Coin worn by either hero.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Herb</th><th class="n">Band 1</th><th class="n">Band 2</th><th class="n">Band 3</th><th class="n">Band 4</th></tr></thead>
+          <tbody>
+            <tr><td>Moonpetal</td><td class="n">58 (52)</td><td class="n">143 (129)</td><td class="n">357 (321)</td><td class="n">887 (798)</td></tr>
+            <tr><td>Lavender</td><td class="n">86 (77)</td><td class="n">215 (194)</td><td class="n">535 (482)</td><td class="n">1,331 (1,198)</td></tr>
+            <tr><td>Silver Mugwort</td><td class="n">72 (65)</td><td class="n">179 (161)</td><td class="n">446 (401)</td><td class="n">1,109 (998)</td></tr>
+            <tr><td>Ember-star Lily</td><td class="n">43 (39)</td><td class="n">107 (96)</td><td class="n">267 (240)</td><td class="n">666 (599)</td></tr>
+            <tr><td>Nightrose</td><td class="n">173 (156)</td><td class="n">430 (387)</td><td class="n">1,070 (963)</td><td class="n">2,662 (2,396)</td></tr>
+          </tbody>
+        </table></div>
+        <p class="small"><b>Band 1:</b> Nettie (Wickhollow), Quill (the jetty, until the lights return), Old Wenna (Bogmire). <b>Band 2:</b> Brann (Dawnroost). <b>Band 3:</b> Pim (the shipyard). <b>Band 4:</b> Sorrel (Misthollow).</p>
+      </div>
+      <div style="display:grid;gap:16px;align-content:start">
+        <figure class="shot"><div class="frame"><img src="{{img:shots/shop.webp}}" alt="Sorrel's herb shop with Buy 10" loading="lazy" width="800" height="450"></div><figcaption><span class="num">1</span><span>Sorrel’s herbs, with the <b>Buy 10</b> button this copy adds. It buys up to 10, as many as fit under 99 and your shards cover.</span></figcaption></figure>
+        <div class="box secret"><span class="lbl">Secret · Save over 90%</span><p>A shop charges for <b>its own</b> band, not yours. Nettie and Old Wenna keep band-1 prices for the whole game, about one fifteenth of Sorrel’s. Fly home to Wickhollow, wear the Jetty Coin, and press Buy 10 until you’re at 99 of everything. A Nightrose costs 156 there with the coin, against 2,396 in Misthollow with it.</p></div>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div>
+        <h3 class="sect">The level chart</h3>
+        <p class="small">Max HP and MP before keepsakes, and the experience to reach the next level. The cap is 20.</p>
+        <div class="tbl"><table>
+          <thead><tr><th class="n">Lv</th><th class="n">Io HP</th><th class="n">Io MP</th><th class="n">Sol HP</th><th class="n">To next</th></tr></thead>
+          <tbody>
+            <tr><td class="n">1</td><td class="n">1,400</td><td class="n">120</td><td class="n">1,800</td><td class="n">160</td></tr>
+            <tr><td class="n">2</td><td class="n">1,680</td><td class="n">127</td><td class="n">2,160</td><td class="n">192</td></tr>
+            <tr><td class="n">3</td><td class="n">2,016</td><td class="n">135</td><td class="n">2,592</td><td class="n">230</td></tr>
+            <tr><td class="n">4</td><td class="n">2,419</td><td class="n">143</td><td class="n">3,110</td><td class="n">282</td></tr>
+            <tr><td class="n">5</td><td class="n">2,903</td><td class="n">151</td><td class="n">3,732</td><td class="n">345</td></tr>
+            <tr><td class="n">6</td><td class="n">3,484</td><td class="n">161</td><td class="n">4,479</td><td class="n">528</td></tr>
+            <tr><td class="n">7</td><td class="n">4,180</td><td class="n">170</td><td class="n">5,375</td><td class="n">646</td></tr>
+            <tr><td class="n">8</td><td class="n">5,016</td><td class="n">180</td><td class="n">6,450</td><td class="n">791</td></tr>
+            <tr><td class="n">9</td><td class="n">6,020</td><td class="n">191</td><td class="n">7,740</td><td class="n">968</td></tr>
+            <tr><td class="n">10</td><td class="n">7,224</td><td class="n">203</td><td class="n">9,288</td><td class="n">1,185</td></tr>
+            <tr><td class="n">11</td><td class="n">8,668</td><td class="n">215</td><td class="n">11,145</td><td class="n">1,451</td></tr>
+            <tr><td class="n">12</td><td class="n">10,402</td><td class="n">228</td><td class="n">13,374</td><td class="n">1,776</td></tr>
+            <tr><td class="n">13</td><td class="n">12,483</td><td class="n">241</td><td class="n">16,049</td><td class="n">2,174</td></tr>
+            <tr><td class="n">14</td><td class="n">14,979</td><td class="n">256</td><td class="n">19,259</td><td class="n">2,661</td></tr>
+            <tr><td class="n">15</td><td class="n">17,975</td><td class="n">271</td><td class="n">23,111</td><td class="n">3,257</td></tr>
+            <tr><td class="n">16</td><td class="n">21,570</td><td class="n">288</td><td class="n">27,733</td><td class="n">10,763</td></tr>
+            <tr><td class="n">17</td><td class="n">25,884</td><td class="n">305</td><td class="n">33,279</td><td class="n">13,173</td></tr>
+            <tr><td class="n">18</td><td class="n">31,061</td><td class="n">323</td><td class="n">39,935</td><td class="n">16,124</td></tr>
+            <tr><td class="n">19</td><td class="n">37,273</td><td class="n">343</td><td class="n">47,922</td><td class="n">19,736</td></tr>
+            <tr><td class="n">20</td><td class="n">44,727</td><td class="n">363</td><td class="n">57,506</td><td class="n">—</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div style="display:grid;gap:14px;align-content:start">
+        <h3 class="sect">Average wild fight</h3>
+        <div class="tbl"><table>
+          <thead><tr><th>Band</th><th class="n">XP</th><th class="n">Shards</th></tr></thead>
+          <tbody>
+            <tr><td>1 (Thornwood)</td><td class="n">123</td><td class="n">94</td></tr>
+            <tr><td>2 (Warm Roads)</td><td class="n">434</td><td class="n">331</td></tr>
+            <tr><td>3 (north)</td><td class="n">1,277</td><td class="n">920</td></tr>
+            <tr><td>4 (peaks)</td><td class="n">3,956</td><td class="n">3,025</td></tr>
+          </tbody>
+        </table></div>
+        <div class="box tip"><span class="lbl">Grinding plan</span>
+          <ul class="tight small" style="color:var(--ink)">
+            <li><b>Level 5</b> before the great wraith: about 5 or 6 Thornwood fights after the first fight.</li>
+            <li><b>Level 10</b> before the node: the Ember Line road and forest road, Random fights on More. Light the 3 nodes for 900 shards.</li>
+            <li><b>Level 15</b> for the moon-sail: Eldergrove’s edge and the cold moor. Flee any Ancient Crown above your level.</li>
+            <li><b>Level 18–19</b> if you want Halcyon’s 3,834-shard payout.</li>
+            <li><b>Level 20</b> for the finale, no exceptions: about 15 band-4 fights from 16.</li>
+          </ul></div>
+        <div class="box tip"><span class="lbl">Story rewards</span><p class="small" style="color:var(--ink)">First fight 220 XP / 60 shards · great wraith 415 / 415 · three wraiths 891 / 669 · Halcyon’s retreat 2,556 / 3,834 · the finale 2,556 / 3,834. Ember Line nodes: 300 shards each.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>GAMEWYRM · Strategy Special</span><span>Herbs, shops &amp; levels · 46–47</span></div>
+</section>
