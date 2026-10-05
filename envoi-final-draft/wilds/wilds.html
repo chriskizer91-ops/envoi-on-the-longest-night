@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wilderness at Night</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../src/game/game.css">
+<link rel="stylesheet" href="./wilds.css">
+</head>
+<body>
+<!-- The wilderness demo page (the workshop's wilds job, steps 5 and 6: envoi-final-draft/workshop/wilds.md): Io walks
+     Chris's eight night wilderness scenes (art request 12) on the game's own field, at the game's settings, from each
+     band's camp along its road to the town or place at the end. In this folder the art loads from ../../art; the build
+     (node tools/build.mjs envoi-final-draft/wilds/wilds.html) puts it inside the page. -->
+<div class="game wilds" id="wl">
+  <div class="layer" id="wl-field"></div>
+
+  <div class="wl-corner" id="wl-corner" hidden>
+    <div class="wl-plate win">
+      <span class="wl-scene" id="wl-scene"></span>
+      <span class="wl-sub" id="wl-sub"></span>
+      <span class="wl-sub" id="wl-sub2" hidden></span>
+    </div>
+    <button type="button" class="wl-btn" id="wl-back">Choose a band</button>
+  </div>
+
+  <div class="wl-note win" id="wl-note" role="status" aria-live="polite">
+    <b id="wl-note-title"></b>
+    <span id="wl-note-body"></span>
+  </div>
+
+  <section class="wl-start" id="wl-start" aria-labelledby="wl-title">
+    <img class="wl-start-art" id="wl-start-art" alt="">
+    <div class="wl-scroll">
+      <div class="wl-card wl-start-card win">
+        <h1 id="wl-title">The wilderness at night</h1>
+        <p class="wl-lead">Walk Io through the eight night scenes, from a band’s camp to the place at the end of its road. Tap where she should go, or use the arrows.</p>
+        <div class="wl-bands" id="wl-bands" role="group" aria-label="Choose a band"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wl-end" id="wl-end" aria-labelledby="wl-end-name" hidden>
+    <div class="wl-scroll">
+      <div class="wl-card wl-end-card win">
+        <p class="wl-kicker" id="wl-end-kicker"></p>
+        <h2 id="wl-end-name"></h2>
+        <p class="wl-end-text" id="wl-end-text"></p>
+        <p class="wl-end-count" id="wl-end-fights"></p>
+        <p class="wl-end-count" id="wl-end-nodes" hidden></p>
+        <div class="wl-end-btns">
+          <button type="button" class="go" id="wl-again">Back to the camp</button>
+          <button type="button" class="go alt" id="wl-choose">Choose a band</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="fade" id="wl-fade"></div>
+</div>
+<script src="../../src/walk/pixel-io.js"></script>
+<script src="../../src/walk/painted-io.js"></script>
+<script src="../../src/walk/walkers.js"></script>
+<script src="../../src/walk/painted-folk.js"></script>
+<script src="../../src/game/sprites.js"></script>
+<script src="../../src/game/maps.js"></script>
+<script src="../../src/game/maps-wilds.js"></script>
+<script src="../../src/game/field.js"></script>
+<script src="./wilds.js"></script>
+</body>
+</html>

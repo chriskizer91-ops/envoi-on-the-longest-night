@@ -16,7 +16,8 @@ What we've already decided goes into *Envoi on the Longest Night* but isn't in t
 **2. Walking without the world map.** You decided the world map is only for flying the Magpie, and walking happens only on painted scenes like your wilderness path example. Bands 2 to 4 are still walked on the world map today.
 
 - Missing: the eight painted wilderness scenes made into walking maps (three in band 2, three in band 3, two in band 4), each with its random fights, and the camp in each band where the Magpie lands.
-- You agreed the plan on October 5, with the scenes at night, and **your eight pictures came the same night** (art request 12: the Warm Roads camp, the Ember Line road, the forest road to Dawnroost, the northern camp, Eldergrove's edge, the cold moor, the frozen camp and Frostmere's shore). They're kept as you sent them in `../reference/art/walk/wilds/`. Next they're traced, joined up and put in, with a demo page first: by the ultracode session, or by a session you start with the workshop's wilderness script (`../envoi-final-draft/workshop/README.md`).
+- You agreed the plan on October 5, with the scenes at night, and **your eight pictures came the same night** (art request 12: the Warm Roads camp, the Ember Line road, the forest road to Dawnroost, the northern camp, Eldergrove's edge, the cold moor, the frozen camp and Frostmere's shore). They're kept as you sent them in `../reference/art/walk/wilds/`.
+- **Walk them now:** https://claude.ai/artifact/2WSu7uWvtDUmF5JwxV5xwC (October 5). All eight are traced and joined in a row, so Io walks each band's road from its camp to Dawnroost, the northern crossroads or the frozen pass, with a note wherever a fight would start. The game itself hasn't changed yet: once you've walked them and said they're right (or what to change), they go into the game and walking leaves the world map.
 
 ## Decided, and waiting on you
 
