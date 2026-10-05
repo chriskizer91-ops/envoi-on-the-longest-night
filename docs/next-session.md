@@ -96,15 +96,25 @@ Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: t
 
 ### Polish still open (told to Chris on October 4)
 
-Small things that would make it nicer, none started:
+Small things that would make it nicer. Auto-advance and the door's sound are on the try page (below); the rest aren't started:
 
-- **Auto-advance** for the words (the one reading setting not built).
-- **Footsteps** again, if Chris likes one of `demos/io-on-foot.html`'s two ideas (soft steps, a cloak's swish), and a door's sound when a map changes.
+- **Auto-advance** for the words: built behind a switch, on the try page (below), waiting on Chris's yes.
+- **Footsteps** again, if Chris likes one of `demos/io-on-foot.html`'s two ideas (soft steps, a cloak's swish). A door's sound when a map changes is on the try page (below).
 - **Quicker fights to start:** every battle builds its models from scratch; keeping the heroes, Lunara and Envoi built between fights would cut the wait, if it shows on the phone.
 - **More to find:** more wells, letters and nodes, and the D&D map's named places as landmarks (`docs/handoff.md`, section 6); more townsfolk with lines that change with the story (section 4); and more of Inkblot: Quill's paper doll already carries the crow on his shoulder in every frame, in his scenes too, so what's left is Inkblot on his own in the story's scenes or on the Magpie's perch (`src/models/magpie.js` has the perch).
 - **More of the story staged,** with the people walking on the map while they talk, as the four big scenes already are (section 5).
 - ~~**Room for the art**~~ (squeezing the battle paintings and the world map): overtaken. The new battles use Chris's paintings at his "Strong" squeeze, and the world map's walking tiles left the page with the wilderness scenes (October 5).
 - **Mooncart:** the game reaches it only once this branch is merged into the repository's default branch, which is Chris's call.
+
+### Polish to try (October 5)
+
+Three small ideas Chris hasn't said yes to (`../handoff/tasks.md`, I06, I08, I12) are in the game's code, each behind a switch that's off in the game, so it plays exactly as before: `window.ENVOI_TRY = { words, door, buy10 }`, read by `src/game/game.js`. A page of their own, "Envoi: Polish to Try", is the game with all three on:
+
+- **Words that move on by themselves:** Settings, "Words move on: On a tap / By themselves", just after Words, saved with the other settings, and on at first there. A said line moves on 1.2 s and 45 ms a letter after it has all appeared (Slow words 1.4 times that, Fast 0.7); a tap moves on at once; choices wait (`src/game/talk.js`).
+- **A door's sound:** the library's "door" as Io walks through an exit onto another walking map, at the Effects volume; never on a road that turns her back, into a fight or a flight (`onExit` in `game.js`).
+- **Buy 10** beside each herb's Buy in the shops: as many as the bag (99) has room for and the shards cover, up to ten, the button saying how many ("Buy 5"), with one buy's sound and save (`shop()` in `game.js`).
+
+Like the chapter demos it's made from the built game: `node tools/make-try.mjs` writes `dist/try.html` and `dist/try.artifact.html`; publish the artifact copy with the files `dist/try.beside.json` lists beside it (the game's songs and keepsake pictures). Its saves are its own; a save code (Menu, Saves) carries a game over. `node tools/try-test.mjs` checks the three on it, and `node tools/try-test.mjs dist/game.html --off` that the game has them off. On Chris's yes to one, switch it on in the game (`const TRY` in `game.js`) and turn its `--off` check round.
 
 ### When the game is finished
 
@@ -169,6 +179,7 @@ When the published game passes 16 MB:
 | Build the game | `node tools/build.mjs --min putting-it-all-together/game.html` |
 | The five chapter demos | after building the game, `node tools/make-demos.mjs` (dist/demo-*.artifact.html: new links only, since the old ones came from the other account) |
 | Play it headless | `node tools/game-test.mjs` (must end with "game test passed") |
+| The polish to try | after building the game, `node tools/make-try.mjs` (dist/try.artifact.html, with the files in dist/try.beside.json), then `node tools/try-test.mjs` and `node tools/try-test.mjs dist/game.html --off` (each must end with "try test passed") |
 | The file Chris keeps | `node tools/build.mjs --min --offline putting-it-all-together/game.html`, then `node tools/game-test.mjs --offline` (plays with the internet blocked) |
 | The walking maps | `node tools/check-maps.mjs` (every map must print ✓: twenty-one, with the Magpie's landings, the chapters' starts and rests and the camps' rules too) |
 | The walks' fights | `node tools/walks.mjs` (each walk's length and fights on the game's maps, beside `story.js`'s; run it after path edits) |

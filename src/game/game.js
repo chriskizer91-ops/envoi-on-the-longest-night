@@ -156,6 +156,11 @@
     if (kept.amb == null && (kept.sfx != null || kept.sound)) settings.amb = settings.sfx;
     root.classList.toggle('big-text', !!settings.big);
     const keepSettings = () => { try { localStorage.setItem('envoi.settings', JSON.stringify(settings)); } catch (e) { /* not kept */ } };
+    // three small ideas Chris hasn't said yes to (handoff/tasks.md, I06, I08, I12), each off unless the page switches it
+    // on before the game starts (window.ENVOI_TRY, set by tools/make-try.mjs): words that move on by themselves (a
+    // reading setting, which starts on there), a door's sound between walking maps, and Buy 10 in the herb shops
+    const TRY = window.ENVOI_TRY || {};
+    if (TRY.words && settings.auto == null) settings.auto = true;
     let mode = 'title', busy = 0;
 
     // ---------- sound ----------
@@ -207,7 +212,7 @@
         Object.fromEntries(Object.entries(window.WALKERS || {}).filter(([, w]) => w.portrait).map(([id, w]) => [id, { name: castName(id), src: w.portrait }])),
         { io: { name: 'Io', src: "art/portraits/portrait-io.webp" }, sol: { name: 'Sol', src: "art/portraits/portrait-sol.webp" }, shipmaster: { name: 'Ysmera Brightkeel', src: "art/portraits/portrait-shipmaster-a.webp" } },
         Object.fromEntries(Object.entries(window.PORTRAITS || {}).map(([id, p]) => [id, { name: castName(id), src: p }]))),
-      people: (id) => S.cast[id] || null, src, speed: () => settings.text,
+      people: (id) => S.cast[id] || null, src, speed: () => settings.text, auto: () => !!(TRY.words && settings.auto),
     });
     const toast = el('div', { class: 'toast win', hidden: '' }, root);
     let toastT = 0;
@@ -433,6 +438,7 @@
       // a road out of the picture into the wide world (the cottage's three, the crossroads' south and east): the world map
       // is only flown now, so she turns back, saying why
       if (ex.to === 'world') { await say(!st.flags.party ? [['io', 'Something is wrong up in the square. I should go and see first.']] : S.scenes[ex.say] || S.scenes.roadOut); stepBack(ex); return; }
+      if (TRY.door) sfx('door'); // I08: a door's sound as she goes on to another walking map (never into a fight or a flight)
       await goField(ex.to, ex.at, ex.dir);
     }
     // she steps 30 px straight back in from the edge the road leaves by (exitMark's out), the way she came, so she stays
@@ -818,6 +824,7 @@
       row('Effects', [['Off', 0], ['Soft', 0.4], ['Normal', 0.75], ['Loud', 1]], 'sfx');
       row('Surroundings', [['Off', 0], ['Soft', 0.4], ['Normal', 0.75], ['Loud', 1]], 'amb');
       row('Words', [['Slow', 0.5], ['Normal', 1], ['Fast', 2], ['All at once', 0]], 'text');
+      if (TRY.words) row('Words move on', [['On a tap', false], ['By themselves', true]], 'auto'); // I06
       row('Text size', [['Normal', false], ['Large', true]], 'big');
       // the battles' frame rate, kept where the battle screen reads it (30 by default, Chris)
       let fps = 30; try { const v = localStorage.getItem('envoi.fps'); if (v !== null) fps = +v; } catch (e) { /* default */ }
@@ -898,6 +905,13 @@
             const bt = el('button', { type: 'button', class: 'go small' }, r, have >= RL.CARRY ? 'Full' : 'Buy');
             bt.disabled = have >= RL.CARRY || st.shards < price;
             bt.addEventListener('click', () => { st.shards -= price; st.herbs[id] = have + 1; sfx('ui-buy'); save(); draw(); });
+            // I12: Buy 10, as many as the bag has room for and the shards cover, up to ten (the button says how many)
+            if (TRY.buy10) {
+              const n = Math.min(10, RL.CARRY - have, Math.floor(st.shards / Math.max(1, price)));
+              const b10 = el('button', { type: 'button', class: 'go small alt' }, r, 'Buy ' + (n > 1 ? n : 10));
+              b10.disabled = n < 2;
+              b10.addEventListener('click', () => { st.shards -= price * n; st.herbs[id] = have + n; sfx('ui-buy'); save(); draw(); });
+            }
           }
         }
         draw();
