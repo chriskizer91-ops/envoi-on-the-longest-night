@@ -3,7 +3,8 @@
 // game passes them in with the portraits) until their paintings come; anyone else, a pixel portrait, their walking
 // sprite's head and shoulders blown up. Words appear a few letters at a time; a tap, Enter or Space
 // shows the rest, then goes on. A line with no speaker is narration. Choices are buttons under the words.
-// Talk.create(host, { portraits: { id: { name, src } }, people: (id) -> { name, look } | null, src(path), speed() -> 0 to 2 })
+// Talk.create(host, { portraits: { id: { name, src } }, people: (id) -> { name, look } | null, src(path), speed() -> 0 to 2,
+//   auto() -> true when a said line moves on by itself (a reading setting, behind a switch: handoff/tasks.md, I06) })
 //   -> { say(lines) -> Promise, ask(who, text, choices) -> Promise<index>, busy }
 //   a line is [who, text] or a string (narration)
 // Needs makeFolk (sprites.js). Defines window.Talk.
@@ -21,7 +22,7 @@
     const next = el('div', { class: 'talk-next', 'aria-hidden': 'true' }, words, '▼');
     const pg = pix.getContext('2d'); pg.imageSmoothingEnabled = false;
     const sprites = {};
-    let typing = null, advance = null, busy = false;
+    let typing = null, advance = null, busy = false, reading = false, onward = 0;
 
     function setFace(id) {
       const pr = id && opts.portraits[id];
@@ -41,14 +42,27 @@
     }
     // the words come a few letters at a time, as fast as the game's setting says (opts.speed: 0 for all at once)
     function show(text) {
-      clearInterval(typing); said.textContent = ''; show.full = text;
+      clearInterval(typing); clearTimeout(onward); said.textContent = ''; show.full = text;
       const sp = opts.speed ? opts.speed() : 1;
-      if (REDUCED || !sp) { said.textContent = text; return; }
-      let i = 0; typing = setInterval(() => { i += 2 * sp; said.textContent = text.slice(0, Math.floor(i)); if (i >= text.length) { clearInterval(typing); typing = null; } }, 18);
+      if (REDUCED || !sp) { said.textContent = text; shown(); return; }
+      let i = 0; typing = setInterval(() => { i += 2 * sp; said.textContent = text.slice(0, Math.floor(i)); if (i >= text.length) { clearInterval(typing); typing = null; shown(); } }, 18);
+    }
+    // a said line that has all appeared moves on by itself when the reading setting says so (opts.auto): after a pause
+    // that grows with its length (1.2 s and 45 ms a letter at Normal words), longer for slower words (Slow 1.4 times
+    // Normal's, Fast 0.7; all at once as Normal), held while the page is out of sight. A tap still moves on at once, and
+    // a question's choices always wait
+    function shown() {
+      clearTimeout(onward);
+      if (!reading || !opts.auto || !opts.auto()) return;
+      const sp = opts.speed ? opts.speed() : 1, ms = (1200 + 45 * show.full.length) / (sp > 0 ? Math.sqrt(sp) : 1);
+      onward = setTimeout(function on() {
+        if (document.hidden) { onward = setTimeout(on, ms); return; }
+        onward = 0; if (advance) { const a = advance; advance = null; a(); }
+      }, ms);
     }
     function tap() {
-      if (typing) { clearInterval(typing); typing = null; said.textContent = show.full; return; }
-      if (advance) { const a = advance; advance = null; a(); }
+      if (typing) { clearInterval(typing); typing = null; said.textContent = show.full; shown(); return; }
+      if (advance) { clearTimeout(onward); const a = advance; advance = null; a(); }
     }
     box.addEventListener('click', (e) => { if (e.target.closest('.talk-choices')) return; tap(); });
     window.addEventListener('keydown', (e) => { if (box.hidden || choiceBox.childElementCount) return; if (e.key === 'Enter' || e.key === ' ' || e.key === 'z' || e.key === 'Z') { e.preventDefault(); e.stopPropagation(); tap(); } }, true);
@@ -57,13 +71,13 @@
       busy = true; box.hidden = false; choiceBox.textContent = ''; next.hidden = false;
       for (const ln of lines) {
         const [id, text] = typeof ln === 'string' ? [null, ln] : ln;
-        setFace(id); box.classList.toggle('narr', !id); show(text);
+        setFace(id); box.classList.toggle('narr', !id); reading = true; show(text);
         await new Promise((r) => { advance = r; });
       }
-      box.hidden = true; busy = false;
+      reading = false; box.hidden = true; busy = false;
     }
     function ask(id, text, choices) {
-      busy = true; box.hidden = false; setFace(id); box.classList.toggle('narr', !id); show(text); next.hidden = true; choiceBox.textContent = '';
+      busy = true; reading = false; box.hidden = false; setFace(id); box.classList.toggle('narr', !id); show(text); next.hidden = true; choiceBox.textContent = '';
       return new Promise((res) => {
         choices.forEach((c, i) => {
           const b = el('button', { type: 'button', class: 'go' + (i ? ' alt' : '') }, choiceBox, c);

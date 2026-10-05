@@ -67,7 +67,8 @@
 <script src="../src/game/game.js"></script>
 <script>
 // The game (plan phase 5). In this folder the art and the songs load from ../art; the build inlines them, or leaves
-// them beside the page (ART_BASE ''): the songs in the published copy, everything with --split. A chapter's demo page (tools/make-demos.mjs) sets ENVOI_CHAPTER first.
+// them beside the page (ART_BASE ''): the songs in the published copy, everything with --split. A chapter's demo page (tools/make-demos.mjs) sets ENVOI_CHAPTER first;
+// the page of polish to try (tools/make-try.mjs) sets ENVOI_TRY, which game.js reads.
 Game.start({ src: (p) => (p.startsWith('data:') ? p : (window.ART_BASE != null ? window.ART_BASE : '../') + p), chapter: window.ENVOI_CHAPTER });
 </script>
 </body>
