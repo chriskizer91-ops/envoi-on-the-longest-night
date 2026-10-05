@@ -266,28 +266,33 @@ try {
     const a = S.labels.indexOf('Surroundings');
     check(a >= 0 && S.labels[a + 1] === 'Footsteps' && S.pressed.Footsteps === 'Soft steps', 'no "Footsteps" just after "Surroundings", soft at first: ' + JSON.stringify([S.labels, S.pressed.Footsteps]));
     await S.close();
-    // the cloak's swish instead, out to the square and back
+    // out to the square and back (Io stands by the cottage's north path now, so the way back across the square is
+    // the long walk)
+    const outAndBack = async () => {
+      await walk(552, 8);
+      await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 40000, 'Wickhollow');
+      await walk(780, 1018);
+      await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'cottage' && !window.__game.busy, null, 40000, 'the cottage again');
+    };
+    // the cloak's swish instead
     S = await setting('Footsteps', 'Cloak’s swish'); await S.close();
     check((await savedSettings()).steps === 'cloak', 'the cloak was not saved: ' + JSON.stringify(await savedSettings()));
-    await walk(552, 8);
-    await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 40000, 'Wickhollow');
+    await outAndBack();
     fs = await steps();
-    check(fs.filter((x) => x.r).length >= 10 && fs.every((x) => x.kind === 'cloak'), 'the cloak\'s swish: ' + JSON.stringify({ n: fs.length, first: fs.slice(0, 3) }));
-    log('  the cloak\'s swish: ' + fs.filter((x) => x.r).length + ' on the way out');
+    check(fs.filter((x) => x.r).length >= 10 && fs.every((x) => x.kind === 'cloak' && x.vol === 0.75), 'the cloak\'s swish: ' + JSON.stringify({ n: fs.length, first: fs.slice(0, 3) }));
+    log('  the cloak\'s swish: ' + fs.filter((x) => x.r).length + ' out to the square and back');
     // None, and Effects off: no footsteps
     S = await setting('Footsteps', 'None'); await S.close();
-    await walk(780, 1018);
-    await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'cottage' && !window.__game.busy, null, 40000, 'the cottage again');
+    await outAndBack();
     fs = await steps();
     check(fs.length === 0 && (await savedSettings()).steps === 'off', 'with None: ' + JSON.stringify({ n: fs.length, kept: await savedSettings() }));
     S = await setting('Footsteps', 'Soft steps'); await S.close();
     S = await setting('Effects', 'Off'); await S.close();
-    await walk(552, 8);
-    await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 40000, 'Wickhollow');
+    await outAndBack();
     fs = await steps();
     check(fs.length === 0, 'with Effects off: ' + fs.length);
     S = await setting('Effects', 'Normal'); await S.close();
-    log('  None, and Effects off: no footsteps');
+    log('  None, and Effects off: no footsteps out to the square and back');
   }
 
   // ---------- Buy 10 (I12) ----------
