@@ -182,7 +182,9 @@ try {
     for (const [label, sp] of [['Slow', 0.5], ['Fast', 2], ['All at once', 0], ['Normal', 1]]) {
       const S = await setting('Words', label); await S.close();
       n = await sayLine(short);
-      await waitFor(() => window.__done != null, null, 20000, 'the line to move on at ' + label);
+      // the say has resolved and the tracker has the line's end: it looks every 15 ms, so it notes the end a moment after
+      // the say resolves, and a read in that moment found none ("moved on after null ms")
+      await waitFor(([n, t]) => { const L = window.__lines.slice(n).find((x) => x.text === t); return window.__done != null && !!(L && L.end); }, [n, short], 20000, 'the line to move on at ' + label);
       const L = await lineAfter(n, short);
       pauses[label] = L && L.end ? Math.round(L.end - L.full) : null;
       check(pauses[label] != null && near(pauses[label], pauseFor(short, sp)), 'at ' + label + ' words the line moved on after ' + pauses[label] + ' ms, not about ' + Math.round(pauseFor(short, sp)));
