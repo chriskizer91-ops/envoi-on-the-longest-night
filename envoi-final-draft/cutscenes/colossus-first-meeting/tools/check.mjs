@@ -4,10 +4,12 @@
 //     cutscene's WebGL context is gone and the last picture stays; Watch again builds it again; Laptop and Light build.
 //  2. The module, from a bare page, as the game would call it: play(container, opts) settles 'skipped' when skipped and
 //     'done' when it plays to the end (started near its end here), and afterwards nothing is left: no
-//     canvas, a lost WebGL context, three.js's fog chunks as they were, its sound closed.
+//     canvas, a lost WebGL context, three.js's fog chunks as they were, its sound closed. Without an arena (the game
+//     as it is) its last picture is the flat painting's, exactly as before the arenas: the same camera and crop, and
+//     everyone where they stood.
 //  3. The module in an arena (the new battles, once the game is switched over): given the fight's arena as the game
-//     gives it, the hand-over ends on the arena's eye-height camera and its crop, everyone in the picture, and play()
-//     still settles 'done'.
+//     gives it (the game's own sources work it out), the hand-over ends on the arena's eye-height camera and its crop,
+//     everyone in the picture, and play() still settles 'done'.
 // Ends with "all good", or prints what failed.
 import fs from 'fs';
 import path from 'path';
@@ -16,13 +18,25 @@ import { execSync } from 'child_process';
 const require = createRequire(import.meta.url);
 let pw; try { pw = require('playwright'); } catch { pw = require(execSync('npm root -g').toString().trim() + '/playwright'); }
 const dir = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
-const three = path.resolve(dir, '../../../tools/node_modules/three/build/three.min.js');
+const repo = path.resolve(dir, '../../..');
+const three = path.join(repo, 'tools/node_modules/three/build/three.min.js');
 const ID = 'colossus-first-meeting', PAGE = 'Colossus_First_Met_Cutscene.html';
-// the fight's arena as the game gives it once the arenas are switched on (src/game/game.js arenaFor): Frostmere's shore,
-// its camera (src/stage/arena-frostmere.js) and where the Bramble Colossus fight stands everyone there (ARENA_AT.colossus)
-const ARENA = { place: 'frostmere', frame: [1448, 1086], camera: { x: 0, h: 2, z: 18, pitch: 4.3, fov: 38 }, ppm: 75.67,
-  heroes: [{ id: 'io', at: [-2.2, -2.2], tall: 2.1, yawBias: -0.38 }, { id: 'sol', at: [-0.8, -1.0], tall: 1.9, yawBias: -0.3 }],
-  foes: [{ id: 'colossus', at: [3.2, -10.6], tall: 7.8, halfW: 5.4, yawBias: 0 }] };
+// the fight this cutscene opens, as the game asks for it (src/game/game.js battle): a wild fight in band 4 against the
+// Bramble Colossus, at level 18 with the flags the party has by then. Section 3 has the game's own sources build it in its
+// arena (Frostmere's shore) and give the cutscene what the game gives it
+const FIGHT = { kind: 'wild', party: { level: 18, flags: { party: true, refit: true, envoi: true, stoop: true } }, opts: { band: 4, pack: ['colossus'] } };
+// the flat painting's hand-over as it was before the arenas (this module as built at 84af961, read at 915 x 412 as
+// section 2 reads it): its camera (where it stands, its turn, its lens and its crop: fullWidth, fullHeight, offsetX,
+// offsetY, width, height) and everyone's place and turn (id, x, z, yaw). A deliberate change to the flat ending
+// changes these too
+const FLAT = {
+  pos: [-4.6028807498849575, 40.43282745917776, 86.09856305379903], quat: [-0.21643961393810282, 0, 0, 0.9762960071199335], fov: 12, aspect: 4 / 3,
+  view: [914.9999999999999, 686.25, -1.1368683772161603e-13, 57.65109449547367, 915, 412],
+  everyone: [['colossus', 0, 0, -0.6868167344174878], ['io', -6.11796509360233, 5.99621034871821, 1.2532259088307158], ['sol', -4.68886837233748, 7.2984886766594474, 1.4432293213384415]],
+};
+// the game's sources a fight's arena is worked out from, as the game page loads them (src/game/game.js arenaFor)
+const GAME = ['src/fx/arena.js'].concat(fs.readdirSync(path.join(repo, 'src/stage')).filter((f) => /^arena-.*\.js$/.test(f)).sort().map((f) => 'src/stage/' + f),
+  ['src/battle/rules.js', 'src/battle/engine.js', 'src/battle/sim.js', 'src/game/fights.js', 'src/game/game.js']);
 const fails = [];
 const ok = (c, what) => { console.log((c ? 'ok   ' : 'FAIL ') + what); if (!c) fails.push(what); };
 const browser = await pw.chromium.launch({ args: ['--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist', '--allow-file-access-from-files', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required'] });
@@ -96,43 +110,71 @@ async function open(url, size) {
       return { why, ms: Math.round(performance.now() - t0), last: C.last };
     }, ID);
     ok(r2.why === 'done', 'play() settles "done" when it plays to the end (' + r2.why + ', ' + (r2.ms / 1000).toFixed(0) + ' s here)');
+    // without an arena (the game as it is): the flat painting's last picture, exactly as it was before the arenas (FLAT)
+    const r3 = await page.evaluate(async (id) => {
+      document.getElementById('box').innerHTML = '';
+      const C = window.CUTSCENES[id], h = C.prepare(document.getElementById('box'), { quality: 'light', test: true }); await h.ready;
+      h.test.handover();
+      const E = h.test.E, k = E.camera, v = k.view;
+      const out = { pos: k.position.toArray(), quat: k.quaternion.toArray(), fov: k.fov, aspect: k.aspect, view: v && v.enabled ? [v.fullWidth, v.fullHeight, v.offsetX, v.offsetY, v.width, v.height] : null,
+        everyone: E.list.map((a) => [a.id, a.x, a.z, a.yaw]) };
+      h.cancel();
+      return out;
+    }, ID);
+    const px = (x) => (Math.round(x * 10) / 10 || 0).toFixed(1); // (-0 shown as 0)
+    const near = (a, b, e) => (Array.isArray(a) ? Array.isArray(b) && a.length === b.length && a.every((x, i) => near(x, b[i], e)) : typeof a === 'number' ? typeof b === 'number' && Math.abs(a - b) <= e : a === b);
+    ok(near(r3.pos, FLAT.pos, 1e-6) && near(r3.quat, FLAT.quat, 1e-9) && near([r3.fov, r3.aspect], [FLAT.fov, FLAT.aspect], 1e-9) && near(r3.view, FLAT.view, 1e-6),
+      'without an arena its last picture is the flat painting\'s, as before: its frame drawn ' + (r3.view ? r3.view.slice(0, 2).map(px).join(' x ') + ' and cropped from ' + r3.view.slice(2, 4).map(px).join(', ') : 'uncropped'));
+    ok(near(r3.everyone, FLAT.everyone, 1e-6), 'and everyone stands where they stood: ' + r3.everyone.map((a) => a[0]).join(', '));
     ok(errs.length === 0, 'no errors from the module' + (errs.length ? ':\n  ' + errs.slice(0, 8).join('\n  ') : ''));
     await page.close();
   } finally { fs.rmSync(bare, { force: true }); }
 }
 // ---------- 3. the module in an arena (the new battles), as the game calls it once the arenas are switched on ----------
 // With opts.arena the last shot ends on the arena's opening frame, its eye-height camera, instead of the flat painting's
-// (README.md, "The hand-over"): the hand-over's camera stands where the arena's stands in the place, turned to its
-// heading, with the battle's crop of its frame, and everyone's feet and heads are in that picture; play() still settles
-// "done" at the end, and the flat painting's last picture is untouched (sections 1 and 2)
+// (README.md, "The hand-over"). The arena is the one the game gives, worked out by the game's own sources: the fight's
+// config in its arena (src/game/fights.js, with opts.arena as the switch would have it) and what the game gives the
+// cutscene of it (src/game/game.js, Game.arenaFor: the place's camera, frame and pixels a metre, src/fx/arena.js and
+// src/stage/arena-*.js, and where everyone stands there, with their heights). The hand-over's camera stands where the
+// arena's stands in the place, turned to its heading, with the battle's crop of its frame, and everyone's feet and heads
+// are in that picture; play() still settles "done" at the end. (That this crop is the one the battle screen takes,
+// tools/game-test.mjs's colossus and finale steps compare once the arenas are on)
 {
   const bare = path.join(dir, '.check-bare.html');
   fs.writeFileSync(bare, '<!doctype html><meta charset="utf-8"><body style="margin:0;background:#000"><div id="box" style="position:fixed;inset:0"></div>' +
-    '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script src="./' + ID + '.js"></script></body>');
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script src="./' + ID + '.js"></script>' +
+    GAME.map((f) => '<script src="' + path.relative(dir, path.join(repo, f)) + '"></script>').join('') + '</body>');
   try {
     const { page, errs } = await open('file://' + bare, [915, 412]);
-    const r1 = await page.evaluate(async ([id, arena]) => {
-      const C = window.CUTSCENES[id], box = document.getElementById('box');
-      const h = C.prepare(box, { quality: 'light', test: true, arena }); await h.ready;
-      h.test.handover();
-      const cam = h.test.E.camera, B = h.test.scene.battle, V = (x, y, z) => new THREE.Vector3(x, y, z);
-      const q = new THREE.Quaternion().setFromAxisAngle(V(0, 1, 0), B.turn || 0), put = (x, y, z) => V(x, y, z).applyQuaternion(q).add(V(B.at[0], B.at[1], B.at[2]));
-      const want = put(B.camera.x || 0, B.camera.h, B.camera.z), heading = V(0, Math.tan(B.camera.pitch * Math.PI / 180), -1).normalize().applyQuaternion(q), look = cam.getWorldDirection(V());
-      cam.updateMatrixWorld();
-      const seen = B.field.every((f) => [0, f.tall].every((y) => { const p = put(f.x, y, f.z).project(cam); return Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1; }));
-      const out = { arena: !!B.arena, off: cam.position.distanceTo(want), turned: look.angleTo(heading) * 180 / Math.PI, crop: !!(cam.view && cam.view.enabled), seen, place: B.place };
-      h.cancel();
-      return out;
-    }, [ID, ARENA]);
-    ok(r1.arena && r1.place === ARENA.place, 'given the fight\'s arena, the hand-over is framed in it (' + r1.place + ')');
-    ok(r1.off < 1e-4 && r1.turned < .01 && r1.crop, 'its last picture is the arena\'s eye-height camera and its crop: ' + r1.off.toFixed(5) + ' m and ' + r1.turned.toFixed(4) + ' degrees off');
-    ok(r1.seen, 'everyone\'s feet and heads are in that picture');
-    const r2 = await page.evaluate(async ([id, arena]) => {
-      document.getElementById('box').innerHTML = '';
-      const C = window.CUTSCENES[id], box = document.getElementById('box');
-      return C.play(box, { quality: 'light', from: C.seconds - 2.5, arena });
-    }, [ID, ARENA]);
-    ok(r2 === 'done', 'play() with the arena settles "done" when it plays to the end (' + r2 + ')');
+    const ARENA = await page.evaluate((F) => {
+      const cfg = window.GameFights.config(F.kind, F.party, Object.assign({ arena: true }, F.opts));
+      return window.Game.arenaFor(cfg);
+    }, FIGHT);
+    ok(!!(ARENA && ARENA.place && ARENA.heroes.length && ARENA.foes.length), 'the game gives this fight\'s arena, from its own sources: ' + (ARENA ? ARENA.place + ', ' + ARENA.camera.fov + ' degree lens ' + ARENA.camera.h + ' m up, ' + ARENA.ppm.toFixed(2) + ' pixels a metre; ' + ARENA.heroes.concat(ARENA.foes).map((f) => f.id + ' at ' + f.at.join(', ')).join('; ') : 'none'));
+    if (ARENA) {
+      const r1 = await page.evaluate(async ([id, arena]) => {
+        const C = window.CUTSCENES[id], box = document.getElementById('box');
+        const h = C.prepare(box, { quality: 'light', test: true, arena }); await h.ready;
+        h.test.handover();
+        const cam = h.test.E.camera, B = h.test.scene.battle, V = (x, y, z) => new THREE.Vector3(x, y, z);
+        const q = new THREE.Quaternion().setFromAxisAngle(V(0, 1, 0), B.turn || 0), put = (x, y, z) => V(x, y, z).applyQuaternion(q).add(V(B.at[0], B.at[1], B.at[2]));
+        const want = put(B.camera.x || 0, B.camera.h, B.camera.z), heading = V(0, Math.tan(B.camera.pitch * Math.PI / 180), -1).normalize().applyQuaternion(q), look = cam.getWorldDirection(V());
+        cam.updateMatrixWorld();
+        const seen = B.field.every((f) => [0, f.tall].every((y) => { const p = put(f.x, y, f.z).project(cam); return Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1; }));
+        const out = { arena: !!B.arena, off: cam.position.distanceTo(want), turned: look.angleTo(heading) * 180 / Math.PI, crop: !!(cam.view && cam.view.enabled), seen, place: B.place };
+        h.cancel();
+        return out;
+      }, [ID, ARENA]);
+      ok(r1.arena && r1.place === ARENA.place, 'given the fight\'s arena, the hand-over is framed in it (' + r1.place + ')');
+      ok(r1.off < 1e-4 && r1.turned < .01 && r1.crop, 'its last picture is the arena\'s eye-height camera and its crop: ' + r1.off.toFixed(5) + ' m and ' + r1.turned.toFixed(4) + ' degrees off');
+      ok(r1.seen, 'everyone\'s feet and heads are in that picture');
+      const r2 = await page.evaluate(async ([id, arena]) => {
+        document.getElementById('box').innerHTML = '';
+        const C = window.CUTSCENES[id], box = document.getElementById('box');
+        return C.play(box, { quality: 'light', from: C.seconds - 2.5, arena });
+      }, [ID, ARENA]);
+      ok(r2 === 'done', 'play() with the arena settles "done" when it plays to the end (' + r2 + ')');
+    }
     ok(errs.length === 0, 'no errors from the module in an arena' + (errs.length ? ':\n  ' + errs.slice(0, 8).join('\n  ') : ''));
     await page.close();
   } finally { fs.rmSync(bare, { force: true }); }

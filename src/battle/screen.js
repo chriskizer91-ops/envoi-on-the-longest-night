@@ -112,6 +112,10 @@
     // asked for below is in a flat painting's terms, and is scaled by how much bigger (ZK; 1 on a flat painting), a little
     // wider still, to keep the place in view. And an arena's shot never zooms in more than half as far again as its
     // widest, so the painting behind is never blown up blurred (ZMAX)
+    // (A cutscene that ends on its fight's opening frame works that frame out as shotField, shotFit and applyCam below
+    // do, with ZK, ZMAX and BELOW: arenaFrame in envoi-final-draft/cutscenes/*/src/player.js. A change to any of them is
+    // a change there too, in both, and both modules rebuilt; tools/game-test.mjs's colossus and finale steps compare the
+    // two crops once the arenas are on)
     const ZK = AF ? AF.ppm / 54 * 1.2 : 1, ZMAX = 1.5;
     // an arena's fight stands low in its frame (the camera is at eye height), so on a phone a tall menu (Io's seven
     // commands) would hide it: there a shot may slide down past the painting's bottom edge, up to this many of its
@@ -1876,9 +1880,18 @@
       for (const f of foes) { f.m.root.visible = true; f.tyaw = f.home.yaw; }
       for (const h of heroes) h.tyaw = h.home.yaw;
       // after a cutscene, in an arena: the fight opens on the cutscene's last picture (everyone in the field shot, before
-      // the menus show: each cutscene's README, "The hand-over") and holds it while that picture fades into it (the
-      // game's shown), so nothing moves under the cross-fade; then the menus come. On a flat painting, as it always has
-      if (AF && cfg.standing) { shotField(50); applyCam(1); if (cfg.game && cfg.game.shown) cfg.game.shown(); await wait(1); }
+      // the menus show: each cutscene's README, "The hand-over") and holds it while that picture fades into it, so
+      // nothing moves under the cross-fade; then the menus come. The game is told to fade it (its shown) only once that
+      // shot is on the screen: wait(0) carries on after the next frame is drawn, and that frame also builds the new foes'
+      // shaders, which can take a second, while the fade (the browser's, off this thread) would have uncovered the
+      // frame before it, the close-up on Io. (S.opening: the lens and crop it held, for the game test.) On a flat painting,
+      // as it always has
+      if (AF && cfg.standing) {
+        shotField(50); applyCam(1); await wait(0);
+        S.opening = { fov: camera.fov, aspect: camera.aspect, view: Object.assign({}, camera.view) };
+        if (cfg.game && cfg.game.shown) cfg.game.shown();
+        await wait(1);
+      }
       UI.showBattle(true); UI.buildWindows(); UI.status(); layoutView();
       shotField(2);
       io().m.play('cast'); UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic();
@@ -2437,6 +2450,8 @@
         weaken(n, who) { const f = who ? E.unit(who) : E.foes[0]; f.hp = Math.min(f.hp, n); D[f.key].hp = f.hp; },
         // the arena this fight is in (null on a flat painting), and what the last frame cost to draw (frame: its number)
         get arena() { return AF; }, get drawn() { const i = renderer ? renderer.info.render : {}; return { frame: i.frame, calls: i.calls, triangles: i.triangles, points: i.points, lines: i.lines }; },
+        // in an arena after a cutscene, the lens and crop the fight held while the cutscene's last picture faded into it
+        get opening() { return S.opening || null; },
       };
     }
     setTimeout(() => {

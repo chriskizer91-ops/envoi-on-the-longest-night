@@ -26,7 +26,8 @@
 //     the last shot settles into the fight's opening frame there instead of on the flat painting: { place, camera: { x,
 //     h, z, pitch, fov }, frame: [w, h], ppm, heroes: [{ id, at: [x, z], tall, yawBias }], foes: [{ id, at, tall, halfW,
 //     yawBias }] }, in the arena's metres; src/game/game.js arenaFor) }
-//   last: after a run, { result, fps, worst, quality, seconds, triangles, calls }.
+//   last: after a run, { result, fps, worst, quality, seconds, triangles, calls, camera }: camera, the last picture's
+//         lens and crop ({ fov, aspect, view }), which a fight in its arena opens on (tools/game-test.mjs compares them).
 function makeCutscene(def) {
   'use strict';
   const V3 = (x, y, z) => new THREE.Vector3(x || 0, y || 0, z || 0);
@@ -508,7 +509,9 @@ function makeCutscene(def) {
     // out of the top rather than everyone's feet out of the bottom, the zoom never past half as big again as the widest
     // (ZMAX), and the crop allowed down past the frame's bottom edge (BELOW). SC.battle gives the arena's camera, frame
     // and ppm, everyone in the arena's metres (field), and where the arena's origin is in the place and how it is turned
-    // there (at, turn).
+    // there (at, turn). These are screen.js's rules, copied: a change to them there is a change here too, in both
+    // cutscenes, with both modules rebuilt (tools/game-test.mjs's colossus and finale steps compare the two crops once the
+    // arenas are on).
     function arenaFrame(B) {
       if (BAT.key === E.view.w + 'x' + E.view.h) return;
       BAT.key = E.view.w + 'x' + E.view.h;
@@ -660,6 +663,7 @@ function makeCutscene(def) {
       } catch (e) { still = null; }
       const f = fps.time > 2 ? Math.round(fps.frames / fps.time) : 0, r = E.renderer.info.render;
       api.last = { result: why, fps: f, worst: fps.worst < 99 ? Math.round(fps.worst) : 0, quality: qn, qualityName: QP.name, seconds: Math.round(fps.time), triangles: r.triangles, calls: r.calls, built: Object.assign({}, E.ms), sharpness: Math.round(E.scale / QP.scale * 100) };
+      { const k = E.camera, v = k.view; api.last.camera = { fov: k.fov, aspect: k.aspect, view: v && v.enabled ? Object.assign({}, v) : null }; }
       if (TEST) { if (settle) settle.res(why); return; }
       if (still) container.appendChild(still);
       dispose();

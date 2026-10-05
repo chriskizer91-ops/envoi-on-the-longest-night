@@ -9,7 +9,8 @@
 // Until the flying demo (plan step 19) is joined in, boarding the Magpie picks a landing and the flight is a short
 // crossing of the night sky.
 // Game.start({ host, src(path) -> URL, skipTitle, state, chapter }) -> the game (chapter: a CHAPTERS index, for a page
-// that plays only that chapter: its title offers to begin it or carry on). Defines window.Game.
+// that plays only that chapter: its title offers to begin it or carry on). Defines window.Game (with Game.arenaFor(cfg):
+// what a fight's cutscene is given of its arena, below).
 (function () {
   'use strict';
   function el(tag, attrs, parent, text) { const e = document.createElement(tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; if (parent) parent.appendChild(e); return e; }
@@ -109,6 +110,21 @@
   const TILES = { '00': "art/world/night-00.webp", '01': "art/world/night-01.webp", '02': "art/world/night-02.webp", '10': "art/world/night-10.webp", '11': "art/world/night-11.webp", '12': "art/world/night-12.webp", '20': "art/world/night-20.webp", '21': "art/world/night-21.webp", '22': "art/world/night-22.webp" };
   // the regions' names on Chris's D&D map (design decisions, place names)
   const REGION = { 2: 'The Verdant Wilds', 3: 'The northern wilds', 4: 'The Ironspire Peaks' };
+
+  // a fight in its arena (the new battles, cfg.arena), for its cutscene to end on the fight's opening frame there: the
+  // arena's locked camera, its frame and pixels a metre (src/fx/arena.js), and where everyone stands in it, in metres,
+  // with their heights and how the battle turns them. Nothing for a fight on its flat painting, whose frame each
+  // cutscene works out itself (each cutscene's README, "The hand-over"). Each cutscene's tools/check.mjs asks it too
+  // (Game.arenaFor), so it checks what the game gives
+  function arenaFor(cfg) {
+    const P = cfg.arena && window.ARENAS && window.ARENAS[cfg.arena], AV = window.makeArenaField && window.makeArenaField.view;
+    if (!P || !AV || !cfg.fight) return null;
+    const look = (id) => (cfg.foeLook && cfg.foeLook[id]) || {}, foes = (cfg.fight().foes || []).slice(0, cfg.slots.length);
+    return Object.assign(AV(P), {
+      heroes: cfg.heroes.map((h) => ({ id: h.id, at: h.home.slice(), tall: h.tall, yawBias: h.yawBias })),
+      foes: foes.map((f, i) => ({ id: f.id, at: cfg.slots[i].slice(), tall: look(f.id).tall, halfW: look(f.id).halfW || 0, yawBias: look(f.id).yawBias })),
+    });
+  }
 
   function start(opts) {
     opts = opts || {};
@@ -622,19 +638,6 @@
       const C = id && window.CUTSCENES && window.CUTSCENES[id];
       return C && !(st.seen && st.seen[id]) ? { id, C, level, arena: arenaFor(cfg) } : null;
     }
-    // a fight in its arena (the new battles, cfg.arena), for its cutscene to end on the fight's opening frame there: the
-    // arena's locked camera, its frame and pixels a metre (src/fx/arena.js), and where everyone stands in it, in metres,
-    // with their heights and how the battle turns them. Nothing for a fight on its flat painting, whose frame each
-    // cutscene works out itself (each cutscene's README, "The hand-over")
-    function arenaFor(cfg) {
-      const P = cfg.arena && window.ARENAS && window.ARENAS[cfg.arena], AV = window.makeArenaField && window.makeArenaField.view;
-      if (!P || !AV || !cfg.fight) return null;
-      const look = (id) => (cfg.foeLook && cfg.foeLook[id]) || {}, foes = (cfg.fight().foes || []).slice(0, cfg.slots.length);
-      return Object.assign(AV(P), {
-        heroes: cfg.heroes.map((h) => ({ id: h.id, at: h.home.slice(), tall: h.tall, yawBias: h.yawBias })),
-        foes: foes.map((f, i) => ({ id: f.id, at: cfg.slots[i].slice(), tall: look(f.id).tall, halfW: look(f.id).halfW || 0, yawBias: look(f.id).yawBias })),
-      });
-    }
     function csOpts(level, arena) {
       const v = (x) => Math.min(1.25, (x || 0) / 0.75), o = { volume: { music: v(settings.music), effects: v(settings.sfx), surroundings: v(settings.amb) } };
       if (coarse) o.quality = 'phone'; if (level) o.level = level; if (arena) o.arena = arena;
@@ -972,5 +975,5 @@
     window.__game = api;
     return api;
   }
-  window.Game = { start, PLACES, LANDINGS };
+  window.Game = { start, PLACES, LANDINGS, arenaFor };
 })();
