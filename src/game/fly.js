@@ -95,6 +95,9 @@
     zin.addEventListener('click', () => { S.zoom = Math.max(0.5, S.zoom / 1.35); });
     zout.addEventListener('click', () => { S.zoom = Math.min(3.2, S.zoom * 1.35); });
     const openAt = (v) => { const [x, y] = toPx(v); const b = opts.bandAt(x, y); return b > 0 && opts.open(b); };
+    // what the mist she turns back from is: a band the Magpie can't reach yet needs more lift; the mist off every band
+    // (band 0, the open sea's) never lifts, whatever she is fitted with
+    const mistLine = (v) => { const [x, y] = toPx(v); return opts.bandAt(x, y) > 0 ? 'Cold mist: the Magpie needs more lift to fly into it.' : 'Cold mist that never lifts: the Magpie turns back.'; };
     const landingsOpen = () => Object.entries(opts.landings).filter(([, L]) => opts.open(L.band) && (!L.need || L.need()));
     cardBtn.addEventListener('click', () => { if (near && S.mode === 'fly') land(near); });
     stayBtn.addEventListener('click', () => { if (S.mode === 'fly' && S.from) land(S.from); });
@@ -144,7 +147,7 @@
         const nx = S.pos.x + Math.sin(S.yaw) * S.speed * dt, nz = S.pos.z + Math.cos(S.yaw) * S.speed * dt;
         const next = new THREE.Vector3(nx, 0, nz);
         // the cold mist turns her back; the map's edge holds her in
-        if (!openAt(next) && S.mode === 'fly') { S.yaw += Math.PI * 0.75 * dt * 4; S.speed *= 0.9; target = null; if (performance.now() - mistNote > 3000) { mistNote = performance.now(); plate.textContent = 'Cold mist: the Magpie needs more lift to fly into it.'; if (opts.sfx) opts.sfx('wind'); } }
+        if (!openAt(next) && S.mode === 'fly') { S.yaw += Math.PI * 0.75 * dt * 4; S.speed *= 0.9; target = null; if (performance.now() - mistNote > 3000) { mistNote = performance.now(); plate.textContent = mistLine(next); if (opts.sfx) opts.sfx('wind'); } }
         else { S.pos.x = Math.max(-MW / 2 + 4, Math.min(MW / 2 - 4, nx)); S.pos.z = Math.max(-MH / 2 + 4, Math.min(MH / 2 - 4, nz)); }
         if (S.mode === 'land') {
           const d = Math.hypot(target.x - S.pos.x, target.z - S.pos.z);

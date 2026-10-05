@@ -13,11 +13,14 @@
 .field-act{position:absolute;left:10px;bottom:16px;z-index:3;appearance:none;border:0;border-radius:24px;min-height:48px;max-width:calc(100% - 170px);padding:0 18px;font:inherit;font-size:15.5px;font-weight:700;background:linear-gradient(180deg,#ffe28f,#f0b84a);color:#2a1d05;box-shadow:0 2px 0 rgba(0,0,0,.4),0 0 0 2px rgba(20,12,4,.5);cursor:pointer;text-align:left;line-height:1.15}
 .field-act[hidden]{display:none}
 .pad{position:absolute;right:10px;bottom:10px;width:132px;height:132px;display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);z-index:3;touch-action:none}
+.pad[hidden]{display:none}
 .pad button{appearance:none;border:1px solid rgba(214,222,255,.45);border-radius:10px;background:rgba(18,16,40,.55);color:#f4f6ff;font-size:17px;line-height:1;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none}
 .pad button:active{background:rgba(255,179,71,.35)}
 .pad-n{grid-column:2;grid-row:1}.pad-w{grid-column:1;grid-row:2}.pad-e{grid-column:3;grid-row:2}.pad-s{grid-column:2;grid-row:3}
 .mini{position:absolute;top:8px;right:8px;width:min(32vw,150px);height:auto;z-index:3;border:1px solid rgba(214,222,255,.55);border-radius:6px;background:#0b0912;box-shadow:0 2px 10px rgba(0,0,0,.5);cursor:pointer;touch-action:none;transition:width .2s}
-.mini.big{width:min(70vw,420px)}
+/* tapped big, it stays above the d-pad (whose top is 142 px up from the bottom): a map is 3:2, so 1.5 times the height
+   left, on a phone held sideways */
+.mini.big{width:min(70vw,420px,(100vh - 158px) * 1.5);width:min(70vw,420px,(100dvh - 158px) * 1.5)}
 /* the dialogue box */
 .game .talk{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:12px;align-items:stretch;padding:8px;z-index:30;cursor:pointer;max-height:48%;min-height:96px}
 .game .talk[hidden]{display:none!important}

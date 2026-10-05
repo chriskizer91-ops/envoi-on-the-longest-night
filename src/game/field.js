@@ -386,7 +386,9 @@
         if (s.kind !== 'event' || !s.rect || !inRect(s.rect, P.x, P.y)) continue;
         if (s.once && opts.isDone && opts.isDone(s.once)) continue;
         if (s.when && !s.when()) continue;
-        held.clear(); route = null; if (opts.onEvent) opts.onEvent(s); return;
+        // an event on a wild map (Halcyon's ambush on the crossroads) starts the count to the next random fight again, as a
+        // fight does, so none comes a step or two after it
+        held.clear(); route = null; if (map.wild) { P.counter = 0; P.roll = Math.random(); } if (opts.onEvent) opts.onEvent(s); return;
       }
       if (map.wild && P.counter >= gapNow()) { P.counter = 0; P.roll = Math.random(); held.clear(); route = null; if (opts.onEncounter) opts.onEncounter(map); }
     }
@@ -555,8 +557,10 @@
     return {
       root, P, cam, load, near, useNear, stage, canStand,
       get map() { return map; },
-      pause() { paused = true; held.clear(); route = null; target = null; act.hidden = true; },
-      resume() { paused = false; last = performance.now(); },
+      // paused (words, a question, the menu), the d-pad goes with the action button: it would show above and through a
+      // short box, and does nothing meanwhile
+      pause() { paused = true; held.clear(); route = null; target = null; act.hidden = true; pad.hidden = true; padId = null; padDirs.clear(); for (const d in padBtns) padBtns[d].classList.remove('lit'); },
+      resume() { paused = false; last = performance.now(); pad.hidden = false; },
       show(on) { root.hidden = !on; if (on) { layout(); last = performance.now(); } },
       walkTo(x, y) { route = findRoute(x, y); },
       // a new picture for the map she is on, in place, with no fade and no jump (a page comparing squeezes of one painting)
