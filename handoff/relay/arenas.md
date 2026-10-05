@@ -48,8 +48,7 @@ Before merging, give its two shared files the adversarial review `../README.md` 
 - `node tools/build.mjs demos/arena.html`: 2.23 MB. `node tools/build.mjs --min putting-it-all-together/game.html`: the published copy 15,160,262 bytes with its 22 files beside it, as on the game's branch (the arena isn't in the game page yet).
 - `node tools/arena-test.mjs --fights band2,colossus,finale --to turns:2` at 915 × 412: band 2's wilds on the moor in a storm (119 draw calls, 340,000 triangles), the Bramble Colossus by Frostmere (102, 322,000) and the finale at the dead Moonwell (156, 373,000), each played on to 24 to 30 seconds of battle. "arena test passed", no errors.
 - Read by hand: the branch's changes to `src/game/fights.js` and `src/battle/screen.js` against the game's branch. Everything in `fights.js` is behind `if (arena)`, and in `screen.js` behind `AF`; the arena is disposed with the fight (`BF.dispose()` in `stop()`).
-- **The game test with the switch off** (`node tools/game-test.mjs --steps title,new,wild,keepsakes --band 2 --level 8 --size 915x412` on the branch): was still running when this was delivered. Its result goes on the next line when it ends.
-- Game test: running.
+- **The game test with the switch off** (`node tools/game-test.mjs --steps title,new,wild,keepsakes --band 2 --level 8 --size 915x412` on the branch, `865677d`): **"game test passed: title, new, wild, keepsakes in 1088 s"**, no errors. The band 2 wild fight at level 8, on the flat Warm Road painting, won ("Victory!"); then the keepsakes step: the Crescent Locket on the roof, Nettie's gift, the Forge Horseshoe in Wickhollow's nook, the Warden's Brooch in the woods, the Items page, a fight with their helps, the shards after the win, and the first Colossus's gifts.
 
 ## When Chris says yes: switching the game over
 
