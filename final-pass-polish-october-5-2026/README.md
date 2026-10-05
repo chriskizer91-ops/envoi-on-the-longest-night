@@ -96,6 +96,29 @@ All 35 of the audit's other findings (T17 in `../handoff/tasks.md`, each listed 
 | The map editor stored every keepsake's place on Chris's first visit, so a later move in `items.js` would have been undone by his next send | It keeps and sends only the ones he moved | `tools/map-editor-keepsake-places.mjs` |
 | The keepsakes step rolled its fight at random, so it took 100 s or 300 s | It fights one wraith in clear weather every time | `tools/keepsakes-fight-pinned.mjs` |
 
+### Files changed outside this folder, and why
+
+The game's own files, where the build reads them (a fix to the game can live nowhere else), the tools that build and test it, and three pointers so the next session finds this folder:
+
+| File | Why |
+|---|---|
+| `src/game/maps.js` | The arrivals: all of Io on the screen, facing into the map |
+| `src/game/field.js` | No fight a step after the ambush; the d-pad hidden under questions; no freeze on a walk of no length |
+| `src/game/fly.js` | The line at the mist that never lifts; the flight's clock never runs backwards |
+| `src/game/game.js` | The Gate 15 chapter; the set fights saved before their scenes; Esc; old saves facing in; the cutscenes' sound paused while hidden |
+| `src/game/state.js` | Moonlore at full HP; the keepsakes' HP and MP |
+| `src/game/game.css` | The title, the keepsake cards and the big mini-map on short screens; the d-pad hidden |
+| `src/game/thareia-audio.js`, `src/battle/sound.js` | The made-up music and the battle's sound wait while the page is hidden (no sound itself changed) |
+| `src/game/fights.js` | Lunara's place in the Colossus's arena; the first fight's losing line |
+| `src/battle/screen.js`, `src/battle/screen.css` | Kestrel Stoop's framing; Last Word; a downed hero kneels; the rows, the menus and the end card on the phone; the damage numbers; the level-up card; the frame-rate line |
+| `src/battle/engine.js` | Guard's Heat tag |
+| `src/battle/sim.js`, `src/battle/balance-results.js` | The balance tool's expert guards through the Warden's Vow (the game's own numbers are unchanged) |
+| `tools/build.mjs` | It fails on art left outside a page and on a page too big |
+| `tools/game-test.mjs` | It fails where it used to pass; the keepsakes' fight pinned; the Gate 15 chapter's comments |
+| `envoi-game-pass-3/map-paths/` (`apply-edits.mjs`, `check-edits.mjs`, `edits-core.js`, `README.md`) | Chris's map edits from Copy my work go into the game, and the keepsakes' reach is checked |
+| `envoi-final-draft/map-editor/` (`map-editor.js`, `map-editor.html`, `page-test.mjs`, `README.md`) | No Download my work; only the keepsakes Chris moved are kept and sent |
+| `handoff/README.md`, `handoff/tasks.md`, `CLAUDE.md` | One pointer each to this folder (T17 marked done) |
+
 ### Left as they are, on purpose
 
 - **While landing, the Magpie ignores the mist,** so "Land where we took off" pressed far from the take-off stop flies her straight back over it (the audit's walking 6; it was so before the landing fix too).
