@@ -9,7 +9,8 @@
 //          effects' volume; the cottage's road out, shut before Sol has joined, plays none
 //   steps: on that walk her footsteps sound as she goes, soft steps at first, on each map's ground and at the effects'
 //          volume; Settings has "Footsteps" (None, Soft steps, Cloak's swish) just after "Surroundings", saved with the
-//          other settings: the cloak's swish sounds instead, and None and Effects off sound none
+//          other settings: down the cottage's path to her door and back, the cloak's swish sounds instead, and None and
+//          Effects off sound none
 //   buy10: in Nettie's shop, Buy 10 buys ten moonpetals and takes their shards, then only the five lavenders the bag has
 //          room for (it holds 99), then only the three mugworts the shards cover, each with the buy's sound, and saved
 // --off checks the game itself has the four off (node tools/try-test.mjs dist/game.html --off): its lines wait for a
@@ -266,13 +267,12 @@ try {
     const a = S.labels.indexOf('Surroundings');
     check(a >= 0 && S.labels[a + 1] === 'Footsteps' && S.pressed.Footsteps === 'Soft steps', 'no "Footsteps" just after "Surroundings", soft at first: ' + JSON.stringify([S.labels, S.pressed.Footsteps]));
     await S.close();
-    // out to the square and back (Io stands by the cottage's north path now, so the way back across the square is
-    // the long walk)
+    // down the cottage's north path to her door and back up it (Io stands at the top of the path now: the square's
+    // south road and the path meet there, so going out to the square and back is a step each way)
+    const there = (x, y, what) => waitFor(([x, y]) => { const g = window.__game, P = g.field.P; return g.field.map.id === 'cottage' && !g.busy && !P.moving && Math.hypot(P.x - x, P.y - y) < 30; }, [x, y], 40000, what);
     const outAndBack = async () => {
-      await walk(552, 8);
-      await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 40000, 'Wickhollow');
-      await walk(780, 1018);
-      await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'cottage' && !window.__game.busy, null, 40000, 'the cottage again');
+      await walk(838, 520); await there(838, 520, 'Io at her door');
+      await walk(560, 120); await there(560, 120, 'Io up the north path');
     };
     // the cloak's swish instead
     S = await setting('Footsteps', 'Cloak’s swish'); await S.close();
@@ -280,7 +280,7 @@ try {
     await outAndBack();
     fs = await steps();
     check(fs.filter((x) => x.r).length >= 10 && fs.every((x) => x.kind === 'cloak' && x.vol === 0.75), 'the cloak\'s swish: ' + JSON.stringify({ n: fs.length, first: fs.slice(0, 3) }));
-    log('  the cloak\'s swish: ' + fs.filter((x) => x.r).length + ' out to the square and back');
+    log('  the cloak\'s swish: ' + fs.filter((x) => x.r).length + ' down the path to her door and back');
     // None, and Effects off: no footsteps
     S = await setting('Footsteps', 'None'); await S.close();
     await outAndBack();
@@ -292,7 +292,7 @@ try {
     fs = await steps();
     check(fs.length === 0, 'with Effects off: ' + fs.length);
     S = await setting('Effects', 'Normal'); await S.close();
-    log('  None, and Effects off: no footsteps out to the square and back');
+    log('  None, and Effects off: no footsteps down the path and back');
   }
 
   // ---------- Buy 10 (I12) ----------
