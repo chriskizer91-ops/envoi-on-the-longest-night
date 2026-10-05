@@ -10,7 +10,7 @@
 // - `floor`: the live ground in front (the kind of tufts, their tint, how dense, how tall in the trampled clearing
 //   and round it, what a blow throws up), `tree`: the live tree that frames the shot, `air`: mist, fireflies, snow,
 //   frost glints, warm sparks, what a roar puts up (birds or bats) and what a heavy blow shakes down;
-// - `summon` and `envoiAt`: where Lunara rises and where Envoi coils, in metres (x across, z away from the camera);
+// - `summon` and `envoiAt`: where Lunara rises and where Envoi coils, in metres (x across; z toward the camera: a negative z is farther away);
 //   `warm`: a box of the painting whose warm lights can pulse or go dark; `wild`: the chance of rain or a storm in a
 //   wild fight here. Here: the glade's own grass and clover, an old oak on the right, mist off the river, fireflies.
 window.ARENAS = window.ARENAS || {};

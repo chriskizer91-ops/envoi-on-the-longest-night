@@ -54,8 +54,8 @@
   const ARENA = false;
   // which arena each fight is fought in: each band's wilds and each gate's place (art request 11)
   const ARENA_OF = { wild: { 1: 'river-glade', 2: 'warm-roads-moor', 3: 'eldergrove', 4: 'frostmere' }, colossus: 'frostmere', greatWraith: 'bogmire', dawnroost: 'dawnroost', halcyon: 'crossroads', finale: 'dead-moonwell' };
-  // where the party and the foes stand in an arena, in metres (x across, z away from the camera, which stands 18 m back
-  // from the middle of the fight): the heroes lower left and the foes upper right, as on the paintings
+  // where the party and the foes stand in an arena, in metres (x across; z toward the camera, which stands at z 18, so
+  // a negative z is farther away): the heroes lower left and the foes upper right, as on the paintings
   const ARENA_AT = {
     pack: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[2.0, -4.6], [4.2, -7.2], [4.4, -3.0]] },
     // the Bramble Horror alone: the party a little nearer, as on the paintings

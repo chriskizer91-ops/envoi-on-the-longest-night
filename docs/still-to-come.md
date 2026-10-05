@@ -7,6 +7,7 @@ What we've already decided goes into *Envoi on the Longest Night* but isn't in t
 **1. The new battle arenas.** Every fight will be fought the way the Colossus in the Meadow page fights: a locked camera, live 3D ground in front (grass, mist, weather, everything the blows throw up) and your battle paintings far off behind, at the settings you picked (the Strong squeeze, 30 frames a second, 3/4 sharpness). The same 3D models and moves; only the stage changes.
 
 - Built, as a demo page with every fight in its arena: https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea (October 5). The game still fights on the flat paintings until you've played it and said yes.
+- In the game's files since October 5, switched off, so nothing you play has changed: your yes switches it on.
 - You see it on your phone first, then it goes into the game.
 - Your words (October 4): "put all of the fights into an arena like that ... with the different battle backgrounds."
 

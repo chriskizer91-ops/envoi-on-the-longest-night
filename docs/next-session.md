@@ -2,7 +2,7 @@
 
 October 4, 2026: the session that started **pass three** (October 3, evening), through Chris's notes on its pages, five chapter demos, his walking paths, herbs for the wilds, and a polish round: his songs, three volumes and two hidden keepsakes. Read this first. Then:
 
-- **Newest of all, October 5: a new hub.** The game's hub is now a session Chris started in ultracode. Start with `../handoff/README.md`: who does what now, the old hub's last results in `../handoff/relay/` (the new battles, delivered on `work/arenas` with their demo page, https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea), and every task left in the game, defined one by one, in `../handoff/tasks.md`.
+- **Newest of all, October 5: a new hub.** The game's hub is now a session Chris started in ultracode. Start with `../handoff/README.md`: who does what now, the old hub's last results in `../handoff/relay/` (the new battles, delivered on `work/arenas` with their demo page, https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea, and brought into the game's branch on October 5 with the switch off), and every task left in the game, defined one by one, in `../handoff/tasks.md`.
 
 - **Newest, October 4, evening: the final draft.** Chris sent the file he keeps and called it the final draft. `../envoi-final-draft/README.md` has it, a review of the game, how to spend the rest of the 30 MB, art request 13 (the wild's own creatures) and the model studio, where modeling sessions Chris starts build new creatures in their own folders and hand them back. That work is on the branch `ccr-31761774-76j8j3`: this game, from `claude/practical-franklin-l1ctf9`, with the new folder on top. Later that evening: `../envoi-final-draft/cutscenes/` (briefs for two cutscenes, the Colossus first met and the finale's opening), and this branch took in `3d-cutscenes/`, `3d-model-field-studies/` and `3d-model-main-characters/` from their branches, so a session started from it has them all. The game itself didn't change: it still builds byte for byte the file Chris keeps.
 
@@ -34,7 +34,7 @@ October 4, 2026: the session that started **pass three** (October 3, evening), t
 | Demo: Envoi before the Finale (the foot of Misthollow) | https://claude.ai/artifact/LqvFuBB9BpvkCUiixc1ZS2 |
 | The game (since October 4, late evening: the two cutscenes, 99 of each herb, the twenty keepsakes with Chris's pictures, on top of everything before) | https://claude.ai/artifact/BgSiyXBu53iW7DJVF1seV8 |
 | The keepsakes: all twenty with Chris's pictures, each card as the game shows it, the Items page, what they add up to | https://claude.ai/artifact/AAtAnWcqszRj4qhVCfgPp5 |
-| The New Battles: every fight in its arena, the game's switch off until Chris says yes (October 5; `../envoi-final-draft/arena/README.md` on `work/arenas`) | https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea |
+| The New Battles: every fight in its arena, the game's switch off until Chris says yes (October 5; `../envoi-final-draft/arena/README.md`) | https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea |
 | The game before that (version 11), made from the other account, which this one can't update; a save code (Menu, Saves) carries a game from it to the new link | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
 | Battle Backgrounds: the game's eight paintings behind live 3D ground, at Chris's picks | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw |
 | Wilderness Walk: Io on Chris's wilderness path, nine squeezes | https://claude.ai/artifact/BcRjgVynWymYim84Yb7STk |
@@ -82,7 +82,7 @@ Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: t
 
 ## Next for Claude
 
-1. **The new battles** (pass-three README, "Next: the new battles"): every painting and Chris's settings are in (Strong, 30 frames a second, 3/4 sharpness). The living field takes a ground and weather for each place, the battle screen uses it; a demo page with every fight first, then the game.
+1. **The new battles:** built as a demo page with every fight in its arena (October 5, https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea), and in the game's branch since then with the switch off. Switch them on at Chris's yes (`../handoff/tasks.md`, T01 part B; `../envoi-final-draft/arena/README.md`, "Switching the game over").
 2. **His notes on the demos**, as they come.
 3. **Walking without the world map:** Chris agreed the plan on October 5 (the scenes at night) and his eight pictures are in; next they're traced into walking maps, a demo page first, then the game (`../handoff/tasks.md`, T02).
 4. **His map path edits**, when he sends more from the map editor, which took over from Walking Paths: list `edits` on its link (https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5) with `ArtifactData` (`out_dir`), `check-edits.mjs`, then `apply-edits.mjs`, `check-maps`, build, `make-demos`, test, publish (`../envoi-final-draft/map-editor/README.md`, "Reading what Chris sent"). His shapes go in as drawn: secret ways and orange patches are meant.

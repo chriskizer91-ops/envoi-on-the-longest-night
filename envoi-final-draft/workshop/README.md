@@ -21,11 +21,11 @@ Each piece of work that can go ahead on its own has a **brief** here and a **sta
 
 | Job | What it does | Brief | Branch | State |
 |---|---|---|---|---|
-| `wilds` | The eight wilderness scenes from Chris's pictures (art request 12): traced, joined in a row, a demo page where Io walks them | `wilds.md` | `work/wilds` | Ready: the pictures came on October 5 and are on the game's branch (`reference/art/walk/wilds/`) |
+| `wilds` | The eight wilderness scenes from Chris's pictures (art request 12): traced, joined in a row, a demo page where Io walks them | `wilds.md` | the game's branch | **Taken by the hub** (October 5): the ultracode hub is tracing them and building the demo page itself, so no session is needed for this job |
 | `words` | Every word of the game, written with Chris: his lore conversation | `words.md` | `work/words` | Ready |
 | `model-<id>` | A creature of the wild, from Chris's two sheets (art request 13) | `../model-studio/` | `work/model-<id>` | Waiting on the sheets |
 | `study-<name>` | Sol, Halcyon or Noctara built finer, for the finale's cutscene (optional) | `../../3d-model-main-characters/README.md`, starter in `../cutscenes/README.md` | `work/study-<name>` | Optional |
-| (the hub) | The new battle arenas | `../../envoi-game-pass-3/README.md`, "Next: the new battles" | the game's branch | Being built in the hub |
+| (the hub) | The new battle arenas | `../arena/README.md` | the game's branch | In the game's branch since October 5, switched off; on at Chris's yes after the demo (`../../handoff/tasks.md`, T01) |
 
 Anything else that can go ahead on its own gets a brief from `_template.md` first, written by the hub, and its starter script names it.
 

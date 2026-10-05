@@ -1,3 +1,4 @@
+**Brought in at `39350b5`** on October 5 by the ultracode hub, with the switch off, after a review by dimension; the game test (title, new, and a band 2 wild fight at level 8, 915 × 412) passed on the same page, byte for byte. Corrections from the review are in `../tasks.md` (T01) and `../../envoi-final-draft/arena/README.md`.
 # Relay: The New Battles (the Arenas)
 
 **Delivered** October 5, 2026, by the old hub. **Branch:** `work/arenas`, at `865677d`. **Chris's demo page:** https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea (published privately; the old hub sends him the link with this handoff). This is task **T01** in `../tasks.md`.

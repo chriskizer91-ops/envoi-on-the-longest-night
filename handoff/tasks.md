@@ -10,9 +10,9 @@ October 5, 2026, early morning. Everything still to do for *Envoi on the Longest
 
 | Id | Task | Kind | Waiting on | Can run beside |
 |---|---|---|---|---|
-| T01 | The new battle arenas: bring them in (switch off), then switch on at Chris's yes | Ready, then waiting on Chris | His yes after the demo, for part B | T02, T03; before T04 and T05 |
+| T01 | The new battle arenas: bring them in (switch off), then switch on at Chris's yes | Part A **done** October 5 (`39350b5`); part B waiting on Chris | His yes after the demo, for part B | T02 |
 | T02 | The wilderness scenes: eight walking maps from his pictures, then walking off the world map | Ready | Nothing (pictures came October 5) | T01, T03 |
-| T03 | Fix the stale lines in the docs other sessions follow | Technical | Nothing | Anything |
+| T03 | Fix the stale lines in the docs other sessions follow | **Done** October 5 (`9c65e72`) | | |
 | T04 | Creatures of the wild (ten families, through the model studio) | Waiting on Chris | His sheets (art request 13); questions 26, 27 | T02; after T01 part A |
 | T05 | Every word (the lore conversation, the workshop's `words` job) | Waiting on Chris | Him starting the session, and his answers | T02; after T01 part A |
 | T06 | Townsfolk portraits (art request 06) | Waiting on Chris | His sixteen portraits | Anything but T13's size work |
@@ -38,7 +38,7 @@ October 5, 2026, early morning. Everything still to do for *Envoi on the Longest
 
 **Why.** Chris, October 4: "we have a bunch of battle backgrounds that are supposed to go with the Colossus in the meadow fight arena, so take the Colossus out and put all of the fights into an arena like that, with the different battle backgrounds." And `../docs/still-to-come.md` (1): "You see it on your phone first, then it goes into the game."
 
-**Where it stands.** Delivered: `relay/arenas.md`. On `work/arenas` (`865677d`), merged with the game's branch at `0757ee8` and checked (balance 51 of 51, every map, three demo fights, and the game test with the switch off: "game test passed: title, new, wild, keepsakes in 1088 s"). The demo page: https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea. The switch is off (`const ARENA = false;` in `src/game/fights.js`, and `putting-it-all-together/game.html` doesn't load the arena's scripts), so bringing it in changes nothing Chris plays. The full write-up: `envoi-final-draft/arena/README.md` on the branch.
+**Where it stands.** **Part A is done** (October 5): `work/arenas` was reviewed by dimension (flat battles, rules and balance, the phone's cost, the docs) and merged into the game's branch at `39350b5`, switched off. After the merge: balance 51 of 51, every map ✓, the published copy 15,160,262 bytes (4,816 more than before: the two shared files' code, no art), byte for byte the page on which the game test passed (title, new, and a band 2 wild fight at level 8, 915 × 412: "game test passed: title, new, wild in 306 s"), and `demos/arena.html` builds at 2.23 MB. The records say so. Before that: delivered in `relay/arenas.md`, on `work/arenas` (`865677d`), merged with the game's branch at `0757ee8` and checked (balance 51 of 51, every map, three demo fights, and the game test with the switch off: "game test passed: title, new, wild, keepsakes in 1088 s"). The demo page: https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea. The switch is off (`const ARENA = false;` in `src/game/fights.js`, and `putting-it-all-together/game.html` doesn't load the arena's scripts), so bringing it in changes nothing Chris plays. The full write-up: `envoi-final-draft/arena/README.md` on the branch.
 
 **Steps, part A (now):**
 
@@ -68,7 +68,7 @@ October 5, 2026, early morning. Everything still to do for *Envoi on the Longest
 
 **Why.** Chris decided on October 3 that the world map is only for flying the Magpie and that walking happens only on painted scenes, and on October 5: "The walking plan is good, make the scenes at night" (`../docs/design-decisions.md`, "October 5, 2026: the wilderness scenes"). His eight pictures came the same night.
 
-**Where it stands.** The eight pictures are in `../reference/art/walk/wilds/` as he sent them (1536 × 1024, at night, the camps' landing ground empty; his packs' notes in `packs/`, including which candidate he kept and why). Nothing is built: `src/game/maps.js` has the thirteen old maps; bands 2 to 4 are walked on the world map (`src/game/world.js`, random fights from a hidden counter, `src/game/game.js` around line 209); the three camps and the three Ember Line nodes are markers on it (`PLACES` and `LANDINGS` at the top of `game.js`).
+**Where it stands.** **The hub took this job on October 5** (the workshop's `wilds` job needs no session): the eight pictures are squeezed into `art/walk/` (1.2 MB, `887719f`), the map tools check a scene traced in a file of its own (`MAPS_EXTRA`) and read `src/game/maps-wilds.js`, where the eight scenes are staged until Chris walks the demo and says yes (the game's page doesn't load that file, so the published page doesn't grow before then); then they move into `maps.js`. Tracing and the demo page are under way. Before that: the eight pictures are in `../reference/art/walk/wilds/` as he sent them (1536 × 1024, at night, the camps' landing ground empty; his packs' notes in `packs/`, including which candidate he kept and why). Nothing is built: `src/game/maps.js` has the thirteen old maps; bands 2 to 4 are walked on the world map (`src/game/world.js`, random fights from a hidden counter, `src/game/game.js` around line 209); the three camps and the three Ember Line nodes are markers on it (`PLACES` and `LANDINGS` at the top of `game.js`).
 
 **Steps:**
 
@@ -111,7 +111,7 @@ October 5, 2026, early morning. Everything still to do for *Envoi on the Longest
 7. `../envoi-final-draft/model-studio/intake.md`: written before the arenas. Add that a creature also needs its place in `ARENA_AT` (pack, lone or great) once T01 is in.
 8. `../living-battlefields/README.md` and `../docs/art-requests/10-painted-meadow-backdrop.md`: request 10 (the meadow's backdrop) was never delivered and nothing needs it now (Chris's battle backgrounds took its place); mark it superseded once Chris agrees (T10).
 
-**Done when.** None of these says anything untrue; one commit, "Docs: ...".
+**Done when.** None of these says anything untrue; one commit, "Docs: ...". **Done** October 5 (`9c65e72`), each change checked against the files by a second pass, which also corrected the same false claims in `../envoi-final-draft/README.md` and `../docs/art-requests/08-paper-dolls.md`.
 
 ## Waiting on Chris
 
