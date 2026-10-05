@@ -25,7 +25,7 @@ A switch at the top picks what the painting is for.
 
 **Walk it** walks Io there with the game's own field, in either mode. Each keepsake glints faintly, as the hidden ones do in the game. Standing by one and pressing the action button (Enter, Space or Z, or the button on screen) shows its card: its picture, its name, who can wear it, and its two helps. (The game's own card is fuller: `src/game/keepsakes.js`.) Enter, Esc or OK closes the card, and the keepsake stays found for the rest of that walk.
 
-**Send everything new** sends each changed map's paths and each keepsake that changed since it was last sent. **Send this map's paths** sends the open map's paths alone. **Copy my work** (and, outside claude.ai, **Download my work**) gives the same as text.
+**Send everything new** sends each changed map's paths and each keepsake that changed since it was last sent. **Send this map's paths** sends the open map's paths alone. **Copy my work** gives the same as text, to paste to Claude; where the page can't reach its database (outside claude.ai), it is the only way, and the page says so. (Until October 5 it offered **Download my work** there too, which a page on claude.ai can't make: it said the file was downloaded when nothing was saved.)
 
 Everything is kept in the browser as he works.
 

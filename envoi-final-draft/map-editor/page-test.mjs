@@ -4,7 +4,8 @@
 // Usage: node envoi-final-draft/map-editor/page-test.mjs [dist/map-editor.html] [--out <dir>]
 // First every step of the Walking Paths page's own test (envoi-game-pass-3/map-paths/page-test.mjs), since the map
 // editor keeps its path tools as they were: zoom, drag, add and delete points, undo and redo, Smooth, new shapes, people
-// and arrivals moved, the reach check, walking Io, the edits kept after a reload, download and check-edits.mjs, the
+// and arrivals moved, the reach check, walking Io, the edits kept after a reload, Copy my work (no download since
+// October 5) with check-edits.mjs and apply-edits.mjs (in a scratch copy of maps.js), the
 // cottage's steps, the page at phone width, and sending through a stand-in store (where Send everything new now sends
 // the keepsakes too). Then the keepsakes: the two hidden ones where they lie today, one put on a map and found within
 // reach, one out of reach and dragged back in, undo and redo, Delete, a note, walking Io to one and its card, sending
@@ -61,7 +62,7 @@ try {
   log('open: ' + path.relative(R, file));
   const w0 = await W();
   check(await ev(() => MapPaths.map) === 'wickhollow', 'the page opens on Wickhollow');
-  check(await ev(() => !document.getElementById('mp-download').hidden && document.getElementById('mp-send-row').hidden), 'outside claude.ai it offers Download, not Send');
+  check(await ev(() => !document.getElementById('mp-download') && document.getElementById('mp-send-row').hidden && /press Copy my work/.test(document.getElementById('mp-send-wait').textContent) && !document.getElementById('mp-send-wait').hidden), 'outside claude.ai it says to use Copy my work, and offers no Send and no download');
   await shot('01-open');
 
   log('zoom in round the west stairs');
@@ -195,18 +196,27 @@ try {
   check(Math.abs(arr2.at[0] - arr.at[0] + 14) <= 1 && JSON.stringify(bogExit.at) === JSON.stringify(arr2.at), 'the arrival moved to ' + arr2.at + ', and Bogmire’s exit to the Thornwood now lands there too');
   await shot('15-thornwood-arrival');
 
-  log('download the edits, and check them');
-  const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 10000 }), page.click('#mp-download')]);
-  const edits = path.join(out, 'edits.json'); await dl.saveAs(edits);
-  const doc = JSON.parse(fs.readFileSync(edits, 'utf8'));
-  check(doc.maps && doc.maps.wickhollow && doc.maps.thornwood && Object.keys(doc.maps).length === 2, 'the file holds the two changed maps (' + Object.keys(doc.maps || {}).join(', ') + ')');
+  log('copy the work, then check and apply it');
+  // the clipboard is caught here, as a paste to Claude would get it
+  await ev(() => { window.__copied = null; navigator.clipboard.writeText = (t) => { window.__copied = t; return Promise.resolve(); }; });
+  await page.click('#mp-copy'); await sleep(300);
+  const copied = await ev(() => document.getElementById('mp-status').textContent);
+  check(/^Copied your work/.test(copied), 'Copy: “' + copied + '”');
+  const edits = path.join(out, 'edits.json'); fs.writeFileSync(edits, (await ev(() => window.__copied)) || '');
+  let doc = {}; try { doc = JSON.parse(fs.readFileSync(edits, 'utf8')); } catch (e) { /* checked next */ }
+  check(doc.maps && doc.maps.wickhollow && doc.maps.thornwood && Object.keys(doc.maps).length === 2, 'what it copied holds the two changed maps (' + Object.keys(doc.maps || {}).join(', ') + ')');
   const chk = spawnSync(process.execPath, [path.join(R, 'envoi-game-pass-3/map-paths/check-edits.mjs'), edits], { encoding: 'utf8' });
   console.log(chk.stdout.replace(/^/gm, '        '));
-  check(chk.status === 0, 'check-edits.mjs finds the downloaded edits safe to apply');
-  await page.click('#mp-copy'); await sleep(300);
-  const copied = await ev(() => ({ status: document.getElementById('mp-status').textContent, box: !document.getElementById('mp-copybox').hidden && document.getElementById('mp-copybox').value.length }));
-  check(/Copied|already selected/.test(copied.status), 'Copy: “' + copied.status + '”');
-  await shot('16-download-copy');
+  check(chk.status === 0, 'check-edits.mjs finds the copied edits safe to apply');
+  // apply-edits.mjs writes them, in a scratch copy of the files it reads (never the game's own maps.js)
+  const scratch = path.join(out, 'apply'); fs.rmSync(scratch, { recursive: true, force: true });
+  for (const f of ['envoi-game-pass-3/map-paths/apply-edits.mjs', 'envoi-game-pass-3/map-paths/edits-core.js', 'src/game/maps.js', 'envoi-final-draft/items/items.js']) {
+    fs.mkdirSync(path.dirname(path.join(scratch, f)), { recursive: true }); fs.copyFileSync(path.join(R, f), path.join(scratch, f));
+  }
+  const ap = spawnSync(process.execPath, [path.join(scratch, 'envoi-game-pass-3/map-paths/apply-edits.mjs'), edits], { encoding: 'utf8' });
+  console.log((ap.stdout + ap.stderr).replace(/^/gm, '        '));
+  check(ap.status === 0 && /^applied wickhollow walk$/m.test(ap.stdout), 'apply-edits.mjs writes them into a scratch copy of maps.js');
+  await shot('16-copy');
 
   log('more on Io’s cottage: delete a point and a shape, a new front, its base line, Esc, an exit’s corner, a nudge');
   await page.click('.mp-map-pick >> text=Io\'s cottage'); await page.waitForFunction(() => MapPaths.painted, null, { timeout: 10000 }); await sleep(250);
@@ -288,7 +298,7 @@ try {
   });
   page = await openPage(ctx2, 'send');
   check(await ev(() => window.__writes.length) === 0, 'nothing is written on load');
-  check(await ev(() => !document.getElementById('mp-send-row').hidden && document.getElementById('mp-download').hidden), 'inside claude.ai it offers Send, not Download');
+  check(await ev(() => !document.getElementById('mp-send-row').hidden && document.getElementById('mp-send-wait').hidden && !document.getElementById('mp-download')), 'inside claude.ai it offers Send');
   const v1 = (await W()).walk[0][3];
   await ev(() => MapPaths.fit()); await sleep(80);
   await dragMap(v1, [v1[0] + 6, v1[1] + 8]);

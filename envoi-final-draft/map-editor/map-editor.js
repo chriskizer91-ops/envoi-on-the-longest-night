@@ -6,7 +6,8 @@
 // can reach on the paths as he has drawn them, and both walk her there with the game's own field (src/game/field.js, at
 // the game's settings), where each keepsake glints as the hidden ones do and shows its card when she finds it.
 // He sends it all to Claude: one document per map in the page's db (edits/<map id>, as Walking Paths did) and one per
-// keepsake (places/<keepsake id>), or a file to download, or text to copy, when the page is opened outside claude.ai.
+// keepsake (places/<keepsake id>), or as text to copy ("Copy my work"), which is all it offers when it can't reach its
+// store (opened outside claude.ai).
 // Every change is kept in this browser as he works (localStorage, when it is there; the paths under the names Walking
 // Paths used).
 // The ideas and the feel are Witch Way's scene editor's (follow-me-down-witch-way, game/src/editor.js): draw and drag
@@ -166,13 +167,13 @@
   function changed(msg) {
     ver++;
     if (sel && !selValid(sel)) sel = null;
-    saveSoon(); reachSoon(); renderMaps(); renderPicked(); renderKeep(); renderUndo(); renderSend(); downloadSoon(); draw();
+    saveSoon(); reachSoon(); renderMaps(); renderPicked(); renderKeep(); renderUndo(); renderSend(); draw();
     if (msg) note(msg);
   }
   // after every change to where a keepsake is: keep it, check what she can reach again, and show it
   function keepChanged(msg) {
     ver++;
-    saveKeepSoon(); reachSoon(); renderMaps(); renderKeep(); renderUndo(); renderSend(); downloadSoon(); renderHelp(); cursor(); draw();
+    saveKeepSoon(); reachSoon(); renderMaps(); renderKeep(); renderUndo(); renderSend(); renderHelp(); cursor(); draw();
     if (msg) note(msg);
   }
 
@@ -1113,7 +1114,7 @@
     const lab = el('label', { for: 'me-note-' + it.id }, card, 'Your note: where exactly, who gives it, or anything else');
     const ta = el('textarea', { id: 'me-note-' + it.id, rows: '2' }, lab);
     ta.value = kw.notes[it.id] || '';
-    ta.addEventListener('input', () => { kw.notes[it.id] = ta.value; saveKeepSoon(); renderSend(); downloadSoon(); });
+    ta.addEventListener('input', () => { kw.notes[it.id] = ta.value; saveKeepSoon(); renderSend(); });
     el('p', { class: 'ip-from' }, card, 'In Chris’s picture (art request 14): ' + it.look + '.' + (it.from ? ' Its look borrows from ' + it.from + '.' : ''));
   }
   // its two helps: the main one, and the other one, in fights or outside them
@@ -1147,7 +1148,7 @@
   }
   function closeFound() { const box = $('me-found'); if (box) box.hidden = true; }
 
-  // ---------- sending the edits to Claude, or downloading or copying them ----------
+  // ---------- sending the edits to Claude, or copying them ----------
   // db: the page's store on claude.ai, where Claude reads one document per map (edits/<map id>); null when the page
   // is opened anywhere else. It answers a moment after the page starts, never at once
   let db = null, dbState = 'waiting', sending = false;
@@ -1184,7 +1185,7 @@
     resource_exhausted: 'too much was sent at once; wait a moment and try again',
     quota_exceeded: 'Claude’s store for this page is full',
     unavailable: 'Claude couldn’t be reached just now; try again in a moment',
-    revoked: 'this page can’t send to Claude any more; use Copy my edits instead',
+    revoked: 'this page can’t send to Claude any more; use Copy my work instead',
     not_valid: 'something in the map isn’t right', too_big: 'the map has too many points to send in one go',
   };
   const why = (e) => { const code = e && e.code; return (WHY[code] || (e && e.message) || 'something went wrong') + (code ? ' (' + code + (e.message && WHY[code] ? ': ' + e.message : '') + ')' : ''); };
@@ -1224,34 +1225,22 @@
       status((done || kd ? 'Sent ' + sent() + ', then couldn’t send ' : 'Couldn’t send ') + what + ': ' + why(e) + '.', 'bad');
     } finally { sending = false; renderSend(); renderMaps(); }
   }
-  // the download is a plain link to a file made in the page; it is made again after each change
-  let dlURL = null, dlT = 0;
-  function downloadSoon() { clearTimeout(dlT); dlT = setTimeout(refreshDownload, 400); }
-  function refreshDownload() {
-    if (dbState !== 'none') return;
-    const a = $('mp-download'), any = anyWork();
-    if (dlURL) { URL.revokeObjectURL(dlURL); dlURL = null; }
-    a.setAttribute('aria-disabled', any ? 'false' : 'true');
-    if (!any) { a.setAttribute('href', '#'); return; }
-    const d = new Date(), pad = (n) => String(n).padStart(2, '0');
-    dlURL = URL.createObjectURL(new Blob([pretty(exportAll()) + '\n'], { type: 'application/json' }));
-    a.href = dlURL; a.download = 'envoi-map-editor-' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + '.json';
-  }
   function renderSend() {
     const any = anyWork(), need = IDS.filter(needsSend).length, ni = db ? unsentItems().length : 0;
-    $('mp-send-wait').hidden = dbState !== 'waiting';
+    // where the page can't reach its store, Copy my work is the way to Claude (until October 5 it offered a download
+    // there too, which a page on claude.ai can't make: nothing was saved, though the page said it was)
+    $('mp-send-wait').hidden = dbState === 'ready';
+    $('mp-send-wait').textContent = dbState === 'none' ? 'This page can’t send to Claude here: press Copy my work, then paste it to Claude.' : 'Checking whether this page can send to Claude…';
     $('mp-send-row').hidden = dbState !== 'ready';
-    $('mp-download').hidden = dbState !== 'none';
     $('mp-send-one').disabled = sending;
     const all = $('mp-send-all'), n = need + ni;
     all.disabled = sending || !n;
     all.textContent = n ? 'Send everything new (' + [need && plural(need, 'map', 'maps'), ni && plural(ni, 'keepsake', 'keepsakes')].filter(Boolean).join(', ') + ')' : 'Send everything new';
-    $('mp-download').setAttribute('aria-disabled', any ? 'false' : 'true');
     $('mp-copy').disabled = !any;
   }
   function renderKept() {
     const n = IDS.filter(isChanged).length, lying = ITEMS.filter(lies).length, k = ITEMS.filter((it) => lies(it) && !!placeOf(it.id)).length;
-    $('mp-kept').textContent = !kept || !keepKept ? 'This browser isn’t keeping your changes (a private window does that). Send, download or copy them before you close the page.'
+    $('mp-kept').textContent = !kept || !keepKept ? 'This browser isn’t keeping your changes (a private window does that). Send or copy them before you close the page.'
       : (n ? plural(n, 'map has', 'maps have') + ' path changes' : 'No path changes yet') + '; ' + k + ' of the ' + lying + ' keepsakes that lie on a map are placed. All of it is kept in this browser as you work.';
   }
   function copyEdits() {
@@ -1282,13 +1271,6 @@
   $('mp-send-one').addEventListener('click', sendThis);
   $('mp-send-all').addEventListener('click', sendAll);
   $('mp-copy').addEventListener('click', copyEdits);
-  const dl = $('mp-download');
-  dl.addEventListener('pointerdown', refreshDownload); dl.addEventListener('focus', refreshDownload);
-  dl.addEventListener('click', (e) => {
-    if (!anyWork()) { e.preventDefault(); status('Nothing to download yet.'); return; }
-    if (!dlURL) refreshDownload();
-    status('Downloaded your work (' + dl.download + '). Give the file to Claude.', 'good');
-  });
   // a mouse click leaves the keyboard with the painting, not on the button
   document.addEventListener('pointerup', (e) => { const b = e.target && e.target.closest ? e.target.closest('.mp-bar button, .mp-panel button') : null; if (b) setTimeout(() => b.blur(), 0); });
   window.addEventListener('pagehide', () => { save(); saveKeep(); });
@@ -1299,7 +1281,7 @@
     let d = null;
     try { d = await window.claude?.use?.('db').catch(() => null) ?? null; } catch (e) { d = null; }
     db = d; dbState = d ? 'ready' : 'none';
-    renderSend(); renderMaps(); renderKept(); refreshDownload();
+    renderSend(); renderMaps(); renderKept();
   })();
   // for tests and for a look from the console: the page's state, read-only in spirit
   // (MapPaths, as Walking Paths named it, so its tests run here too)
