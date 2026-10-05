@@ -4,8 +4,10 @@
 //        [--weather clear|rain|storm] [--to shot|end|turns:N] [--at 6] [--turbo 6] [--out <dir>] [--jpg <dir>]
 //   --fights: the demo's fight ids (first, band1 to band4, horror, colossus, gate5, gate10, gate15, finale); all by default
 //   --to shot: each fight is watched (the expert play style) until it has run --at seconds of battle, then a moment at
-//            normal speed, a screenshot, and what that frame cost to draw (draw calls, triangles);
-//        end: as shot, then on to the fight's end card; turns:N: as shot, then until N more turns have been played
+//            normal speed and a screenshot; then the next hero's command is waited for, and what that frame costs to
+//            draw (draw calls, triangles) is counted with the arena and without it (report.json has every count);
+//        end: the screenshot, then on to the fight's end card; turns:N: the screenshot, then on for N more turns'
+//            worth of battle (about six seconds each)
 //   --jpg: also save each screenshot as a small JPEG named after its place, for a README (a second fight in a place
 //          adds its own name: eldergrove-horror.jpg, frostmere-colossus.jpg)
 // three.js r128 comes from npm into tools/.cache, since the CDN is unreachable from the sandbox; the fonts are skipped.

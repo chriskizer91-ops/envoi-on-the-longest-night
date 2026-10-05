@@ -175,7 +175,7 @@
     if (F.kind === 'wild' && !F.pack && !F.forms) { opt('roll', 'As the wilds roll them'); SIM.BAND_PACKS[F.band].filter((p) => p[0] !== 'bramble?').forEach((p, i) => opt('p' + i, packName(p))); }
     else if (F.forms) { opt('roll', 'Any of its four forms'); for (const [id, nm] of FORMS) opt(id, nm); }
     $('pfoesL').hidden = !sel.children.length; if (P.foes && [...sel.options].some((o) => o.value === P.foes)) sel.value = P.foes;
-    $('pweatherL').hidden = !F.arena; if (P.weather) $('pweather').value = P.weather;
+    $('pweatherL').hidden = !F.arena; $('pweather').value = P.weather || 'roll';
   }
   function keep() { PICKED[cur.id] = { level: +$('plevel').value, foes: $('pfoes').value, weather: $('pweather').value }; }
 
