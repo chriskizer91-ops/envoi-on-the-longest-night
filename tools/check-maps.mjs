@@ -2,11 +2,15 @@
 // feet and 6 px either side inside a walk area and outside every block and person) from the map's start and from every
 // arrival point, and reports any exit, person, spot (the keepsakes in items.js among them) or arrival she can't reach. Whatever the grid misses is looked for
 // again along the narrow ways (field.js's fine search: 4 px steps on the same rule), where Chris's secret paths run, and
-// is named as reached that way. Usage: node tools/check-maps.mjs [mapId]
+// is named as reached that way. Usage: [MAPS_EXTRA=file.js,...] node tools/check-maps.mjs [mapId]
 import path from 'path'; import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const R = path.resolve(new URL('..', import.meta.url).pathname);
 require(path.join(R, 'src/game/maps.js'));
+// maps traced but not yet in the game (the wilderness scenes, src/game/maps-wilds.js, until Chris's okay), and any
+// files named in MAPS_EXTRA (comma-separated: a map traced in a file of its own, before it joins the others)
+import fs from 'fs';
+for (const f of [path.join(R, 'src/game/maps-wilds.js'), ...(process.env.MAPS_EXTRA || '').split(',').filter(Boolean).map((x) => path.resolve(x))]) if (fs.existsSync(f)) require(f);
 const MAPS = globalThis.MAPS, CELL = 12, GW = 128, GH = 86, REACH = 58;
 // the keepsakes that lie on a map are spots too (the game adds them from items.js)
 globalThis.window = globalThis; require(path.join(R, 'envoi-final-draft/items/items.js'));

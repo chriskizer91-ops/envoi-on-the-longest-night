@@ -1,5 +1,5 @@
 // trace-overlay.mjs: draws a ground map's traced walk areas, blocks, fronts, exits, people and spots over its painting,
-// to check the tracing by eye. Usage: node tools/trace-overlay.mjs <mapId> <out.png> [width] [--grid 50] [--crop x,y,w,h]
+// to check the tracing by eye. Usage: [MAPS_EXTRA=file.js,...] node tools/trace-overlay.mjs <mapId> <out.png> [width] [--grid 50] [--crop x,y,w,h]
 //   [--plain] (the painting and the grid only)
 // Walk areas are green, blocks red, fronts (the painting's pieces drawn over Io when she's behind them) violet with their
 // base line, exits blue, people gold, other spots white, event areas pink; labels name each. --crop draws only that part
@@ -9,6 +9,8 @@ const require = createRequire(import.meta.url);
 const R = path.resolve(new URL('..', import.meta.url).pathname);
 const sharp = require(path.join(R, 'tools/node_modules/sharp'));
 require(path.join(R, 'src/game/maps.js'));
+// maps traced but not yet in the game (src/game/maps-wilds.js), and any files named in MAPS_EXTRA (comma-separated)
+for (const f of [path.join(R, 'src/game/maps-wilds.js'), ...(process.env.MAPS_EXTRA || '').split(',').filter(Boolean).map((x) => path.resolve(x))]) if (fs.existsSync(f)) require(f);
 const args = process.argv.slice(2), pos = [];
 let grid = 100, crop = null, plain = false;
 for (let i = 0; i < args.length; i++) {
@@ -29,7 +31,9 @@ function plainPng(buf) {
   for (let o = 8; o + 12 <= buf.length;) { const len = buf.readUInt32BE(o), type = buf.toString('ascii', o + 4, o + 8); if (keep.has(type)) parts.push(buf.subarray(o, o + 12 + len)); o += 12 + len; }
   return Buffer.concat(parts);
 }
-const src = path.join(R, 'reference/art/walk', path.basename(M.src).replace(/\.[a-z]+$/, '.png'));
+// the original painting: Chris's walking maps are in reference/art/walk, his wilderness scenes in reference/art/walk/wilds
+const png = path.basename(M.src).replace(/\.[a-z]+$/, '.png'), src = [path.join(R, 'reference/art/walk', png), path.join(R, 'reference/art/walk/wilds', png)].find((f) => fs.existsSync(f));
+if (!src) { console.error('no painting for ' + id + ' (' + png + ') in reference/art/walk or reference/art/walk/wilds'); process.exit(1); }
 const X = (x) => ((x - cx) * k).toFixed(1), Y = (y) => ((y - cy) * k).toFixed(1);
 const sw = Math.max(1.5, 3 * k * 0.6), fs1 = Math.max(12, Math.round(14 * Math.min(1.6, k)));
 const poly = (pts, fill, stroke, dash) => '<polygon points="' + pts.map((p) => X(p[0]) + ',' + Y(p[1])).join(' ') + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '"' + (dash ? ' stroke-dasharray="6 4"' : '') + '/>';
