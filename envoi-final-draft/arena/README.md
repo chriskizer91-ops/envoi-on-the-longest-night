@@ -8,7 +8,7 @@ The game itself hasn't changed yet. It switches over once you've played the demo
 
 ## The page
 
-`demos/arena.html`, built into `dist/arena.html` (and `dist/arena.artifact.html` to publish). The game's session publishes it and puts the link here.
+**https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea** (published October 5, with the game's latest in it). It is `demos/arena.html`, built into `dist/arena.html` (and `dist/arena.artifact.html`, the copy that is published).
 
 - Pick a fight: the first fight, the wilds of each band, the Bramble Horror, the Bramble Colossus, gates 5, 10 and 15, or the finale. The list shows each place's painting.
 - Pick the party's level, the foes (or let the wilds roll them, as the game does), and the weather (or let it come as it comes).
@@ -143,7 +143,7 @@ Not done: the game still fights on its flat paintings, and builds as before with
 <script src="../src/stage/arena-dead-moonwell.js"></script>
 ```
 
-Then it builds the file you keep as always (`node tools/build.mjs --min --offline putting-it-all-together/game.html`) and plays it (`node tools/game-test.mjs --steps title,new,wild --band 2 --level 8`). Every fight but the first is then fought in its arena. It makes the file 0.4 MB bigger, 16.3 MB to 16.7 MB (the eight paintings and the arena's code). Without step 2, step 1 does nothing: a fight whose arena isn't in the page stays on its flat painting.
+Then it builds the file you keep as always (`node tools/build.mjs --min --offline putting-it-all-together/game.html`) and plays it (`node tools/game-test.mjs --steps title,new,wild --band 2 --level 8`). Every fight but the first is then fought in its arena. It makes the file 0.4 MB bigger (the eight paintings and the arena's code): with the keepsakes in (October 5), the file you keep goes from 17.9 MB to 18.3 MB of its 30, and the published page from 14.5 MB to 15.6 MB as the build counts them. That is under the published page's 16 MB, but close: if it is ever refused for size, `art/arena` joins the songs and the keepsakes' pictures beside the page (`<meta name="beside">` in `game.html`). Without step 2, step 1 does nothing: a fight whose arena isn't in the page stays on its flat painting.
 
 Both were tried here (How it was checked, above).
 
@@ -174,6 +174,8 @@ node tools/arena-test.mjs --jpg envoi-final-draft/arena/renders   # these pictur
 ```
 
 This work began from the game at commit `ae4a864`, before the keepsakes and the cutscenes went in. It merges with the game's branch as it stood at `0757ee8` without a clash, and a scratch copy of the two merged was tried: the demo's band 2 and Colossus fights, and the game test with the switch on (its band 2 wild fight on the moor, won). No errors.
+
+On October 5 the game's branch at `0757ee8` was merged into this one (`01456b7`, no clash: the keepsakes' lines in `fights.js` stand beside the arena's), and the branch was pushed as `work/arenas` for the session that is the game's hub from then on (`handoff/relay/arenas.md` on the game's branch). Checked after that merge, headless: the balance (51 of 51 targets), every walking map (`check-maps.mjs`, the keepsakes' places included), the demo built again (2.23 MB) and three of its fights at 915 × 412 (band 2's wilds on the moor in a storm, the Bramble Colossus by Frostmere, and the finale at the dead Moonwell, each to 24 to 30 seconds of battle), with no errors. The game with the switch off builds as before; its own test is in `handoff/relay/arenas.md`. With the switch on, measured in a scratch copy of the game page: the file you keep 18.3 MB, the published page 15.6 MB as the build counts it (above).
 
 Ideas for later:
 
