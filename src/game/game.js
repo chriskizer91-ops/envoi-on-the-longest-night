@@ -655,8 +655,14 @@
       const colossus = kind === 'wild' && (cfg.fight().foes || []).some((f) => f.id === 'colossus');
       // a cutscene first, when this fight has one that hasn't played
       const cs = cutsceneFor(kind, cfg), still = cs ? await cutscene(cs) : null;
-      if (still) { cfg.quickIntro = true; cfg.standing = true; }
-      const r = await new Promise((res) => { cfg.game = { onEnd: res, onError: () => res({ outcome: 'error' }) }; cfg.sound = SND; layer.ctl = BattleScreen.start(cfg); if (still) fadeStill(still); });
+      // after a cutscene, the fight takes its place under the cutscene's last picture: in an arena, no weather rolls in
+      if (still) { cfg.quickIntro = true; cfg.standing = true; if (cfg.arena) cfg.weather = 'clear'; }
+      // a battle that can't even start (an arena that fails to build) hands back to the map instead of leaving its layer up
+      const r = await new Promise((res) => {
+        cfg.game = { onEnd: res, onError: () => res({ outcome: 'error' }) }; cfg.sound = SND;
+        try { layer.ctl = BattleScreen.start(cfg); } catch (err) { console.error(err); layer.ctl = { stop() {} }; res({ outcome: 'error' }); return; }
+        if (still) fadeStill(still);
+      });
       layer.ctl.stop(); layer.remove();
       if (was === 'field') field.show(true); else if (was === 'world') world.show(true);
       if (r.outcome !== 'error') { moreShards(r); GS.applyBattle(st, r); backAfter(r); }

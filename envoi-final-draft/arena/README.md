@@ -71,7 +71,7 @@ The wilds roll their weather, as the game will; three of these rolled a storm, w
 
 For comparison: Colossus in the Meadow, which you measured at 29 to 30 frames a second on your phone even in the storm, draws 96 things and 319,000 triangles; today's first fight, 83 and 156,000. The arena's own part is small, 10 to 19 draw calls and 4,000 to 28,000 triangles; most of every frame is the fighters themselves, as in today's fights, and they are the same models.
 
-The demo page is 2.2 MB, the eight paintings 268 KB of it.
+The demo page is 2.2 MB, the eight paintings 0.33 MB of it (250 KB as files; written into the page they take a third more).
 
 ## Pictures
 
@@ -105,7 +105,7 @@ More moments, the same size:
 
 ## Not finished, or worth a look
 
-1. **How fast it runs on your phone** is the one thing the test browser can't tell. The counts above are close to Colossus in the Meadow's, but the busiest fights (gate 10's three wraiths, the finale) ask more of it than the meadow did. If one runs slow, the levers are the ones you know: the frame cap and the 3D's sharpness.
+1. **How fast it runs on your phone** is the one thing the test browser can't tell. The counts above are close to Colossus in the Meadow's, but the busiest fights (gate 10's three wraiths, the finale) ask more of it than the meadow did. If one runs slow, tell the game's session which fight. This page has no lever for it: its fps button only goes up from 30 (to 45, 60 or the screen's own), and the 3D stays at your 3/4 sharpness. The levers you know from the Battle Backgrounds page, half sharpness and a cap of 24 (20 froze there), are a small change each, and the session can put a sharpness button on this page for you to try first.
 2. **If a fight freezes or goes black on your phone**, the 20 frames a second freeze you saw on the Battle Backgrounds page is the first place to look (it is still unexplained; 20 isn't offered here).
 3. **Close-ups are less close** than in today's fights, so that the painting behind never blurs. Say if you'd rather have them closer and a little softer.
 4. **The Colossus and the great wraith** are too tall to fit above the menus on the phone in some shots; then their heads go out of the top rather than everyone's feet out of the bottom.
@@ -121,7 +121,7 @@ Headless, in the test browser (Chromium with SwiftShader drawing in software), o
 - **Whole fights to their end cards:** band 2's wilds (won after 4:39 of battle) and the great wraith (won after 7:55, and "Bogmire has its lights back"). No errors.
 - **The finale's opening turns**, to 43 seconds of battle, with Lunara risen from the dead Moonwell among the five of them. No errors.
 - **The great wraith's fall**, its stolen lamplight flying home and the town's lamps lighting again; **the Colossus's Wrath**; **a storm** in the river glade; **a blizzard** by Frostmere; **Envoi** folding in at the crossroads, summoned by hand. No errors.
-- **The game, with the switch off:** the file you keep, built from this work with the two files it shares with the game (`src/battle/screen.js` and `src/game/fights.js`) put back as they were, is byte for byte yours (SHA-256 `6396cfcc…`), so nothing else here reaches the game. With them as they are now it is 16.31 MB (SHA-256 `96433868…`), and the game test passes: the title, a new game, and a band 2 wild fight at level 8 on the flat Warm Road painting, played to a win and back to the map.
+- **The game, with the switch off** (measured October 4, before the keepsakes went in): the file you keep, built from this work with the two files it shares with the game (`src/battle/screen.js` and `src/game/fights.js`) put back as they were, is byte for byte yours (SHA-256 `6396cfcc…`), so nothing else here reaches the game. With them as they are now it is 16.31 MB (SHA-256 `96433868…`), and the game test passes: the title, a new game, and a band 2 wild fight at level 8 on the flat Warm Road painting, played to a win and back to the map.
 - **The game, with the switch on** (in a copy of the game page that isn't kept): the same test passes, with its band 2 wild fight fought on the Warm Roads' moor and won.
 
 ## Switching the game over
@@ -143,7 +143,7 @@ Not done: the game still fights on its flat paintings, and builds as before with
 <script src="../src/stage/arena-dead-moonwell.js"></script>
 ```
 
-Then it builds the file you keep as always (`node tools/build.mjs --min --offline putting-it-all-together/game.html`) and plays it (`node tools/game-test.mjs --steps title,new,wild --band 2 --level 8`). Every fight but the first is then fought in its arena. It makes the file 0.4 MB bigger (the eight paintings and the arena's code): with the keepsakes in (October 5), the file you keep goes from 17.9 MB to 18.3 MB of its 30, and the published page from 14.5 MB to 15.6 MB as the build counts them. That is under the published page's 16 MB, but close: if it is ever refused for size, `art/arena` joins the songs and the keepsakes' pictures beside the page (`<meta name="beside">` in `game.html`). Without step 2, step 1 does nothing: a fight whose arena isn't in the page stays on its flat painting.
+Then it builds the file you keep as always (`node tools/build.mjs --min --offline putting-it-all-together/game.html`) and plays it (`node tools/game-test.mjs --steps title,new,wild --band 2 --level 8`). Every fight but the first is then fought in its arena. It makes the file 0.4 MB bigger (the eight paintings and the arena's code): with the keepsakes in (October 5), the file you keep goes from 17.9 MB to 18.3 MB of its 30, and the published page from 14.5 MB to 14.9 MB as the build counts them (15,572,999 bytes, built with `--min` and without `--offline`), under its 16 MB. (An `--offline` build writes a copy to publish too, with three.js and the fonts inside: 16,379,946 bytes. Never publish that one: build with `--min` again after making the file you keep.) Without step 2, step 1 does nothing: a fight whose arena isn't in the page stays on its flat painting.
 
 Both were tried here (How it was checked, above).
 
@@ -170,12 +170,16 @@ node tools/arena-test.mjs                                 # every fight to 6 s o
 node tools/arena-test.mjs --fights band2,gate5 --to end   # whole fights, to their end cards
 node tools/arena-test.mjs --fights finale --to turns:4    # the finale's opening turns
 node tools/arena-test.mjs --size 1280x800                 # a laptop's screen
-node tools/arena-test.mjs --jpg envoi-final-draft/arena/renders   # these pictures
+node tools/arena-test.mjs --jpg envoi-final-draft/arena/renders   # eleven of the pictures: each fight's, named after its place
 ```
+
+That remakes eleven of the eighteen pictures above: every one in the first table but the lamps coming home. The tool never writes the other seven (the lamps coming home and the six under "More moments"). A storm or blizzard (`--weather storm`) or a laptop's screen (`--size 1280x800`) is saved under the place's own name, over the phone's picture, so make those in another folder and rename them. Run all the fights together: run alone, the Bramble Horror and the Colossus are saved as `eldergrove.jpg` and `frostmere.jpg`. The wilds roll their weather, so a new run may not show Eldergrove in a storm, as its caption says.
 
 This work began from the game at commit `ae4a864`, before the keepsakes and the cutscenes went in. It merges with the game's branch as it stood at `0757ee8` without a clash, and a scratch copy of the two merged was tried: the demo's band 2 and Colossus fights, and the game test with the switch on (its band 2 wild fight on the moor, won). No errors.
 
-On October 5 the game's branch at `0757ee8` was merged into this one (`01456b7`, no clash: the keepsakes' lines in `fights.js` stand beside the arena's), and the branch was pushed as `work/arenas` for the session that is the game's hub from then on (`handoff/relay/arenas.md` on the game's branch). Checked after that merge, headless: the balance (51 of 51 targets), every walking map (`check-maps.mjs`, the keepsakes' places included), the demo built again (2.23 MB) and three of its fights at 915 × 412 (band 2's wilds on the moor in a storm, the Bramble Colossus by Frostmere, and the finale at the dead Moonwell, each to 24 to 30 seconds of battle), with no errors. The game with the switch off builds as before; its own test is in `handoff/relay/arenas.md`. With the switch on, measured in a scratch copy of the game page: the file you keep 18.3 MB, the published page 15.6 MB as the build counts it (above).
+On October 5 the game's branch at `0757ee8` was merged into this one (`01456b7`, no clash: the keepsakes' lines in `fights.js` stand beside the arena's), and the branch was pushed as `work/arenas` for the session that is the game's hub from then on (`handoff/relay/arenas.md` on the game's branch). Checked after that merge, headless: the balance (51 of 51 targets), every walking map (`check-maps.mjs`, the keepsakes' places included), the demo built again (2.23 MB) and three of its fights at 915 × 412 (band 2's wilds on the moor in a storm, the Bramble Colossus by Frostmere, and the finale at the dead Moonwell, each to 24 to 30 seconds of battle), with no errors. The game with the switch off builds as before; its own test is in `handoff/relay/arenas.md`. With the switch on, measured in a scratch copy of the game page: the file you keep 18.3 MB, the published page 14.9 MB as the build counts it (15,572,999 bytes; the 15.6 first written here was the `--offline` build's copy, above).
+
+**Brought into the game's branch** on October 5 at `39350b5` by the ultracode hub, with the switch off, after a review of the two shared files by dimension (flat battles, rules and balance, the phone's cost, the docs), which found nothing that changes a flat fight. Its corrections are in this README and in `../../handoff/tasks.md` (T01 part B).
 
 Ideas for later:
 

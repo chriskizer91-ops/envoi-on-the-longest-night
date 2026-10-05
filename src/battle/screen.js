@@ -2393,8 +2393,10 @@
         if (cfg.game) { $('start').hidden = true; SND.init(); begin(!!cfg.quickIntro); return; }
         beginBtn.disabled = false; beginBtn.textContent = 'Begin the battle'; if (!coarse) beginBtn.focus({ preventScroll: true }); };
       paintImg.onload = () => { lastTf = ''; if (AF) AF.setPainting(paintImg); ready(); };
-      paintImg.onerror = () => { beginBtn.textContent = 'The painting didn’t load. Reload to try again.'; };
-      paintImg.src = SC.image.startsWith('data:') ? SC.image : '../' + SC.image;
+      // a painting that can't load: the game carries on without the fight (back to the map), a page says so
+      paintImg.onerror = () => { beginBtn.textContent = 'The painting didn’t load. Reload to try again.'; if (cfg.game && cfg.game.onError) cfg.game.onError(new Error('the painting didn’t load: ' + SC.image)); };
+      // read from beside the page when the build leaves it there (ART_BASE ''), as every other picture is
+      paintImg.src = SC.image.startsWith('data:') ? SC.image : (window.ART_BASE != null ? window.ART_BASE : '../') + SC.image;
       beginBtn.addEventListener('click', () => { SND.init(); begin(!!cfg.quickIntro); });
       $('skipBtn').addEventListener('click', () => { S.skip = true; if (skipRes) skipRes(); });
       $('again').addEventListener('click', () => { if (cfg.game) { cfg.game.onEnd(S.result); return; } SND.init(); begin(true); });
