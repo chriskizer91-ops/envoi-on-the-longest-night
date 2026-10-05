@@ -109,6 +109,10 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 
 `model-studio/README.md` has the whole loop. In short: Chris generates a creature's two sheets, starts a new session with that creature's starter message and the sheets, plays with its bench page on his phone until he's happy, and brings its return slip back to the game's session, which puts the creature into the game. Each modeling session works only in its own folder, so several can run at once. The same loop builds anything else the game needs, from a blank brief.
 
+## The workshop
+
+`workshop/README.md` (October 5): how several sessions work on the game at once, as Chris asked. Each job that can go ahead on its own has a brief and a starter script; Chris pastes the script into a new session, which works on its own branch (`work/<job>`), changes only what its brief allows, and leaves a slip, and the game's session brings it in. Two jobs are written: **the wilderness scenes** (from art request 12's pictures) and **every word** (Chris's lore conversation). The model studio's creatures and the optional character studies use the same branches.
+
 ## Cutscenes
 
 `cutscenes/README.md` answers Chris's question from October 4, evening: yes, the game can have cutscenes like the field study's film, shorter (under a minute before a fight) and lighter (a Phone detail that holds 30 frames a second). It has a brief and a starter message for two, each made by its own session in its own folder: **the Colossus, first met** (the first time the party meets it beside the frozen road) and **the finale's opening** (the camera coming in from far off onto Io and Sol, Noctara and Halcyon at the dead Moonwell). To give those sessions what they build on, this branch now also carries `3d-cutscenes/` (from `claude/quirky-newton-dr3w1q`), and `3d-model-field-studies/` and `3d-model-main-characters/` (from `claude/confident-albattani-nhdy6e`). Chris's Colossus battle page is kept in `../reference/demos/bramble-colossus-battle.html`.

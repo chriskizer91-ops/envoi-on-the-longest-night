@@ -31,6 +31,8 @@ Each band starts at a camp where the Magpie lands, and its scenes join up in a r
 5. **Leave the camps' landing ground empty.** The game draws the Magpie, Io, Sol and everyone else.
 6. Save them in `reference/art/walk/wilds/` under the file names above.
 
+**Where to send them:** to the game's session, or to a new session with the workshop's wilderness script (`../../envoi-final-draft/workshop/README.md`), which does the next part while the game's session works on other things.
+
 **What happens next:** Claude squeezes each to your "100% extra light" (as the wild maps are, about 0.1 MB each), traces where Io can walk, joins the scenes to the places around them, moves the three Ember Line nodes from the world map onto the Ember Line road, and takes the walking off the world map (it stays for flying). A demo page on your phone first, then the game.
 
 ## Style lock

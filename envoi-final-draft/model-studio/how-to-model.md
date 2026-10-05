@@ -4,11 +4,11 @@ For a Claude session that Chris has started with one of the briefs in `briefs/`.
 
 ## 1. Start from the game's branch
 
-A new session starts on the repository's default branch, which is older than the game. Bring your branch up to the game first:
+A new session starts on the repository's default branch, which is older than the game. Start from the game, on your own branch, `work/model-<id>` (your brief's id), where the hub looks for your work:
 
 ```sh
 git fetch origin ccr-31761774-76j8j3
-git merge --ff-only FETCH_HEAD
+git checkout -B work/model-<id> FETCH_HEAD
 ```
 
 If that refuses, stop and tell Chris; don't force anything. Then `npm install --prefix tools` once.
@@ -73,7 +73,7 @@ cp dist/<id>.html 3d-model-new-character-ideas/<id>/<Name>_Bench.html
 ## 7. Hand it back
 
 1. Write `README.md` in your folder, like the Emberback's: what it is, what Chris brought, the model, its moves (a table with each move's length, hits and cues), its numbers, the Model Build Spec's card, and what's still open.
-2. Commit only your folder, by explicit path, with a message that says the sheets are Chris's. Push to your own branch.
+2. Commit only your folder, by explicit path, with a message that says the sheets are Chris's. Push to `work/model-<id>` (`git push -u origin work/model-<id>`), as you go and at the end. If that push is refused, push to your own branch and name it in the slip.
 3. Your last message is the return slip (`return-slip.md`), filled in. Chris takes it to the hub.
 
 ## The project's other rules, in short

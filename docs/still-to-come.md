@@ -15,7 +15,7 @@ What we've already decided goes into *Envoi on the Longest Night* but isn't in t
 **2. Walking without the world map.** You decided the world map is only for flying the Magpie, and walking happens only on painted scenes like your wilderness path example. Bands 2 to 4 are still walked on the world map today.
 
 - Missing: eight painted wilderness scenes (three in band 2, three in band 3, two in band 4), each with its random fights, and a camp scene in each band where the Magpie lands.
-- You agreed the plan on October 5, with the scenes at night. Waiting on: your pictures for art request 12 (`art-requests/12-wilderness-scenes.md`), one prompt per scene in your example's style: the Warm Roads camp, the Ember Line road, the forest road to Dawnroost, the northern camp, Eldergrove's edge, the cold moor, the frozen camp and Frostmere's shore. Then they're traced, joined up and put in, with a demo page first.
+- You agreed the plan on October 5, with the scenes at night. Your pictures can go straight to a new session with the workshop's wilderness script (`../envoi-final-draft/workshop/README.md`), which traces them and makes the demo page. Waiting on: your pictures for art request 12 (`art-requests/12-wilderness-scenes.md`), one prompt per scene in your example's style: the Warm Roads camp, the Ember Line road, the forest road to Dawnroost, the northern camp, Eldergrove's edge, the cold moor, the frozen camp and Frostmere's shore. Then they're traced, joined up and put in, with a demo page first.
 
 **3. Creatures of the wild.** New beasts for the wilderness fights, with your rule that the closer the party gets to Noctara, the more upset the wild becomes (the wisps and wraiths stay hers). Today about nine wild fights in ten are against the same three foes.
 
@@ -24,7 +24,7 @@ What we've already decided goes into *Envoi on the Longest Night* but isn't in t
 
 **4. Townsfolk portraits and story stills.** Sixteen painted portraits for the townsfolk (art request 06) and nine stills for the big story moments (art request 07). Until they come, the townsfolk talk with their paper doll's face, and the scenes play over the map.
 
-**5. Every word.** All the game's words are placeholders until your lore conversation writes them:
+**5. Every word.** All the game's words are placeholders until your lore conversation writes them. A new session with the workshop's words script can be that conversation: it asks you what it needs and puts in only what you approve.
 
 - what the townsfolk say, and the names of the twelve new ones (Old Wenna, Tobb and Pell in Bogmire; Marta, Brann and Tamsin at Dawnroost; Pim, Tock and Old Gil at the shipyard; Sorrel, Ede and the watchwoman in Misthollow);
 - the five letters at the wells;

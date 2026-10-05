@@ -48,11 +48,11 @@ Then read envoi-final-draft/cutscenes/README.md and envoi-final-draft/cutscenes/
 **For the finest render of the four (optional, alongside the finale):** the Io study shows how far a character can go past her game model at laptop detail. Three more sessions could do the same for the other three, each keeping her game model's look, bones and moves, so the finale cutscene can swap them in with a line each. Each takes this message, with the name changed:
 
 ```text
-You're a modeling session for Envoi on the Longest Night. First bring your branch up to the game: git fetch origin ccr-31761774-76j8j3 && git merge --ff-only FETCH_HEAD
-Then read 3d-model-main-characters/README.md and 3d-model-main-characters/io/README.md, and make Halcyon's study the same way, in 3d-model-main-characters/halcyon/. Show me her page when it's ready.
+You're a modeling session for Envoi on the Longest Night. Start from the game on your own branch: git fetch origin ccr-31761774-76j8j3 && git checkout -B work/study-halcyon FETCH_HEAD
+Then read 3d-model-main-characters/README.md and 3d-model-main-characters/io/README.md, and make Halcyon's study the same way, in 3d-model-main-characters/halcyon/. Push to work/study-halcyon as you go. Show me her page when it's ready.
 ```
 
-(Sol's goes in `3d-model-main-characters/sol/`, Noctara's in `3d-model-main-characters/noctara/`.)
+(Sol's goes in `3d-model-main-characters/sol/` on `work/study-sol`, Noctara's in `3d-model-main-characters/noctara/` on `work/study-noctara`. They are workshop jobs: `../workshop/README.md`.)
 
 ## Rules for every cutscene session
 
