@@ -8,6 +8,7 @@ October 4, 2026: the session that started **pass three** (October 3, evening), t
 
 - **Newer still, October 4, evening: the twenty keepsakes.** Chris locked a list of twenty keepsakes to find, each with a still picture, worn on a new Items page (`../envoi-final-draft/items/README.md`; the data is `items.js`, the pictures art request 14). He places them with **the map editor** (`../envoi-final-draft/map-editor/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5): the walking paths and the keepsakes in one tool, published in the Item Places page's place. Its database has collection `edits` (paths, as Walking Paths did) and `places` (keepsakes). Each keepsake gets a tiny PNG and a card, shown when it's found and in the inventory, and the inventory never tells how many are left to find. Claude placed the twelve found ones at his word (each on its named place, away from the main way through, all within Io's reach). He moves any he likes and sends them. (He approved them as they were the same night, and they went into the game.) His first map from the editor, Wickhollow (a new nook behind the house by the east bridge, where the Forge Horseshoe lies), went into `maps.js` that evening.
 
+- `still-to-come.md`: everything decided but not in the game yet (October 5), the note Chris got with his new file. Keep it current as pieces go in.
 - `../envoi-game-pass-3/README.md`: everything from pass three: Chris's decisions, the pages, the measured sizes, and the plans for the new battles and for walking without the world map.
 - `docs/handoff.md` lists what the game still wants (written before pass three; the pass-three README supersedes it where they differ).
 - `putting-it-all-together/README.md` lists every piece of the game, where it comes from and its state.
@@ -104,7 +105,7 @@ Decided for the finished game, not to build before then:
 
 ### The file Chris keeps
 
-Sent to him on October 4 as `Envoi-on-the-Longest-Night.html` (16.3 MB, the second copy that day, with the fights' original battle music): the offline build (`node tools/build.mjs --min --offline putting-it-all-together/game.html`), with three.js, the fonts and the songs inside, and Chapters on the title. It keeps its own saves; a save code (Menu, Saves) carries a game between it and the published page. Send him a new one after any round he wants to keep.
+Sent to him again on October 5, just after midnight, as `Envoi-on-the-Longest-Night.html` (17.9 MB, with the two cutscenes, the twenty keepsakes and the 99-herb bag), with `still-to-come.md`. Before that, on October 4 (16.3 MB, the second copy that day, with the fights' original battle music): the offline build (`node tools/build.mjs --min --offline putting-it-all-together/game.html`), with three.js, the fonts and the songs inside, and Chapters on the title. It keeps its own saves; a save code (Menu, Saves) carries a game between it and the published page. Send him a new one after any round he wants to keep.
 
 ## When things arrive
 

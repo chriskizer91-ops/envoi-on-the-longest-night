@@ -1,0 +1,62 @@
+# Still to Come
+
+What we've already decided goes into *Envoi on the Longest Night* but isn't in the game yet, as of October 5, 2026, just after midnight. The game file sent with this note has everything else: the whole story from the title to the ending, both cutscenes, the twenty keepsakes with your pictures, 99 of each herb, and your songs.
+
+## Being built now
+
+**1. The new battle arenas.** Every fight will be fought the way the Colossus in the Meadow page fights: a locked camera, live 3D ground in front (grass, mist, weather, everything the blows throw up) and your battle paintings far off behind, at the settings you picked (the Strong squeeze, 30 frames a second, 3/4 sharpness). The same 3D models and moves; only the stage changes.
+
+- A helper session is building it. The demo page with every fight in its arena is built and being tested.
+- You see it on your phone first, then it goes into the game.
+- Your words (October 4): "put all of the fights into an arena like that ... with the different battle backgrounds."
+
+## Decided, and waiting on you
+
+**2. Walking without the world map.** You decided the world map is only for flying the Magpie, and walking happens only on painted scenes like your wilderness path example. Bands 2 to 4 are still walked on the world map today.
+
+- Missing: about seven or eight painted wilderness scenes (about three in band 2, three in band 3, one or two in band 4), each with its random fights, and a camp scene in each band where the Magpie lands.
+- Waiting on: your OK to that plan (question 20), and whether the scenes are at night or by day (question 21). Then art request 12 (one prompt per scene, in your example's style), your pictures, and they go in.
+
+**3. Creatures of the wild.** New beasts for the wilderness fights, with your rule that the closer the party gets to Noctara, the more upset the wild becomes (the wisps and wraiths stay hers). Today about nine wild fights in ten are against the same three foes.
+
+- Waiting on: your character sheets from art request 13 (ten creature families in three waves; wave 1 fills bands 1 and 2, which have nothing else today). Then one modeling session per creature through the model studio, and its return slip back here.
+- Question 26 asks you to confirm the list and the names, and 27 how a beaten creature leaves.
+
+**4. Townsfolk portraits and story stills.** Sixteen painted portraits for the townsfolk (art request 06) and nine stills for the big story moments (art request 07). Until they come, the townsfolk talk with their paper doll's face, and the scenes play over the map.
+
+**5. Every word.** All the game's words are placeholders until your lore conversation writes them:
+
+- what the townsfolk say, and the names of the twelve new ones (Old Wenna, Tobb and Pell in Bogmire; Marta, Brann and Tamsin at Dawnroost; Pim, Tock and Old Gil at the shipyard; Sorrel, Ede and the watchwoman in Misthollow);
+- the five letters at the wells;
+- every story scene, the ending included;
+- the keepsakes: a line for each as it's found, what Nettie, Marta, Ysmera and Ede say as they give theirs, and what the Colossus leaves (questions 24 and 32);
+- the Colossus's lines, and the cutscenes' captions.
+
+## Decided for the finishing pass
+
+**6. Beating the game unlocks Chapters.** Your words: "if you beat the game that unlocks chapter selection once we finalize the game." Until the game is finished, Chapters stays on the title from the start, so each part can be tried.
+
+## How big it will be
+
+Today's file is 17.9 MB of your 30. With everything above it comes to about 18 MB: the portraits and stills add 2 to 3 MB and the creatures about 1, while the new battles (their paintings at the Strong squeeze) and the wilderness scenes in place of the world map's walking tiles take off about 3.5.
+
+## Ideas we haven't decided
+
+These are not on the list until you say yes:
+
+- footsteps: none (as now), soft steps, or a cloak's swish;
+- things to find at the D&D map's named places (Willowmurk, Rotbridge, Mosswatch Tower, Fawnrest Shrine, Eldergrove, Frostmere Lake, Peak's Veil, Stormwatch), with an optional great creature at some of them (question 28);
+- a Field Notes page listing the creatures calmed and the places found;
+- more townsfolk in each town, and Inkblot on Quill's shoulder;
+- words that move on by themselves (auto-advance);
+- fights that start quicker (keeping the heroes built between fights);
+- a door's sound when a map changes;
+- wild packs framed a little closer on the phone;
+- more of your songs, such as a theme for each band's wilds;
+- finer studies of Sol, Halcyon and Noctara for the finale's cutscene;
+- a "buy 10" button in the shops;
+- the game on Mooncart (merging this branch into the main one is your call).
+
+---
+
+Where each is written down: the arenas and the walking in `design-decisions.md` (pass three, "Battles" and "Walking") and `../envoi-game-pass-3/README.md` ("Next"); the creatures in `../envoi-final-draft/README.md` and `art-requests/13-wild-creatures.md`; the art in `art-requests/06-townsfolk-portraits.md` and `07-story-stills.md`; Chapters in `design-decisions.md` ("Chapters, once the game is finished"); the questions in `questions/open.md`.
