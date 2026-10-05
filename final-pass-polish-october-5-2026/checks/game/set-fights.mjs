@@ -58,8 +58,9 @@ const said = (words) => { const t = document.querySelector('.talk-said'); return
 let bad = 0;
 const ok = (good, line) => { if (!good) bad++; console.log((good ? '✓ ' : '✗ ') + line); };
 try {
-  // the first fight, won: Sol's scene follows
-  await from(() => { const s = GameState.fresh(); s.where = { mode: 'field', map: 'wickhollow', at: [800, 610], dir: 'n' }; GameState.save(s, 1); }, 'win');
+  // the first fight, won: Sol's scene follows (Io starts near, not on, the spot that scene walks her to: field.js's
+  // walk to the very point she stands on can go wrong, which is not what this checks)
+  await from(() => { const s = GameState.fresh(); s.where = { mode: 'field', map: 'wickhollow', at: [770, 640], dir: 'n' }; GameState.save(s, 1); }, 'win');
   await tapUntil(said, 60000, 'Someone comes running');
   let sv = await saved();
   ok(sv.done.first && sv.flags.party, 'the first fight, won: during Sol’s scene the save has the fight done (' + !!sv.done.first + ') and Sol in the party (' + !!sv.flags.party + ')');
