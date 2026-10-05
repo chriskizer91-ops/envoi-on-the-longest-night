@@ -116,6 +116,9 @@
 /* a phone held sideways: closer rows and the help on two wide lines, so with a save (Continue and its line) the
    game's name isn't cut off at the top */
 @media (max-height:460px){.title-box{gap:6px;padding-top:8px}.title-help{max-width:600px}}
+/* shorter still (sideways in Chrome, whose address bar stays: 356 px, 330 with the status bar): a smaller name and
+   closer, slimmer rows, so all of it fits with a save too */
+@media (max-height:380px){.title-box{gap:4px;padding-top:4px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}.game>.title h1{font-size:42px;margin-bottom:2px}.game>.title .go{min-height:38px}.title-help{margin-top:2px}}
 /* larger text (the menu's Text size) */
 .game.big-text .talk-said{font-size:19.5px;line-height:1.38}
 .game.big-text .talk-who{font-size:22px}
