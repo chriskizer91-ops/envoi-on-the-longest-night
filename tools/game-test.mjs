@@ -26,7 +26,8 @@
 //             unless another is picked, and a pick is kept where the battle screen reads it); Random fights holds at once
 //             (the gap to the next fight follows it); Settings plays a cutscene again ("Watch again", once a game has
 //             shown it), over the menu, and Esc skips it
-//   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load; then saves made
+//   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load (into the slot the
+//             player picks, after a question before a full one); then saves made
 //             on the world map before the wilderness scenes: one by a node loads on the Ember Line road with its rest at
 //             the Warm Roads camp's fire, one whose Magpie was left at Bogmire finds her moored at the camp, and the
 //             title's Continue names where such a save opens
@@ -789,7 +790,14 @@ try {
       await page.click('.talk-choices button:text-is("Paste a save code")');
       await page.fill('textarea.code', code);
       await page.click('.gmenu-foot button:text-is("Load it")');
+      // a pasted game goes into the slot the player picks, and over a game only after a question: here slot 2, the one
+      // it came from, over itself
+      await waitFor(() => [...document.querySelectorAll('.talk-choices button')].some((b) => /^Slot 2:/.test(b.textContent)), null, 10000, 'the question of which slot');
+      await page.locator('.talk-choices button', { hasText: /^Slot 2:/ }).click();
+      await waitFor(() => [...document.querySelectorAll('.talk-choices button')].some((b) => b.textContent === 'Put it over that game'), null, 10000, 'the question before a full slot');
+      await page.click('.talk-choices button:text-is("Put it over that game")');
       await waitFor((m) => window.__game.mode === m && !window.__game.busy, savedMode, 30000, 'the loaded game');
+      log('  the pasted code asked which slot, and asked again before going over slot 2\'s game');
       await shot('saves-loaded');
       // saves made on the world map before the wilderness scenes (nobody walks it now): each loads on the ground maps
       const worldSave = (magpie, at, rest) => page.evaluate(([magpie, at, rest]) => {
