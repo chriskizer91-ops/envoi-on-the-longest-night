@@ -4,6 +4,7 @@
 
 - **`envoi-real-final-pass-guide.html`** is the whole guide in one file. Every picture and font is inside it, so it opens anywhere, on a phone too, with no internet. On GitHub, open the file and use **Download raw file**.
 - It covers the build Chris has as one file, **"Envoi on the Longest Night - final polish.html"** (October 5, 2026; SHA-256 `f24d5248…6a16`), with the four try-page ideas on (footsteps, words that move on by themselves, the door sound, Buy 10). That file and its source are on the `claude/send-note-gigdew` branch, in `final-pass-polish-october-5-2026/`.
+- It's also published as a private page: https://claude.ai/artifact/5AWk7ccark6ySmeKm37mWw
 - The keepsake and letter checklists remember their ticks in the reader's own browser.
 
 ## What's inside
