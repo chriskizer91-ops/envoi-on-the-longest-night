@@ -374,15 +374,27 @@
       function note(text, sec) { msg(text, true); clearTimeout(noteTO); noteTO = setTimeout(hideMsg, (sec || 1.5) * 1000); }
       // a number is placed as soon as it is made, so it never shows for a frame in the corner
       const nums = [];
+      // (kept on the screen, however short it is: below its top edge and above the windows, a line below each older
+      // number on the same fighter and a line above each newer one, so a stack against an edge keeps its order)
       function place(n) {
         const u = n.t / n.dur, s = toScreen(n.p), rise = 44 * (1 - Math.pow(1 - Math.min(1, u * 1.6), 3)), pop = u < 0.12 ? 1.4 - u * 3.3 : 1;
-        n.el.style.transform = 'translate(' + (s[0] + n.dx).toFixed(1) + 'px,' + (s[1] - 34 - rise - n.dy).toFixed(1) + 'px) translate(-50%,-50%) scale(' + pop.toFixed(3) + ')';
+        let older = 0, newer = 0;
+        for (const m of nums) if (m !== n && m.p.distanceTo(n.p) < 1) { if (m.born < n.born) older++; else newer++; }
+        const y = clamp(s[1] - 34 - rise - n.dy, 22 + 26 * older, view.h - view.uiH - 12 - 26 * newer);
+        n.el.style.transform = 'translate(' + (s[0] + n.dx).toFixed(1) + 'px,' + y.toFixed(1) + 'px) translate(-50%,-50%) scale(' + pop.toFixed(3) + ')';
         n.el.style.opacity = String(u > 0.75 ? 1 - (u - 0.75) / 0.25 : 1);
       }
+      // a fighter who already has numbers up makes room for a new one: they go up a line, so blows in a row (Envoi's
+      // eight) don't print over each other (all rise alike, so an older one stays above a newer one); past three, the
+      // oldest fades out early
+      let numsMade = 0;
       function number(p, text, cls, dy) {
         const e = document.createElement('div'); e.className = 'num' + (cls ? ' ' + cls : ''); e.textContent = String(text);
-        const n = { el: e, p: new THREE.Vector3(p.x, p.y, p.z), t: 0, dur: 1.2, dx: rnd(-16, 16), dy: dy || 0 };
-        place(n); numsEl.appendChild(e); nums.push(n);
+        const P = new THREE.Vector3(p.x, p.y, p.z), up = nums.filter((m) => m.t < m.dur * 0.85 && m.p.distanceTo(P) < 1);
+        for (const m of up) m.dy += 26;
+        if (up.length >= 3) up[0].t = up[0].dur * 0.85;
+        const n = { el: e, p: P, t: 0, dur: 1.2, dx: rnd(-16, 16), dy: dy || 0, born: numsMade++ };
+        numsEl.appendChild(e); nums.push(n); place(n);
       }
       // the arrow over the fighter a menu is pointing at
       function mark(f) { markOn = f; markEl.hidden = !f; }
