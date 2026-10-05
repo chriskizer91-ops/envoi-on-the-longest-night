@@ -5,7 +5,7 @@
 // (narration); who is 'io', 'sol', 'shipmaster' (painted portraits) or a person's id (a pixel portrait).
 // A line that is an object is a stage direction for the scene player (game.js stagePlay): who walks in, where, and when
 // she turns. The lore conversation can change the words and leave the directions where they are.
-// Defines window.SCRIPT = { people, wells, scenes, cast }.
+// Defines window.SCRIPT = { people, wells, keepsakes, gifts, colossusGifts, scenes, cast }.
 (function () {
   'use strict';
   // who the people are, for their pixel portraits when they speak in a scene away from their map
@@ -65,21 +65,46 @@
     crosswell: { letter: ['A letter weighted under a stone on the well’s rim:', '“To my love at the yard: the cold is coming down the road early this year. Light the lamps. I’ll find my way. — Ennis.”'], gift: { herb: 'mugwort' } },
     mistwell: { letter: ['Under the ice, a letter in a jar:', '“To the Moon. Please come back. — the children of Misthollow.”'], gift: { herb: 'nightrose' } },
   };
-  // the two hidden keepsakes (rules.js KEEPSAKES; Chris, October 4), as each is found; name: its name in rules.js
+  // the twenty keepsakes (envoi-final-draft/items/; keepsakes.js), as each is found; its card follows, with its name and
+  // what it does. The two hidden ones keep the words they had (Chris, October 4); the rest are new placeholders, like
+  // every line here (docs/questions/open.md, 32)
   const keepsakes = {
-    io: (name) => [
+    'crescent-locket': [
       'Tucked under a loose slate at the very end of the ridge: a little silver locket, a crescent moon worked into its lid.',
       ['io', 'Whoever hid this didn’t want it found from the ground.'],
       'It is cold as moonlight in her hand, and her Moonlore hums through it.',
-      'Io keeps ' + name + '. Her Lunar Mend and Waxing Light heal a quarter more.',
     ],
-    sol: (name) => [
+    'wardens-brooch': [
       'Where the trail gives out, sunk in the moss among the thorns: an old brooch, a sunstone set in dark bronze. It is still warm.',
       ['sol', 'A Warden’s brooch. A long way from the waystation.'],
       ['sol', 'I’ll wear it home for them.'],
-      'Sol pins on ' + name + '. She has a tenth more HP, and her blows land a tenth harder.',
     ],
+    'forge-horseshoe': ['In the nook behind the house, by the east bridge: a horseshoe from Hilde’s forge, still glowing at its edges.', ['io', 'Lucky, Hilde would say. I’ll take lucky.']],
+    'jetty-coin': ['At the far end of the lakeshore walk, under the willows: an old copper coin with a little boat on its face.'],
+    'frog-ring': ['Where the trail gives out past the moon stone: a bronze ring, with a little green frog sitting on it.', ['io', 'Hello, you.']],
+    'hag-stone': ['Out along the north-west boardwalk, hung on a post: a grey stone with a hole worn through it, on a loop of twine.', 'Through the hole, the dark looks a little less dark.'],
+    'bogstriders': ['At the end of the southern boardwalk, left by the last plank: a pair of boots on thick, studded soles.', ['sol', 'Mud boots. Whoever left these went on barefoot.']],
+    'fen-heart-lamp': ['At the top of the square where the great wraith sat, a little lantern is still burning, green glass and brass, with no one to tend it.', ['io', 'It kept burning all through the dark.']],
+    'kettle-helm': ['At the west end of the wall-walk: a round iron helm, a little rooster weather vane turning on its top.', ['sol', 'The watch wore these. It’s still facing into the wind.']],
+    'node-sunstone': ['At the top of the west stair, a chip of the node’s sunstone has come loose. It is warm, and glowing again.', ['sol', 'The node gave a piece of itself back. I’ll carry it.']],
+    'crossroads-pennant': ['Far down the east road, tied to a waymark: a scrap of red cloth edged in gold. A Wardens’ pennant.', ['sol', 'They came this way. Some of them did.']],
+    'dockhand-gloves': ['At the end of the west dock, down in the cove: a dockhand’s gloves, worn through at the fingertips.'],
+    'pass-bell': ['Under the lamp by the road, half buried in the snow: a bronze hand-bell, rimed with frost.', 'It rings once, very softly, as Io lifts it.'],
+    'misthollow-cowl': ['At the end of the balcony bridge: a frost-white hood, blue snowflakes stitched round its edge.'],
   };
+  // the four keepsakes the townsfolk give (keepsakes.js): Nettie as Io sets out with Sol, Marta and Ede the first time
+  // the party speaks with them, Ysmera once her yard has met them
+  const gifts = {
+    nettie: [['nettie', 'Before you go, Io. Take this: a charm knotted into every corner, for the road.'], ['io', 'Nettie, it’s beautiful.'], ['nettie', 'It’s warm, is what it is. Go on.']],
+    marta: [['marta', 'Sol. These hung over your bunk all the years you were gone. Take them.'], ['sol', 'Marta…'], ['marta', 'Bring them home again.']],
+    ysmera: [['shipmaster', 'A moon-glass, witch. My sailors read the weather in it. You’ll read more.'], ['io', 'I’ll take good care of it.']],
+    ede: [['ede', 'A coal from the inn fire, Warden. We kept it lit for spite. Keep it lit for us.'], ['sol', 'I will.']],
+  };
+  // what the first Bramble Colossus leaves when it falls: a keepsake for each of them
+  const colossusGifts = [
+    'The Colossus sinks back into the snow, and its great bud falls open one last time.',
+    'In its heart lies a warm seed shaped like a heart; beside it, a thorn as long as a dagger.',
+  ];
   // the story's scenes, by name
   const scenes = {
     prologue: [
@@ -226,5 +251,5 @@
     noMagpie: [['io', 'The Magpie is moored at Wickhollow’s jetty.']],
     bogmireLanding: [['quill', 'Not to Bogmire, not till its lamps are lit. There’s nothing to land by.']],
   };
-  window.SCRIPT = { people, wells, keepsakes, scenes, cast };
+  window.SCRIPT = { people, wells, keepsakes, gifts, colossusGifts, scenes, cast };
 })();

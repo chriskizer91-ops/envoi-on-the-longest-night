@@ -18,8 +18,11 @@
 //             draw, skips it with Esc as a player can, and checks the fight starts with the Colossus already standing
 //   finale:   the finale's opening cutscene plays before the finale's first try, is skipped with Esc, and the fight starts
 //             with Noctara and Halcyon already standing; the fight isn't played out (run it last)
-//   keepsakes: Io walks by a tap up Chris's secret way over Wickhollow's roof to her keepsake, and down the Thornwood's
-//             dark trail to Sol's; each is found once, named in the Party tab, and counts in a fight
+//   keepsakes: the twenty (src/game/keepsakes.js): Io walks by a tap up Chris's secret way over Wickhollow's roof to the
+//             Crescent Locket, into the nook by the east bridge for the Forge Horseshoe, and down the Thornwood's dark
+//             trail to the Warden's Brooch; Nettie gives her shawl; each shows its card, which never counts them. The Items
+//             page shows only what has been found and hands the horseshoe to Io; the Party tab adds them up; they count in
+//             a fight and after it (more shards); and the first Bramble Colossus (cut short) leaves its two
 //   songs:    Chris's songs play where they belong (the towns', the wilds'), each from where it was; the fights play
 //             their own theme, and the made-up music plays everywhere else; Music Off quietens them (run after title or new)
 // Each step saves a screenshot in --out (tools/.cache/game-test by default). Exits 1 on any page error.
@@ -79,6 +82,12 @@ async function waitFor(fn, arg, ms, what) {
 }
 // tap through the dialogue box until it closes (or until `until` is true)
 // a cutscene: wait until it draws, picture it, skip it with Esc as a player can, and wait for its fight to start
+// a step that plays on from the title (the save step ends there) continues the game first
+async function inPlay() {
+  if (!await page.evaluate(() => !!document.querySelector('.game>.title'))) return;
+  await page.click('.title-box button:text-is("Continue")');
+  await waitFor(() => !document.querySelector('.game>.title') && !window.__game.busy, null, 30000, 'the game to continue');
+}
 async function throughCutscene(name) {
   await waitFor(() => !!document.querySelector('.cutscene-layer canvas'), null, 120000, 'the ' + name + ' cutscene to draw');
   await waitFor(() => { const b = document.querySelector('.cutscene-layer .cs-skip'); return !!b && !b.hidden; }, null, 120000, 'the ' + name + ' cutscene to play');
@@ -215,54 +224,125 @@ try {
       await talkThrough(30000);
       await shot(step + '-after');
     } else if (step === 'keepsakes') {
+      // the twenty keepsakes (src/game/keepsakes.js): found on the maps by a tap and the action button, given by Nettie,
+      // left by the first Bramble Colossus; each shows its card, which never counts them; the Items page shows only what
+      // has been found and hands a shared one over; and they count in a fight and after it
       const walk = async (x, y, what) => {
         const t1 = Date.now();
         await page.evaluate(([x, y]) => window.__game.field.walkTo(x, y), [x, y]);
         await waitFor(([x, y]) => { const P = window.__game.field.P; return Math.hypot(P.x - x, P.y - y) < 14; }, [x, y], 40000, what);
         log('  ' + what + ' by a tap, in ' + ((Date.now() - t1) / 1000).toFixed(1) + ' s');
       };
-      const pick = async (id, what) => {
+      const items = () => page.evaluate(() => Object.assign({}, window.__game.state.items));
+      // its card: shown, never a count of the twenty, then closed with Enter as a player can
+      const card = async (id) => {
+        await talkThrough(30000, '!!document.querySelector(".kcard-layer")');
+        await waitFor(() => !!document.querySelector('.kcard-layer'), null, 30000, 'the card of ' + id);
+        const t = await page.$eval('.kcard-layer', (e) => e.textContent);
+        if (/\b20\b|twenty|left to find/i.test(t)) throw new Error('the card counts the keepsakes: ' + t);
+        await sleep(400); await shot('keepsake-card-' + id);
+        await page.$eval('.kcard-layer', (e) => { e.dataset.seen = '1'; });
+        await page.keyboard.press('Enter');
+        await waitFor(() => !document.querySelector('.kcard-layer[data-seen]'), null, 10000, 'the card to close'); // (another may follow it)
+      };
+      const pick = async (id, what, who) => {
         const label = await page.evaluate(() => (window.__game.field.near() || {}).label);
         if (label !== 'Something glinting') throw new Error('nothing to pick up ' + what + ': ' + label);
         await page.keyboard.press('Enter');
-        await talkThrough(30000, '!window.__game.busy && !!window.__game.state.keepsakes && !!window.__game.state.keepsakes.' + id);
+        await card(id);
+        await waitFor(() => !window.__game.busy, null, 10000, 'the game after the card');
+        const it = await items();
+        if (it[id] !== who) throw new Error(id + ' is worn by ' + it[id] + ', not ' + who);
         const after = await page.evaluate(() => (window.__game.field.near() || {}).label);
         if (after === 'Something glinting') throw new Error('the keepsake ' + what + ' is still there once found');
+        log('  ' + id + ' found ' + what + ', and ' + who + ' wears it');
       };
+      await inPlay();
       await page.evaluate(() => { const g = window.__game; g.state.flags.party = true; g.state.done.first = true; g.goField('wickhollow', [700, 440]); });
       await waitFor(() => window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 30000, 'the square');
       await walk(458, 562, 'up the tree and along the roof');
       await shot('keepsake-roof');
-      await pick('io', 'on the roof');
+      await pick('crescent-locket', 'on the roof', 'io');
       await walk(700, 440, 'back down to the square');
+      // Nettie's gift as Io sets out with Sol, then her shop
+      await walk(568, 462, 'to Nettie');
+      const nl = await page.evaluate(() => (window.__game.field.near() || {}).label);
+      if (nl !== 'Talk to Nettie') throw new Error('not by Nettie: ' + nl);
+      await page.keyboard.press('Enter');
+      await card('knotted-shawl');
+      await waitFor(() => !!document.querySelector('.gmenu'), null, 20000, 'Nettie’s shop');
+      await page.click('.gmenu-foot button:text-is("Done")');
+      await waitFor(() => !document.querySelector('.gmenu') && !window.__game.busy, null, 10000, 'the shop to close');
+      if ((await items())['knotted-shawl'] !== 'io') throw new Error('Nettie’s shawl is not Io’s: ' + JSON.stringify(await items()));
+      log('  Nettie gives Io her shawl, then her shop opens');
+      await page.evaluate(() => { window.__game.goField('wickhollow', [1150, 680]); });
+      await waitFor(() => !window.__game.busy, null, 30000, 'the east bridge');
+      await walk(1195, 690, 'into the nook by the east bridge');
+      await pick('forge-horseshoe', 'in the nook', 'sol');
       await page.evaluate(() => { window.__game.goField('thornwood', [800, 540]); });
       await waitFor(() => window.__game.field.map.id === 'thornwood' && !window.__game.busy, null, 30000, 'the Thornwood');
       await page.evaluate(() => window.__game.field.setCounter(-1e6)); // no wild fight on the way
       await walk(1284, 816, 'down the dark trail');
       await shot('keepsake-woods');
-      await pick('sol', 'in the woods');
+      await pick('wardens-brooch', 'in the woods', 'sol');
+      // the Items page: only what has been found, never how many are left; hand the shared horseshoe to Io
       await page.evaluate(() => { window.__game.menu(); });
       await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');
+      await page.click('.gmenu-tabs button:text-is("Items")'); await sleep(400);
+      const tiles = await page.$$eval('.ks-col', (cols) => cols.map((c) => ({ who: c.querySelector('h3').textContent, n: c.querySelectorAll('.ks-tile').length })));
+      const itext = await page.$eval('.gmenu-body', (b) => b.textContent);
+      if (/\b20\b|twenty|left to find|of 20/i.test(itext)) throw new Error('the Items page counts the keepsakes: ' + itext);
+      if (JSON.stringify(tiles) !== JSON.stringify([{ who: 'Io', n: 2 }, { who: 'Sol', n: 2 }])) throw new Error('the Items page shows ' + JSON.stringify(tiles));
+      await shot('keepsake-items');
+      await page.click('.ks-tile[title="The Forge Horseshoe"]');
+      await waitFor(() => !!document.querySelector('.kcard-layer'), null, 10000, 'the horseshoe’s card');
+      await shot('keepsake-items-card');
+      await page.click('.kcard-actions button:text-is("Give it to Io")');
+      await waitFor(() => !document.querySelector('.kcard-layer'), null, 10000, 'the card to close');
+      if ((await items())['forge-horseshoe'] !== 'io') throw new Error('the horseshoe was not handed to Io');
+      if (!await page.evaluate(() => !!document.querySelector('.gmenu'))) throw new Error('the menu closed with the card');
+      const tiles2 = await page.$$eval('.ks-col', (cols) => cols.map((c) => c.querySelectorAll('.ks-tile').length));
+      if (tiles2.join() !== '3,1') throw new Error('after handing it over the Items page shows ' + tiles2);
+      log('  the Items page shows Io 2 and Sol 2, and hands the horseshoe to Io');
       await page.click('.gmenu-tabs button:text-is("Party")'); await sleep(300);
       const party = await page.$eval('.gmenu-body', (b) => b.textContent);
-      if (!party.includes('Carries the Crescent Locket') || !party.includes('Carries the Warden’s Brooch')) throw new Error('the Party tab does not name the keepsakes: ' + party);
+      if (!party.includes('Her keepsakes: +8.75% healing · +1% HP') || !party.includes('Her keepsakes: +2.5% HP · +2.5% damage')) throw new Error('the Party tab does not add them up: ' + party);
       await shot('keepsake-party');
       await page.click('.gmenu-foot button:text-is("Close")');
       await waitFor(() => !document.querySelector('.gmenu'), null, 10000, 'the menu to close');
-      // in a fight: Sol's max HP and her blows a tenth more, Io's Moonlore heals a quarter more
+      // in a fight: each hero's keepsakes, as the game's maximums have them
       await page.evaluate(() => { window.__game.battle('wild', { band: 1, scene: null }); });
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
       const hs = await page.evaluate(() => {
-        const RL = window.BattleRules, E = window.__battle.engine, L = window.__game.state.level, sol = E.heroes.find((h) => h.id === 'sol'), io = E.heroes.find((h) => h.id === 'io');
-        return { solHp: sol.maxHp, want: Math.round(RL.HEROES.sol.hp * RL.scale(L) * 1.1), dmg: sol.boostDmg, heal: io.boostHeal, state: window.GameState.maxHp(window.__game.state, 'sol') };
+        const E = window.__battle.engine, GS = window.GameState, st = window.__game.state, h = (id) => E.heroes.find((x) => x.id === id);
+        const io = h('io'), sol = h('sol');
+        return { io: [io.maxHp, GS.maxHp(st, 'io'), io.maxMp, GS.maxMp(st), io.boostHeal, io.tranceMul, io.herbMul], sol: [sol.maxHp, GS.maxHp(st, 'sol'), sol.boostDmg, sol.tranceMul] };
       });
-      if (hs.solHp !== hs.want || hs.state !== hs.want || hs.dmg !== 1.1 || hs.heal !== 1.25) throw new Error('the keepsakes do not count in the fight: ' + JSON.stringify(hs));
-      log('  in a fight: Sol ' + hs.solHp + ' HP, blows x' + hs.dmg + ', Io heals x' + hs.heal);
+      const close = (a, b) => Math.abs(a - b) < 1e-9;
+      if (hs.io[0] !== hs.io[1] || hs.io[2] !== hs.io[3] || hs.sol[0] !== hs.sol[1] || !close(hs.io[4], 1.0875) || !close(hs.io[5], 1.1) || !close(hs.io[6], 1.1) || !close(hs.sol[2], 1.025) || !close(hs.sol[3], 1.1)) throw new Error('the keepsakes do not count in the fight: ' + JSON.stringify(hs));
+      log('  in a fight: Io ' + hs.io[0] + ' HP, heals x' + hs.io[4] + ', Trance x' + hs.io[5] + ', herbs x' + hs.io[6] + '; Sol ' + hs.sol[0] + ' HP, blows x' + hs.sol[2] + ', Trance x' + hs.sol[3]);
       await page.evaluate((tb) => { for (const f of window.__battle.engine.foes) window.__battle.weaken(5, f.key); window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
       await waitFor(() => window.__battle && window.__battle.state === 'over' && !document.getElementById('end').hidden, null, 900000, 'the fight to end');
       await page.click('#again');
+      // the horseshoe, now Io's, still finds more shards for the party
+      await waitFor(() => { const t = document.querySelector('.toast'); return !!t && !t.hidden && /more shards/.test(t.textContent); }, null, 30000, 'the keepsakes’ shards');
+      log('  after the win: ' + await page.$eval('.toast', (t) => t.textContent));
       await waitFor(() => !document.querySelector('.battle-layer'), null, 60000, 'the battle to close');
       await talkThrough(30000);
+      // the first Bramble Colossus leaves one for each of them (its cutscene marked seen, and the fight cut short)
+      await page.evaluate(() => { const st = window.__game.state; st.level = 18; st.band = 4; st.flags = Object.assign(st.flags, { refit: true, envoi: true, stoop: true }); st.seen = Object.assign(st.seen || {}, { 'colossus-first-meeting': true }); window.__game.battle('wild', { band: 4, pack: ['colossus'] }); });
+      await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the Colossus to stand');
+      await page.evaluate((tb) => { for (const f of window.__battle.engine.foes) window.__battle.weaken(5, f.key); window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
+      await waitFor(() => window.__battle && window.__battle.state === 'over' && !document.getElementById('end').hidden, null, 900000, 'the Colossus to fall');
+      const out = await page.evaluate(() => window.__battle.result && window.__battle.result.outcome);
+      if (out !== 'win') throw new Error('the cut-short Colossus fight ended ' + out);
+      await page.click('#again');
+      await card('heart-seed');
+      await card('colossus-thorn');
+      await waitFor(() => !window.__game.busy, null, 20000, 'the game after the Colossus');
+      const it = await items();
+      if (it['heart-seed'] !== 'io' || it['colossus-thorn'] !== 'sol') throw new Error('the Colossus’s keepsakes: ' + JSON.stringify(it));
+      log('  the first Colossus left the Heart-Seed (Io) and the Thorn (Sol)');
     } else if (step === 'songs') {
       const songs = () => page.evaluate(() => window.__game.songs.state());
       const near = (a, b) => Math.abs(a - b) < 0.02;
@@ -322,6 +402,7 @@ try {
       await page.click('.gmenu-foot button:text-is("Close")');
       await waitFor(() => !document.querySelector('.gmenu'), null, 10000, 'the menu to close');
     } else if (step === 'finale') {
+      await inPlay();
       await page.evaluate(() => { const st = window.__game.state; st.level = 20; st.band = 4; st.flags = Object.assign(st.flags, { party: true, refit: true, envoi: true, charge: true, stoop: true, shipyard: true, upgrade2: true }); if (st.seen) delete st.seen['finale-opening']; });
       await page.evaluate(() => { window.__game.battle('finale'); });
       await throughCutscene('finale');

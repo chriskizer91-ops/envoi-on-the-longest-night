@@ -1,0 +1,156 @@
+{
+  "collection": "Envoi keepsakes",
+  "items": [
+    {
+      "id": 1,
+      "name": "The Crescent Locket",
+      "wearer": "Io",
+      "source": "Hidden keepsake",
+      "hidden": true,
+      "primary": "+6.25% healing",
+      "secondary": "Trance 10% faster",
+      "origin": "Hidden on the red roof in Wickhollow.",
+      "main": {
+        "healing_pct": 6.25
+      },
+      "effects": {
+        "trance_speed_pct": 10
+      },
+      "item_png": "items/01-crescent-locket.png",
+      "card_png": "cards/01-crescent-locket-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Nettie's Knotted Shawl",
+      "wearer": "Io",
+      "source": "Gift",
+      "primary": "+2.5% healing",
+      "secondary": "Herbs she uses in fights heal 10% more",
+      "origin": "Nettie's gift as Io sets out.",
+      "main": {
+        "healing_pct": 2.5
+      },
+      "effects": {
+        "combat_herb_healing_pct": 10
+      },
+      "item_png": "items/02-netties-knotted-shawl.png",
+      "card_png": "cards/02-netties-knotted-shawl-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 3,
+      "name": "The Fen-Heart Lamp",
+      "wearer": "Io",
+      "source": "Map find",
+      "primary": "+3% healing",
+      "secondary": "5% of her MP back after each fight",
+      "origin": "Still burning where the Great Wraith sat, at the fen's dark heart.",
+      "main": {
+        "healing_pct": 3
+      },
+      "effects": {
+        "post_fight_mp_restore_pct": 5
+      },
+      "item_png": "items/03-fen-heart-lamp.png",
+      "card_png": "cards/03-fen-heart-lamp-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Ysmera's Moonglass",
+      "wearer": "Io",
+      "source": "Gift",
+      "primary": "+3.75% healing",
+      "secondary": "10% more MP",
+      "origin": "Ysmera's gift at the shipyard.",
+      "main": {
+        "healing_pct": 3.75
+      },
+      "effects": {
+        "max_mp_pct": 10
+      },
+      "item_png": "items/04-ysmeras-moonglass.png",
+      "card_png": "cards/04-ysmeras-moonglass-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 5,
+      "name": "The Pass Bell",
+      "wearer": "Io",
+      "source": "Map find",
+      "primary": "+4% healing",
+      "secondary": "Trance 10% faster",
+      "origin": "Frost-rimed hand-bell in the snow on the frozen pass.",
+      "main": {
+        "healing_pct": 4
+      },
+      "effects": {
+        "trance_speed_pct": 10
+      },
+      "item_png": "items/05-pass-bell.png",
+      "card_png": "cards/05-pass-bell-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 6,
+      "name": "The Colossus Heart-Seed",
+      "wearer": "Io",
+      "source": "Colossus drop",
+      "primary": "+5.5% healing",
+      "secondary": "Heals 1% of her HP each turn",
+      "origin": "From the first Bramble Colossus.",
+      "main": {
+        "healing_pct": 5.5
+      },
+      "effects": {
+        "hp_regen_per_turn_pct": 1
+      },
+      "item_png": "items/06-colossus-heart-seed.png",
+      "card_png": "cards/06-colossus-heart-seed-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    }
+  ]
+}

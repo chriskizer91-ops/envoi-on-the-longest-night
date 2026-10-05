@@ -1114,24 +1114,26 @@
     const ta = el('textarea', { id: 'me-note-' + it.id, rows: '2' }, lab);
     ta.value = kw.notes[it.id] || '';
     ta.addEventListener('input', () => { kw.notes[it.id] = ta.value; saveKeepSoon(); renderSend(); downloadSoon(); });
-    el('p', { class: 'ip-from' }, card, 'For its picture (art request 14): ' + it.look + '.' + (it.from ? ' Its look borrows from ' + it.from + '.' : ''));
+    el('p', { class: 'ip-from' }, card, 'In Chris’s picture (art request 14): ' + it.look + '.' + (it.from ? ' Its look borrows from ' + it.from + '.' : ''));
   }
   // its two helps: the main one, and the other one, in fights or outside them
   function helpList(ul, it) {
     for (const [label, text] of [['Main help', it.does], [it.inFight ? 'In fights' : 'Outside fights', it.alsoDoes]]) { const li = el('li', null, ul); el('small', null, li, label); el('span', null, li, text + '.'); }
   }
-  // a keepsake's picture: a stand-in, its glint on the colour the pictures' backgrounds will have, until its picture
-  // from art request 14 comes
+  // a keepsake's picture: Chris's (art request 14; the game's tiny copy, items.js pic) on the colour of the game's
+  // menus, a soft glow behind it in the colour of who may wear it. Until it has loaded, the glow alone
+  const pics = {};
   function drawPic(c, it, size) {
-    const d = Math.min(window.devicePixelRatio || 1, 3), col = WEARC[it.wear], m = size / 2, cy = size * 0.46, r = size * 0.24;
+    const d = Math.min(window.devicePixelRatio || 1, 3), col = WEARC[it.wear], m = size / 2;
     c.width = Math.round(size * d); c.height = Math.round(size * d); c.style.width = size + 'px'; c.style.height = size + 'px';
     const q = c.getContext('2d'); q.setTransform(d, 0, 0, d, 0, 0);
     q.fillStyle = C.pic; q.fillRect(0, 0, size, size);
-    const gr = q.createRadialGradient(m, cy, 1, m, cy, size * 0.42); gr.addColorStop(0, rgba(col, 0.5)); gr.addColorStop(1, rgba(col, 0)); q.fillStyle = gr; q.fillRect(0, 0, size, size);
-    if (it.secret) { q.beginPath(); q.arc(m, cy, size * 0.33, 0, Math.PI * 2); q.setLineDash([2, 4]); q.lineWidth = 1.5; q.strokeStyle = 'rgba(244,246,255,0.55)'; q.stroke(); q.setLineDash([]); }
-    q.beginPath(); for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2 - Math.PI / 2, dd = i % 2 ? r * 0.34 : r; q.lineTo(m + Math.cos(a) * dd, cy + Math.sin(a) * dd); } q.closePath(); q.fillStyle = col; q.fill();
-    q.beginPath(); q.arc(m, cy, r * 0.22, 0, Math.PI * 2); q.fillStyle = it.secret ? C.secret : 'rgba(255,255,255,0.9)'; q.fill();
-    q.fillStyle = 'rgba(214,222,255,0.62)'; q.font = '600 ' + Math.max(8, Math.round(size * 0.1)) + 'px system-ui, sans-serif'; q.textAlign = 'center'; q.fillText('picture to come', m, size * 0.92);
+    const gr = q.createRadialGradient(m, m, 1, m, m, size * 0.48); gr.addColorStop(0, rgba(col, 0.32)); gr.addColorStop(1, rgba(col, 0)); q.fillStyle = gr; q.fillRect(0, 0, size, size);
+    if (!it.pic) return;
+    let im = pics[it.id];
+    if (!im) { im = pics[it.id] = new Image(); im.src = src(it.pic); }
+    const put = () => { if (c.isConnected || c.id) { q.imageSmoothingQuality = 'high'; q.drawImage(im, size * 0.06, size * 0.06, size * 0.88, size * 0.88); } };
+    if (im.complete && im.naturalWidth) put(); else im.addEventListener('load', put, { once: true });
   }
   // the card she sees when she finds one on a walk, as the game will show it: its picture, its name, who can wear it,
   // and its two helps

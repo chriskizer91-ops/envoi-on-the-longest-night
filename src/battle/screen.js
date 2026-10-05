@@ -482,14 +482,14 @@
             if (!S.heartSeen) { S.heartSeen = true; UI.note('Its heart is bare: every blow lands double while its flower is open.', 2.6); }
           } else UI.number(chest(to), nf(e.n), big ? 'big' : '');
           if (d.hp > 0 && !(u.vow > 0) && !u.charging) to.m.play('hurt');
-          const df = D[e.from]; if (df && !df.inTrance && from && from.side === 'hero') df.tr = Math.min(0.99, df.tr + RL.TRANCE.dealt);
+          const df = D[e.from]; if (df && !df.inTrance && from && from.side === 'hero') df.tr = Math.min(0.99, df.tr + RL.TRANCE.dealt * (from.tranceMul || 1));
         } else {
           if (E.lunara === 1) FX.burst(chest(to), [0.8, 0.88, 1], 18, 2.2);
           UI.number(chest(to), nf(e.n), e.guard ? 'small' : '');
           if (d.hp <= 0) to.m.play('kneel', true); else to.m.play(e.guard ? 'block' : 'hurt', true);
           if (e.guard && to.key === 'io') FX.shieldHit();
           if (to.key === 'sol' && !d.inTrance) d.heat = Math.min(100, d.heat + 10);
-          if (!d.inTrance && d.hp > 0) d.tr = Math.min(1, d.tr + e.n / u.maxHp * RL.TRANCE.taken);
+          if (!d.inTrance && d.hp > 0) d.tr = Math.min(1, d.tr + e.n / u.maxHp * RL.TRANCE.taken * (u.tranceMul || 1));
         }
       } else if (e.t === 'heal') {
         const u = E.unit(e.to), d = D[e.to];

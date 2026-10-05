@@ -113,7 +113,7 @@
   function start(opts) {
     opts = opts || {};
     const src = opts.src || ((p) => p);
-    const RL = window.BattleRules, GS = window.GameState, S = window.SCRIPT, MAPS = window.MAPS, AUD = window.ThareiaAudio;
+    const RL = window.BattleRules, GS = window.GameState, S = window.SCRIPT, MAPS = window.MAPS, AUD = window.ThareiaAudio, K = window.Keepsakes;
     const host = opts.host || document.body;
     const root = el('div', { class: 'game' }, host);
     const fieldHost = el('div', { class: 'layer' }, root), worldHost = el('div', { class: 'layer' }, root);
@@ -200,6 +200,7 @@
       encounter: { get mean() { return 770 / settings.rate; }, get min() { return 440 / settings.rate; } },
       light: (m) => settings.light * (m.id === 'bogmire' && !st.flags.lights ? 0.55 : m.id === 'bogmire-heart' && !st.flags.lights ? 0.8 : 1),
       isDone: (k) => !!st.done[k],
+      glint: () => K.party(st).glint, // the Bogmire Hag-Stone: hidden things glint brighter
       onExit: (ex) => act(() => onExit(ex)), onEvent: (s) => act(() => onEvent(s)), onTalk: (p) => act(() => onTalk(p)),
       onSpot: (s) => act(() => onSpot(s)), onEncounter: (m) => act(() => wild(m.wild.band, m.wild.scene)), onMenu: () => act(menu),
       goal: (id) => goalOn(id),
@@ -222,11 +223,17 @@
         wickhollow: { spots: [{ kind: 'event', id: 'first', rect: [560, 450, 1075, 690], once: 'first' }] },
       };
       for (const id in extra) { const m = MAPS[id]; if (m._extra) continue; m._extra = true; m.people = (m.people || []).concat(extra[id].people || []); m.spots = (m.spots || []).concat(extra[id].spots || []); }
+      // the keepsakes that lie on the maps, where items.js puts them (Chris's places), each a faint glint
+      for (const it of K.list()) {
+        const m = it.home && it.at && MAPS[it.home];
+        if (m && !(m.spots || []).some((s) => s.kind === 'keepsake' && s.id === it.id)) m.spots = (m.spots || []).concat({ kind: 'keepsake', id: it.id, at: it.at, label: 'Something glinting' });
+      }
       for (const id in MAPS) {
         const m = MAPS[id]; m.people0 = m.people0 || m.people || [];
         for (const s of m.spots || []) {
           if (s.kind === 'magpie') s.hide = () => !(st.magpie && LANDINGS[st.magpie].field && LANDINGS[st.magpie].field[0] === id);
-          if (s.kind === 'keepsake') s.hide = () => !!(st.keepsakes && st.keepsakes[s.id]); // gone once found
+          // a keepsake is gone once found, and one whose gate isn't won yet (items.js after) isn't there yet
+          if (s.kind === 'keepsake') { const it = K.get(s.id); s.hide = () => K.found(st, s.id) || !!(it && it.after && !st.done[it.after]); }
         }
       }
       MAPS.jetty.people0.forEach((p) => { if (p.id === 'quill') p.when = () => !st.flags.lights; });
@@ -460,6 +467,7 @@
       // Quill gives Io the Magpie once Sol has joined
       if (p.id === 'quill' && st.flags.party && !st.flags.magpie) { await scene('magpie'); st.flags.magpie = true; st.magpie = 'wickhollow'; save(); return; }
       await say(lines);
+      await gift(p);
       for (const U of UPGRADES) if (U.who === p.id && st.flags[U.after] && !st.flags[U.flag]) { await upgrade(U); break; }
       if (p.role === 'shop') await shop(p);
       else if (p.role === 'inn') await rest(p.name);
@@ -484,14 +492,53 @@
         st.letters = (st.letters || 0) + 1; save();
       }
     }
-    // a hidden keepsake (rules.js KEEPSAKES; Chris, October 4): found once and carried for good (the Party tab names it)
+    // ---------- the keepsakes (keepsakes.js; Chris, October 4) ----------
+    // one that lies on a map: she kneels for it, its words, then its card
     async function keepsake(id) {
-      const K = RL.KEEPSAKES[id]; st.keepsakes = st.keepsakes || {};
-      if (st.keepsakes[id] || !K) return;
+      const it = K.get(id);
+      if (!it || K.found(st, id)) return;
       await field.pose('kneel', 1.9);
       sfx('secret');
-      await say(S.keepsakes[id](K.name));
-      st.keepsakes[id] = true; save();
+      await say(S.keepsakes[id] || ['Something glinting: ' + it.look + '.']);
+      await gainKeepsake(id);
+    }
+    // a keepsake comes to the party: its hero puts it on at once (the Items page changes that), it's saved, and its card
+    // shows
+    async function gainKeepsake(id) {
+      if (!K.give(st, id)) return;
+      GS.fit(st); save();
+      await K.showFound(root, st, id, { src });
+    }
+    // the townsfolk's gifts, once each: Nettie's as Io sets out with Sol, Ysmera's once her yard has met them, Marta's
+    // and Ede's the first time they're spoken to
+    const GIFT_WHEN = { nettie: (F) => !!F.party, marta: () => true, ysmera: (F) => !!F.shipyard, ede: () => true };
+    async function gift(p) {
+      const it = K.list().find((x) => x.source === 'gift' && x.giver === p.id);
+      if (!it || K.found(st, it.id) || !GIFT_WHEN[p.id] || !GIFT_WHEN[p.id](st.flags)) return;
+      sfx('secret'); await say(S.gifts[p.id]); await gainKeepsake(it.id);
+    }
+    // the first Bramble Colossus the party beats leaves a keepsake for each of them
+    async function colossusGifts() {
+      const ids = K.list().filter((x) => x.source === 'fight' && !K.found(st, x.id)).map((x) => x.id);
+      if (!ids.length) return;
+      sfx('secret'); await say(S.colossusGifts);
+      for (const id of ids) await gainKeepsake(id);
+    }
+    // after a fight that wasn't lost, the keepsakes that work outside fights: a share of HP and MP back, and more shards
+    // from a win (added before the win is counted, so a level up takes them in)
+    function moreShards(r) {
+      const more = r.outcome === 'win' || r.outcome === 'retreat' ? Math.round((r.shards || 0) * K.party(st).shards / 100) : 0;
+      if (more > 0) { r.shards += more; r.keepsakeShards = more; }
+    }
+    function backAfter(r) {
+      if (r.outcome !== 'win' && r.outcome !== 'retreat' && r.outcome !== 'fled') return;
+      for (const id of heroes()) {
+        const g = GS.gearOf(st, id), max = GS.maxHp(st, id), hp = GS.hpOf(st, id);
+        if (g.hpBack && hp > 0) st.hp[id] = Math.min(max, hp + Math.round(max * g.hpBack / 100));
+      }
+      const gi = GS.gearOf(st, 'io');
+      if (gi.mpBack) st.mp = Math.min(GS.maxMp(st), GS.mpOf(st) + Math.round(GS.maxMp(st) * gi.mpBack / 100));
+      GS.fit(st);
     }
     const bandHere = () => (mode === 'world' ? world.bandAt(world.P.x, world.P.y) || 1 : (field.map && field.map.band) || 1);
     async function rest(name) {
@@ -605,15 +652,18 @@
       // the map under the battle stops drawing until the fight is over
       const was = mode; field.show(false); world.show(false);
       const cfg = GameFights.config(kind, st, o);
+      const colossus = kind === 'wild' && (cfg.fight().foes || []).some((f) => f.id === 'colossus');
       // a cutscene first, when this fight has one that hasn't played
       const cs = cutsceneFor(kind, cfg), still = cs ? await cutscene(cs) : null;
       if (still) { cfg.quickIntro = true; cfg.standing = true; }
       const r = await new Promise((res) => { cfg.game = { onEnd: res, onError: () => res({ outcome: 'error' }) }; cfg.sound = SND; layer.ctl = BattleScreen.start(cfg); if (still) fadeStill(still); });
       layer.ctl.stop(); layer.remove();
       if (was === 'field') field.show(true); else if (was === 'world') world.show(true);
-      if (r.outcome !== 'error') GS.applyBattle(st, r);
+      if (r.outcome !== 'error') { moreShards(r); GS.applyBattle(st, r); backAfter(r); }
       if (mode === 'field') music(MUSIC[field.map.id] || 'travel'); else if (mode === 'world') music('travel');
       save();
+      if (colossus && r.outcome === 'win') await colossusGifts();
+      if (r.keepsakeShards) note('The keepsakes find ' + nf(r.keepsakeShards) + ' more shards.');
       return r;
     }
     // a random fight: st.wilds counts each band's, since the Bramble Colossus never comes in the last band's first few
@@ -661,7 +711,7 @@
         const card = el('div', { class: 'gmenu-card win' }, ov);
         const tabs = el('div', { class: 'gmenu-tabs', role: 'tablist' }, card), body = el('div', { class: 'gmenu-body' }, card);
         const close = () => { ov.remove(); menuOpen = null; done(); };
-        const T = { Party: party, Herbs: herbs, Moonlore: lore, Saves: saves, Settings: setup };
+        const T = { Party: party, Herbs: herbs, Items: items, Moonlore: lore, Saves: saves, Settings: setup };
         let cur = 'Party';
         const btns = Object.keys(T).map((k) => { const b = el('button', { type: 'button', role: 'tab', class: 'tab' }, tabs, k); b.addEventListener('click', () => { cur = k; draw(); }); return b; });
         const foot = el('div', { class: 'gmenu-foot' }, card);
@@ -681,8 +731,8 @@
         const c = el('div', { class: 'gm-hero' }, b); el('h3', null, c, RL.HEROES[id].name);
         bar(c, 'HP', GS.hpOf(st, id), GS.maxHp(st, id), 'hp');
         if (id === 'io') bar(c, 'MP', GS.mpOf(st), GS.maxMp(st), 'mp');
-        const K = st.keepsakes && st.keepsakes[id] && RL.KEEPSAKES[id];
-        if (K) el('p', { class: 'gm-note' }, c, 'Carries ' + K.name + ': ' + K.what + '.');
+        const ks = K.summary(st, id);
+        if (ks) el('p', { class: 'gm-note' }, c, 'Her keepsakes: ' + ks + '.');
       }
       el('p', { class: 'gm-note' }, b, 'Played ' + clock(st.time) + ' · ' + st.wins + ' fights won · The Magpie: ' + (st.flags.magpie ? 'band ' + st.band + (st.magpie ? ', at ' + LANDINGS[st.magpie].name : '') : 'not yet yours'));
     }
@@ -699,6 +749,10 @@
           if (H.target === 'ally' || H.target === 'fallen') { r.textContent = ''; el('span', null, r, 'On whom?'); pickHero(r, go); } else go('io');
         });
       }
+    }
+    // the keepsakes found, and who wears them (keepsakes.js): only what has been found, never how many are left
+    function items(b, redraw) {
+      K.page(b, st, { root, src, heroes: heroes(), redraw, changed: () => { GS.fit(st); save(); sfx('ui-confirm'); } });
     }
     function lore(b, redraw) {
       el('p', { class: 'gm-top' }, b, 'Io’s healing Moonlore works out of battle too. MP ' + nf(GS.mpOf(st)) + ' / ' + nf(GS.maxMp(st)) + '.');
@@ -788,7 +842,8 @@
           body.textContent = ''; el('p', { class: 'gm-top' }, body, nf(st.shards) + ' sunstone shards. Up to ' + RL.CARRY + ' of each herb; in a fight, each can be used once.');
           const what = { moonpetal: 'heals one', lavender: 'heals both', mugwort: 'Io’s MP', emberLily: 'blows 10% harder for a fight', nightrose: 'brings one back' };
           for (const id of Object.keys(RL.HERBS)) {
-            const H = RL.HERBS[id], price = RL.herbPrice(id, band), have = st.herbs[id] || 0, r = el('div', { class: 'gm-item' }, body);
+            // the Jetty Coin: herbs cost less
+            const H = RL.HERBS[id], price = Math.round(RL.herbPrice(id, band) * (1 - K.party(st).herbPrice / 100)), have = st.herbs[id] || 0, r = el('div', { class: 'gm-item' }, body);
             const nm = el('span', null, r, H.name + ' ×' + have); el('small', null, nm, ' ' + what[id]);
             el('b', null, r, nf(price));
             const bt = el('button', { type: 'button', class: 'go small' }, r, have >= RL.CARRY ? 'Full' : 'Buy');
@@ -869,6 +924,7 @@
     }
     async function begin(isNew) {
       titleEl.remove(); titleEl = null; busy++;
+      K.migrate(st); // a save from before the twenty keeps its two keepsakes
       try {
         if (isNew) { music('title'); await prologue(); await goField('cottage', [838, 520], 's'); }
         else { const W = st.where; if (W.mode === 'world') await goWorld(W.at[0], W.at[1], W.dir); else await goField(W.map, W.at, W.dir); }

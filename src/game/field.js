@@ -24,7 +24,7 @@
 //   shorter side; it sets the camera's closeness in place of zoom), showWalk (draws the walk areas, for checking them);
 //   the page may change ioH, pace, ioScreen and showWalk while it runs
 //   and the callbacks onExit(exit), onEvent(spot), onTalk(person), onSpot(spot), onEncounter(map), onMenu(), onStep(map, running),
-//   isDone(id) (an event or a well already used), src(path) (the art's URL), goal(mapId) -> null or { x, y, kind:
+//   isDone(id) (an event or a well already used), glint() (the keepsakes' glints shine brighter), src(path) (the art's URL), goal(mapId) -> null or { x, y, kind:
 //   'person' | 'spot' | 'event' | 'exit', out (an exit's outward angle) }: the story's next step, which the little arrow
 //   points to (goal-arrow.js) and the mini-map marks
 //   pose(name, seconds) -> Promise: the painted Io kneels ('kneel') or casts moonlight ('cast'), even in a scene
@@ -443,13 +443,13 @@
       g.filter = 'none';
       if (opts.showWalk) drawWalk();
       // spots glimmer softly, so a player can find them
-      const pulse = 0.5 + 0.5 * Math.sin(t / 300);
+      const pulse = 0.5 + 0.5 * Math.sin(t / 300), bright = !!(opts.glint && opts.glint());
       for (const s of things()) {
         if (s.kind === 'person') continue;
         const x = (s.x - cam.x) * cam.z, y = (s.y - cam.y) * cam.z;
         const c = s.kind === 'rest' ? '255,214,140' : s.kind === 'magpie' ? '160,200,255' : s.kind === 'keepsake' ? '215,230,255' : s.used ? '200,200,220' : '255,240,200';
-        // a hidden keepsake only twinkles now and then, and small
-        const r = s.kind === 'keepsake' ? 2 + 4 * Math.pow(Math.max(0, Math.sin(t / 700)), 6) : (s.used ? 4 : 6) + pulse * 3;
+        // a keepsake only twinkles now and then, and small; with the Hag-Stone worn (opts.glint) it glints brighter
+        const r = s.kind === 'keepsake' ? (bright ? 4 + 3 * pulse : 2 + 4 * Math.pow(Math.max(0, Math.sin(t / 700)), 6)) : (s.used ? 4 : 6) + pulse * 3;
         const gr = g.createRadialGradient(x, y - 6, 0, x, y - 6, r * 2.4); gr.addColorStop(0, 'rgba(' + c + ',' + (s.used ? 0.35 : 0.8) + ')'); gr.addColorStop(1, 'rgba(' + c + ',0)');
         g.fillStyle = gr; g.beginPath(); g.arc(x, y - 6, r * 2.4, 0, Math.PI * 2); g.fill();
       }

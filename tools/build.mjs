@@ -1,8 +1,10 @@
 // Builds each demo shell in demos/ into one self-contained page in dist/: local scripts and
 // stylesheets are inlined, and image paths under art/ inside them become data URIs, as do "./" image paths, read from
 // the page's own folder (a demo's own test pictures, which stay out of the game's art/). Chris's songs (art/music/*.webm)
-// go inside the page too, but the copy to publish (<name>.artifact.html) leaves them beside it as files, to stay under
-// the 16 MB a published page may be: publish it with the songs it lists (ART_BASE ''). three.js
+// go inside the page too. A page can name art folders to keep beside the copy to publish instead, to stay under the 16 MB
+// a published page may be: <meta name="beside" content="art/music art/keepsakes"> (the game: its songs and the
+// keepsakes' pictures). Its <name>.artifact.html then reads them from beside it (ART_BASE ''): publish it with the files
+// <name>.beside.json lists, at the same paths. Every other page has everything inside. three.js
 // stays a cdnjs <script> tag, and the fonts come from Google Fonts, unless --offline puts them inside
 // the page too (the file Chris keeps, which must work with no internet).
 // --split leaves the art out of the page instead: it stays art/... beside it, copied into dist/<name>-split/ (the
@@ -14,15 +16,17 @@ import path from 'path';
 import { createRequire } from 'module';
 const R = path.resolve(new URL('..', import.meta.url).pathname);
 const MIME = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', avif: 'image/avif', webm: 'audio/webm' };
-const SPLIT = process.argv.includes('--split'), used = new Set(), songs = new Set();
-// a song stays a marked path until the two copies are written: inside the page, or beside the published copy
-const SONG = '@@song@@', SONG_RE = /@@song@@(art\/music\/[^"'`]+\.webm)/g;
+const SPLIT = process.argv.includes('--split'), used = new Set(), beside = new Set();
+// a file from a folder the page keeps beside it stays a marked path until the two copies are written: inside the page,
+// or beside the published copy
+const MARK = '@@beside@@', MARK_RE = /@@beside@@(art\/[^"'`]+\.(webp|png|jpe?g|avif|webm))/g;
+let besideDirs = [];
 function inlineArt(code, dir) {
   return code.replace(/"((?:art\/|\.\/)[^"]+\.(webp|png|jpe?g|avif|webm))"/g, (m, p, ext) => {
     const own = p.startsWith('./'), f = own ? path.resolve(dir, p) : path.join(R, p);
     if (!fs.existsSync(f)) return m;
     if (SPLIT && !own) { used.add(p); return m; }
-    if (ext === 'webm' && !own) { songs.add(p); return '"' + SONG + p + '"'; }
+    if (!own && besideDirs.some((d) => p.startsWith(d + '/'))) { beside.add(p); return '"' + MARK + p + '"'; }
     return '"data:' + MIME[ext] + ';base64,' + fs.readFileSync(f).toString('base64') + '"';
   });
 }
@@ -55,6 +59,8 @@ fs.mkdirSync(path.join(R, 'dist'), { recursive: true });
 for (const rel of files) {
   const src = path.resolve(R, rel), dir = path.dirname(src);
   let html = fs.readFileSync(src, 'utf8');
+  besideDirs = ((html.match(/<meta name="beside" content="([^"]*)">/) || [])[1] || '').split(/\s+/).filter(Boolean);
+  html = html.replace(/<meta name="beside" content="[^"]*">\n?/, '');
   html = html.replace(/<script src="(\.\.?\/[^"]+\.js)"><\/script>/g, (m, p) => {
     let code = inlineArt(fs.readFileSync(path.resolve(dir, p), 'utf8'), dir);
     if (esbuild) code = esbuild.transformSync(code, { minify: true, target: 'es2019', legalComments: 'none' }).code;
@@ -67,11 +73,11 @@ for (const rel of files) {
   const dir_ = SPLIT ? path.join(R, 'dist', path.basename(src, '.html') + '-split') : path.join(R, 'dist');
   fs.mkdirSync(dir_, { recursive: true });
   const out = path.join(dir_, path.basename(src));
-  fs.writeFileSync(out, html.replace(SONG_RE, (m, p) => 'data:audio/webm;base64,' + fs.readFileSync(path.join(R, p)).toString('base64')));
+  fs.writeFileSync(out, html.replace(MARK_RE, (m, p, ext) => 'data:' + MIME[ext] + ';base64,' + fs.readFileSync(path.join(R, p)).toString('base64')));
   console.log(path.relative(R, out), (fs.statSync(out).size / 1048576).toFixed(2) + ' MB');
-  // the copy to publish: its songs beside it, read from beside the page (ART_BASE '')
-  let pub = html.replace(SONG_RE, (m, p) => p);
-  if (songs.size && !SPLIT) pub = pub.replace(/<body>\n?/, (b) => b + '<script>window.ART_BASE = \'\';</script>\n');
+  // the copy to publish: its songs and keepsake pictures beside it, read from beside the page (ART_BASE '')
+  let pub = html.replace(MARK_RE, (m, p) => p);
+  if (beside.size && !SPLIT) pub = pub.replace(/<body>\n?/, (b) => b + '<script>window.ART_BASE = \'\';</script>\n');
   // the Artifact publisher wraps the page in its own doctype, head and body, so that copy leaves them out
   const title = (pub.match(/<title>[^<]*<\/title>/) || [''])[0];
   const art = title + '\n' + pub
@@ -80,11 +86,11 @@ for (const rel of files) {
     .replace(/<meta charset="utf-8">\n?|<meta name="viewport"[^>]*>\n?/g, '');
   const aout = path.join(dir_, path.basename(src, '.html') + '.artifact.html');
   fs.writeFileSync(aout, art);
-  if (songs.size) {
-    const list = [...songs].sort(), bytes = list.reduce((a, p) => a + fs.statSync(path.join(R, p)).size, 0);
-    fs.writeFileSync(path.join(dir_, path.basename(src, '.html') + '.songs.json'), JSON.stringify(list, null, 1));
-    console.log('  ' + path.relative(R, aout) + ': ' + list.length + ' songs to publish beside it, ' + (bytes / 1048576).toFixed(2) + ' MB (listed in ' + path.basename(src, '.html') + '.songs.json)');
-    songs.clear();
+  if (beside.size) {
+    const list = [...beside].sort(), bytes = list.reduce((a, p) => a + fs.statSync(path.join(R, p)).size, 0);
+    fs.writeFileSync(path.join(dir_, path.basename(src, '.html') + '.beside.json'), JSON.stringify(list, null, 1));
+    console.log('  ' + path.relative(R, aout) + ': ' + list.length + ' files to publish beside it (' + besideDirs.join(', ') + '), ' + (bytes / 1048576).toFixed(2) + ' MB (listed in ' + path.basename(src, '.html') + '.beside.json)');
+    beside.clear();
   }
   if (SPLIT) {
     let bytes = 0;

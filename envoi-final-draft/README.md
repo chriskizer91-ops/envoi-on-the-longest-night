@@ -103,7 +103,7 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
    - quicker fight starts, by keeping the heroes built between fights;
    - a door's sound when a map changes;
    - packs framed a little closer on the phone.
-7. **On Chris's side:** the lore conversation (every word), the sheets for art request 13, the keepsakes' places (the Item Places page) and pictures (art request 14), art requests 06 and 07, and questions 20, 21 and 24 to 32 in `../docs/questions/open.md`.
+7. **On Chris's side:** the lore conversation (every word), the sheets for art request 13, art requests 06 and 07, and questions 20, 21 and 24 to 32 in `../docs/questions/open.md`. (The keepsakes' places and pictures came on October 4, late evening.)
 
 ## The model studio
 
@@ -117,7 +117,9 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 
 `items/README.md` has the twenty keepsakes Chris locked on October 4, evening: things to find, each with a still picture, that Io and Sol put on and take off on a new Items page. Six are Io's alone, six Sol's alone, and eight either can wear, so one hero can wear fourteen if the party finds them all. Each has a main help (a small share of healing, damage or max HP) and one other help, in fights or outside them. Together the main helps reach what the two hidden keepsakes give today, and the hidden two keep a quarter of it. Four are gifts from townsfolk, the first Bramble Colossus gives each hero one, and Chris places the other twelve himself. The pictures are art request 14 (`../docs/art-requests/14-keepsake-items.md`).
 
-**The map editor** (`map-editor/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5) is where he places them: one tool for the walking paths and the keepsakes, published in the Item Places page's place. Each keepsake will have a tiny PNG picture and a card, shown when it's found and in the inventory, and the inventory never tells how many are left to find. Nothing is in the game until he has placed them.
+**The map editor** (`map-editor/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5) is where he places them: one tool for the walking paths and the keepsakes, published in the Item Places page's place. Each keepsake has a tiny PNG picture and a card, shown when it's found and in the inventory, and the inventory never tells how many are left to find.
+
+**In the game since October 4, late evening:** Chris approved the places as they were and sent all twenty pictures, so the keepsakes went in (`items/README.md`, "In the game"), with a demo page of their cards and the Items page (https://claude.ai/artifact/AAtAnWcqszRj4qhVCfgPp5) and the game at a new link (https://claude.ai/artifact/BgSiyXBu53iW7DJVF1seV8).
 
 ## For the next session working on the game
 
@@ -134,7 +136,7 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 | `model-studio/` | The model studio: the briefs, the return slip, the intake |
 | `cutscenes/` | The cutscene plan, a brief for each, and their sessions' folders |
 | `../docs/art-requests/13-wild-creatures.md` | The image prompts for the ten creature families |
-| `items/` | The twenty keepsakes: the list (`items.js`) and the plan |
+| `items/` | The twenty keepsakes: the list (`items.js`), and how they look and work in the game |
 | `map-editor/` | The map editor: the walking paths and the keepsakes in one tool, with its test |
 | `item-places/` | The Item Places page, which placed an earlier draft of the list (the map editor took its place and its link) |
 | `../docs/art-requests/14-keepsake-items.md` | The image prompts for the twenty keepsakes' pictures |

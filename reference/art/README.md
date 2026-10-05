@@ -71,3 +71,12 @@ Received October 2, 2026:
 ## Key art
 
 `key-art-advert.png` (1672×941) is an advert for the game, not a title screen. It shows the Witch casting at Noctara, with Lunara and Envoi above, Sol and Halcyon crossing blades below, and a wraith behind Noctara. Use it later wherever a poster fits: a loading screen, the back of the title, or a page's cover image.
+
+## Keepsakes
+
+Art request 14 (`../../docs/art-requests/14-keepsake-items.md`), received October 4, 2026, late evening, in four packs from Chris's generator, kept as they came in `keepsakes/`:
+
+- `Envoi-01-Io-Items-and-Cards/` (1 to 6, Io's), `Envoi-02-Sol-Items-and-Cards/` (7 to 12, Sol's), `Envoi-03-Shared-Items-13-16/` and `Envoi-04-Shared-Items-17-20/` (the eight either can wear).
+- In each: `items/NN-<name>.png` (1254 × 1254, transparent), `cards/NN-<name>-card.png` (900 × 1260, each keepsake's card as his generator laid it out), `preview.png` (the cards together), `items.json` (the data the cards were made from), `generation-prompts.txt` and `README.txt`.
+- The numbers follow `envoi-final-draft/items/items.js`. The game's tiny copies are in `../../art/keepsakes/`, made by `node tools/keepsake-pictures.mjs`; the game draws its cards itself, in the look of these.
+

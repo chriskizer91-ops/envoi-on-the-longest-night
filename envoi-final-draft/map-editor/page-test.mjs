@@ -339,7 +339,7 @@ try {
   await page.click('#me-mode-keepsakes'); await sleep(200);
   check(await ev(() => MapEditor.mode) === 'keepsakes' && await ev(() => getComputedStyle(document.querySelector('[data-for="paths"]')).display) === 'none', 'Keepsakes shows its part of the panel, and hides the path tools');
   check(await ev(() => document.querySelectorAll('#me-groups .ip-item').length) === 20, 'the list has all twenty');
-  check(await ev(() => !!document.querySelector('#me-card canvas.me-pic') && /Crescent Locket/.test(document.querySelector('#me-card h3').textContent)), 'the card shows the picked one, with its stand-in picture');
+  check(await ev(() => !!document.querySelector('#me-card canvas.me-pic') && /Crescent Locket/.test(document.querySelector('#me-card h3').textContent)), 'the card shows the picked one, with its picture');
   await shot('30-keepsakes');
   // the Hag-Stone: picking it in the list opens Bogmire, where it lies; then put it beside where a new walk starts there
   await page.click('#me-groups .ip-item >> text=The Bogmire Hag-Stone'); await page.waitForFunction(() => MapEditor.painted && MapEditor.map === 'bogmire', null, { timeout: 10000 }); await sleep(200);

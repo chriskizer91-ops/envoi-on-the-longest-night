@@ -9,8 +9,8 @@
 //   people: who stands where, how they look (`look`, a pixel figure from sprites.js) and what they say (`talk`, in
 //           script.js); `role` makes them a shop or an inn
 //   spots:  things to look at or use: `rest` (an inn bed or a camp: HP and MP back, and the game is saved), `well` (a
-//           small well with a letter and a gift), `keepsake` (one of the two hidden magic items, rules.js KEEPSAKES),
-//           `event` (a story beat or a set fight when she walks into `rect`)
+//           small well with a letter and a gift), `event` (a story beat or a set fight when she walks into `rect`)
+//           (the keepsakes' spots come from envoi-final-draft/items/items.js: the game adds them, as `keepsake`)
 //   wild:   random encounters on this map: the band, the battle backdrop, and the encounter rate
 // Defines globalThis.MAPS.
 (function (G) {
@@ -96,8 +96,8 @@
       ],
       spots: [
         { kind: 'rest', at: [777, 530], label: 'The Moonwell', note: 'Lunara sleeps here. Rest, and the game is saved.' },
-        // Io's keepsake, at the end of Chris's secret way up the tree and along the red roof's ridge (his pick, October 4)
-        { kind: 'keepsake', id: 'io', at: [458, 562], label: 'Something glinting' },
+        // (the Crescent Locket lies at the end of Chris's secret way up the tree and along the red roof's ridge, his pick
+        // on October 4: the keepsakes' places are in envoi-final-draft/items/items.js)
       ],
     },
     // Io's cottage, in the woods south of the square, with her garden: where the story starts
@@ -221,9 +221,8 @@
       people: [],
       spots: [
         { kind: 'well', id: 'moonstone', at: [1010, 336], label: 'The moon stone', note: 'An old stone with the crescent cut deep in it. Someone has left something at its foot.' },
-        // Sol's keepsake, where Chris's trail into the dark woods south of the road gives out (his pick, October 4: "in
-        // the spooky woods")
-        { kind: 'keepsake', id: 'sol', at: [1284, 816], label: 'Something glinting' },
+        // (the Warden's Brooch lies where Chris's trail into the dark woods south of the road gives out, his pick on
+        // October 4, "in the spooky woods": items.js)
       ],
       wild: { band: 1, scene: 'thornwood-bridge', rate: 1 },
     },

@@ -1,8 +1,8 @@
 # The Twenty Keepsakes
 
-**Locked by Chris on October 4, 2026 (evening).** These are the twenty things Io and Sol can find, each with a still picture. They put them on and take them off on a new Items page, and each gives its wearer two small, lasting helps. The data is `items.js` and the pictures are art request 14 (`../../docs/art-requests/14-keepsake-items.md`).
+**Locked by Chris on October 4, 2026 (evening).** These are the twenty things Io and Sol can find, each with a still picture. They put them on and take them off on a new Items page, and each gives its wearer two small, lasting helps. The data is `items.js` and the pictures are Chris's (art request 14, `../../docs/art-requests/14-keepsake-items.md`).
 
-**Next:** Chris places the keepsakes himself with the map editor (`../map-editor/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5), one tool for both the walking paths and the keepsakes. **Nothing here is in the game yet.**
+**In the game since October 4, late evening** (going into the 5th), once Chris had approved their places ("Those are all good locations") and sent his pictures. "In the game" below says how they work there; the demo page shows all twenty and their cards (https://claude.ai/artifact/AAtAnWcqszRj4qhVCfgPp5).
 
 ## Chris's rules
 
@@ -11,7 +11,7 @@
 3. **The same totals as today.** Together the main helps reach what the two hidden keepsakes give today: Io's Lunar Mend and Waxing Light heal 25% more, and Sol has 10% more HP and her blows land 10% harder. The two hidden ones keep a quarter of that and stay the strongest.
 4. **Where they come from.** Four are gifts from townsfolk. The first time the party beats a Bramble Colossus, in the last band's wilds, it gives each hero one. The two hidden ones stay where they are, and Chris places the other twelve on the maps.
 5. **Names** say what each thing is and where it's found.
-6. **Pictures and cards** (Chris, on approving the list): each keepsake has a tiny PNG picture and a card. The card shows when she finds it, and again when the player looks in the inventory.
+6. **Pictures and cards** (Chris, on approving the list): each keepsake has a tiny PNG picture and a card. The card shows when she finds it, and again when the player looks in the inventory. His pictures and cards came that night (below, "The pictures").
 7. **The inventory never tells how many are left to find.** It shows only what has been found: no count of the twenty, no empty places for the rest.
 
 ## The twenty
@@ -77,11 +77,26 @@
 
 Several looks borrow from Chris's Aethermoor relics. `items.js` names each one: the Knotted Shawl, the Pass Bell, the Hall Gauntlets, the Jetty Coin, the Frog-Ring, the Hag-Stone, the Bogstriders, the Kettle-Helm, the Dockhand's Gloves and the Misthollow Cowl. They come from `New-game` (`game/src/data/relics.js` on `claude/cool-ptolemy-uc93gg`, and `thareia/game/src/data/relics.js` on `claude/tender-babbage-4wiplk`). What each giver says, and each keepsake's own words, wait for the lore conversation (`../../docs/questions/open.md`, 32).
 
-## Putting them in the game, once Chris has placed them
+## The pictures
 
-1. **The rules:** `ITEMS` in `src/battle/rules.js`, taken from `items.js`, with each help worked into the battle engine and the maps. The two keepsakes in the game today become the Crescent Locket and the Warden's Brooch above, cut to a quarter, at the same moment.
-2. **Finding them:** the twelve lie as glints where Chris put them, like the two hidden ones today. The gifts come in the givers' words, and the Colossus's two come after the party first beats one. Finding one shows its card: its tiny picture, its name, who can wear it, and its two helps. The map editor's walk already shows this card.
-3. **The inventory:** a new Items tab in the menu, with Io's and Sol's keepsakes side by side, each with its tiny picture. Tap one to see its card, put it on, take it off, or hand a shared one to the other hero. It lists only what has been found, and nothing in it tells how many are still out there.
-4. **The save** keeps what was found and who wears what. A save that already has the two keepsakes keeps them.
-5. **The pictures:** art request 14, each made into a tiny PNG. Until they come, each keepsake shows a small drawn stand-in, as the map editor does.
-6. **A demo page on Chris's phone first,** as always, then the game.
+Chris sent four packs on October 4, late evening: a 1254 × 1254 transparent PNG of each keepsake, a 900 × 1260 card for each, a preview sheet, the data his generator used, and its prompts. They are kept as they came in `../../reference/art/keepsakes/`.
+
+- **The game's tiny pictures:** `art/keepsakes/<keepsake id>.png`, 256 pixels square with their transparency, in 256 colours, about 28 KB each (565 KB for all twenty). `node tools/keepsake-pictures.mjs` makes them from his packs again whenever the size needs to change. `items.js` names each one (`pic`).
+- **The cards:** the game draws each keepsake's card itself, in the look of Chris's: the dark blue card with its thin silver frame (gold for the two hidden ones), "Envoi · keepsake" at the top and who can wear it in a chip, the picture on its soft halo, the name, where it comes from, the main help large and the other help under it, and where it was found in a box. Drawn by the game, its words stay sharp and readable on his phone held sideways (where a whole card picture's small print would be too small to read), they can change when the lore conversation writes them, and it leaves out the number at the foot of his cards ("01 / 20"), which would tell the player how many there are (rule 7). His cards are kept with his packs.
+- **Their looks** (`look` in `items.js`) now say what his pictures show where they differ from the prompts: Ysmera's Moonglass is a hand mirror, the Frog-Ring has a little green frog sitting on it, the Kettle-Helm's weather vane is a rooster, the Warden's Brooch is a bronze bird round an ember-red stone, and so on.
+
+## In the game
+
+- **Finding them** (`src/game/keepsakes.js`, `src/game/game.js`). The fourteen that lie on a map glint faintly where `items.js` puts them, as the two hidden ones did. Standing by one and pressing the action button, Io kneels for it, a line or two is said, and its card shows. The Fen-Heart Lamp is there only once the great wraith is beaten, and the Node Sunstone once Sol has relit the node (`after`).
+- **The gifts:** Nettie gives her shawl the first time Io speaks with her once Sol has joined her (as they set out), Marta and Ede the first time the party speaks with them, and Ysmera once her yard has met them. Each after the giver's own lines, before her shop, inn or upgrade.
+- **The first Bramble Colossus** the party beats leaves the Heart-Seed for Io and the Thorn for Sol, with a card each.
+- **Who wears it:** a keepsake goes on at once when it's found, so nobody misses its help: Io's on Io, Sol's on Sol, and a shared one on Sol once she's with Io (the shared ones make up her HP and damage totals), else on Io. The card says who put it on.
+- **The Items page** is a new tab in the menu: Io's keepsakes beside Sol's, as pictures. A tap shows its card, where it can be taken off, put on, or (a shared one) given to the other. It shows only what has been found: no count, no empty places, and the cards carry no number.
+- **The Party tab** adds up each hero's main helps ("Her keepsakes: +8.75% healing · +1% HP").
+- **In a fight,** each hero's keepsakes go into the battle with her (`src/game/fights.js`, `src/battle/engine.js`): more max HP and MP; harder blows (on Io, her spells and blows; not the summons'); stronger Lunar Mend and Waxing Light; Trance filling faster; Sol starting with Heat; the herbs Io uses healing more; a little HP back as Io's turn starts; Sunder a turn longer; Kestrel Stoop harder. **The big blows a foe warns of** are its charged moves, the ones it gathers for a turn first: Void Sphere, Black Noon, the Bramble Horror's Grab after its Lure, the Colossus's Devour after its Siren Bloom; they hit the Kettle-Helm's wearer 10% softer. **Frost slows her for half as long:** she shakes off a Frost halfway through it. **The Bogstriders** make running from a pack work 2 times in 3 for the party.
+- **After a fight** that wasn't lost: the Frog-Ring gives back 5% of its wearer's HP and the Fen-Heart Lamp 5% of Io's MP; the Horseshoe and the Gloves add their shards to a win, before it's counted (a note says how many). In the shops the Jetty Coin takes 10% off every herb, and with the Hag-Stone worn the keepsakes' glints shine brighter and steadier on the maps.
+- **Out of a fight,** the max HP and MP and Io's Moonlore follow the same keepsakes as in one (`src/game/state.js`), so the numbers agree.
+- **The balance never counts on them:** the simulator and every fight's targets run without them (51 of 51 met, as before). All twenty, with the shared ones on Sol, reach the totals above exactly (the demo page adds them up).
+- **A save from before** with the two hidden keepsakes keeps them as the Crescent Locket and the Warden's Brooch, cut to a quarter. A chapter starts with none; the ones before it can still be found.
+- **Size:** the pictures are inside the file Chris keeps; the published game keeps them beside it as files, as it does the songs (`dist/game.beside.json`).
+- **Checked** by `node tools/game-test.mjs --steps title,new,keepsakes`: Io finds the Locket on the roof, the Horseshoe in the nook and the Brooch in the Thornwood, Nettie gives her shawl, the Items page hands the Horseshoe to Io, the Party tab adds them up, a fight has them, a win brings more shards, and the first Colossus leaves its two.

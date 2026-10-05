@@ -59,7 +59,7 @@
 .ip-card textarea:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
 .ip-card .ip-from { margin: 0; color: var(--dim); font-size: 12px; }
 
-/* a keepsake's picture: a stand-in until its picture from art request 14 comes */
+/* a keepsake's picture: Chris's, from art request 14 (map-editor.js drawPic) */
 .me-pic { display: block; width: 72px; height: 72px; border-radius: 8px; box-shadow: 0 0 0 1px var(--line-hi); background: var(--pic); }
 
 /* its two helps: the main one, and the other one, in fights or outside them */

@@ -1,6 +1,6 @@
 // check-maps.mjs: can Io reach everything on every traced map? Walks each map's grid (the field engine's own rule: her
 // feet and 6 px either side inside a walk area and outside every block and person) from the map's start and from every
-// arrival point, and reports any exit, person, spot or arrival she can't reach. Whatever the grid misses is looked for
+// arrival point, and reports any exit, person, spot (the keepsakes in items.js among them) or arrival she can't reach. Whatever the grid misses is looked for
 // again along the narrow ways (field.js's fine search: 4 px steps on the same rule), where Chris's secret paths run, and
 // is named as reached that way. Usage: node tools/check-maps.mjs [mapId]
 import path from 'path'; import { createRequire } from 'module';
@@ -8,6 +8,9 @@ const require = createRequire(import.meta.url);
 const R = path.resolve(new URL('..', import.meta.url).pathname);
 require(path.join(R, 'src/game/maps.js'));
 const MAPS = globalThis.MAPS, CELL = 12, GW = 128, GH = 86, REACH = 58;
+// the keepsakes that lie on a map are spots too (the game adds them from items.js)
+globalThis.window = globalThis; require(path.join(R, 'envoi-final-draft/items/items.js'));
+for (const it of globalThis.LOOT.ITEMS) if (it.home && it.at && MAPS[it.home]) MAPS[it.home].spots = (MAPS[it.home].spots || []).concat({ kind: 'keepsake', id: it.id, at: it.at });
 const inPoly = (pts, x, y) => { let ins = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) ins = !ins; } return ins; };
 let bad = 0;
 for (const [id, m] of Object.entries(MAPS)) {

@@ -2,10 +2,11 @@
 // the one in use is written at every rest, at every change of map and from the menu. A save code carries a save as text,
 // to another device or another copy of the game (handoff, section 9). The state is the party (level, experience, each
 // hero's HP, Io's MP), the shards, the herbs carried, the story's flags, what has been done once (events, wells), the
-// highest band the Magpie can reach, where Io is, where she last rested, the hidden keepsakes found (keepsakes: { io, sol }) and
-// the time played. HP or MP of null means full.
+// highest band the Magpie can reach, where Io is, where she last rested, the keepsakes found and who wears each (items:
+// keepsakes.js; a save from before them has keepsakes: { io, sol }, the two hidden ones) and the time played. HP or MP of
+// null means full.
 // Defines window.GameState = { fresh, load, save, has, clear, slot, use, list, latest, code, fromCode, SLOTS, maxHp,
-// maxMp, hpOf, mpOf, keepsake, gain, restore, applyBattle, healOutside, useHerb }. Needs rules.js.
+// maxMp, hpOf, mpOf, gearOf, fit, gain, restore, applyBattle, healOutside, useHerb }. Needs rules.js and keepsakes.js.
 (function () {
   'use strict';
   // slot 1 keeps the name the single save had, so a game saved before the slots came is in slot 1
@@ -20,7 +21,7 @@
     return {
       v: 1, level: 1, xp: 0, shards: 0, hp: { io: null, sol: null }, mp: null, herbs: startHerbs(), flags: {}, done: {}, band: 1,
       where: { mode: 'field', map: 'cottage', at: null, dir: 's' }, rest: { mode: 'field', map: 'cottage', at: [838, 520] },
-      landings: { wickhollow: true }, time: 0, fights: 0, wins: 0,
+      landings: { wickhollow: true }, items: {}, time: 0, fights: 0, wins: 0,
     };
   }
   function load(n) { try { const s = localStorage.getItem(keyOf(n || SLOT)); if (!s) return null; const st = JSON.parse(s); return st && st.v === 1 ? st : null; } catch (e) { return null; } }
@@ -41,10 +42,12 @@
     if (!m || sum(m[1]) !== m[2]) return null;
     try { const st = JSON.parse(decodeURIComponent(escape(atob(m[1])))); return st && st.v === 1 && st.flags && st.where ? st : null; } catch (e) { return null; }
   }
-  // a hidden keepsake's strength, once the party has found it (rules.js KEEPSAKES), or 1: keepsake(st, 'sol', 'hp')
-  const keepsake = (st, id, k) => (st.keepsakes && st.keepsakes[id] && RL().KEEPSAKES[id][k]) || 1;
-  const maxHp = (st, id) => Math.round(RL().HEROES[id].hp * RL().scale(st.level) * keepsake(st, id, 'hp'));
-  const maxMp = (st) => Math.round(RL().HEROES.io.mp * RL().mpScale(st.level));
+  // what the keepsakes a hero wears add, in percent (keepsakes.js): gearOf(st, 'sol').hp. The same as the battle's (the
+  // engine multiplies in the same order, so the maximums agree to the point)
+  const NONE = { heal: 0, hp: 0, mp: 0, hpBack: 0, mpBack: 0 };
+  const gearOf = (st, id) => (window.Keepsakes ? window.Keepsakes.gear(st, id) : NONE);
+  const maxHp = (st, id) => Math.round(RL().HEROES[id].hp * RL().scale(st.level) * (1 + gearOf(st, id).hp / 100));
+  const maxMp = (st) => Math.round(RL().HEROES.io.mp * RL().mpScale(st.level) * (1 + gearOf(st, 'io').mp / 100));
   const hpOf = (st, id) => (st.hp[id] == null ? maxHp(st, id) : st.hp[id]);
   const mpOf = (st) => (st.mp == null ? maxMp(st) : st.mp);
   // experience and shards; a level up keeps each hero's share of HP and MP. Returns how many levels were gained
@@ -61,6 +64,11 @@
     return ups;
   }
   function restore(st) { st.hp = { io: null, sol: null }; st.mp = null; }
+  // after a keepsake goes on or comes off: HP and MP inside the new maximums (full stays full)
+  function fit(st) {
+    for (const id of ['io', 'sol']) if (st.hp[id] != null && st.hp[id] >= maxHp(st, id)) st.hp[id] = null;
+    if (st.mp != null && st.mp >= maxMp(st)) st.mp = null;
+  }
   // after a fight: HP and MP as the battle left them, and the herbs it used taken from those carried (the fight had at
   // most BATTLE_USE of each: fights.js); a win gives its experience and shards. A hero who fell in a fight the party won
   // gets back up with a little HP
@@ -80,14 +88,14 @@
     if (st.mp != null && st.mp >= maxMp(st)) st.mp = null;
     return ups;
   }
-  // Io's Moonlore out of battle: Lunar Mend on one, Waxing Light on both (when Sol is with her); her keepsake makes it stronger
+  // Io's Moonlore out of battle: Lunar Mend on one, Waxing Light on both (when Sol is with her); her keepsakes make it stronger
   function healOutside(st, move, who) {
     const M = RL().HEROES.io.moves[move], k = RL().scale(st.level), mp = mpOf(st);
     if (!M || mp < M.mp) return 'Not enough MP.';
     const ids = move === 'waxing' ? (st.flags.party ? ['io', 'sol'] : ['io']) : [who];
     if (ids.every((id) => hpOf(st, id) <= 0)) return 'She is down: a Nightrose or a rest will bring her back.';
     st.mp = mp - M.mp;
-    for (const id of ids) { if (hpOf(st, id) <= 0) continue; st.hp[id] = Math.min(maxHp(st, id), hpOf(st, id) + Math.round(M.heal * k * keepsake(st, 'io', 'heal'))); if (st.hp[id] >= maxHp(st, id)) st.hp[id] = null; }
+    for (const id of ids) { if (hpOf(st, id) <= 0) continue; st.hp[id] = Math.min(maxHp(st, id), hpOf(st, id) + Math.round(M.heal * k * (1 + gearOf(st, 'io').heal / 100))); if (st.hp[id] >= maxHp(st, id)) st.hp[id] = null; }
     return null;
   }
   // a herb out of battle, as it works in battle (heals grow with the level); the Lily only works in a fight
@@ -104,5 +112,5 @@
     st.herbs[id]--;
     return null;
   }
-  window.GameState = { fresh, load, save, has, clear, slot, use, list, latest, code, fromCode, SLOTS, maxHp, maxMp, hpOf, mpOf, keepsake, gain, restore, applyBattle, healOutside, useHerb };
+  window.GameState = { fresh, load, save, has, clear, slot, use, list, latest, code, fromCode, SLOTS, maxHp, maxMp, hpOf, mpOf, gearOf, fit, gain, restore, applyBattle, healOutside, useHerb };
 })();

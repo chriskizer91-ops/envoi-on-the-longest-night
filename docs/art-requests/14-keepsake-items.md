@@ -4,6 +4,8 @@ October 4, 2026, for the final draft's polish (`../../envoi-final-draft/`). One 
 
 **Why:** Chris's plan (October 4): twenty things to find, each with a still picture (no animation), shown on a new Items page where each hero puts them on and takes them off.
 
+**Received October 4, 2026, late evening:** all twenty, from Chris's four packs, each with a transparent 1254 × 1254 picture and a card. They are kept as they came in `../../reference/art/keepsakes/`; the game's tiny pictures are `../../art/keepsakes/<keepsake id>.png` (256 × 256, 565 KB for all twenty, made by `node tools/keepsake-pictures.mjs`). His pictures have transparent backgrounds rather than the indigo asked for below, which suits the game's cards better. The game draws each card itself in the look of his cards (`../../envoi-final-draft/items/README.md`, "The pictures"). Nothing more is needed from this request.
+
 **This is the locked list** (Chris, October 4, evening). Each name says what the keepsake is and where it's found, and several looks borrow from his Aethermoor relics. None of the words is canon until the lore conversation.
 
 **If you made pictures from the first version of this request,** five of them still fit under their new names. Rename the files:

@@ -1125,3 +1125,18 @@ Chris, in one message: "Those are all good locations also the bag limit on each 
   - **Watch again:** once a game has shown a cutscene, the menu's Settings can play it again.
   - **Size** (the build's measure): the published game is 14.4 MB with both inside (13.6 MB before), close to the 16 MB a published page may be. The file Chris keeps is 17.1 MB of its 30.
 
+## October 4, 2026, late evening: the keepsakes in the game
+
+Chris sent the twenty keepsakes' pictures ("Items", four packs, each picture with a card), the evening he approved their places. With the list locked, the places approved and the pictures in, they went into the game (`../envoi-final-draft/items/README.md`, "The pictures" and "In the game").
+
+- **The pictures:** tiny PNGs, as he asked: 256 pixels square, transparent, 256 colours, about 28 KB each, made from his packs (kept as they came in `reference/art/keepsakes/`).
+- **The cards are drawn by the game, in the look of his.** His cards are pictures with their words inside; on his phone held sideways their small print would be too small to read, and each carries a number at its foot ("01 / 20") that would tell the player how many there are, against his rule for the inventory. So the game lays out the same card (dark blue, silver frame, gold for the two hidden ones, who can wear it, the picture, the name, the two helps, where it was found) with words that stay readable either way up, and no number.
+- **A keepsake goes on as it's found,** so nobody misses its help: its own hero's, and a shared one on Sol once she's with Io (the shared ones make up her totals), else on Io. The Items page takes one off, puts it on, or gives a shared one to the other.
+- **The Items page** is a sixth tab in the menu: what each hero wears, as pictures, and a tap for the card. Only what has been found; nothing counts the twenty.
+- **The gifts' moments:** Nettie's as Io sets out with Sol (the first time Io speaks with her once Sol has joined her), Marta's and Ede's the first time the party speaks with them, Ysmera's once her yard has met them.
+- **What some helps mean in play:** "the big blows a foe warns of" are the moves it gathers a turn for first (Void Sphere, Black Noon, the Grab, the Devour); "Frost slows her for half as long" means she shakes a Frost off halfway; the Bogstriders' easier run works for the whole party; the shards from a win count before the level up; HP and MP come back after any fight that wasn't lost.
+- **The two hidden keepsakes are cut to a quarter now,** as Chris decided: the Locket's 25% healing is 6.25%, the Brooch's 10% HP and damage 2.5% each. A save that found them keeps them.
+- **A chapter starts without keepsakes;** the ones before it can still be found.
+- **The balance never counts on them:** all 51 balance targets give the numbers they gave before.
+- **The published game keeps the pictures beside it,** as it does the songs, so it stays under the 16 MB a published page may be (14.5 MB with the keepsakes' code). The file Chris keeps has them inside.
+
