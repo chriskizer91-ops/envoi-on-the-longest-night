@@ -6,7 +6,7 @@
 //
 // Defines makeCutscene(def) only. def: {
 //   id, title,
-//   scene()   the scene's data (scene.js), made fresh for each run
+//   scene(arena)   the scene's data (scene.js), made fresh for each run; arena is opts.arena (below), or null
 //   words()   its lines (words.js)
 //   place(renderer, quality, placeData)   builds the place; returns { scene, moonDir, heightAt(x, z), update(t, dt, camera),
 //             shadowAt(x, z), setWarm(p, r)?, impact(x, z, k)?, set(o)?, dispose()? }
@@ -24,8 +24,13 @@
 //     chip), still (default true: when it ends, the last frame stays in the container as a picture, for a cross-fade;
 //     the caller removes it, .envoi-cs-still), onProgress(fraction, words), idle (while waiting for start(), the
 //     opening view drifts behind the caller's start screen), test (frames are driven from the test hooks only), from
-//     (start that many seconds in, for checking) }
-//   last: after a run, { result, fps, worst, quality, seconds, triangles, calls, built, sharpness, sound }.
+//     (start that many seconds in, for checking), arena (when the fight is fought in its arena, the game gives it, and
+//     the last shot settles into the fight's opening frame there instead of on the flat painting: { place, camera: { x,
+//     h, z, pitch, fov }, frame: [w, h], ppm, heroes: [{ id, at: [x, z], tall, yawBias }], foes: [{ id, at, tall, halfW,
+//     yawBias }] }, in the arena's metres; src/game/game.js arenaFor) }
+//   last: after a run, { result, fps, worst, quality, seconds, triangles, calls, built, sharpness, sound, camera }: camera,
+//         the last picture's lens and crop ({ fov, aspect, view }), which a fight in its arena opens on (tools/game-test.mjs
+//         compares them).
 function makeCutscene(def) {
   'use strict';
   const V3 = (x, y, z) => new THREE.Vector3(x || 0, y || 0, z || 0);
@@ -79,7 +84,7 @@ function makeCutscene(def) {
     opts = opts || {};
     const qn = QUALITY[opts.quality] ? opts.quality : (isPhone() ? 'phone' : 'laptop'), QP = QUALITY[qn];
     const TEST = !!opts.test, vol = Object.assign({ music: 1, effects: 1, surroundings: 1 }, opts.volume || {});
-    const SC = timeline(def.scene()), WORDS = def.words(), CAST = def.cast();
+    const SC = timeline(def.scene(opts.arena || null)), WORDS = def.words(), CAST = def.cast();
     // opts.level: the level the fight meets its creature at (the cast's own level otherwise)
     if (opts.level) for (const id in SC.cast) if (SC.cast[id].level) SC.cast[id].level = opts.level;
     const saved = {}; for (const k of CHUNKS) saved[k] = THREE.ShaderChunk[k];
@@ -401,12 +406,27 @@ function makeCutscene(def) {
       resolve(c.at, look); if (c.at2) look.lerp(resolve(c.at2, _c), e);
     }
     const BAT = { pos: V3(), look: V3(), fov: 12, view: null };
+    const LENS = { cam: new THREE.PerspectiveCamera(), q: new THREE.Quaternion(), win: [0, 0, 0, 0] };
     function cameraStep(realT, cut, dt) {
       const s = SC.shots[film.shot], c = s.cam, cam = E.camera, st = film.t - s.start;
       if (cut) { delete c._from; delete c._to; }
       const e = (EASE[c.ease] || EASE.io)(cl(st / s.d, 0, 1));
-      let fov = c.fov ? lerp(c.fov[0], c.fov[1], e) : 34, exact = false;
-      if (c.battle) {
+      let fov = c.fov ? lerp(c.fov[0], c.fov[1], e) : 34, exact = false, lens = false;
+      if (c.battle && SC.battle.arena) {
+        // an arena's camera and framing (arenaFrame), reached by the end of the shot: from where the shot starts, the
+        // camera moves to the arena's eye-height camera and turns to its heading while its lens's window slides and
+        // narrows from the shot's own onto the battle's crop of the arena's frame; for its last moments it is exactly the
+        // battle's
+        arenaFrame(SC.battle);
+        const b = cl((st - (c.glide ? c.glide[0] : 0)) / ((c.glide ? c.glide[1] : s.d) - (c.glide ? c.glide[0] : 0)), 0, 1), k = (EASE[c.ease] || EASE.soft)(b);
+        const t0 = Math.tan((c.fov ? c.fov[0] : fov) * Math.PI / 360), a = E.view.w / E.view.h, W = BAT.win;
+        if (c.from) {
+          camPose(c, 0, cam.position, _b); LENS.cam.position.copy(cam.position); LENS.cam.up.set(0, 1, 0); LENS.cam.lookAt(_b);
+          cam.position.lerp(BAT.full.pos, k); LENS.q.copy(LENS.cam.quaternion).slerp(BAT.full.quat, k);
+          LENS.win = [lerp(-a * t0, W[0], k), lerp(a * t0, W[1], k), lerp(-t0, W[2], k), lerp(t0, W[3], k)];
+        } else { cam.position.copy(BAT.full.pos); LENS.q.copy(BAT.full.quat); LENS.win = W.slice(); _b.set(0, 0, -30).applyQuaternion(LENS.q).add(cam.position); }
+        exact = b >= 1; lens = true;
+      } else if (c.battle) {
         // the battle's own camera and framing (battle.js), reached by the end of the shot: from where the shot starts,
         // the camera glides onto the battle's line of sight and lens; for its last moments it is exactly the battle's
         battleFrame(SC.battle);
@@ -417,7 +437,17 @@ function makeCutscene(def) {
       } else { const sf = camPose(c, e, cam.position, _b); if (c.spline) fov = sf; }
       if (!c.free) { const gy = E.world.heightAt(cam.position.x, cam.position.z) + .08; if (cam.position.y < gy) cam.position.y = gy; }
       if (cam.view && cam.view.enabled) cam.clearViewOffset();
-      if (exact) {
+      if (lens && exact) {
+        // the battle's camera exactly, in an arena: the arena's lens and its crop of the arena's frame
+        const B = SC.battle;
+        cam.position.copy(BAT.full.pos); cam.quaternion.copy(BAT.full.quat);
+        cam.fov = B.camera.fov; cam.aspect = B.width / B.height; cam.setViewOffset(B.width * BAT.view.s, B.height * BAT.view.s, BAT.view.ox, BAT.view.oy, E.view.w, E.view.h); cam.updateProjectionMatrix();
+      } else if (lens) {
+        cam.quaternion.copy(LENS.q);
+        const hk = (c.shake || 0) * (1 - sm(0, 1, st / s.d));
+        if (hk > 0) { const t = realT; _e.set((Math.sin(t * .9) * .6 + Math.sin(t * 2.3 + 1) * .3 + Math.sin(t * 5.1) * .1) * hk * .012, (Math.sin(t * .7 + 2) * .6 + Math.sin(t * 1.9) * .4) * hk * .014, Math.sin(t * .5 + 3) * hk * .006); _q.setFromEuler(_e); cam.quaternion.multiply(_q); }
+        lensWindow(cam, LENS.win);
+      } else if (exact) {
         // the battle's camera exactly: its 12 degree lens and its crop of the painting's frame
         const B = SC.battle, A = B.width / B.height;
         cam.position.copy(BAT.full.pos); cam.up.set(0, 1, 0); cam.lookAt(BAT.full.look);
@@ -488,6 +518,52 @@ function makeCutscene(def) {
       const ray = new THREE.Raycaster(); ray.setFromCamera(ndc, full);
       BAT.pos.copy(full.position); BAT.look.copy(full.position).addScaledVector(ray.ray.direction, DIST);
       BAT.fov = 2 * Math.atan((h / S2) / IH * Math.tan(B.fov / 2 * Math.PI / 180)) * 180 / Math.PI;
+    }
+
+    // ---------- an arena's framing (the new battles): its locked camera, and the crop its opening shot takes ----------
+    // When the game says the fight is in its arena (opts.arena: the scene then gives SC.battle.arena), the battle looks
+    // through the arena's locked camera (src/fx/arena.js): at eye height on flat ground, with its own lens and a frame the
+    // painting's size, everyone placed in metres. Its opening shot crops that frame round everyone as the battle screen
+    // does in an arena (src/battle/screen.js: shotField, shotFit, applyCam, before the menu shows): the flat paintings'
+    // margins scaled by ZK (the place's frame pixels a metre over 54, and a fifth more), a giant whose head won't fit going
+    // out of the top rather than everyone's feet out of the bottom, the zoom never past half as big again as the widest
+    // (ZMAX), and the crop allowed down past the frame's bottom edge (BELOW). SC.battle gives the arena's camera, frame
+    // and ppm, everyone in the arena's metres (field), and where the arena's origin is in the place and how it is turned
+    // there (at, turn). These are screen.js's rules, copied: a change to them there is a change here too, in both
+    // cutscenes, with both modules rebuilt (tools/game-test.mjs's colossus and finale steps compare the two crops once the
+    // arenas are on).
+    function arenaFrame(B) {
+      if (BAT.key === E.view.w + 'x' + E.view.h) return;
+      BAT.key = E.view.w + 'x' + E.view.h;
+      const IW = B.width, IH = B.height, CA = B.camera, ZK = B.ppm / 54 * 1.2, ZMAX = 1.5, BELOW = Math.round(IH * .14);
+      const full = new THREE.PerspectiveCamera(CA.fov, IW / IH, .1, 900);
+      full.position.set(CA.x || 0, CA.h, CA.z); full.lookAt(CA.x || 0, CA.h + Math.tan(CA.pitch * Math.PI / 180) * 100, CA.z - 100); full.updateMatrixWorld(); full.updateProjectionMatrix();
+      const toPx = (x, y, z) => { _a.set(x, y, z).project(full); return [(_a.x + 1) / 2 * IW, (1 - _a.y) / 2 * IH]; };
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      for (const f of B.field) {
+        const pts = [[f.x, 0, f.z], [f.x, f.tall, f.z]]; if (f.halfW) pts.push([f.x + f.halfW, 0, f.z], [f.x - f.halfW, 0, f.z]);
+        for (const p of pts) { const q = toPx(p[0], p[1], p[2]); x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }
+      }
+      const w = E.view.w, h = E.view.h, availH = Math.max(120, h - 40), sMin = Math.max(w / IW, h / IH);
+      const S2 = Math.min(Math.max(Math.min((w - 16) / (x1 - x0 + 120 * ZK), availH / (y1 - y0 + 70 * ZK)), sMin), sMin * ZMAX);
+      const cy = (y1 - y0 + 70 * ZK) * S2 > availH ? y1 + 20 * ZK - availH / 2 / S2 : (y0 + y1) / 2, DPR = Math.min(window.devicePixelRatio || 1, 2);
+      let ox = (x0 + x1) / 2 * S2 - w / 2, oy = cy * S2 - (h / 2 + 20);
+      ox = cl(ox, 0, IW * S2 - w); oy = cl(oy, 0, IH * S2 - h + BELOW * S2);
+      ox = Math.round(ox * DPR) / DPR; oy = Math.round(oy * DPR) / DPR;
+      BAT.view = { s: S2, ox, oy };
+      // the same camera in the place, and its crop as a window of its lens (tangents of the angles off its heading:
+      // left, right, bottom, top)
+      const turn = new THREE.Quaternion().setFromAxisAngle(V3(0, 1, 0), B.turn || 0);
+      BAT.full = { pos: full.position.clone().applyQuaternion(turn).add(V3(B.at[0], B.at[1], B.at[2])), quat: turn.multiply(full.quaternion) };
+      const ty = Math.tan(CA.fov * Math.PI / 360), tx = ty * IW / IH, l = tx * (2 * ox / (IW * S2) - 1), t = ty * (1 - 2 * oy / (IH * S2));
+      BAT.win = [l, l + 2 * tx * w / (IW * S2), t - 2 * ty * h / (IH * S2), t];
+    }
+    // a lens that shows the window [left, right, bottom, top] of tangents round the camera's heading, at the screen's
+    // shape: an off-centre crop of a wider lens, as a battle's shot is of its frame
+    function lensWindow(cam, W) {
+      const tx = Math.max(Math.abs(W[0]), Math.abs(W[1])), ty = Math.max(Math.abs(W[2]), Math.abs(W[3])), fh = E.view.h * 2 * ty / (W[3] - W[2]), fw = fh * tx / ty;
+      cam.fov = Math.atan(ty) * 360 / Math.PI; cam.aspect = tx / ty;
+      cam.setViewOffset(fw, fh, (W[0] + tx) / (2 * tx) * fw, (ty - W[3]) / (2 * ty) * fh, E.view.w, E.view.h); cam.updateProjectionMatrix();
     }
 
     // ---------- the words: narration in a lower third ----------
@@ -607,6 +683,7 @@ function makeCutscene(def) {
       } catch (e) { still = null; }
       const f = fps.time > 2 ? Math.round(fps.frames / fps.time) : 0, r = E.renderer.info.render;
       api.last = { result: why, fps: f, worst: fps.worst < 99 ? Math.round(fps.worst) : 0, quality: qn, qualityName: QP.name, seconds: Math.round(fps.time), triangles: r.triangles, calls: r.calls, built: Object.assign({}, E.ms), sharpness: Math.round(E.scale / QP.scale * 100), sound: E.snd ? (E.snd.ready ? 'ready' : 'making') : 'none' };
+      { const k = E.camera, v = k.view; api.last.camera = { fov: k.fov, aspect: k.aspect, view: v && v.enabled ? Object.assign({}, v) : null }; }
       if (TEST) { if (settle) settle.res(why); return; }
       if (still) container.appendChild(still);
       dispose();

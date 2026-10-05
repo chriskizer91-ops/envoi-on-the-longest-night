@@ -21,8 +21,12 @@
 //   sound  [t, 'night', id, gain, { pan, far, secs }] (a bed's level, or one of the place's own sounds) | [t, 'sfx', id,
 //          gain, { at }] (an effect, placed where something is)
 //   say    [[t0, t1, key], ...]: a line from words.js; it may run on past the shot's end
-// Defines cutsceneScene() only.
-function cutsceneScene() {
+// When the game says the fight is fought in its arena (the new battles: arena, given by the game), the fight is seen
+// through the arena's locked camera at eye height instead, everyone placed in the arena's metres, and the cutscene ends
+// on that frame: see arenaPlaces below.
+//
+// Defines cutsceneScene(arena) only (arena: the game's, or nothing for the flat painting).
+function cutsceneScene(arena) {
   'use strict';
   // the fight's painting camera, and where it stands everyone (painting pixels)
   const B = { scene: 'dead-moonwell', width: 1448, height: 1086, fov: 12, pitch: 26, ppm: 54, io: [560, 762], sol: [630, 812], halcyon: [750, 690], noctara: [828, 642] };
@@ -32,11 +36,41 @@ function cutsceneScene() {
     const rc = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hit = new THREE.Vector3();
     return (p) => { rc.setFromCamera(new THREE.Vector2(p[0] / B.width * 2 - 1, 1 - p[1] / B.height * 2), cam); rc.ray.intersectPlane(plane, hit); return [hit.x, hit.z]; };
   })();
-  const IO = ground(B.io), SOL = ground(B.sol), HAL = ground(B.halcyon), NOC = ground(B.noctara);
-  const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2], HEROES = mid(IO, SOL), FOES = mid(HAL, NOC);
-  const face = (p, q) => Math.atan2(q[0] - p[0], q[1] - p[1]);
+  const mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2], face = (p, q) => Math.atan2(q[0] - p[0], q[1] - p[1]);
+  // where the flat painting's fight stands them, and in its arena (arenaPlaces) where the arena's does
+  const FLAT = { io: ground(B.io), sol: ground(B.sol), halcyon: ground(B.halcyon), noctara: ground(B.noctara) }, AR = arenaPlaces(arena, FLAT);
+  const IO = AR ? AR.io : FLAT.io, SOL = AR ? AR.sol : FLAT.sol, HAL = AR ? AR.halcyon : FLAT.halcyon, NOC = AR ? AR.noctara : FLAT.noctara;
+  const HEROES = mid(IO, SOL), FOES = mid(HAL, NOC);
   // their facing in the fight: each side toward the other's middle, turned a little toward the camera (yawBias)
-  const YAW = { io: face(IO, FOES) - .38, sol: face(SOL, FOES) - .3, halcyon: face(HAL, HEROES) + .15, noctara: face(NOC, HEROES) + .25 };
+  const YAW = AR ? AR.yaw : { io: face(IO, FOES) - .38, sol: face(SOL, FOES) - .3, halcyon: face(HAL, HEROES) + .15, noctara: face(NOC, HEROES) + .25 };
+
+  // The new battles: when the game says the fight is fought in its arena (A: src/game/game.js arenaFor), it is seen
+  // through the arena's locked camera at eye height, everyone placed in the arena's metres (src/fx/arena.js and
+  // src/stage/arena-dead-moonwell.js; ARENA_AT.finale in src/game/fights.js), so the cutscene ends on that frame. The
+  // arena is laid square on the court with Halcyon and Noctara's middle where the painting's fight has it, so the two
+  // stand within a step of where they always have (the arena stands them a little farther apart), and Io and Sol walk
+  // up to the arena's places for them; its camera then stands out over the main stair, at eye height above the court.
+  // Null for the flat painting, or when the arena hasn't all four of them.
+  function arenaPlaces(A, F) {
+    const pt = (p) => Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]), num = (v, d) => (Number.isFinite(v) ? v : d);
+    const by = (list, id) => (Array.isArray(list) ? list.find((u) => u && u.id === id && pt(u.at)) : null);
+    if (!A || !A.camera || !Array.isArray(A.frame) || !(A.ppm > 0)) return null;
+    const io = by(A.heroes, 'io'), sol = by(A.heroes, 'sol'), hal = by(A.foes, 'halcyon'), noc = by(A.foes, 'noctara');
+    if (!io || !sol || !hal || !noc) return null;
+    // where the arena's origin is on the court
+    const fm = mid(F.halcyon, F.noctara), am = mid(hal.at, noc.at), at = [fm[0] - am[0], fm[1] - am[1]], place = (p) => [p[0] + at[0], p[1] + at[1]];
+    // their facings as the battle sets them (src/battle/screen.js buildFoes): each toward the other side's middle, and
+    // its own turn toward the camera
+    const hc = mid(io.at, sol.at), fc = am;
+    const yaw = { io: face(io.at, fc) + num(io.yawBias, -.38), sol: face(sol.at, fc) + num(sol.yawBias, -.3), halcyon: face(hal.at, hc) + num(hal.yawBias, .15), noctara: face(noc.at, hc) + num(noc.yawBias, .25) };
+    return {
+      io: place(io.at), sol: place(sol.at), halcyon: place(hal.at), noctara: place(noc.at), yaw,
+      // the arena's framing (player.js arenaFrame): its camera, frame and pixels a metre, where its origin is on the
+      // court, and the four in its own metres with the fight's heights
+      battle: { arena: true, place: A.place, width: A.frame[0], height: A.frame[1], camera: A.camera, ppm: A.ppm, at: [at[0], 0, at[1]], turn: 0,
+        field: [{ x: io.at[0], z: io.at[1], tall: num(io.tall, 2.1) }, { x: sol.at[0], z: sol.at[1], tall: num(sol.tall, 1.9) }, { x: hal.at[0], z: hal.at[1], tall: num(hal.tall, 2.11) }, { x: noc.at[0], z: noc.at[1], tall: num(noc.tall, 2.5) }] }
+    };
+  }
   // a point d meters from p, toward a compass bearing (degrees east of north) and a height (degrees up)
   const aim = (p, az, el, d) => { const a = az * Math.PI / 180, e = el * Math.PI / 180; return [p[0] + Math.sin(a) * Math.cos(e) * d, p[1] + Math.sin(e) * d, p[2] - Math.cos(a) * Math.cos(e) * d]; };
   // the moon (moonwell.js): 18 degrees west of north, 28 up; looking at Noctara along a bearing 20 degrees east of it puts
@@ -129,8 +163,8 @@ function cutsceneScene() {
       sol: { at: SOL, yaw: YAW.sol, state: { heat: 0 } }
     },
     // the fight's framing: its painting camera, the battle's origin in the place (the court's middle), and everyone standing
-    // in it (their heights are the fight's: src/game/fights.js, FOE_LOOK and the heroes)
-    battle: {
+    // in it (their heights are the fight's: src/game/fights.js, FOE_LOOK and the heroes); in an arena, the arena's
+    battle: AR ? AR.battle : {
       scene: B.scene, width: B.width, height: B.height, fov: B.fov, pitch: B.pitch, ppm: B.ppm, at: [0, 0, 0],
       field: [{ x: IO[0], z: IO[1], tall: 2.1 }, { x: SOL[0], z: SOL[1], tall: 1.9 }, { x: HAL[0], z: HAL[1], tall: 2.11 }, { x: NOC[0], z: NOC[1], tall: 2.5 }]
     },

@@ -18,11 +18,15 @@
 //   scenes:   the staged scenes play on their maps (Sol at the bridge, Quill at the jetty, the knight, Ysmera)
 //   save:     the save is written, and the title offers Continue
 //   wild:     a wild fight in the band (--band, at --level) is played to its end by the expert play style
-//   colossus: the Bramble Colossus is fought the same way (band 4); headless, a whole fight takes a long while. The first
-//             time, its cutscene plays first (envoi-final-draft/cutscenes/colossus-first-meeting/): the step sees it
-//             draw, skips it with Esc as a player can, and checks the fight starts with the Colossus already standing
+//   colossus: the Bramble Colossus is fought the same way (band 4), cut short: headless, a whole fight outlasts the wait,
+//             so its Colossus is weakened once the fight begins, as keepsakes does. The first time, its cutscene plays
+//             first (envoi-final-draft/cutscenes/colossus-first-meeting/): the step sees it draw, skips it with Esc as a
+//             player can, and checks the fight starts with the Colossus already standing. The first win leaves its two
+//             keepsakes, whose cards are closed with Enter
 //   finale:   the finale's opening cutscene plays before the finale's first try, is skipped with Esc, and the fight starts
 //             with Noctara and Halcyon already standing; the fight isn't played out (run it last)
+//             (colossus and finale, once the arenas are on: the fight opens on the cutscene's last picture exactly, the
+//             same lens and crop of its arena's frame)
 //   keepsakes: the twenty (src/game/keepsakes.js): Io walks by a tap up Chris's secret way over Wickhollow's roof to the
 //             Crescent Locket, into the nook by the east bridge for the Forge Horseshoe, and down the Thornwood's dark
 //             trail to the Warden's Brooch; Nettie gives her shawl; each shows its card, which never counts them. The Items
@@ -105,6 +109,21 @@ async function throughCutscene(name) {
   await page.keyboard.press('Escape');
   await waitFor(() => !!window.__battle, null, 120000, 'the battle screen after the cutscene');
   log('  its cutscene played, and was skipped with Esc');
+}
+// once the fight has begun after its cutscene: in its arena (the new battles, once switched on) it opened on the
+// cutscene's last picture exactly, the same lens and the same crop of the arena's frame, held while the picture faded
+// into it (each cutscene's README, "The hand-over"). On a flat painting there is nothing to compare: the picture fades
+// over the fight's first moments, as it always has
+async function sameOpening(id) {
+  const r = await page.evaluate((id) => {
+    const B = window.__battle, C = window.CUTSCENES && window.CUTSCENES[id];
+    return { arena: !!(B && B.arena), a: C && C.last ? C.last.camera : null, b: B ? B.opening : null };
+  }, id);
+  if (!r.arena) return;
+  const nums = (c) => (c && c.view ? [c.fov, c.aspect, c.view.fullWidth, c.view.fullHeight, c.view.offsetX, c.view.offsetY, c.view.width, c.view.height] : null);
+  const a = nums(r.a), b = nums(r.b);
+  if (!a || !b || a.some((x, i) => Math.abs(x - b[i]) > 1e-3)) throw new Error('the fight did not open on the cutscene’s last picture: ' + JSON.stringify({ cutscene: a, fight: b }));
+  log('  the fight opened on the cutscene’s last picture: the arena’s frame drawn ' + b[2].toFixed(0) + ' x ' + b[3].toFixed(0) + ' and cropped from ' + b[4].toFixed(1) + ', ' + b[5].toFixed(1) + ', as the cutscene ended');
 }
 async function talkThrough(ms, until) {
   const end = Date.now() + (ms || 60000);
@@ -242,6 +261,8 @@ try {
       await waitFor(() => !!window.__battle, null, 60000, 'the battle screen');
       await page.evaluate((tb) => { window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
+      if (cut) await sameOpening('colossus-first-meeting');
+      if (step === 'colossus') await page.evaluate(() => { for (const f of window.__battle.engine.foes) window.__battle.weaken(5, f.key); });
       await shot(step + '-fight');
       // where it is fought (on the flat painting while the arenas are switched off), and how sharp its 3D is drawn
       const how = await page.evaluate(() => { const B = window.__battle, s = B.sharp, A = B.arena; return { arena: A ? A.place.id : null, sharp: s ? s.sharp : null, w: s ? s.w : 0, h: s ? s.h : 0 }; });
@@ -256,6 +277,16 @@ try {
       const r = await page.evaluate(() => ({ fights: window.__game.state.fights, wins: window.__game.state.wins, level: window.__game.state.level }));
       log('  after the fight: ' + JSON.stringify(r));
       await talkThrough(30000);
+      // the first Bramble Colossus the party beats leaves its two keepsakes, and the game waits on each card: closed with
+      // Enter as a player can (and any words between them tapped through), so the next step finds the game free
+      const cards = [];
+      for (const t1 = Date.now(); await page.evaluate(() => window.__game.busy) && Date.now() - t1 < 30000; await sleep(400)) {
+        const card = await page.evaluate(() => { const c = document.querySelector('.kcard-layer'); if (!c) return null; const first = !c.dataset.met; c.dataset.met = '1'; return { first, name: c.getAttribute('aria-label') }; });
+        if (card) { await page.keyboard.press('Enter'); if (card.first) cards.push(card.name); }
+        await talkThrough(5000);
+      }
+      if (await page.evaluate(() => window.__game.busy)) { await shot(step + '-still-busy'); throw new Error('the game is still busy after the fight'); }
+      if (cards.length) log('  its keepsakes\' cards, each closed with Enter: ' + cards.join(', '));
       await shot(step + '-after');
     } else if (step === 'keepsakes') {
       // the twenty keepsakes (src/game/keepsakes.js): found on the maps by a tap and the action button, given by Nettie,
@@ -441,6 +472,7 @@ try {
       await page.evaluate(() => { window.__game.battle('finale'); });
       await throughCutscene('finale');
       await waitFor(() => window.__battle && window.__battle.state === 'battle', null, 240000, 'the finale to begin');
+      await sameOpening('finale-opening');
       const seen = await page.evaluate(() => !!(window.__game.state.seen && window.__game.state.seen['finale-opening']));
       if (!seen) throw new Error('the finale cutscene isn’t marked seen');
       await shot('finale-fight');

@@ -9,7 +9,8 @@
 // Until the flying demo (plan step 19) is joined in, boarding the Magpie picks a landing and the flight is a short
 // crossing of the night sky.
 // Game.start({ host, src(path) -> URL, skipTitle, state, chapter }) -> the game (chapter: a CHAPTERS index, for a page
-// that plays only that chapter: its title offers to begin it or carry on). Defines window.Game.
+// that plays only that chapter: its title offers to begin it or carry on). Defines window.Game (with Game.arenaFor(cfg):
+// what a fight's cutscene is given of its arena, below).
 (function () {
   'use strict';
   function el(tag, attrs, parent, text) { const e = document.createElement(tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; if (parent) parent.appendChild(e); return e; }
@@ -109,6 +110,21 @@
   const TILES = { '00': "art/world/night-00.webp", '01': "art/world/night-01.webp", '02': "art/world/night-02.webp", '10': "art/world/night-10.webp", '11': "art/world/night-11.webp", '12': "art/world/night-12.webp", '20': "art/world/night-20.webp", '21': "art/world/night-21.webp", '22': "art/world/night-22.webp" };
   // the regions' names on Chris's D&D map (design decisions, place names)
   const REGION = { 2: 'The Verdant Wilds', 3: 'The northern wilds', 4: 'The Ironspire Peaks' };
+
+  // a fight in its arena (the new battles, cfg.arena), for its cutscene to end on the fight's opening frame there: the
+  // arena's locked camera, its frame and pixels a metre (src/fx/arena.js), and where everyone stands in it, in metres,
+  // with their heights and how the battle turns them. Nothing for a fight on its flat painting, whose frame each
+  // cutscene works out itself (each cutscene's README, "The hand-over"). Each cutscene's tools/check.mjs asks it too
+  // (Game.arenaFor), so it checks what the game gives
+  function arenaFor(cfg) {
+    const P = cfg.arena && window.ARENAS && window.ARENAS[cfg.arena], AV = window.makeArenaField && window.makeArenaField.view;
+    if (!P || !AV || !cfg.fight) return null;
+    const look = (id) => (cfg.foeLook && cfg.foeLook[id]) || {}, foes = (cfg.fight().foes || []).slice(0, cfg.slots.length);
+    return Object.assign(AV(P), {
+      heroes: cfg.heroes.map((h) => ({ id: h.id, at: h.home.slice(), tall: h.tall, yawBias: h.yawBias })),
+      foes: foes.map((f, i) => ({ id: f.id, at: cfg.slots[i].slice(), tall: look(f.id).tall, halfW: look(f.id).halfW || 0, yawBias: look(f.id).yawBias })),
+    });
+  }
 
   function start(opts) {
     opts = opts || {};
@@ -620,27 +636,30 @@
       if (kind === 'finale') id = 'finale-opening';
       else if (kind === 'wild' && cfg.fight) { const f = (cfg.fight().foes || [])[0]; if (f && f.id === 'colossus') { id = 'colossus-first-meeting'; level = f.level; } }
       const C = id && window.CUTSCENES && window.CUTSCENES[id];
-      return C && !(st.seen && st.seen[id]) ? { id, C, level } : null;
+      return C && !(st.seen && st.seen[id]) ? { id, C, level, arena: arenaFor(cfg) } : null;
     }
-    function csOpts(level) {
+    function csOpts(level, arena) {
       const v = (x) => Math.min(1.25, (x || 0) / 0.75), o = { volume: { music: v(settings.music), effects: v(settings.sfx), surroundings: v(settings.amb) } };
-      if (coarse) o.quality = 'phone'; if (level) o.level = level;
+      if (coarse) o.quality = 'phone'; if (level) o.level = level; if (arena) o.arena = arena;
       return o;
     }
     async function cutscene(cs) {
       st.seen = st.seen || {}; st.seen[cs.id] = true; save();
       const box = el('div', { class: 'cutscene-layer' }, root);
-      try { await cs.C.play(box, csOpts(cs.level)); } catch (e) { /* a cutscene that can't play is passed over */ }
+      try { await cs.C.play(box, csOpts(cs.level, cs.arena)); } catch (e) { /* a cutscene that can't play is passed over */ }
       return box;
     }
-    // the cutscene's last picture stays over the fight while it builds, then fades into it
-    function fadeStill(box) { setTimeout(() => { box.classList.add('is-gone'); setTimeout(() => box.remove(), 900); }, 1200); }
+    // the cutscene's last picture stays over the fight while it builds, then fades into it (after ms, 1200 by default)
+    function fadeStill(box, ms) { setTimeout(() => { box.classList.add('is-gone'); setTimeout(() => box.remove(), 900); }, ms === undefined ? 1200 : ms); }
     // one this game has shown, watched again from the menu's Settings: over the menu, which is still there after it
+    // (it ends as it did before its fight: in the fight's arena when the fight is fought in one)
+    const CUT_FIGHT = { 'colossus-first-meeting': ['wild', { band: 4, pack: ['colossus'] }], 'finale-opening': ['finale', {}] };
     async function rewatch(id) {
       const C = window.CUTSCENES && window.CUTSCENES[id]; if (!C) return;
       const was = curMusic; music(null);
+      let arena = null; try { if (GameFights.ARENA && CUT_FIGHT[id]) arena = arenaFor(GameFights.config(CUT_FIGHT[id][0], st, CUT_FIGHT[id][1])); } catch (e) { /* the flat painting's ending */ }
       const box = el('div', { class: 'cutscene-layer is-over', tabindex: '-1' }, root); box.focus({ preventScroll: true });
-      try { await C.play(box, csOpts()); } catch (e) { /* passed over */ }
+      try { await C.play(box, csOpts(null, arena)); } catch (e) { /* passed over */ }
       box.remove(); music(was);
     }
     async function battle(kind, o) {
@@ -658,11 +677,16 @@
       // after a cutscene, the fight takes its place under the cutscene's last picture: in an arena, no weather rolls in
       if (still) { cfg.quickIntro = true; cfg.standing = true; if (cfg.arena) cfg.weather = 'clear'; }
       // a battle that can't even start (an arena that fails to build) hands back to the map instead of leaving its layer up
+      let late = 0;
       const r = await new Promise((res) => {
         cfg.game = { onEnd: res, onError: () => res({ outcome: 'error' }) }; cfg.sound = SND;
+        // in an arena, the picture fades when the battle is drawing the same frame (it says so: shown), or after a while
+        // if it never does; on a flat painting, a moment after the battle starts building, as before
+        if (still && cfg.arena) { late = setTimeout(() => fadeStill(still, 0), 15000); cfg.game.shown = () => { clearTimeout(late); fadeStill(still, 0); }; }
         try { layer.ctl = BattleScreen.start(cfg); } catch (err) { console.error(err); layer.ctl = { stop() {} }; res({ outcome: 'error' }); }
-        if (still) fadeStill(still); // a cutscene's last picture goes in the error case too
+        if (still && !cfg.arena) fadeStill(still); // a cutscene's last picture goes in the error case too
       });
+      if (still && cfg.arena) { clearTimeout(late); if (still.parentNode) still.remove(); } // (an arena's battle that ended before it drew)
       layer.ctl.stop(); layer.remove();
       if (was === 'field') field.show(true); else if (was === 'world') world.show(true);
       if (r.outcome !== 'error') { moreShards(r); GS.applyBattle(st, r); backAfter(r); }
@@ -956,5 +980,5 @@
     window.__game = api;
     return api;
   }
-  window.Game = { start, PLACES, LANDINGS };
+  window.Game = { start, PLACES, LANDINGS, arenaFor };
 })();
