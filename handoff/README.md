@@ -80,6 +80,8 @@ Every task left in the game is defined one by one in **`tasks.md`** here: why (C
 
 ## Your first moves
 
+**Done October 5** by the ultracode hub: 1 to 3 (T03 `9c65e72`; T01 part A `39350b5`, with the review's fixes; T02 step 1 `cf4a475`, the scenes staged in `src/game/maps-wilds.js` and their demo at https://claude.ai/artifact/2WSu7uWvtDUmF5JwxV5xwC), and 4 is asked. What comes next waits on Chris: his yes to the arenas (T01 part B), his okay to the scenes and his four calls (T02 step 2, T10). `tasks.md` has where each stands.
+
 1. Check the relay (above).
 2. T03, quickly, then T01's part A: review `work/arenas` and bring it in with the switch off. The arenas go first because the creatures' intake (T04) and the words (T05) both touch `src/game/fights.js`.
 3. T02 as a workflow: the eight scenes traced in parallel, each into a file of its own, then added to `src/game/maps.js` one at a time; then the demo page for Chris to walk.
