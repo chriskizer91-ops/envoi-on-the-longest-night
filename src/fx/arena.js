@@ -48,7 +48,8 @@ function makeArenaField(P) {
   };
   const root = new THREE.Group(); root.name = 'Arena';
   const AIRP = Object.assign({ mist: 0.5, fireflies: 0, ffColor: [0.85, 1, 0.45], snow: 0, sparks: 0, glints: 0, fly: 'birds', fall: 'leaf', leaf: [0.3, 0.42, 0.2] }, P.air || {});
-  const STATS = { liveTufts: 0, glints: 0 };
+  // what the arena holds (its tufts, frost glints), and what is up this frame (stones and clods, birds or bats in the air)
+  const STATS = { liveTufts: 0, glints: 0, debris: 0, birds: 0 };
 
   // ---------- the locked camera and its frame ----------
   const FW = 1448, FH = 1086; // the frame is the painting's own size, so its pixels are the painting's
@@ -366,10 +367,12 @@ function makeArenaField(P) {
       '  float g = gustAt(q), push = length(pushAt(q));',
       '  c *= 1. + (.22 * g * uWind.z + .45 * min(push, 1.2)) * near;',
       '  c *= 1. - .35 * cshade(q) * (1. - uStorm);',
-      '  float pud = smoothstep(.6, .7, mf(q * .09)) * uWet; c *= 1. - .3 * uWet - .25 * pud;',
-      '  c = mix(c, uStormC * 1.6 + uBoltC * uFlash * .6, pud * .45);',
-      '  { vec2 cc = floor(q * 1.4), fr = fract(q * 1.4) - .5, o = vec2(mh(cc + 3.1), mh(cc + 7.7)) - .5; float rp = fract(uT * 1.2 + mh(cc));',
-      '   c += vec3(.4, .45, .5) * smoothstep(.06, 0., abs(length(fr - o * .5) - rp * .45)) * (1. - rp) * uRain * pud * step(mh(cc + 1.9), .6) * near; }',
+      // the rain's puddles, and its drops rippling them: worked out only while the ground is wet, and the drops only
+      // while it rains (dry, both came to nothing; the whole frame takes the same way, so the skip is free)
+      '  if (uWet > .001) { float pud = smoothstep(.6, .7, mf(q * .09)) * uWet; c *= 1. - .3 * uWet - .25 * pud;',
+      '   c = mix(c, uStormC * 1.6 + uBoltC * uFlash * .6, pud * .45);',
+      '   if (uRain > .001) { vec2 cc = floor(q * 1.4), fr = fract(q * 1.4) - .5, o = vec2(mh(cc + 3.1), mh(cc + 7.7)) - .5; float rp = fract(uT * 1.2 + mh(cc));',
+      '    c += vec3(.4, .45, .5) * smoothstep(.06, 0., abs(length(fr - o * .5) - rp * .45)) * (1. - rp) * uRain * pud * step(mh(cc + 1.9), .6) * near; } }',
       '  vec4 dc = decalAt(q); c *= 1. - dc.x; c += decalC(dc.w) * dc.y * .8;',
       '  c *= uRelight; vec3 gl = glowAt(P); c += c * gl * 2.4 + gl * .03;',
       ' } else if (gnd > .01) { c *= uRelight; }',
@@ -580,7 +583,8 @@ function makeArenaField(P) {
         ' vec3 d = normalize(vW - uCP); float dist = length(vW - uCP);',
         // ripples: the wind's small waves, the shockwaves' rings, and the rain
         ' vec2 q = vW.xz; vec2 n = (vec2(mn(q * 1.7 + uT * vec2(.31, .22)), mn(q * 1.3 - uT * vec2(.24, .37))) - .5) * (.05 + .05 * uWind.z) + pushAt(q) * .06;',
-        ' { vec2 cc = floor(q * 1.6), fr = fract(q * 1.6) - .5, o = vec2(mh(cc + 3.1), mh(cc + 7.7)) - .5; float rp = fract(uT * 1.3 + mh(cc)); n += (fr - o * .4) * smoothstep(.08, 0., abs(length(fr - o * .4) - rp * .45)) * (1. - rp) * uRain * step(mh(cc + 1.9), .55) * .5; }',
+        // (the rain's rings only while it rains)
+        ' if (uRain > .001) { vec2 cc = floor(q * 1.6), fr = fract(q * 1.6) - .5, o = vec2(mh(cc + 3.1), mh(cc + 7.7)) - .5; float rp = fract(uT * 1.3 + mh(cc)); n += (fr - o * .4) * smoothstep(.08, 0., abs(length(fr - o * .4) - rp * .45)) * (1. - rp) * uRain * step(mh(cc + 1.9), .55) * .5; }',
         // the reflection: the painting seen in the mirrored direction
         ' vec3 r = normalize(vec3(d.x + n.x, -d.y + abs(n.x + n.y) * .3, d.z + n.y)); vec4 rq = uVP * vec4(uCP + r * 600., 1.); vec2 ru = clamp(rq.xy / rq.w * .5 + .5, vec2(.002), vec2(.998));',
         ' vec3 refl = texture2D(uPaint, ru).rgb; float fres = .03 + .97 * pow(1. - clamp(-d.y, 0., 1.), 5.);',
@@ -810,6 +814,7 @@ function makeArenaField(P) {
 
   // ---------- birds or bats: they sit in the far trees and the framing tree until a roar or a blow puts them up ----------
   const NBD = 28, BAT = AIRP.fly === 'bats', BP = Array.from({ length: NBD }, () => new THREE.Vector4(0, -60, 0, 0)), BH = Array.from({ length: NBD }, () => new THREE.Vector4(0, 0, 1, 0));
+  let birds = null; // drawn only while some are in the air
   {
     const Pp = [], A = [], I = [];
     const tri = (b, pts) => { const s = Pp.length / 3; for (const p of pts) { Pp.push(p[0], p[1], p[2]); A.push(b); } I.push(s, s + 1, s + 2); };
@@ -820,7 +825,7 @@ function makeArenaField(P) {
       else { tri(b, [[0.05, 0, 0.06], [0.48, 0, -0.06], [0.05, 0, -0.1]]); tri(b, [[-0.05, 0, 0.06], [-0.05, 0, -0.1], [-0.48, 0, -0.06]]); }
     }
     const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(Pp, 3)); g.setAttribute('aB', new THREE.Float32BufferAttribute(A, 1)); g.setIndex(I);
-    const birds = new THREE.Mesh(g, new THREE.ShaderMaterial({
+    birds = new THREE.Mesh(g, new THREE.ShaderMaterial({
       uniforms: { uBP: { value: BP }, uBH: { value: BH }, uC: { value: COL(BAT ? 0x0c0810 : 0x0e0b14) } }, side: THREE.DoubleSide,
       vertexShader: 'attribute float aB; uniform vec4 uBP[' + NBD + ']; uniform vec4 uBH[' + NBD + '];\n' +
         'void main(){ int i = int(aB + .5); vec4 P = vec4(0.), H = vec4(0., 0., 1., 0.); for (int k = 0; k < ' + NBD + '; k++) { if (k == i) { P = uBP[k]; H = uBH[k]; } }\n' +
@@ -859,11 +864,12 @@ function makeArenaField(P) {
   }
 
   // ---------- rocks and clods, stone chips or splinters thrown up by the big blows: they fly, tumble, bounce and settle ----------
+  // (drawn only while any are up or lying there: most of a fight, none are)
   const NDB = 140;
   const debris = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 0), new THREE.MeshStandardMaterial({ roughness: 0.95, flatShading: true }), NDB);
   debris.instanceMatrix.setUsage(THREE.DynamicDrawUsage); debris.frustumCulled = false; debris.count = NDB; root.add(debris);
   const DBR = Array.from({ length: NDB }, () => ({ on: false, p: V3(), v: V3(), q: new THREE.Quaternion(), w: V3(), s: 0.1, life: 0, rest: 0, wet: false }));
-  const _m4 = new THREE.Matrix4(), _qq = new THREE.Quaternion(), _sv = V3();
+  const _m4 = new THREE.Matrix4(), _qq = new THREE.Quaternion(), _sv = V3(), _eu = new THREE.Euler();
   // what a blow throws up here (P.floor.debris): turf and stones, stone chips, frozen clods, or splinters
   const DEBRIS = {
     turf: [0x4b4a52, 0x3c3428, 0x5a5560, 0x46562e], stone: [0x6a6670, 0x585460, 0x7a7680, 0x4a4650], frost: [0xb8c0d0, 0x6a7080, 0x9aa4b4, 0x56604e],
@@ -877,7 +883,7 @@ function makeArenaField(P) {
     for (let k = 0; k < n; k++) {
       const D = DBR[dbN], a = rnd() * TAU, r = rr(0.3, 1.6) * Math.sqrt(s), sp = rr(2, 6.5) * s; dbN = (dbN + 1) % NDB;
       D.on = true; D.p.set(x + Math.sin(a) * r, 0.1, z + Math.cos(a) * r); D.v.set(Math.sin(a) * sp, rr(4, 9) * Math.sqrt(s), Math.cos(a) * sp);
-      D.q.setFromEuler(new THREE.Euler(rnd() * TAU, rnd() * TAU, 0)); D.w.set(rr(-9, 9), rr(-9, 9), rr(-9, 9)); D.s = rr(0.06, 0.2) * (0.7 + 0.5 * s); D.life = rr(4, 7); D.rest = 0; D.wet = false;
+      D.q.setFromEuler(_eu.set(rnd() * TAU, rnd() * TAU, 0)); D.w.set(rr(-9, 9), rr(-9, 9), rr(-9, 9)); D.s = rr(0.06, 0.2) * (0.7 + 0.5 * s); D.life = rr(4, 7); D.rest = 0; D.wet = false;
     }
   }
 
@@ -1046,10 +1052,11 @@ function makeArenaField(P) {
     }
     for (const k of ['position', 'aCol', 'aSize', 'aRot', 'aKind']) pG.attributes[k].needsUpdate = true;
     // the rocks and clods (they sink into water)
-    let any = false;
+    let any = false, up = 0;
     for (let i = 0; i < NDB; i++) {
       const D = DBR[i]; if (!D.on) continue; any = true;
       D.life -= dt; if (D.life <= 0) { D.on = false; debris.setMatrixAt(i, _m4.makeScale(0, 0, 0)); continue; }
+      up++;
       if (D.rest < 1) {
         D.v.y -= 9.8 * dt; D.p.addScaledVector(D.v, dt);
         const fl = WATER && !onDeck(D.p.x, D.p.z) ? (WATER.y === undefined ? -0.34 : WATER.y) : 0;
@@ -1058,12 +1065,14 @@ function makeArenaField(P) {
           if (fl < 0) { D.v.multiplyScalar(0.8); }
           else { D.p.y = D.s * 0.6; if (D.v.y < -1.5) { D.v.y *= -0.32; D.v.x *= 0.55; D.v.z *= 0.55; D.w.multiplyScalar(0.5); } else { D.v.set(0, 0, 0); D.rest = 1; } }
         }
-        _qq.setFromEuler(new THREE.Euler(D.w.x * dt, D.w.y * dt, D.w.z * dt)); D.q.multiply(_qq);
+        _qq.setFromEuler(_eu.set(D.w.x * dt, D.w.y * dt, D.w.z * dt)); D.q.multiply(_qq);
       }
       const sc = D.s * Math.min(1, D.life / 1.2); debris.setMatrixAt(i, _m4.compose(D.p, D.q, _sv.set(sc, sc * 0.75, sc)));
     }
     if (any) debris.instanceMatrix.needsUpdate = true;
+    debris.visible = up > 0; STATS.debris = up;
     // the birds or bats: up and away when startled, back to roost later
+    let aloft = 0;
     for (const B of BIRDS) {
       const bp = BP[B.i], bh = BH[B.i];
       if (B.st === 1) {
@@ -1072,9 +1081,10 @@ function makeArenaField(P) {
         B.v.y += ((B.p.y < 30 ? 3.5 : -0.5) - B.v.y) * dt * 0.8; const hs = Math.hypot(B.v.x, B.v.z) || 1; B.v.x *= (8.5 / hs - 1) * dt + 1; B.v.z *= (8.5 / hs - 1) * dt + 1;
         B.p.addScaledVector(B.v, dt); B.flap += dt * (BAT ? 26 : B.v.y > 1 ? 22 : 12 * (0.5 + 0.5 * Math.sin(B.t * 1.3)));
         bp.set(B.p.x, B.p.y, B.p.z, 1); bh.set(B.v.x, B.v.y * 0.5, B.v.z, B.flap);
-        if (B.t > B.dur) { B.st = 2; B.wait = rr(15, 35); bp.w = 0; }
+        if (B.t > B.dur) { B.st = 2; B.wait = rr(15, 35); bp.w = 0; } else aloft++;
       } else { bp.w = 0; if (B.st === 2 && (B.wait -= dt) <= 0) B.st = 0; }
     }
+    birds.visible = aloft > 0; STATS.birds = aloft;
   }
 
   const api = {
@@ -1096,8 +1106,19 @@ function makeArenaField(P) {
       BU.uPaint.value = t; sheet.visible = true;
     },
     dispose() {
-      root.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose()); });
-      for (const t of keep) t.dispose();
+      root.traverse((o) => {
+        // an instanced mesh's own buffers (where each stone or post stands, and its colour) are freed only by its own
+        // dispose() in three r128, not by its geometry's
+        if (o.isInstancedMesh) o.dispose();
+        if (o.geometry) o.geometry.dispose(); if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose());
+      });
+      // the textures, and the canvases they were painted on, emptied: a canvas keeps its pixels until it is collected,
+      // which on a phone can be a while after the fight (if the canvases are ever kept per place, so that a fight starts
+      // sooner, those must be left out of this)
+      for (const t of keep) {
+        t.dispose();
+        for (const c of [t.image].concat(t.mipmaps || [])) if (c && c.nodeName === 'CANVAS') { c.width = 0; c.height = 0; }
+      }
     },
   };
   update(0, 0);

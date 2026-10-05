@@ -10,8 +10,9 @@
 //   controls: the three ways to move her by pointer, on the same road: holding on the map steers her toward it, a quick
 //             tap walks her there, and one thumb on the pad (here a mouse) walks her north and rolls round to north-east
 //   world:    Io walks the world map
-//   menu:     the menu opens on every tab and closes; Settings plays a cutscene again ("Watch again", once a game has
-//             shown it), over the menu, and Esc skips it
+//   menu:     the menu opens on every tab and closes; Settings has the battles' sharpness beside their frame rate (3/4
+//             unless another is picked, and a pick is kept where the battle screen reads it); Settings plays a cutscene
+//             again ("Watch again", once a game has shown it), over the menu, and Esc skips it
 //   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load
 //   scenes:   the staged scenes play on their maps (Sol at the bridge, Quill at the jetty, the knight, Ysmera)
 //   save:     the save is written, and the title offers Continue
@@ -192,6 +193,24 @@ try {
       await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');
       for (const tab of await page.$$eval('.gmenu-tabs button', (b) => b.map((x) => x.textContent))) {
         await page.click('.gmenu-tabs button:text-is("' + tab + '")'); await sleep(200); await shot('menu-' + tab.toLowerCase());
+      }
+      // Settings has the battles' sharpness beside their frame rate: 3/4 unless another is picked, and a pick is kept
+      // where the battle screen reads it ('envoi.sharp')
+      {
+        await page.click('.gmenu-tabs button:text-is("Settings")'); await sleep(200);
+        const row = (label) => page.evaluate((lb) => {
+          const r = [...document.querySelectorAll('.gmenu-body .gm-item')].find((x) => x.firstChild && x.firstChild.textContent === lb);
+          return r ? { opts: [...r.querySelectorAll('button')].map((b) => b.textContent + (b.getAttribute('aria-pressed') === 'true' ? '*' : '')).join(', '), kept: localStorage.getItem('envoi.sharp') } : null;
+        }, label);
+        const pick = async (t) => {
+          await page.locator('.gmenu-body .gm-item').filter({ has: page.locator('span', { hasText: 'Battle sharpness' }) }).getByRole('button', { name: t, exact: true }).click();
+          await sleep(200); return row('Battle sharpness');
+        };
+        const fr = await row('Battle frame rate'), s0 = await row('Battle sharpness');
+        if (!fr || !s0 || s0.opts !== 'Full, 3/4*, Half') throw new Error('Settings: no Battle sharpness choice beside the frame rate, or 3/4 isn’t picked: ' + JSON.stringify(s0));
+        const s1 = await pick('Half'), s2 = await pick('3/4');
+        if (s1.kept !== '0.5' || !/Half\*/.test(s1.opts) || s2.kept !== '0.75' || !/3\/4\*/.test(s2.opts)) throw new Error('Settings: Battle sharpness isn’t kept: ' + JSON.stringify([s1, s2]));
+        log('  Settings: Battle frame rate ' + fr.opts + '; Battle sharpness ' + s0.opts + ' (Half kept as ' + s1.kept + ', then 3/4 again)');
       }
       // a cutscene the game has shown can be watched again from Settings, over the menu
       if (await page.evaluate(() => !!(window.CUTSCENES && window.CUTSCENES['colossus-first-meeting']))) {
