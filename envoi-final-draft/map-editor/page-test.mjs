@@ -6,10 +6,11 @@
 // editor keeps its path tools as they were: zoom, drag, add and delete points, undo and redo, Smooth, new shapes, people
 // and arrivals moved, the reach check, walking Io, the edits kept after a reload, Copy my work (no download since
 // October 5) with check-edits.mjs and apply-edits.mjs (in a scratch copy of maps.js), the
-// cottage's steps, the page at phone width, and sending through a stand-in store (where Send everything new now sends
-// the keepsakes too). Then the keepsakes: the two hidden ones where they lie today, one put on a map and found within
-// reach, one out of reach and dragged back in, undo and redo, Delete, a note, walking Io to one and its card, sending
-// one document per keepsake, everything kept after a reload, and the page at phone width.
+// cottage's steps, the page at phone width, and sending through a stand-in store (where Send everything new sends the
+// keepsakes Chris moved too: none there). Then the keepsakes: the two hidden ones where they lie today, one put on a map
+// and found within reach, one out of reach and dragged back in, undo and redo, Delete, a note, walking Io to one and its
+// card, sending a document for each one he moved or wrote a note on (since October 5 no other: one he never touched
+// follows items.js), everything kept after a reload, and the page at phone width.
 // Each step saves a screenshot in --out (tools/.cache/map-editor-test by default). Exits 1 on any page error or failed
 // step.
 import fs from 'fs';
@@ -325,7 +326,7 @@ try {
   writes = await ev(() => window.__writes);
   const sentEdits = writes.filter((x) => x.path.startsWith('edits/')), sentPlaces = writes.filter((x) => x.path.startsWith('places/'));
   check(sentEdits.length === 2 && sentEdits[1].path === 'edits/jetty', 'Send everything new sends only the jetty’s paths (Wickhollow is already sent): ' + sentEdits.map((x) => x.path).join(', '));
-  check(sentPlaces.length === 20 && writes.length === 22, 'and one document for each of the twenty keepsakes, the first time: ' + sentPlaces.length);
+  check(sentPlaces.length === 0 && writes.length === 2, 'and no keepsake’s document, since he moved none: ' + sentPlaces.length);
   fs.writeFileSync(path.join(out, 'sent.json'), JSON.stringify(sentEdits.map((x) => x.body), null, 1));
   const chk3 = spawnSync(process.execPath, [path.join(R, 'envoi-game-pass-3/map-paths/check-edits.mjs'), path.join(out, 'sent.json')], { encoding: 'utf8' });
   console.log(chk3.stdout.replace(/^/gm, '        '));
@@ -399,14 +400,19 @@ try {
   check(!(await ev(() => MapEditor.foundOpen)) && (await ev(() => MapEditor.found)).includes('hag-stone'), 'Enter closes the card, and it stays found');
   await page.keyboard.press('Escape'); await sleep(300);
   check(!(await ev(() => MapEditor.walking)), 'Esc brings the editing back');
-  // sending: one document per keepsake
+  // a note on a gift, which has no place
+  await page.click('#me-groups .ip-item >> text=Nettie’s Knotted Shawl'); await sleep(150);
+  await page.fill('#me-card textarea', 'Nettie gives it as Io sets out'); await sleep(400);
+  // sending: a document for each keepsake he moved (the Hag-Stone, the Bogstriders) or wrote a note on (the shawl)
   await page.click('#mp-send-all');
   await page.waitForFunction(() => /^Sent /.test(document.getElementById('mp-status').textContent), null, { timeout: 10000 });
   const kw = (await ev(() => window.__writes)).filter((x) => x.path.startsWith('places/'));
   const hag = kw.find((x) => x.path === 'places/hag-stone');
-  check(kw.length === 20 && hag && hag.body.map === 'bogmire' && hag.body.note === 'By the jars, where Old Wenna can see it' && hag.body.wear === 'either', 'Send everything new writes one document per keepsake, the Hag-Stone’s with its place and note: ' + kw.length + ' ' + JSON.stringify(hag && hag.body));
+  check(kw.length === 3 && hag && hag.body.map === 'bogmire' && hag.body.note === 'By the jars, where Old Wenna can see it' && hag.body.wear === 'either' && kw.some((x) => x.path === 'places/bogstriders'), 'Send everything new writes a document for each keepsake he moved or wrote a note on, the Hag-Stone’s with its place and note: ' + kw.map((x) => x.path).join(', ') + ' ' + JSON.stringify(hag && hag.body));
   const gift = kw.find((x) => x.path === 'places/knotted-shawl');
-  check(gift && gift.body.source === 'gift' && gift.body.giver === 'nettie' && gift.body.map === null, 'a gift says who gives it, and has no place');
+  check(gift && gift.body.source === 'gift' && gift.body.giver === 'nettie' && gift.body.map === null && gift.body.note === 'Nettie gives it as Io sets out', 'a gift says who gives it, and has no place');
+  const keptIds = await ev(() => Object.keys(JSON.parse(localStorage.getItem('envoi.map-editor.keepsakes.v1')).places).sort().join(', '));
+  check(keptIds === 'bogstriders, hag-stone', 'this browser keeps only the keepsakes he moved: ' + keptIds);
   check(await ev(() => document.getElementById('mp-send-all').disabled), 'then there is nothing new to send');
   // kept after a reload
   await page.reload(); await page.waitForFunction(() => window.MapEditor && MapEditor.painted && MapEditor.dbState !== 'waiting', null, { timeout: 20000 }); await sleep(300);

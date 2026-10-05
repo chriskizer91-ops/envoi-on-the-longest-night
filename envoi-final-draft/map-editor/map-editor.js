@@ -116,25 +116,43 @@
   // today, the twelve where Claude put them, away from the main ways through
   const lies = (it) => it.source === 'hidden' || it.source === 'found';
   const kw = { places: {}, notes: {} };
+  // where the list puts one now ({ map, x, y }, or null), and whether two places are the same
+  const listed = (it) => (it.at && MAPS[it.home] ? { map: it.home, x: it.at[0], y: it.at[1] } : null);
+  const same = (a, b) => JSON.stringify(a || null) === JSON.stringify(b || null);
+  const moved = (it) => lies(it) && it.id in kw.places && !same(kw.places[it.id], listed(it));
+  // This browser keeps only his moves, each with the list's place he moved it from: a move counts while the list still
+  // has the keepsake there, and once the list moves it (his move taken in, or another), the list's place stands. So a
+  // keepsake he never moved follows items.js. (Until October 5 the page kept every keepsake's place from his first
+  // visit, version 1 below, and a later move in items.js would have gone back at his next send: those were kept while
+  // the list had the fourteen where V1 has them, so a place kept then is a move of his only where it differs from V1)
+  const V1 = { 'crescent-locket': ['wickhollow', 458, 562], 'fen-heart-lamp': ['bogmire-heart', 775, 215], 'pass-bell': ['frozen-pass', 615, 625], 'wardens-brooch': ['thornwood', 1284, 816], 'node-sunstone': ['dawnroost-node', 205, 135], 'crossroads-pennant': ['crossroads', 1395, 470], 'forge-horseshoe': ['wickhollow', 1195, 690], 'jetty-coin': ['jetty', 470, 372], 'frog-ring': ['thornwood', 1380, 190], 'hag-stone': ['bogmire', 540, 240], 'bogstriders': ['bogmire', 1420, 750], 'kettle-helm': ['dawnroost', 215, 232], 'dockhand-gloves': ['shipyard', 170, 640], 'misthollow-cowl': ['misthollow', 135, 245] };
   (function loadKeepsakes() {
     const d = store.get(KEEP_STORE), ok = (p) => !!p && typeof p === 'object' && !!MAPS[p.map] && Number.isFinite(p.x) && Number.isFinite(p.y);
     const places = d && typeof d === 'object' && d.places && typeof d.places === 'object' ? d.places : {};
+    const was = d && d.version === 2 && d.was && typeof d.was === 'object' ? d.was : {};
     for (const id of Object.keys(places)) {
       const it = BY[id], p = places[id];
       if (!it || !lies(it)) continue;
+      const from = d.version === 2 ? was[id] : V1[id] ? { map: V1[id][0], x: V1[id][1], y: V1[id][2] } : listed(it);
+      if (!same(from, listed(it))) continue;
       if (p === null && it.at) kw.places[id] = null;
       else if (ok(p)) kw.places[id] = { map: p.map, x: clamp(Math.round(p.x), 0, MW), y: clamp(Math.round(p.y), 0, MH) };
     }
     const notes = d && typeof d === 'object' && d.notes && typeof d.notes === 'object' ? d.notes : {};
     for (const id of Object.keys(notes)) if (BY[id] && typeof notes[id] === 'string') kw.notes[id] = notes[id];
-    for (const it of ITEMS) if (lies(it) && it.at && MAPS[it.home] && !(it.id in kw.places)) kw.places[it.id] = { map: it.home, x: it.at[0], y: it.at[1] };
+    for (const it of ITEMS) if (lies(it) && listed(it) && !(it.id in kw.places)) kw.places[it.id] = listed(it);
   })();
   const placeOf = (id) => kw.places[id] || null;
   const onMap = (id, map) => { const p = placeOf(id); return !!p && p.map === map; };
   const itemsOn = (map) => ITEMS.filter((it) => lies(it) && onMap(it.id, map));
   let keepT = 0, keepKept = true;
   function saveKeepSoon() { clearTimeout(keepT); keepT = setTimeout(saveKeep, 250); }
-  function saveKeep() { clearTimeout(keepT); keepKept = store.set(KEEP_STORE, { version: 1, places: kw.places, notes: kw.notes }); renderKept(); }
+  function saveKeep() {
+    clearTimeout(keepT);
+    const places = {}, was = {};
+    for (const it of ITEMS) if (moved(it)) { places[it.id] = kw.places[it.id]; was[it.id] = listed(it); }
+    keepKept = store.set(KEEP_STORE, { version: 2, places, was, notes: kw.notes }); renderKept();
+  }
   // their own undo and redo, apart from each map's
   const khist = { u: [], r: [] };
   function keepSnap(json) { khist.u.push(json || JSON.stringify(kw.places)); if (khist.u.length > 200) khist.u.shift(); khist.r.length = 0; }
@@ -1161,7 +1179,10 @@
   // one document per keepsake: where it lies (the fourteen that lie on a map), or who gives it, and his note
   function docOf(it) { const p = lies(it) ? placeOf(it.id) : null; return { item: it.id, name: it.name, wear: it.wear, source: it.source, giver: it.giver || null, map: p ? p.map : null, x: p ? p.x : null, y: p ? p.y : null, note: kw.notes[it.id] || '' }; }
   const keyOf = (it) => JSON.stringify(docOf(it));
-  const unsentItems = () => ITEMS.filter((it) => ui.itemSent[it.id] !== keyOf(it));
+  // what to send: each keepsake he moved or wrote a note on, and any whose document Claude has is out of date (one he
+  // moved back, or sent by the page before October 5, when it sent all twenty), each once it has changed since it was
+  // last sent. One he never touched isn't sent, so Claude's copy of items.js stays the word on it
+  const unsentItems = () => ITEMS.filter((it) => (moved(it) || (kw.notes[it.id] || '').trim() || it.id in ui.itemSent) && ui.itemSent[it.id] !== keyOf(it));
   // anything worth keeping or sending: a changed map, a keepsake on a map, a note
   const anyWork = () => IDS.some(isChanged) || ITEMS.some((it) => lies(it) && !!placeOf(it.id)) || Object.keys(kw.notes).some((id) => kw.notes[id] && kw.notes[id].trim());
   async function sendItem(it) {
