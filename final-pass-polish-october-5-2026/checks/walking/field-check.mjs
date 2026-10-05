@@ -1,5 +1,5 @@
 // field-check.mjs: three of the audit's walking findings, played in the built game at a Pixel 7a held sideways
-// (915 x 412) (T17, walking 2, 4 and 5, in handoff/wrap-up-2026-10-05.md).
+// (915 x 412, or --size) (T17, walking 2, 4 and 5, in handoff/wrap-up-2026-10-05.md).
 //   ambush:   Halcyon's ambush fires on the crossroads, a wild map, with the random fights' counter nearly full. It
 //             starts the count again, so no random fight comes a step or two after it (the counter is 0 when it fires).
 //   question: the Magpie's question on the jetty. While it's asked the d-pad is hidden, as the action button is (it used
@@ -8,8 +8,8 @@
 //   mist:     the Magpie flown into the mist over a band she can't reach yet says she needs more lift; flown into the
 //             mist that never lifts (band 0, under mist all game), it says so instead, not that she needs more lift.
 // Build first (node tools/build.mjs --min putting-it-all-together/game.html), then, from the repository's top folder:
-//   flock /tmp/claude-0/browser.lock node final-pass-polish-october-5-2026/checks/walking/field-check.mjs [dist/game.html]
-// Exits 1 if any check fails; screenshots go to /tmp/claude-0/field-check.
+//   flock /tmp/claude-0/browser.lock node final-pass-polish-october-5-2026/checks/walking/field-check.mjs [dist/game.html] [--size 915x356]
+// Exits 1 if any check fails; screenshots go to /tmp/claude-0/field-check-<size>.
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
@@ -17,12 +17,14 @@ import { execSync } from 'child_process';
 const require = createRequire(import.meta.url);
 let pw; try { pw = require('playwright'); } catch { pw = require(execSync('npm root -g').toString().trim() + '/playwright'); }
 const R = path.resolve(new URL('../../..', import.meta.url).pathname);
-const file = path.resolve(process.argv[2] || path.join(R, 'dist/game.html')), out = '/tmp/claude-0/field-check';
+// --size WxH: another screen (915x356 is the phone with Chrome's address bar showing)
+const argv = process.argv.slice(2), si = argv.indexOf('--size'), size = si >= 0 ? argv.splice(si, 2)[1].split('x').map(Number) : [915, 412];
+const file = path.resolve(argv[0] || path.join(R, 'dist/game.html')), out = '/tmp/claude-0/field-check-' + size.join('x');
 fs.mkdirSync(out, { recursive: true });
 const THREE_JS = fs.readFileSync(path.join(R, 'tools/.cache/three.min.js')); // game-test.mjs fetches it once
 
 const browser = await pw.chromium.launch({ args: ['--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required'] });
-const page = await browser.newPage({ viewport: { width: 915, height: 412 } });
+const page = await browser.newPage({ viewport: { width: size[0], height: size[1] } });
 const errs = [];
 page.on('pageerror', (e) => errs.push('pageerror: ' + e.message));
 await page.route('**/*', (route) => {
