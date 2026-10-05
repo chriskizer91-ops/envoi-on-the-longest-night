@@ -45,7 +45,8 @@ export function fightOf(kind, opts, level) {
 
 // the camera director (its whole section of screen.js: shot, shotFit, shotField and the rest), with applyCam, toScreen
 // and the arena's ZK, ZMAX and BELOW, run on an arena's camera at a screen size (w, h, and uiH: the battle windows'
-// height as layoutView takes it), for the fighters given. `extra` names more stand-ins the code may read
+// height as layoutView takes it), for the fighters given. `extra` names more stand-ins the code may read; run(code)
+// evaluates more of screen.js (an action, say) in the same scope
 export function director(place, size, fighters, extra) {
   const A = arenaOf(place), AF = { ppm: A.ppm, frame: A.frame, camera: A.camera };
   const IW = A.frame[0], IH = A.frame[1];
@@ -60,7 +61,8 @@ export function director(place, size, fighters, extra) {
   }, extra || {});
   const section = SRC.slice(SRC.indexOf('// ---------- camera director'), SRC.indexOf('function addShake('));
   const body = [line('const ZK = AF ?'), line('const BELOW = AF ?'), section, grab('function applyCam('), grab('function toScreen('),
-    'return { shot, shotAt, shotBoth, shotFit, shotField, applyCam, toScreen, view, cam, ZK, ZMAX, BELOW };'].join('\n');
+    // (run: more of screen.js, evaluated in the same scope, so it sees all of the above)
+    'return { shot, shotAt, shotBoth, shotFit, shotField, applyCam, toScreen, view, cam, ZK, ZMAX, BELOW, run: (code) => eval(code) };'].join('\n');
   const names = Object.keys(env);
   const d = new Function(...names, body)(...names.map((k) => env[k]));
   Object.assign(d.view, { w: size.w, h: size.h, uiH: size.uiH, uiNow: size.uiNow || size.uiH });
