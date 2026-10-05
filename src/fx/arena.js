@@ -814,7 +814,7 @@ function makeArenaField(P) {
 
   // ---------- birds or bats: they sit in the far trees and the framing tree until a roar or a blow puts them up ----------
   const NBD = 28, BAT = AIRP.fly === 'bats', BP = Array.from({ length: NBD }, () => new THREE.Vector4(0, -60, 0, 0)), BH = Array.from({ length: NBD }, () => new THREE.Vector4(0, 0, 1, 0));
-  let birds = null; // drawn only while some are in the air
+  let birds = null; // drawn only while some are in the air (update(): an empty draw range while none are)
   {
     const Pp = [], A = [], I = [];
     const tri = (b, pts) => { const s = Pp.length / 3; for (const p of pts) { Pp.push(p[0], p[1], p[2]); A.push(b); } I.push(s, s + 1, s + 2); };
@@ -864,7 +864,7 @@ function makeArenaField(P) {
   }
 
   // ---------- rocks and clods, stone chips or splinters thrown up by the big blows: they fly, tumble, bounce and settle ----------
-  // (drawn only while any are up or lying there: most of a fight, none are)
+  // (drawn only while any are up or lying there: most of a fight, none are; update() sets the count to 0 then)
   const NDB = 140;
   const debris = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 0), new THREE.MeshStandardMaterial({ roughness: 0.95, flatShading: true }), NDB);
   debris.instanceMatrix.setUsage(THREE.DynamicDrawUsage); debris.frustumCulled = false; debris.count = NDB; root.add(debris);
@@ -1070,7 +1070,12 @@ function makeArenaField(P) {
       const sc = D.s * Math.min(1, D.life / 1.2); debris.setMatrixAt(i, _m4.compose(D.p, D.q, _sv.set(sc, sc * 0.75, sc)));
     }
     if (any) debris.instanceMatrix.needsUpdate = true;
-    debris.visible = up > 0; STATS.debris = up;
+    // none up, none drawn: a count of 0 issues no draw call. Never .visible = false instead: three builds a mesh's shader
+    // for the lights of the first frame that draws it (the start's renderer.compile() counted Lunara's and Envoi's lights,
+    // hidden straight after), so stones hidden until the first heavy blow would build theirs then, a stall in that frame
+    // of every arena fight; left in the scene, theirs is built in the opening frames with everything else. (Their colours
+    // were all set at the start, while count was NDB: r128 sizes the colour buffer from count at the first setColorAt.)
+    debris.count = up > 0 ? NDB : 0; STATS.debris = up;
     // the birds or bats: up and away when startled, back to roost later
     let aloft = 0;
     for (const B of BIRDS) {
@@ -1084,7 +1089,8 @@ function makeArenaField(P) {
         if (B.t > B.dur) { B.st = 2; B.wait = rr(15, 35); bp.w = 0; } else aloft++;
       } else { bp.w = 0; if (B.st === 2 && (B.wait -= dt) <= 0) B.st = 0; }
     }
-    birds.visible = aloft > 0; STATS.birds = aloft;
+    // none aloft, none drawn: a draw range of 0 issues no draw call, and keeps them in the scene (why: the stones', above)
+    birds.geometry.setDrawRange(0, aloft > 0 ? Infinity : 0); STATS.birds = aloft;
   }
 
   const api = {
