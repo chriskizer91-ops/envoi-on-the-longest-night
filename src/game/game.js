@@ -18,21 +18,22 @@
   const wait = (s) => new Promise((r) => setTimeout(r, s * 1000));
   // where each place lay on the world map (atlas px), read only for saves made there before the wilderness scenes:
   // nobody walks it now (Chris, October 3: it is for flying). A place's ground map and where Io came onto it from the
-  // world map (and the way she faces there, south unless given), a camp (its landing), or a node (its road, the Ember
-  // Line road). The crossroads' south road is closed now, so she comes in where the cold moor's road does
+  // world map (and the way she faces there: into the map, as every arrival does, south unless given), a camp (its
+  // landing), or a node (its road, the Ember Line road). The crossroads' south road is closed now, so she comes in
+  // where the cold moor's road does
   const OLD_WORLD = {
-    wickhollow: { at: [1348, 1838], band: 1, map: 'cottage', arrive: [790, 990] },
-    thornwood: { at: [1530, 2160], band: 1, map: 'thornwood', arrive: [60, 456] },
-    bogmire: { at: [1752, 2512], band: 1, map: 'bogmire', arrive: [70, 368] },
+    wickhollow: { at: [1348, 1838], band: 1, map: 'cottage', arrive: [790, 990], dir: 'n' },
+    thornwood: { at: [1530, 2160], band: 1, map: 'thornwood', arrive: [60, 456], dir: 'e' },
+    bogmire: { at: [1752, 2512], band: 1, map: 'bogmire', arrive: [70, 368], dir: 'e' },
     warmCamp: { at: [820, 1560], band: 2, camp: 'warmCamp' },
-    node1: { at: [960, 1420], band: 2, map: 'ember-line-road' }, node2: { at: [1180, 1330], band: 2, map: 'ember-line-road' }, node3: { at: [760, 1250], band: 2, map: 'ember-line-road' },
-    dawnroost: { at: [1325, 1098], band: 2, map: 'dawnroost', arrive: [645, 990] },
+    node1: { at: [960, 1420], band: 2, map: 'ember-line-road', dir: 'e' }, node2: { at: [1180, 1330], band: 2, map: 'ember-line-road', dir: 'e' }, node3: { at: [760, 1250], band: 2, map: 'ember-line-road', dir: 'e' },
+    dawnroost: { at: [1325, 1098], band: 2, map: 'dawnroost', arrive: [645, 990], dir: 'n' },
     northCamp: { at: [1150, 620], band: 3, camp: 'northCamp' },
     crossroads: { at: [1960, 820], band: 3, map: 'crossroads', arrive: [40, 485], dir: 'e' },
-    shipyard: { at: [2097, 599], band: 3, map: 'shipyard', arrive: [760, 990], need: (sv) => sv.flags.stoop },
+    shipyard: { at: [2097, 599], band: 3, map: 'shipyard', arrive: [760, 990], dir: 'n', need: (sv) => sv.flags.stoop },
     frozenCamp: { at: [2760, 1120], band: 4, camp: 'frozenCamp' },
-    frozenPass: { at: [3270, 980], band: 4, map: 'frozen-pass', arrive: [790, 990] },
-    misthollow: { at: [3500, 735], band: 4, map: 'misthollow', arrive: [768, 985] },
+    frozenPass: { at: [3270, 980], band: 4, map: 'frozen-pass', arrive: [790, 990], dir: 'n' },
+    misthollow: { at: [3500, 735], band: 4, map: 'misthollow', arrive: [768, 985], dir: 'n' },
   };
   // where the Magpie can land: a dock on a ground map, or a camp's landing ground (maps.js land: she sets down there,
   // and Io steps down 50 px east of it); at a dock as at a camp, Io is set down in reach of her and beside her glow, not
@@ -351,7 +352,7 @@
     function fromWorldAt(sv, at, rest) {
       let best = null, bd = Infinity;
       for (const k in OLD_WORLD) { const p = OLD_WORLD[k]; if (p.band > (sv.band || 1) || (p.need && !p.need(sv)) || (rest && !p.camp)) continue; const d = Math.hypot(p.at[0] - at[0], p.at[1] - at[1]); if (d < bd) { bd = d; best = p; } }
-      if (!best) return rest ? ['cottage', [838, 520]] : ['cottage', [790, 990]];
+      if (!best) return rest ? ['cottage', [838, 520]] : ['cottage', [790, 990], 'n'];
       if (!best.camp) return [best.map, (best.arrive || MAPS[best.map].start).slice(), best.dir];
       const L = LANDINGS[best.camp], fire = (MAPS[L.field[0]].spots || []).find((s) => s.kind === 'rest');
       return [L.field[0], (rest && fire ? fire.at : L.field[1]).slice()];
