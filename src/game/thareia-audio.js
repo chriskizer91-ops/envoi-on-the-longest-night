@@ -4,7 +4,8 @@
 // Defines window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, setVolume }.
 // Additions for the game (October 3 and 4, 2026): setVolume(music, effects, surroundings), the game's volume settings
 // (0 to 1; 0.75 is the library's own level), and for playSfx a gain, for its quieter sounds, and a bus: 'amb' for a
-// place's own sounds (crickets, wind, water), which follow the surroundings volume instead of the effects'.
+// place's own sounds (crickets, wind, water), which follow the surroundings volume instead of the effects'. And
+// (October 5) the music and the sounds wait while the page is hidden, as Chris's songs do.
 (function () {
 'use strict';
 /* ---------- sounds.js ---------- */
@@ -24,7 +25,7 @@ const rnd = (a, b) => a + Math.random() * (b - a);
 let AC = null, OUT = null, REV = null, NOISE = null, BUS = null, BUSREV = null, ECHO = null;
 const VOL = { music: 1, sfx: 1, amb: 1 }; // the game's volume settings (setVolume)
 function sfxInit(given) {
-  if (AC && !given) { if (AC.state === 'suspended') AC.resume(); return AC; }
+  if (AC && !given) { if (AC.state === 'suspended' && !document.hidden) AC.resume(); return AC; } // (hidden, it waits: below)
   AC = given || new (window.AudioContext || window.webkitAudioContext)();
   const comp = AC.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4; comp.attack.value = .003; comp.release.value = .2;
   OUT = AC.createGain(); OUT.gain.value = .85; OUT.connect(comp); comp.connect(AC.destination);
@@ -631,6 +632,16 @@ function setVolume(music, effects, surroundings) {
   VOL.music = music / .75; VOL.sfx = effects / .75; VOL.amb = (surroundings ?? effects) / .75;
   if (cur && AC) { cur.bus.gain.setTargetAtTime(.9 * VOL.music, AC.currentTime, .05); cur.rev.gain.setTargetAtTime(.9 * VOL.music, AC.currentTime, .05); }
 }
+
+// the page hidden (another app, the screen off): the music and the sounds wait, as Chris's songs pause (songs.js), and
+// go on when it shows again. Only what this stopped is started again, never a context already stopped for a reason of
+// its own (or a checking one, offline)
+let hidStopped = false;
+document.addEventListener('visibilitychange', () => {
+  if (!AC || (window.OfflineAudioContext && AC instanceof window.OfflineAudioContext)) return;
+  if (document.hidden) { if (AC.state === 'running') { hidStopped = true; AC.suspend(); } }
+  else if (hidStopped) { hidStopped = false; AC.resume(); }
+});
 
 window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, sfxContext, setVolume };
 })();
