@@ -66,10 +66,11 @@
     return ups;
   }
   function restore(st) { st.hp = { io: null, sol: null }; st.mp = null; }
-  // after a keepsake goes on or comes off: HP and MP inside the new maximums (full stays full)
+  // after a keepsake goes on or comes off: HP and MP inside the new maximums (full stays full). One who wasn't full is
+  // held at the lower maximum, not marked full, so taking a keepsake off and on again gives no HP or MP back
   function fit(st) {
-    for (const id of ['io', 'sol']) if (st.hp[id] != null && st.hp[id] >= maxHp(st, id)) st.hp[id] = null;
-    if (st.mp != null && st.mp >= maxMp(st)) st.mp = null;
+    for (const id of ['io', 'sol']) if (st.hp[id] != null && st.hp[id] > maxHp(st, id)) st.hp[id] = maxHp(st, id);
+    if (st.mp != null && st.mp > maxMp(st)) st.mp = maxMp(st);
   }
   // after a fight: HP and MP as the battle left them, and the herbs it used taken from those carried (the fight had at
   // most BATTLE_USE of each: fights.js); a win gives its experience and shards. A hero who fell in a fight the party won

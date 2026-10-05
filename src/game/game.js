@@ -596,13 +596,13 @@
     }
     function backAfter(r) {
       if (r.outcome !== 'win' && r.outcome !== 'retreat' && r.outcome !== 'fled') return;
+      // back up to the maximum is marked full (null), as after a fight: GS.fit only holds HP and MP inside the maximums
       for (const id of heroes()) {
-        const g = GS.gearOf(st, id), max = GS.maxHp(st, id), hp = GS.hpOf(st, id);
-        if (g.hpBack && hp > 0) st.hp[id] = Math.min(max, hp + Math.round(max * g.hpBack / 100));
+        const g = GS.gearOf(st, id), max = GS.maxHp(st, id), hp = GS.hpOf(st, id), v = hp + Math.round(max * g.hpBack / 100);
+        if (g.hpBack && hp > 0) st.hp[id] = v >= max ? null : v;
       }
-      const gi = GS.gearOf(st, 'io');
-      if (gi.mpBack) st.mp = Math.min(GS.maxMp(st), GS.mpOf(st) + Math.round(GS.maxMp(st) * gi.mpBack / 100));
-      GS.fit(st);
+      const gi = GS.gearOf(st, 'io'), mx = GS.maxMp(st), mv = GS.mpOf(st) + Math.round(mx * gi.mpBack / 100);
+      if (gi.mpBack) st.mp = mv >= mx ? null : mv;
     }
     const bandHere = () => (field.map && field.map.band) || 1;
     async function rest(name) {
