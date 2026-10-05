@@ -681,8 +681,17 @@
     async function cutscene(cs) {
       st.seen = st.seen || {}; st.seen[cs.id] = true; save();
       const box = el('div', { class: 'cutscene-layer' }, root);
-      try { await cs.C.play(box, csOpts(cs.level, cs.arena)); } catch (e) { /* a cutscene that can't play is passed over */ }
+      try { await playCut(cs.C, box, csOpts(cs.level, cs.arena)); } catch (e) { /* a cutscene that can't play is passed over */ }
       return box;
+    }
+    // a cutscene makes its sound in an AudioContext of its own, out of the game's reach: those made while it plays are
+    // kept, so they wait while the page is hidden, as the game's own do (and only what this stopped goes on again)
+    async function playCut(C, box, o) {
+      const AC = window.AudioContext, made = [], held = new Set();
+      const vis = () => { for (const c of made) { if (document.hidden) { if (c.state === 'running') { held.add(c); c.suspend(); } } else if (held.delete(c)) c.resume().catch(() => {}); } };
+      if (AC) { window.AudioContext = function (...a) { const c = new AC(...a); made.push(c); return c; }; window.AudioContext.prototype = AC.prototype; }
+      document.addEventListener('visibilitychange', vis);
+      try { return await C.play(box, o); } finally { if (AC) window.AudioContext = AC; document.removeEventListener('visibilitychange', vis); }
     }
     // the cutscene's last picture stays over the fight while it builds, then fades into it (after ms, 1200 by default)
     function fadeStill(box, ms) { setTimeout(() => { box.classList.add('is-gone'); setTimeout(() => box.remove(), 900); }, ms === undefined ? 1200 : ms); }
@@ -694,7 +703,7 @@
       const was = curMusic; music(null);
       let arena = null; try { if (GameFights.ARENA && CUT_FIGHT[id]) arena = arenaFor(GameFights.config(CUT_FIGHT[id][0], st, CUT_FIGHT[id][1])); } catch (e) { /* the flat painting's ending */ }
       const box = el('div', { class: 'cutscene-layer is-over', tabindex: '-1' }, root); box.focus({ preventScroll: true });
-      try { await C.play(box, csOpts(null, arena)); } catch (e) { /* passed over */ }
+      try { await playCut(C, box, csOpts(null, arena)); } catch (e) { /* passed over */ }
       box.remove(); music(was);
     }
     async function battle(kind, o) {
