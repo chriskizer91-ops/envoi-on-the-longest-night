@@ -118,7 +118,7 @@
       return new Promise((res) => { resolveFly = res; });
     }
     function frame(now) {
-      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      const dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now; // never back in time (fly() sets the clock)
       step(dt); render(now);
       if (!root.hidden) raf = requestAnimationFrame(frame);
     }

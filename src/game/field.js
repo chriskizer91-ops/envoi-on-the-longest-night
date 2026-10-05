@@ -303,7 +303,9 @@
     let last = performance.now(), stopped = false;
     function frame(t) {
       if (stopped) return;
-      const dt = Math.min(0.05, (t - last) / 1000); last = t;
+      // never a step back in time: resume() and show() set the clock from performance.now(), which can be later than
+      // this frame's own time
+      const dt = Math.max(0, Math.min(0.05, (t - last) / 1000)); last = t;
       if (map && img && !paused && !root.hidden) step(dt);
       if (map && img && !root.hidden) stageStep(dt);
       if (map && img && !root.hidden) draw(t);
@@ -398,7 +400,8 @@
       const [tx, ty] = a.path[0], dx = tx - a.x, dy = ty - a.y, L = Math.hypot(dx, dy), sp = a.speed * dt;
       if (L > 0.01) a.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'e' : 'w') : (dy > 0 ? 's' : 'n');
       a.walk = (a.walk || 0) + Math.min(L, sp) / ioH();
-      if (L <= sp) { a.x = tx; a.y = ty; a.path.shift(); if (!a.path.length) { a.path = null; const r = a.res; a.res = null; if (r) r(); return false; } }
+      // a walk to the point she already stands on (or as good as) arrives at once, rather than dividing by nothing
+      if (L <= Math.max(sp, 0.01)) { a.x = tx; a.y = ty; a.path.shift(); if (!a.path.length) { a.path = null; const r = a.res; a.res = null; if (r) r(); return false; } }
       else { a.x += dx / L * sp; a.y += dy / L * sp; }
       a.walkT += dt * a.speed / 110; return true;
     }
