@@ -1875,6 +1875,10 @@
       }
       for (const f of foes) { f.m.root.visible = true; f.tyaw = f.home.yaw; }
       for (const h of heroes) h.tyaw = h.home.yaw;
+      // after a cutscene, in an arena: the fight opens on the cutscene's last picture (everyone in the field shot, before
+      // the menus show: each cutscene's README, "The hand-over") and holds it while that picture fades into it (the
+      // game's shown), so nothing moves under the cross-fade; then the menus come. On a flat painting, as it always has
+      if (AF && cfg.standing) { shotField(50); applyCam(1); if (cfg.game && cfg.game.shown) cfg.game.shown(); await wait(1); }
       UI.showBattle(true); UI.buildWindows(); UI.status(); layoutView();
       shotField(2);
       io().m.play('cast'); UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic();

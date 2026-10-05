@@ -2,7 +2,8 @@
 // fought the way Colossus in the Meadow is (living-battlefields/field.js, which this is made from): one locked camera,
 // Chris's painting of the place far off, and live 3D ground in front that answers the fight. Each place
 // (src/stage/arena-*.js) gives its painting, the camera fitted to it, the skyline and the ground line traced on it, its
-// ground and its air. three.js r128 (global THREE). Defines makeArenaField(place).
+// ground and its air. three.js r128 (global THREE). Defines makeArenaField(place), and makeArenaField.view(place): its
+// locked camera's numbers without building it (at the end of this file).
 //
 // The camera never moves: a shot is a crop or a zoom of its frame, as the battle screen's shots are of a painting. The
 // picture is made of three layers:
@@ -51,8 +52,9 @@ function makeArenaField(P) {
   const STATS = { liveTufts: 0, glints: 0 };
 
   // ---------- the locked camera and its frame ----------
-  const FW = 1448, FH = 1086; // the frame is the painting's own size, so its pixels are the painting's
-  const CA = Object.assign({ x: 0, h: 2, z: 18, pitch: 4.2, fov: 38 }, P.camera || {});
+  // (the frame's size, the camera's numbers and the fight's clearing come from makeArenaField.view, below)
+  const AV = makeArenaField.view(P), FW = AV.frame[0], FH = AV.frame[1]; // the frame is the painting's own size, so its pixels are the painting's
+  const CA = AV.camera;
   const cam = new THREE.PerspectiveCamera(CA.fov, FW / FH, 0.1, 900);
   cam.position.set(CA.x, CA.h, CA.z); cam.lookAt(CA.x, CA.h + Math.tan(CA.pitch * PI / 180) * 100, CA.z - 100);
   cam.updateMatrixWorld(true); cam.updateProjectionMatrix();
@@ -264,7 +266,7 @@ function makeArenaField(P) {
   function moss(g, ox, H, c) { // a low, soft mound
     for (let i = 0; i < 160; i++) { const a = rr(0.1, PI - 0.1), r = rr(0, 1), x = ox + 256 + Math.cos(a) * r * 200, y = H - Math.sin(a) * r * 110; g.fillStyle = rgb(c[0] * rr(0.7, 1.3), c[1] * rr(0.7, 1.3), c[2] * rr(0.7, 1.2)); g.beginPath(); g.arc(x, y, rr(8, 20), 0, TAU); g.fill(); }
   }
-  const FL = Object.assign({ kind: 'meadow', density: 1, short: [0.07, 0.2], tall: [0.62, 1.3], clear: [0.8, -2.8, 8, 9.5, 7], cells: [0.04, 0.08, 0.12] }, P.floor || {});
+  const FL = Object.assign({ kind: 'meadow', density: 1, short: [0.07, 0.2], tall: [0.62, 1.3], clear: AV.clear, cells: [0.04, 0.08, 0.12] }, P.floor || {});
   const grassTex = (() => {
     const W = 2048, H = 512, c = cvs(W, H), g = c.getContext('2d');
     (KIND[FL.kind] || KIND.meadow).forEach((draw, k) => draw(g, k * 512, H));
@@ -1081,7 +1083,7 @@ function makeArenaField(P) {
     root, camera: cam, frame: [FW, FH], update, light, impact, ripple, roar, decal, glow, strike, splash, onThunder: null, stats: STATS, fog: FOG, place: P,
     floorAt, frameOf, skyV, groundV,
     // how many of the frame's pixels a metre is, where the fight is (the battle screen scales its zooms by it)
-    ppm: FH / (2 * Math.hypot(CLR[0] - CP.x, 1 - CP.y, CLR[1] - CP.z) * Math.tan(CA.fov / 2 * PI / 180)),
+    ppm: AV.ppm,
     get flash() { return flashV; }, get wet() { return wet; }, get rain() { return rainNow; }, get wrath() { return wrathV; }, get wind() { return AIRU.uWind.value; },
     get weather() { return wName; }, setWeather(n) { if (n === 'clear' || n === 'rain' || n === 'storm') { wName = n; wT = n === 'clear' ? 0 : n === 'rain' ? 0.55 : 1; } },
     setWrath(w) { wrathT = cl(+w || 0, 0, 1); },
@@ -1103,3 +1105,12 @@ function makeArenaField(P) {
   update(0, 0);
   return api;
 }
+// The arena's locked camera without building the arena: its frame (the painting's own size), the camera (the place's
+// own numbers over these), the fight's clearing (where the place's floor puts it) and how many of the frame's pixels
+// a metre is there (ppm: the battle screen scales its zooms by it). makeArenaField builds from it, and the game gives it
+// to a cutscene that ends on its fight's opening frame (src/game/game.js, arenaFor).
+makeArenaField.view = function (P) {
+  const FW = 1448, FH = 1086, CA = Object.assign({ x: 0, h: 2, z: 18, pitch: 4.2, fov: 38 }, P.camera || {});
+  const clear = (P.floor && P.floor.clear) || [0.8, -2.8, 8, 9.5, 7];
+  return { place: P.id, frame: [FW, FH], camera: CA, clear, ppm: FH / (2 * Math.hypot(clear[0] - CA.x, 1 - CA.h, clear[1] - CA.z) * Math.tan(CA.fov / 2 * Math.PI / 180)) };
+};

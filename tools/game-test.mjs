@@ -16,9 +16,10 @@
 //   scenes:   the staged scenes play on their maps (Sol at the bridge, Quill at the jetty, the knight, Ysmera)
 //   save:     the save is written, and the title offers Continue
 //   wild:     a wild fight in the band (--band, at --level) is played to its end by the expert play style
-//   colossus: the Bramble Colossus is fought the same way (band 4); headless, a whole fight takes a long while. The first
-//             time, its cutscene plays first (envoi-final-draft/cutscenes/colossus-first-meeting/): the step sees it
-//             draw, skips it with Esc as a player can, and checks the fight starts with the Colossus already standing
+//   colossus: the Bramble Colossus is fought the same way (band 4), cut short: headless, a whole fight outlasts the wait,
+//             so its Colossus is weakened once the fight begins, as keepsakes does. The first time, its cutscene plays
+//             first (envoi-final-draft/cutscenes/colossus-first-meeting/): the step sees it draw, skips it with Esc as a
+//             player can, and checks the fight starts with the Colossus already standing
 //   finale:   the finale's opening cutscene plays before the finale's first try, is skipped with Esc, and the fight starts
 //             with Noctara and Halcyon already standing; the fight isn't played out (run it last)
 //   keepsakes: the twenty (src/game/keepsakes.js): Io walks by a tap up Chris's secret way over Wickhollow's roof to the
@@ -218,6 +219,7 @@ try {
       await waitFor(() => !!window.__battle, null, 60000, 'the battle screen');
       await page.evaluate((tb) => { window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
+      if (step === 'colossus') await page.evaluate(() => { for (const f of window.__battle.engine.foes) window.__battle.weaken(5, f.key); });
       await shot(step + '-fight');
       await waitFor(() => window.__battle && window.__battle.state === 'over' && !document.getElementById('end').hidden, null, 1500000, 'the fight to end');
       const res = await page.evaluate(() => ({ outcome: window.__battle.result.outcome, title: document.getElementById('endTitle').textContent }));
