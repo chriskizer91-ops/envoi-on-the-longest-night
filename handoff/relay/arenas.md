@@ -59,6 +59,8 @@ Not done; only on his yes. `envoi-final-draft/arena/README.md` ("Switching the g
 
 Without step 2, step 1 does nothing: a fight whose arena isn't in the page stays on its flat painting.
 
+3. **Re-aim both cutscenes' last shots.** Each cutscene ends on its fight's opening frame on the flat painting (the frozen road's camera for the Colossus, the dead Moonwell's for the finale: "The hand-over" in each cutscene's README). Switched on, those fights open from the arena's eye-height camera with everyone placed in metres (`src/stage/arena-frostmere.js` and `arena-dead-moonwell.js`; `ARENA_AT.colossus` and `.finale`), so the cross-fade would jump. Neither the helper's checks nor the old hub's covered the game's two cutscene hand-overs. In each cutscene's folder: the `battle` shot in `src/scene.js` to the arena's camera and positions, `node tools/build.mjs`, `node tools/check.mjs` ("all good"); the game loads the rebuilt module from there.
+
 **Mind the size.** Measured October 5 with the game's latest (the keepsakes in), in a scratch copy of the page with the nine lines added:
 
 | | Today | With the arenas |
