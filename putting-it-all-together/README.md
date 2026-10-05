@@ -20,7 +20,7 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | The Bramble Colossus | `../3d-model-new-character-ideas/bramble-colossus/` | In: the last band's great wild foe, about one wild fight in twelve there, on the frozen road. Its fight on its own: `../demos/colossus.html` |
 | The wild meadow's life, on every painted battle: mist, fireflies, snow, dust and turf where big blows land, birds and bats put up by roars, leaves shaken down, a red storm for the Colossus's Wrath | `../src/fx/battlefield.js`, after `../3d-model-new-character-ideas/bramble-horror/meadow.js` | In |
 | The story's people walking in: Sol over the bridge, Quill to the skiff, the knight at the crossroads, Ysmera at the slip | `../src/game/script.js` (the stage directions), `../src/game/field.js` | In. The words are still placeholders |
-| Walking with sound: each place's own ambience, and a pace that builds to a run | `../src/game/game.js` | In. The footsteps are gone (Chris didn't like them); `io-on-foot.html` has two other ideas to try by ear |
+| Walking with sound: each place's own ambience, and a pace that builds to a run | `../src/game/game.js` | In. The footsteps are gone (Chris didn't like them); `io-on-foot.html` has two other ideas to try by ear, and since October 5 the page of polish to try (below) has both in the game, switched off here |
 | Walking by hand: hold anywhere to steer her, tap or click to walk there in straight lines, a one-thumb pad, slipping round corners | `../src/game/field.js` | In (pass three), after Witch Way's pad and walker. Since October 4 a tap follows narrow ways too, Chris's secret paths included |
 | Chapters: start at the beginning, or just before gate 5, 10 or 15 in the town on its doorstep, or at the foot of Misthollow before the finale, with the party as the story leaves it there | `../src/game/game.js` (`CHAPTERS`); a demo page per chapter from `node tools/make-demos.mjs` | In (pass three). In the finished game it unlocks once the game is beaten (Chris, October 4); until then it's on the title from the start |
 | The little golden arrow: where the story wants Io next, over the goal when it's in view, else beside her pointing the way, on the walking maps (through the wilderness scenes too), and ringed on the mini-map | `../src/game/goal-arrow.js`; the next step and the way there in `../src/game/game.js` (`nextStep`, `goalOn`) | In (pass three) |
@@ -48,8 +48,9 @@ Started October 3, 2026. All the work so far is now on one branch, `ccr-9e19f4e2
 | Io on Foot | https://claude.ai/artifact/G1B5cMkYzBq4RiausDAAQj | Io walking the game's maps, with sliders for her height, the camera and her pace, the walking areas shown, her poses, and two footstep ideas to try |
 | Walking Map Resolution | https://claude.ai/artifact/7F4pu4v3BQiKAZAtVJkC1i | The walking maps' compression choices, in the game at Chris's settings (he chose "75% light") |
 | Wilderness at Night | https://claude.ai/artifact/2WSu7uWvtDUmF5JwxV5xwC | The eight night scenes on their own: Io walks each band's road from its camp, with a note where each fight would start (`../envoi-final-draft/wilds/`) |
+| Envoi Polish to Try | https://claude.ai/artifact/NZ7C68JJTJ2taFJJgmkcMw | The game with four small ideas Chris hasn't said yes to switched on: footsteps (Settings, Footsteps), words that move on by themselves (Settings, Words move on), a door's sound between maps, and Buy 10 in the herb shops (`../tools/make-try.mjs`, `../docs/next-session.md`, "Polish to try"). Its saves are its own |
 
-Both are private until Chris shares them from the page's Share menu.
+Each is private until Chris shares it from the page's Share menu.
 
 ## How a new mob comes into the game
 

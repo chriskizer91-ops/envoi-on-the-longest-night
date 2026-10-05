@@ -4,7 +4,7 @@ What we've already decided goes into *Envoi on the Longest Night* but isn't in t
 
 **New in this file: the new battles.** Every fight but the first is fought in its place, the way the Colossus in the Meadow page fights: your painting far off behind, live 3D ground in front that answers every blow, rain or a storm now and then in the wilds (a blizzard in the frozen places), at your settings (the Strong squeeze, 30 frames a second, 3/4 sharpness). Both cutscenes end on their fight's first picture in its arena, so the fight takes over without a jump. If a fight runs slow on your phone, Settings now has **Battle sharpness** (Full, 3/4 or Half) beside the battle frame rate: Half draws the 3D with about half the pixels. And tell me which fight it was. Your words (October 4): "put all of the fights into an arena like that ... with the different battle backgrounds"; and October 5: "Yes, switch them on." The first fight keeps the Night square's own painting, as before.
 
-**New in this file: walking without the world map.** The Magpie lands at a camp in bands 2, 3 and 4, and Io walks your painted night scenes from there to the town: the Warm Roads camp, the Ember Line road and the forest road up to Dawnroost; the northern camp, Eldergrove's edge and the cold moor to the crossroads; the frozen camp and Frostmere's shore up to the frozen pass. Fights come on the walks about as often as in the Thornwood, and never in the camps. The world map is only for flying now. The four things you said yes to as I suggested them: the roads that ran off the edge of Io's cottage and the crossroads turn her back with a line; the Magpie at a camp is a soft glow on the landing ground, like at the docks; Sol relights the Ember Line's nodes on their road, and a lit one goes dark; and the golden arrow follows the story through the scenes. A game saved out on the world map still loads, at the nearest place.
+**New in this file: walking without the world map.** The Magpie lands at a camp in bands 2, 3 and 4, and Io walks your painted night scenes from there to the town: the Warm Roads camp, the Ember Line road and the forest road up to Dawnroost; the northern camp, Eldergrove's edge and the cold moor to the crossroads; the frozen camp and Frostmere's shore up to the frozen pass. Fights come on the walks about as often as in the Thornwood, and never in the camps. The world map is only for flying now. The four things you said yes to as I suggested them: the roads that ran off the edge of Io's cottage and the crossroads turn her back with a line; the Magpie at a camp is a soft glow on the landing ground, like at the docks; Sol relights the Ember Line's nodes on their road, and a lit one goes dark; and the golden arrow follows the story through the scenes. A game saved out on the world map still loads, at the nearest place. Two small fixes since: Io now lands beside the Magpie at every dock, so the Magpie's glow isn't hidden behind her and the button offers the Magpie straight away; and a change to Random fights in Settings now holds at once (it used to wait for the next fight).
 
 ## Decided, and waiting on you
 
@@ -34,19 +34,26 @@ Today's file is 17.25 MB of your 30, with the new battles and your eight scenes 
 
 ## Ideas we haven't decided
 
-These are not on the list until you say yes:
+These are not on the list until you say yes.
 
-- footsteps: none (as now), soft steps, or a cloak's swish;
+**Four of them you can try in the game now,** on a page of their own, Envoi Polish to Try (https://claude.ai/artifact/NZ7C68JJTJ2taFJJgmkcMw): the same game with the four switched on. They're in your game file too, switched off, so it plays exactly as before. Tell me which to keep:
+
+- **footsteps:** Menu, Settings, Footsteps: Soft steps (as it starts there), a cloak's swish, or None. The two sounds from the Io on Foot page, as you heard them there, now in the game itself; the soft steps change with the ground (earth, stone or wood);
+- **words that move on by themselves:** Settings, Words move on: By themselves (as it starts there) or On a tap. A line waits a moment after it has all appeared, longer for a long line and at Slow words; a tap still moves on at once, and a question waits for your answer;
+- **a door's sound** as Io walks from one map to the next (never on a road that turns her back);
+- **Buy 10** beside each herb's Buy in the shops, as many as the bag has room for and the shards cover.
+
+That page keeps its own saves; a save code (Menu, Saves) carries a game over from your file.
+
+The rest are ideas only:
+
 - things to find at the D&D map's named places (Willowmurk, Rotbridge, Mosswatch Tower, Fawnrest Shrine, Eldergrove, Frostmere Lake, Peak's Veil, Stormwatch), with an optional great creature at some of them (question 28);
 - a Field Notes page listing the creatures calmed and the places found;
 - more townsfolk in each town, and more of Inkblot: Quill's paper doll already carries the crow on his shoulder, in his scenes too, so this would be Inkblot on his own in the story's scenes, or on the Magpie's perch;
-- words that move on by themselves (auto-advance);
 - fights that start quicker (keeping the heroes built between fights);
-- a door's sound when a map changes;
 - wild packs framed a little closer on the phone;
 - more of your songs, such as a theme for each band's wilds;
 - finer studies of Sol, Halcyon and Noctara for the finale's cutscene;
-- a "buy 10" button in the shops;
 - the game on Mooncart (merging this branch into the main one is your call).
 
 ---
