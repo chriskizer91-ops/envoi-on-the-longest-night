@@ -93,7 +93,7 @@ Each demo is the whole game opening at its chapter, saving as it goes; its title
 19. **Chris's walking paths are in** (his first round from the Walking Paths page: eleven maps, new ground on five), secret ways included: the path up a house and over its roof into Wickhollow's square, and the Thornwood's paths up from the moon stone. They're applied exactly as he drew them (`map-paths/apply-edits.mjs`), and the game and the demos carry them.
 20. **The editor's drawing tools come first:** + Green, + Purple and + Red, in the layers' colours, at the top of its panel.
 21. **Chris's second round of walking paths** (October 4): Dawnroost's living node, the dead Moonwell, the Thornwood and Wickhollow, with new places to explore, among them a hidden nook behind the node's weapon stall.
-22. **Herbs for the wilds** (October 4): up to nine of each, three of each to start, each used once a fight, as many as you have out of battle. The fights are exactly as balanced as before.
+22. **Herbs for the wilds** (October 4): up to nine of each (99 since that evening, at Chris's word), three of each to start, each used once a fight, as many as you have out of battle. The fights are exactly as balanced as before.
 23. **Chris's songs are in** (October 4): Moonlit Forest Path in the towns, Herbal Decay in the wilds and over the world map, each as loud as the made-up music it replaces (`../src/game/songs.js`). The fights keep their original battle music, at his word (his Herbal Decay Battle is out of the game). The made-up music keeps the title, the marsh, the ruins, the flight and the ending. On the published pages the songs are two files beside the page.
 24. **Three volumes:** Music, Effects and Surroundings (each place's own crickets, wind and water), each from Off to Loud.
 25. **Two hidden keepsakes,** Chris's magic items: Io's on top of the red roof in Wickhollow (her Moonlore heals a quarter more), Sol's where the trail into the Thornwood's dark woods gives out (a tenth more HP and a tenth harder blows). Nothing points to them; the balance never counts on them. Their names wait for Chris (`../docs/questions/open.md`, 24).
@@ -139,7 +139,7 @@ Chris chose 3D ground in front and a squeezed painting far off behind, for every
 3. **The battle screen uses it** (`../src/battle/screen.js`): the locked camera, the party and the foes in the clearing, every move and rule as now.
 4. **A demo page comes first** (every fight of the game playable there, in its place), **then the game.**
 
-## Next: walking without the world map (for Chris to confirm)
+## Next: walking without the world map (confirmed by Chris on October 5, at night)
 
 Today the world map carries all of band 2's and band 3's wild walking, and the camps where the Magpie lands. Without it, each band's wilds become a short run of painted wilderness scenes between its places, as the Thornwood already is in band 1:
 
@@ -150,12 +150,12 @@ Today the world map carries all of band 2's and band 3's wild walking, and the c
 | 3 | about 3: the northern camp (the Magpie lands), Eldergrove's edge, the cold moor | the northern crossroads, the shipyard |
 | 4 | 1 or 2: the frozen camp (the Magpie lands), Frostmere's shore | the frozen pass, Misthollow, the dead Moonwell |
 
-Random fights happen on the wilderness scenes, as in the Thornwood today, and the Magpie flies between the landings. Once Chris agrees the plan, art request 12 follows: one prompt per scene, in the style and layout of his example. Every map in the game is at night, as the story is one long night, so the prompts would ask for night unless Chris wants these by day.
+Random fights happen on the wilderness scenes, as in the Thornwood today, and the Magpie flies between the landings. Chris agreed the plan on October 5 ("The walking plan is good, make the scenes at night"), and art request 12 has its eight prompts (`../docs/art-requests/12-wilderness-scenes.md`): the Warm Roads camp, the Ember Line road and the forest road to Dawnroost; the northern camp, Eldergrove's edge and the cold moor; the frozen camp and Frostmere's shore. Every one at night, as the story is one long night.
 
 ## Waiting on Chris
 
 1. **The five demos:** play each from just before its gate on to the next, and say what to change.
-2. **The walking plan** above, and whether the wilderness scenes are at night (`../docs/questions/open.md`, 20 and 21). Art request 12 follows his answer.
+2. **The wilderness scenes' pictures** (art request 12, eight at night). The plan is agreed (October 5).
 3. **More map paths** whenever he likes (his two rounds are in): the editor's + Green and + Purple draw new ground and fronts anywhere; sent edits go in the same way.
 4. Still open from before:
    - the lore conversation (every word is a placeholder);

@@ -5,7 +5,7 @@ For the hub session (the one working on the game itself), when Chris pastes a re
 ## 1. Fetch it and check it touched only its folder
 
 ```sh
-git fetch origin <branch from the slip>
+git fetch origin work/model-<id>             # or the branch the slip names
 git diff --stat HEAD...FETCH_HEAD          # every path must be under 3d-model-new-character-ideas/<id>/
 git merge --no-ff FETCH_HEAD -m "Bring in <Name> from <branch>"
 ```

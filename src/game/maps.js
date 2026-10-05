@@ -9,8 +9,8 @@
 //   people: who stands where, how they look (`look`, a pixel figure from sprites.js) and what they say (`talk`, in
 //           script.js); `role` makes them a shop or an inn
 //   spots:  things to look at or use: `rest` (an inn bed or a camp: HP and MP back, and the game is saved), `well` (a
-//           small well with a letter and a gift), `keepsake` (one of the two hidden magic items, rules.js KEEPSAKES),
-//           `event` (a story beat or a set fight when she walks into `rect`)
+//           small well with a letter and a gift), `event` (a story beat or a set fight when she walks into `rect`)
+//           (the keepsakes' spots come from envoi-final-draft/items/items.js: the game adds them, as `keepsake`)
 //   wild:   random encounters on this map: the band, the battle backdrop, and the encounter rate
 // Defines globalThis.MAPS.
 (function (G) {
@@ -62,6 +62,7 @@
         [[205, 772], [308, 758], [312, 818], [745, 818], [770, 844], [757, 867], [697, 869], [614, 866], [459, 878], [301, 859], [276, 851], [220, 815]], // the lane under the garden fence
         [[452, 718], [482, 718], [501, 730], [567, 724], [586, 749], [541, 761], [546, 788], [484, 783], [488, 829], [454, 822], [455, 786], [381, 780], [378, 736]], // through the garden gate to the lower house's door
         [[432, 712], [502, 712], [502, 734], [432, 734]],
+        [[1150, 659], [1245, 669], [1250, 692], [1256, 706], [1238, 716], [1162, 713], [1134, 696], [1110, 678], [1107, 654]], // the nook past the bench, behind the house by the east bridge (Chris, October 4, evening)
       ],
       block: [
         // the Moonwell's low wall and flower beds, a ring open to the south, and the well itself inside it
@@ -81,6 +82,7 @@
         { pts: [[304, 466], [322, 449], [356, 500], [334, 532], [296, 532], [291, 497]], base: 530 }, // the dark tree by the west stairs
         { pts: [[152, 681], [190, 680], [202, 712], [180, 730], [140, 730], [128, 712]], base: 728 }, // the tree by the lower jetty
         { pts: [[401, 455], [422, 436], [424, 426], [427, 421], [432, 425], [435, 435], [455, 455]], base: 455 },
+        { pts: [[1169, 720], [1222, 678], [1232, 675], [1240, 685], [1250, 686], [1258, 690], [1274, 711], [1279, 740], [1245, 753], [1169, 726]], base: 753 }, // the bushes in front of that nook
       ],
       exits: [
         { rect: [1514, 354, 1536, 396], to: 'thornwood', at: [60, 456], label: 'The Thornwood' },
@@ -94,8 +96,8 @@
       ],
       spots: [
         { kind: 'rest', at: [777, 530], label: 'The Moonwell', note: 'Lunara sleeps here. Rest, and the game is saved.' },
-        // Io's keepsake, at the end of Chris's secret way up the tree and along the red roof's ridge (his pick, October 4)
-        { kind: 'keepsake', id: 'io', at: [458, 562], label: 'Something glinting' },
+        // (the Crescent Locket lies at the end of Chris's secret way up the tree and along the red roof's ridge, his pick
+        // on October 4: the keepsakes' places are in envoi-final-draft/items/items.js)
       ],
     },
     // Io's cottage, in the woods south of the square, with her garden: where the story starts
@@ -219,9 +221,8 @@
       people: [],
       spots: [
         { kind: 'well', id: 'moonstone', at: [1010, 336], label: 'The moon stone', note: 'An old stone with the crescent cut deep in it. Someone has left something at its foot.' },
-        // Sol's keepsake, where Chris's trail into the dark woods south of the road gives out (his pick, October 4: "in
-        // the spooky woods")
-        { kind: 'keepsake', id: 'sol', at: [1284, 816], label: 'Something glinting' },
+        // (the Warden's Brooch lies where Chris's trail into the dark woods south of the road gives out, his pick on
+        // October 4, "in the spooky woods": items.js)
       ],
       wild: { band: 1, scene: 'thornwood-bridge', rate: 1 },
     },

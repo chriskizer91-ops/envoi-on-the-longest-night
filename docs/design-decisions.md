@@ -1050,10 +1050,10 @@ Chris played pass three's pages and the game, and sent the last four battle pain
 
 ## October 4, 2026: herbs for the wilds
 
-- **The party carries up to nine of each herb and starts with three of each** (Chris: "you can carry more than one of each herb... start with three of each"). A new game and every chapter begin with three of each.
+- **The party carries up to nine of each herb and starts with three of each** (Chris: "you can carry more than one of each herb... start with three of each"). A new game and every chapter begin with three of each. (Up to 99 since that evening: "the bag limit on each item should be 99", below.)
 - **In a fight each herb can be used once** ("only use one in a battle"): the fight's Item menu shows how many the party carries, and a herb already used that fight stays on the list, greyed, "once a fight". So every fight is exactly as it was balanced (all 51 balance targets give the same numbers as before).
 - **Out of battle there's no limit** ("you need to be able to use lots in the wilds so you can grind"): from the menu's Herbs, as many as the party carries.
-- **Shops sell up to nine of each; a well's herb is kept unless Io carries nine,** when she trades it on for shards.
+- **Shops sell up to nine of each; a well's herb is kept unless Io carries nine,** when she trades it on for shards. (99 since that evening.)
 - **The journey simulation** starts with three of each, tops them up to three at each shop and spends none between fights, so it plays a little harder than a player who grinds with herbs. Every gate is still reached at its level (6, 11, 15 and 20); the attentive player's finale took a median of 20 tries in this run against 14 before. That fight is the same either way, so the difference is the dice. It's a long shot by design (won 2 to 10 times in a hundred).
 - **Chris finished his walking paths** (October 4): a second round on Dawnroost's living node, the dead Moonwell, the Thornwood and Wickhollow, with new spots to explore, among them a hidden nook behind the node's weapon stall. All in as he drew them.
 
@@ -1093,3 +1093,63 @@ Chris asked what polish is left, and for these: his three songs in; the songs' v
 - **Beating the game unlocks Chapters** (Chris: "if you beat the game that unlocks chapter selection once we finalize the game"). Until the game is finished, Chapters stays on the title from the start, so each part can be tried.
 - **How, when it's time:** winning the finale already marks the save (`flags.ending`, set before the ending plays), so the title can offer Chapters once any slot holds a beaten game. A mark of its own on the device, set at the same moment, would keep Chapters open even after that save is overwritten.
 - Chris has the whole game as one file (the offline build, songs inside) to keep and play anywhere: sent October 4 with all three songs, and again the same day with the fights' original battle music.
+
+## October 4, 2026, evening: the twenty keepsakes
+
+Chris's rules for things to find, settled over three messages that evening; he locked the list they made the same night. `../envoi-final-draft/items/README.md` has the list, and `items.js` its data.
+
+- **Twenty keepsakes,** each with a still picture (no animation), put on and taken off on a new Items page.
+- **Six only Io can wear, six only Sol, and eight either.** There's no limit on how many one hero wears, so one can wear fourteen if the party finds all twenty.
+- **Two helps each.** Every keepsake has one main help, a small share of healing, damage or max HP, and one other help, in fights or outside them. In fights: Trance fills faster (two keepsakes for each hero), and starting a fight with Heat. Outside: more shards is good; walking faster isn't.
+- **The same totals as today.** Together the main helps reach what the two hidden keepsakes give today: Io's Lunar Mend and Waxing Light heal 25% more, and Sol has 10% more HP and her blows land 10% harder. The sizes differ ("some of them might be 1% of something... some of them might be 3%").
+- **The two hidden keepsakes are cut to a quarter** of what they give now and stay the strongest. The Warden's Brooch keeps a quarter of both its helps.
+- **Four are gifts from townsfolk,** and the first fight with the Bramble Colossus, in the last band's wilds, gives each hero one.
+- **Names say what each thing is and where it's found.** They can come from the other games or be made up; Chris prefers what and where.
+- **Chris places them himself,** with one tool that is both the map editor and the item placer (`../envoi-final-draft/map-editor/`).
+- **Where the found ones lie** (Chris, later that evening: "put them [in] place, not necessarily hidden, but you have to walk around the wilds and fight creatures to find items, and explore the towns"): each on the place its name gives, away from the main way through, so they're found by exploring the towns and by walking, and fighting, through the wilds. Claude placed them; Chris moves any he likes in the map editor. He also wanted the finds early in the game, and 8 of the 14 that lie on a map are in the first part, from Wickhollow to the fen's dark heart.
+- **Pictures and cards** (on approving the list): each keepsake has a tiny PNG picture and a card, shown when she finds it and again in the inventory.
+- **The inventory never tells how many are left to find.** It shows only what has been found: no count, no empty places for the rest.
+- As with the two today, the balance never counts on them.
+
+## October 4, 2026, late evening: the places, the bag, the shops and the cutscenes
+
+Chris, in one message: "Those are all good locations also the bag limit on each item should be 99. Also make sure there is a shop in every town. Also the cut scenes are done."
+
+- **The keepsakes' places are approved.** The twelve found ones lie where Claude put them (`../envoi-final-draft/items/items.js`, `at`), with his Wickhollow nook for the Forge Horseshoe. With the list locked and the places approved, they're ready to go into the game.
+- **The bag holds up to 99 of each herb** (`rules.js` `CARRY`). The shops sell up to 99 of each, and a well's herb is kept unless Io already carries 99. A new game still starts with three of each, and a fight still lets each herb be used once, so every fight is as it was balanced. The keepsakes are one of a kind, so the limit is the herbs'.
+- **Every town has a herb shop,** and already did: Nettie in Wickhollow, Quill at the jetty, Old Wenna in Bogmire, Brann in Dawnroost, Pim at the shipyard and Sorrel in Misthollow. Each sells all five herbs at its band's price. Io's cottage is her home, and the three camps on the world map are rests, not towns.
+- **Both cutscenes are in the game,** as their sessions made them (`../envoi-final-draft/cutscenes/`):
+  - **The Colossus, first met** (45 seconds) plays the first time a Bramble Colossus comes out of the snow by the frozen road. **The finale's opening** (72 seconds) plays before the finale's first try. Each plays once a game: a second Colossus, or a try after a lost finale, goes straight to the fight.
+  - **The fight starts where the cutscene ends.** Its last picture stays while the battle builds under it, then fades into the fight. The foes are already standing where the cutscene left them (they don't rise a second time), and the fight skips the lines the cutscene has shown.
+  - **Skip** (the button, or Esc) skips it, and it still counts as seen. It plays at the game's Music, Effects and Surroundings volumes, and at Phone detail on a phone.
+  - **Watch again:** once a game has shown a cutscene, the menu's Settings can play it again.
+  - **Size** (the build's measure): the published game is 14.4 MB with both inside (13.6 MB before), close to the 16 MB a published page may be. The file Chris keeps is 17.1 MB of its 30.
+
+## October 4, 2026, late evening: the keepsakes in the game
+
+Chris sent the twenty keepsakes' pictures ("Items", four packs, each picture with a card), the evening he approved their places. With the list locked, the places approved and the pictures in, they went into the game (`../envoi-final-draft/items/README.md`, "The pictures" and "In the game").
+
+- **The pictures:** tiny PNGs, as he asked: 256 pixels square, transparent, 256 colours, about 28 KB each, made from his packs (kept as they came in `reference/art/keepsakes/`).
+- **The cards are drawn by the game, in the look of his.** His cards are pictures with their words inside; on his phone held sideways their small print would be too small to read, and each carries a number at its foot ("01 / 20") that would tell the player how many there are, against his rule for the inventory. So the game lays out the same card (dark blue, silver frame, gold for the two hidden ones, who can wear it, the picture, the name, the two helps, where it was found) with words that stay readable either way up, and no number.
+- **A keepsake goes on as it's found,** so nobody misses its help: its own hero's, and a shared one on Sol once she's with Io (the shared ones make up her totals), else on Io. The Items page takes one off, puts it on, or gives a shared one to the other.
+- **The Items page** is a sixth tab in the menu: what each hero wears, as pictures, and a tap for the card. Only what has been found; nothing counts the twenty.
+- **The gifts' moments:** Nettie's as Io sets out with Sol (the first time Io speaks with her once Sol has joined her), Marta's and Ede's the first time the party speaks with them, Ysmera's once her yard has met them.
+- **What some helps mean in play:** "the big blows a foe warns of" are the moves it gathers a turn for first (Void Sphere, Black Noon, the Grab, the Devour); "Frost slows her for half as long" means she shakes a Frost off halfway; the Bogstriders' easier run works for the whole party; the shards from a win count before the level up; HP and MP come back after any fight that wasn't lost.
+- **The two hidden keepsakes are cut to a quarter now,** as Chris decided: the Locket's 25% healing is 6.25%, the Brooch's 10% HP and damage 2.5% each. A save that found them keeps them.
+- **A chapter starts without keepsakes;** the ones before it can still be found.
+- **The balance never counts on them:** all 51 balance targets give the numbers they gave before.
+- **The published game keeps the pictures beside it,** as it does the songs, so it stays under the 16 MB a published page may be (14.5 MB with the keepsakes' code). The file Chris keeps has them inside.
+
+## October 5, 2026: the wilderness scenes
+
+Chris: "The walking plan is good, make the scenes at night" (questions 20 and 21).
+
+- **Eight painted wilderness scenes replace walking on the world map,** which is for flying the Magpie only (his decision of October 3). Each band starts at a camp where the Magpie lands, and its scenes join up in a row to the band's town or gate:
+  - band 2: the Warm Roads camp, the Ember Line road (where the three nodes Sol relights now stand) and the forest road up to Dawnroost;
+  - band 3: the northern camp, Eldergrove's edge and the cold moor, to the northern crossroads' west road;
+  - band 4: the frozen camp and Frostmere's shore, up to the frozen pass.
+  - Band 1 needs none: the Thornwood is its wild walk.
+- **At night,** like every map in the game: the story is one long night.
+- **Art request 12** has a prompt for each, in the walking maps' style with the layout of Chris's example: a clear path across open wild ground, side paths to small places worth exploring, and the paths' edges matched so one scene leads into the next (`art-requests/12-wilderness-scenes.md`).
+- **When the pictures come:** squeezed to "100% extra light", traced, joined up, the nodes moved from the world map, random fights on the walks (none in the camps, which are rests), and the walking taken off the world map. A demo page first, then the game.
+

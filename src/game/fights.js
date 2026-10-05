@@ -5,7 +5,8 @@
 // flags, with one of each herb it carries to use (the menu shows how many it carries). GameFights.config(kind, party,
 // opts) -> the cfg for BattleScreen.start, without `game` (the game adds it).
 //   kind: 'first' | 'wild' | 'greatWraith' | 'dawnroost' | 'halcyon' | 'finale'
-//   party: { level, xp, hp: { io, sol }, mp, herbs, flags, keepsakes } (hp and mp null mean full; keepsakes: the hidden ones found)
+//   party: { level, xp, hp: { io, sol }, mp, herbs, flags, items } (hp and mp null mean full; items: the keepsakes found
+//            and who wears each, keepsakes.js)
 //   opts: { band, scene, seen, pack } for a wild fight (seen: the band's wild fights so far; pack: a set pack, for tests)
 // Needs rules.js, sim.js, the models and the stage scenes. Defines window.GameFights.
 // The new battles (ARENA below): opts also takes, for any fight, arena (true or false: fought in its arena or on its flat
@@ -83,21 +84,40 @@
     if (id === 'noctara') return makeNoctara({});
     throw new Error('no foe ' + id);
   }
-  // the party as the engine takes it: each hero's level, HP and MP as they stand, and the keepsake she carries, if
-  // it's been found (rules.js KEEPSAKES)
-  const keepsakeOf = (P, id) => (P.keepsakes && P.keepsakes[id] && RL().KEEPSAKES[id]) || null;
+  // the party as the engine takes it: each hero's level, HP and MP as they stand, and what the keepsakes she wears add
+  // (keepsakes.js; the balance never counts on them)
+  const K = () => window.Keepsakes;
   function partyOf(P, solo) {
     const p = [{ id: 'io', level: P.level }];
     if (P.hp && P.hp.io != null) p[0].hp = P.hp.io;
     if (P.mp != null) p[0].mp = P.mp;
-    if (keepsakeOf(P, 'io')) p[0].healMul = keepsakeOf(P, 'io').heal;
+    if (K()) wearing(p[0], K().gear(P, 'io'));
     if (!solo && P.flags && P.flags.party) {
       const s = { id: 'sol', level: P.level }; if (P.hp && P.hp.sol != null) s.hp = P.hp.sol;
-      if (keepsakeOf(P, 'sol')) { s.hpMul = keepsakeOf(P, 'sol').hp; s.dmgMul = keepsakeOf(P, 'sol').damage; }
+      if (K()) wearing(s, K().gear(P, 'sol'));
       p.push(s);
     }
     return p;
   }
+  // a hero's keepsakes in the engine's terms (engine.js, its heroes): items.js gives them in percent
+  function wearing(h, g) {
+    const pc = (x) => 1 + x / 100;
+    if (g.heal) h.healMul = pc(g.heal);
+    if (g.hp) h.hpMul = pc(g.hp);
+    if (g.might) h.dmgMul = pc(g.might);
+    if (g.mp) h.mpMul = pc(g.mp);
+    if (g.trance) h.tranceMul = pc(g.trance);
+    if (g.heat) h.heat = Math.min(100, g.heat);
+    if (g.herbHeal) h.herbMul = pc(g.herbHeal);
+    if (g.regen) h.regen = g.regen / 100;
+    if (g.sunder) h.sunderPlus = g.sunder;
+    if (g.stoop) h.stoopMul = pc(g.stoop);
+    if (g.bigBlows) h.warnedMul = 1 - g.bigBlows / 100;
+    if (g.frost) h.frostCut = g.frost / 100;
+    return h;
+  }
+  // running from a pack: how often it works with the party's keepsakes (the Bogstriders), else the engine's one in two
+  const fleeOf = (P) => (K() && K().party(P).flee) || undefined;
   const base = (scene, P, solo) => {
     const at = PLACES[scene] || PLACES['gloamwood-road'];
     const heroes = [hero('io', at.io)]; if (!solo && P.flags.party) heroes.push(hero('sol', at.sol));
@@ -131,7 +151,7 @@
       if (lone) { const at = PLACES[scene]; c.heroes[0].home = [at.io[0] + 40, at.io[1] - 50]; if (c.heroes[1]) c.heroes[1].home = [at.sol[0] + 40, at.sol[1] - 50]; c.slots = [at.slots[0]]; }
       if (arena) inArena(c, ARENA_OF.wild[band], lone ? ARENA_AT.lone : ARENA_AT.pack, wilds);
       return Object.assign(c, {
-        fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), ...bagOf(P), ends: { canFlee: true }, reward: window.BattleRules.WILD_REWARD }),
+        fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), ...bagOf(P), ends: { canFlee: true }, flee: fleeOf(P), reward: window.BattleRules.WILD_REWARD }),
         introMsg: lone ? (fs) => (fs[0].id === 'brambleAmbush' ? 'A low blackberry thicket grows over the road, heavy with fruit.' : 'A blackberry thicket stands by the road, lusher than it should be, and heavy with fruit.') : undefined,
         introAfter: lone ? (fs) => (fs[0].id === 'brambleAmbush' ? 'It was never a thicket. It strikes before anyone can move.' : fs[0].id === 'brambleAncient' ? 'The ground heaves. Old woody horns rise out of its crown: an Ancient Crown.' : 'The ground heaves, its roots flare, and its canes rise toward the party.') : undefined,
         quickIntro: !lone,
@@ -255,7 +275,7 @@
     c.heroes[0].home = at.io; if (c.heroes[1]) c.heroes[1].home = at.sol; c.slots = [at.slot];
     if (opts.arena != null ? opts.arena : ARENA) inArena(c, ARENA_OF.colossus, ARENA_AT.colossus, Object.assign({ wilds: true }, opts));
     return Object.assign(c, {
-      fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), ...bagOf(P), ends: { canFlee: true }, reward: window.BattleRules.WILD_REWARD }),
+      fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), ...bagOf(P), ends: { canFlee: true }, flee: fleeOf(P), reward: window.BattleRules.WILD_REWARD }),
       introMsg: 'Beside the frozen road stands a thicket as big as a house, green where nothing else is. The snow round it has melted.',
       introAfter: 'The ground splits. It heaves itself up out of the earth, and a great thorned bud opens on a glowing heart: a Bramble Colossus.',
       attackText: () => 'The Bramble Colossus attacks!',

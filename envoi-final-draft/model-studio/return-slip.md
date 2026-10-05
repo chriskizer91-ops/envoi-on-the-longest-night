@@ -5,7 +5,7 @@ Every modeling session ends its work by writing this slip, filled in, as its las
 ```text
 RETURN SLIP: <Creature or model name>
 Brief:   envoi-final-draft/model-studio/briefs/<id>.md (or "custom", with the brief pasted below)
-Branch:  <the branch this session pushed to>
+Branch:  work/model-<id> (or the branch this session pushed to, if that was refused)
 Commit:  <the last commit's short hash>
 Folder:  3d-model-new-character-ideas/<id>/  (nothing outside it changed)
 Page:    <the bench page's claude.ai/artifact link>

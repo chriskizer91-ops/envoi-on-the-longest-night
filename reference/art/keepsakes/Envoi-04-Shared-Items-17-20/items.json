@@ -1,0 +1,108 @@
+{
+  "collection": "Envoi keepsakes",
+  "items": [
+    {
+      "id": 17,
+      "name": "The Bogstriders",
+      "wearer": "Either",
+      "source": "Map find",
+      "primary": "+1% HP",
+      "secondary": "Running from a pack works 2 times in 3",
+      "origin": "Mud boots, Bogmire.",
+      "main": {
+        "hp_pct": 1
+      },
+      "effects": {
+        "escape_success_fraction": [
+          2,
+          3
+        ]
+      },
+      "item_png": "items/17-bogstriders.png",
+      "card_png": "cards/17-bogstriders-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 18,
+      "name": "The Dawnroost Kettle-Helm",
+      "wearer": "Either",
+      "source": "Map find",
+      "primary": "+1% HP",
+      "secondary": "Warned big blows hit 10% softer",
+      "origin": "A dented helm with a weather vane.",
+      "main": {
+        "hp_pct": 1
+      },
+      "effects": {
+        "warned_big_blow_damage_reduction_pct": 10
+      },
+      "item_png": "items/18-dawnroost-kettle-helm.png",
+      "card_png": "cards/18-dawnroost-kettle-helm-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 19,
+      "name": "The Dockhand's Gloves",
+      "wearer": "Either",
+      "source": "Map find",
+      "primary": "+1% damage",
+      "secondary": "10% more shards",
+      "origin": "Lost in the shipyard's cove.",
+      "main": {
+        "damage_pct": 1
+      },
+      "effects": {
+        "shard_gain_pct": 10
+      },
+      "item_png": "items/19-dockhands-gloves.png",
+      "card_png": "cards/19-dockhands-gloves-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 20,
+      "name": "The Misthollow Cowl",
+      "wearer": "Either",
+      "source": "Map find",
+      "primary": "+1% HP",
+      "secondary": "Frost slows her half as long",
+      "origin": "Frost-white hood.",
+      "main": {
+        "hp_pct": 1
+      },
+      "effects": {
+        "frost_slow_duration_multiplier": 0.5
+      },
+      "item_png": "items/20-misthollow-cowl.png",
+      "card_png": "cards/20-misthollow-cowl-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    }
+  ]
+}

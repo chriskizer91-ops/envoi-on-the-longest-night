@@ -1,0 +1,157 @@
+{
+  "collection": "Envoi keepsakes",
+  "items": [
+    {
+      "id": 7,
+      "name": "The Warden's Brooch",
+      "wearer": "Sol",
+      "source": "Hidden keepsake",
+      "hidden": true,
+      "primary": "+2.5% HP and +2.5% damage",
+      "secondary": "Trance 10% faster",
+      "origin": "Hidden in the Thornwood's dark woods.",
+      "main": {
+        "hp_pct": 2.5,
+        "damage_pct": 2.5
+      },
+      "effects": {
+        "trance_speed_pct": 10
+      },
+      "item_png": "items/07-wardens-brooch.png",
+      "card_png": "cards/07-wardens-brooch-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 8,
+      "name": "The Wardens' Hall Gauntlets",
+      "wearer": "Sol",
+      "source": "Gift",
+      "primary": "+1.5% damage",
+      "secondary": "Sunder lasts a turn longer",
+      "origin": "Marta's gift at Dawnroost.",
+      "main": {
+        "damage_pct": 1.5
+      },
+      "effects": {
+        "sunder_duration_extra_turns": 1
+      },
+      "item_png": "items/08-wardens-hall-gauntlets.png",
+      "card_png": "cards/08-wardens-hall-gauntlets-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 9,
+      "name": "The Node Sunstone",
+      "wearer": "Sol",
+      "source": "Map find",
+      "primary": "+1% damage",
+      "secondary": "Starts each fight with 10 Heat",
+      "origin": "In Dawnroost's node once Sol relights it.",
+      "main": {
+        "damage_pct": 1
+      },
+      "effects": {
+        "starting_heat": 10
+      },
+      "item_png": "items/09-node-sunstone.png",
+      "card_png": "cards/09-node-sunstone-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 10,
+      "name": "The Crossroads Pennant",
+      "wearer": "Sol",
+      "source": "Map find",
+      "primary": "+1% HP",
+      "secondary": "Trance 10% faster",
+      "origin": "Tied to the stone ring at the crossroads.",
+      "main": {
+        "hp_pct": 1
+      },
+      "effects": {
+        "trance_speed_pct": 10
+      },
+      "item_png": "items/10-crossroads-pennant.png",
+      "card_png": "cards/10-crossroads-pennant-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Ede's Hearth-Coal",
+      "wearer": "Sol",
+      "source": "Gift",
+      "primary": "+1.5% HP",
+      "secondary": "Starts each fight with 10 Heat",
+      "origin": "Ede's gift at Misthollow.",
+      "main": {
+        "hp_pct": 1.5
+      },
+      "effects": {
+        "starting_heat": 10
+      },
+      "item_png": "items/11-edes-hearth-coal.png",
+      "card_png": "cards/11-edes-hearth-coal-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 12,
+      "name": "The Colossus Thorn",
+      "wearer": "Sol",
+      "source": "Colossus drop",
+      "primary": "+2% damage",
+      "secondary": "Kestrel Stoop 10% harder",
+      "origin": "From the first Bramble Colossus.",
+      "main": {
+        "damage_pct": 2
+      },
+      "effects": {
+        "kestrel_stoop_damage_pct": 10
+      },
+      "item_png": "items/12-colossus-thorn.png",
+      "card_png": "cards/12-colossus-thorn-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    }
+  ]
+}

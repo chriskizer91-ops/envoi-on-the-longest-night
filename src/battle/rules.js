@@ -248,13 +248,14 @@
   };
 
   // ---------- herbs, the items (bible); the map lists them by place, shops sell them for sunstone shards ----------
-  // The party carries up to nine of each (CARRY) and starts with three of each (START_HERBS), but in a fight each herb
+  // The party carries up to 99 of each (CARRY; Chris, October 4, evening: "the bag limit on each item should be 99") and
+  // starts with three of each (START_HERBS), but in a fight each herb
   // can be used once (BATTLE_USE): out in the wilds it can use as many as it carries, to keep going between fights
   // (Chris, October 4). So in a fight a herb is still a special healing, stronger than Io's own: Moonpetal heals 20% more
   // than Lunar Mend, Lavender 20% more than Waxing Light. Ember-star Lily makes every blow the party lands 10% harder for
   // the rest of the fight (Chris, October 3). Heal and revive grow with the user's level; prices are level 1 shards and
   // grow with the shop's band
-  const CARRY = 9, START_HERBS = 3, BATTLE_USE = 1;
+  const CARRY = 99, START_HERBS = 3, BATTLE_USE = 1;
   const HERBS = {
     moonpetal: { name: 'Moonpetal', heal: Math.round(HEROES.io.moves.mend.heal * 1.2), target: 'ally', price: 40 },
     lavender: { name: 'Lavender', heal: Math.round(HEROES.io.moves.waxing.heal * 1.2), target: 'allies', price: 60 },
@@ -263,16 +264,12 @@
     nightrose: { name: 'Nightrose', revive: 0.25, target: 'fallen', price: 120 },
   };
 
-  // ---------- the two hidden keepsakes, Chris's magic items (October 4) ----------
-  // One for Io and one for Sol, hidden off the paths: Io's up on the red roof in Wickhollow, Sol's at the end of a trail
-  // deep in the Thornwood. Finding one makes the game a little easier; not finding them changes nothing, since the
-  // balance (the simulator, the fight tables, the journey) never counts on them. heal: Io's own Moonlore heals (Lunar
-  // Mend and Waxing Light, in a fight and out of one), not the herbs' or Lunara's; hp and damage: Sol's max HP and every
-  // blow she lands. The names wait for Chris's (docs/questions/open.md)
-  const KEEPSAKES = {
-    io: { name: 'the Crescent Locket', heal: 1.25, what: 'her Moonlore heals a quarter more' },
-    sol: { name: 'the Warden’s Brooch', hp: 1.1, damage: 1.1, what: 'a tenth more HP, and her blows land a tenth harder' },
-  };
+  // ---------- the keepsakes ----------
+  // The twenty keepsakes Io and Sol can find (Chris, October 4: envoi-final-draft/items/items.js) make the game a little
+  // easier for whoever wears them; not finding them changes nothing, since the balance (the simulator, the fight tables,
+  // the journey) never counts on them. The game adds them up (src/game/keepsakes.js) and the engine takes what each hero
+  // wears through her setup (engine.js). They replaced the two hidden keepsakes of the morning, which are two of them now,
+  // cut to a quarter.
 
   // ---------- experience and shards ----------
   // to go from level L to L+1 (Chris, October 2): about 79 wild fights from level 2 to 20, with about 40% of them in the
@@ -297,5 +294,5 @@
   // a big blow: a single hit this strong at level 1 (or stronger) on the Colossus's bare heart breaks its Siren Bloom
   const BIG_BLOW = 450;
 
-  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, START_HERBS, BATTLE_USE, KEEPSAKES, xpNeed, grows, herbPrice, MAGPIE, WILD_REWARD, BIG_BLOW };
+  G.BattleRules = { CURVE, SWING, MAX_LEVEL, scale, mpScale, HEROES, SUMMONS, FOES, STATUS, TRANCE, HERBS, CARRY, START_HERBS, BATTLE_USE, xpNeed, grows, herbPrice, MAGPIE, WILD_REWARD, BIG_BLOW };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

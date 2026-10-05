@@ -1,5 +1,7 @@
 # Walking Paths
 
+**Since October 4, evening, the map editor (`../../envoi-final-draft/map-editor/`) is the tool for this.** It keeps these path tools exactly as they are and adds the keepsakes; its test runs this page's test too. These files stay as this page's record.
+
 Chris's editor for where Io can walk on the game's 13 maps, used on his laptop (pass three, October 3, 2026). It follows Witch Way's scene editor (follow-me-down-witch-way, `game/src/editor.js`). Built by a helper agent and reviewed in the session that started pass three.
 
 **The page:** https://claude.ai/artifact/8BmLZd8sJjYBQ6kRbX2enm (private; published with the `db` capability).

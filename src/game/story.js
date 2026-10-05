@@ -7,7 +7,7 @@
 //   walk:    wild country between two places: about `fights` random encounters for a player who walks straight through
 //            (measured on the game's own maps; each wild fight is worth rules.js WILD_REWARD times its table's experience)
 //   rest:    a rest place (an inn, or a camp where the way is long): HP and MP back, and where a lost fight wakes you
-//   shop:    a herb shop: the party carries up to nine of each herb, and uses each once a fight
+//   shop:    a herb shop: the party carries up to 99 of each herb (rules.js CARRY), and uses each once a fight
 //   upgrade: the Magpie's upgrade (rules.js MAGPIE): it needs the band's gate won, the party's level and the shards
 //   flags:   story flags the battles read (party: Sol has joined; refit, envoi, stoop: the gates' rewards)
 // Defines globalThis.STORY.

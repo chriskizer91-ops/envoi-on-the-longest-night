@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Envoi Keepsakes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../src/battle/screen.css">
+<link rel="stylesheet" href="../src/game/game.css">
+<style>
+/* the keepsakes' demo page (October 4, 2026, late evening): the game's own cards and Items page (src/game/keepsakes.js,
+   game.css), with a list to find each one by hand. It keeps the game's night, whatever the device's theme */
+:root{color-scheme:dark;--night:#05030c;--ink:#f4f6ff;--soft:#c9cff2;--dim:#9aa3cf;--line:rgba(214,222,255,.22);--panel:rgba(26,31,70,.6);--hi:#ffd88f}
+html,body{height:auto;overflow:auto}
+body{display:block;margin:0;padding:max(14px,env(safe-area-inset-top,0px)) 16px max(28px,env(safe-area-inset-bottom,0px));background:radial-gradient(120% 70% at 50% 0%,#1b2047 0%,#0b0a1c 55%,var(--night) 100%) fixed var(--night);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.kd{display:grid;gap:14px;max-width:1000px;margin:0 auto}
+.kd-head{display:grid;gap:6px}
+.kd-head h1{font-size:28px;color:#fff4dc;text-wrap:balance}
+.kd-head p{margin:0;max-width:70ch;color:var(--soft);font-size:15px;line-height:1.5}
+.kd-bar{display:flex;flex-wrap:wrap;gap:8px}
+.kd-grid{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;align-items:start}
+@media (max-width:780px){.kd-grid{grid-template-columns:minmax(0,1fr)}}
+.kd-sec{min-width:0;padding:12px 12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.kd-sec h2{margin:0;font-family:"IM Fell English",Georgia,serif;font-weight:400;font-size:21px;color:var(--hi)}
+.kd-sec h3{margin:14px 0 6px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.kd-note{margin:4px 0 0;color:var(--dim);font-size:13px;line-height:1.45}
+.kd-list{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.kd-row{display:grid;grid-template-columns:46px minmax(0,1fr) auto;align-items:center;gap:10px;padding:6px 8px;border-radius:8px;background:rgba(0,0,0,.25)}
+.kd-row img{display:block;width:46px;height:46px;object-fit:contain}
+.kd-row b{display:block;font-size:14.5px;line-height:1.3}
+.kd-row small{display:block;color:var(--dim);font-size:12.5px;line-height:1.35}
+.kd-row .go{min-width:76px}
+.kd-who{display:grid;gap:4px;margin-top:10px;padding:8px 10px;border-radius:8px;background:rgba(0,0,0,.25)}
+.kd-who h3{margin:0;font-family:"IM Fell English",Georgia,serif;font-size:19px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--hi)}
+.kd-who ul{display:grid;gap:3px;margin:0;padding:0;list-style:none;font-size:14px;line-height:1.4}
+.kd-who li{color:var(--soft)}
+.kd-who .kd-main{color:#f6e3ad}
+.kd-who .kd-none{color:var(--dim)}
+.kd-over{position:fixed;inset:0;z-index:50;pointer-events:none}
+.kd-over>*{pointer-events:auto}
+.kd-over .gmenu-tabs .tab:disabled{opacity:.4;cursor:default}
+.kd-over .gmenu-card h2{margin:0 0 6px}
+</style>
+</head>
+<body>
+<div class="kd">
+  <header class="kd-head">
+    <h1>Envoi · the twenty keepsakes</h1>
+    <p>Chris’s pictures, on the game’s own cards. Press <b>Find</b> on one to see the card that shows when it comes to the party: in the game, the fourteen on the maps are found by exploring, four come as gifts, and two from the first Bramble Colossus. Then open the Items page as the game’s menu shows it, with only what has been found and nothing that says how many are left.</p>
+  </header>
+  <div class="kd-bar">
+    <button type="button" class="go" id="kd-items">Open the Items page</button>
+    <button type="button" class="go alt" id="kd-all">Find them all</button>
+    <button type="button" class="go alt" id="kd-reset">Start again</button>
+  </div>
+  <div class="kd-grid">
+    <section class="kd-sec" aria-labelledby="kd-l">
+      <h2 id="kd-l">Find one</h2>
+      <p class="kd-note">This list is only for trying them: the game never shows it.</p>
+      <div id="kd-groups"></div>
+    </section>
+    <section class="kd-sec" aria-labelledby="kd-s">
+      <h2 id="kd-s">What they add up to</h2>
+      <p class="kd-note">All twenty together reach what the two hidden keepsakes gave this morning: Io’s healing 25% more, and Sol 10% more HP and 10% harder blows when she wears the eight shared ones.</p>
+      <div id="kd-sum"></div>
+    </section>
+  </div>
+</div>
+<div class="kd-over" id="kd-over"></div>
+<script src="../envoi-final-draft/items/items.js"></script>
+<script src="../src/game/keepsakes.js"></script>
+<script>
+(function () {
+  'use strict';
+  const K = window.Keepsakes, ITEMS = window.LOOT.ITEMS;
+  // here the pictures load from ../art; the build puts them inside the page
+  const src = (p) => (String(p).startsWith('data:') ? p : (window.ART_BASE != null ? window.ART_BASE : '../') + p);
+  const over = document.getElementById('kd-over');
+  const NAME = { io: 'Io', sol: 'Sol' };
+  function el(tag, attrs, parent, text) { const e = document.createElement(tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; if (parent) parent.appendChild(e); return e; }
+  // the party, as a save has it once Sol is with Io; what has been found is kept in this browser
+  const STORE = 'envoi.keepsakes-demo.v1';
+  let st = { flags: { party: true }, items: {}, done: {} };
+  try { const kept = JSON.parse(localStorage.getItem(STORE) || 'null'); if (kept && kept.items) st.items = kept.items; } catch (e) { /* a fresh start */ }
+  const keep = () => { try { localStorage.setItem(STORE, JSON.stringify({ items: st.items })); } catch (e) { /* not kept */ } };
+
+  const GROUPS = [['hidden', 'Hidden, where they were this morning'], ['found', 'Lying on the maps'], ['gift', 'Gifts'], ['fight', 'From the first Bramble Colossus']];
+  const wearLine = (it) => (it.wear === 'io' ? 'Only Io' : it.wear === 'sol' ? 'Only Sol' : 'Io or Sol');
+  function list() {
+    const box = document.getElementById('kd-groups'); box.textContent = '';
+    for (const [source, title] of GROUPS) {
+      el('h3', null, box, title);
+      const ul = el('ul', { class: 'kd-list' }, box);
+      for (const it of ITEMS.filter((x) => x.source === source)) {
+        const has = K.found(st, it.id), li = el('li', { class: 'kd-row' }, ul);
+        el('img', { alt: '', src: src(it.pic), width: '256', height: '256' }, li);
+        const t = el('div', null, li); el('b', null, t, it.name); el('small', null, t, wearLine(it) + ' · ' + K.mainLine(it) + (has ? ' · ' + (st.items[it.id] ? NAME[st.items[it.id]] + ' wears it' : 'not worn') : ''));
+        const b = el('button', { type: 'button', class: 'go small' + (has ? ' alt' : ''), 'data-id': it.id }, li, has ? 'Its card' : 'Find');
+        b.addEventListener('click', () => find(it));
+      }
+    }
+  }
+  async function find(it) {
+    if (!K.found(st, it.id)) { K.give(st, it.id); keep(); await K.showFound(over, st, it.id, { src }); }
+    else await K.show(over, it, { src, wears: st.items[it.id] ? NAME[st.items[it.id]] + ' wears it.' : 'Nobody wears it.' });
+    draw();
+    const b = document.querySelector('#kd-groups button[data-id="' + it.id + '"]'); if (b) b.focus({ preventScroll: true });
+  }
+
+  // each hero's helps added up, and the party's (keepsakes.js gear and party)
+  const n = (x) => String(Math.round(x * 100) / 100);
+  function helps(g) {
+    const out = [];
+    if (g.heal) out.push(['Lunar Mend and Waxing Light heal ' + n(g.heal) + '% more', 1]);
+    if (g.hp) out.push([n(g.hp) + '% more HP', 1]);
+    if (g.might) out.push(['Blows' + ' land ' + n(g.might) + '% harder', 1]);
+    if (g.trance) out.push(['Trance fills ' + n(g.trance) + '% faster']);
+    if (g.heat) out.push(['Starts each fight with ' + n(g.heat) + ' Heat']);
+    if (g.herbHeal) out.push(['Herbs she uses in a fight heal ' + n(g.herbHeal) + '% more']);
+    if (g.mp) out.push([n(g.mp) + '% more MP']);
+    if (g.regen) out.push([n(g.regen) + '% of her HP back as each of her turns starts']);
+    if (g.sunder) out.push(['Sunder lasts ' + n(g.sunder) + ' turn longer']);
+    if (g.stoop) out.push(['Kestrel Stoop lands ' + n(g.stoop) + '% harder']);
+    if (g.bigBlows) out.push(['Big blows a foe warns of hit her ' + n(g.bigBlows) + '% softer']);
+    if (g.frost) out.push(['Frost slows her for ' + n(g.frost) + '% less of the time']);
+    if (g.hpBack) out.push([n(g.hpBack) + '% of her HP back after each fight']);
+    if (g.mpBack) out.push([n(g.mpBack) + '% of her MP back after each fight']);
+    return out;
+  }
+  function sums() {
+    const box = document.getElementById('kd-sum'); box.textContent = '';
+    for (const who of ['io', 'sol']) {
+      const w = el('div', { class: 'kd-who' }, box); el('h3', null, w, NAME[who]);
+      const ul = el('ul', null, w), hs = helps(K.gear(st, who));
+      if (!hs.length) el('li', { class: 'kd-none' }, ul, 'Wears none yet');
+      for (const [t, main] of hs) el('li', main ? { class: 'kd-main' } : null, ul, t);
+    }
+    const P = K.party(st), w = el('div', { class: 'kd-who' }, box); el('h3', null, w, 'The party');
+    const ul = el('ul', null, w), out = [];
+    if (P.shards) out.push('Fights give ' + n(P.shards) + '% more shards');
+    if (P.herbPrice) out.push('Herbs cost ' + n(P.herbPrice) + '% less in the shops');
+    if (P.glint) out.push('Hidden things glint brighter on the maps');
+    if (P.flee) out.push('Running from a pack works 2 times in 3');
+    if (!out.length) el('li', { class: 'kd-none' }, ul, 'Nothing yet');
+    for (const t of out) el('li', null, ul, t);
+  }
+  function draw() { list(); sums(); }
+
+  // the game's menu with its Items tab (the other tabs need a game behind them)
+  function itemsPage() {
+    const opener = document.activeElement;
+    const ov = el('div', { class: 'gmenu', role: 'dialog', 'aria-label': 'Menu' }, over);
+    const card = el('div', { class: 'gmenu-card win' }, ov);
+    const tabs = el('div', { class: 'gmenu-tabs', role: 'tablist' }, card);
+    for (const k of ['Party', 'Herbs', 'Items', 'Moonlore', 'Saves', 'Settings']) { const b = el('button', { type: 'button', role: 'tab', class: 'tab', 'aria-selected': String(k === 'Items') }, tabs, k); if (k !== 'Items') b.disabled = true; }
+    const body = el('div', { class: 'gmenu-body' }, card);
+    const foot = el('div', { class: 'gmenu-foot' }, card), x = el('button', { type: 'button', class: 'go' }, foot, 'Close');
+    const close = () => { ov.remove(); draw(); if (opener && opener.focus) opener.focus({ preventScroll: true }); };
+    const redraw = () => { body.textContent = ''; K.page(body, st, { root: over, src, heroes: ['io', 'sol'], redraw, changed: keep }); };
+    x.addEventListener('click', close);
+    ov.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
+    redraw(); setTimeout(() => x.focus({ preventScroll: true }), 30);
+  }
+  document.getElementById('kd-items').addEventListener('click', itemsPage);
+  document.getElementById('kd-all').addEventListener('click', () => { for (const it of ITEMS) K.give(st, it.id); keep(); draw(); });
+  document.getElementById('kd-reset').addEventListener('click', () => { st.items = {}; keep(); draw(); });
+  draw();
+  window.KeepsakesDemo = { get state() { return st; }, itemsPage };
+})();
+</script>
+</body>
+</html>

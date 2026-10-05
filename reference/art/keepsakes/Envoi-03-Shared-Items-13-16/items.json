@@ -1,0 +1,105 @@
+{
+  "collection": "Envoi keepsakes",
+  "items": [
+    {
+      "id": 13,
+      "name": "The Forge Horseshoe",
+      "wearer": "Either",
+      "source": "Map find",
+      "primary": "+1% HP",
+      "secondary": "5% more shards",
+      "origin": "By Hilde's forge, Wickhollow.",
+      "main": {
+        "hp_pct": 1
+      },
+      "effects": {
+        "shard_gain_pct": 5
+      },
+      "item_png": "items/13-forge-horseshoe.png",
+      "card_png": "cards/13-forge-horseshoe-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 14,
+      "name": "The Jetty Coin",
+      "wearer": "Either",
+      "source": "Map find",
+      "primary": "+1% damage",
+      "secondary": "Herbs 10% cheaper",
+      "origin": "Between the jetty's boards.",
+      "main": {
+        "damage_pct": 1
+      },
+      "effects": {
+        "herb_price_discount_pct": 10
+      },
+      "item_png": "items/14-jetty-coin.png",
+      "card_png": "cards/14-jetty-coin-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 15,
+      "name": "The Thornwood Frog-Ring",
+      "wearer": "Either",
+      "source": "Map find",
+      "primary": "+1% HP",
+      "secondary": "5% of her HP back after each fight",
+      "origin": "In the stream by the moon stone.",
+      "main": {
+        "hp_pct": 1
+      },
+      "effects": {
+        "post_fight_hp_restore_pct": 5
+      },
+      "item_png": "items/15-thornwood-frog-ring.png",
+      "card_png": "cards/15-thornwood-frog-ring-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    },
+    {
+      "id": 16,
+      "name": "The Bogmire Hag-Stone",
+      "wearer": "Either",
+      "source": "Map find",
+      "primary": "+1% damage",
+      "secondary": "Hidden things glint brighter",
+      "origin": "A stone with a hole, on twine.",
+      "main": {
+        "damage_pct": 1
+      },
+      "effects": {
+        "brighter_hidden_item_glints": true
+      },
+      "item_png": "items/16-bogmire-hag-stone.png",
+      "card_png": "cards/16-bogmire-hag-stone-card.png",
+      "item_dimensions": [
+        1254,
+        1254
+      ],
+      "card_dimensions": [
+        900,
+        1260
+      ]
+    }
+  ]
+}

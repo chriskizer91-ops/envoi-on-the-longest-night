@@ -4,6 +4,12 @@ October 4, 2026: the session that started **pass three** (October 3, evening), t
 
 - **Newest, October 4, evening: the final draft.** Chris sent the file he keeps and called it the final draft. `../envoi-final-draft/README.md` has it, a review of the game, how to spend the rest of the 30 MB, art request 13 (the wild's own creatures) and the model studio, where modeling sessions Chris starts build new creatures in their own folders and hand them back. That work is on the branch `ccr-31761774-76j8j3`: this game, from `claude/practical-franklin-l1ctf9`, with the new folder on top. Later that evening: `../envoi-final-draft/cutscenes/` (briefs for two cutscenes, the Colossus first met and the finale's opening), and this branch took in `3d-cutscenes/`, `3d-model-field-studies/` and `3d-model-main-characters/` from their branches, so a session started from it has them all. The game itself didn't change: it still builds byte for byte the file Chris keeps.
 
+- **Newest, October 4, late evening (into the 5th): the keepsakes and the cutscenes in the game.** Chris approved the keepsakes' places, asked for 99 of each herb in the bag and a shop in every town (there was one already: Wickhollow, the jetty, Bogmire, Dawnroost, the shipyard, Misthollow), said the two cutscenes were done, and sent the twenty keepsakes' pictures. All of it is in the game and published at a new link (this account can't update the old one): https://claude.ai/artifact/BgSiyXBu53iW7DJVF1seV8. The keepsakes: `../envoi-final-draft/items/README.md` ("The pictures", "In the game"), and their demo page, https://claude.ai/artifact/AAtAnWcqszRj4qhVCfgPp5. The cutscenes: `../envoi-final-draft/cutscenes/README.md` ("Into the game"). The decisions: `design-decisions.md`, the two "late evening" sections.
+
+- **Newer still, October 4, evening: the twenty keepsakes.** Chris locked a list of twenty keepsakes to find, each with a still picture, worn on a new Items page (`../envoi-final-draft/items/README.md`; the data is `items.js`, the pictures art request 14). He places them with **the map editor** (`../envoi-final-draft/map-editor/`, https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5): the walking paths and the keepsakes in one tool, published in the Item Places page's place. Its database has collection `edits` (paths, as Walking Paths did) and `places` (keepsakes). Each keepsake gets a tiny PNG and a card, shown when it's found and in the inventory, and the inventory never tells how many are left to find. Claude placed the twelve found ones at his word (each on its named place, away from the main way through, all within Io's reach). He moves any he likes and sends them. (He approved them as they were the same night, and they went into the game.) His first map from the editor, Wickhollow (a new nook behind the house by the east bridge, where the Forge Horseshoe lies), went into `maps.js` that evening.
+
+- `../envoi-final-draft/workshop/README.md`: how other sessions work on the game at once (October 5): the jobs, their starter scripts, their branches (`work/<job>`) and how to bring each one in. Fetch `work/*` to see what has come back.
+- `still-to-come.md`: everything decided but not in the game yet (October 5), the note Chris got with his new file. Keep it current as pieces go in.
 - `../envoi-game-pass-3/README.md`: everything from pass three: Chris's decisions, the pages, the measured sizes, and the plans for the new battles and for walking without the world map.
 - `docs/handoff.md` lists what the game still wants (written before pass three; the pass-three README supersedes it where they differ).
 - `putting-it-all-together/README.md` lists every piece of the game, where it comes from and its state.
@@ -24,18 +30,21 @@ October 4, 2026: the session that started **pass three** (October 3, evening), t
 | Demo: Envoi at Gate 10 (Dawnroost, before its living node) | https://claude.ai/artifact/P5aNRec8gbhiVWrYBUQReT |
 | Demo: Envoi at Gate 15 (the crossroads, before Halcyon) | https://claude.ai/artifact/64ZUCdHakdVWA6mubZCwCA |
 | Demo: Envoi before the Finale (the foot of Misthollow) | https://claude.ai/artifact/LqvFuBB9BpvkCUiixc1ZS2 |
-| The game (version 11: Chris's town and wilds songs with the original battle music, three volumes, the two hidden keepsakes, herbs for the wilds, his walking paths) | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
+| The game (since October 4, late evening: the two cutscenes, 99 of each herb, the twenty keepsakes with Chris's pictures, on top of everything before) | https://claude.ai/artifact/BgSiyXBu53iW7DJVF1seV8 |
+| The keepsakes: all twenty with Chris's pictures, each card as the game shows it, the Items page, what they add up to | https://claude.ai/artifact/AAtAnWcqszRj4qhVCfgPp5 |
+| The game before that (version 11), made from the other account, which this one can't update; a save code (Menu, Saves) carries a game from it to the new link | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
 | Battle Backgrounds: the game's eight paintings behind live 3D ground, at Chris's picks | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw |
 | Wilderness Walk: Io on Chris's wilderness path, nine squeezes | https://claude.ai/artifact/BcRjgVynWymYim84Yb7STk |
-| Walking Paths: the laptop editor for the maps' paths (its edits come back through its database, collection `edits`) | https://claude.ai/artifact/8BmLZd8sJjYBQ6kRbX2enm |
+| Map Editor: the walking paths and the twenty keepsakes in one laptop tool (collections `edits` and `places`; October 4, evening) | https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5 |
+| Walking Paths: the paths editor before the map editor (its edits came back through its database, collection `edits`; this account couldn't update it on October 4) | https://claude.ai/artifact/8BmLZd8sJjYBQ6kRbX2enm |
 | Io on Foot: her walk, with sliders and the footstep ideas | https://claude.ai/artifact/G1B5cMkYzBq4RiausDAAQj |
 | Walking Map Resolution: the town maps' compression choices | https://claude.ai/artifact/7F4pu4v3BQiKAZAtVJkC1i |
 | The Bramble Colossus on its own | https://claude.ai/artifact/H2QTXhNnEi7W7Qbs6BXvA2 |
 | Colossus in the Meadow: the living battlefield's first fight | https://claude.ai/artifact/KCMQSy3QksJbZ4ikquxYVj |
 
-  To update a page from a new session, pass its link as `url` to the Artifact tool. A publish to a page this conversation hasn't read is refused once and hands back the live copy; check it holds nothing your build lacks, then publish again.
+  To update a page from a new session, pass its link as `url` to the Artifact tool. A publish to a page this conversation hasn't read is refused once and hands back the live copy; check it holds nothing your build lacks, then publish again. The five chapter demos and the older game link came from the other account and can't be updated from this one (October 4, late evening); the game's Chapters on its title opens the same five places. Publish new demos from `make-demos.mjs` if Chris wants them back as their own links.
 
-  **The game and the five demos carry Chris's songs as two files beside the page.** Publish each with `files` mapping `art/music/<song>.webm` to the same path (the two are listed in `dist/game.songs.json`); a page published without them plays the made-up music instead.
+  **The game carries Chris's songs and the keepsakes' pictures as 22 files beside the page.** Publish it (and any demo made from it) with `files` mapping each path in `dist/game.beside.json` to the same path; a page published without them plays the made-up music, and its keepsakes have no pictures.
 
 ## Claude's field studies (October 4)
 
@@ -57,16 +66,16 @@ Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: t
 - then, after Chris's notes on those: the battle menu fixed (casting blacked it out); no lines across Io; the walking maps back at full size (towns quality 45, wilds 20); the little golden arrow to the story's next step (`src/game/goal-arrow.js`), with the Magpie moored where the script says; paper-doll faces in the dialogue box; battles' 3D at 3/4 sharpness; the four last battle paintings in; chapters starting just before each gate; and five demo pages (`tools/make-demos.mjs`).
 - then, on October 4: Chris's two rounds of walking paths, secret ways included, and the editor's drawing tools first; herbs for the wilds (carry nine, start with three, one of each a fight);
 - and the polish round: Chris's town and wilds songs (`src/game/songs.js`; the fights keep their original battle music, at his word), three volumes (Music, Effects, Surroundings), two hidden keepsakes (Io's on the red roof, Sol's in the Thornwood's dark woods; the balance never counts on them), and taps that walk Io along narrow ways (`design-decisions.md`, "October 4, 2026: polish").
-- **Size:** the file Chris keeps is 16.3 MB with the songs inside; the published game (and each demo) is 13.6 MB, under the 16 MB a published page may be, with the songs beside it.
+- **Size:** the file Chris keeps is 17.1 MB with the songs, the cutscenes and the keepsakes' pictures inside (October 4, late evening); the published game is 14.5 MB, under the 16 MB a published page may be, with the songs and pictures beside it.
 
 ## Waiting on Chris
 
 1. **The five demos:** his notes from playing each, from just before its gate on to the next.
-2. **The walking plan** without the world map, and whether the wilderness scenes are at night (`questions/open.md`, 20 and 21). Art request 12 follows his answer.
+2. **The wilderness scenes' pictures:** art request 12 (`art-requests/12-wilderness-scenes.md`), eight scenes at night. Chris agreed the plan on October 5 ("The walking plan is good, make the scenes at night").
 3. **More map path edits**, whenever he sends them (both his rounds are in the game).
 4. **The lore conversation:** every word of the script is still a placeholder.
 5. **Art requests 06 and 07** (townsfolk portraits, story stills), and the footsteps.
-6. **The keepsakes' names and words** (`questions/open.md`, 24).
+6. **The keepsakes' words** (`questions/open.md`, 24 and 32): the lines when each is found and the four givers' lines are placeholders. Their places (approved) and pictures (art request 14) are in.
 
 ## Next for Claude
 
@@ -74,7 +83,8 @@ Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: t
 2. **His notes on the demos**, as they come.
 3. **Walking without the world map**, once Chris agrees the plan.
 4. **His map path edits**, when he sends more: list `edits` on the Walking Paths page with `ArtifactData` (`out_dir`), `check-edits.mjs`, then `apply-edits.mjs`, `check-maps`, build, `make-demos`, test, publish (`../envoi-game-pass-3/map-paths/README.md`). His shapes go in as drawn: secret ways and orange patches are meant.
-5. **The 20 frames a second freeze** on the Battle Backgrounds page is unexplained (the test browser can't pace like his phone). 20 is off the page and the game never offered it; if the new battles freeze or go black on his phone, look here first.
+5. **The twenty keepsakes are in** (October 4, late evening). If Chris moves one in the map editor, list `places` on its link with `ArtifactData` and copy the new `at` into `../envoi-final-draft/items/items.js`; then `node tools/check-maps.mjs`, build, test (`--steps title,new,keepsakes`) and publish the game with its beside files.
+6. **The 20 frames a second freeze** on the Battle Backgrounds page is unexplained (the test browser can't pace like his phone). 20 is off the page and the game never offered it; if the new battles freeze or go black on his phone, look here first.
 
 ### Polish still open (told to Chris on October 4)
 
@@ -96,7 +106,7 @@ Decided for the finished game, not to build before then:
 
 ### The file Chris keeps
 
-Sent to him on October 4 as `Envoi-on-the-Longest-Night.html` (16.3 MB, the second copy that day, with the fights' original battle music): the offline build (`node tools/build.mjs --min --offline putting-it-all-together/game.html`), with three.js, the fonts and the songs inside, and Chapters on the title. It keeps its own saves; a save code (Menu, Saves) carries a game between it and the published page. Send him a new one after any round he wants to keep.
+Sent to him again on October 5, just after midnight, as `Envoi-on-the-Longest-Night.html` (17.9 MB, with the two cutscenes, the twenty keepsakes and the 99-herb bag), with `still-to-come.md`. Before that, on October 4 (16.3 MB, the second copy that day, with the fights' original battle music): the offline build (`node tools/build.mjs --min --offline putting-it-all-together/game.html`), with three.js, the fonts and the songs inside, and Chapters on the title. It keeps its own saves; a save code (Menu, Saves) carries a game between it and the published page. Send him a new one after any round he wants to keep.
 
 ## When things arrive
 
@@ -131,7 +141,7 @@ Follow the eight steps in `putting-it-all-together/README.md`:
 | `art/music/battle-herbal-decay.webm` | nowhere: the fights keep their original battle theme (`src/battle/sound.js`), at Chris's word (October 4) |
 
 - `src/game/songs.js` loops each from an `<audio>` element, at the level measured to match the made-up music (`SONGS[id].level`, at Normal), fades, and pauses while the page is hidden. A song that can't play hands over to the made-up music.
-- **The build** puts the songs `songs.js` names inside `dist/game.html` (and the `--offline` file), and leaves them beside `dist/game.artifact.html` (ART_BASE `''`), listed in `dist/game.songs.json`. `make-demos.mjs` copies both, so each demo's published copy wants the songs beside it too. `--split` puts them in `files.json` with the pictures.
+- **The build** puts the songs `songs.js` names inside `dist/game.html` (and the `--offline` file), and leaves them beside `dist/game.artifact.html` (ART_BASE `''`) with the keepsakes' pictures, listed in `dist/game.beside.json` (`game.html` names the two folders in `<meta name="beside">`). `make-demos.mjs` copies both, so each demo's published copy wants the same files beside it. `--split` puts them in `files.json` with the pictures.
 - A 48k copy of the battle song is in `reference/music/`, in case the 32k one sounds thin.
 
 ### More room, if it's needed
