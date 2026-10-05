@@ -4,7 +4,9 @@
 //        [--steps title,new,walk,controls,world,wilds,menu,saves,scenes,save,wild,colossus,finale,keepsakes,songs,chapters]
 //        [--band 4] [--level 18] [--out <dir>] [--size 960x540] [--turbo 8] [--offline] [--sharp 0.5]
 // Without --steps it runs title,new,walk,world,menu,saves,save. --sharp plays the fights at that sharpness of their 3D
-// (the Settings' Battle sharpness: 1, 0.75 or 0.5), and the fight steps check it.
+// (the Settings' Battle sharpness: 1, 0.75 or 0.5), and the fight steps check it. While the arenas are on
+// (GameFights.ARENA), every fight a step starts must be fought in its arena: one that fell back to its flat painting
+// fails the step (the first fight keeps the Night square's painting by design, and no step plays it).
 //   title:    the title screen comes up
 //   new:      a new game starts, the prologue plays, and Io stands in her cottage
 //   walk:     Io walks up Wickhollow's south road with the arrow keys
@@ -25,14 +27,19 @@
 //   menu:     the menu opens on every tab and closes; Settings has the battles' sharpness beside their frame rate (3/4
 //             unless another is picked, and a pick is kept where the battle screen reads it); Random fights holds at once
 //             (the gap to the next fight follows it); Settings plays a cutscene again ("Watch again", once a game has
-//             shown it), over the menu, and Esc skips it
+//             shown it), over the menu, and Esc skips it. In the cottage, Effects and Surroundings at Off are silent,
+//             each on its own: with Effects off the menu's Save makes no sound and the place's sounds still come; with
+//             Surroundings off the place is silent for 13 s (each of its sounds comes back within 12) and Save sounds
 //   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load (into the slot the
 //             player picks, after a question before a full one); then saves made
 //             on the world map before the wilderness scenes: one by a node loads on the Ember Line road with its rest at
 //             the Warm Roads camp's fire, one whose Magpie was left at Bogmire finds her moored at the camp, and the
 //             title's Continue names where such a save opens
-//   scenes:   the staged scenes play on their maps (Sol at the bridge, Quill at the jetty, the knight, Ysmera)
-//   save:     the save is written, and the title offers Continue
+//   scenes:   the staged scenes play on their maps (Sol at the bridge, Quill at the jetty, the knight, Ysmera): each
+//             starts, its person walks in, its words are said, and it ends within two minutes
+//   save:     the game is saved over another slot's game by click, after the question in that slot's row ("Keep it"
+//             keeps that game, "Save over it" saves); then the title writes the game as it stands (a mark the test sets
+//             in it), its Continue names that slot and map, and opens the game just saved
 //   wild:     a wild fight in the band (--band, at --level) is played to its end by the expert play style
 //   colossus: the Bramble Colossus is fought the same way (band 4), cut short: headless, a whole fight outlasts the wait,
 //             so its Colossus is weakened once the fight begins, as keepsakes does. The first time, its cutscene plays
@@ -47,7 +54,8 @@
 //             Crescent Locket, into the nook by the east bridge for the Forge Horseshoe, and down the Thornwood's dark
 //             trail to the Warden's Brooch; Nettie gives her shawl; each shows its card, which never counts them. The Items
 //             page shows only what has been found and hands the horseshoe to Io; the Party tab adds them up; they count in
-//             a fight and after it (more shards); and the first Bramble Colossus (cut short) leaves its two
+//             a fight (one wraith, in clear weather, so the step takes as long each time) and after it (more shards); and
+//             the first Bramble Colossus (cut short) leaves its two
 //   songs:    Chris's songs play where they belong (the towns', the wilds': the Thornwood, then on into a wilderness
 //             scene), each from where it was; the fights play their own theme, and the made-up music plays everywhere
 //             else; Music Off quietens them (run after title or new)
@@ -58,9 +66,13 @@
 // Each step saves a screenshot in --out (tools/.cache/game-test by default). Exits 1 on any page error.
 // three.js r128 comes from npm into tools/.cache, since the CDN is unreachable from the sandbox; the fonts are skipped.
 // --offline tests the file Chris keeps (node tools/build.mjs --min --offline putting-it-all-together/game.html):
-// nothing is served, any reach for the web fails the test, and its fonts must be inside it.
+// nothing is served, any reach for the web fails the test, and its fonts must be inside it. It is played from a folder
+// of its own (a copy in a new temporary folder), as on his phone: beside dist/, the page's '../art/...' is the
+// repository's art/, which stood in for any art the build had left outside it. Any reach for a file beside it fails too.
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
 import { execSync } from 'child_process';
 const require = createRequire(import.meta.url);
@@ -86,6 +98,13 @@ for (let i = 0; i < args.length; i++) {
   else file = path.resolve(args[i]);
 }
 fs.mkdirSync(out, { recursive: true });
+let ownDir = null;
+if (offline) {
+  ownDir = fs.mkdtempSync(path.join(os.tmpdir(), 'envoi-offline-'));
+  fs.copyFileSync(file, path.join(ownDir, path.basename(file))); file = path.join(ownDir, path.basename(file));
+  console.log('the file Chris keeps, played from a folder of its own: ' + file);
+}
+const itself = (u) => { try { return fileURLToPath(u.split('#')[0]) === file; } catch (e) { return false; } };
 
 const browser = await pw.chromium.launch({ args: ['--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required'] });
 const page = await browser.newPage({ viewport: { width: size[0], height: size[1] } });
@@ -95,8 +114,8 @@ page.on('console', (m) => { if (m.type() === 'error') errs.push('console: ' + m.
 await page.route('**/*', (route) => {
   const u = route.request().url();
   if (offline) {
-    if (u.startsWith('file:') || u.startsWith('data:') || u.startsWith('blob:')) return route.continue();
-    errs.push('reached for the web: ' + u.slice(0, 120));
+    if (itself(u) || u.startsWith('data:') || u.startsWith('blob:')) return route.continue();
+    errs.push((u.startsWith('file:') ? 'reached outside the file for ' : 'reached for the web: ') + u.slice(0, 120));
     return route.abort();
   }
   if (u.includes('three.min.js')) return route.fulfill({ status: 200, contentType: 'application/javascript', body: THREE_JS });
@@ -127,6 +146,13 @@ async function throughCutscene(name) {
   await page.keyboard.press('Escape');
   await waitFor(() => !!window.__battle, null, 120000, 'the battle screen after the cutscene');
   log('  its cutscene played, and was skipped with Esc');
+}
+// once a fight has begun: while the arenas are on (GameFights.ARENA), every fight but the first is fought in its arena
+// (fights.js), so one that fell back to its flat painting (its arena missing from the page, or failing to build) fails
+// the step. The first fight keeps the Night square's painting by design
+async function inItsArena(kind) {
+  const r = await page.evaluate(() => ({ on: !!(window.GameFights && window.GameFights.ARENA), arena: window.__battle && window.__battle.arena ? window.__battle.arena.place.id : null }));
+  if (r.on && !r.arena && kind !== 'first') throw new Error('the arenas are on, but this fight fell back to its flat painting');
 }
 // once the fight has begun after its cutscene: in its arena (the new battles, once switched on) it opened on the
 // cutscene's last picture exactly, the same lens and the same crop of the arena's frame, held while the picture faded
@@ -516,6 +542,51 @@ try {
       }
       await page.click('.gmenu-foot button:text-is("Close")');
       await waitFor(() => !document.querySelector('.gmenu'), null, 10000, 'the menu to close');
+      // Effects and Surroundings at Off are silent, each on its own. Every effect and every sound of a place goes through
+      // ThareiaAudio.playSfx (a place's sounds on their own bus, 'amb'): each is counted here with the level its bus is
+      // given, and one at level 0 is silent. In the cottage the menu's Save sounds an effect, and the place's crickets
+      // come back every 6 to 12 s while Io stands there
+      {
+        await page.evaluate(() => { window.__game.goField('cottage', [838, 520]); });
+        await waitFor(() => window.__game.field.map.id === 'cottage' && !window.__game.busy, null, 30000, 'the cottage');
+        await page.evaluate(() => {
+          window.__game.audioInit();
+          const A = window.ThareiaAudio, AC = window.AudioContext || window.webkitAudioContext, play = A.playSfx, gain = AC.prototype.createGain;
+          let made = null; window.__played = []; window.__unhear = () => { A.playSfx = play; AC.prototype.createGain = gain; };
+          AC.prototype.createGain = function () { const g = gain.apply(this, arguments); if (made) made.push(g); return g; };
+          A.playSfx = function (snd, t, g, bus) {
+            made = [];
+            try { return play.apply(this, arguments); } finally { window.__played.push({ what: (bus || 'sfx') + ':' + (typeof snd === 'string' ? snd : snd && snd.id), level: made.length ? made[0].gain.value : 0 }); made = null; }
+          };
+        });
+        const heard = async () => (await page.evaluate(() => window.__played.splice(0))).filter((x) => x.level > 0).map((x) => x.what);
+        const settings = async () => { await page.evaluate(() => { window.__game.menu(); }); await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu'); await page.click('.gmenu-tabs button:text-is("Settings")'); await sleep(200); };
+        const pick = async (row, label) => { await page.locator('.gmenu-body .gm-item').filter({ has: page.locator('span', { hasText: row }) }).getByRole('button', { name: label, exact: true }).click(); await sleep(150); };
+        const saveB = async () => { await page.click('.gmenu-foot button:text-is("Save")'); await sleep(400); };
+        const closeM = async () => { await page.click('.gmenu-foot button:text-is("Close")'); await waitFor(() => !document.querySelector('.gmenu'), null, 10000, 'the menu to close'); };
+        const amb = (w) => w.startsWith('amb:'), fx = (w) => w.startsWith('sfx:');
+        // Effects off: Save is silent, and the place's sounds still come
+        await settings(); await pick('Effects', 'Off'); await pick('Surroundings', 'Normal'); await heard();
+        await saveB(); let h = await heard();
+        if (h.some(fx)) throw new Error('Effects at Off, but Save still sounded: ' + h.join(', '));
+        await closeM();
+        for (let i = 0; i < 30 && !h.some(amb); i++) { await sleep(500); h = h.concat(await heard()); }
+        if (!h.some(amb)) throw new Error('with Effects at Off, the cottage’s own sounds never came in 15 s');
+        if (h.some(fx)) throw new Error('Effects at Off, but the game played ' + h.filter(fx).join(', '));
+        const placeSound = h.find(amb);
+        // Surroundings off: Save sounds, and the place is silent
+        await settings(); await pick('Effects', 'Normal'); await pick('Surroundings', 'Off'); await heard();
+        await saveB(); h = await heard();
+        if (!h.includes('sfx:ui-save')) throw new Error('with Effects at Normal, Save made no sound: ' + JSON.stringify(h));
+        await closeM(); await heard();
+        await sleep(13000); h = await heard();
+        if (h.some(amb)) throw new Error('Surroundings at Off, but the cottage still played ' + h.filter(amb).join(', '));
+        await settings(); await pick('Surroundings', 'Normal'); h = await heard();
+        if (!h.some(amb)) throw new Error('Surroundings back at Normal made no sound: ' + JSON.stringify(h));
+        await closeM();
+        await page.evaluate(() => window.__unhear());
+        log('  Effects at Off: Save silent, the cottage still heard (' + placeSound + '); Surroundings at Off: the cottage silent for 13 s, Save heard');
+      }
     } else if (step === 'wild' || step === 'colossus') {
       await page.evaluate(([L, b]) => { const st = window.__game.state; st.level = L; st.flags = Object.assign(st.flags, { party: true, refit: L > 5, envoi: L > 10, stoop: L > 15 }); st.band = Math.max(st.band, b); }, [level, band]);
       const kind = step === 'colossus' ? 'colossus' : 'wild';
@@ -526,6 +597,7 @@ try {
       await waitFor(() => !!window.__battle, null, 60000, 'the battle screen');
       await page.evaluate((tb) => { window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
+      await inItsArena(kind);
       if (cut) await sameOpening('colossus-first-meeting');
       if (step === 'colossus') await page.evaluate(() => { for (const f of window.__battle.engine.foes) window.__battle.weaken(5, f.key); });
       await shot(step + '-fight');
@@ -640,9 +712,11 @@ try {
       await shot('keepsake-party');
       await page.click('.gmenu-foot button:text-is("Close")');
       await waitFor(() => !document.querySelector('.gmenu'), null, 10000, 'the menu to close');
-      // in a fight: each hero's keepsakes, as the game's maximums have them
-      await page.evaluate(() => { window.__game.battle('wild', { band: 1, scene: null }); });
+      // in a fight: each hero's keepsakes, as the game's maximums have them. One wraith in clear weather, so the step
+      // takes about as long each time (a pack rolled at random took about 100 s or about 300 s)
+      await page.evaluate(() => { window.__game.battle('wild', { band: 1, scene: null, pack: ['wraith'], weather: 'clear' }); });
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
+      await inItsArena('wild');
       const hs = await page.evaluate(() => {
         const E = window.__battle.engine, GS = window.GameState, st = window.__game.state, h = (id) => E.heroes.find((x) => x.id === id);
         const io = h('io'), sol = h('sol');
@@ -663,6 +737,7 @@ try {
       // at the top level: the expert walks away from a foe alone two levels up, and the Colossus is 16 to 20
       await page.evaluate(() => { const st = window.__game.state; st.level = 20; st.band = 4; st.flags = Object.assign(st.flags, { refit: true, envoi: true, stoop: true }); st.seen = Object.assign(st.seen || {}, { 'colossus-first-meeting': true }); window.__game.battle('wild', { band: 4, pack: ['colossus'] }); });
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the Colossus to stand');
+      await inItsArena('wild');
       await page.evaluate((tb) => { for (const f of window.__battle.engine.foes) window.__battle.weaken(5, f.key); window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
       await waitFor(() => window.__battle && window.__battle.state === 'over' && !document.getElementById('end').hidden, null, 900000, 'the Colossus to fall');
       const out = await page.evaluate(() => window.__battle.result && window.__battle.result.outcome);
@@ -697,6 +772,7 @@ try {
       const wildAt = s.songs.wilds.at;
       await page.evaluate(() => { window.__game.battle('wild', { band: 1, scene: null }); });
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
+      await inItsArena('wild');
       await sleep(2500); s = await songs();
       const theme = await page.evaluate(() => window.__game.battleTheme);
       if (s.playing || !s.songs.wilds.paused || !theme) throw new Error('a fight should play its own theme, and no song: ' + JSON.stringify(s) + ', theme ' + theme);
@@ -744,6 +820,7 @@ try {
       await page.evaluate(() => { window.__game.battle('finale'); });
       await throughCutscene('finale');
       await waitFor(() => window.__battle && window.__battle.state === 'battle', null, 240000, 'the finale to begin');
+      await inItsArena('finale');
       await sameOpening('finale-opening');
       const seen = await page.evaluate(() => !!(window.__game.state.seen && window.__game.state.seen['finale-opening']));
       if (!seen) throw new Error('the finale cutscene isn’t marked seen');
@@ -849,41 +926,91 @@ try {
       // the staged scenes: each one's people walk in on its map; a screenshot as they arrive, and at the scene's end
       // as the story stands when each scene plays: the first fight won, Sol with Io, and so on
       await page.evaluate(() => { const st = window.__game.state; st.done.first = true; Object.assign(st.flags, { party: true }); st.done.halcyon = true; });
-      const SC = [['sol', 'wickhollow', [780, 702]], ['magpie', 'jetty', [1100, 392]], ['ambush', 'crossroads', [768, 592]], ['shipyard', 'shipyard', [760, 985]]];
-      for (const [id, map, at] of SC) {
+      // each scene's person, who walks in for it
+      const SC = [['sol', 'wickhollow', [780, 702], 'sol'], ['magpie', 'jetty', [1100, 392], 'quill'], ['ambush', 'crossroads', [768, 592], 'halcyon'], ['shipyard', 'shipyard', [760, 985], 'ysmera']];
+      for (const [id, map, at, who] of SC) {
         await page.evaluate(([m, a]) => { window.__game.goField(m, a); }, [map, at]);
         // a first visit can play its own scene on arrival (the shipyard's): tap through it
         await sleep(600); await talkThrough(90000, () => window.__game.mode === 'field' && !window.__game.busy);
         await waitFor((m) => window.__game.field.map && window.__game.field.map.id === m && !window.__game.busy, map, 30000, 'the map ' + map);
         await page.evaluate((x) => { window.__game.scene(x); }, id);
-        // let the first walk play, then tap through, taking a picture at the first line said with everyone in place
+        // let the first walk play, then tap through, taking a picture at the first line said with everyone in place. The
+        // scene must start (its words open), its person must walk in, and it must end
         await sleep(1500);
-        let shotN = 0;
+        let shotN = 0, spoke = false, came = false;
         const end = Date.now() + 120000;
         while (Date.now() < end) {
-          const st = await page.evaluate(() => ({ busy: window.__game.busy, open: !!document.querySelector('.talk') && !document.querySelector('.talk').hidden, actors: ['sol', 'quill', 'halcyon', 'ysmera'].filter((k) => window.__game.field.stage.actor(k)).length }));
+          const st = await page.evaluate((w) => ({ busy: window.__game.busy, open: !!document.querySelector('.talk') && !document.querySelector('.talk').hidden, came: !!window.__game.field.stage.actor(w) }), who);
+          came = came || st.came;
           if (!st.busy) break;
           if (st.open) {
+            spoke = true;
             if (shotN < 2) { await sleep(400); await shot('scene-' + id + '-' + shotN++); }
             await page.click('.talk-words'); await sleep(250); await page.click('.talk-words').catch(() => {});
           }
           await sleep(500);
         }
         await shot('scene-' + id + '-end');
-        log('  scene ' + id + ' played');
+        if (await page.evaluate(() => window.__game.busy)) throw new Error('the scene ' + id + ' did not end within two minutes');
+        if (!spoke) throw new Error('the scene ' + id + ' said nothing: it never started');
+        if (!came) throw new Error('the scene ' + id + ': ' + who + ' never walked in');
+        log('  scene ' + id + ' played: ' + who + ' walked in, the words were said, and it ended');
       }
     } else if (step === 'save') {
+      await inPlay();
+      const stored = (n) => page.evaluate((k) => localStorage.getItem(k), n > 1 ? 'envoi.save.v1.' + n : 'envoi.save.v1');
+      const slots = () => page.evaluate(() => ({ now: window.GameState.slot(), full: window.GameState.list().filter((x) => x.st).map((x) => x.slot) }));
+      const row = (n) => '.gmenu-body .gm-item:nth-child(' + (n + 1) + ')';
+      // saving over another slot's game, by click: the question comes in that slot's own row, "Keep it" keeps its game,
+      // and "Save over it" puts this game there. With no other slot holding a game yet, this game is saved in its own
+      // slot and in an empty one first (neither asks), so the slot it leaves holds one
       await page.evaluate(() => { window.__game.menu(); });
       await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');
+      await page.click('.gmenu-tabs button:text-is("Saves")'); await sleep(200);
+      let sl = await slots(), other = sl.full.find((n) => n !== sl.now);
+      if (!other) {
+        if (!sl.full.includes(sl.now)) { await page.click(row(sl.now) + ' button:text-is("Save here")'); await sleep(300); }
+        const empty = [1, 2, 3].find((n) => n !== sl.now && !sl.full.includes(n));
+        await page.click(row(empty) + ' button:text-is("Save here")');
+        await waitFor((n) => window.GameState.slot() === n, empty, 10000, 'the game saved in the empty slot ' + empty);
+        other = sl.now; sl = await slots();
+      }
+      const before = await stored(other);
+      const ask = async () => {
+        await page.click(row(other) + ' button:text-is("Save here")');
+        await waitFor((r) => /Save over slot/.test((document.querySelector(r) || {}).textContent || ''), row(other), 10000, 'the question in slot ' + other + '’s row');
+      };
+      await ask(); await shot('save-over-question');
+      await page.click(row(other) + ' button:text-is("Keep it")'); await sleep(300);
+      if (await stored(other) !== before || await page.evaluate(() => window.GameState.slot()) === other) throw new Error('“Keep it” didn’t keep slot ' + other + '’s game');
+      await ask();
+      await page.click(row(other) + ' button:text-is("Save over it")');
+      await waitFor((n) => window.GameState.slot() === n, other, 10000, 'the game saved over slot ' + other);
+      await sleep(300);
+      const over = JSON.parse((await stored(other)) || 'null'), was = JSON.parse(before), here = await page.evaluate(() => window.__game.field.map.id);
+      if (!over || !(over.saved > was.saved) || over.where.map !== here) throw new Error('“Save over it” didn’t put this game in slot ' + other + ': ' + JSON.stringify(over && { saved: over.saved, where: over.where }) + ' (it held one saved at ' + was.saved + ')');
+      log('  saved over slot ' + other + '’s game by click, after the question in its row (“Keep it” kept it)');
+      // the title writes the game as it stands now: a mark set in it (its shards) must be in the save, and the title's
+      // Continue must name that slot and map, and open it
+      const mark = 4000 + Math.floor(Math.random() * 5000);
+      const now = await page.evaluate((m) => { const g = window.__game, id = g.field.map.id; g.state.shards = m; return { slot: window.GameState.slot(), map: id, name: window.MAPS[id].name }; }, mark);
       await page.click('.gmenu-foot button:text-is("Title")');
       await waitFor(() => !!document.querySelector('.title h1'), null, 10000, 'the title again');
+      const kept = JSON.parse((await stored(now.slot)) || 'null');
+      if (!kept || kept.shards !== mark || kept.where.map !== now.map) throw new Error('the title didn’t write the game as it stands: ' + JSON.stringify(kept && { shards: kept.shards, where: kept.where }) + ', not ' + mark + ' shards on ' + now.map);
       const cont = await page.$$eval('.title-box button', (b) => b.map((x) => x.textContent));
       if (!cont.includes('Continue')) throw new Error('no Continue on the title: ' + cont.join(', '));
+      const line = await page.$eval('.title-save', (e) => e.textContent);
+      if (!line.startsWith('Slot ' + now.slot + ' · ') || !line.endsWith(now.name)) throw new Error('the title’s Continue line doesn’t name slot ' + now.slot + ' and ' + now.name + ': ' + line);
       await shot('save');
+      await page.click('.title-box button:text-is("Continue")');
+      await waitFor((m) => window.__game.mode === 'field' && !window.__game.busy && window.__game.state.shards === m, mark, 30000, 'Continue to open the game just saved');
+      log('  the title wrote the game as it stood, and Continue (“' + line + '”) opened it');
     } else throw new Error('no step ' + step);
   }
 } catch (e) { failed = true; console.log('FAILED: ' + e.message); }
 await browser.close();
+if (ownDir) fs.rmSync(ownDir, { recursive: true, force: true });
 for (const e of errs) console.log(e);
 if (errs.length) failed = true;
 console.log(failed ? 'game test failed' : 'game test passed: ' + steps.join(', ') + ' in ' + ((Date.now() - t0) / 1000).toFixed(0) + ' s');

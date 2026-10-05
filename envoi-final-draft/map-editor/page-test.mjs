@@ -4,11 +4,13 @@
 // Usage: node envoi-final-draft/map-editor/page-test.mjs [dist/map-editor.html] [--out <dir>]
 // First every step of the Walking Paths page's own test (envoi-game-pass-3/map-paths/page-test.mjs), since the map
 // editor keeps its path tools as they were: zoom, drag, add and delete points, undo and redo, Smooth, new shapes, people
-// and arrivals moved, the reach check, walking Io, the edits kept after a reload, download and check-edits.mjs, the
-// cottage's steps, the page at phone width, and sending through a stand-in store (where Send everything new now sends
-// the keepsakes too). Then the keepsakes: the two hidden ones where they lie today, one put on a map and found within
-// reach, one out of reach and dragged back in, undo and redo, Delete, a note, walking Io to one and its card, sending
-// one document per keepsake, everything kept after a reload, and the page at phone width.
+// and arrivals moved, the reach check, walking Io, the edits kept after a reload, Copy my work (no download since
+// October 5) with check-edits.mjs and apply-edits.mjs (in a scratch copy of maps.js), the
+// cottage's steps, the page at phone width, and sending through a stand-in store (where Send everything new sends the
+// keepsakes Chris moved too: none there). Then the keepsakes: the two hidden ones where they lie today, one put on a map
+// and found within reach, one out of reach and dragged back in, undo and redo, Delete, a note, walking Io to one and its
+// card, sending a document for each one he moved or wrote a note on (since October 5 no other: one he never touched
+// follows items.js), everything kept after a reload, and the page at phone width.
 // Each step saves a screenshot in --out (tools/.cache/map-editor-test by default). Exits 1 on any page error or failed
 // step.
 import fs from 'fs';
@@ -61,7 +63,7 @@ try {
   log('open: ' + path.relative(R, file));
   const w0 = await W();
   check(await ev(() => MapPaths.map) === 'wickhollow', 'the page opens on Wickhollow');
-  check(await ev(() => !document.getElementById('mp-download').hidden && document.getElementById('mp-send-row').hidden), 'outside claude.ai it offers Download, not Send');
+  check(await ev(() => !document.getElementById('mp-download') && document.getElementById('mp-send-row').hidden && /press Copy my work/.test(document.getElementById('mp-send-wait').textContent) && !document.getElementById('mp-send-wait').hidden), 'outside claude.ai it says to use Copy my work, and offers no Send and no download');
   await shot('01-open');
 
   log('zoom in round the west stairs');
@@ -195,18 +197,27 @@ try {
   check(Math.abs(arr2.at[0] - arr.at[0] + 14) <= 1 && JSON.stringify(bogExit.at) === JSON.stringify(arr2.at), 'the arrival moved to ' + arr2.at + ', and Bogmire’s exit to the Thornwood now lands there too');
   await shot('15-thornwood-arrival');
 
-  log('download the edits, and check them');
-  const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 10000 }), page.click('#mp-download')]);
-  const edits = path.join(out, 'edits.json'); await dl.saveAs(edits);
-  const doc = JSON.parse(fs.readFileSync(edits, 'utf8'));
-  check(doc.maps && doc.maps.wickhollow && doc.maps.thornwood && Object.keys(doc.maps).length === 2, 'the file holds the two changed maps (' + Object.keys(doc.maps || {}).join(', ') + ')');
+  log('copy the work, then check and apply it');
+  // the clipboard is caught here, as a paste to Claude would get it
+  await ev(() => { window.__copied = null; navigator.clipboard.writeText = (t) => { window.__copied = t; return Promise.resolve(); }; });
+  await page.click('#mp-copy'); await sleep(300);
+  const copied = await ev(() => document.getElementById('mp-status').textContent);
+  check(/^Copied your work/.test(copied), 'Copy: “' + copied + '”');
+  const edits = path.join(out, 'edits.json'); fs.writeFileSync(edits, (await ev(() => window.__copied)) || '');
+  let doc = {}; try { doc = JSON.parse(fs.readFileSync(edits, 'utf8')); } catch (e) { /* checked next */ }
+  check(doc.maps && doc.maps.wickhollow && doc.maps.thornwood && Object.keys(doc.maps).length === 2, 'what it copied holds the two changed maps (' + Object.keys(doc.maps || {}).join(', ') + ')');
   const chk = spawnSync(process.execPath, [path.join(R, 'envoi-game-pass-3/map-paths/check-edits.mjs'), edits], { encoding: 'utf8' });
   console.log(chk.stdout.replace(/^/gm, '        '));
-  check(chk.status === 0, 'check-edits.mjs finds the downloaded edits safe to apply');
-  await page.click('#mp-copy'); await sleep(300);
-  const copied = await ev(() => ({ status: document.getElementById('mp-status').textContent, box: !document.getElementById('mp-copybox').hidden && document.getElementById('mp-copybox').value.length }));
-  check(/Copied|already selected/.test(copied.status), 'Copy: “' + copied.status + '”');
-  await shot('16-download-copy');
+  check(chk.status === 0, 'check-edits.mjs finds the copied edits safe to apply');
+  // apply-edits.mjs writes them, in a scratch copy of the files it reads (never the game's own maps.js)
+  const scratch = path.join(out, 'apply'); fs.rmSync(scratch, { recursive: true, force: true });
+  for (const f of ['envoi-game-pass-3/map-paths/apply-edits.mjs', 'envoi-game-pass-3/map-paths/edits-core.js', 'src/game/maps.js', 'envoi-final-draft/items/items.js']) {
+    fs.mkdirSync(path.dirname(path.join(scratch, f)), { recursive: true }); fs.copyFileSync(path.join(R, f), path.join(scratch, f));
+  }
+  const ap = spawnSync(process.execPath, [path.join(scratch, 'envoi-game-pass-3/map-paths/apply-edits.mjs'), edits], { encoding: 'utf8' });
+  console.log((ap.stdout + ap.stderr).replace(/^/gm, '        '));
+  check(ap.status === 0 && /^applied wickhollow walk$/m.test(ap.stdout), 'apply-edits.mjs writes them into a scratch copy of maps.js');
+  await shot('16-copy');
 
   log('more on Io’s cottage: delete a point and a shape, a new front, its base line, Esc, an exit’s corner, a nudge');
   await page.click('.mp-map-pick >> text=Io\'s cottage'); await page.waitForFunction(() => MapPaths.painted, null, { timeout: 10000 }); await sleep(250);
@@ -288,7 +299,7 @@ try {
   });
   page = await openPage(ctx2, 'send');
   check(await ev(() => window.__writes.length) === 0, 'nothing is written on load');
-  check(await ev(() => !document.getElementById('mp-send-row').hidden && document.getElementById('mp-download').hidden), 'inside claude.ai it offers Send, not Download');
+  check(await ev(() => !document.getElementById('mp-send-row').hidden && document.getElementById('mp-send-wait').hidden && !document.getElementById('mp-download')), 'inside claude.ai it offers Send');
   const v1 = (await W()).walk[0][3];
   await ev(() => MapPaths.fit()); await sleep(80);
   await dragMap(v1, [v1[0] + 6, v1[1] + 8]);
@@ -315,7 +326,7 @@ try {
   writes = await ev(() => window.__writes);
   const sentEdits = writes.filter((x) => x.path.startsWith('edits/')), sentPlaces = writes.filter((x) => x.path.startsWith('places/'));
   check(sentEdits.length === 2 && sentEdits[1].path === 'edits/jetty', 'Send everything new sends only the jetty’s paths (Wickhollow is already sent): ' + sentEdits.map((x) => x.path).join(', '));
-  check(sentPlaces.length === 20 && writes.length === 22, 'and one document for each of the twenty keepsakes, the first time: ' + sentPlaces.length);
+  check(sentPlaces.length === 0 && writes.length === 2, 'and no keepsake’s document, since he moved none: ' + sentPlaces.length);
   fs.writeFileSync(path.join(out, 'sent.json'), JSON.stringify(sentEdits.map((x) => x.body), null, 1));
   const chk3 = spawnSync(process.execPath, [path.join(R, 'envoi-game-pass-3/map-paths/check-edits.mjs'), path.join(out, 'sent.json')], { encoding: 'utf8' });
   console.log(chk3.stdout.replace(/^/gm, '        '));
@@ -389,14 +400,19 @@ try {
   check(!(await ev(() => MapEditor.foundOpen)) && (await ev(() => MapEditor.found)).includes('hag-stone'), 'Enter closes the card, and it stays found');
   await page.keyboard.press('Escape'); await sleep(300);
   check(!(await ev(() => MapEditor.walking)), 'Esc brings the editing back');
-  // sending: one document per keepsake
+  // a note on a gift, which has no place
+  await page.click('#me-groups .ip-item >> text=Nettie’s Knotted Shawl'); await sleep(150);
+  await page.fill('#me-card textarea', 'Nettie gives it as Io sets out'); await sleep(400);
+  // sending: a document for each keepsake he moved (the Hag-Stone, the Bogstriders) or wrote a note on (the shawl)
   await page.click('#mp-send-all');
   await page.waitForFunction(() => /^Sent /.test(document.getElementById('mp-status').textContent), null, { timeout: 10000 });
   const kw = (await ev(() => window.__writes)).filter((x) => x.path.startsWith('places/'));
   const hag = kw.find((x) => x.path === 'places/hag-stone');
-  check(kw.length === 20 && hag && hag.body.map === 'bogmire' && hag.body.note === 'By the jars, where Old Wenna can see it' && hag.body.wear === 'either', 'Send everything new writes one document per keepsake, the Hag-Stone’s with its place and note: ' + kw.length + ' ' + JSON.stringify(hag && hag.body));
+  check(kw.length === 3 && hag && hag.body.map === 'bogmire' && hag.body.note === 'By the jars, where Old Wenna can see it' && hag.body.wear === 'either' && kw.some((x) => x.path === 'places/bogstriders'), 'Send everything new writes a document for each keepsake he moved or wrote a note on, the Hag-Stone’s with its place and note: ' + kw.map((x) => x.path).join(', ') + ' ' + JSON.stringify(hag && hag.body));
   const gift = kw.find((x) => x.path === 'places/knotted-shawl');
-  check(gift && gift.body.source === 'gift' && gift.body.giver === 'nettie' && gift.body.map === null, 'a gift says who gives it, and has no place');
+  check(gift && gift.body.source === 'gift' && gift.body.giver === 'nettie' && gift.body.map === null && gift.body.note === 'Nettie gives it as Io sets out', 'a gift says who gives it, and has no place');
+  const keptIds = await ev(() => Object.keys(JSON.parse(localStorage.getItem('envoi.map-editor.keepsakes.v1')).places).sort().join(', '));
+  check(keptIds === 'bogstriders, hag-stone', 'this browser keeps only the keepsakes he moved: ' + keptIds);
   check(await ev(() => document.getElementById('mp-send-all').disabled), 'then there is nothing new to send');
   // kept after a reload
   await page.reload(); await page.waitForFunction(() => window.MapEditor && MapEditor.painted && MapEditor.dbState !== 'waiting', null, { timeout: 20000 }); await sleep(300);

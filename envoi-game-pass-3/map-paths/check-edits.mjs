@@ -1,6 +1,7 @@
-// check-edits.mjs: checks walking-path edits from the map paths page (envoi-game-pass-3/map-paths) before they go into
-// the game. It reads the file the page downloads or copies ("Download my edits", "Copy my edits"), one map's document
-// from the page's store (edits/<map id>, as read back, or its `data`), or a list of any of these. For each map, with the
+// check-edits.mjs: checks walking-path edits from the map paths page (envoi-game-pass-3/map-paths) and the map editor
+// (envoi-final-draft/map-editor) before they go into the game. It reads every file apply-edits.mjs reads (edits-core.js
+// docsOf): what the pages copy or download ("Copy my work", Walking Paths' "Download my edits"), one map's document from
+// the page's store (edits/<map id>, as read back, or its `data`), or a list of any of these. For each map, with the
 // page's own rules (edits-core.js):
 //   - every walk area, block and front is a closed shape: three or more different points round some ground, every
 //     point inside the painting's 1536 x 1024 (a repeated closing point or a shape crossing itself is a warning)
@@ -8,8 +9,10 @@
 //   - each arrival leads to this map in maps.js (another map's exit) or game.js (the Magpie); one from the world map
 //     (in edits made before the wilderness scenes, since when nobody walks it) is left out with a note
 //   - the edits were made on the game's tracing as it is now (or it says what changed since)
-//   - with the edits applied, Io can still reach every exit, person, spot and arrival (tools/check-maps.mjs's rule),
-//     and no walk area is cut off from the rest; only problems the game's tracing doesn't already have count
+//   - with the edits applied, Io can still reach every exit, person, spot, keepsake and arrival (tools/check-maps.mjs's
+//     rule), and no walk area is cut off from the rest; only problems the game's tracing doesn't already have count.
+//     The keepsakes (items.js since October 5, no longer maps.js's spots) are checked where Chris put them when the
+//     files carry their places (the map editor's "Copy my work", the `places` collection), else where items.js has them
 // It also checks that the page's copy of game.js's Magpie arrivals (edits-core.js) still matches game.js.
 // Usage: node envoi-game-pass-3/map-paths/check-edits.mjs <edits.json> [more.json ...]
 // Exits 1 when a map's edits can't go into the game as they are (an error, something she could reach before and can't
@@ -37,24 +40,29 @@ for (const [k, L] of Object.entries(GAME.LANDINGS)) if (L.field) { const c = E.M
 for (const k of Object.keys(E.MAGPIE_IN)) if (!GAME.LANDINGS[k] || !GAME.LANDINGS[k].field) drift.push('the Magpie’s ' + k + ' (gone from game.js)');
 if (drift.length) console.log('! the page’s copy of game.js’s arrivals is out of date for ' + drift.join(', ') + ': update WORLD_IN and MAGPIE_IN in edits-core.js');
 
-// every map document in a file: the page's download ({ maps: { id: doc } }), one document, a store read ({ data }),
-// or a list of these
-function docsOf(v, where) {
-  if (Array.isArray(v)) return v.flatMap((x, i) => docsOf(x, where + '[' + i + ']'));
-  if (v && typeof v === 'object') {
-    if (v.maps && typeof v.maps === 'object' && !Array.isArray(v.maps)) return Object.entries(v.maps).map(([k, d]) => ({ d, where, key: k }));
-    if (v.data && typeof v.data === 'object' && v.data.map) return [{ d: v.data, where }];
-    if (v.map) return [{ d: v, where }];
-  }
-  return [{ d: v, where, notDoc: true }];
+// every document in the files, as apply-edits.mjs reads them (edits-core.js docsOf)
+const read = files.map((f) => { try { return { f, found: E.docsOf(JSON.parse(fs.readFileSync(f, 'utf8')), path.basename(f)) }; } catch (e) { return { f, e }; } });
+// the keepsakes that lie on a map: where items.js has them (the game now), and where they will lie once his places
+// (any the files carry) go into items.js by hand. Each is a spot she must get near enough to pick up, as the map
+// editor checks it (map-editor.js withKeepsakes)
+require(path.join(R, 'envoi-final-draft/items/items.js'));
+const ITEMS = globalThis.LOOT.ITEMS, NAME = Object.fromEntries(ITEMS.map((it) => [it.id, it.name]));
+const inGame = {};
+for (const it of ITEMS) if ((it.source === 'hidden' || it.source === 'found') && it.at && MAPS[it.home]) inGame[it.id] = { map: it.home, at: it.at };
+const placed = Object.assign({}, inGame);
+for (const r of read) for (const x of r.found || []) if (x.keepsake && NAME[x.d.item]) placed[x.d.item] = MAPS[x.d.map] && Number.isFinite(x.d.x) && Number.isFinite(x.d.y) ? { map: x.d.map, at: [x.d.x, x.d.y] } : null;
+function reachWith(id, w, places) {
+  const spots = w.spots.concat(Object.keys(places).filter((k) => places[k] && places[k].map === id).map((k) => ({ kind: 'keepsake', id: k, item: k, at: places[k].at })));
+  const r = E.reach(MAPS, id, Object.assign({}, w, { spots }));
+  for (const p of r.problems) if (p.kind === 'spot' && spots[p.i].item) p.text = 'She can’t get near enough to pick up ' + NAME[spots[p.i].item].replace(/^The /, 'the ') + '.';
+  return r;
 }
 
 let failed = 0, maps = 0, unread = 0;
-for (const f of files) {
-  let data;
-  try { data = JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { console.log('✗ ' + f + ': can’t read it as JSON (' + e.message + ')'); unread++; continue; }
-  const docs = docsOf(data, path.basename(f));
-  if (!docs.length) console.log('· ' + f + ': no maps in it');
+for (const { f, found, e } of read) {
+  if (e) { console.log('✗ ' + f + ': can’t read it as JSON (' + e.message + ')'); unread++; continue; }
+  const docs = found.filter((x) => !x.keepsake);
+  if (!docs.length) console.log('· ' + f + ': no maps in it' + (found.length ? ' (' + found.length + ' keepsakes’ places, which go into items.js by hand)' : ''));
   for (const { d, where, key, notDoc } of docs) {
     maps++;
     if (notDoc) { console.log('✗ ' + where + ': this isn’t a map’s edits'); failed++; continue; }
@@ -66,7 +74,7 @@ for (const f of files) {
     const name = MAPS[d.map] ? MAPS[d.map].name : String(d.map);
     let reachLine = '', fresh = [], lessGround = '';
     if (!errors.length) {
-      const before = E.reach(MAPS, d.map, E.traced(MAPS, d.map)), after = E.reach(MAPS, d.map, E.applied(MAPS, d));
+      const before = reachWith(d.map, E.traced(MAPS, d.map), inGame), after = reachWith(d.map, E.applied(MAPS, d), placed);
       fresh = after.problems.filter((p) => !before.problems.some((q) => q.text === p.text));
       const old = after.problems.filter((p) => before.problems.some((q) => q.text === p.text));
       reachLine = after.reached + ' cells she can reach (' + before.reached + ' as traced)';

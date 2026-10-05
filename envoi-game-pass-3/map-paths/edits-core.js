@@ -2,7 +2,7 @@
 // both read a map alike: which parts of a ground map the page edits, in maps.js's own shapes and the paintings' own
 // 1536 x 1024 pixels; the game's tracing of them and its fingerprint; where Io can stand and what she can reach (the
 // field's own rule, as tools/check-maps.mjs applies it); the gentle smoothing; the document the page sends to Claude for
-// one map; and the check of such a document before it goes into the game.
+// one map; the check of such a document before it goes into the game; and the documents in a file Claude is given.
 // Works in the page and in Node. Each function takes MAPS (src/game/maps.js). Defines globalThis.MapEdits.
 (function (G) {
   'use strict';
@@ -316,9 +316,29 @@
     return t;
   }
 
+  // ---------- the files Claude is given ----------
+  // every document in what was read from a file, for check-edits.mjs and apply-edits.mjs alike: the map editor's "Copy
+  // my work" ({ maps: { id: doc }, keepsakes: [...] }; Walking Paths' download has no keepsakes), one store row
+  // ({ data }), a bare document, or a list of any of these. Each comes back as { d, where }: a map's edits (with key,
+  // the id an export files it under), a keepsake's place (keepsake: true; the `places` collection's documents and an
+  // export's keepsakes, which go into items.js by hand), or anything else (notDoc: true)
+  function docsOf(v, where) {
+    if (Array.isArray(v)) return v.flatMap((x, i) => docsOf(x, where + '[' + i + ']'));
+    if (v && typeof v === 'object') {
+      if (v.maps && typeof v.maps === 'object' && !Array.isArray(v.maps)) {
+        return Object.entries(v.maps).map(([k, d]) => ({ d, where, key: k }))
+          .concat(Array.isArray(v.keepsakes) ? v.keepsakes.map((d, i) => ({ d, where: where + ', keepsake ' + i, keepsake: true })) : []);
+      }
+      const d = v.data && typeof v.data === 'object' && !Array.isArray(v.data) ? v.data : v;
+      if (d.item) return [{ d, where, keepsake: true }];
+      if (d.map) return [{ d, where }];
+    }
+    return [{ d: v, where, notDoc: true }];
+  }
+
   G.MapEdits = {
     MW, MH, CELL, GW, GH, REACH, WORLD_IN, MAGPIE_IN, FIELDS,
     clone, inPoly, bbox, area, centre, placeName, arrivalsInto, arrivalKey, arrivalName, mirrorGame,
-    traced, part, geom, hash, fingerprint, changedFields, standTest, reach, smooth, shapeMatch, body, validate, applied,
+    traced, part, geom, hash, fingerprint, changedFields, standTest, reach, smooth, shapeMatch, body, validate, applied, docsOf,
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);
