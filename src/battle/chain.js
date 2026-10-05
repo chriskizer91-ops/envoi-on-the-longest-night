@@ -105,6 +105,8 @@
         P.band = st.band;
         const camp = opts.campEvery || 7;
         for (let i = 0; i < st.fights; i++) { encounter(st.band, 'wild'); if ((i + 1) % camp === 0) goRest(); }
+        // the Ember Line nodes Sol relights on the way: the short ways to them, and their shards (game.js: 150 times the band)
+        if (st.nodes) { for (let i = 0; i < (st.nodeFights || 0); i++) encounter(st.band, 'wild'); P.shards += st.nodes * 150 * st.band; }
         note('walk:' + st.walk);
         continue;
       }

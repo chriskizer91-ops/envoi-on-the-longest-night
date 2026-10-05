@@ -98,7 +98,10 @@ for (const [name, legs] of Object.entries(WALKS)) {
   console.log(''.padEnd(14) + L.map((l) => l.id + ' ' + Math.round(l.L) + (l.wild ? '' : ' (no fights)')).join(', '));
   if (name === 'warmRoads') {
     const t = nodeTour(), L2 = L.map((l) => (l.id === 'ember-line-road' ? Object.assign({}, l, { L: t.L }) : l)), wild2 = L2.filter((l) => l.wild).reduce((a, l) => a + l.L, 0);
-    console.log(''.padEnd(14) + 'lighting the three nodes on the way (' + t.order.join(', ') + '): ' + Math.round(wild2) + ' px, about ' + fights(L2, 50000).toFixed(1) + ' fights');
+    // story.js's nodeFights: the fights the ways to the nodes add to the walk's own
+    const f2 = fights(L2, 50000), more = Math.max(0, Math.round(f2) - n), step = globalThis.STORY.PATH.find((s) => s.walk === name), had = step && step.nodeFights;
+    console.log(''.padEnd(14) + 'lighting the three nodes on the way (' + t.order.join(', ') + '): ' + Math.round(wild2) + ' px, about ' + f2.toFixed(1) + ' fights: ' + more + ' more' + (more === had ? ', as story.js has it' : ', story.js has ' + had + ' (nodeFights)'));
+    if (more !== had) off++;
   }
 }
 console.log(off ? off + (off === 1 ? ' walk differs' : ' walks differ') + ' from story.js: set its `fights`, then node tools/chain.mjs' : 'Every walk meets the fights story.js gives it.');

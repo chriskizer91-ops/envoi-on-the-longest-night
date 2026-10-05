@@ -6,7 +6,9 @@
 //            goes on whatever happens
 //   walk:    wild country between two places: about `fights` random encounters for a player who walks straight through
 //            (measured on the game's own maps by tools/walks.mjs: the wild ground a tap walks from where Io comes on to the
-//            way out, one fight per 770 px; each wild fight is worth rules.js WILD_REWARD times its table's experience)
+//            way out, one fight per 770 px; each wild fight is worth rules.js WILD_REWARD times its table's experience);
+//            `nodes`: the Ember Line nodes Sol relights on the way (each gives 150 shards times the band, game.js), and
+//            `nodeFights`: the fights the short ways to them add (tools/walks.mjs measures the walk lighting them)
 //   rest:    a rest place (an inn, or a camp where the way is long): HP and MP back, and where a lost fight wakes you
 //   shop:    a herb shop: the party carries up to 99 of each herb (rules.js CARRY), and uses each once a fight
 //   upgrade: the Magpie's upgrade (rules.js MAGPIE): it needs the band's gate won, the party's level and the shards
@@ -42,7 +44,7 @@
     { upgrade: 0, at: 'bogmire', flags: { refit: true } },
     // ---------- band 2: the Warm Roads and Dawnroost ----------
     { rest: 'warmRoads', camp: true },
-    { walk: 'warmRoads', band: 2, fights: 3 }, // the Ember Line road and the forest road up to Dawnroost from the Warm Roads camp: 2,200 px (about 4.6 fights lighting the three nodes)
+    { walk: 'warmRoads', band: 2, fights: 3, nodes: 3, nodeFights: 2 }, // the Ember Line road and the forest road up to Dawnroost from the Warm Roads camp: 2,200 px; lighting the three nodes on the way, 3,548 px (about 4.6 fights: 2 more), and 900 shards
     { rest: 'dawnroost' },
     { shop: 'dawnroost' },
     { fight: 'dawnroost', at: 'dawnroost', gate: true, level: 10 },
