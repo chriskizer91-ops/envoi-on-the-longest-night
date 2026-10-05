@@ -6,8 +6,9 @@
 // stand on, or one within 14 px of a cell she can reach, and outside every exit): where the Magpie lands (game.js
 // LANDINGS) and each chapter's start and rest (game.js CHAPTERS). And each map's own rules: every exit leads to a map,
 // or is a road out of the picture that she turns back from (`to: 'world'`, with its line in script.js); a camp has a
-// rest, no random fights, and a landing ground (`land`) she can reach where the Magpie lands, with Io set down in reach
-// of her; a map's fights are its own band's; and its painting is there.
+// rest, no random fights, and a landing ground (`land`) she can reach where the Magpie lands; wherever she lands, at a
+// dock or a camp, Io is set down in reach of her and beside her glow; a map's fights are its own band's; and its
+// painting is there.
 // Usage: [MAPS_EXTRA=file.js,...] node tools/check-maps.mjs [mapId]  (MAPS_EXTRA: maps traced in files of their own,
 // before they join maps.js)
 import fs from 'fs'; import path from 'path'; import { createRequire } from 'module';
@@ -95,8 +96,17 @@ for (const [id, m] of Object.entries(MAPS)) {
       const [c, d] = near(...m.land); if (d > 14 || !seen[c]) probs.push('its land at ' + m.land + ' is off the ground she can reach');
       const Ls = Object.entries(GAME.LANDINGS || {}).filter(([, L]) => L.field && L.field[0] === id);
       if (GAME.LANDINGS && !Ls.length) probs.push('a landing ground the Magpie never lands on (game.js LANDINGS)');
-      for (const [k, L] of Ls) if (Math.hypot(L.field[1][0] - m.land[0], (L.field[1][1] - m.land[1]) * 1.3) >= REACH) probs.push('the Magpie’s landing ' + k + ' sets Io down at ' + L.field[1] + ', out of reach of her at ' + m.land);
     }
+  }
+  // wherever the Magpie lands, at a dock or a camp, she sets Io down in reach of her and beside her glow, not in front of
+  // it (field.js draws a spot's glow 6 px above its point, before the figures; the same rule as game-test's landing). A
+  // dock's Magpie is its spot here; a camp's is its land (game.js adds the spot). Bogmire's west dock is added by
+  // game.js alone, so it goes unchecked here.
+  const glow = ((m.spots || []).find((s) => s.kind === 'magpie') || {}).at || (Array.isArray(m.land) && m.land);
+  if (glow) for (const [k, L] of Object.entries(GAME.LANDINGS || {}).filter(([, L]) => L.field && L.field[0] === id)) {
+    const [x, y] = L.field[1];
+    if (Math.hypot(x - glow[0], (y - glow[1]) * 1.3) >= REACH) probs.push('the Magpie’s landing ' + k + ' sets Io down at ' + L.field[1] + ', out of reach of her at ' + glow);
+    else if (Math.abs(glow[0] - x) < 30 && glow[1] - 6 <= y) probs.push('the Magpie’s landing ' + k + ' sets Io down at ' + L.field[1] + ', in front of her glow at ' + glow);
   }
   if (m.wild && m.wild.band !== m.band) probs.push('band ' + m.wild.band + ' fights on a band ' + m.band + ' map');
   if (!m.src || !fs.existsSync(path.join(R, m.src))) probs.push('no painting at ' + m.src); // a bad src leaves the field undrawn and Io frozen (field.js, load)

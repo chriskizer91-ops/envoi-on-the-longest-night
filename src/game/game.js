@@ -34,16 +34,17 @@
     misthollow: { at: [3500, 735], band: 4, map: 'misthollow', arrive: [768, 985] },
   };
   // where the Magpie can land: a dock on a ground map, or a camp's landing ground (maps.js land: she sets down there,
-  // and Io steps down 50 px east of it, beside her and in reach of her); a camp's first landing plays its scene, then
+  // and Io steps down 50 px east of it); at a dock as at a camp, Io is set down in reach of her and beside her glow, not
+  // in front of it (tools/check-maps.mjs checks both); a camp's first landing plays its scene, then
   // offers a rest (sky: where she docks on the flying map, in atlas pixels; Wickhollow's and Bogmire's are the world
   // travel demo's)
   const LANDINGS = {
-    wickhollow: { name: 'Wickhollow', band: 1, field: ['jetty', [768, 700]], sky: [1446, 1806] },
-    bogmire: { name: 'Bogmire', band: 1, field: ['bogmire', [100, 372]], need: (st) => st.flags.lights, sky: [1886, 2462] },
+    wickhollow: { name: 'Wickhollow', band: 1, field: ['jetty', [768, 720]], sky: [1446, 1806] },
+    bogmire: { name: 'Bogmire', band: 1, field: ['bogmire', [130, 372]], need: (st) => st.flags.lights, sky: [1886, 2462] },
     warmCamp: { name: 'The Warm Roads', band: 2, field: ['warm-roads-camp', [368, 425]], scene: 'warmRoads', sky: [820, 1530] },
-    dawnroost: { name: 'Dawnroost', band: 2, field: ['dawnroost', [1400, 330]], need: (st) => st.done['visit:dawnroost'], sky: [1365, 1085] },
+    dawnroost: { name: 'Dawnroost', band: 2, field: ['dawnroost', [1450, 300]], need: (st) => st.done['visit:dawnroost'], sky: [1365, 1085] },
     northCamp: { name: 'The northern wilds', band: 3, field: ['northern-camp', [386, 455]], scene: 'northern', sky: [1150, 590] },
-    shipyard: { name: 'The shipyard', band: 3, field: ['shipyard', [764, 290]], need: (st) => st.done['visit:shipyard'], sky: [2097, 580] },
+    shipyard: { name: 'The shipyard', band: 3, field: ['shipyard', [794, 270]], need: (st) => st.done['visit:shipyard'], sky: [2097, 580] },
     frozenCamp: { name: 'The northeast peaks', band: 4, field: ['frozen-camp', [356, 442]], scene: 'frozen', sky: [2760, 1090] },
   };
   // the chapters: the start, and each gate with the party as the story leaves it there (story.js's path), for trying a

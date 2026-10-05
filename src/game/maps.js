@@ -162,7 +162,7 @@
         { rect: [500, 0, 604, 20], to: 'wickhollow', at: [788, 975], label: 'Wickhollow' },
         { rect: [680, 1004, 812, 1024], to: 'world', at: 'wickhollow', label: 'The world', say: 'roadOut' },
         { rect: [0, 397, 18, 442], to: 'world', at: 'wickhollow', label: 'The world', say: 'roadOut' },
-        { rect: [1516, 722, 1536, 770], to: 'world', at: 'wickhollow', label: 'The world', say: 'roadOut' },
+        { rect: [1516, 704, 1536, 770], to: 'world', at: 'wickhollow', label: 'The world', say: 'roadOut' },
       ],
       people: [],
       spots: [
