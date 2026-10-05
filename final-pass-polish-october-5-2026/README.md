@@ -34,7 +34,7 @@ So the pass is, in order:
 
 ## The file Chris has
 
-**"Envoi on the Longest Night - final polish.html"**, here in this folder, made for him on October 5, at night: 18,095,301 bytes (17.26 MB of his 30), SHA-256 `f24d524826bf626bf9f8ac72755c0527f5b2b173349f136f7c9b33c5d6c63a16`.
+**"Envoi on the Longest Night - final polish.html"**, here in this folder, sent to him on October 5, at night: 18,095,301 bytes (17.26 MB of his 30), SHA-256 `f24d524826bf626bf9f8ac72755c0527f5b2b173349f136f7c9b33c5d6c63a16`.
 
 - The whole game, everything inside: it plays with no internet. Its title inside is the game's own, "Envoi on the Longest Night"; the file's name says which copy it is, so it isn't mixed up with the one he sent.
 - The four ideas of the try page are on, as in the file he sent ("the entire game at its current state"): footsteps (Settings, Footsteps: None turns them off), words that move on by themselves (Settings, Words move on: On a tap turns it back), the door's sound between maps and Buy 10 in the herb shops (no setting).
@@ -62,7 +62,7 @@ The whole pass (`checks/full-pass.sh`), at a Pixel 7a held sideways (915 × 412)
 | The game test: the finale's cutscene into its fight | Pass |
 | The file Chris keeps, with the four ideas off, played with the internet blocked | Pass |
 | **His file** (the four ideas on), played with the internet blocked | Pass |
-| The four ideas on his file (the offline try page, which is his file but for its title, byte for byte) | Running as this was written |
+| The four ideas on his file (the offline try page, which is his file but for its title, byte for byte) | Pass: words that move on (and a tap still moves a line at once), the door each way, 47 soft steps and 43 of the cloak's swish (none at None or Effects off), Buy 10 |
 
 ## What this pass fixed
 
