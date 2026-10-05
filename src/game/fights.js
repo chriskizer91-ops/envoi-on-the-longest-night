@@ -6,10 +6,10 @@
 // opts) -> the cfg for BattleScreen.start, without `game` (the game adds it).
 //   kind: 'first' | 'wild' | 'greatWraith' | 'dawnroost' | 'halcyon' | 'finale'
 //   party: { level, xp, hp: { io, sol }, mp, herbs, flags, keepsakes } (hp and mp null mean full; keepsakes: the hidden ones found)
-//   opts: { band, scene, seen, pack } for a wild fight (seen: the band's wild fights so far; pack: a set pack, for tests);
-//         for any fight, arena (true or false: fought in its arena or on its flat painting, whatever ARENA below says) and
-//         weather (in an arena: 'clear', 'rain' or 'storm'; by default the wilds roll it now and then)
+//   opts: { band, scene, seen, pack } for a wild fight (seen: the band's wild fights so far; pack: a set pack, for tests)
 // Needs rules.js, sim.js, the models and the stage scenes. Defines window.GameFights.
+// The new battles (ARENA below): opts also takes, for any fight, arena (true or false: fought in its arena or on its flat
+// painting, whatever ARENA says) and weather (in an arena: 'clear', 'rain' or 'storm'; by default the wilds roll it).
 (function () {
   'use strict';
   const RL = () => window.BattleRules, SIM = () => window.BattleSim;
