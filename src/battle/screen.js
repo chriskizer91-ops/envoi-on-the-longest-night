@@ -40,8 +40,16 @@
 
   function start(cfg) {
     const RL = window.BattleRules, BE = window.BattleEngine;
-    const SC = window.SCENES[cfg.scene || 'night-square'];
-    const IW = SC.width, IH = SC.height, A = IW / IH, FOV = SC.fov, PITCH = SC.pitch * Math.PI / 180, PXM = SC.ppm;
+    // the new battles: when the config names an arena (cfg.arena, a place in src/stage/arena-*.js) and the page has the
+    // arena field (src/fx/arena.js), the fight is fought there, as Colossus in the Meadow is: the place's painting far off,
+    // drawn sharp behind the 3D layer as a flat battle's is, brought to life by a sheet over it, and live 3D ground in
+    // front that answers every blow. The camera is the arena's locked one and a shot is a crop of its frame, so every
+    // shot, move and window below works the same in both. Without an arena, the flat painting, as before
+    const ARENA = cfg.arena && window.ARENAS && window.ARENAS[cfg.arena] && window.makeArenaField ? window.ARENAS[cfg.arena] : null;
+    const AF = ARENA ? window.makeArenaField(ARENA) : null;
+    const SC = ARENA ? { id: ARENA.id, name: ARENA.name, image: ARENA.image, width: AF.frame[0], height: AF.frame[1], fov: AF.camera.fov, lamps: [], layout: { lights: [], occ: [] }, summonFrom: ARENA.summonFrom }
+      : window.SCENES[cfg.scene || 'night-square'];
+    const IW = SC.width, IH = SC.height, A = IW / IH, FOV = SC.fov, PITCH = (SC.pitch || 0) * Math.PI / 180, PXM = SC.ppm || 54;
     const DIST = (IH / 2) / (PXM * Math.tan(FOV / 2 * Math.PI / 180));
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
     // the 3D layer draws at 3/4 of that (Chris, October 3: he could hardly tell it from full, and it spares the phone's
@@ -60,9 +68,9 @@
     const paintImg = new Image();
     const PICK = { level: cfg.level || 1, pack: cfg.pack || 0 }; // the fight chosen on the start card (the party page)
 
-    // ---------- the painting's camera, exactly as the battle builds it ----------
-    const fullCam = new THREE.PerspectiveCamera(FOV, A, DIST * 0.6, DIST * 1.6);
-    fullCam.position.set(0, DIST * Math.sin(PITCH), DIST * Math.cos(PITCH)); fullCam.lookAt(0, 0, 0);
+    // ---------- the painting's camera, exactly as the battle builds it (in an arena, the arena's locked camera) ----------
+    const fullCam = AF ? AF.camera.clone() : new THREE.PerspectiveCamera(FOV, A, DIST * 0.6, DIST * 1.6);
+    if (!AF) { fullCam.position.set(0, DIST * Math.sin(PITCH), DIST * Math.cos(PITCH)); fullCam.lookAt(0, 0, 0); }
     fullCam.updateMatrixWorld(); fullCam.updateProjectionMatrix();
     const camera = fullCam.clone();
     const raycaster = new THREE.Raycaster(), ndc = new THREE.Vector2(), hitP = new THREE.Vector3(), tmpV = new THREE.Vector3();
@@ -94,14 +102,25 @@
       return new THREE.CanvasTexture(c);
     }
 
+    // a place on the floor: painting pixels on a flat battle's painting, metres in an arena
+    const spot = (p) => (AF ? { x: p[0], z: p[1] } : g(p[0], p[1]));
     // the wraith's route in from the bridge (the first fight), and the Moonwell, where Lunara rises
-    const ROUTE = [[1185, 452], [1120, 520], [1000, 690], [860, 800]].map((p) => g(p[0], p[1]));
-    const WELL = g(...(SC.summon || [712, 725])), LUN = { x: WELL.x, z: WELL.z - 0.9 };
+    const ROUTE = AF ? [] : [[1185, 452], [1120, 520], [1000, 690], [860, 800]].map((p) => g(p[0], p[1]));
+    const WELL = AF ? spot(ARENA.summon) : g(...(SC.summon || [712, 725])), LUN = { x: WELL.x, z: WELL.z - 0.9 };
     const SUMMON_FROM = SC.summonFrom || 'the Moonwell';
+    // an arena's frame shows the fight bigger than a flat painting does (the camera is near, at eye height): every zoom
+    // asked for below is in a flat painting's terms, and is scaled by how much bigger (ZK; 1 on a flat painting), a little
+    // wider still, to keep the place in view. And an arena's shot never zooms in more than half as far again as its
+    // widest, so the painting behind is never blown up blurred (ZMAX)
+    const ZK = AF ? AF.ppm / 54 * 1.2 : 1, ZMAX = 1.5;
+    // an arena's fight stands low in its frame (the camera is at eye height), so on a phone a tall menu (Io's seven
+    // commands) would hide it: there a shot may slide down past the painting's bottom edge, up to this many of its
+    // pixels, and the strip below is the painting's own nearest ground again, mirrored and in shadow (BELOW; 0 when flat)
+    const BELOW = AF ? Math.round(IH * 0.14) : 0;
 
     // ---------- camera director: every shot is a point on the painting plus a zoom ----------
     const view = { w: 1, h: 1, uiH: 0 };
-    const cam = { cx: 1185, cy: 430, s: 1.4, tx: 1185, ty: 430, ts: 1.4, k: 3, follow: null, fs: 1.5 };
+    const cam = { cx: 1185, cy: 430, s: 1.4, tx: 1185, ty: 430, ts: 1.4, k: 3, follow: null, fs: 1.5, lift: 0 };
     const shake = { amp: 0, x: 0, y: 0 };
     let renderer = null, lastTf = '';
     function layoutView() {
@@ -117,13 +136,13 @@
     function shotAt(p, s, k, lift) {
       const big = lift === undefined && bigAt(p);
       if (big) { lift = big.tall * 0.45; s /= 1.7; }
-      const q = toPx(tmpV.set(p.x, lift === undefined ? 1.1 : lift, p.z)); shot(q[0], q[1], s, k);
+      const q = toPx(tmpV.set(p.x, lift === undefined ? 1.1 : lift, p.z)); shot(q[0], q[1], s / ZK, k);
     }
-    function followShot(getPos, s, k) { cam.follow = getPos; cam.fs = s; cam.k = k || 3; }
+    function followShot(getPos, s, k) { cam.follow = getPos; cam.fs = s / ZK; cam.k = k || 3; }
     function shotBoth(a, b, zoom, k) {
       if (bigAt(a) || bigAt(b)) { const pts = []; for (const p of [a, b]) { const f = bigAt(p); pts.push({ x: p.x, y: 0, z: p.z }, { x: p.x, y: f ? f.tall : 2.2, z: p.z }); } shotFit(pts, Math.min(1, zoom), k); return; }
       const pa = toPx(tmpV.set(a.x, 1.1, a.z)), pb = toPx(tmpV.set(b.x, 1.1, b.z));
-      const needW = Math.abs(pa[0] - pb[0]) + 175, needH = 250;
+      const needW = Math.abs(pa[0] - pb[0]) + 175 * ZK, needH = 250 * ZK;
       const availH = Math.max(120, view.h - view.uiH - 50);
       const s = Math.min((view.w - 16) / needW, availH / needH) * (zoom || 1);
       shot((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2 - 18, s, k);
@@ -132,8 +151,12 @@
     function shotFit(pts, zoom, k) {
       let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
       for (const p of pts) { const q = toPx(tmpV.set(p.x, p.y || 0, p.z)); x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }
-      const availH = Math.max(120, view.h - view.uiH - 40), s = Math.min((view.w - 16) / (x1 - x0 + 120), availH / (y1 - y0 + 70)) * (zoom || 1);
-      shot((x0 + x1) / 2, (y0 + y1) / 2, s, k);
+      const availH = Math.max(120, view.h - view.uiH - 40), s = Math.min((view.w - 16) / (x1 - x0 + 120 * ZK), availH / (y1 - y0 + 70 * ZK)) * (zoom || 1);
+      // an arena's frame is only so tall: when a giant won't fit above the menus, its head goes out of the top rather
+      // than everyone's feet out of the bottom
+      let cy = (y0 + y1) / 2;
+      if (AF) { const sMin = Math.max(view.w / IW, view.h / IH), sE = Math.min(Math.max(s, sMin), sMin * ZMAX); if ((y1 - y0 + 70 * ZK) * sE > availH) cy = y1 + 20 * ZK - availH / 2 / sE; }
+      shot((x0 + x1) / 2, cy, s, k);
     }
     // everyone still standing, heads included
     function shotField(k) {
@@ -150,19 +173,41 @@
       if (cam.follow) { const p = cam.follow(); const q = toPx(tmpV.set(p.x, 1.1, p.z)); cam.tx = q[0]; cam.ty = q[1]; cam.ts = cam.fs; }
       const k = REDUCED ? 1 : 1 - Math.exp(-rdt * cam.k);
       cam.cx += (cam.tx - cam.cx) * k; cam.cy += (cam.ty - cam.cy) * k; cam.s += (cam.ts - cam.s) * k;
-      const sMin = Math.max(view.w / IW, view.h / IH), S2 = Math.max(sMin, cam.s);
+      const sMin = Math.max(view.w / IW, view.h / IH), S2 = AF ? Math.min(Math.max(sMin, cam.s), sMin * ZMAX) : Math.max(sMin, cam.s);
       const midY = (view.h - view.uiH) / 2 + 20;
       shake.amp *= Math.exp(-rdt * 7);
       shake.x = (Math.random() - 0.5) * 2 * shake.amp; shake.y = (Math.random() - 0.5) * 2 * shake.amp;
       let ox = cam.cx * S2 - view.w / 2 + shake.x, oy = cam.cy * S2 - midY + shake.y;
-      ox = clamp(ox, 0, IW * S2 - view.w); oy = clamp(oy, 0, IH * S2 - view.h);
+      // in an arena, while a command is chosen, the view slides down (past the painting's edge if it must) until
+      // everyone's feet are above the menus, however tall they have grown
+      if (AF) {
+        let need = 0;
+        if (UI.menuOpen && view.uiNow) {
+          let low = 0; for (const f of standing()) low = Math.max(low, toPx(tmpV.set(f.pos.x, 0, f.pos.z))[1]);
+          need = Math.max(0, low * S2 - (view.h - view.uiNow - 14) - oy);
+        }
+        cam.lift += (need - cam.lift) * k; oy += cam.lift;
+      }
+      ox = clamp(ox, 0, IW * S2 - view.w); oy = clamp(oy, 0, IH * S2 - view.h + BELOW * S2);
       ox = Math.round(ox * DPR) / DPR; oy = Math.round(oy * DPR) / DPR;
       camera.setViewOffset(IW * S2, IH * S2, ox, oy, view.w, view.h); view.s2 = S2;
       // the painting is drawn into a canvas the size of the stage, only the part the camera shows (bench.js)
       const tf = ox + ',' + oy + ',' + S2.toFixed(5) + ',' + view.w + ',' + view.h + ',' + TOWN.ver;
       if (tf !== lastTf && paintImg.complete && paintImg.naturalWidth) {
         paintCtx.imageSmoothingEnabled = true; paintCtx.imageSmoothingQuality = 'high';
-        paintCtx.drawImage(paintImg, ox / S2, oy / S2, view.w / S2, view.h / S2, 0, 0, paintCv.width, paintCv.height);
+        const sy = oy / S2, sh = view.h / S2, on = Math.min(sh, IH - sy), k = paintCv.height / sh;
+        if (!BELOW || on > sh - 0.5) paintCtx.drawImage(paintImg, ox / S2, oy / S2, view.w / S2, view.h / S2, 0, 0, paintCv.width, paintCv.height);
+        else {
+          // an arena's shot below the painting's edge: the painting down to it, then its last rows mirrored, darkening
+          const y0 = on * k, ex = sh - on;
+          paintCtx.drawImage(paintImg, ox / S2, sy, view.w / S2, on, 0, 0, paintCv.width, y0);
+          paintCtx.save(); paintCtx.translate(0, 2 * y0); paintCtx.scale(1, -1);
+          paintCtx.drawImage(paintImg, ox / S2, IH - ex, view.w / S2, ex, 0, y0 - ex * k, paintCv.width, ex * k);
+          paintCtx.restore();
+          const sh2 = paintCtx.createLinearGradient(0, y0, 0, y0 + BELOW * k);
+          sh2.addColorStop(0, 'rgba(6,4,14,0.15)'); sh2.addColorStop(1, 'rgba(6,4,14,0.6)');
+          paintCtx.fillStyle = sh2; paintCtx.fillRect(0, y0, paintCv.width, paintCv.height - y0);
+        }
         drawTown(ox, oy, S2);
         lastTf = tf;
       }
@@ -178,7 +223,7 @@
     }
     function stepSky(rdt) {
       SKY.v += (SKY.to - SKY.v) * Math.min(1, rdt * 0.6); SKY.bolt = Math.max(0, SKY.bolt - rdt * 3);
-      const el2 = $('sky'); if (!el2) return;
+      const el2 = $('sky'); if (!el2 || AF) return; // an arena turns its own sky red, over the painting
       const a = Math.min(1, SKY.v * 0.85 + SKY.bolt * 0.5);
       el2.style.opacity = a > 0.003 ? a.toFixed(3) : '0';
       // the painting's skyline on screen: its row, through the camera as it stands
@@ -186,17 +231,29 @@
     }
     // the painted windows that light again when a scene's stolen lamplight comes home (Bogmire): warm glows drawn over
     // the painting, each fading in when its light arrives
+    // (an arena gives its windows in fractions of its painting; here they are in its pixels, as a flat painting's)
+    if (AF && ARENA.windows) SC.windows = ARENA.windows.map(([u, v]) => [u * IW, v * IH]);
     const TOWN = { a: (SC.windows || []).map(() => 0), to: (SC.windows || []).map(() => 0), ver: 0, stars: 0, starsTo: 0, field: null };
     function stepTown(rdt) {
       let changed = false;
       if (Math.abs(TOWN.starsTo - TOWN.stars) > 0.003) { TOWN.stars += (TOWN.starsTo - TOWN.stars) * Math.min(1, rdt * 0.8); changed = true; }
       for (let i = 0; i < TOWN.a.length; i++) { const d = TOWN.to[i] - TOWN.a[i]; if (Math.abs(d) > 0.004) { TOWN.a[i] += d * Math.min(1, rdt * 2.4); changed = true; } else if (d) { TOWN.a[i] = TOWN.to[i]; changed = true; } }
       if (changed) TOWN.ver++;
+      // an arena's painted lamps are dark while the stolen lamplight is out, and light as it comes home
+      if (AF && cfg.winLights && TOWN.a.length) AF.setLamps(TOWN.a.reduce((s, a) => s + a, 0) / TOWN.a.length);
     }
     // the stars coming back over the painted sky at the end (the scene's `sky` box), brighter ones with a soft glow
     function drawStars(ox, oy, S2) {
-      const sk = SC.sky; if (!sk || TOWN.stars < 0.01) return;
-      if (!TOWN.field) { TOWN.field = []; for (let i = 0; i < 260; i++) TOWN.field.push([sk[0] + Math.random() * (sk[2] - sk[0]), sk[1] + Math.pow(Math.random(), 1.3) * (sk[3] - sk[1]), Math.random()]); }
+      const sk = AF ? (ARENA.stars ? [0, 0, IW, IH] : null) : SC.sky; if (!sk || TOWN.stars < 0.01) return;
+      if (!TOWN.field) {
+        TOWN.field = [];
+        // in an arena, only over the painting's sky: above its traced skyline, fading toward it
+        for (let i = 0; TOWN.field.length < 260 && i < 4000; i++) {
+          const u = Math.random(), top = AF ? (AF.skyV(u) - 0.03) * IH : sk[3], v = sk[1] + Math.pow(Math.random(), 1.3) * (top - sk[1]);
+          if (AF && Math.hypot(u * IW - 0.31 * IW, v - 0.17 * IH) < 0.1 * IH) continue; // not on the moon
+          TOWN.field.push([sk[0] + u * (sk[2] - sk[0]), v, Math.random()]);
+        }
+      }
       const c = paintCtx; c.save(); c.globalCompositeOperation = 'lighter';
       for (const [u, v, b] of TOWN.field) {
         const x = (u * S2 - ox) * DPR, y = (v * S2 - oy) * DPR, a = TOWN.stars * (0.35 + 0.65 * b), r = (0.6 + 1.6 * b * b) * DPR * Math.max(1, S2 * 0.8);
@@ -228,7 +285,7 @@
     const IOS = window.makeIoSpells ? window.makeIoSpells(FX) : null;
     const SND = cfg.sound || window.makeBattleSound();
     // listeners on the window, kept so stop() can take them off again
-    const offs = []; let ro = null;
+    const offs = []; let ro = null, uiRo = null;
     const on = (t, ty, fn) => { t.addEventListener(ty, fn); offs.push([t, ty, fn]); };
 
     // ---------- the fighters and the battle's state ----------
@@ -237,6 +294,7 @@
     let LU = null;                // Lunara
     let EN = null;                // Envoi, when the page has it (from Dawnroost on)
     let BF = null;                // the living battlefield (battlefield.js): the painting's air, and how it answers the fight
+    const LIT = {};               // the night's lights (an arena's field shades them as its weather changes)
     let E = null;                 // the engine
     const D = {};                 // what the player has been shown so far, per unit
     const S = { trace: [], state: 'boot', acting: false, t0: 0, skip: false, auto: cfg.auto || null, rand: null, result: null, dealt: 0, guard: {}, rime: 0, rimeOn: false, choosing: null, known: false };
@@ -491,6 +549,8 @@
           if (to.key === 'sol' && !d.inTrance) d.heat = Math.min(100, d.heat + 10);
           if (!d.inTrance && d.hp > 0) d.tr = Math.min(1, d.tr + e.n / u.maxHp * RL.TRANCE.taken * (u.tranceMul || 1));
         }
+        // in an arena every blow ripples the ground round whoever it lands on, and throws up a little of it
+        if (AF && to && to.pos) AF.impact(to.pos.x, to.pos.z, big ? 0.42 : 0.2);
       } else if (e.t === 'heal') {
         const u = E.unit(e.to), d = D[e.to];
         d.hp = Math.min(u.maxHp, d.hp + e.n);
@@ -1492,6 +1552,7 @@
         shotField(2.2);
         W.play('whirl', true); SND.sfx.grasp();
         await untilP(W, A.cues[0]); SND.sfx.swish();
+        if (AF) AF.vortex(f.pos.x, f.pos.z, 10, 1); // in an arena, a whirlwind of torn grass and dust round it
         for (let k = 0; k < A.hits.length; k++) {
           await untilP(W, A.hits[k]);
           if (!ev.has()) continue;
@@ -1499,6 +1560,7 @@
           for (const h of reach()) thornFx(h, k === A.hits.length - 1);
           SND.sfx.swish(); addShake(7 + 2 * k); showWave(ev, k);
         }
+        if (AF) AF.vortex(f.pos.x, f.pos.z, 10, 0);
         await until(() => !W.busy); f.aimAt = null; ev.rest();
       },
       // Thorn Volley: two whip-cracks fling its thorns high, and they rain on the party in three waves
@@ -1826,7 +1888,8 @@
       UI.msg(cfg.winLightsText || 'The stolen lamplight flies home.', true);
       const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -2.5), arrivals = [];
       W.forEach(([u, v], i) => {
-        const to = new THREE.Vector3(); if (!rayAt(u, v).intersectPlane(plane, to)) return;
+        // (in an arena the windows are far off beyond the fen: each light flies off toward its own, and is lost in the dark)
+        const to = new THREE.Vector3(); if (AF) rayAt(u, v).at(60, to); else if (!rayAt(u, v).intersectPlane(plane, to)) return;
         arrivals.push(wait(i * 0.16).then(() => FX.projectile({ from: from.clone(), to: () => to, dur: 0.85 + Math.random() * 0.35, arc: 1.2 + Math.random(), side: rnd(-0.3, 0.3), color: 0xffe2a8, halo: 0xff9a40, size: 0.2, trail: [1, 0.78, 0.4], light: 0xffb45a, lightI: 2 }))
           .then(() => { TOWN.to[i] = 1; SND.sfx.chime(); }));
       });
@@ -2050,7 +2113,7 @@
     function buildFoes() {
       for (const f of foes) { scene.remove(f.m.root); if (f.m.fx) scene.remove(f.m.fx); dispose(f.m); scene.remove(f.shadow); if (f.glow) scene.remove(f.glow); delete F[f.key]; }
       foes = [];
-      const units = E.foes, slots = cfg.slots.slice(0, units.length).map((p) => g(p[0], p[1]));
+      const units = E.foes, slots = cfg.slots.slice(0, units.length).map(spot);
       const heroC = centerOf(heroes.map((h) => h.home));
       units.forEach((u, i) => {
         const look = cfg.foeLook[u.id], m = addModel(cfg.makeFoe(u.id, u.level, i));
@@ -2086,6 +2149,9 @@
       PACE.fps = { n: 0, t: 0, secN: 0, secT: 0, low: 0, prev: 0 };
       UI.vignette(0); UI.cinematic(false); UI.tint(0); UI.showBattle(false);
       newEngine(); resetHeroes(); buildFoes();
+      // an arena's weather for this fight (a wild fight's now and then rolls rain or a storm), and its painted lamps,
+      // dark while a great wraith has their light
+      if (AF) { AF.setWeather(cfg.weather || 'clear'); if (cfg.winLights) AF.setLamps(0, true); }
       S.acting = false; S.state = 'intro';
       await intro(quick);
     }
@@ -2102,6 +2168,41 @@
       if (cfg.packs.length < 2 && sel.closest('label')) sel.closest('label').hidden = true;
       sel.value = String(PICK.pack); sel.addEventListener('change', () => { PICK.pack = +sel.value; note(); });
       note();
+    }
+
+    // ---------- the arena (src/fx/arena.js), answering what a flat battle's living battlefield is asked ----------
+    // impact, roar, shake and storm do there what they do over a flat painting, on live ground; and in an arena the
+    // effects' flashes also light the ground round them, their rings ripple through the grass, and a Wrath brings red
+    // lightning down into the clearing now and then, away from the fighters
+    function arenaField() {
+      const glows = [0, 1, 2].map(() => ({ p: new THREE.Vector3(), r: 0, c: new THREE.Color(), I: 0, t: 1, dur: 1 }));
+      let gi = 0, strikeT = 5;
+      const fl = FX.flashLight, rg = FX.ring;
+      FX.flashLight = (p, color, I, dur, dist) => { const G = glows[gi++ % 3]; G.p.copy(p); G.r = (dist || 6) * 0.9; G.c.set(color); G.I = Math.min(2.4, I * 0.3); G.t = 0; G.dur = Math.max(0.2, dur); return fl(p, color, I, dur, dist); };
+      FX.ring = (p, color, r0, r1, dur, op, tex) => { if (p && r1 >= 1.2) AF.ripple(p.x, p.z, Math.min(0.8, r1 * 0.1) * (op || 1)); return rg(p, color, r0, r1, dur, op, tex); };
+      AF.onThunder = (k, near) => { SND.sfx.boom(near ? 1.3 : 0.4 + 0.4 * k); addShake(near ? 10 : 3); if (near) UI.flash('#ffe0e0', 0.45, 0.35); };
+      // somewhere on the ground the camera sees, at least 4 m from everyone in the fight
+      const away = () => {
+        let best = { x: 0, z: -14 };
+        for (let i = 0; i < 30; i++) {
+          const p = { x: (Math.random() - 0.5) * 22, z: -2 - Math.random() * 14 };
+          if (standing().every((f) => Math.hypot(f.pos.x - p.x, f.pos.z - p.z) > 4)) { best = p; break; }
+        }
+        return best;
+      };
+      return {
+        grp: AF.root, air: {},
+        update(dt, t) {
+          for (let i = 0; i < 3; i++) { const G = glows[i]; G.t += dt; const k = G.t < G.dur ? 1 - G.t / G.dur : 0; AF.glow(i, G.p.x, G.p.y, G.p.z, G.r, k > 0 ? G.c : null, G.I * k); }
+          if (AF.wrath > 0.7 && dt > 0 && (strikeT -= dt) <= 0) { strikeT = 7 + Math.random() * 7; const p = away(); AF.strike(p.x, p.z); }
+          AF.update(t, dt);
+        },
+        impact(p, k) { AF.impact(p.x, p.z, Math.min(1.3, k)); if (k >= 0.9) AF.decal('crack', p.x, p.z, 2.2 * k, { glow: 0.25 }); if (k >= 1.1) AF.throwDebris(p.x, p.z, k, 16); },
+        roar(k) { AF.roar(Math.min(1, k)); },
+        shake(px) { if (px >= 12) AF.roar(Math.min(0.5, px / 40)); },
+        storm(v) { AF.setWrath(v); },
+        dispose() { FX.flashLight = fl; FX.ring = rg; AF.dispose(); },
+      };
     }
 
     // ---------- main loop ----------
@@ -2168,6 +2269,13 @@
       const pointScale = IH * (view.s2 || 1) / (Math.max(1, view.h) * Math.tan(FOV / 2 * Math.PI / 180));
       FX.update(dt, clock.t, pointScale);
       if (BF) BF.update(dt, clock.t, pointScale);
+      if (AF) {
+        // the night's lights follow the arena's weather: a cloud over the moon, a storm, lightning, a Wrath
+        const L = AF.light;
+        LIT.hemi.color.copy(L.hemiSky); LIT.hemi.groundColor.copy(L.hemiGround); LIT.hemi.intensity = L.hemiI;
+        LIT.moon.position.copy(L.dir).multiplyScalar(30); LIT.moon.color.copy(L.color); LIT.moon.intensity = L.I;
+        LIT.fill.color.copy(L.fillC); LIT.fill.intensity = L.fillI;
+      }
       stepSky(rdt);
       if (FX.grp.children.length !== fxKids) { lightOnly(FX.grp); fxKids = FX.grp.children.length; }
       applyCam(rdt);
@@ -2240,17 +2348,18 @@
       scene = new THREE.Scene();
       shadowTex = radialTex('rgba(10,4,16,0.62)', 'rgba(10,4,16,0.3)', 'rgba(10,4,16,0)');
       lightTex = radialTex('rgba(255,255,255,1)', 'rgba(255,255,255,0.28)');
-      scene.add(new THREE.HemisphereLight(0x756aa8, 0x33262f, 1.1));
-      const moon = new THREE.DirectionalLight(0xb8c0ff, 0.62); moon.position.set(-5, 9, -12); scene.add(moon);
-      const fill = new THREE.DirectionalLight(0xffdcc0, 0.42); fill.position.set(2, 5, 10); scene.add(fill);
+      LIT.hemi = new THREE.HemisphereLight(0x756aa8, 0x33262f, 1.1); scene.add(LIT.hemi);
+      const moon = new THREE.DirectionalLight(0xb8c0ff, 0.62); moon.position.set(-5, 9, -12); scene.add(moon); LIT.moon = moon;
+      const fill = new THREE.DirectionalLight(0xffdcc0, 0.42); fill.position.set(2, 5, 10); scene.add(fill); LIT.fill = fill;
       for (const i of SC.lamps) { const L = SC.layout.lights[i]; const p = new THREE.PointLight(new THREE.Color(L.c), L.i, L.d, 2); p.position.copy(lampPos(L.base, L.at)); scene.add(p); }
       const depthMat = new THREE.MeshBasicMaterial({ colorWrite: false, side: THREE.DoubleSide });
       for (const o of SC.layout.occ) for (const poly of o.polys) { const m = new THREE.Mesh(cutout(poly, o.base), depthMat); m.renderOrder = -1; scene.add(m); }
       scene.add(FX.grp);
-      if (window.makeBattlefield) { BF = makeBattlefield({ id: SC.id, g, IW, IH, onLightning: lightning }); scene.add(BF.grp); }
+      if (AF) { BF = arenaField(); scene.add(BF.grp); scene.fog = AF.fog; if (cfg.winLights) AF.setLamps(0, true); }
+      else if (window.makeBattlefield) { BF = makeBattlefield({ id: SC.id, g, IW, IH, onLightning: lightning }); scene.add(BF.grp); }
       // the heroes, in their places
       for (const hc of cfg.heroes) {
-        const p = g(hc.home[0], hc.home[1]); p.yaw = 0;
+        const p = spot(hc.home); p.yaw = 0;
         const h = fighter(hc.id, addModel(hc.make()), hc, p);
         h.side = 'hero';
         h.shadow = disc(hc.shadow || 0.6, shadowTex, 0xffffff, false, 1); h.shadow.scale.set(1, 0.8, 1);
@@ -2262,7 +2371,7 @@
       glowG = disc(3.2, lightTex, 0xcfdcff, true, 2); glowG.position.set(WELL.x, 0.015, WELL.z); glowG.material.opacity = 0;
       if (cfg.makeEnvoi) {
         // as on its bench: between the party and the foes, nudged off Io so its coils keep clear of her
-        const ep = SC.envoiAt ? g(...SC.envoiAt) : g(720, 790); if (!SC.envoiAt) { ep.x += 0.55; ep.z -= 0.3; } ep.yaw = 0;
+        const ep = AF ? spot(ARENA.envoiAt) : SC.envoiAt ? g(...SC.envoiAt) : g(720, 790); if (!AF && !SC.envoiAt) { ep.x += 0.55; ep.z -= 0.3; } ep.yaw = 0;
         EN = fighter('envoi', addModel(cfg.makeEnvoi()), { kind: 'envoi', tall: 6.4 }, ep); EN.on = false;
         EN.shadow = disc(1.6, shadowTex, 0xffffff, false, 1); EN.shadow.scale.set(1, 0.6, 1); EN.shadow.position.set(ep.x, 0.006, ep.z);
         initEnvoi();
@@ -2283,7 +2392,7 @@
       const ready = () => {
         if (cfg.game) { $('start').hidden = true; SND.init(); begin(!!cfg.quickIntro); return; }
         beginBtn.disabled = false; beginBtn.textContent = 'Begin the battle'; if (!coarse) beginBtn.focus({ preventScroll: true }); };
-      paintImg.onload = () => { lastTf = ''; ready(); };
+      paintImg.onload = () => { lastTf = ''; if (AF) AF.setPainting(paintImg); ready(); };
       paintImg.onerror = () => { beginBtn.textContent = 'The painting didn’t load. Reload to try again.'; };
       paintImg.src = SC.image.startsWith('data:') ? SC.image : '../' + SC.image;
       beginBtn.addEventListener('click', () => { SND.init(); begin(!!cfg.quickIntro); });
@@ -2308,6 +2417,8 @@
       let tmr = 0;
       const onResize = () => { clearTimeout(tmr); tmr = setTimeout(layoutView, 100); };
       if (window.ResizeObserver) { ro = new ResizeObserver(onResize); ro.observe(stage); } else on(window, 'resize', onResize);
+      // an arena keeps the fighters' feet above the menus while a command is chosen (applyCam), so it follows their height
+      if (AF && window.ResizeObserver) { const ui = $('ui'); uiRo = new ResizeObserver(() => { view.uiNow = ui.hidden ? 0 : ui.offsetHeight + 12; }); uiRo.observe(ui); }
 
       // test hooks for headless checks
       window.__battle = {
@@ -2318,6 +2429,8 @@
         setFight(level, pack) { PICK.level = level; if (pack !== undefined) PICK.pack = pack; },
         // a test shortcut: a unit down to n HP, shown and real (the first foe by default)
         weaken(n, who) { const f = who ? E.unit(who) : E.foes[0]; f.hp = Math.min(f.hp, n); D[f.key].hp = f.hp; },
+        // the arena this fight is in (null on a flat painting), and what the last frame cost to draw (frame: its number)
+        get arena() { return AF; }, get drawn() { const i = renderer ? renderer.info.render : {}; return { frame: i.frame, calls: i.calls, triangles: i.triangles, points: i.points, lines: i.lines }; },
       };
     }
     setTimeout(() => {
@@ -2331,6 +2444,7 @@
       S.dead = true; SND.stopMusic(0.3);
       for (const [t, ty, fn] of offs) t.removeEventListener(ty, fn);
       if (ro) ro.disconnect();
+      if (uiRo) uiRo.disconnect();
       for (const f of heroes.concat(foes)) dispose(f.m);
       if (LU) dispose(LU.m); if (EN) dispose(EN.m);
       if (renderer) { renderer.dispose(); renderer.forceContextLoss(); renderer = null; }

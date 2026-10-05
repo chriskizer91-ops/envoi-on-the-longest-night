@@ -9,6 +9,8 @@
 //            and who wears each, keepsakes.js)
 //   opts: { band, scene, seen, pack } for a wild fight (seen: the band's wild fights so far; pack: a set pack, for tests)
 // Needs rules.js, sim.js, the models and the stage scenes. Defines window.GameFights.
+// The new battles (ARENA below): opts also takes, for any fight, arena (true or false: fought in its arena or on its flat
+// painting, whatever ARENA says) and weather (in an arena: 'clear', 'rain' or 'storm'; by default the wilds roll it).
 (function () {
   'use strict';
   const RL = () => window.BattleRules, SIM = () => window.BattleSim;
@@ -40,6 +42,38 @@
   };
   // where the party stands against the Colossus on each painting: about 8.5 m from it, as on its bench (its arms reach 9 m)
   const COLOSSUS_AT = { 'frozen-road': { io: [638, 704], sol: [712, 738], slot: [974, 557] } };
+
+  // ---------- the new battles: every fight in an arena (src/fx/arena.js, src/stage/arena-*.js) ----------
+  // ARENA is the switch for the game. false: its fights are fought on the flat paintings, as they always have been. true:
+  // each is fought in its place's arena, Chris's painting far off behind live 3D ground, as in Colossus in the Meadow.
+  // To switch, set it to true here, and add the arena's scripts to putting-it-all-together/game.html after
+  // battlefield.js (src/fx/arena.js, then the eight src/stage/arena-*.js); envoi-final-draft/arena/README.md has the
+  // lines. Without them the switch does nothing. The arena demo (demos/arena.html) asks for arenas itself (opts.arena),
+  // whatever ARENA says. The first fight keeps the Night square's painting either way (October 3, question 23): its
+  // camera looks down on the square from high above, and no ground of ours could stand in front of it.
+  const ARENA = false;
+  // which arena each fight is fought in: each band's wilds and each gate's place (art request 11)
+  const ARENA_OF = { wild: { 1: 'river-glade', 2: 'warm-roads-moor', 3: 'eldergrove', 4: 'frostmere' }, colossus: 'frostmere', greatWraith: 'bogmire', dawnroost: 'dawnroost', halcyon: 'crossroads', finale: 'dead-moonwell' };
+  // where the party and the foes stand in an arena, in metres (x across, z away from the camera, which stands 18 m back
+  // from the middle of the fight): the heroes lower left and the foes upper right, as on the paintings
+  const ARENA_AT = {
+    pack: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[2.0, -4.6], [4.2, -7.2], [4.4, -3.0]] },
+    // the Bramble Horror alone: the party a little nearer, as on the paintings
+    lone: { io: [-2.2, -1.4], sol: [-0.8, -0.2], slots: [[2.6, -5.6]] },
+    great: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[3.0, -8.0]] },
+    // the Bramble Colossus: about 9 m from the party, as on its bench
+    colossus: { io: [-2.2, -2.2], sol: [-0.8, -1.0], slots: [[3.2, -10.6]] },
+    knight: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[2.6, -4.4]] },
+    finale: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[1.6, -3.6], [3.6, -5.6]] },
+  };
+  // a fight's config moved into its arena: the place, the party and the foes where they stand there, and the weather
+  // (opts.weather, or in the wilds now and then rain or a storm, as the place says)
+  function inArena(c, place, at, opts) {
+    const A = window.ARENAS && window.ARENAS[place]; if (!A || !window.makeArenaField) return c;
+    c.arena = place; c.heroes[0].home = at.io; if (c.heroes[1]) c.heroes[1].home = at.sol; c.slots = at.slots;
+    c.weather = opts.weather || (opts.wilds && A.wild && Math.random() < A.wild ? (Math.random() < 0.5 ? 'rain' : 'storm') : 'clear');
+    return c;
+  }
   function makeFoe(id, level, i) {
     if (id === 'wraith') return makeWraith({ level });
     if (id === 'greatWraith') return makeWraith({ level, great: true });
@@ -103,6 +137,8 @@
   function config(kind, P, opts) {
     opts = opts || {};
     const S = SIM();
+    // in an arena (the switch above, or opts.arena from the arena demo)
+    const arena = opts.arena != null ? !!opts.arena : ARENA, wilds = Object.assign({ wilds: true }, opts);
     if (kind === 'wild') {
       // opts.seen: how many of the band's wild fights the party has had (the Colossus never comes in the first few)
       const band = opts.band || 1, rand = Math.random;
@@ -113,6 +149,7 @@
       const c = base(scene, P);
       const lone = foes[0].id.startsWith('bramble');
       if (lone) { const at = PLACES[scene]; c.heroes[0].home = [at.io[0] + 40, at.io[1] - 50]; if (c.heroes[1]) c.heroes[1].home = [at.sol[0] + 40, at.sol[1] - 50]; c.slots = [at.slots[0]]; }
+      if (arena) inArena(c, ARENA_OF.wild[band], lone ? ARENA_AT.lone : ARENA_AT.pack, wilds);
       return Object.assign(c, {
         fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), ...bagOf(P), ends: { canFlee: true }, flee: fleeOf(P), reward: window.BattleRules.WILD_REWARD }),
         introMsg: lone ? (fs) => (fs[0].id === 'brambleAmbush' ? 'A low blackberry thicket grows over the road, heavy with fruit.' : 'A blackberry thicket stands by the road, lusher than it should be, and heavy with fruit.') : undefined,
@@ -144,6 +181,7 @@
     if (kind === 'greatWraith') {
       const c = base('bogmire-boardwalk', P);
       c.heroes[0].home = [590, 790]; if (c.heroes[1]) c.heroes[1].home = [680, 852]; c.slots = [[920, 645]];
+      if (arena) inArena(c, ARENA_OF.greatWraith, ARENA_AT.great, opts);
       return Object.assign(c, {
         fight: () => ({ party: partyOf(P), foes: [{ id: 'greatWraith', level: 5 }], flags: flagsOf(P), ...bagOf(P) }),
         introMsg: 'Every lamp and window in Bogmire has gone dark…',
@@ -158,6 +196,7 @@
     if (kind === 'dawnroost') {
       const c = base('dawnroost-node', P);
       c.heroes[0].home = [530, 700]; c.heroes[1].home = [615, 760]; c.slots = [[805, 645], [880, 600], [875, 722]];
+      if (arena) inArena(c, ARENA_OF.dawnroost, ARENA_AT.pack, opts);
       c.makeEnvoi = () => makeEnvoi({});
       return Object.assign(c, {
         fight: () => ({ party: partyOf(P), foes: [{ id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }], flags: flagsOf(P), ...bagOf(P) }),
@@ -178,6 +217,7 @@
     if (kind === 'halcyon') {
       const c = base('northern-crossroads', P);
       c.heroes[0].home = [560, 690]; c.heroes[1].home = [645, 752]; c.slots = [[895, 622]];
+      if (arena) inArena(c, ARENA_OF.halcyon, ARENA_AT.knight, opts);
       return Object.assign(c, {
         alias: { halcyon: 'The Gloam Knight' },
         fight: () => ({ party: partyOf(P), foes: [{ id: 'halcyon' }], flags: flagsOf(P, { kestrel: true }), ...bagOf(P), ends: { retreat: { foe: 'halcyon', below: 0.2 } } }),
@@ -203,6 +243,7 @@
     if (kind === 'finale') {
       const c = base('dead-moonwell', P);
       c.heroes[0].home = [560, 762]; c.heroes[1].home = [630, 812]; c.slots = [[750, 690], [828, 642]];
+      if (arena) inArena(c, ARENA_OF.finale, ARENA_AT.finale, opts);
       c.foeLook = Object.assign({}, FOE_LOOK, { halcyon: Object.assign({}, FOE_LOOK.halcyon, { downAct: 'kneel', downNote: 'Halcyon falls to one knee on her planted blade, and stays there.' }) });
       return Object.assign(c, {
         fight: () => { const f = S.FIGHTS.finale.setup(P.level); return Object.assign(f, { party: partyOf(P), flags: flagsOf(P, f.flags), ...bagOf(P) }); },
@@ -232,6 +273,7 @@
   function colossus(P, foes, opts) {
     const scene = COLOSSUS_AT[opts.scene] ? opts.scene : 'frozen-road', at = COLOSSUS_AT[scene], c = base(scene, P);
     c.heroes[0].home = at.io; if (c.heroes[1]) c.heroes[1].home = at.sol; c.slots = [at.slot];
+    if (opts.arena != null ? opts.arena : ARENA) inArena(c, ARENA_OF.colossus, ARENA_AT.colossus, Object.assign({ wilds: true }, opts));
     return Object.assign(c, {
       fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), ...bagOf(P), ends: { canFlee: true }, flee: fleeOf(P), reward: window.BattleRules.WILD_REWARD }),
       introMsg: 'Beside the frozen road stands a thicket as big as a house, green where nothing else is. The snow round it has melted.',
@@ -246,5 +288,5 @@
   }
   // the painting each band's wild fights play on: the Thornwood's own map has its bridge
   const WILD_SCENE = { 1: 'gloamwood-road', 2: 'warm-road', 3: 'northern-crossroads', 4: 'frozen-road' };
-  window.GameFights = { config, WILD_SCENE, PLACES };
+  window.GameFights = { config, WILD_SCENE, PLACES, ARENA, ARENA_OF, ARENA_AT };
 })();
