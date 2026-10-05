@@ -864,9 +864,16 @@
         const r = el('div', { class: 'gm-item' }, b), t = el('span', null, r, 'Slot ' + n + (n === GS.slot() ? ' (in use)' : ''));
         el('small', null, t, sv ? saveLine(sv) : 'Empty');
         const x = el('button', { type: 'button', class: 'go small' + (n === GS.slot() ? '' : ' alt') }, r, 'Save here');
-        x.addEventListener('click', async () => {
-          if (sv && n !== GS.slot()) { const k = await ask(null, 'Save over slot ' + n + '? ' + saveLine(sv) + ' will be lost.', ['Save over it', 'Keep it']); if (k) return; }
-          GS.use(n); save(); sfx('ui-save'); note('Saved in slot ' + n + '.'); redraw();
+        // over another slot's game, the question is asked in the slot's own row (the dialogue box would open under the
+        // menu, where it can't be tapped, and stay behind once the menu closed)
+        const doSave = () => { GS.use(n); save(); sfx('ui-save'); note('Saved in slot ' + n + '.'); redraw(); };
+        x.addEventListener('click', () => {
+          if (!(sv && n !== GS.slot())) { doSave(); return; }
+          r.textContent = '';
+          const q = el('span', null, r, 'Save over slot ' + n + '?'); el('small', null, q, saveLine(sv) + ' will be lost.');
+          const g = el('div', { class: 'gm-pick' }, r), yes = el('button', { type: 'button', class: 'go small' }, g, 'Save over it'), no = el('button', { type: 'button', class: 'go small alt' }, g, 'Keep it');
+          yes.addEventListener('click', doSave); no.addEventListener('click', () => redraw());
+          no.focus({ preventScroll: true });
         });
       }
       const r = el('div', { class: 'gm-item' }, b), t = el('span', null, r, 'Save code'); el('small', null, t, 'The game as text: copy it, and paste it into the title’s Load on another device or another copy of the game.');
@@ -892,7 +899,13 @@
         el('p', { class: 'gm-top' }, card, 'Paste a save code from another copy of the game. Then pick the slot it goes in.');
         const ta = el('textarea', { class: 'code', rows: '5', 'aria-label': 'Save code', placeholder: 'ENVOI1:…' }, card), msg = el('p', { class: 'gm-note' }, card, '');
         const foot = el('div', { class: 'gmenu-foot' }, card), ok = el('button', { type: 'button', class: 'go' }, foot, 'Load it'), no = el('button', { type: 'button', class: 'go alt' }, foot, 'Back');
-        ok.addEventListener('click', () => { const sv = GS.fromCode(ta.value); if (!sv) { msg.textContent = 'That isn’t a whole save code. Copy it again, all of it.'; return; } ov.remove(); done(sv); });
+        ok.addEventListener('click', () => {
+          const sv = GS.fromCode(ta.value);
+          if (!sv) { msg.textContent = 'That isn’t a whole save code. Copy it again, all of it.'; return; }
+          // a code from a newer copy of the game, saved somewhere this copy doesn't have, would open on nothing
+          if ([sv.where, sv.rest].some((w) => w && w.mode !== 'world' && w.map && !MAPS[w.map])) { msg.textContent = 'That code is from a newer copy of the game, saved in a place this copy doesn’t have.'; return; }
+          ov.remove(); done(sv);
+        });
         no.addEventListener('click', () => { ov.remove(); done(null); });
         setTimeout(() => ta.focus({ preventScroll: true }), 30);
       });
