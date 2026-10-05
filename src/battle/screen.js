@@ -532,7 +532,8 @@
     function newEngine() {
       const seed = cfg.seed || (1 + Math.floor(Math.random() * 1e9));
       S.rand = BE.rng(seed * 2654435761 + 97);
-      E = BE.create(Object.assign({ seed }, cfg.fight(PICK.level, PICK.pack)));
+      const fight = cfg.fight(PICK.level, PICK.pack);
+      E = BE.create(Object.assign({ seed }, fight)); S.party = fight.party; // (with each hero's keepsakes, for the level-up)
       for (const k in D) delete D[k];
       for (const u of E.units) D[u.key] = { hp: u.hp, mp: u.mp, heat: u.heat || 0, tr: u.trance || 0, inTrance: false };
       S.dealt = 0; S.guard = {}; S.choosing = null;
@@ -2152,8 +2153,10 @@
           const k0 = RL.scale(lead.level), k1 = RL.scale(lv), dl = $('lvlList');
           $('lvlTitle').textContent = (heroes.length > 1 ? 'The party is level ' : 'Io is level ') + lv + '!';
           dl.textContent = '';
-          for (const h of heroes) { const H = RL.HEROES[h.key]; el('dt', null, dl, H.name + '’s HP'); el('dd', null, dl, nf(H.hp * k0) + ' → ' + nf(H.hp * k1)); }
-          el('dt', null, dl, 'Io’s MP'); el('dd', null, dl, Math.round(RL.HEROES.io.mp * RL.mpScale(lead.level)) + ' → ' + Math.round(RL.HEROES.io.mp * RL.mpScale(lv)));
+          // HP and MP as the game will have them, with what each hero's keepsakes add (fights.js hands them to the engine)
+          const kept = (id, k) => ((S.party || []).find((p) => p.id === id) || {})[k] || 1, mpK = kept('io', 'mpMul');
+          for (const h of heroes) { const H = RL.HEROES[h.key], m = kept(h.key, 'hpMul'); el('dt', null, dl, H.name + '’s HP'); el('dd', null, dl, nf(H.hp * k0 * m) + ' → ' + nf(H.hp * k1 * m)); }
+          el('dt', null, dl, 'Io’s MP'); el('dd', null, dl, Math.round(RL.HEROES.io.mp * RL.mpScale(lead.level) * mpK) + ' → ' + Math.round(RL.HEROES.io.mp * RL.mpScale(lv) * mpK));
           el('dt', null, dl, 'Flame Bolt'); el('dd', null, dl, nf(330 * k0) + ' → ' + nf(330 * k1));
           $('lvlBox').hidden = false;
           SND.sfx.chime();
