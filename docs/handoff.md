@@ -1,5 +1,7 @@
 # Handoff: What the Game Still Wants
 
+> **Superseded on October 5, 2026.** What the game still wants is now `../handoff/tasks.md`, kept by the session that is the game's hub (`../handoff/README.md`). This list stays as the record of October 3.
+
 October 3, 2026. The game plays from the title to the ending in one page (https://claude.ai/artifact/UDTnemDCiz2EKcoGqbCtm8), and every part has been played through headless with no errors. This note lists what is waiting on Chris, then everything Claude would add or improve, most important first. `status.md` has the links and `design-decisions.md` the reasons behind what is built.
 
 **Done since, in `../putting-it-all-together/` (October 3, later):** the Bramble Colossus in the game (section 2); living battlefields on every painted battle (section 3, the first way); three save slots, a save code, word speed, larger text and separate volumes (section 9); the offline build (size and delivery); and `tools/game-test.mjs` (technical notes). Each is marked below.

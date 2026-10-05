@@ -2,6 +2,8 @@
 
 October 4, 2026: the session that started **pass three** (October 3, evening), through Chris's notes on its pages, five chapter demos, his walking paths, herbs for the wilds, and a polish round: his songs, three volumes and two hidden keepsakes. Read this first. Then:
 
+- **Newest of all, October 5: a new hub.** The game's hub is now a session Chris started in ultracode. Start with `../handoff/README.md`: who does what now, the old hub's last results in `../handoff/relay/` (the new battles, delivered on `work/arenas` with their demo page, https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea), and every task left in the game, defined one by one, in `../handoff/tasks.md`.
+
 - **Newest, October 4, evening: the final draft.** Chris sent the file he keeps and called it the final draft. `../envoi-final-draft/README.md` has it, a review of the game, how to spend the rest of the 30 MB, art request 13 (the wild's own creatures) and the model studio, where modeling sessions Chris starts build new creatures in their own folders and hand them back. That work is on the branch `ccr-31761774-76j8j3`: this game, from `claude/practical-franklin-l1ctf9`, with the new folder on top. Later that evening: `../envoi-final-draft/cutscenes/` (briefs for two cutscenes, the Colossus first met and the finale's opening), and this branch took in `3d-cutscenes/`, `3d-model-field-studies/` and `3d-model-main-characters/` from their branches, so a session started from it has them all. The game itself didn't change: it still builds byte for byte the file Chris keeps.
 
 - **Newest, October 4, late evening (into the 5th): the keepsakes and the cutscenes in the game.** Chris approved the keepsakes' places, asked for 99 of each herb in the bag and a shop in every town (there was one already: Wickhollow, the jetty, Bogmire, Dawnroost, the shipyard, Misthollow), said the two cutscenes were done, and sent the twenty keepsakes' pictures. All of it is in the game and published at a new link (this account can't update the old one): https://claude.ai/artifact/BgSiyXBu53iW7DJVF1seV8. The keepsakes: `../envoi-final-draft/items/README.md` ("The pictures", "In the game"), and their demo page, https://claude.ai/artifact/AAtAnWcqszRj4qhVCfgPp5. The cutscenes: `../envoi-final-draft/cutscenes/README.md` ("Into the game"). The decisions: `design-decisions.md`, the two "late evening" sections.
@@ -17,11 +19,11 @@ October 4, 2026: the session that started **pass three** (October 3, evening), t
 
 ## Where things are
 
-- **The branch:** all the work is on `claude/practical-franklin-l1ctf9`, pushed. It holds the game from `ccr-9e19f4e2-29pyn6` (which held all of `second-account-work`) and the creature branch `claude/sleepy-dirac-t4ftx0`, merged.
+- **The branch:** the game's branch is `ccr-31761774-76j8j3`, pushed (since October 4, evening). It holds `claude/practical-franklin-l1ctf9`, where the work was before, with the game from `ccr-9e19f4e2-29pyn6` (which held all of `second-account-work`) and the creature branch `claude/sleepy-dirac-t4ftx0`, merged. Workshop jobs and helpers push to their own `work/<name>` branches, and the hub brings them in.
   - The repository's default branch is still `claude/admiring-hawking-p7m87n`, and nothing is merged into it yet. Chris decides when.
   - Mooncart builds the default branch, so the game reaches Mooncart only after that merge.
 - **The game:** `putting-it-all-together/game.html`, built from `src/`. It plays from the title to the ending.
-- **Pages on Chris's phone** (private until he shares them; this account can update them in place):
+- **Pages on Chris's phone** (private until he shares them). This account can update only the game, the keepsakes, the map editor, the new battles and the two cutscene pages (`../envoi-final-draft/cutscenes/README.md`); the rest came from Chris's other account, so a new version of one goes out at a new link:
 
 | Page | Link |
 |---|---|
@@ -32,6 +34,7 @@ October 4, 2026: the session that started **pass three** (October 3, evening), t
 | Demo: Envoi before the Finale (the foot of Misthollow) | https://claude.ai/artifact/LqvFuBB9BpvkCUiixc1ZS2 |
 | The game (since October 4, late evening: the two cutscenes, 99 of each herb, the twenty keepsakes with Chris's pictures, on top of everything before) | https://claude.ai/artifact/BgSiyXBu53iW7DJVF1seV8 |
 | The keepsakes: all twenty with Chris's pictures, each card as the game shows it, the Items page, what they add up to | https://claude.ai/artifact/AAtAnWcqszRj4qhVCfgPp5 |
+| The New Battles: every fight in its arena, the game's switch off until Chris says yes (October 5; `../envoi-final-draft/arena/README.md` on `work/arenas`) | https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea |
 | The game before that (version 11), made from the other account, which this one can't update; a save code (Menu, Saves) carries a game from it to the new link | https://claude.ai/artifact/9ix7XE5CT9pLrDATugkg2w |
 | Battle Backgrounds: the game's eight paintings behind live 3D ground, at Chris's picks | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw |
 | Wilderness Walk: Io on Chris's wilderness path, nine squeezes | https://claude.ai/artifact/BcRjgVynWymYim84Yb7STk |
