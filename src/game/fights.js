@@ -46,12 +46,14 @@
   // ---------- the new battles: every fight in an arena (src/fx/arena.js, src/stage/arena-*.js) ----------
   // ARENA is the switch for the game. false: its fights are fought on the flat paintings, as they always have been. true:
   // each is fought in its place's arena, Chris's painting far off behind live 3D ground, as in Colossus in the Meadow.
-  // To switch, set it to true here, and add the arena's scripts to putting-it-all-together/game.html after
+  // On since October 5, at Chris's yes ("Yes, switch them on"; docs/design-decisions.md); false and the nine script lines
+  // out of game.html bring the flat paintings back. To switch, set it here, and keep the arena's scripts in
+  // putting-it-all-together/game.html after
   // battlefield.js (src/fx/arena.js, then the eight src/stage/arena-*.js); envoi-final-draft/arena/README.md has the
   // lines. Without them the switch does nothing. The arena demo (demos/arena.html) asks for arenas itself (opts.arena),
   // whatever ARENA says. The first fight keeps the Night square's painting either way (October 3, question 23): its
   // camera looks down on the square from high above, and no ground of ours could stand in front of it.
-  const ARENA = false;
+  const ARENA = true;
   // which arena each fight is fought in: each band's wilds and each gate's place (art request 11)
   const ARENA_OF = { wild: { 1: 'river-glade', 2: 'warm-roads-moor', 3: 'eldergrove', 4: 'frostmere' }, colossus: 'frostmere', greatWraith: 'bogmire', dawnroost: 'dawnroost', halcyon: 'crossroads', finale: 'dead-moonwell' };
   // where the party and the foes stand in an arena, in metres (x across; z toward the camera, which stands at z 18, so
