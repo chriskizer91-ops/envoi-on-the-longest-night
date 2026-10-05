@@ -44,7 +44,7 @@
     warmCamp: { name: 'The Warm Roads', band: 2, field: ['warm-roads-camp', [368, 425]], scene: 'warmRoads', sky: [820, 1530] },
     dawnroost: { name: 'Dawnroost', band: 2, field: ['dawnroost', [1450, 300]], need: (st) => st.done['visit:dawnroost'], sky: [1365, 1085] },
     northCamp: { name: 'The northern wilds', band: 3, field: ['northern-camp', [386, 455]], scene: 'northern', sky: [1150, 590] },
-    shipyard: { name: 'The shipyard', band: 3, field: ['shipyard', [794, 270]], need: (st) => st.done['visit:shipyard'], sky: [2097, 580] },
+    shipyard: { name: 'The shipyard', band: 3, field: ['shipyard', [780, 205]], need: (st) => st.done['visit:shipyard'], sky: [2097, 580] },
     frozenCamp: { name: 'The northeast peaks', band: 4, field: ['frozen-camp', [356, 442]], scene: 'frozen', sky: [2760, 1090] },
   };
   // the chapters: the start, and each gate with the party as the story leaves it there (story.js's path), for trying a

@@ -2,13 +2,13 @@
 // feet and 6 px either side inside a walk area and outside every block and person) from the map's start and from every
 // arrival point, and reports any exit, person, spot (the keepsakes in items.js among them) or arrival she can't reach. Whatever the grid misses is looked for
 // again along the narrow ways (field.js's fine search: 4 px steps on the same rule), where Chris's secret paths run, and
-// is named as reached that way. The other ways onto a map are checked like the arrivals from other maps (a point she can
-// stand on, or one within 14 px of a cell she can reach, and outside every exit): where the Magpie lands (game.js
-// LANDINGS) and each chapter's start and rest (game.js CHAPTERS). And each map's own rules: every exit leads to a map,
-// or is a road out of the picture that she turns back from (`to: 'world'`, with its line in script.js); a camp has a
-// rest, no random fights, and a landing ground (`land`) she can reach where the Magpie lands; wherever she lands, at a
-// dock or a camp, Io is set down in reach of her and beside her glow; a map's fights are its own band's; and its
-// painting is there.
+// is named as reached that way. The arrivals from other maps must be a point she can stand on, or one within 14 px of a
+// cell she can reach, and outside every exit; the other ways onto a map, where the Magpie lands (game.js LANDINGS) and
+// each chapter's start and rest (game.js CHAPTERS), must be ground she stands on, outside every exit. And each map's own
+// rules: every exit leads to a map, or is a road out of the picture that she turns back from (`to: 'world'`, with its
+// line in script.js); a camp has a rest, no random fights, and a landing ground (`land`) she can reach where the Magpie
+// lands; wherever she lands, at a dock or a camp, Io is set down in reach of her and beside her glow; a map's fights are
+// its own band's; and its painting is there.
 // Usage: [MAPS_EXTRA=file.js,...] node tools/check-maps.mjs [mapId]  (MAPS_EXTRA: maps traced in files of their own,
 // before they join maps.js)
 import fs from 'fs'; import path from 'path'; import { createRequire } from 'module';
@@ -74,12 +74,13 @@ for (const [id, m] of Object.entries(MAPS)) {
   const inExit = (r, x, y) => x >= r[0] - 8 && x <= r[2] + 8 && y >= r[1] - 8 && y <= r[3] + 8;
   for (const [oid, om] of Object.entries(MAPS)) for (const ex of om.exits || []) if (ex.to === id) {
     for (const e2 of m.exits || []) if (inExit(e2.rect, ex.at[0], ex.at[1])) probs.push('arrival from ' + oid + ' at ' + ex.at + ' is inside the exit to ' + e2.to); const [c, d] = near(...ex.at); if (!seen[c] || d > 14) probs.push('arrival from ' + oid + ' at ' + ex.at + (d > 14 ? ' (' + Math.round(d) + ' px off the walk)' : ' (cut off)')); }
-  // where the Magpie lands, and the chapters' starts and rests (a point she can stand on passes too: Dawnroost's
-  // chapter rest stands 15 px from a whole open cell)
+  // where the Magpie lands, and the chapters' starts and rests: a point she can stand on (Dawnroost's chapter rest stands
+  // 15 px from a whole open cell), since the field moves her off any other to the nearest open cell, where the checks
+  // here don't look (the shipyard's landing set her down in front of the Magpie's glow that way)
   for (const [what, at] of intoMap(id)) {
     for (const e2 of m.exits || []) if (inExit(e2.rect, at[0], at[1])) probs.push(what + ' at ' + at + ' is inside the exit to ' + e2.to);
     const [c, d] = near(...at);
-    if (!stand(at[0], at[1]) && d > 14) probs.push(what + ' at ' + at + ' (' + Math.round(d) + ' px off the walk)'); else if (!seen[c]) probs.push(what + ' at ' + at + ' (cut off)');
+    if (!stand(at[0], at[1])) probs.push(what + ' at ' + at + ' is not ground she can stand on' + (d > 14 ? ' (' + Math.round(d) + ' px off the walk)' : '')); else if (!seen[c]) probs.push(what + ' at ' + at + ' (cut off)');
   }
   // every exit leads to a map, or is a road out of the picture that she turns back from, saying its line
   for (const ex of m.exits || []) {

@@ -266,8 +266,17 @@
       P.x = (at || m.start)[0]; P.y = (at || m.start)[1]; P.dir = dir || 's'; P.walkT = 0; P.vx = P.vy = 0; P.lean = P.turn = 0;
       for (const n of m.people || []) n.face = n.face0 || 's';
       buildGrid();
-      // never start inside a wall: the nearest open cell
-      if (!canStand(P.x, P.y)) { const r = findRoute(P.x, P.y); if (r && r.length) { P.x = r[r.length - 1][0]; P.y = r[r.length - 1][1]; } }
+      // never start inside a wall (a save made off the ground, or on a path a later edit moved): the middle of the nearest
+      // open cell, outside every exit. A plain scan of the grid, since a route from where she stands can't start where
+      // every cell round her is closed
+      if (!canStand(P.x, P.y)) {
+        const x0 = P.x, y0 = P.y; let bd = 1e9;
+        for (let j = 0; j < GH; j++) for (let i = 0; i < GW; i++) {
+          if (!grid[j * GW + i]) continue;
+          const x = i * CELL + CELL / 2, y = j * CELL + CELL / 2, d = (x - x0) ** 2 + (y - y0) ** 2;
+          if (d < bd && !(m.exits || []).some((ex) => inExit(ex.rect, x, y))) { bd = d; P.x = x; P.y = y; }
+        }
+      }
       // the threshold carries from map to map with the counter, so a row of wild scenes is one walk and fights don't
       // bunch where one scene meets the next (it is drawn again only after a fight)
       if (P.roll == null) P.roll = Math.random();

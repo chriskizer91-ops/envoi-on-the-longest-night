@@ -12,8 +12,10 @@
 //             tap walks her there, and one thumb on the pad (here a mouse) walks her north and rolls round to north-east
 //   world:    the Magpie (the world map is only for flying since the wilderness scenes): a road out of Io's cottage turns
 //             her back with her line; then she walks to the Magpie at the end of Wickhollow's jetty by a tap and takes
-//             her up, flies to the Warm Roads and lands at its camp, where its scene plays and she rests, the Magpie's
-//             glow beside her
+//             her up, and lands again: "Land where we took off" a moment into the flight, then, up again, the card
+//             offering to land again there, pressed at rest 2.5 m off the stop; each time she is back on the jetty within
+//             20 s with no error. Up a third time, she flies to the Warm Roads and lands at its camp, where its scene plays
+//             and she rests, the Magpie's glow beside her
 //   wilds:    a band's row of wilderness scenes walked by taps, from its camp, where the Magpie is moored, to its town (the
 //             party as that band's gate chapter has it; --band 2, 3 or 4, else all three): on every scene the little
 //             arrow points the way on, the camps have no random fights and the walks do (the hidden counter grows,
@@ -369,15 +371,37 @@ try {
       await page.evaluate(() => { window.__game.goField('jetty', [768, 700]); });
       await waitFor(() => window.__game.field.map.id === 'jetty' && !window.__game.busy, null, 30000, 'the jetty');
       await sleep(400);
-      const mag = await page.evaluate(() => window.__game.field.map.spots.find((s) => s.kind === 'magpie').at);
-      const p = await page.evaluate(tapToward, { at: mag });
-      if (p.error || !p.direct) throw new Error('the Magpie is not there to tap: ' + JSON.stringify(p));
-      await page.mouse.click(p.sx, p.sy);
-      await waitFor(() => document.querySelectorAll('.talk-choices button').length > 0, null, 30000, 'the Magpie to offer a flight');
-      await page.click('.talk-choices button:text-is("Fly")');
-      const t1 = Date.now();
-      await waitFor(() => window.__game.mode === 'fly' && !!window.__game.flyer && window.__game.flyer.state.mode === 'fly', null, 120000, 'the Magpie to take off');
+      // a tap on her, Fly, and up into the air (the time Fly was pressed)
+      const takeOff = async () => {
+        const mag = await page.evaluate(() => window.__game.field.map.spots.find((s) => s.kind === 'magpie').at);
+        const p = await page.evaluate(tapToward, { at: mag });
+        if (p.error || !p.direct) throw new Error('the Magpie is not there to tap: ' + JSON.stringify(p));
+        await page.mouse.click(p.sx, p.sy);
+        await waitFor(() => document.querySelectorAll('.talk-choices button').length > 0, null, 30000, 'the Magpie to offer a flight');
+        await page.click('.talk-choices button:text-is("Fly")');
+        const t = Date.now();
+        await waitFor(() => window.__game.mode === 'fly' && !!window.__game.flyer && window.__game.flyer.state.mode === 'fly', null, 120000, 'the Magpie to take off');
+        return t;
+      };
+      await takeOff();
       await sleep(500); await shot('world-fly');
+      // she comes down again however she is asked (fly.js), back on the jetty within 20 s and with no error
+      const comesDown = async (press, what) => {
+        const e0 = errs.length, t = Date.now();
+        await press();
+        await waitFor(() => window.__game.mode === 'field' && !window.__game.busy && !!window.__game.field.map && window.__game.field.map.id === 'jetty', null, 20000, what);
+        if (errs.length > e0) throw new Error(what + ': ' + errs[e0]);
+        log('  ' + what + ': back on the jetty in ' + ((Date.now() - t) / 1000).toFixed(0) + ' s');
+      };
+      // "Land where we took off", a moment into the flight
+      await comesDown(() => page.click('.fly-stay'), 'landed where she took off');
+      // up again, and the card, offering to land again there, pressed at rest 2.5 m off the stop (fly.js: 12 atlas
+      // pixels a meter, the map's middle at 0), where she has to come all the way in to come down
+      await takeOff();
+      await page.evaluate(() => { const S = window.__game.flyer.state, [x, y] = window.__game.LANDINGS.wickhollow.sky; S.pos.set(x / 12 - 192 + 2.5, 0, y / 12 - 128); S.speed = 0; });
+      await waitFor(() => { const c = document.querySelector('.fly-card'); return !!c && !c.hidden && /Wickhollow/.test(c.textContent) && /Land again here/.test(c.textContent); }, null, 10000, 'Wickhollow to offer to land again');
+      await comesDown(() => page.click('.fly-card button'), 'landed by the card from rest beside the stop');
+      const t1 = await takeOff();
       // her own steering toward a stop (fly.js), as a tap on it would set it
       await page.evaluate(() => window.__game.flyer.flyTo('warmCamp'));
       await waitFor(() => { const c = document.querySelector('.fly-card'); return !!c && !c.hidden && /Warm Roads/.test(c.textContent); }, null, 300000, 'the Warm Roads to offer a landing');
