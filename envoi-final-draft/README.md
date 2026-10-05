@@ -41,7 +41,7 @@ No errors. One run stumbled, but on the test's own fault: it started a fight fro
 2. **Finding things.** Five letters, three nodes and two keepsakes over five hours. The named places on Chris's D&D map (Mosswatch Tower, Rotbridge, Willowmurk, Fawnrest Shrine, Eldergrove, Frostmere Lake, Peak's Veil, Stormwatch) are on the flying map, but there is nothing to visit at any of them.
 3. **The words.** Every line is still a placeholder, waiting for the lore conversation.
 4. **The art still to come.** Sixteen townsfolk portraits and nine story stills (art requests 06 and 07).
-5. **Walking the wilds.** Bands 2 and 3 are walked on the world map, which Chris wants to be for flying only; painted wilderness scenes would replace it once he answers `../docs/questions/open.md` 20 and 21 (art request 12).
+5. **Walking the wilds.** Bands 2 and 3 are walked on the world map, which Chris wants to be for flying only; eight painted wilderness scenes replace it (he agreed the plan on October 5, at night: art request 12).
 6. **Small foes on the phone.** In a wild fight the pack stands small near the top of the screen (a wisp is about 20 pixels tall in the picture above). Anything new should be at least about a meter tall, and the battle camera could frame packs a little closer.
 
 ## The 30 MB
@@ -92,7 +92,7 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
    | 3 | Fawnrest Shrine, Eldergrove | The White Hart of Fawnrest |
    | 4 | Frostmere Lake, Peak's Veil, Stormwatch | The Thunder-Roc of Stormwatch (and the Colossus, as now) |
 
-   Their walking scenes would join art request 12 once Chris answers questions 20 and 21.
+   Their walking scenes would come as more prompts after art request 12's eight.
 3. **Field notes.** A menu tab where Io notes every creature the party has calmed and every place it has found, with how many of each. It makes the finding count, and needs no art.
 4. **Errands and keepsakes.** Townsfolk asks tied to the creatures and places, and **the twenty keepsakes** (Chris's plan, October 4, evening): `items/README.md`. Each great creature leaves one of them, and as with the two hidden now, the balance never counts on any.
 5. **The new battles,** as pass three planned them: 3D ground in front, Chris's paintings far off behind.
@@ -103,7 +103,7 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
    - quicker fight starts, by keeping the heroes built between fights;
    - a door's sound when a map changes;
    - packs framed a little closer on the phone.
-7. **On Chris's side:** the lore conversation (every word), the sheets for art request 13, art requests 06 and 07, and questions 20, 21 and 24 to 32 in `../docs/questions/open.md`. (The keepsakes' places and pictures came on October 4, late evening.)
+7. **On Chris's side:** the lore conversation (every word), the sheets for art request 13, art requests 06, 07 and 12, and questions 24 to 32 in `../docs/questions/open.md`. (The keepsakes' places and pictures came on October 4, late evening.)
 
 ## The model studio
 

@@ -139,7 +139,7 @@ Chris chose 3D ground in front and a squeezed painting far off behind, for every
 3. **The battle screen uses it** (`../src/battle/screen.js`): the locked camera, the party and the foes in the clearing, every move and rule as now.
 4. **A demo page comes first** (every fight of the game playable there, in its place), **then the game.**
 
-## Next: walking without the world map (for Chris to confirm)
+## Next: walking without the world map (confirmed by Chris on October 5, at night)
 
 Today the world map carries all of band 2's and band 3's wild walking, and the camps where the Magpie lands. Without it, each band's wilds become a short run of painted wilderness scenes between its places, as the Thornwood already is in band 1:
 
@@ -150,12 +150,12 @@ Today the world map carries all of band 2's and band 3's wild walking, and the c
 | 3 | about 3: the northern camp (the Magpie lands), Eldergrove's edge, the cold moor | the northern crossroads, the shipyard |
 | 4 | 1 or 2: the frozen camp (the Magpie lands), Frostmere's shore | the frozen pass, Misthollow, the dead Moonwell |
 
-Random fights happen on the wilderness scenes, as in the Thornwood today, and the Magpie flies between the landings. Once Chris agrees the plan, art request 12 follows: one prompt per scene, in the style and layout of his example. Every map in the game is at night, as the story is one long night, so the prompts would ask for night unless Chris wants these by day.
+Random fights happen on the wilderness scenes, as in the Thornwood today, and the Magpie flies between the landings. Chris agreed the plan on October 5 ("The walking plan is good, make the scenes at night"), and art request 12 has its eight prompts (`../docs/art-requests/12-wilderness-scenes.md`): the Warm Roads camp, the Ember Line road and the forest road to Dawnroost; the northern camp, Eldergrove's edge and the cold moor; the frozen camp and Frostmere's shore. Every one at night, as the story is one long night.
 
 ## Waiting on Chris
 
 1. **The five demos:** play each from just before its gate on to the next, and say what to change.
-2. **The walking plan** above, and whether the wilderness scenes are at night (`../docs/questions/open.md`, 20 and 21). Art request 12 follows his answer.
+2. **The wilderness scenes' pictures** (art request 12, eight at night). The plan is agreed (October 5).
 3. **More map paths** whenever he likes (his two rounds are in): the editor's + Green and + Purple draw new ground and fronts anywhere; sent edits go in the same way.
 4. Still open from before:
    - the lore conversation (every word is a placeholder);

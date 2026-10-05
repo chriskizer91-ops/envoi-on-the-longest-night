@@ -19,8 +19,8 @@ New questions, if any come up while the game is built, go here.
 
 ## Pass three (October 3, evening)
 
-20. **Walking without the world map.** Today the world map carries band 2's and band 3's wild walking and the camps where the Magpie lands. The plan in `../../envoi-game-pass-3/README.md` makes each band's wilds a short run of painted wilderness scenes (about three in band 2, three in band 3, one or two in band 4). Is that the right shape and number?
-21. **Night or day for the wilderness scenes?** Every map in the game is at night (the story is one long night); Chris's example path is by day.
+20. **Walking without the world map.** Today the world map carries band 2's and band 3's wild walking and the camps where the Magpie lands. The plan in `../../envoi-game-pass-3/README.md` makes each band's wilds a short run of painted wilderness scenes (about three in band 2, three in band 3, one or two in band 4). Is that the right shape and number? Answered October 5: "The walking plan is good." Eight scenes: three in band 2, three in band 3, two in band 4 (`../art-requests/12-wilderness-scenes.md`).
+21. **Night or day for the wilderness scenes?** Every map in the game is at night (the story is one long night); Chris's example path is by day. Answered October 5: "make the scenes at night".
 22. **The squeezes:** which level for the battle backgrounds (the Battle Backgrounds page), and which for the wilderness scenes (the Wilderness Walk page)? Answered October 3, late evening: "Strong" for the battle backgrounds, and "100% extra light" for wilderness scenes (`design-decisions.md`).
 23. **Gate 5's painting:** Chris counted seven backgrounds (four wilds, gates 10 and 15, the finale). Gate 5, the great wraith, also needs one; 03 Bogmire Lantern Banks fits it exactly. And the first fight: keep the Night square's painting? In the game since October 3, late evening: 03 for gate 5, the Night square for the first fight.
 

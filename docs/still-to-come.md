@@ -14,8 +14,8 @@ What we've already decided goes into *Envoi on the Longest Night* but isn't in t
 
 **2. Walking without the world map.** You decided the world map is only for flying the Magpie, and walking happens only on painted scenes like your wilderness path example. Bands 2 to 4 are still walked on the world map today.
 
-- Missing: about seven or eight painted wilderness scenes (about three in band 2, three in band 3, one or two in band 4), each with its random fights, and a camp scene in each band where the Magpie lands.
-- Waiting on: your OK to that plan (question 20), and whether the scenes are at night or by day (question 21). Then art request 12 (one prompt per scene, in your example's style), your pictures, and they go in.
+- Missing: eight painted wilderness scenes (three in band 2, three in band 3, two in band 4), each with its random fights, and a camp scene in each band where the Magpie lands.
+- You agreed the plan on October 5, with the scenes at night. Waiting on: your pictures for art request 12 (`art-requests/12-wilderness-scenes.md`), one prompt per scene in your example's style: the Warm Roads camp, the Ember Line road, the forest road to Dawnroost, the northern camp, Eldergrove's edge, the cold moor, the frozen camp and Frostmere's shore. Then they're traced, joined up and put in, with a demo page first.
 
 **3. Creatures of the wild.** New beasts for the wilderness fights, with your rule that the closer the party gets to Noctara, the more upset the wild becomes (the wisps and wraiths stay hers). Today about nine wild fights in ten are against the same three foes.
 

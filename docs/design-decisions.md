@@ -1140,3 +1140,16 @@ Chris sent the twenty keepsakes' pictures ("Items", four packs, each picture wit
 - **The balance never counts on them:** all 51 balance targets give the numbers they gave before.
 - **The published game keeps the pictures beside it,** as it does the songs, so it stays under the 16 MB a published page may be (14.5 MB with the keepsakes' code). The file Chris keeps has them inside.
 
+## October 5, 2026: the wilderness scenes
+
+Chris: "The walking plan is good, make the scenes at night" (questions 20 and 21).
+
+- **Eight painted wilderness scenes replace walking on the world map,** which is for flying the Magpie only (his decision of October 3). Each band starts at a camp where the Magpie lands, and its scenes join up in a row to the band's town or gate:
+  - band 2: the Warm Roads camp, the Ember Line road (where the three nodes Sol relights now stand) and the forest road up to Dawnroost;
+  - band 3: the northern camp, Eldergrove's edge and the cold moor, to the northern crossroads' west road;
+  - band 4: the frozen camp and Frostmere's shore, up to the frozen pass.
+  - Band 1 needs none: the Thornwood is its wild walk.
+- **At night,** like every map in the game: the story is one long night.
+- **Art request 12** has a prompt for each, in the walking maps' style with the layout of Chris's example: a clear path across open wild ground, side paths to small places worth exploring, and the paths' edges matched so one scene leads into the next (`art-requests/12-wilderness-scenes.md`).
+- **When the pictures come:** squeezed to "100% extra light", traced, joined up, the nodes moved from the world map, random fights on the walks (none in the camps, which are rests), and the walking taken off the world map. A demo page first, then the game.
+
