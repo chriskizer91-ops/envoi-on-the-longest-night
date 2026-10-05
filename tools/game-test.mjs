@@ -627,8 +627,9 @@ try {
       log('  after the win: ' + await page.$eval('.toast', (t) => t.textContent));
       await waitFor(() => !document.querySelector('.battle-layer'), null, 60000, 'the battle to close');
       await talkThrough(30000);
-      // the first Bramble Colossus leaves one for each of them (its cutscene marked seen, and the fight cut short)
-      await page.evaluate(() => { const st = window.__game.state; st.level = 18; st.band = 4; st.flags = Object.assign(st.flags, { refit: true, envoi: true, stoop: true }); st.seen = Object.assign(st.seen || {}, { 'colossus-first-meeting': true }); window.__game.battle('wild', { band: 4, pack: ['colossus'] }); });
+      // the first Bramble Colossus leaves one for each of them (its cutscene marked seen, and the fight cut short), the party
+      // at the top level: the expert walks away from a foe alone two levels up, and the Colossus is 16 to 20
+      await page.evaluate(() => { const st = window.__game.state; st.level = 20; st.band = 4; st.flags = Object.assign(st.flags, { refit: true, envoi: true, stoop: true }); st.seen = Object.assign(st.seen || {}, { 'colossus-first-meeting': true }); window.__game.battle('wild', { band: 4, pack: ['colossus'] }); });
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the Colossus to stand');
       await page.evaluate((tb) => { for (const f of window.__battle.engine.foes) window.__battle.weaken(5, f.key); window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
       await waitFor(() => window.__battle && window.__battle.state === 'over' && !document.getElementById('end').hidden, null, 900000, 'the Colossus to fall');

@@ -133,7 +133,7 @@ The final deliverable is one HTML file of at most 30 MB (Chris, October 3), sent
 | Nine story stills | +4.2 MB |
 | **Everything** | **about 29 MB** |
 
-That is just under 30 MB. For more room, the battle paintings (4.2 MB of files) and the world map (3.0 MB) can be squeezed to AVIF as the walking maps were, with a comparison page like Walking Map Resolution for Chris to choose from.
+That is just under 30 MB. For more room, the battle paintings (4.2 MB of files) and the world map (3.0 MB) can be squeezed to AVIF as the walking maps were, with a comparison page like Walking Map Resolution for Chris to choose from. (Overtaken since: the battle paintings were squeezed a little in pass three, and since October 5 every fight but the first is fought in front of Chris's battle backgrounds at his "Strong" squeeze, in the new battles' arenas; the world map's nine walking tiles are out of the game since October 5, when it became only flown, and the flight keeps its own far view and clouds.)
 
 **The published game** fits on one page again (14.3 MB) now that the walking maps are squeezed. When the songs and the art push it past a published page's 16 MB, it is published split, as planned: a small page with its pictures beside it as files, at the same link with the same save. Build that with `node tools/build.mjs --min --split putting-it-all-together/game.html`; `dist/game-split/files.json` lists the pictures to publish with the page. Only the published copy is split, never the file Chris keeps.
 
@@ -143,13 +143,13 @@ That is just under 30 MB. For more room, the battle paintings (4.2 MB of files) 
 
 ## Technical notes
 
-- **Tests:** `tools/game-test.mjs` is the game test (October 3, later): the title, a new game, walking on a ground map and on the world map, the menu, the save slots and code, the staged scenes, and a wild fight or the Colossus to its end. Saves to start at each band are still to come.
+- **Tests:** `tools/game-test.mjs` is the game test (October 3, later): the title, a new game, walking on a ground map and on the world map, the menu, the save slots and code, the staged scenes, and a wild fight or the Colossus to its end. Since October 5 its `world` step flies the Magpie instead (nobody walks the world map), and a `wilds` step walks each band's wilderness scenes by taps. Saves to start at each band came in pass three as the chapters (its `chapters` step).
 - **The walking maps:** `node tools/trace-overlay.mjs <map> out.png 1600 --grid 25 --crop x,y,w,h` draws a map's walk areas, blocks and fronts over its painting, close up; `node tools/check-maps.mjs` checks that every exit, person, spot and arrival can be reached.
   - Headless Chrome renders slowly (a 3D fight takes several minutes), so set fights are weakened to keep tests short.
   - The unbuilt page can't load the flight's textures from `file://`; test the built page (`node tools/build.mjs --min putting-it-all-together/game.html`) or serve the folder.
 - **Map tracing:** `node tools/check-maps.mjs` after any change to `src/game/maps.js`; `node tools/trace-overlay.mjs <map> <out.png>` to see it.
 - **Balance:**
   - `node tools/balance.mjs` for the fights' 51 targets.
-  - `node tools/chain.mjs` for the whole journey. Its walks are the game's measured ones (2, 3, 5 and 3 fights a band, measured by `tools/walks.mjs`), and wild fights are worth 1.75 times their table (`rules.js` `WILD_REWARD`).
+  - `node tools/chain.mjs` for the whole journey. Its walks are the game's measured ones (2, 3, 5 and 3 fights a band, measured by `tools/walks.mjs`; since October 5, band 2's also lights the three Ember Line nodes on the way, 2 fights more and their 900 shards: `story.js` `nodes` and `nodeFights`), and wild fights are worth 1.75 times their table (`rules.js` `WILD_REWARD`).
 - **Each battle** makes its own WebGL context and frees it at the end. Fine so far; keeping one renderer for the whole game would be gentler on old phones.
 - **Retired:** the walking test page (`demos/walk-test.html`) is superseded by the game.

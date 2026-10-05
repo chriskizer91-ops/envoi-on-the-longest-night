@@ -14,7 +14,7 @@ Started October 4, 2026, when Chris sent the file he keeps and called it the fin
 
 Played headless at a Pixel 7a's size (915 × 412) with the internet blocked, on October 4:
 
-- the title, a new game, walking (holding to steer, tapping, the pad), the world map, every menu tab;
+- the title, a new game, walking (holding to steer, tapping, the pad), the world map (walked then; since October 5 the game only flies it), every menu tab;
 - the four staged scenes (Sol over the bridge, Quill at the jetty, the knight at the crossroads, Ysmera at the slip);
 - both hidden keepsakes, found by tapping along Chris's secret ways;
 - saving, and Continue on the title;
@@ -28,7 +28,7 @@ No errors. One run stumbled, but on the test's own fault: it started a fight fro
 
 | | |
 |---|---|
-| Places to walk | 13 painted maps: 7 towns and homes, 3 gates, 3 wild places; the world map between them, walked on foot and flown by the Magpie |
+| Places to walk | 13 painted maps: 7 towns and homes, 3 gates, 3 wild places; the world map between them, walked on foot and flown by the Magpie (since October 5 the game has 21: Chris's eight wilderness scenes took over the walking, and the world map is only flown) |
 | People | 17 townsfolk, each with a line or two that changes as the story moves on |
 | Things to find | 5 letters at small wells, 3 Ember Line nodes to relight, 2 hidden keepsakes |
 | Things to carry | 5 herbs, a herb shop in each town, the Magpie's 3 upgrades |
@@ -41,12 +41,12 @@ No errors. One run stumbled, but on the test's own fault: it started a fight fro
 2. **Finding things.** Five letters, three nodes and two keepsakes over five hours. The named places on Chris's D&D map (Mosswatch Tower, Rotbridge, Willowmurk, Fawnrest Shrine, Eldergrove, Frostmere Lake, Peak's Veil, Stormwatch) are on the flying map, but there is nothing to visit at any of them.
 3. **The words.** Every line is still a placeholder, waiting for the lore conversation.
 4. **The art still to come.** Sixteen townsfolk portraits and nine story stills (art requests 06 and 07).
-5. **Walking the wilds.** Bands 2 and 3 are walked on the world map, which Chris wants to be for flying only; eight painted wilderness scenes replace it (he agreed the plan on October 5, at night: art request 12).
-6. **Small foes on the phone.** In a wild fight the pack stands small near the top of the screen (a wisp is about 20 pixels tall in the picture above). Anything new should be at least about a meter tall, and the battle camera could frame packs a little closer.
+5. **Walking the wilds.** Bands 2 and 3 were walked on the world map, which Chris wants to be for flying only; eight painted wilderness scenes replace it (he agreed the plan on October 5, at night: art request 12). **Done October 5:** the scenes are in the game, the camps are where the Magpie lands, and the world map is only flown (`wilds/README.md`).
+6. **Small foes on the phone.** In a wild fight the pack stands small near the top of the screen (a wisp is about 20 pixels tall in the picture above). Anything new should be at least about a meter tall, and the battle camera could frame packs a little closer. **Since October 5** the new battles show the foes bigger: a wisp about 30 to 35 pixels tall in the shot every turn opens on (`arena/README.md`).
 
 ## The 30 MB
 
-Where today's 16.3 MB goes, measured in the file:
+Where the file's 16.3 MB goes, measured in it (October 4):
 
 | Part | MB |
 |---|---|
@@ -68,7 +68,7 @@ What a new piece costs in the file:
 | A battle painting at Chris's "Strong" squeeze | about 0.04 |
 | A song (like Chris's, about 3 to 4 minutes) | about 1 |
 
-What's already planned takes the file to **about 15 to 17 MB** (pass three's measure): the portraits and stills add 2 to 3, and the new battles (their paintings at Strong) and painted wilderness scenes in place of walking the world map take off about 3.5. That leaves **about 13 MB** for more game. One way to spend it:
+What's already planned takes the file to **about 15 to 17 MB** (pass three's measure): the portraits and stills add 2 to 3, and the new battles (their paintings at Strong) and painted wilderness scenes in place of walking the world map take off about 3.5. (Both are in the game since October 5: the wilderness scenes took 1.1 MB off, as planned, and the new battles added 0.4 MB for now, since the eight flat paintings they replace, about 2.7 MB, are still in the file and could come out. With the keepsakes and the cutscenes in too, the file Chris keeps is 17.25 MB at `a1662af`.) That leaves **about 13 MB** for more game. One way to spend it:
 
 | More game | MB |
 |---|---|
@@ -95,15 +95,15 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
    Their walking scenes would come as more prompts after art request 12's eight.
 3. **Field notes.** A menu tab where Io notes every creature the party has calmed and every place it has found, with how many of each. It makes the finding count, and needs no art.
 4. **Errands and keepsakes.** Townsfolk asks tied to the creatures and places, and **the twenty keepsakes** Chris locked (October 4, evening): `items/README.md`. None comes from a great creature of request 13 (the first Bramble Colossus gives two), so one from a great creature would be beyond his twenty (question 28). As with the two hidden now, the balance never counts on any.
-5. **The new battles,** as pass three planned them: 3D ground in front, Chris's paintings far off behind.
+5. **The new battles,** as pass three planned them: 3D ground in front, Chris's paintings far off behind. **Done:** in the game since October 5, switched on at Chris's yes (`arena/README.md`).
 6. **Small polish:**
    - auto-advance for the words;
    - the ending's "Even the ones at the wells" said only when Io found them;
    - Chapters unlocking once the game is beaten (Chris's rule, for the finishing pass);
    - quicker fight starts, by keeping the heroes built between fights;
    - a door's sound when a map changes;
-   - packs framed a little closer on the phone.
-7. **On Chris's side:** the lore conversation (every word), the sheets for art request 13, art requests 06, 07 and 12, and questions 24 to 32 in `../docs/questions/open.md`. (The keepsakes' places and pictures came on October 4, late evening.)
+   - packs framed a little closer on the phone (the new battles do, since October 5).
+7. **On Chris's side:** the lore conversation (every word), the sheets for art request 13, art requests 06 and 07, and questions 24 to 32 in `../docs/questions/open.md`. (The keepsakes' places and pictures came on October 4, late evening, and art request 12's eight pictures on October 5: they are in the game.)
 
 ## The model studio
 
@@ -111,7 +111,7 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 
 ## The workshop
 
-`workshop/README.md` (October 5): how several sessions work on the game at once, as Chris asked. Each job that can go ahead on its own has a brief and a starter script; Chris pastes the script into a new session, which works on its own branch (`work/<job>`), changes only what its brief allows, and leaves a slip, and the game's session brings it in. Two jobs are written: **the wilderness scenes** (from art request 12's pictures) and **every word** (Chris's lore conversation). The model studio's creatures and the optional character studies use the same branches.
+`workshop/README.md` (October 5): how several sessions work on the game at once, as Chris asked. Each job that can go ahead on its own has a brief and a starter script; Chris pastes the script into a new session, which works on its own branch (`work/<job>`), changes only what its brief allows, and leaves a slip, and the game's session brings it in. Two jobs are written: **the wilderness scenes** (from art request 12's pictures; done by the hub itself on October 5, and in the game) and **every word** (Chris's lore conversation). The model studio's creatures and the optional character studies use the same branches.
 
 ## Cutscenes
 

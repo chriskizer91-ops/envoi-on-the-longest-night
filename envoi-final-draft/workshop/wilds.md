@@ -2,6 +2,8 @@
 
 **Job:** `wilds`. **Branch:** `work/wilds`. **From Chris:** nothing more: his eight pictures for art request 12 (`../../docs/art-requests/12-wilderness-scenes.md`) came on October 5 and are on the game's branch already, as they came, in `../../reference/art/walk/wilds/` (his packs' notes in `packs/` there).
 
+**Done October 5, by the hub itself** (no workshop session was needed): the eight scenes traced, joined and walked on their demo page (`../wilds/README.md`), then put into the game the same day at Chris's go-ahead, with the hub's part at the end done too (`../wilds/plan-into-the-game.md`; `../../handoff/tasks.md`, T02). Since then the world map is only flown. This brief is kept as it was written, so where it says "today", it means before that.
+
 Read `README.md` here first: the loop, the rules every workshop session keeps, and the slip.
 
 ## What it's for

@@ -34,7 +34,7 @@ October 4, 2026, for the final draft's polish (`../../envoi-final-draft/`). Numb
 - **Upset by the cold.** Every creature gets a **frost-touched** look in its sheets: frost and rime on it, its breath steaming, its colours paler, its glow dimmer, its eyes wilder. The game uses more of it the closer the party comes to Noctara.
 - **Beaten, not killed.** The game's tone rule: defeat is release, not death. Each one's last pose is how it leaves: slinking off, sitting down to sleep, flying away.
 - **Colours** stay out of the other lanes: Noctara's deep purple, the wraiths' soul-green, Halcyon's cold blue, Io's magenta. Frost's pale blue-white is fine. Warm glowing accents read best at night.
-- **Size** matters on the battle camera, which sits far off with a long lens: nothing smaller than about a meter tall, or it shrinks to a few pixels on the phone.
+- **Size** matters on the battle camera, which sits far off (on the old flat paintings with a long lens; since October 5, in the new battles' arenas, about 18 m from the fight at eye height): nothing smaller than about a meter tall, or it shrinks to a few pixels on the phone.
 
 ## Style lock
 

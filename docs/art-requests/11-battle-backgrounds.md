@@ -10,7 +10,7 @@ Matched to where each fight happens on the world map (the game's places on the D
 
 | Fight | Where it happens | Painting |
 |---|---|---|
-| Band 1 wilds, levels 1 to 5 | the Gloamwood round Wickhollow, and the Thornwood | **01 Wickhollow River Glade** |
+| Band 1 wilds, levels 1 to 5 | the Gloamwood round Wickhollow, and the Thornwood (only the Thornwood since October 5, when walking left the world map) | **01 Wickhollow River Glade** |
 | Band 2 wilds, levels 6 to 10 | the Warm Roads, in the western forests and riverlands | **11 Warm Roads Moorland** (new; none of the ten is there) |
 | Band 3 wilds, levels 11 to 15 | the northwest forests round the northern camp, where Eldergrove is | **02 Eldergrove First-Age Clearing** |
 | Band 4 wilds, levels 16 to 20, and the Bramble Colossus | the frozen pass, by Frostmere Lake | **05 Frostmere Lakeside Meadow** |

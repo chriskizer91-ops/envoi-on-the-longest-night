@@ -5,9 +5,10 @@
 // shortest way over the 12 px grid of cells she can stand in, pulled straight). Only maps with random fights (`wild`)
 // count: the camps have none. The fights come as field.js brings them: every 770 map px walked on average, never under
 // 440 (game.js, at the menu's Normal), with the counter and its threshold carried from map to map and in from the walking
-// before. Band 2's walk is also measured lighting the Ember Line road's three nodes on the way (the nearest next).
-// Run it after Chris's path edits change a walk's length (T09); when a walk's fights differ, set story.js's `fights`,
-// then node tools/chain.mjs (and --results src/battle/chain-results.js). Exits 0: it only informs.
+// before. Band 2's walk is also measured lighting the Ember Line road's three nodes on the way (the nearest next), and
+// the fights that adds are checked against story.js's `nodeFights`, which the simulator plays too, with the nodes' shards.
+// Run it after Chris's path edits change a walk's length (T09); when a walk's fights differ, set story.js's `fights` (or
+// `nodeFights`), then node tools/chain.mjs (and --results src/battle/chain-results.js). Exits 0: it only informs.
 // Usage: [MAPS_EXTRA=file.js,...] node tools/walks.mjs
 // From the T02 step 2 plan's draft (envoi-final-draft/wilds/plan-into-the-game.md).
 import path from 'path'; import { createRequire } from 'module';

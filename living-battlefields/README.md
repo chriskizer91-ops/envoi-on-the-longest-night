@@ -110,7 +110,7 @@ cp dist/colossus-fight.html living-battlefields/Colossus_Fight.html
 
 ## Still open
 
-- **Into the game.** The branches have been together since pass three, and the new battles take this way of fighting to every fight but the first: Chris's paintings far off behind live 3D ground (`../envoi-final-draft/arena/README.md`). The game's switch stays off until Chris has played their demo and said yes (`../handoff/tasks.md`, T01).
+- **Into the game: done October 5.** The branches have been together since pass three, and the new battles take this way of fighting to every fight but the first: Chris's paintings far off behind live 3D ground (`../envoi-final-draft/arena/README.md`). Chris played their demo and said yes on October 5 ("Yes, switch them on"), and the game has fought that way since (`../handoff/tasks.md`, T01).
 - **Chris's painted backdrop** for the meadow (art request 10) never came, and nothing needs it now: his battle backgrounds took its place (art request 11, a painting for every fight but the first), and the new battles set them far off behind live 3D ground, as this page does. Whether to close the request is a question for Chris (`../handoff/tasks.md`, T10).
 - **No stars.** The fight's sky has only the moon, because the stars only come back at the ending (lore answers 5 and 10). Since October 3 the wild meadow and the wild glade on the creature benches have none either; `opts.stars` lights them for the ending.
 - **Towns:** the same painting-plus-weather approach over the town paintings, without the 3D grass.

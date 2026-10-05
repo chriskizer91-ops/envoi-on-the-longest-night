@@ -21,17 +21,17 @@ Each piece of work that can go ahead on its own has a **brief** here and a **sta
 
 | Job | What it does | Brief | Branch | State |
 |---|---|---|---|---|
-| `wilds` | The eight wilderness scenes from Chris's pictures (art request 12): traced, joined in a row, a demo page where Io walks them | `wilds.md` | the game's branch | **Taken by the hub** (October 5): the ultracode hub is tracing them and building the demo page itself, so no session is needed for this job |
+| `wilds` | The eight wilderness scenes from Chris's pictures (art request 12): traced, joined in a row, a demo page where Io walks them | `wilds.md` | the game's branch | **Done by the hub** (October 5): the ultracode hub traced them and built the demo page itself, so no session was needed for this job, and they went into the game the same day at Chris's go-ahead (`../wilds/README.md`; `../../handoff/tasks.md`, T02) |
 | `words` | Every word of the game, written with Chris: his lore conversation | `words.md` | `work/words` | Ready |
 | `model-<id>` | A creature of the wild, from Chris's two sheets (art request 13) | `../model-studio/` | `work/model-<id>` | Waiting on the sheets |
 | `study-<name>` | Sol, Halcyon or Noctara built finer, for the finale's cutscene (optional) | `../../3d-model-main-characters/README.md`, starter in `../cutscenes/README.md` | `work/study-<name>` | Optional |
-| (the hub) | The new battle arenas | `../arena/README.md` | the game's branch | In the game's branch since October 5, switched off; on at Chris's yes after the demo (`../../handoff/tasks.md`, T01) |
+| (the hub) | The new battle arenas | `../arena/README.md` | the game's branch | In the game since October 5: brought in switched off, and switched on the same day at Chris's yes after the demo (`../../handoff/tasks.md`, T01) |
 
 Anything else that can go ahead on its own gets a brief from `_template.md` first, written by the hub, and its starter script names it.
 
 ## Starter scripts
 
-**The wilderness scenes** (attach the eight pictures):
+**The wilderness scenes** (attach the eight pictures). Not needed any more: the hub made the scenes, and they are in the game since October 5, so this script is kept only as it was:
 
 ```text
 You're a workshop session for Envoi on the Longest Night: the wilderness scenes. Start from the game on your own branch: git fetch origin ccr-31761774-76j8j3 && git checkout -B work/wilds FETCH_HEAD

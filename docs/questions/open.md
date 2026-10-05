@@ -19,10 +19,10 @@ New questions, if any come up while the game is built, go here.
 
 ## Pass three (October 3, evening)
 
-20. **Walking without the world map.** Today the world map carries band 2's and band 3's wild walking and the camps where the Magpie lands. The plan in `../../envoi-game-pass-3/README.md` makes each band's wilds a short run of painted wilderness scenes (about three in band 2, three in band 3, one or two in band 4). Is that the right shape and number? Answered October 5: "The walking plan is good." Eight scenes: three in band 2, three in band 3, two in band 4 (`../art-requests/12-wilderness-scenes.md`).
+20. **Walking without the world map.** Until October 5 the world map carried band 2's and band 3's wild walking and the camps where the Magpie lands. The plan in `../../envoi-game-pass-3/README.md` makes each band's wilds a short run of painted wilderness scenes (about three in band 2, three in band 3, one or two in band 4). Is that the right shape and number? Answered October 5: "The walking plan is good." Eight scenes: three in band 2, three in band 3, two in band 4 (`../art-requests/12-wilderness-scenes.md`). In the game since October 5: the camps are where the Magpie lands, and the world map is only flown (`../design-decisions.md`, "October 5, 2026: the wilderness scenes in the game").
 21. **Night or day for the wilderness scenes?** Every map in the game is at night (the story is one long night); Chris's example path is by day. Answered October 5: "make the scenes at night".
 22. **The squeezes:** which level for the battle backgrounds (the Battle Backgrounds page), and which for the wilderness scenes (the Wilderness Walk page)? Answered October 3, late evening: "Strong" for the battle backgrounds, and "100% extra light" for wilderness scenes (`design-decisions.md`).
-23. **Gate 5's painting:** Chris counted seven backgrounds (four wilds, gates 10 and 15, the finale). Gate 5, the great wraith, also needs one; 03 Bogmire Lantern Banks fits it exactly. And the first fight: keep the Night square's painting? In the game since October 3, late evening: 03 for gate 5, the Night square for the first fight.
+23. **Gate 5's painting:** Chris counted seven backgrounds (four wilds, gates 10 and 15, the finale). Gate 5, the great wraith, also needs one; 03 Bogmire Lantern Banks fits it exactly. And the first fight: keep the Night square's painting? Settled October 3, late evening, for the new battles: 03 for gate 5, the Night square for the first fight. In the game since October 5, when the new battles were switched on (until then every fight was on the old flat paintings, gate 5 on Bogmire's boardwalk).
 
 ## Polish (October 4)
 
@@ -58,6 +58,7 @@ Asked October 3 by the session that polished them in `../../3d-model-new-charact
 4. **The wild meadow** (`../../3d-model-new-character-ideas/bramble-horror/meadow.js`), the living place made for the creature benches, with its own hours and weather. On October 3 Chris said it should be in the game.
    - Where does it go: behind the fights in the wilderness between stops, or one place in particular? `../handoff.md` (Living battlefields) weighs both.
    - Battles are set in front of painted backdrops (`design-decisions.md`, October 1). Is the meadow, a 3D place that answers the fight, an exception for the wilds?
+   - Since October 5 every fight but the first is fought that way: live 3D ground made from the living battlefield's (`../../living-battlefields/`), with Chris's painting of the place far off behind (`../../envoi-final-draft/arena/README.md`). Whether that answers this question is Chris's to say (`../../handoff/tasks.md`, T01).
 
 ## Another new character idea
 

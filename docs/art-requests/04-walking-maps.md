@@ -7,6 +7,8 @@ How walking works:
 - **The world map** (Chris's 3×3 grid, `02-world-map.md`) is walked as it is. The pixel Io crosses it between places, and random fights happen in its wild country.
 - **These ground-level maps** are entered from the world map. Towns are safe, with people to talk to and shops. The set-fight places hold the gate fights.
 
+(That was how walking worked until October 5, 2026. Since then nobody walks the world map, which is only for flying the Magpie: she lands at a dock on one of these maps or at a camp, and the wild walking between places is on the Thornwood (below) and on Chris's eight wilderness scenes, `12-wilderness-scenes.md`.)
+
 Each painting needs:
 
 - **The same view as the world map, much closer:** a high overhead view, straight on and not turned. You see the ground from above and the front faces of walls, houses and trees. Never isometric, and no horizon or sky.

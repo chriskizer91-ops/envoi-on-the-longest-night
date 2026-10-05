@@ -85,7 +85,7 @@ Each demo is the whole game opening at its chapter, saving as it goes; its title
 11. **The battle menu fixed:** the title screen's style had caught the battle menu's heading, so casting witchcraft blacked out the menu.
 12. **No lines across Io:** her cape's ripple bands meet in whole pixels now (1,672 seam pixels on a test render before, none after).
 13. **The walking maps at full size:** the towns and gates at quality 45, the wilds at "100% extra light"; 2.66 MB for thirteen.
-14. **The little golden arrow** (`../src/game/goal-arrow.js`): where the story wants Io next, on the walking maps and the world map, ringed on the mini-map. The Magpie is now moored where the script says she is (Bogmire's west dock after the lights; after each upgrade, where it was made).
+14. **The little golden arrow** (`../src/game/goal-arrow.js`): where the story wants Io next, on the walking maps and the world map (until it was only flown, October 5; since then it leads through the wilderness scenes instead), ringed on the mini-map. The Magpie is now moored where the script says she is (Bogmire's west dock after the lights; after each upgrade, where it was made).
 15. **Paper-doll faces in the dialogue box** for the townsfolk, cut from Chris's sheets (75 KB for all nineteen), until the painted portraits come.
 16. **Battles at 3/4 sharpness** (the 3D; the painting behind stays sharp), 30 frames a second as before.
 17. **Every fight has its painting:** the four last battle backgrounds are in, and the Battle Backgrounds page shows the game's eight at Chris's picks.
@@ -94,7 +94,7 @@ Each demo is the whole game opening at its chapter, saving as it goes; its title
 20. **The editor's drawing tools come first:** + Green, + Purple and + Red, in the layers' colours, at the top of its panel.
 21. **Chris's second round of walking paths** (October 4): Dawnroost's living node, the dead Moonwell, the Thornwood and Wickhollow, with new places to explore, among them a hidden nook behind the node's weapon stall.
 22. **Herbs for the wilds** (October 4): up to nine of each (99 since that evening, at Chris's word), three of each to start, each used once a fight, as many as you have out of battle. The fights are exactly as balanced as before.
-23. **Chris's songs are in** (October 4): Moonlit Forest Path in the towns, Herbal Decay in the wilds and over the world map, each as loud as the made-up music it replaces (`../src/game/songs.js`). The fights keep their original battle music, at his word (his Herbal Decay Battle is out of the game). The made-up music keeps the title, the marsh, the ruins, the flight and the ending. On the published pages the songs are two files beside the page.
+23. **Chris's songs are in** (October 4): Moonlit Forest Path in the towns, Herbal Decay in the wilds and over the world map (until it was only flown, October 5; since then on the wilderness scenes instead), each as loud as the made-up music it replaces (`../src/game/songs.js`). The fights keep their original battle music, at his word (his Herbal Decay Battle is out of the game). The made-up music keeps the title, the marsh, the ruins, the flight and the ending. On the published pages the songs are two files beside the page.
 24. **Three volumes:** Music, Effects and Surroundings (each place's own crickets, wind and water), each from Off to Loud.
 25. **Two hidden keepsakes,** Chris's magic items: Io's on top of the red roof in Wickhollow (her Moonlore heals a quarter more), Sol's where the trail into the Thornwood's dark woods gives out (a tenth more HP and a tenth harder blows). Nothing points to them; the balance never counts on them. Their names wait for Chris (`../docs/questions/open.md`, 24).
 26. **A tap walks Io along narrow ways too,** Chris's secret paths included: a tap on the roof's glint takes her up the tree and along the ridge. The Walking Paths editor's reach check follows narrow ways the same way, so its orange marks only ground she can't reach at all.
@@ -103,7 +103,7 @@ Each demo is the whole game opening at its chapter, saving as it goes; its title
 
 The file Chris keeps (offline, one file): **16.3 MB** with the songs inside (October 4), from 14.4 MB without them. The published game is 13.6 MB, under the 16 MB a published page may be, with the songs as two files beside it (1.5 MB).
 
-| In the file today | MB |
+| In the file on October 4 | MB |
 |---|---|
 | World map: walking tiles 2.6, the flight's map 1.1, clouds 0.3 | 3.9 |
 | Walking maps (13, full size) and Io's walk | 3.7 |
@@ -113,21 +113,27 @@ The file Chris keeps (offline, one file): **16.3 MB** with the songs inside (Oct
 | Title picture, portraits, fonts, the skiff | 1.1 |
 | Chris's two songs (inside the file he keeps; beside the published page) | 1.9 |
 
+Since October 5 the world map's walking tiles are out of the game (the flight keeps its own map and clouds) and the eight wilderness scenes are in, 1.1 MB lighter in all, and the new battles are on, 0.4 MB heavier for now (the old paintings they replace are still in). With the keepsakes and the cutscenes in as well (October 4, late evening), the file Chris keeps is 17.25 MB, and the published game 13.8 MB with the songs and the keepsakes' pictures beside it (18,084,824 and 14,475,925 bytes at `a1662af`).
+
 Where it is heading, with everything Chris has asked for:
 
 | Change | MB |
 |---|---|
 | Sixteen townsfolk portraits and nine story stills, squeezed | +2.1 to 3.1 |
-| The new battles: the eight backgrounds at Strong (0.24 MB) and the living field's code, in place of the nine old paintings | about −2.5 |
-| No walking on the world map: its walking tiles go (the flight keeps its own map), and about eight wilderness scenes come in at "100% extra light" | about −1.1 |
+| The new battles: the eight backgrounds at Strong (0.24 MB) and the living field's code, in place of the nine old paintings (on since October 5, but the eight old paintings they replace are still in the file, so for now they add 0.4; the Night square's stays for the first fight) | about −2.5 |
+| No walking on the world map: its walking tiles go (the flight keeps its own map), and about eight wilderness scenes come in at "100% extra light" (done October 5: −1.1) | about −1.1 |
 | New wild creatures, later (about 65 KB each) | about +0.4 |
 | **About** | **16 to 17 MB of the 30 MB limit** |
 
+Counted again from the 17.25 MB of October 5, with the rows still to come and the eight old battle paintings out (about 2.7 MB), the file comes to about 17 to 18 MB.
+
 The published copy already keeps the songs beside the page. If the pictures push it past 16 MB too, it goes out as a small page with everything beside it (`node tools/build.mjs --min --split`), which is already built.
 
-## Next: the new battles
+## Next: the new battles (done October 5)
 
 Chris chose 3D ground in front and a squeezed painting far off behind, for every fight, and has every painting and his settings in.
+
+**All done by October 5:** the demo page first (https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea), then the game at Chris's yes ("Yes, switch them on"), where every fight but the first is fought in its place's arena (`../envoi-final-draft/arena/README.md`). The steps below are the plan as it was.
 
 1. ~~The squeeze~~: Strong (AVIF quality 20). ~~The four new paintings~~: in. ~~The phone's levers~~: 30 frames a second, 3/4 sharpness.
 2. **The living field takes a ground for each place** (`../living-battlefields/field.js`):
@@ -139,9 +145,9 @@ Chris chose 3D ground in front and a squeezed painting far off behind, for every
 3. **The battle screen uses it** (`../src/battle/screen.js`): the locked camera, the party and the foes in the clearing, every move and rule as now.
 4. **A demo page comes first** (every fight of the game playable there, in its place), **then the game.**
 
-## Next: walking without the world map (confirmed by Chris on October 5, at night)
+## Next: walking without the world map (confirmed by Chris on October 5, at night; done the same day)
 
-Today the world map carries all of band 2's and band 3's wild walking, and the camps where the Magpie lands. Without it, each band's wilds become a short run of painted wilderness scenes between its places, as the Thornwood already is in band 1:
+Until October 5 the world map carried all of band 2's and band 3's wild walking, and the camps where the Magpie lands. Without it, each band's wilds become a short run of painted wilderness scenes between its places, as the Thornwood already is in band 1:
 
 | Band | Scenes | Then |
 |---|---|---|
@@ -150,12 +156,12 @@ Today the world map carries all of band 2's and band 3's wild walking, and the c
 | 3 | about 3: the northern camp (the Magpie lands), Eldergrove's edge, the cold moor | the northern crossroads, the shipyard |
 | 4 | 1 or 2: the frozen camp (the Magpie lands), Frostmere's shore | the frozen pass, Misthollow, the dead Moonwell |
 
-Random fights happen on the wilderness scenes, as in the Thornwood today, and the Magpie flies between the landings. Chris agreed the plan on October 5 ("The walking plan is good, make the scenes at night"), and art request 12 has its eight prompts (`../docs/art-requests/12-wilderness-scenes.md`): the Warm Roads camp, the Ember Line road and the forest road to Dawnroost; the northern camp, Eldergrove's edge and the cold moor; the frozen camp and Frostmere's shore. Every one at night, as the story is one long night.
+Random fights happen on the wilderness scenes, as in the Thornwood today, and the Magpie flies between the landings. Chris agreed the plan on October 5 ("The walking plan is good, make the scenes at night"), and art request 12 has its eight prompts (`../docs/art-requests/12-wilderness-scenes.md`): the Warm Roads camp, the Ember Line road and the forest road to Dawnroost; the northern camp, Eldergrove's edge and the cold moor; the frozen camp and Frostmere's shore. Every one at night, as the story is one long night. His pictures came the same night, and the scenes are in the game since October 5, at his go-ahead: the camps are the Magpie's landings, the three Ember Line nodes stand on their road, and the world map is only flown (`../envoi-final-draft/wilds/README.md`).
 
 ## Waiting on Chris
 
 1. **The five demos:** play each from just before its gate on to the next, and say what to change.
-2. **The wilderness scenes' pictures** (art request 12, eight at night). The plan is agreed (October 5).
+2. ~~The wilderness scenes' pictures~~ (art request 12, eight at night): they came on October 5, and the scenes are in the game.
 3. **More map paths** whenever he likes (his two rounds are in): the editor's + Green and + Purple draw new ground and fronts anywhere; sent edits go in the same way.
 4. Still open from before:
    - the lore conversation (every word is a placeholder);

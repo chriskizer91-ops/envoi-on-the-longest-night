@@ -152,9 +152,9 @@ As in FF9: the world is walked on foot, and later flown over. All of it at night
 
 **The maps:**
 
-- **The world map** is Chris's nine detailed tiles in a 3×3 grid, 4608×3072 in all, north up, in day and night versions (`../reference/art/world-map/`); the game uses the night ones, with their joins blended in code. The pixel Io walks it at full detail between places, and the random fights happen in its wild country.
+- **The world map** is Chris's nine detailed tiles in a 3×3 grid, 4608×3072 in all, north up, in day and night versions (`../reference/art/world-map/`); the game uses the night ones, with their joins blended in code. The pixel Io walks it at full detail between places, and the random fights happen in its wild country. (Until October 5. Since then nobody walks it: it is only for flying the Magpie, its walking tiles are out of the game, and bands 2, 3 and 4 walk Chris's eight wilderness scenes instead: `design-decisions.md`, "October 5, 2026: the wilderness scenes in the game".)
 - **The far view** from the Magpie is the same world, scaled down, since it doesn't need full detail: 3072×2048 with the joins blended, compressed to AVIF at about 740 KB, as in Chris's world travel demo.
-- **Ground-level maps** are entered from the world map: the towns and the set-fight places (`art-requests/04-walking-maps.md`).
+- **Ground-level maps** are entered from the world map: the towns and the set-fight places (`art-requests/04-walking-maps.md`). (Since October 5 never from the world map: from the Magpie's landings, from each other and from the wilderness scenes.)
 - A phone-friendly tracing tool marks where Io can walk, what she walks behind, the town entrances and the wild areas, once per tile; the day and night versions share it.
 - **Walking:** Io is 42 map pixels tall on maps shipped at 768 pixels wide with sharp pixels, at 0.7× zoom (0.8 or 0.9 on a more detailed map), with one walking speed (110 map pixels a second). A **navigation mini-map** in the corner shows the whole map, the part on screen and Io; once the maps are traced it also shows paths, exits and towns.
 

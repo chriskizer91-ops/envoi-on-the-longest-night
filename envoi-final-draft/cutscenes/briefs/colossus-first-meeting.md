@@ -41,7 +41,7 @@ The field study already shows its warm ring: frost everywhere, and inside about 
 
 It has no throat, so it never roars: its sounds are wood, leaves, soil, roots and air (`sounds.js`). Let the night fall silent when it wakes, as the field study does.
 
-**Where the fight is drawn:** today the Colossus is fought on the frozen road's painting (`reference/art/backdrops/battle-frozen-road.png`, the game's `art/backdrops/battle-frozen-road.avif`). The new battles planned in pass three move it to Frostmere's lakeside meadow (`reference/art/battle-backgrounds/05-ironspire-frostmere-lakeside-meadow.png`), which the field study's meadow was built after. End on the same composition either way, and say in your README which painting your last frame matches best; the game's session matches the hand-off to whichever painting the fight uses then.
+**Where the fight is drawn:** until October 5 the Colossus was fought on the frozen road's painting (`reference/art/backdrops/battle-frozen-road.png`, the game's `art/backdrops/battle-frozen-road.avif`). The new battles planned in pass three move it to Frostmere's lakeside meadow (`reference/art/battle-backgrounds/05-ironspire-frostmere-lakeside-meadow.png`), which the field study's meadow was built after. End on the same composition either way, and say in your README which painting your last frame matches best; the game's session matches the hand-off to whichever painting the fight uses then. (Since October 5 the game fights it at Frostmere, in the new battles' arena, and the cutscene ends on that arena's opening frame: `../colossus-first-meeting/README.md`, "The hand-over".)
 
 ## How it should look
 

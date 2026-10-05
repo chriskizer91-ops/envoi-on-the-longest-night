@@ -23,7 +23,7 @@ In the story this is the moment the lore answers set up: Noctara means to eclips
 
 The game has the dead Moonwell only as paintings, which look right from one spot, and this camera travels. So build it, as much as the camera sees on its way in:
 
-- **The court** where the fight happens, after the painting the finale is fought on today (`reference/art/backdrops/battle-dead-moonwell.png`; the game's copy is `art/backdrops/battle-dead-moonwell.avif`): frosted flagstones; the round well at the back of the court on a stepped dais, moths and crescents carved round its rim and an iron arch over it with a crescent, black and empty inside, giving no light at all; crescent banners on iron poles; two braziers burning low at the near corners, the only warm light; stairs on every side; towers all round.
+- **The court** where the fight happens, after the painting the finale was fought on until October 5 (`reference/art/backdrops/battle-dead-moonwell.png`; the game's copy is `art/backdrops/battle-dead-moonwell.avif`): frosted flagstones; the round well at the back of the court on a stepped dais, moths and crescents carved round its rim and an iron arch over it with a crescent, black and empty inside, giving no light at all; crescent banners on iron poles; two braziers burning low at the near corners, the only warm light; stairs on every side; towers all round.
 - **Its layout** from above is the walking map's (`reference/art/walk/walk-misthollow-moonwell.png`), which agrees with that painting: the round court, the well at its heart, the towers with their crescent banners, and the stair coming up from the south, the way Io and Sol arrive.
 - **The far view** is in art request 11's painting of the same place (`reference/art/battle-backgrounds/14-ironhold-misthollow-dead-moonwell.png`, planned for the new battles): the court open toward the snowy peaks, and the eclipse over them.
 - **Misthollow below:** pale towers, arches and bridges on the cliffs, every window dark, mist rolling through the streets (`reference/art/walk/walk-misthollow.png`).
@@ -56,7 +56,7 @@ One continuous move down from the sky for the first half, then cuts.
 | 7 | 6 s | **Kestrel.** Across the court, Halcyon slides into Warden's Vow (`vowStance`). Sol knows the stance. Hold on her face |
 | 8 | 8 s | **The four.** Wide and low across the frost: Io and Sol on one side, Noctara and Halcyon on the other, the dead well between them and the eclipse above. The camera settles into the battle's own framing, and the words: "The longest night begins!" Hand over to the fight |
 
-The battle's framing for the end is in `src/stage/dead-moonwell.js` (its camera: 26 degrees of pitch, the long 12 degree lens, 54 painting pixels a meter) and `src/game/fights.js` (`finale`: the party at painting pixels 560, 762 and 630, 812, the foes at 750, 690 and 828, 642). Ending on that composition lets the game cross-fade straight into the fight.
+The battle's framing for the end is in `src/stage/dead-moonwell.js` (its camera: 26 degrees of pitch, the long 12 degree lens, 54 painting pixels a meter) and `src/game/fights.js` (`finale`: the party at painting pixels 560, 762 and 630, 812, the foes at 750, 690 and 828, 642). Ending on that composition lets the game cross-fade straight into the fight. (Since October 5 the game fights the finale in the new battles' arena at the dead Moonwell, in front of painting 14, and the cutscene ends on that arena's opening frame instead: `../finale-opening/README.md`, "The hand-over".)
 
 ## Super well rendered
 

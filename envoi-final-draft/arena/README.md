@@ -4,7 +4,7 @@ Chris, October 4, 2026: "we have a bunch of battle backgrounds that are supposed
 
 This is that, as a demo page first: **every fight of the game, in its place**, fought the way Colossus in the Meadow is. Your painting of the place stands far off behind, and live 3D ground stands in front of it and answers every blow. The fights themselves are the game's own: the same moves, rules, menus, windows and words, and the same 3D models (Io exactly as she is).
 
-The game itself hasn't changed yet. It switches over once you've played the demo and said yes (how, at the end).
+Until October 5 the game itself hadn't changed. That day you said "Yes, switch them on", and since then every fight in the game but the first is fought in its arena, and both cutscenes hand over into theirs (how it was switched, at the end). Wherever this page says "today", it means the game's fights as they were until then, on the flat paintings (where the first fight still is).
 
 ## The page
 
@@ -135,10 +135,10 @@ Headless, in the test browser (Chromium with SwiftShader drawing in software), o
 
 ## Switching the game over
 
-Not done: the game still fights on its flat paintings, and builds as before with the switch off. When you say yes, the game's session does two things:
+**Done October 5** (`10a2f08`), at your yes. Until then the game fought on its flat paintings, and built as before with the switch off. The game's session did two things:
 
-1. In `src/game/fights.js`, it changes `const ARENA = false;` to `const ARENA = true;`.
-2. In `putting-it-all-together/game.html`, right after the line `<script src="../src/fx/battlefield.js"></script>`, it adds these nine lines:
+1. In `src/game/fights.js`, it changed `const ARENA = false;` to `const ARENA = true;`.
+2. In `putting-it-all-together/game.html`, right after the line `<script src="../src/fx/battlefield.js"></script>`, it added these nine lines:
 
 ```html
 <script src="../src/fx/arena.js"></script>
@@ -152,9 +152,11 @@ Not done: the game still fights on its flat paintings, and builds as before with
 <script src="../src/stage/arena-dead-moonwell.js"></script>
 ```
 
-Then it builds the file you keep as always (`node tools/build.mjs --min --offline putting-it-all-together/game.html`) and plays it (`node tools/game-test.mjs --steps title,new,wild --band 2 --level 8`). Every fight but the first is then fought in its arena. It makes the file 0.4 MB bigger (the eight paintings and the arena's code): with the keepsakes in (October 5), the file you keep goes from 17.9 MB to 18.3 MB of its 30, and the published page from 14.5 MB to 14.9 MB as the build counts them (15,574,382 bytes with the tidy-up and the Sharpness setting of October 5, built with `--min` and without `--offline`), under its 16 MB. (An `--offline` build writes a copy to publish too, with three.js and the fonts inside: 16,379,946 bytes. Never publish that one: build with `--min` again after making the file you keep.) Without step 2, step 1 does nothing: a fight whose arena isn't in the page stays on its flat painting.
+Then the file you keep is built as always (`node tools/build.mjs --min --offline putting-it-all-together/game.html`) and played (`node tools/game-test.mjs --steps title,new,wild --band 2 --level 8`). Every fight but the first is now fought in its arena. It made the file 0.4 MB bigger (the eight paintings and the arena's code): with the keepsakes in (October 5), the file you keep went from 17.9 MB to 18.3 MB of its 30, and the published page from 14.5 MB to 14.9 MB as the build counts them (15,574,382 bytes with the tidy-up and the Sharpness setting of October 5, built with `--min` and without `--offline`), under its 16 MB. (An `--offline` build writes a copy to publish too, with three.js and the fonts inside: 16,379,946 bytes. Never publish that one: build with `--min` again after making the file you keep.) Without step 2, step 1 does nothing: a fight whose arena isn't in the page stays on its flat painting. The wilderness scenes went in the same day and took the world map's walking tiles out, so with both, the file you keep is 17.25 MB and the published page 13.8 MB as the build counts them (18,084,824 and 14,475,925 bytes at `a1662af`).
 
-Both were tried here (How it was checked, above).
+The game was tried here with the switch off and with it on, before it was switched (How it was checked, above).
+
+**To switch back** to the flat paintings, if a fight runs too slow on your phone even with **Battle sharpness** at Half (the game's Settings): `false` in step 1 is enough, and taking the nine lines out of `game.html` too takes the 0.4 MB back off (`src/game/fights.js` says how, beside the switch).
 
 ## For the next session
 
@@ -190,9 +192,9 @@ This work began from the game at commit `ae4a864`, before the keepsakes and the 
 
 On October 5 the game's branch at `0757ee8` was merged into this one (`01456b7`, no clash: the keepsakes' lines in `fights.js` stand beside the arena's), and the branch was pushed as `work/arenas` for the session that is the game's hub from then on (`handoff/relay/arenas.md` on the game's branch). Checked after that merge, headless: the balance (51 of 51 targets), every walking map (`check-maps.mjs`, the keepsakes' places included), the demo built again (2.23 MB) and three of its fights at 915 × 412 (band 2's wilds on the moor in a storm, the Bramble Colossus by Frostmere, and the finale at the dead Moonwell, each to 24 to 30 seconds of battle), with no errors. The game with the switch off builds as before; its own test is in `handoff/relay/arenas.md`. With the switch on, measured in a scratch copy of the game page: the file you keep 18.3 MB, the published page 14.9 MB as the build counts it (15,572,999 bytes; the 15.6 first written here was the `--offline` build's copy, above).
 
-**Brought into the game's branch** on October 5 at `39350b5` by the ultracode hub, with the switch off, after a review of the two shared files by dimension (flat battles, rules and balance, the phone's cost, the docs), which found nothing that changes a flat fight. Its corrections are in this README and in `../../handoff/tasks.md` (T01 part B).
+**Brought into the game's branch** on October 5 at `39350b5` by the ultracode hub, with the switch off, after a review of the two shared files by dimension (flat battles, rules and balance, the phone's cost, the docs), which found nothing that changes a flat fight. Its corrections are in this README and in `../../handoff/tasks.md` (T01 part B). **Switched on** the same day at `10a2f08`, at Chris's yes, after the cutscenes' hand-over into the arenas (`a1b5af6`) and the polish with the game's **Battle sharpness** setting (`add7875`) were brought in.
 
 Ideas for later:
 
-- Once the game is switched over, the eight flat paintings the arenas replace (about 2.7 MB of the file) could come out of it; the Night square's stays, for the first fight and the prologue.
+- Now that the game is switched over (October 5), the eight flat paintings the arenas replace (about 2.7 MB of the file) could come out of it; while they stay, switching back is one line. The Night square's stays, for the first fight and the prologue.
 - If you ever paint the Night square from eye height, the first fight could have an arena too.

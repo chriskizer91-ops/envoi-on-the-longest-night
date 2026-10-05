@@ -1,6 +1,6 @@
 # Art Request 02: The World Map
 
-The flying map: the world as the party sees it from the Magpie (plan step 19), and the world map Io walks (step 18). The ground-level maps are `04-walking-maps.md`.
+The flying map: the world as the party sees it from the Magpie (plan step 19), and the world map Io walked (step 18) until October 5, 2026. Since then it is only flown: bands 2, 3 and 4 walk Chris's eight wilderness scenes instead (`12-wilderness-scenes.md`), and the nine walking tiles are out of the game (the flight keeps its far view and clouds). The ground-level maps are `04-walking-maps.md`.
 
 Chris painted the world himself as nine detailed tiles in a 3×3 grid, received on October 2, 2026 as day versions (`../../reference/art/world-map/day/`). The night versions are next: their prompts are at the end ("The night versions"). The prompts just below were the first description of the world and are kept for reference.
 
