@@ -4,7 +4,7 @@ October 5, 2026, early morning. Everything still to do for *Envoi on the Longest
 
 **This file is yours from now on:** keep it current as tasks finish or Chris decides new ones. (A second pass that would have checked it against the files was stopped at Chris's word, so where a step here doesn't match the code, trust the code and fix the step.)
 
-**Kinds.** *Ready*: decided, and nothing to wait for. *Waiting on Chris*: decided, and blocked on his art, answers, notes or yes. *Finishing pass*: decided for the finished game, deliberately later. *Technical*: health of the build, the tests and the docs. *Idea*: offered, not decided. Nothing of an idea is built until Chris says yes; at most a demo page for him to judge.
+**Kinds.** *Ready*: decided, and nothing to wait for. *Waiting on Chris*: decided, and blocked on his art, answers, notes or yes. *Finishing pass*: decided for the finished game, deliberately later. *Technical*: health of the build, the tests and the docs. *Idea*: offered, not decided. Nothing of an idea is built until Chris says yes; at most a demo page for him to judge, or, for a small one, its code behind a switch that's off in the game, on a page to try it (I06, I08 and I12, at the end).
 
 ## At a glance, in the order to take them
 
@@ -211,7 +211,9 @@ Unexplained (`../docs/next-session.md`): on the Battle Backgrounds page, his pho
 
 ## Ideas Chris hasn't said yes to
 
-Nothing of these is built until he says yes; then a demo page first. Most are in `../docs/still-to-come.md` ("Ideas we haven't decided") and `../envoi-final-draft/README.md`.
+Nothing of these is built until he says yes; then a demo page first. Three small ones (I06, I08, I12) are built behind a switch that's off in the game, on a page for him to try them. Most are in `../docs/still-to-come.md` ("Ideas we haven't decided") and `../envoi-final-draft/README.md`.
+
+**The try page** (I06, I08, I12; October 5, `766fc66`). The three are in the game's code, each behind a switch that's off in the game: `window.ENVOI_TRY = { words, door, buy10 }`, read by `src/game/game.js` (absent or false, the game plays exactly as before). After `node tools/build.mjs --min putting-it-all-together/game.html`, `node tools/make-try.mjs` writes `dist/try.html` and `dist/try.artifact.html`, "Envoi: Polish to Try", the game with all three on; publish the artifact copy with the files `dist/try.beside.json` lists (the game's 22) beside it. Its saves are its own: a save code (Menu, Saves) carries a game over. `node tools/try-test.mjs` checks each idea on it, and `node tools/try-test.mjs dist/game.html --off` that the game has all three off. **On his yes to one:** switch it on in the game (`const TRY` in `game.js`, e.g. `Object.assign({ door: true }, window.ENVOI_TRY)`, or take its switch out), turn the test's `--off` check round for it, then the records (`../docs/still-to-come.md`, `../docs/next-session.md`, this table). In a merge with T02's step 2, which rewrites `onExit`, keep the door's line just before its last `await goField(...)`.
 
 | Id | Idea | What a yes would take |
 |---|---|---|
@@ -220,13 +222,13 @@ Nothing of these is built until he says yes; then a demo page first. Most are in
 | I03 | A Field Notes page: creatures calmed, places found | A menu tab (today: Party, Herbs, Items, Moonlore, Saves, Settings); little point before T04 |
 | I04 | More townsfolk in each town | Paper-doll sheets, portraits and words for each |
 | I05 | Inkblot beyond Quill's shoulder (in scenes, on the Magpie's perch) | The perch exists in `src/models/magpie.js`; a small model |
-| I06 | Words that move on by themselves | A reading setting beside text speed (`src/game/talk.js`) |
+| I06 | Words that move on by themselves | **Built behind a switch, on the try page; waiting on his yes** (October 5, `766fc66`): Settings' "Words move on: On a tap / By themselves" just after Words, saved with the other settings (on at first there); a said line moves on 1.2 s and 45 ms a letter after it has all appeared, 1.4 times that at Slow words and 0.7 at Fast; a tap moves on at once; choices wait (`src/game/talk.js`). A yes: on in the game, and whether it starts on |
 | I07 | Quicker fight starts: keep the heroes built between fights | `screen.js` builds and frees every model each fight; worth it if the arenas load slowly on his phone |
-| I08 | A door's sound when a map changes | The sound exists (`thareia-audio.js`, "door"), never played |
+| I08 | A door's sound when a map changes | **Built behind a switch, on the try page; waiting on his yes** (October 5, `766fc66`): the library's "door" (`thareia-audio.js`) as Io walks through an exit onto another walking map, at the Effects volume (`onExit` in `game.js`); never on a shut road, into a fight or a flight, or onto the world map. A yes: on in the game |
 | I09 | Wild packs framed closer on the phone | Mostly answered by the arenas (a wisp 30 to 35 px tall against 20); judge on the demo |
 | I10 | More of his songs: a theme for each band's wilds, one for the great creatures | His songs; 3 to 4 MB for three or four |
 | I11 | Finer studies of Sol, Halcyon and Noctara for the finale's cutscene | Sessions he starts (`work/study-<name>`, the workshop) |
-| I12 | A "buy 10" button in the shops | `shop()` in `game.js` |
+| I12 | A "buy 10" button in the shops | **Built behind a switch, on the try page; waiting on his yes** (October 5, `766fc66`): beside each herb's Buy (`shop()` in `game.js`), as many as the bag has room for (99) and the shards cover, up to ten, the button saying how many ("Buy 5"), with one buy's sound and save. A yes: on in the game |
 | I13 | More wells, letters and nodes, and Moonlore learned from the letters | Words from T05; places on the maps |
 | I14 | More of the story staged, people walking as they talk | Overlaps T07's stills |
 | I15 | The Magpie's flight: town cards with notes, a whole-map view from his demo | The flying map (`src/game/fly.js`) |
