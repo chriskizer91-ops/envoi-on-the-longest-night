@@ -14,7 +14,8 @@
 // picture that she turns back from, to: 'world') and the people.
 // Map coordinates are the paintings' own 1536 x 1024 pixels whatever size they ship at.
 // Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw(), stage, setPicture(url),
-//   canStand(x, y) (whether her feet fit there, on the map she is on: the rule her every step follows) }
+//   canStand(x, y) (whether her feet fit there, on the map she is on: the rule her every step follows), setCounter(v) and
+//   gap (the map px walked since the last random fight, and the gap to the next at the settings now, for the tests) }
 //   stage: the story's actors, walking on the map while a scene plays (handoff, section 5): add(id, look, [x, y], dir),
 //   walk(id, path, speed) -> Promise (path: points to walk through), face(id, dir), remove(id), clear(), io(path, speed)
 //   -> Promise (Io walks it, even while the field is paused for the scene), ioFace(dir), focus([x, y], an actor's id, or
@@ -94,7 +95,7 @@
     // run: how long she has walked without stopping; after a moment the pace builds to a run (handoff, section 8)
     // vx, vy: her speed (map px a second), eased as Path Polish's motion eases it; walk: how far she has walked, in her
     // heights, for her painted steps; lean and turn: the motion's lean into the walk and into a turn; pose: kneel or cast
-    const P = { x: 0, y: 0, dir: 's', walkT: 0, moving: false, counter: 0, next: 0, run: 0, stepD: 0, vx: 0, vy: 0, walk: 0, lean: 0, turn: 0, blocked: 0, pose: null, poseT: 0, poseDur: 1, poseRes: null };
+    const P = { x: 0, y: 0, dir: 's', walkT: 0, moving: false, counter: 0, roll: null, run: 0, stepD: 0, vx: 0, vy: 0, walk: 0, lean: 0, turn: 0, blocked: 0, pose: null, poseT: 0, poseDur: 1, poseRes: null };
     const RUN = 0.5; // the run is half again her walk
     const ioH = () => opts.ioH || 42;
     let map = null, img = null, grid = null, route = null, paused = false, lastExit = null, flash = 0, goalNow = null;
@@ -269,7 +270,7 @@
       if (!canStand(P.x, P.y)) { const r = findRoute(P.x, P.y); if (r && r.length) { P.x = r[r.length - 1][0]; P.y = r[r.length - 1][1]; } }
       // the threshold carries from map to map with the counter, so a row of wild scenes is one walk and fights don't
       // bunch where one scene meets the next (it is drawn again only after a fight)
-      if (!P.next) P.next = nextGap();
+      if (P.roll == null) P.roll = Math.random();
       plate.textContent = m.name;
       return new Promise((res) => {
         const next = new Image();
@@ -278,10 +279,12 @@
         next.src = opts.src ? opts.src(m.src) : m.src;
       });
     }
-    // the gap to the next random fight, in map px walked: around the mean, never less than the minimum
-    function nextGap() {
+    // the gap to the next random fight, in map px walked: around the mean, never less than the minimum. What's drawn and
+    // kept is the roll (P.roll, 0 to 1), not the gap, so a change to how often fights come (the menu's Random fights,
+    // through opts.encounter) holds at once rather than after the next fight
+    function gapNow() {
       const E = opts.encounter || { mean: 770, min: 440 }, rate = (map && map.wild && map.wild.rate) || 1;
-      return Math.max(E.min, E.mean * (0.55 + Math.random() * 0.9)) / rate;
+      return Math.max(E.min, E.mean * (0.55 + P.roll * 0.9)) / rate;
     }
 
     // the way turns by more than about 50 degrees at b, going from (ax, ay) through b to c
@@ -376,7 +379,7 @@
         if (s.when && !s.when()) continue;
         held.clear(); route = null; if (opts.onEvent) opts.onEvent(s); return;
       }
-      if (map.wild && P.counter >= P.next) { P.counter = 0; P.next = nextGap(); held.clear(); route = null; if (opts.onEncounter) opts.onEncounter(map); }
+      if (map.wild && P.counter >= gapNow()) { P.counter = 0; P.roll = Math.random(); held.clear(); route = null; if (opts.onEncounter) opts.onEncounter(map); }
     }
     // ---------- the story's actors ----------
     function walkAlong(a, dt) {
@@ -550,7 +553,7 @@
       // a new picture for the map she is on, in place, with no fade and no jump (a page comparing squeezes of one painting)
       setPicture(url) { const next = new Image(); next.onload = () => { if (map) img = next; }; next.src = url; },
       pose(name, secs) { if (P.poseRes) P.poseRes(); return new Promise((res) => { P.pose = name; P.poseT = 0; P.poseDur = secs || 1.4; P.poseRes = res; held.clear(); route = null; }); },
-      setCounter(v) { P.counter = v; },
+      setCounter(v) { P.counter = v; }, get gap() { return P.roll == null ? null : gapNow(); },
       stop() { stopped = true; ro.disconnect(); window.removeEventListener('keydown', onKey); window.removeEventListener('keyup', onKeyUp); },
     };
   }

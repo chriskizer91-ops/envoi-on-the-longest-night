@@ -21,8 +21,9 @@
 //             lit before offers nothing, and from the town the road back leads into the last scene. Not a default step
 //             (about two minutes for the three)
 //   menu:     the menu opens on every tab and closes; Settings has the battles' sharpness beside their frame rate (3/4
-//             unless another is picked, and a pick is kept where the battle screen reads it); Settings plays a cutscene
-//             again ("Watch again", once a game has shown it), over the menu, and Esc skips it
+//             unless another is picked, and a pick is kept where the battle screen reads it); Random fights holds at once
+//             (the gap to the next fight follows it); Settings plays a cutscene again ("Watch again", once a game has
+//             shown it), over the menu, and Esc skips it
 //   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load; then saves made
 //             on the world map before the wilderness scenes: one by a node loads on the Ember Line road with its rest at
 //             the Warm Roads camp's fire, one whose Magpie was left at Bogmire finds her moored at the camp, and the
@@ -468,6 +469,12 @@ try {
         if (s1.kept !== String(other) || !picked(s1, other) || s2.kept !== String(want) || !picked(s2, want)) throw new Error('Settings: Battle sharpness isn’t kept: ' + JSON.stringify([s1, s2]));
         await sharpRow().scrollIntoViewIfNeeded(); await sleep(200); await shot('menu-settings-battles');
         log('  Settings: Battle frame rate ' + fr.opts + '; Battle sharpness ' + s0.opts + ' (' + NAME[other] + ' kept as ' + s1.kept + ', then ' + NAME[want] + ' again)');
+        // Random fights holds at once: the gap to the next random fight follows it (the field keeps its roll, not the gap)
+        const gap = () => page.evaluate(() => window.__game.field.gap);
+        const fights = async (label) => { await page.locator('.gmenu-body .gm-item').filter({ has: page.locator('span', { hasText: 'Random fights' }) }).getByRole('button', { name: label, exact: true }).click(); await sleep(150); return gap(); };
+        const g0 = await gap(), g1 = await fights('Fewer'), g2 = await fights('Normal');
+        if (!(g0 > 0) || Math.abs(g1 / g0 - 1 / 0.6) > 0.001 || Math.abs(g2 - g0) > 0.01) throw new Error('Random fights doesn’t hold at once: the gap ' + JSON.stringify([g0, g1, g2]));
+        log('  Random fights holds at once: the next fight ' + Math.round(g0) + ' px of walking away at Normal, ' + Math.round(g1) + ' at Fewer');
       }
       // a cutscene the game has shown can be watched again from Settings, over the menu
       if (await page.evaluate(() => !!(window.CUTSCENES && window.CUTSCENES['colossus-first-meeting']))) {
