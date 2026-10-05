@@ -1,6 +1,6 @@
 # Art Request 13: The Wild's Own Creatures
 
-October 4, 2026, for the final draft's polish (`../../envoi-final-draft/`). Number 12 stays kept for the wilderness walking scenes, which wait on Chris's answer to `../questions/open.md` 20 and 21.
+October 4, 2026, for the final draft's polish (`../../envoi-final-draft/`). Number 12 is the wilderness walking scenes (`12-wilderness-scenes.md`): Chris answered `../questions/open.md` 20 and 21 on October 5, and his eight pictures came the same night.
 
 **Why:** today the wilds of bands 1 and 2 hold only wisps and wraiths, and across the whole game about nine wild fights in ten are against wisps, frost wisps and wraiths, all of them Noctara's. Band 3 adds the Bramble Horror (one fight in five) and band 4 the Bramble Colossus (one in twelve). Chris's direction (October 3): the wisps and wraiths are hers; the wild's own creatures grow more upset the closer the party comes to her.
 

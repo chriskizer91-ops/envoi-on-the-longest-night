@@ -49,7 +49,7 @@ These are not on the list until you say yes:
 - footsteps: none (as now), soft steps, or a cloak's swish;
 - things to find at the D&D map's named places (Willowmurk, Rotbridge, Mosswatch Tower, Fawnrest Shrine, Eldergrove, Frostmere Lake, Peak's Veil, Stormwatch), with an optional great creature at some of them (question 28);
 - a Field Notes page listing the creatures calmed and the places found;
-- more townsfolk in each town, and Inkblot on Quill's shoulder;
+- more townsfolk in each town, and more of Inkblot: Quill's paper doll already carries the crow on his shoulder, in his scenes too, so this would be Inkblot on his own in the story's scenes, or on the Magpie's perch;
 - words that move on by themselves (auto-advance);
 - fights that start quicker (keeping the heroes built between fights);
 - a door's sound when a map changes;

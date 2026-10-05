@@ -1,11 +1,14 @@
 // game-test.mjs: plays the built game headless (Chromium + SwiftShader, as tools/check.mjs does) and reports any error.
 // Build the page first: node tools/build.mjs --min putting-it-all-together/game.html
-// Usage: node tools/game-test.mjs [dist/game.html] [--steps title,new,walk,controls,world,menu,saves,save,wild,colossus,chapters]
-//        [--band 4]
-//        [--level 18] [--out <dir>] [--size 960x540] [--turbo 8] [--offline]
+// Usage: node tools/game-test.mjs [dist/game.html]
+//        [--steps title,new,walk,controls,world,menu,saves,scenes,save,wild,colossus,finale,keepsakes,songs,chapters]
+//        [--band 4] [--level 18] [--out <dir>] [--size 960x540] [--turbo 8] [--offline]
+// Without --steps it runs title,new,walk,world,menu,saves,save.
 //   title:    the title screen comes up
 //   new:      a new game starts, the prologue plays, and Io stands in her cottage
 //   walk:     Io walks up Wickhollow's south road with the arrow keys
+//   controls: the three ways to move her by pointer, on the same road: holding on the map steers her toward it, a quick
+//             tap walks her there, and one thumb on the pad (here a mouse) walks her north and rolls round to north-east
 //   world:    Io walks the world map
 //   menu:     the menu opens on every tab and closes; Settings plays a cutscene again ("Watch again", once a game has
 //             shown it), over the menu, and Esc skips it
@@ -25,6 +28,9 @@
 //             a fight and after it (more shards); and the first Bramble Colossus (cut short) leaves its two
 //   songs:    Chris's songs play where they belong (the towns', the wilds'), each from where it was; the fights play
 //             their own theme, and the made-up music plays everywhere else; Music Off quietens them (run after title or new)
+//   chapters: the title's Chapters, for gates 5, 10 and 15 and the finale: each opens in the town before its gate (the
+//             crossroads' own south road for gate 15, Misthollow for the finale), the party at the gate's level and saved,
+//             after the town's arrival scene, with the little arrow pointing her on
 // Each step saves a screenshot in --out (tools/.cache/game-test by default). Exits 1 on any page error.
 // three.js r128 comes from npm into tools/.cache, since the CDN is unreachable from the sandbox; the fonts are skipped.
 // --offline tests the file Chris keeps (node tools/build.mjs --min --offline putting-it-all-together/game.html):

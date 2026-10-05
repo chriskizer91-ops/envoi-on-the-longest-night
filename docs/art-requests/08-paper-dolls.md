@@ -1,6 +1,6 @@
 # Art Request 08: Everyone on the Maps as Paper Dolls
 
-Io now walks the maps the way Path Polish paints her: a painted walk sheet with six steps in each of four directions (`reference/art/walk/io-walk-sheet.png`, from Chris's Witch Way). The 3D models stay for the battles. Everyone else who stands or walks on the maps needs the same kind of sheet, so they look as if they belong beside her. Until their sheets come in, they stay as pixel figures.
+Io now walks the maps the way Path Polish paints her: a painted walk sheet with six steps in each of four directions (`reference/art/walk/io-walk-sheet.png`, from Chris's Witch Way). The 3D models stay for the battles. Everyone else who stands or walks on the maps needs the same kind of sheet, so they look as if they belong beside her. All nineteen sheets came in pass three (October 3) and are in the game.
 
 These nineteen prompts make one walk sheet for each of them: Sol, Halcyon, Ysmera, Quill (with Inkblot), and the fifteen townsfolk of request 06.
 

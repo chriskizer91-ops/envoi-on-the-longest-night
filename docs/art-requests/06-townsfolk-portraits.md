@@ -1,10 +1,10 @@
 # Art Request 06: The Townsfolk's Portraits
 
-The game is playable with every townsperson talking. Io, Sol and Ysmera speak with their painted portraits (request 05); everyone else shows a pixel portrait for now: their walking sprite's head and shoulders, blown up. These sixteen prompts replace those with paintings in the same style as the pilot three.
+The game is playable with every townsperson talking. Io, Sol and Ysmera speak with their painted portraits (request 05); everyone else shows their paper doll's face for now: the head and shoulders of the doll's front pose, cut from Chris's sheet (request 08). These sixteen prompts replace those with paintings in the same style as the pilot three.
 
-Each person's colors match their walking sprite (`src/game/sprites.js`), so the painting and the sprite read as the same person. Two pairs share a sprite (Gretch and the other elders, Hilde and the other workers); the paintings tell them apart.
+Each person's colors match their paper doll (request 08 described the dolls in much the same words), so the painting and the doll read as the same person. Attach the person's sheet (`reference/art/walkers/<id>-walk.png`) to their prompt as well, so the painting follows the doll wherever it differs from the words.
 
-How to make them: as in request 05. Square, 1:1, at least 1024 × 1024, head and shoulders turned slightly to the viewer's left, a plain deep indigo background, moonlight from the upper left and a warm lamp from below right. Generate two to four of each and keep the best. Save them in `reference/art/portraits/` under the file names below, and they go into the game in place of the pixel portraits.
+How to make them: as in request 05. Square, 1:1, at least 1024 × 1024, head and shoulders turned slightly to the viewer's left, a plain deep indigo background, moonlight from the upper left and a warm lamp from below right. Generate two to four of each and keep the best. Save them in `reference/art/portraits/` under the file names below, and they go into the game in place of the paper dolls' faces.
 
 ## Style lock
 

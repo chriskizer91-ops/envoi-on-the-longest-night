@@ -1,5 +1,7 @@
 # Art Request 10: The Wild Meadow's Painted Backdrop
 
+**Never delivered, and nothing needs it now** (October 5, 2026). No painting came back for this request. Chris's battle backgrounds took its place: art request 11 matched one of his paintings to every fight but the first, the Colossus's included (05, Frostmere Lakeside Meadow), and the new battles set them far off behind live 3D ground, as Colossus in the Meadow does. Whether to close this request is a question for Chris (`../../handoff/tasks.md`, T10, 2).
+
 For the locked-camera fight, **Colossus in the Meadow** (`../../living-battlefields/`). Everything far off in that fight is a painting: the night sky, the moon, the mountains, the forest round the meadow and the far grass. The page paints its own in code when it opens, and a painting from the image generator can take its place. Only the far part is seen as painted: the grass near enough to move, a tree, the mist, the weather and the fight stay live in front of it.
 
 Renumbered 10 when the branches were merged (it was 08, which the paper dolls had taken).

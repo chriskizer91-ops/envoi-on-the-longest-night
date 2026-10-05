@@ -6,7 +6,7 @@
 window.STILLS = {
 };
 
-// the townsfolk's painted portraits (art request 06), by person: until one arrives, that person speaks with a pixel
-// portrait. For example:  gretch: "art/portraits/portrait-gretch.webp",
+// the townsfolk's painted portraits (art request 06), by person: until one arrives, that person speaks with their paper
+// doll's face (src/walk/walkers.js, `portrait`). For example:  gretch: "art/portraits/portrait-gretch.webp",
 window.PORTRAITS = {
 };

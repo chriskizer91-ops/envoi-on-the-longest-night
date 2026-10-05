@@ -94,7 +94,7 @@ What's already planned takes the file to **about 15 to 17 MB** (pass three's mea
 
    Their walking scenes would come as more prompts after art request 12's eight.
 3. **Field notes.** A menu tab where Io notes every creature the party has calmed and every place it has found, with how many of each. It makes the finding count, and needs no art.
-4. **Errands and keepsakes.** Townsfolk asks tied to the creatures and places, and **the twenty keepsakes** (Chris's plan, October 4, evening): `items/README.md`. Each great creature leaves one of them, and as with the two hidden now, the balance never counts on any.
+4. **Errands and keepsakes.** Townsfolk asks tied to the creatures and places, and **the twenty keepsakes** Chris locked (October 4, evening): `items/README.md`. None comes from a great creature of request 13 (the first Bramble Colossus gives two), so one from a great creature would be beyond his twenty (question 28). As with the two hidden now, the balance never counts on any.
 5. **The new battles,** as pass three planned them: 3D ground in front, Chris's paintings far off behind.
 6. **Small polish:**
    - auto-advance for the words;

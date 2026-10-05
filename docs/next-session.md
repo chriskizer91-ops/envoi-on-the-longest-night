@@ -84,8 +84,8 @@ Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: t
 
 1. **The new battles** (pass-three README, "Next: the new battles"): every painting and Chris's settings are in (Strong, 30 frames a second, 3/4 sharpness). The living field takes a ground and weather for each place, the battle screen uses it; a demo page with every fight first, then the game.
 2. **His notes on the demos**, as they come.
-3. **Walking without the world map**, once Chris agrees the plan.
-4. **His map path edits**, when he sends more: list `edits` on the Walking Paths page with `ArtifactData` (`out_dir`), `check-edits.mjs`, then `apply-edits.mjs`, `check-maps`, build, `make-demos`, test, publish (`../envoi-game-pass-3/map-paths/README.md`). His shapes go in as drawn: secret ways and orange patches are meant.
+3. **Walking without the world map:** Chris agreed the plan on October 5 (the scenes at night) and his eight pictures are in; next they're traced into walking maps, a demo page first, then the game (`../handoff/tasks.md`, T02).
+4. **His map path edits**, when he sends more from the map editor, which took over from Walking Paths: list `edits` on its link (https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5) with `ArtifactData` (`out_dir`), `check-edits.mjs`, then `apply-edits.mjs`, `check-maps`, build, `make-demos`, test, publish (`../envoi-final-draft/map-editor/README.md`, "Reading what Chris sent"). His shapes go in as drawn: secret ways and orange patches are meant.
 5. **The twenty keepsakes are in** (October 4, late evening). If Chris moves one in the map editor, list `places` on its link with `ArtifactData` and copy the new `at` into `../envoi-final-draft/items/items.js`; then `node tools/check-maps.mjs`, build, test (`--steps title,new,keepsakes`) and publish the game with its beside files.
 6. **The 20 frames a second freeze** on the Battle Backgrounds page is unexplained (the test browser can't pace like his phone). 20 is off the page and the game never offered it; if the new battles freeze or go black on his phone, look here first.
 
@@ -96,9 +96,9 @@ Small things that would make it nicer, none started:
 - **Auto-advance** for the words (the one reading setting not built).
 - **Footsteps** again, if Chris likes one of `demos/io-on-foot.html`'s two ideas (soft steps, a cloak's swish), and a door's sound when a map changes.
 - **Quicker fights to start:** every battle builds its models from scratch; keeping the heroes, Lunara and Envoi built between fights would cut the wait, if it shows on the phone.
-- **More to find:** more wells, letters and nodes, and the D&D map's named places as landmarks (`docs/handoff.md`, section 6); more townsfolk with lines that change with the story, and Inkblot on Quill's shoulder (section 4).
+- **More to find:** more wells, letters and nodes, and the D&D map's named places as landmarks (`docs/handoff.md`, section 6); more townsfolk with lines that change with the story (section 4); and more of Inkblot: Quill's paper doll already carries the crow on his shoulder in every frame, in his scenes too, so what's left is Inkblot on his own in the story's scenes or on the Magpie's perch (`src/models/magpie.js` has the perch).
 - **More of the story staged,** with the people walking on the map while they talk, as the four big scenes already are (section 5).
-- **Room for the art:** the battle paintings and the world map could be squeezed to AVIF as the walking maps were, with a comparison page for Chris first.
+- ~~**Room for the art**~~ (squeezing the battle paintings and the world map): overtaken. The new battles use Chris's paintings at his "Strong" squeeze, and once the wilderness scenes are in (T02), the world map's walking tiles leave the page ("More room, if it's needed", below).
 - **Mooncart:** the game reaches it only once this branch is merged into the repository's default branch, which is Chris's call.
 
 ### When the game is finished
@@ -149,7 +149,7 @@ Follow the eight steps in `putting-it-all-together/README.md`:
 
 ### More room, if it's needed
 
-The battle paintings (4.2 MB of files) and the world map (3.0 MB) could be squeezed to AVIF the way the walking maps were. Show Chris a comparison page first, like Walking Map Resolution.
+Squeezing the battle paintings and the world map is overtaken. The new battles use Chris's paintings at his "Strong" squeeze (0.24 MB for all eight), and once they're switched on and nothing flat uses the eight flat paintings they replace, those can leave the page (the Night square's stays, for the first fight and the prologue). Once the wilderness scenes are in, the world map's nine walking tiles leave the page too; flying keeps the far view and the clouds (`../handoff/tasks.md`, T02 and T13).
 
 When the published game passes 16 MB:
 
@@ -171,7 +171,7 @@ When the published game passes 16 MB:
 
 The game test's steps:
 
-- `--steps` picks them from title, new, walk, controls, world, menu, saves, scenes, save, chapters, keepsakes, songs, wild and colossus. The chapters step checks each chapter's town, its arrival scene and the arrow; keepsakes walks Io by taps up the roof and down the Thornwood's trail to both and checks them in a fight; songs checks each song plays where it should, from where it was.
+- `--steps` picks them from title, new, walk, controls, world, menu, saves, scenes, save, wild, colossus, finale, keepsakes, songs and chapters. The chapters step checks each chapter's town, its arrival scene and the arrow; keepsakes walks Io by taps up the roof and down the Thornwood's trail to both and checks them in a fight; songs checks each song plays where it should, from where it was.
 - `--size 915x412` is a Pixel 7a held sideways.
 
 ## Lessons from this session

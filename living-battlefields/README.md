@@ -110,8 +110,8 @@ cp dist/colossus-fight.html living-battlefields/Colossus_Fight.html
 
 ## Still open
 
-- **Into the game.** The battle screen on the game's branch (`src/battle/screen.js`) could take this for the Colossus's fight, as the handoff note there plans for living battlefields. That needs this branch and the game's branch to be together first.
-- **Chris's painted backdrop** for the meadow (art request 10), and paintings for other places.
+- **Into the game.** The branches have been together since pass three, and the new battles take this way of fighting to every fight but the first: Chris's paintings far off behind live 3D ground (`../envoi-final-draft/arena/README.md`). The game's switch stays off until Chris has played their demo and said yes (`../handoff/tasks.md`, T01).
+- **Chris's painted backdrop** for the meadow (art request 10) never came, and nothing needs it now: his battle backgrounds took its place (art request 11, a painting for every fight but the first), and the new battles set them far off behind live 3D ground, as this page does. Whether to close the request is a question for Chris (`../handoff/tasks.md`, T10).
 - **No stars.** The fight's sky has only the moon, because the stars only come back at the ending (lore answers 5 and 10). Since October 3 the wild meadow and the wild glade on the creature benches have none either; `opts.stars` lights them for the ending.
 - **Towns:** the same painting-plus-weather approach over the town paintings, without the 3D grass.
 - **The Gloamwing and the Emberback** could fight here too. The Emberback's model and bench are done (`../3d-model-new-character-ideas/emberback/`).
