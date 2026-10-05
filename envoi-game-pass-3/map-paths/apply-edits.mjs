@@ -1,7 +1,10 @@
 // apply-edits.mjs: puts Chris's edits from the Walking Paths page into the game's src/game/maps.js. Check them first
 // (check-edits.mjs). Each changed walk, block or front list is rewritten with its unchanged lines kept exactly as they
 // are (their comments, and the arc(), ring() and lamp helpers), and each new or changed shape written as plain points
-// under the comment of the shape it replaces; a lamp helper is opened up only where one of its lamps changed.
+// under the comment of the shape it replaces; a lamp helper is opened up only where one of its lamps changed. A list
+// still empty, on one line (`block: [],`), gets its new shapes on lines of their own between its brackets. A one-line
+// list with something in it (the jetty's `block: [...lampBlocks(JETTY_LAMPS)],`, the fen's heart's fronts) still stops
+// it ("has no block"): open that list onto lines of its own by hand first.
 // Usage: node envoi-game-pass-3/map-paths/apply-edits.mjs <edits.json> [more.json ...]
 //   each file one map's document as the page's store gives it back (ArtifactData list/get with out_dir), or its data
 // Then node tools/check-maps.mjs, build, test and publish (README.md, "Reading and applying Chris's edits").
@@ -17,6 +20,10 @@ function mapBlock(id) {
 }
 function fieldEntries(id, field) {
   const [a, b] = mapBlock(id), block = SRC.slice(a, b);
+  // a list still empty, on one line (`block: [],`: the crossroads', the cold moor's, Frostmere's shore's): its new shapes
+  // go between the brackets, on lines of their own
+  const one = block.indexOf('\n      ' + field + ': [],');
+  if (one >= 0) { const at = a + one + ('\n      ' + field + ': [').length; return { entries: [], abs: [at, at], tail: [], inline: true }; }
   const fs0 = block.indexOf('\n      ' + field + ': [\n'); if (fs0 < 0) throw new Error(id + ' has no ' + field);
   const bodyStart = fs0 + ('\n      ' + field + ': [\n').length, bodyEnd = block.indexOf('\n      ],', bodyStart);
   const lines = block.slice(bodyStart, bodyEnd + 1).split('\n').filter((l, i, arr) => i < arr.length - 1 || l.length);
@@ -48,7 +55,7 @@ for (const doc of docs) {
   const fields = (doc.changed || []).filter((f) => ['walk', 'block', 'front'].includes(f));
   for (const field of fields) {
     // every list is found in maps.js as it was read; the rewrites go in from the end of the file, so none moves another
-    const { entries, abs, tail } = fieldEntries(doc.map, field);
+    const { entries, abs, tail, inline } = fieldEntries(doc.map, field);
     const where = []; entries.forEach((e, ei) => { for (let m = 0; m < e.n; m++) where.push([ei, m]); });
     const sh = doc.shapes[field], from = sh.fromTracing, dropped = sh.dropped.slice();
     const out = [], lit = (shape, comment) => {
@@ -82,7 +89,7 @@ for (const doc of docs) {
       i++;
     }
     out.push(...tail);
-    edits.push([abs[0], abs[1], out.join('\n') + '\n', doc.map + ' ' + field]);
+    edits.push([abs[0], abs[1], inline ? '\n' + out.join('\n') + '\n      ' : out.join('\n') + '\n', doc.map + ' ' + field]);
   }
 }
 edits.sort((a, b) => b[0] - a[0]);
