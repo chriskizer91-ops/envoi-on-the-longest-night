@@ -442,7 +442,9 @@
       save();
     }
     async function onExit(ex) {
-      if (ex.to === 'thornwood' && field.map.id === 'wickhollow' && !st.flags.party) { await scene('thornwoodShut'); stepBack(ex); return; }
+      // the Thornwood stays shut until Quill has given Io the Magpie, as the story (and the arrow) has it: won early, the
+      // great wraith left Quill's scene to play on Bogmire's boardwalks, and Io stuck off them
+      if (ex.to === 'thornwood' && field.map.id === 'wickhollow' && !st.flags.magpie) { await scene(st.flags.party ? 'thornwoodQuill' : 'thornwoodShut'); stepBack(ex); return; }
       // a road out of the picture into the wide world (the cottage's three, the crossroads' south and east): the world map
       // is only flown now, so she turns back, saying why
       if (ex.to === 'world') { await say(!st.flags.party ? [['io', 'Something is wrong up in the square. I should go and see first.']] : S.scenes[ex.say] || S.scenes.roadOut); stepBack(ex); return; }
@@ -887,7 +889,7 @@
       return new Promise((done) => {
         const ov = el('div', { class: 'gmenu', role: 'dialog', 'aria-label': 'Load a save code' }, root), card = el('div', { class: 'gmenu-card win' }, ov);
         el('h2', null, card, 'Load a save code');
-        el('p', { class: 'gm-top' }, card, 'Paste a save code from another copy of the game. It goes into the slot in use.');
+        el('p', { class: 'gm-top' }, card, 'Paste a save code from another copy of the game. Then pick the slot it goes in.');
         const ta = el('textarea', { class: 'code', rows: '5', 'aria-label': 'Save code', placeholder: 'ENVOI1:…' }, card), msg = el('p', { class: 'gm-note' }, card, '');
         const foot = el('div', { class: 'gmenu-foot' }, card), ok = el('button', { type: 'button', class: 'go' }, foot, 'Load it'), no = el('button', { type: 'button', class: 'go alt' }, foot, 'Back');
         ok.addEventListener('click', () => { const sv = GS.fromCode(ta.value); if (!sv) { msg.textContent = 'That isn’t a whole save code. Copy it again, all of it.'; return; } ov.remove(); done(sv); });
@@ -963,7 +965,10 @@
         const all = GS.list(), opts2 = all.filter((x) => x.st);
         const k = await ask(null, opts2.length ? 'Load which game?' : 'There are no saved games here yet. A save code from another copy of the game can be pasted.', opts2.map((x) => 'Slot ' + x.slot + ': level ' + x.st.level + ', ' + clock(x.st.time)).concat(['Paste a save code', 'Back']));
         if (k < opts2.length) { GS.use(opts2[k].slot); st = opts2[k].st; titleEl.hidden = false; begin(false); return; }
-        if (k === opts2.length) { const sv = await pasteCode(); if (sv) { st = sv; GS.save(st); titleEl.hidden = false; begin(false); return; } }
+        if (k === opts2.length) {
+          const sv = await pasteCode(), slot = sv ? await pickSlot('Put the pasted game in which slot?', 'Put it over that game') : 0;
+          if (slot) { GS.use(slot); st = sv; GS.save(st); titleEl.hidden = false; begin(false); return; }
+        }
         titleEl.hidden = false;
       });
       el('p', { class: 'title-help' }, box, 'Tap where Io should go, or hold to steer her, or use the arrows. Tap people and glowing things to talk to them or use them. The golden arrow shows where to go next. Sound on.');
@@ -984,14 +989,14 @@
       if (audioOn) music('title');
       setTimeout(() => (box.querySelector('button') || b).focus({ preventScroll: true }), 50);
     }
-    // which slot a new game or a chapter goes in: an empty one first; a full one is only lost if the player says so.
-    // Resolves the slot's number, or 0 for Back
-    async function pickSlot(question) {
+    // which slot a new game, a chapter or a pasted save code goes in: an empty one first; a full one is only lost if the
+    // player says so (over: the button that says so, 'Start over it' by default). Resolves the slot's number, or 0 for Back
+    async function pickSlot(question, over) {
       const all = GS.list();
       if (!all.some((x) => x.st)) return 1;
       const k = await ask(null, question, all.map((x) => 'Slot ' + x.slot + ': ' + (x.st ? 'level ' + x.st.level : 'empty')).concat(['Back']));
       if (k >= all.length) return 0;
-      if (all[k].st) { const y = await ask(null, 'Slot ' + all[k].slot + ' holds a game: ' + saveLine(all[k].st) + '. Start over it?', ['Start over it', 'Back']); if (y) return 0; }
+      if (all[k].st) { const y = await ask(null, 'Slot ' + all[k].slot + ' holds a game: ' + saveLine(all[k].st) + '. ' + (over || 'Start over it') + '?', [over || 'Start over it', 'Back']); if (y) return 0; }
       return all[k].slot;
     }
     async function begin(isNew) {
