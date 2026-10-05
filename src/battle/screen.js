@@ -109,9 +109,10 @@
 
     // a place on the floor: painting pixels on a flat battle's painting, metres in an arena
     const spot = (p) => (AF ? { x: p[0], z: p[1] } : g(p[0], p[1]));
-    // the wraith's route in from the bridge (the first fight), and the Moonwell, where Lunara rises
+    // the wraith's route in from the bridge (the first fight), and the Moonwell, where Lunara rises (in an arena, the
+    // place's spot for her, unless the fight names its own: the Bramble Colossus stands where she would rise)
     const ROUTE = AF ? [] : [[1185, 452], [1120, 520], [1000, 690], [860, 800]].map((p) => g(p[0], p[1]));
-    const WELL = AF ? spot(ARENA.summon) : g(...(SC.summon || [712, 725])), LUN = { x: WELL.x, z: WELL.z - 0.9 };
+    const WELL = AF ? spot(cfg.summon || ARENA.summon) : g(...(SC.summon || [712, 725])), LUN = { x: WELL.x, z: WELL.z - 0.9 };
     const SUMMON_FROM = SC.summonFrom || 'the Moonwell';
     // an arena's frame shows the fight bigger than a flat painting does (the camera is near, at eye height): every zoom
     // asked for below is in a flat painting's terms, and is scaled by how much bigger (ZK; 1 on a flat painting), a little

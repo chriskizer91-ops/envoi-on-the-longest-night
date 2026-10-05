@@ -63,16 +63,19 @@
     // the Bramble Horror alone: the party a little nearer, as on the paintings
     lone: { io: [-2.2, -1.4], sol: [-0.8, -0.2], slots: [[2.6, -5.6]] },
     great: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[3.0, -8.0]] },
-    // the Bramble Colossus: about 9 m from the party, as on its bench
-    colossus: { io: [-2.2, -2.2], sol: [-0.8, -1.0], slots: [[3.2, -10.6]] },
+    // the Bramble Colossus: about 9 m from the party, as on its bench. Lunara rises off to its left (summon): at the
+    // place's own spot she would rise inside it
+    colossus: { io: [-2.2, -2.2], sol: [-0.8, -1.0], slots: [[3.2, -10.6]], summon: [-6, -9] },
     knight: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[2.6, -4.4]] },
     finale: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[1.6, -3.6], [3.6, -5.6]] },
   };
-  // a fight's config moved into its arena: the place, the party and the foes where they stand there, and the weather
-  // (opts.weather, or in the wilds now and then rain or a storm, as the place says)
+  // a fight's config moved into its arena: the place, the party and the foes where they stand there (and where Lunara
+  // rises, when the place's own spot won't do for them), and the weather (opts.weather, or in the wilds now and then
+  // rain or a storm, as the place says)
   function inArena(c, place, at, opts) {
     const A = window.ARENAS && window.ARENAS[place]; if (!A || !window.makeArenaField) return c;
     c.arena = place; c.heroes[0].home = at.io; if (c.heroes[1]) c.heroes[1].home = at.sol; c.slots = at.slots;
+    if (at.summon) c.summon = at.summon;
     c.weather = opts.weather || (opts.wilds && A.wild && Math.random() < A.wild ? (Math.random() < 0.5 ? 'rain' : 'storm') : 'clear');
     return c;
   }
