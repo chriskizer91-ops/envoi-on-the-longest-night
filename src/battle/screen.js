@@ -1781,7 +1781,7 @@
         list.push({ id: 'arts', label: 'Sword Arts' });
       }
       if (s.options.some((o) => o.herb)) list.push({ id: 'item', label: 'Item', disabled: !s.options.some((o) => o.herb && o.ok) });
-      list.push(h.id === 'io' ? { id: 'defend', label: 'Defend' } : { id: 'guard', label: 'Guard' });
+      list.push(h.id === 'io' ? { id: 'defend', label: 'Defend' } : { id: 'guard', label: 'Guard', tag: has('guard') ? tagOf(has('guard')) : '' });
       if (has('flee')) list.push({ id: 'flee', label: 'Flee' });
       return list;
     }
