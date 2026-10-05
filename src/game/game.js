@@ -157,11 +157,13 @@
     if (kept.amb == null && (kept.sfx != null || kept.sound)) settings.amb = settings.sfx;
     root.classList.toggle('big-text', !!settings.big);
     const keepSettings = () => { try { localStorage.setItem('envoi.settings', JSON.stringify(settings)); } catch (e) { /* not kept */ } };
-    // three small ideas Chris hasn't said yes to (handoff/tasks.md, I06, I08, I12), each off unless the page switches it
-    // on before the game starts (window.ENVOI_TRY, set by tools/make-try.mjs): words that move on by themselves (a
-    // reading setting, which starts on there), a door's sound between walking maps, and Buy 10 in the herb shops
+    // four small ideas Chris hasn't said yes to (handoff/tasks.md, I01, I06, I08, I12), each off unless the page switches
+    // it on before the game starts (window.ENVOI_TRY, set by tools/make-try.mjs): footsteps (a sound setting, which starts
+    // on soft steps there), words that move on by themselves (a reading setting, which starts on there), a door's sound
+    // between walking maps, and Buy 10 in the herb shops
     const TRY = window.ENVOI_TRY || {};
     if (TRY.words && settings.auto == null) settings.auto = true;
+    if (TRY.steps && settings.steps == null) settings.steps = 'soft';
     let mode = 'title', busy = 0;
 
     // ---------- sound ----------
@@ -190,6 +192,10 @@
     }
     function sfx(id, gain) { if (!audioOn || !settings.sfx) return; try { AUD.playSfx(id, undefined, gain); } catch (e) { /* no audio */ } }
     function amb(id, gain) { if (!audioOn || !settings.amb) return; try { AUD.playSfx(id, undefined, gain, 'amb'); } catch (e) { /* no audio */ } }
+    // I01: Io's footsteps as each foot lands on a walking map (footsteps.js, through field.js's onStep), at the effects'
+    // volume: soft steps, a cloak's swish, or none (Settings, Footsteps)
+    const feet = TRY.steps ? window.Footsteps.make(() => (audioOn ? AUD.sfxContext() : null)) : null;
+    function footstep(m) { if (!feet || !audioOn || !settings.sfx || settings.steps === 'off') return; try { feet.play(settings.steps, m.id, settings.sfx); } catch (e) { /* no audio */ } }
     // the place's ambience: each of its sounds comes back now and then, while Io is walking there
     const ambNext = {};
     setInterval(() => {
@@ -234,6 +240,7 @@
       light: (m) => settings.light * (m.id === 'bogmire' && !st.flags.lights ? 0.55 : m.id === 'bogmire-heart' && !st.flags.lights ? 0.8 : 1),
       isDone: (k) => !!st.done[k],
       glint: () => K.party(st).glint, // the Bogmire Hag-Stone: hidden things glint brighter
+      onStep: feet ? footstep : null, // I01, only where the page switches footsteps on
       onExit: (ex) => act(() => onExit(ex)), onEvent: (s) => act(() => onEvent(s)), onTalk: (p) => act(() => onTalk(p)),
       onSpot: (s) => act(() => onSpot(s)), onEncounter: (m) => act(() => wild(m.wild.band, m.wild.scene)), onMenu: () => act(menu),
       goal: (id) => goalOn(id),
@@ -824,6 +831,7 @@
       row('Music', [['Off', 0], ['Soft', 0.4], ['Normal', 0.75], ['Loud', 1]], 'music');
       row('Effects', [['Off', 0], ['Soft', 0.4], ['Normal', 0.75], ['Loud', 1]], 'sfx');
       row('Surroundings', [['Off', 0], ['Soft', 0.4], ['Normal', 0.75], ['Loud', 1]], 'amb');
+      if (TRY.steps) row('Footsteps', [['None', 'off'], ['Soft steps', 'soft'], ['Cloak’s swish', 'cloak']], 'steps'); // I01
       row('Words', [['Slow', 0.5], ['Normal', 1], ['Fast', 2], ['All at once', 0]], 'text');
       if (TRY.words) row('Words move on', [['On a tap', false], ['By themselves', true]], 'auto'); // I06
       row('Text size', [['Normal', false], ['Large', true]], 'big');
@@ -1005,7 +1013,7 @@
     // time played
     setInterval(() => { if (mode !== 'title' && !document.hidden) st.time += 1; }, 1000);
     if (opts.skipTitle) { audioOn = false; begin(!opts.state); } else showTitle();
-    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at, dir) => act(() => goField(id, at, dir)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, LANDINGS, menu: () => act(menu), audioInit, songs, get music() { return songs.playing() || AUD.musicPlaying(); }, get battleTheme() { return SND.musicOn; },
+    const api = { get flyer() { return flyer; }, get feet() { return feet; }, get state() { return st; }, set state(v) { st = v; }, field, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at, dir) => act(() => goField(id, at, dir)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, LANDINGS, menu: () => act(menu), audioInit, songs, get music() { return songs.playing() || AUD.musicPlaying(); }, get battleTheme() { return SND.musicOn; },
       get goal() { return mode === 'field' && field.map ? goalOn(field.map.id) : null; } };
     window.__game = api;
     return api;

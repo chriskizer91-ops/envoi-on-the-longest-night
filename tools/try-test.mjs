@@ -1,5 +1,5 @@
 // try-test.mjs: plays the page of polish to try (dist/try.html, from tools/make-try.mjs) headless, as tools/game-test.mjs
-// plays the game, and checks that each of its three ideas (handoff/tasks.md, I06, I08, I12) does what it says, with no
+// plays the game, and checks that each of its four ideas (handoff/tasks.md, I01, I06, I08, I12) does what it says, with no
 // page errors:
 //   words: a new game's prologue goes by with no tap, each line moving on a pause after it has all appeared, the pause
 //          growing with the line's length and following the words' speed (Slow longer, Fast shorter); a tap still moves
@@ -7,10 +7,14 @@
 //          other settings, and "On a tap" makes a line wait for a tap again
 //   door:  Io walks out of her cottage to Wickhollow and back: the game's sound 'door' plays once each way, on the
 //          effects' volume; the cottage's road out, shut before Sol has joined, plays none
+//   steps: on that walk her footsteps sound as she goes, soft steps at first, on each map's ground and at the effects'
+//          volume; Settings has "Footsteps" (None, Soft steps, Cloak's swish) just after "Surroundings", saved with the
+//          other settings: the cloak's swish sounds instead, and None and Effects off sound none
 //   buy10: in Nettie's shop, Buy 10 buys ten moonpetals and takes their shards, then only the five lavenders the bag has
 //          room for (it holds 99), then only the three mugworts the shards cover, each with the buy's sound, and saved
-// --off checks the game itself has the three off (node tools/try-test.mjs dist/game.html --off): its lines wait for a
-// tap, Settings has no "Words move on" and saves no reading setting, no door sounds, and its shops have no Buy 10.
+// --off checks the game itself has the four off (node tools/try-test.mjs dist/game.html --off): its lines wait for a
+// tap, Settings has no "Words move on" or "Footsteps" and saves neither, no door sounds or footsteps, and its shops have
+// no Buy 10.
 // Build first: node tools/build.mjs --min putting-it-all-together/game.html && node tools/make-try.mjs
 // Usage: node tools/try-test.mjs [dist/try.html] [--off] [--size 915x412] [--out <dir>]
 // Screenshots go in --out (tools/.cache/try-test by default). Exits 1 on a failed check or any page error. One browser
@@ -104,7 +108,7 @@ try {
   await waitFor(() => !!document.querySelector('.title h1') && !!window.__game, null, 30000, 'the title');
   const sw = await page.evaluate(() => ({ title: document.title, on: window.ENVOI_TRY || null }));
   if (off) check(!sw.on, 'the game has switches on: ' + JSON.stringify(sw.on));
-  else check(sw.title === 'Envoi: Polish to Try' && sw.on && sw.on.words === true && sw.on.door === true && sw.on.buy10 === true, 'not the page of polish to try: ' + JSON.stringify(sw));
+  else check(sw.title === 'Envoi Polish to Try' && sw.on && sw.on.steps === true && sw.on.words === true && sw.on.door === true && sw.on.buy10 === true, 'not the page of polish to try: ' + JSON.stringify(sw));
   log('  "' + sw.title + '", ' + (sw.on ? 'switches ' + JSON.stringify(sw.on) : 'no switches'));
   // the sounds the game plays through its effects (game.js sfx() calls ThareiaAudio.playSfx), and each line the
   // dialogue box shows: when it had all appeared (full) and when it went (end)
@@ -168,13 +172,14 @@ try {
     check(!S.labels.includes('Words move on'), 'the game shows "Words move on"');
     const S2 = await setting('Words', 'Normal'); await S2.close();
     const kept = await savedSettings();
-    check(!('auto' in kept), 'the game saved a reading setting: ' + JSON.stringify(kept));
+    check(!('auto' in kept) && !('steps' in kept), 'the game saved a reading setting or footsteps: ' + JSON.stringify(kept));
+    check(!S.labels.includes('Footsteps'), 'the game shows "Footsteps"');
     n = await sayLine('A line that waits for a tap.');
     await sleep(pauseFor('A line that waits for a tap.', 1) + 2500);
     check(await page.evaluate(() => window.__done == null && !document.querySelector('.talk').hidden), 'a line moved on with no tap');
     await page.click('.talk-words');
     await waitFor(() => window.__done != null, null, 5000, 'the tap');
-    log('  Settings: ' + S.labels.join(', ') + '; nothing saved of a reading setting; a line waits for a tap');
+    log('  Settings: ' + S.labels.join(', ') + '; nothing saved of a reading setting or footsteps; a line waits for a tap');
   } else {
     // the pause follows the words' speed
     const short = 'A short line, said by itself.';
@@ -214,6 +219,14 @@ try {
   // ---------- the door (I08) ----------
   log('step door');
   await page.evaluate(() => { window.__sfx.length = 0; });
+  // each footstep the game sends to footsteps.js (I01): which sound, on which map, at what volume, and whether it sounded
+  const hasFeet = await page.evaluate(() => {
+    const F = window.__game.feet; window.__steps = [];
+    if (!F) return false;
+    const play = F.play; F.play = function (kind, map, vol) { const r = play.apply(this, arguments); window.__steps.push({ kind, map, vol, r }); return r; };
+    return true;
+  });
+  check(hasFeet === !off, off ? 'the game has footsteps' : 'no footsteps on the page');
   const walk = (x, y) => page.evaluate(([x, y]) => window.__game.field.walkTo(x, y), [x, y]);
   // the cottage's road south, shut before Sol has joined: Io turns back with a line, and no door
   await walk(746, 1016);
@@ -236,6 +249,46 @@ try {
   if (off) check(d.length === 0, 'the game played a door: ' + JSON.stringify(d));
   else check(d.length === 2 && d.every((x) => x.bus === 'effects' && x.gain === null), 'back to the cottage: ' + JSON.stringify(d));
   log(off ? '  to Wickhollow and back: no door' : '  to Wickhollow and back: the door each way, on the effects\' volume');
+
+  // ---------- footsteps (I01) ----------
+  log('step steps');
+  const steps = () => page.evaluate(() => window.__steps.splice(0));
+  let fs = await steps();
+  if (off) check(fs.length === 0, 'the game played footsteps: ' + fs.length);
+  else {
+    // soft steps at first, on the cottage's earth and the square's stone, at the effects' volume (Normal)
+    const on = fs.filter((x) => x.r), maps = [...new Set(on.map((x) => x.map))];
+    check(on.length >= 20 && fs.every((x) => x.kind === 'soft' && x.vol === 0.75) && maps.includes('cottage') && maps.includes('wickhollow'), 'the soft steps on the walk: ' + JSON.stringify({ n: fs.length, sounded: on.length, maps, first: fs.slice(0, 3) }));
+    log('  to Wickhollow and back: ' + on.length + ' soft steps on ' + maps.join(' and ') + ', at the effects\' volume');
+    // the setting, just after Surroundings, soft at first, and saved with the others
+    let S = await setting(null);
+    await rowInView('Footsteps'); await shot('settings-steps');
+    const a = S.labels.indexOf('Surroundings');
+    check(a >= 0 && S.labels[a + 1] === 'Footsteps' && S.pressed.Footsteps === 'Soft steps', 'no "Footsteps" just after "Surroundings", soft at first: ' + JSON.stringify([S.labels, S.pressed.Footsteps]));
+    await S.close();
+    // the cloak's swish instead, out to the square and back
+    S = await setting('Footsteps', 'Cloak’s swish'); await S.close();
+    check((await savedSettings()).steps === 'cloak', 'the cloak was not saved: ' + JSON.stringify(await savedSettings()));
+    await walk(552, 8);
+    await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 40000, 'Wickhollow');
+    fs = await steps();
+    check(fs.filter((x) => x.r).length >= 10 && fs.every((x) => x.kind === 'cloak'), 'the cloak\'s swish: ' + JSON.stringify({ n: fs.length, first: fs.slice(0, 3) }));
+    log('  the cloak\'s swish: ' + fs.filter((x) => x.r).length + ' on the way out');
+    // None, and Effects off: no footsteps
+    S = await setting('Footsteps', 'None'); await S.close();
+    await walk(780, 1018);
+    await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'cottage' && !window.__game.busy, null, 40000, 'the cottage again');
+    fs = await steps();
+    check(fs.length === 0 && (await savedSettings()).steps === 'off', 'with None: ' + JSON.stringify({ n: fs.length, kept: await savedSettings() }));
+    S = await setting('Footsteps', 'Soft steps'); await S.close();
+    S = await setting('Effects', 'Off'); await S.close();
+    await walk(552, 8);
+    await waitFor(() => window.__game.field.map && window.__game.field.map.id === 'wickhollow' && !window.__game.busy, null, 40000, 'Wickhollow');
+    fs = await steps();
+    check(fs.length === 0, 'with Effects off: ' + fs.length);
+    S = await setting('Effects', 'Normal'); await S.close();
+    log('  None, and Effects off: no footsteps');
+  }
 
   // ---------- Buy 10 (I12) ----------
   log('step buy10');
@@ -300,5 +353,5 @@ try {
 await browser.close();
 for (const e of errs) console.log(e);
 if (errs.length) failed = true;
-console.log(failed ? 'try test failed' : 'try test passed: ' + (off ? 'the game has the three off (words wait for a tap, no door, no Buy 10)' : 'words, door, buy10') + ' in ' + ((Date.now() - t0) / 1000).toFixed(0) + ' s');
+console.log(failed ? 'try test failed' : 'try test passed: ' + (off ? 'the game has the four off (words wait for a tap, no door, no footsteps, no Buy 10)' : 'words, door, steps, buy10') + ' in ' + ((Date.now() - t0) / 1000).toFixed(0) + ' s');
 process.exit(failed ? 1 : 0);
