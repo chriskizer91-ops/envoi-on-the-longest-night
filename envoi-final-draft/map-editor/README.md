@@ -33,6 +33,7 @@ Everything is kept in the browser as he works.
 
 - **The paths:** as for Walking Paths. `ArtifactData` `list` on the page's link, collection `edits`, one document per map; then `check-edits.mjs` and `apply-edits.mjs` (`../../envoi-game-pass-3/map-paths/README.md`).
 - **The keepsakes:** collection `places`, one document per keepsake (`places/<keepsake id>`), shaped `{ item, name, wear, source, giver, map, x, y, note, sent }`. `map`, `x` and `y` are where it lies, in the map's 1536 × 1024 painting. They are `null` for the gifts and the Colossus's two, and for one he took off its map.
+- **What he copies** ("Copy my work", pasted to Claude): save it as a file and give it to `check-edits.mjs` and `apply-edits.mjs` as it is, like the store's documents (one, a list, or the whole export). They read its `maps`; `apply-edits.mjs` also names each keepsake in it that isn't where `items.js` puts it (or has a note), for `items.js` by hand, and writes nothing, exiting 1, when it can't write a walk, block or front a document says changed.
 
 ## Files
 

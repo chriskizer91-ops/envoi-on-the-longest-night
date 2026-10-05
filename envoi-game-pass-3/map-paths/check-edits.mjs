@@ -1,6 +1,7 @@
-// check-edits.mjs: checks walking-path edits from the map paths page (envoi-game-pass-3/map-paths) before they go into
-// the game. It reads the file the page downloads or copies ("Download my edits", "Copy my edits"), one map's document
-// from the page's store (edits/<map id>, as read back, or its `data`), or a list of any of these. For each map, with the
+// check-edits.mjs: checks walking-path edits from the map paths page (envoi-game-pass-3/map-paths) and the map editor
+// (envoi-final-draft/map-editor) before they go into the game. It reads every file apply-edits.mjs reads (edits-core.js
+// docsOf): what the pages copy or download ("Copy my work", Walking Paths' "Download my edits"), one map's document from
+// the page's store (edits/<map id>, as read back, or its `data`), or a list of any of these. For each map, with the
 // page's own rules (edits-core.js):
 //   - every walk area, block and front is a closed shape: three or more different points round some ground, every
 //     point inside the painting's 1536 x 1024 (a repeated closing point or a shape crossing itself is a warning)
@@ -37,24 +38,14 @@ for (const [k, L] of Object.entries(GAME.LANDINGS)) if (L.field) { const c = E.M
 for (const k of Object.keys(E.MAGPIE_IN)) if (!GAME.LANDINGS[k] || !GAME.LANDINGS[k].field) drift.push('the Magpie’s ' + k + ' (gone from game.js)');
 if (drift.length) console.log('! the page’s copy of game.js’s arrivals is out of date for ' + drift.join(', ') + ': update WORLD_IN and MAGPIE_IN in edits-core.js');
 
-// every map document in a file: the page's download ({ maps: { id: doc } }), one document, a store read ({ data }),
-// or a list of these
-function docsOf(v, where) {
-  if (Array.isArray(v)) return v.flatMap((x, i) => docsOf(x, where + '[' + i + ']'));
-  if (v && typeof v === 'object') {
-    if (v.maps && typeof v.maps === 'object' && !Array.isArray(v.maps)) return Object.entries(v.maps).map(([k, d]) => ({ d, where, key: k }));
-    if (v.data && typeof v.data === 'object' && v.data.map) return [{ d: v.data, where }];
-    if (v.map) return [{ d: v, where }];
-  }
-  return [{ d: v, where, notDoc: true }];
-}
-
 let failed = 0, maps = 0, unread = 0;
 for (const f of files) {
   let data;
   try { data = JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { console.log('✗ ' + f + ': can’t read it as JSON (' + e.message + ')'); unread++; continue; }
-  const docs = docsOf(data, path.basename(f));
-  if (!docs.length) console.log('· ' + f + ': no maps in it');
+  // every map document in the file, as apply-edits.mjs reads it (edits-core.js docsOf); the keepsakes' places go into
+  // items.js by hand
+  const all = E.docsOf(data, path.basename(f)), docs = all.filter((x) => !x.keepsake);
+  if (!docs.length) console.log('· ' + f + ': no maps in it' + (all.length ? ' (' + all.length + ' keepsakes’ places, which go into items.js by hand)' : ''));
   for (const { d, where, key, notDoc } of docs) {
     maps++;
     if (notDoc) { console.log('✗ ' + where + ': this isn’t a map’s edits'); failed++; continue; }

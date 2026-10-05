@@ -1,16 +1,25 @@
-// apply-edits.mjs: puts Chris's edits from the Walking Paths page into the game's src/game/maps.js. Check them first
-// (check-edits.mjs). Each changed walk, block or front list is rewritten with its unchanged lines kept exactly as they
-// are (their comments, and the arc(), ring() and lamp helpers), and each new or changed shape written as plain points
-// under the comment of the shape it replaces; a lamp helper is opened up only where one of its lamps changed. A list
-// still empty, on one line (`block: [],`), gets its new shapes on lines of their own between its brackets. A one-line
-// list with something in it (the jetty's `block: [...lampBlocks(JETTY_LAMPS)],`, the fen's heart's fronts) still stops
-// it ("has no block"): open that list onto lines of its own by hand first.
+// apply-edits.mjs: puts Chris's path edits from the map editor (or the Walking Paths page) into the game's
+// src/game/maps.js. Check them first (check-edits.mjs). Each changed walk, block or front list is rewritten with its
+// unchanged lines kept exactly as they are (their comments, and the arc(), ring() and lamp helpers), and each new or
+// changed shape written as plain points under the comment of the shape it replaces; a lamp helper is opened up only
+// where one of its lamps changed. A list still empty, on one line (`block: [],`), gets its new shapes on lines of their
+// own between its brackets. A one-line list with something in it (the jetty's `block: [...lampBlocks(JETTY_LAMPS)],`,
+// the fen's heart's fronts) still stops it ("has no block"): open that list onto lines of its own by hand first.
 // Usage: node envoi-game-pass-3/map-paths/apply-edits.mjs <edits.json> [more.json ...]
-//   each file one map's document as the page's store gives it back (ArtifactData list/get with out_dir), or its data
+//   each file as check-edits.mjs reads it (edits-core.js docsOf): the map editor's "Copy my work", Walking Paths'
+//   download, a store read (ArtifactData list or get, with out_dir or not), one map's document, or a list of these.
+//   The keepsakes' places in an export or from the `places` collection aren't written here: it names the ones Chris
+//   moved, for envoi-final-draft/items/items.js by hand. Nor are moved exits, people, spots and arrivals (it names those
+//   too). It writes nothing and exits 1 when a file can't be read, holds something that isn't a map's edits, or has a
+//   document whose changed walk, block or front wasn't written.
 // Then node tools/check-maps.mjs, build, test and publish (README.md, "Reading and applying Chris's edits").
 import fs from 'fs';
 import path from 'path';
-const R = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../..'), P = path.join(R, 'src/game/maps.js');
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const HERE = path.dirname(new URL(import.meta.url).pathname), R = path.resolve(HERE, '../..'), P = path.join(R, 'src/game/maps.js');
+require(path.join(HERE, 'edits-core.js'));
+const E = globalThis.MapEdits, SHAPES = ['walk', 'block', 'front'];
 const SRC = fs.readFileSync(P, 'utf8');
 const helpers = SRC.slice(SRC.indexOf("  'use strict';") + 15, SRC.indexOf('  const MAPS = {'));
 function mapBlock(id) {
@@ -45,14 +54,27 @@ function fieldEntries(id, field) {
   return { entries, abs: [a + bodyStart, a + bodyEnd + 1], tail: lead };
 }
 
-const docs = process.argv.slice(2).map((f) => { const v = JSON.parse(fs.readFileSync(f, 'utf8')); return v.data && v.data.map ? v.data : v; });
-if (!docs.length) { console.log('Usage: node envoi-game-pass-3/map-paths/apply-edits.mjs <edits.json> [more.json ...]'); process.exit(2); }
+const files = process.argv.slice(2);
+if (!files.length) { console.log('Usage: node envoi-game-pass-3/map-paths/apply-edits.mjs <edits.json> [more.json ...]'); process.exit(2); }
+// every document in the files, read as check-edits.mjs reads them
+let bad = 0;
+const docs = [], keeps = [];
+for (const f of files) {
+  let v;
+  try { v = JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { console.log('✗ ' + f + ': can’t read it as JSON (' + e.message + ')'); bad++; continue; }
+  for (const x of E.docsOf(v, path.basename(f))) {
+    if (x.keepsake) keeps.push(x.d);
+    else if (x.notDoc) { console.log('✗ ' + x.where + ': this isn’t a map’s edits'); bad++; }
+    else if (!Array.isArray(x.d.changed)) { console.log('✗ ' + x.where + ': ' + x.d.map + '’s edits don’t say what changed'); bad++; }
+    else docs.push(x.d);
+  }
+}
 const I = '        ';
 const pts = (p) => '[' + p.map((q) => '[' + q[0] + ', ' + q[1] + ']').join(', ') + ']';
 let src = SRC;
 const edits = []; // [start, end, text], applied from the end
 for (const doc of docs) {
-  const fields = (doc.changed || []).filter((f) => ['walk', 'block', 'front'].includes(f));
+  const fields = doc.changed.filter((f) => SHAPES.includes(f));
   for (const field of fields) {
     // every list is found in maps.js as it was read; the rewrites go in from the end of the file, so none moves another
     const { entries, abs, tail, inline } = fieldEntries(doc.map, field);
@@ -92,8 +114,32 @@ for (const doc of docs) {
     edits.push([abs[0], abs[1], inline ? '\n' + out.join('\n') + '\n      ' : out.join('\n') + '\n', doc.map + ' ' + field]);
   }
 }
+// every walk, block and front a document says changed must have its rewrite; the rest of what changed goes in by hand
+for (const doc of docs) {
+  const lost = doc.changed.filter((f) => SHAPES.includes(f) && !edits.some((e) => e[3] === doc.map + ' ' + f));
+  if (lost.length) { console.log('✗ ' + doc.map + ': its ' + lost.join(', ') + ' changed, but nothing would be written for ' + (lost.length > 1 ? 'them' : 'it')); bad++; }
+  const byHand = doc.changed.filter((f) => !SHAPES.includes(f));
+  if (byHand.length) console.log('· ' + doc.map + ': its ' + byHand.join(', ') + ' changed too, which go in by hand (README.md, “Reading and applying Chris’s edits”, step 3)');
+}
+// the keepsakes' places, from an export or the `places` collection: named when they differ from items.js, never written
+if (keeps.length) {
+  globalThis.window = globalThis; require(path.join(R, 'envoi-final-draft/items/items.js'));
+  const BY = Object.fromEntries(globalThis.LOOT.ITEMS.map((it) => [it.id, it])), lines = [];
+  for (const k of keeps) {
+    const it = BY[k.item]; if (!it) { lines.push(k.item + ': not one of the keepsakes in items.js'); continue; }
+    const was = (it.source === 'hidden' || it.source === 'found') && it.at ? it.home + ' at ' + it.at.join(', ') : null, now = k.map ? k.map + ' at ' + k.x + ', ' + k.y : null;
+    const what = [];
+    if (now !== was) what.push(now ? 'lies on ' + now + (was ? ' (items.js: ' + was + ')' : ' (items.js: not on a map)') : 'taken off its map (items.js: ' + was + ')');
+    if (k.note && String(k.note).trim()) what.push('his note: “' + String(k.note).trim() + '”');
+    if (what.length) lines.push(it.name + ': ' + what.join('; '));
+  }
+  console.log('· the keepsakes’ places came too (' + keeps.length + '). apply-edits.mjs doesn’t write those: put any Chris moved into envoi-final-draft/items/items.js by hand (its home and at), then run node tools/check-maps.mjs.');
+  for (const l of lines) console.log('    ' + l);
+  if (!lines.length) console.log('    All of them are where items.js has them, with no notes: nothing to do for them.');
+}
+if (bad) { console.log('Nothing was written to maps.js: ' + bad + (bad === 1 ? ' problem' : ' problems') + ' above.'); process.exit(1); }
 edits.sort((a, b) => b[0] - a[0]);
 for (let j = 1; j < edits.length; j++) if (edits[j][1] > edits[j - 1][0]) throw new Error('overlapping edits');
 for (const [a, b, t, what] of edits) { src = src.slice(0, a) + t + src.slice(b); console.log('applied ' + what); }
 if (!edits.length) console.log('nothing to apply: no walk, block or front changed');
-fs.writeFileSync(P, src);
+else fs.writeFileSync(P, src);
