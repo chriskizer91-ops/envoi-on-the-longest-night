@@ -1,0 +1,1662 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Envoi Player’s Guide</title>
+<meta name="description" content="A late-’90s-style magazine walkthrough for Envoi on the Longest Night: every spell, boss, keepsake and secret.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wdth,wght@0,62..125,400..900;1,62..125,400..900&family=IM+Fell+English:ital@0;1&family=Silkscreen:wght@400;700&display=swap">
+<style>
+/* MOTHLIGHT Player's Guide: Envoi on the Longest Night.
+   Layout: a stack of late-'90s magazine pages lying on a night-blue desk. Each page has a running head with its
+   section tab, a folio at the foot, and a two-column text grid on wide screens that folds to one column on a phone.
+   Dark "night" pages carry the cover, the boss files and the secrets; ivory "paper" pages carry the walkthrough.
+   One deliberate look in every theme: the game's own night never goes light. */
+:root {
+  color-scheme: dark;
+  --desk: #0b0714;
+  --night: #171026;
+  --night-2: #241838;
+  --night-line: #3b2c56;
+  --moon: #ece6ff;
+  --moon-dim: #b6abd0;
+  --paper: #f2e9d3;
+  --paper-2: #e6d9b9;
+  --paper-line: #c9b893;
+  --ink: #1c1426;
+  --ink-soft: #4b3e5a;
+  --io: #c8226d;
+  --io-deep: #8e1650;
+  --sol: #f0a81f;
+  --sol-deep: #b46c00;
+  --wraith: #44e3a0;
+  --frost: #8fd6ff;
+  --blood: #d8283f;
+  --gold: #ffd66e;
+  --win1: #474f82;
+  --win2: #1c203e;
+  --winb: #d6deff;
+  --band1: #79c255;
+  --band2: #ff8a3d;
+  --band3: #6ea6ff;
+  --band4: #9ee9ff;
+  --display: "Anton", "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+  --fell: "IM Fell English", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --pixel: "Silkscreen", "Courier New", monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--desk);
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(236,230,255,.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 70% 80%, rgba(236,230,255,.25) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 45% 60%, rgba(255,214,110,.25) 50%, transparent 51%);
+  background-size: 240px 240px, 310px 310px, 420px 420px;
+  color: var(--moon);
+  font-family: var(--body);
+  font-size: 16.5px;
+  line-height: 1.55;
+  padding-inline: 16px;
+  padding-block: 20px 48px;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+b, strong { font-weight: 750; }
+
+/* ---------- the page ---------- */
+.page {
+  position: relative;
+  max-width: 1060px;
+  margin: 0 auto 34px;
+  background: var(--night);
+  color: var(--moon);
+  box-shadow: 10px 10px 0 rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
+  padding: 0 clamp(16px, 4vw, 46px) 18px;
+  overflow: hidden;
+}
+.page.paper { background: var(--paper); color: var(--ink); }
+.page.paper a { color: var(--io-deep); }
+.runner {
+  display: flex; align-items: stretch; justify-content: space-between; gap: 12px;
+  margin: 0 calc(-1 * clamp(16px, 4vw, 46px)) 22px;
+  font-family: var(--pixel); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  border-bottom: 3px solid var(--sec, var(--gold));
+}
+.runner .sec { background: var(--sec, var(--gold)); color: #120b1c; padding: 7px 14px; font-weight: 700; }
+.runner .mag { padding: 7px 14px; opacity: .75; text-align: right; }
+.folio {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  margin-top: 26px; padding-top: 8px; border-top: 1px solid currentColor;
+  font-family: var(--pixel); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; opacity: .72;
+}
+.folio .pg { font-family: var(--display); font-size: 22px; letter-spacing: 0; opacity: 1; }
+
+/* ---------- type ---------- */
+.kicker {
+  display: inline-block; font-family: var(--pixel); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  background: var(--sec, var(--gold)); color: #140c1e; padding: 4px 9px 3px; transform: skewX(-8deg);
+}
+.headline {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase; line-height: .92;
+  font-size: clamp(44px, 8vw, 86px); letter-spacing: .005em; margin: 10px 0 12px;
+  transform: skewX(-7deg); transform-origin: left bottom; text-wrap: balance;
+  color: var(--gold);
+  background: linear-gradient(180deg, #fff3c4 0%, var(--gold) 38%, var(--sol) 64%, #e2541c 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(3px 3px 0 #000) drop-shadow(0 0 1px #000);
+}
+.paper .headline {
+  background: linear-gradient(180deg, var(--io) 0%, var(--io-deep) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  filter: drop-shadow(3px 3px 0 rgba(28,20,38,.28));
+}
+.headline .small { display: block; font-size: .42em; letter-spacing: .04em; margin-bottom: .1em; }
+.deck { font-size: clamp(18px, 2.2vw, 21px); line-height: 1.45; font-style: italic; max-width: 60ch; margin: 0 0 22px; color: var(--moon-dim); }
+.paper .deck { color: var(--ink-soft); }
+h3 {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase; letter-spacing: .02em;
+  font-size: 30px; line-height: 1; margin: 26px 0 10px; text-wrap: balance;
+}
+h3 .num { display: inline-grid; place-items: center; width: 1.25em; height: 1.25em; margin-right: .3em; background: var(--sec, var(--gold)); color: #140c1e; font-size: .8em; transform: skewX(-8deg); vertical-align: .08em; }
+h4 { font-family: var(--body); font-stretch: 85%; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: 14px; margin: 18px 0 6px; color: var(--sec, var(--gold)); }
+.paper h4 { color: var(--io-deep); }
+p { margin: 0 0 12px; }
+.fell { font-family: var(--fell); }
+.lede::first-letter { font-family: var(--display); float: left; font-size: 4.1em; line-height: .82; padding: .06em .1em 0 0; color: var(--sec, var(--gold)); }
+.paper .lede::first-letter { color: var(--io); }
+.cols { columns: 2 330px; column-gap: 34px; column-rule: 1px dotted rgba(127,110,150,.5); }
+.cols > *:not(ol):not(ul):not(p) { break-inside: avoid; }
+.cols > ol, .cols > ul { break-inside: auto; }
+.cols p { break-inside: auto; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 22px 30px; align-items: start; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 18px 24px; align-items: start; }
+.grid2 > *, .grid3 > * { min-width: 0; }
+.say { font-family: var(--fell); font-size: 1.12em; line-height: 1.4; }
+.say b { font-family: var(--body); font-size: .72em; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; display: block; color: var(--sec, var(--gold)); }
+.paper .say b { color: var(--io-deep); }
+.note { font-size: 13.5px; opacity: .8; }
+.pill { display: inline-block; font-family: var(--pixel); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px 1px; border: 1.5px solid currentColor; border-radius: 2px; white-space: nowrap; vertical-align: .1em; }
+kbd { font-family: var(--pixel); font-size: 11px; border: 1.5px solid currentColor; border-bottom-width: 3px; padding: 1px 6px; border-radius: 3px; white-space: nowrap; }
+
+/* ---------- boxes ---------- */
+.box { position: relative; border: 3px solid #000; background: var(--night-2); color: var(--moon); padding: 0 16px 12px; margin: 16px 0; box-shadow: 5px 5px 0 rgba(0,0,0,.45); break-inside: avoid; }
+.box > .tag { display: inline-block; margin: 0 0 10px -16px; padding: 5px 12px 4px; font-family: var(--display); font-size: 19px; letter-spacing: .04em; text-transform: uppercase; background: var(--gold); color: #140c1e; }
+.box > .tag small { font-family: var(--pixel); font-size: 10px; letter-spacing: .1em; margin-left: 8px; opacity: .8; }
+.box p:last-child, .box ul:last-child { margin-bottom: 0; }
+.box.tip > .tag { background: var(--wraith); }
+.box.warn > .tag { background: repeating-linear-gradient(-45deg, var(--gold) 0 12px, #140c1e 12px 24px); color: transparent; width: calc(100% + 32px); margin-right: -16px; height: 12px; padding: 0; display: block; }
+.box.warn > .tag + h5 { margin-top: 2px; }
+.box.warn { border-color: var(--gold); }
+.box h5 { font-family: var(--display); font-weight: 400; font-size: 21px; text-transform: uppercase; letter-spacing: .03em; margin: 6px 0 6px; }
+.box.secret { border: 3px dashed var(--gold); background: #1d1230; }
+.box.secret > .tag { background: var(--io); color: #fff; }
+.stamp { position: absolute; right: 10px; top: 6px; font-family: var(--display); font-size: 18px; letter-spacing: .08em; color: var(--blood); border: 3px solid var(--blood); padding: 1px 8px; transform: rotate(8deg); opacity: .9; text-transform: uppercase; background: rgba(0,0,0,.2); }
+.paper .box { background: #fbf5e6; color: var(--ink); border-color: var(--ink); box-shadow: 5px 5px 0 rgba(28,20,38,.25); }
+.paper .box.secret { background: #fff3d9; border-color: var(--io); }
+.paper .box.tip > .tag { background: var(--band1); }
+.ffwin { background: linear-gradient(180deg, var(--win1), var(--win2)); border: 2px solid var(--winb); border-radius: 8px; color: #f4f6ff; padding: 12px 16px; box-shadow: 0 0 0 2px #0d0f22, 4px 4px 0 2px rgba(0,0,0,.35); font-family: var(--fell); font-size: 18px; line-height: 1.4; margin: 14px 0; break-inside: avoid; }
+.ffwin b { display: block; font-family: var(--body); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: 2px; }
+.ffwin p { margin: 0 0 6px; }
+.ffwin p:last-child { margin: 0; }
+
+/* ---------- screenshots ---------- */
+.shot { margin: 14px 0; break-inside: avoid; }
+.shot .frame { position: relative; border: 3px solid #fff; outline: 2px solid #000; box-shadow: 6px 6px 0 rgba(0,0,0,.5); background: #000; }
+.paper .shot .frame { box-shadow: 6px 6px 0 rgba(28,20,38,.3); }
+.shot img { width: 100%; height: auto; }
+.shot figcaption { font-size: 13.5px; line-height: 1.4; margin-top: 10px; display: flex; gap: 8px; align-items: baseline; }
+.shot figcaption .n { flex: none; display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 4px; font-family: var(--display); font-size: 14px; background: var(--sec, var(--gold)); color: #140c1e; transform: skewX(-8deg); }
+.strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 16px; }
+.strip > * { min-width: 0; }
+
+/* ---------- area maps with callouts ---------- */
+.areamap { margin: 18px 0 8px; break-inside: avoid; }
+.areamap .frame { position: relative; border: 3px solid #000; outline: 3px solid var(--sec, var(--gold)); box-shadow: 8px 8px 0 rgba(0,0,0,.45); }
+.areamap .frame img { width: 100%; height: auto; }
+.areamap .title { position: absolute; left: 10px; top: 10px; font-family: var(--display); font-size: clamp(14px, 2.4vw, 24px); text-transform: uppercase; background: rgba(12,7,22,.86); color: var(--gold); padding: 3px 10px 2px; border: 2px solid var(--gold); transform: skewX(-7deg); }
+.mk { position: absolute; transform: translate(-50%, -50%); width: clamp(18px, 2.6vw, 28px); height: clamp(18px, 2.6vw, 28px); border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-size: clamp(10px, 1.5vw, 15px); line-height: 1; border: 2px solid #000; box-shadow: 0 0 0 2px rgba(255,255,255,.85), 2px 2px 0 2px rgba(0,0,0,.6); color: #140c1e; background: #fff; cursor: default; }
+.mk.k { background: var(--gold); border-radius: 3px; transform: translate(-50%, -50%) rotate(45deg); }
+.mk.k span { transform: rotate(-45deg); }
+.mk.k.secret { background: var(--io); color: #fff; }
+.mk.r { background: var(--wraith); }
+.mk.s { background: var(--frost); }
+.mk.n { background: #e9e4ff; }
+.mk.w { background: #b98cff; }
+.mk.b { background: var(--blood); color: #fff; }
+.mk.x { background: #fff; border-radius: 3px; width: auto; min-width: clamp(18px, 2.6vw, 28px); padding: 0 4px; }
+.mk.m { background: var(--sol); }
+.legend { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 6px 18px; font-size: 14px; line-height: 1.35; }
+.legend li { display: flex; gap: 9px; align-items: flex-start; min-width: 0; }
+.legend .mk { position: static; transform: none; flex: none; width: 22px; height: 22px; font-size: 12px; box-shadow: 1px 1px 0 1px rgba(0,0,0,.4); }
+.legend .mk.k { transform: rotate(45deg) scale(.86); }
+.legend .mk.x { width: auto; min-width: 22px; }
+.key { display: flex; flex-wrap: wrap; gap: 6px 16px; font-family: var(--pixel); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; margin: 10px 0 0; opacity: .85; }
+.key span { display: inline-flex; align-items: center; gap: 6px; }
+.key i { width: 11px; height: 11px; border: 1.5px solid #000; display: inline-block; }
+
+/* ---------- tables ---------- */
+.tablewrap { overflow-x: auto; margin: 12px 0 16px; break-inside: avoid; -webkit-overflow-scrolling: touch; }
+table.stat { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.35; font-variant-numeric: tabular-nums; min-width: 520px; }
+table.stat.narrow { min-width: 0; }
+table.stat th { font-family: var(--body); font-stretch: 85%; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: 12px; text-align: left; background: #000; color: var(--gold); padding: 7px 9px; white-space: nowrap; }
+table.stat td { padding: 6px 9px; border-bottom: 1px solid var(--night-line); vertical-align: top; }
+table.stat tr:nth-child(even) td { background: rgba(255,255,255,.035); }
+.paper table.stat th { background: var(--ink); color: var(--paper); }
+.paper table.stat td { border-bottom-color: var(--paper-line); }
+.paper table.stat tr:nth-child(even) td { background: rgba(28,20,38,.045); }
+table.stat td.num, table.stat th.num { text-align: right; white-space: nowrap; }
+table.stat .nm { font-weight: 750; white-space: nowrap; }
+
+/* ---------- cover ---------- */
+.cover { padding: 0; background: #07040d; }
+.cover .art { position: relative; }
+.cover .art img { width: 100%; height: auto; }
+.cover .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,4,13,.15) 0%, rgba(7,4,13,0) 30%, rgba(7,4,13,.2) 62%, #07040d 100%); }
+.masthead { position: relative; z-index: 2; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 4px 16px; padding: 14px clamp(16px, 4vw, 40px) 10px; background: #07040d; border-bottom: 4px solid var(--io); }
+.masthead .logo { font-family: var(--display); font-size: clamp(58px, 13vw, 138px); line-height: .82; letter-spacing: .01em; transform: skewX(-8deg); background: linear-gradient(180deg, #ffffff 0%, #d9d3ff 30%, #9c8cff 60%, var(--io) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: #d9d3ff; filter: drop-shadow(4px 4px 0 var(--io-deep)) drop-shadow(2px 2px 0 #000); }
+.masthead .issue { font-family: var(--pixel); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--moon-dim); text-align: right; line-height: 1.6; }
+.masthead .issue b { color: var(--gold); }
+.coverbody { position: relative; z-index: 2; margin-top: clamp(-170px, -16vw, -40px); padding: 0 clamp(16px, 4vw, 40px) 26px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px 26px; align-items: end; }
+.coverbody .gamename { font-family: var(--fell); font-style: italic; font-size: clamp(30px, 5.4vw, 58px); line-height: 1; color: #fff; text-shadow: 0 2px 18px rgba(0,0,0,.9), 0 0 2px #000; margin: 0 0 8px; text-wrap: balance; }
+.coverbody .strap { font-family: var(--display); text-transform: uppercase; font-size: clamp(22px, 3.6vw, 38px); line-height: .98; color: var(--gold); transform: skewX(-7deg); text-shadow: 3px 3px 0 #000; margin: 0 0 10px; }
+.coverlines { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.coverlines li { font-family: var(--display); text-transform: uppercase; font-size: clamp(17px, 2.3vw, 24px); line-height: 1.02; color: #fff; text-shadow: 2px 2px 0 #000; border-left: 6px solid var(--io); padding: 2px 0 2px 10px; }
+.coverlines li small { display: block; font-family: var(--body); text-transform: none; font-size: 13.5px; line-height: 1.3; color: var(--moon-dim); text-shadow: none; margin-top: 3px; }
+.coverlines li.y { border-color: var(--sol); }
+.coverlines li.g { border-color: var(--wraith); }
+.burst { position: absolute; z-index: 3; right: clamp(10px, 4vw, 44px); top: clamp(120px, 21vw, 230px); width: clamp(104px, 16vw, 160px); aspect-ratio: 1; max-width: 100%; display: grid; place-items: center; text-align: center; background: var(--gold); color: #140c1e; transform: rotate(12deg); clip-path: polygon(50% 0%, 59% 13%, 75% 5%, 77% 21%, 95% 21%, 88% 37%, 100% 50%, 88% 63%, 95% 79%, 77% 79%, 75% 95%, 59% 87%, 50% 100%, 41% 87%, 25% 95%, 23% 79%, 5% 79%, 12% 63%, 0% 50%, 12% 37%, 5% 21%, 23% 21%, 25% 5%, 41% 13%); }
+.burst span { font-family: var(--display); text-transform: uppercase; font-size: clamp(15px, 2.4vw, 23px); line-height: .95; padding: 18%; }
+.burst span b { display: block; font-size: 1.7em; font-weight: 400; color: var(--io-deep); }
+.barcode { display: flex; align-items: flex-end; gap: 10px; justify-self: end; background: #fff; color: #000; padding: 6px 8px 4px; font-family: var(--pixel); font-size: 9px; }
+.barcode i { display: block; height: 38px; width: 92px; background: repeating-linear-gradient(90deg, #000 0 2px, #fff 2px 3px, #000 3px 4px, #fff 4px 6px, #000 6px 9px, #fff 9px 10px, #000 10px 11px, #fff 11px 14px); }
+
+/* ---------- contents ---------- */
+.toc { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.toc a { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 9px 4px 8px; text-decoration: none; border-bottom: 1px dotted var(--night-line); }
+.toc a:hover { background: rgba(255,255,255,.04); }
+.toc .p { font-family: var(--display); font-size: 26px; line-height: 1; color: var(--c, var(--gold)); }
+.toc .t { font-family: var(--display); text-transform: uppercase; font-size: 21px; line-height: 1.05; letter-spacing: .02em; }
+.toc .d { display: block; font-family: var(--body); text-transform: none; font-size: 13.5px; letter-spacing: 0; color: var(--moon-dim); margin-top: 2px; }
+.toc .chip { width: 14px; height: 14px; background: var(--c, var(--gold)); transform: skewX(-8deg); }
+
+/* ---------- cast cards ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.hero .face { border: 3px solid #fff; outline: 2px solid #000; box-shadow: 6px 6px 0 var(--c, var(--io)); }
+.hero h3 { margin-top: 0; color: var(--c, var(--io)); }
+.statbar { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 6px; margin: 10px 0; }
+.statbar div { background: #000; border: 1px solid var(--night-line); padding: 6px 8px; font-variant-numeric: tabular-nums; }
+.statbar small { display: block; font-family: var(--pixel); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--moon-dim); }
+.statbar b { font-family: var(--display); font-weight: 400; font-size: 19px; line-height: 1.15; color: var(--c, var(--gold)); }
+
+/* ---------- boss file ---------- */
+.bossfile { border: 3px solid #000; background: linear-gradient(180deg, #2a1023 0%, var(--night-2) 140px); box-shadow: 8px 8px 0 rgba(0,0,0,.5); margin: 22px 0; break-inside: avoid; }
+.bossfile header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 14px; padding: 10px 16px 8px; background: #000; border-bottom: 3px solid var(--blood); }
+.bossfile header h3 { margin: 0; font-size: clamp(26px, 4vw, 36px); color: #fff; transform: skewX(-6deg); }
+.bossfile header .where { font-family: var(--pixel); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+.bossfile .inner { padding: 14px 16px 16px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 18px 24px; }
+.bossfile .inner > * { min-width: 0; }
+.bossfile .threat { display: inline-flex; gap: 3px; vertical-align: middle; }
+.bossfile .threat i { width: 12px; height: 12px; background: var(--blood); transform: skewX(-12deg); display: block; }
+.bossfile .threat i.off { background: #3a2a45; }
+.vitals { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 6px; margin-bottom: 12px; }
+.vitals div { background: #000; padding: 6px 9px; border-left: 4px solid var(--blood); font-variant-numeric: tabular-nums; }
+.vitals small { display: block; font-family: var(--pixel); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--moon-dim); }
+.vitals b { font-family: var(--display); font-weight: 400; font-size: 20px; }
+.moves { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.moves li { padding: 6px 0; border-bottom: 1px dotted var(--night-line); }
+.moves li b { color: var(--gold); }
+.moves li .pill { color: var(--frost); margin-left: 4px; }
+.plan { counter-reset: s; list-style: none; margin: 0; padding: 0; }
+.plan li { counter-increment: s; position: relative; padding: 0 0 10px 36px; }
+.plan li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; display: grid; place-items: center; font-family: var(--display); font-size: 15px; background: var(--gold); color: #140c1e; transform: skewX(-8deg); }
+
+/* ---------- walkthrough steps ---------- */
+.steps { counter-reset: st; list-style: none; margin: 8px 0 14px; padding: 0; }
+.steps > li { counter-increment: st; position: relative; padding: 0 0 12px 44px; break-inside: avoid; }
+.steps > li::before { content: counter(st); position: absolute; left: 0; top: 0; width: 30px; height: 30px; display: grid; place-items: center; font-family: var(--display); font-size: 17px; color: #fff; background: var(--io); border: 2px solid var(--ink); transform: skewX(-8deg); }
+.steps > li > b:first-child { display: block; font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: 19px; letter-spacing: .02em; line-height: 1.1; margin-bottom: 3px; }
+.night .steps > li::before { border-color: #000; }
+.bandhead { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin: -6px 0 18px; font-family: var(--pixel); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.bandhead span { border: 2px solid currentColor; padding: 3px 9px 2px; }
+
+/* ---------- keepsakes ---------- */
+.kgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.kcard { position: relative; display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; background: linear-gradient(160deg, #2b1e40 0%, #171026 100%); border: 2px solid var(--night-line); padding: 12px; box-shadow: 5px 5px 0 rgba(0,0,0,.45); min-width: 0; }
+.kcard.secret { border-color: var(--io); box-shadow: 5px 5px 0 var(--io-deep); }
+.kcard img { width: 92px; height: 92px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.6)); }
+.kcard h4 { margin: 0 0 3px; color: #fff; font-family: var(--fell); font-size: 18px; text-transform: none; letter-spacing: 0; font-stretch: 100%; font-weight: 400; line-height: 1.15; }
+.kcard .who { display: block; padding-right: 66px; font-family: var(--pixel); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--moon-dim); }
+.kcard .fx { font-size: 13.5px; line-height: 1.35; margin: 6px 0; }
+.kcard .fx b { color: var(--gold); font-weight: 700; }
+.kcard .where { font-size: 13px; line-height: 1.35; color: var(--moon-dim); border-top: 1px dotted var(--night-line); padding-top: 6px; }
+.kcard .ck { position: absolute; right: 8px; top: 8px; display: flex; align-items: center; gap: 5px; font-family: var(--pixel); font-size: 9.5px; text-transform: uppercase; color: var(--moon-dim); }
+.kcard .ck input { width: 18px; height: 18px; accent-color: var(--gold); margin: 0; }
+.kcard .sticker { position: absolute; left: -6px; top: -8px; font-family: var(--display); font-size: 12px; letter-spacing: .06em; background: var(--io); color: #fff; padding: 2px 7px 1px; transform: rotate(-6deg); border: 2px solid #000; }
+.tally { font-family: var(--display); font-size: 22px; color: var(--gold); }
+
+/* ---------- misc ---------- */
+.spoiler { font-family: var(--pixel); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; background: var(--blood); color: #fff; padding: 8px 12px 7px; margin: 0 0 18px; display: block; }
+.pullquote { font-family: var(--fell); font-style: italic; font-size: clamp(22px, 3vw, 30px); line-height: 1.2; color: var(--gold); border-top: 3px solid var(--gold); border-bottom: 3px solid var(--gold); padding: 12px 0; margin: 18px 0; text-wrap: balance; break-inside: avoid; }
+.paper .pullquote { color: var(--io-deep); border-color: var(--io); }
+.pullquote cite { display: block; font-family: var(--pixel); font-size: 10.5px; font-style: normal; letter-spacing: .1em; text-transform: uppercase; margin-top: 8px; opacity: .8; }
+.toplink { position: fixed; right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); z-index: 20; font-family: var(--display); font-size: 15px; text-transform: uppercase; letter-spacing: .04em; text-decoration: none; background: var(--gold); color: #140c1e; padding: 8px 12px 7px; border: 2px solid #000; box-shadow: 3px 3px 0 #000; transform: skewX(-8deg); }
+ul.tight { margin: 0 0 12px; padding-left: 20px; }
+ul.tight li { margin-bottom: 4px; }
+.bar { height: 10px; background: #000; border: 1px solid var(--night-line); position: relative; }
+.bar i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--io), var(--gold)); }
+.colophon { font-size: 13.5px; color: var(--moon-dim); }
+
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .coverbody { grid-template-columns: minmax(0, 1fr); margin-top: -24px; }
+  .burst { top: clamp(84px, 30vw, 160px); }
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .hero .face { max-width: 220px; }
+  .bossfile .inner { grid-template-columns: minmax(0, 1fr); }
+  .runner .mag { display: none; }
+  .barcode { justify-self: start; }
+}
+
+.narrowfig { max-width: 640px; }
+code { font-family: var(--pixel); font-size: .8em; background: rgba(127,110,150,.18); padding: 1px 5px; border-radius: 2px; }
+.mk.band { color: #140c1e; }
+.mk.b1 { background: var(--band1); }
+.mk.b2 { background: var(--band2); }
+.mk.b3 { background: var(--band3); }
+.mk.b4 { background: var(--band4); }
+.mk.x { font-family: "Arial", "Helvetica Neue", "Segoe UI Symbol", sans-serif; font-weight: 700; }
+
+</style>
+</head>
+<body>
+
+<section class="page cover" id="cover" aria-label="Cover">
+  <div class="masthead">
+    <div class="logo" aria-label="Mothlight">MOTHLIGHT</div>
+    <div class="issue">The night-gaming monthly<br><b>Winter Special</b> · Player’s Guide No. 1<br>Longest Night Issue · $5.99</div>
+  </div>
+  <div class="art">
+    <img src="images/art/title.jpg" alt="Title painting: Io the witch casts toward Noctara the Starless, with Lunara and the letter-wyrm Envoi above them" width="1400" height="788">
+  </div>
+  <div class="burst" aria-hidden="true"><span>Secret <b>Roof</b> revealed!</span></div>
+  <div class="coverbody">
+    <div>
+      <p class="gamename">Envoi on the Longest Night</p>
+      <p class="strap">The complete player’s guide</p>
+      <ul class="coverlines">
+        <li>Every spell revealed <small>Io’s Witchcraft and Moonlore, Sol’s Sword Arts, both Trances and both summons, with real numbers</small></li>
+        <li class="y">All 20 keepsakes <small>Including the two hidden ones nobody finds by accident</small></li>
+      </ul>
+    </div>
+    <div>
+      <ul class="coverlines">
+        <li class="g">Boss files <small>The great wraith, the Gloam Knight, the Bramble Colossus and Noctara the Starless</small></li>
+        <li>13 painted maps <small>Every glint, letter well, shop, bed and exit marked</small></li>
+        <li class="y">Level 20 or bust <small>Why the last four levels matter, and where to earn them</small></li>
+      </ul>
+      <div class="barcode" style="margin-top:16px" aria-hidden="true"><i></i><span>WINTER<br>ISSUE</span></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="page" id="contents" style="--sec: var(--gold)">
+  <header class="runner"><span class="sec">Contents</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <div class="grid2">
+    <div>
+      <span class="kicker">In this issue</span>
+      <h2 class="headline">Contents</h2>
+      <ol class="toc">
+        <li><a href="#basics" style="--c: var(--moon)"><span class="p">3</span><span class="t">Getting started<span class="d">The title screen, controls, saving, the menu and settings</span></span><span class="chip"></span></a></li>
+        <li><a href="#cast" style="--c: var(--io)"><span class="p">4</span><span class="t">Meet the cast<span class="d">Io, Sol, the summons, and who stands against them</span></span><span class="chip"></span></a></li>
+        <li><a href="#battle" style="--c: var(--wraith)"><span class="p">5</span><span class="t">Battle school<span class="d">Turn gauges, Heat, Trance, warnings and the end card</span></span><span class="chip"></span></a></li>
+        <li><a href="#spells" style="--c: var(--io)"><span class="p">7</span><span class="t">The spellbook<span class="d">Every move for both heroes, with costs and power</span></span><span class="chip"></span></a></li>
+        <li><a href="#atlas" style="--c: var(--sol)"><span class="p">9</span><span class="t">The atlas &amp; the Magpie<span class="d">The world map, the four bands and the three upgrades</span></span><span class="chip"></span></a></li>
+        <li><a href="#walk1" style="--c: var(--band1)"><span class="p">10</span><span class="t">Walkthrough I: Wickhollow to the fen<span class="d">Levels 1–5 · the great wraith</span></span><span class="chip"></span></a></li>
+        <li><a href="#walk2" style="--c: var(--band2)"><span class="p">13</span><span class="t">Walkthrough II: The Warm Roads<span class="d">Levels 5–10 · Dawnroost and the making of Envoi</span></span><span class="chip"></span></a></li>
+        <li><a href="#walk3" style="--c: var(--band3)"><span class="p">14</span><span class="t">Walkthrough III: The north road<span class="d">Levels 10–15 · the Gloam Knight and the shipyard</span></span><span class="chip"></span></a></li>
+        <li><a href="#walk4" style="--c: var(--band4)"><span class="p">16</span><span class="t">Walkthrough IV: Over the peaks<span class="d">Levels 15–20 · Misthollow and the dead Moonwell</span></span><span class="chip"></span></a></li>
+        <li><a href="#bosses" style="--c: var(--blood)"><span class="p">18</span><span class="t">Boss files<span class="d">Stats, every move and a plan for each fight</span></span><span class="chip"></span></a></li>
+        <li><a href="#bestiary" style="--c: var(--wraith)"><span class="p">20</span><span class="t">Bestiary<span class="d">Wisps, wraiths and the four Bramble Horrors</span></span><span class="chip"></span></a></li>
+        <li><a href="#keepsakes" style="--c: var(--gold)"><span class="p">21</span><span class="t">The keepsakes<span class="d">All 20, with a checklist you can tick off</span></span><span class="chip"></span></a></li>
+        <li><a href="#herbs" style="--c: var(--band1)"><span class="p">22</span><span class="t">Herbs, shops &amp; levels<span class="d">Prices in every band and the experience chart</span></span><span class="chip"></span></a></li>
+        <li><a href="#secrets" style="--c: var(--io)"><span class="p">23</span><span class="t">Secrets &amp; letters<span class="d">The red roof, the five wells and other quiet things</span></span><span class="chip"></span></a></li>
+        <li><a href="#tips" style="--c: var(--gold)"><span class="p">24</span><span class="t">Top 20 tips<span class="d">Everything we wish we’d known on our first night</span></span><span class="chip"></span></a></li>
+      </ol>
+    </div>
+    <div>
+      <span class="kicker" style="--sec: var(--io)">From the editors</span>
+      <h3 style="margin-top:12px">Welcome to the longest night</h3>
+      <p class="lede">Three nights before the longest night of the year, the stars over Wickhollow go out. Io, the village witch, keeps the Moonwell and a bundle of letters to the dead that she has never been able to burn. By the end of this guide she will have flown a patched-up skiff over the Ironspire Peaks, folded those letters into a wyrm, and stood at a dead Moonwell against Noctara the Starless.</p>
+      <p>We played it to the end and opened up the game files to check our work. Every number in these pages is the game’s own: what each spell costs, how hard it hits, how much a Nightrose costs in the far north, and where every last keepsake is lying in the dark.</p>
+      <p>Read it front to back for a full walkthrough, or jump to what you need. The maps are marked with numbered callouts, and the keepsake list has boxes you can tick as you go. Your ticks stay on this device.</p>
+      <div class="box tip"><span class="tag">How to read this guide</span>
+        <p><b>TIP</b> boxes hold strategy. <b>SECRET</b> boxes point at things the game never tells you. <b>WARNING</b> boxes mean a fight that can go badly if you walk in unready.</p>
+        <p>Numbers assume the level you’re likely to be at that point. Every move hits about 20% harder per level, so a level ahead of us is a big help.</p>
+      </div>
+      <p class="spoiler">Spoiler warning: the walkthrough follows the whole story, ending included.</p>
+      <figure class="shot"><div class="frame"><img src="images/shots/title.webp" alt="The title screen. New game starts in Io’s cottage, Chapters jumps ahead to a later gate, and Load takes a slot or a pasted save code." loading="lazy" width="960" height="640"></div><figcaption><span>The title screen. <b>New game</b> starts in Io’s cottage, <b>Chapters</b> jumps ahead to a later gate, and <b>Load</b> takes a slot or a pasted save code.</span></figcaption></figure>
+    </div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Contents</span><span class="pg">2</span></footer>
+</section>
+
+
+<section class="page paper" id="basics" style="--sec: var(--win1)">
+  <header class="runner"><span class="sec">Getting started</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker" style="--sec: var(--frost)">Basic training</span>
+  <h2 class="headline"><span class="small">Before you leave the cottage</span>Getting started</h2>
+  <p class="deck">Envoi on the Longest Night plays in your browser on a phone, tablet or computer. You walk painted towns and woods, talk to everyone, and fight in a turn-gauge battle system in the spirit of the late PlayStation classics. Here’s everything you need before the first wraith.</p>
+
+  <div class="grid2">
+    <div>
+      <h3><span class="num">1</span>The title screen</h3>
+      <ul class="tight">
+        <li><b>Continue</b> appears once you have a save. It loads the slot you saved in most recently and puts Io exactly where she stood.</li>
+        <li><b>New game</b> asks which of the <b>three save slots</b> to use, then plays the prologue and wakes Io in her cottage.</li>
+        <li><b>Chapters</b> is the game’s level select. Pick <i>The start</i>, <i>Gate 5: the great wraith</i>, <i>Gate 10: Dawnroost</i>, <i>Gate 15: Halcyon</i> or <i>The approach to the finale</i>. “The party comes as the story leaves it there”: the right level, the shards for the next upgrade, and 3 of each herb. You start with no keepsakes, though.</li>
+        <li><b>Load</b> lists your slots and has <b>Paste a save code</b>, for a game copied from another device.</li>
+      </ul>
+      <h3><span class="num">2</span>Controls</h3>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>To…</th><th>On a phone</th><th>On a keyboard</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Walk</td><td>Tap where Io should go, hold to steer, or use the on-screen arrows</td><td><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></td></tr>
+          <tr><td class="nm">Talk or use</td><td>Tap a person or anything glowing, or the action button</td><td><kbd>Enter</kbd> <kbd>Space</kbd> <kbd>Z</kbd></td></tr>
+          <tr><td class="nm">Next line</td><td>Tap the text box</td><td><kbd>Enter</kbd> <kbd>Space</kbd> <kbd>Z</kbd></td></tr>
+          <tr><td class="nm">Menu</td><td>☰ Menu, top left</td><td><kbd>Esc</kbd> or <kbd>M</kbd></td></tr>
+          <tr><td class="nm">Battle menus</td><td>Tap a command, then its target</td><td><kbd>↑</kbd><kbd>↓</kbd> to move, <kbd>Enter</kbd> to pick, <kbd>Esc</kbd> to go back</td></tr>
+          <tr><td class="nm">Fly the Magpie</td><td>Tap the map, or use ▲ Faster, ◀ ▶ Turn, ▼ Slower</td><td>Arrow keys</td></tr>
+        </tbody>
+      </table></div>
+      <p>The action button names what’s in reach: <i>Talk to Nettie</i>, <i>Rest</i>, <i>The Magpie</i>, or a spot’s own name. If you’re ever unsure where to go, follow the <b>golden arrow</b>. It always points at the next story goal.</p>
+    </div>
+    <div>
+      <h3><span class="num">3</span>The field screen</h3>
+      <figure class="areamap" style="--sec: var(--win1)">
+        <div class="frame">
+          <img src="images/shots/map-wickhollow.webp" alt="Io in Wickhollow with the place name, menu button, minimap, golden arrow and arrow pad on screen" width="960" height="640" loading="lazy">
+          <span class="mk n" style="left:14.5%;top:4%"><span>A</span></span>
+          <span class="mk n" style="left:12.5%;top:10.5%"><span>B</span></span>
+          <span class="mk n" style="left:82%;top:9%"><span>C</span></span>
+          <span class="mk n" style="left:43%;top:47%"><span>D</span></span>
+          <span class="mk n" style="left:55%;top:62%"><span>E</span></span>
+          <span class="mk n" style="left:79%;top:87%"><span>F</span></span>
+          <span class="mk n" style="left:29%;top:18%"><span>G</span></span>
+        </div>
+        <ul class="legend">
+          <li><span class="mk n"><span>A</span></span><span><b>Where you are.</b> The name of the map.</span></li>
+          <li><span class="mk n"><span>B</span></span><span><b>Menu.</b> Party, Herbs, Items, Moonlore, Saves and Settings.</span></li>
+          <li><span class="mk n"><span>C</span></span><span><b>Minimap.</b> The whole area, with Io as a pink dot.</span></li>
+          <li><span class="mk n"><span>D</span></span><span><b>Io.</b> Sol follows in her steps once she joins.</span></li>
+          <li><span class="mk n"><span>E</span></span><span><b>The golden arrow.</b> Points to your next goal.</span></li>
+          <li><span class="mk n"><span>F</span></span><span><b>Arrow pad.</b> An alternative to tap-to-walk.</span></li>
+          <li><span class="mk n"><span>G</span></span><span><b>People.</b> Tap anyone to talk. Here, Mayor Gretch.</span></li>
+        </ul>
+      </figure>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <h3><span class="num">4</span>Saving and resting</h3>
+      <p>The game <b>saves itself</b> every time you change places, rest, finish a fight, buy herbs or pick something up. You rarely need to think about it.</p>
+      <p><b>Rest points</b> refill HP and MP, save, and become the spot you wake at if you lose a fight. They’re all free: Io’s bed, Wickhollow’s Moonwell, Tobb’s Lanternless Inn in Bogmire, the Warden hall at Dawnroost, the shipyard bunkhouse, the sled camp in the frozen pass, Ede’s Lantern House in Misthollow, and the three camps on the world map.</p>
+      <p>To keep a game somewhere safe, open <b>Menu → Saves → Save code → Copy</b>. The code starts <code>ENVOI1:</code>. On another device, choose <b>Load → Paste a save code</b>.</p>
+      <div class="box warn"><span class="tag">Warning</span><h5>Pasting overwrites without asking</h5><p>A pasted save code goes straight into the slot you’re using. Switch to an empty slot first if you want to keep the game that’s there.</p></div>
+    </div>
+    <div>
+      <h3><span class="num">5</span>Losing isn’t the end</h3>
+      <p>There’s no Game Over screen. If the whole party falls, you wake at the last place you rested with <b>full HP and MP</b>, and the game <b>gives back every herb you used</b> in the fight. You only lose the walk back, and the fight’s experience and shards.</p>
+      <p>So try a hard fight early just to see it. It costs you very little.</p>
+      <h3><span class="num">6</span>Settings worth knowing</h3>
+      <ul class="tight">
+        <li><b>Random fights:</b> Fewer, Normal or More. Fewer stretches the walk between fights to 1⅔×; More shortens it to ⅔×. Set it to More when you’re grinding.</li>
+        <li><b>Words:</b> Slow, Normal, Fast or All at once.</li>
+        <li><b>Text size:</b> Normal or Large.</li>
+        <li><b>Map light:</b> Dim, Normal or Bright. Bright helps on a phone outdoors.</li>
+        <li><b>Music, Effects, Surroundings:</b> Off, Soft, Normal or Loud.</li>
+        <li><b>Battle frame rate:</b> 30 (the default), 45, 60 or Screen.</li>
+        <li><b>Watch again:</b> replays the two full cutscenes once you’ve seen them.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="strip">
+    <figure class="shot"><div class="frame"><img src="images/shots/ui-menu.webp" alt="The menu. Party shows your level, experience to the next level and your sunstone shards, the only money in the game." loading="lazy" width="960" height="640"></div><figcaption><span class="n">M</span><span>The menu. <b>Party</b> shows your level, experience to the next level and your <b>sunstone shards</b>, the only money in the game.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/ui-tab-settings.webp" alt="Settings are shared by all three save slots." loading="lazy" width="960" height="640"></div><figcaption><span class="n">S</span><span><b>Settings</b> are shared by all three save slots.</span></figcaption></figure>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Getting started</span><span class="pg">3</span></footer>
+</section>
+
+
+<section class="page" id="cast" style="--sec: var(--io)">
+  <header class="runner"><span class="sec">Meet the cast</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Character profiles</span>
+  <h2 class="headline"><span class="small">The witch, the Warden and the night</span>Meet the cast</h2>
+  <p class="deck">Only two heroes ever fight, but they fight in very different ways. Io spends MP; Sol builds up Heat and spends it. Learn both rhythms and you’ve learned the game.</p>
+
+  <div class="grid2">
+    <article class="hero" style="--c: var(--io)">
+      <img class="face" src="images/art/portrait-io.jpg" alt="Io, the witch of Wickhollow, in her wide crimson hat and round glasses" width="480" height="480" loading="lazy">
+      <div style="min-width:0">
+        <h3>Io, the Witch</h3>
+        <p class="say"><b>Io</b>“I keep the Moonwell here, and the moths that come home to it.”</p>
+        <div class="statbar">
+          <div><small>HP at L1 → L20</small><b>1,400 → 44,727</b></div>
+          <div><small>MP at L1 → L20</small><b>120 → 363</b></div>
+          <div><small>Turn gauge</small><b>2.4 s</b></div>
+        </div>
+        <p>Wickhollow’s village witch and the heart of the party. Her <b>Witchcraft</b> deals damage, her <b>Moonlore</b> heals and feeds Heat to Sol, and only she can <b>summon</b>. Her Trance is the <b>Lunar Trance</b>: Moonlore at half cost, Lunar Mend healing everyone, and the finisher <b>Moonlight</b>.</p>
+      </div>
+    </article>
+    <article class="hero" style="--c: var(--sol)">
+      <img class="face" src="images/art/portrait-sol.jpg" alt="Sol, the last Warden, red-haired in gold sun armor" width="480" height="480" loading="lazy">
+      <div style="min-width:0">
+        <h3>Sol, the last Warden</h3>
+        <p class="say"><b>Sol</b>“All but one. Sol, of Dawnroost.”</p>
+        <div class="statbar">
+          <div><small>HP at L1 → L20</small><b>1,800 → 57,506</b></div>
+          <div><small>Heat</small><b>0 – 100</b></div>
+          <div><small>Turn gauge</small><b>2.2 s</b></div>
+        </div>
+        <p>She runs into Wickhollow chasing a wraith and joins after your first fight. Sol has no MP. Each Attack gives her <b>+20 Heat</b> and every hit she takes <b>+10</b>, and her <b>Sword Arts</b> spend it. She’s faster and tougher than Io, and her passive <b>Warden’s Oath</b> has her take hits meant for Io whenever Io drops below 25% HP. Her Trance is <b>Dawnbreaker</b>.</p>
+      </div>
+    </article>
+  </div>
+
+  <h3 style="margin-top:30px">The summons</h3>
+  <div class="grid2">
+    <article class="hero" style="--c: var(--frost)">
+      <img class="face" src="images/art/portrait-lunara.jpg" alt="Lunara, the Pale Mother, with silver hair, moth wings and a crescent halo" width="400" height="400" loading="lazy">
+      <div style="min-width:0">
+        <h4 style="color:var(--frost)">Lunara, the Pale Mother</h4>
+        <p>She sleeps in Wickhollow’s Moonwell, and Io can call her <b>once per battle</b> from the very first fight. She heals everyone for 60% of their max HP, <b>revives anyone who’s down</b>, and cuts all damage to the party to 60% until she strikes. On Io’s next turn she unleashes <b>Silver Requiem</b> and <b>Moonfall</b>.</p>
+      </div>
+    </article>
+    <article class="hero" style="--c: var(--gold)">
+      <img class="face" src="images/art/portrait-envoi.jpg" alt="Envoi, a golden wyrm folded from letters sealed with red wax" width="528" height="396" loading="lazy">
+      <div style="min-width:0">
+        <h4>Envoi, the Letter Wyrm</h4>
+        <p>Folded from the letters Io could never burn, and lit from Dawnroost’s living node. Once per battle, if Sol has <b>70 Heat or more</b>, Io can call Envoi. It puts up the <b>Folding Ward</b>, which swallows the next enemy attack whole, then strikes for the biggest single number in the game.</p>
+      </div>
+    </article>
+  </div>
+
+  <h3 style="margin-top:30px">Faces on the road</h3>
+  <div class="grid3">
+    <div class="ffwin"><b>Halcyon, the Gloam Knight</b><p>A knight in dark armor with a black blade. Sol knows the way she fights. Halcyon taught her.</p></div>
+    <div class="ffwin"><b>Noctara the Starless</b><p>She put out the stars, and on the longest night she means to put out the moon from Misthollow’s Moonwell.</p></div>
+    <div class="ffwin"><b>Quill</b><p>Grumbling owner of the Magpie, a little skiff that flies on sunstone and stubbornness.</p></div>
+    <div class="ffwin"><b>Ysmera Brightkeel</b><p>Aurosi shipmaster at the northern shipyard. Her gnomes can give the Magpie a moon-sail.</p></div>
+    <div class="ffwin"><b>Nettie, Hilde &amp; Mayor Gretch</b><p>Wickhollow’s herbalist, smith and mayor. Nettie has a gift for Io once Sol joins.</p></div>
+    <div class="ffwin"><b>Marta</b><p>Keeps the Warden hall at Dawnroost, all forty bunks still made up. She has something of Sol’s.</p></div>
+  </div>
+  <div class="grid2" style="margin-top:8px">
+    <div>
+      <img src="images/art/portrait-noctara.jpg" alt="Noctara the Starless, crowned and veiled in black, with a wraith behind her" width="400" height="400" loading="lazy" style="border:3px solid #fff;outline:2px solid #000;box-shadow:6px 6px 0 var(--io-deep);max-width:280px">
+    </div>
+    <div>
+      <p class="pullquote">“Noctara will be at Misthollow’s Moonwell on the longest night. If she eclipses the moon from there, the night won’t end.”<cite>Ysmera Brightkeel, at the shipyard</cite></p>
+    </div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Meet the cast</span><span class="pg">4</span></footer>
+</section>
+
+
+<section class="page" id="battle" style="--sec: var(--wraith)">
+  <header class="runner"><span class="sec">Battle school</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Battle school · part 1</span>
+  <h2 class="headline"><span class="small">Gauges, commands and the windows</span>How battles work</h2>
+  <p class="deck">Fights happen on a painted stage with the 3D party on one side and the foes on the other. If you’ve played a late-’90s Final Fantasy you’ll feel at home in seconds. There’s one big difference: you can never be rushed.</p>
+
+  <figure class="areamap" style="--sec: var(--wraith)">
+    <div class="frame">
+      <img src="images/shots/b1-flame-sub.webp" alt="Io's Witchcraft menu open against the Shadow Wraith in the Night square" width="960" height="640" loading="lazy">
+      <span class="mk n" style="left:20%;top:4%"><span>A</span></span>
+      <span class="mk n" style="left:26%;top:80%"><span>B</span></span>
+      <span class="mk n" style="left:61%;top:84%"><span>C</span></span>
+      <span class="mk n" style="left:88%;top:91%"><span>D</span></span>
+      <span class="mk n" style="left:68%;top:93%"><span>E</span></span>
+    </div>
+    <ul class="legend">
+      <li><span class="mk n"><span>A</span></span><span><b>Enemy window.</b> Name, level and an HP bar, but no numbers.</span></li>
+      <li><span class="mk n"><span>B</span></span><span><b>Command window.</b> Here, Io’s Witchcraft list with MP costs.</span></li>
+      <li><span class="mk n"><span>C</span></span><span><b>Party window.</b> HP, plus MP for Io or Heat for Sol.</span></li>
+      <li><span class="mk n"><span>D</span></span><span><b>Turn gauge.</b> Full means it’s her turn.</span></li>
+      <li><span class="mk n"><span>E</span></span><span><b>Trance gauge.</b> Pink; fills as she fights.</span></li>
+    </ul>
+  </figure>
+
+  <div class="cols">
+    <h3>The Turn gauge</h3>
+    <p>Every fighter has a <b>Turn gauge</b> that fills in real time. Io’s takes <b>2.4 seconds</b> to fill and Sol’s <b>2.2</b>. Foes vary from 1.7 seconds (the Towering Bramble) to 3.4 (the great wraith). When a gauge is full, that fighter acts.</p>
+    <p>The key rule is in the very first fight’s tip: <span class="fell">“While anyone acts or chooses, every gauge waits.”</span> Menus pause the battle, so take your time. And when a hero and a foe are ready at the same moment, <b>the hero always goes first</b>.</p>
+    <h3>The commands</h3>
+    <p><b>Io:</b> Attack, Witchcraft ▸, Moonlore ▸, Summon ▸, Item ▸, Defend, and Flee in wild fights. In Trance, <b>Moonlight</b> appears at the top.</p>
+    <p><b>Sol:</b> Attack, Sword Arts ▸, Item ▸, Guard, and Flee. In Trance, Attack becomes <b>Daybreak</b> and <b>High Noon</b> appears. Greyed-out moves tell you why: <i>MP</i>, <i>Heat</i>, <i>once a battle</i>, <i>Sol needs 70 Heat</i>.</p>
+    <h3>Reading enemy HP</h3>
+    <p>The enemy window only shows a bar. For a real number, open any attack and look at the target list: foes are listed with their <b>HP as a percentage</b>. The cursor always starts on the weakest one.</p>
+    <div class="box tip"><span class="tag">Tip</span><p>A foe’s big once-only move fires the first time it starts a turn below a set HP line: the wraiths’ <b>Eclipse</b> at 35%, Halcyon’s <b>Black Noon</b> at 30%. Use the target list’s % to plan a burst that carries it from above the line to zero in one go.</p></div>
+    <h3>How damage works</h3>
+    <p>Every move has a base power. It’s multiplied by <b>1.2 for every level</b> above 1, then rolled up or down by as much as <b>25%</b>. There are <b>no critical hits and no misses</b>. The extra-large damage numbers you’ll see are just big hits, drawn bigger.</p>
+    <p>Three elements matter: <b>fire</b> (Flame Bolt), <b>moon</b> (Crescent Blades, Moonlight, Lunara) and <b>sun</b> (Flare Cut, Kestrel Stoop, High Noon, Envoi). A weakness multiplies damage by up to 1.5.</p>
+    <h3>Defend, Guard and running</h3>
+    <p><b>Defend</b> and <b>Guard</b> halve the damage that hero takes until her next turn. Sol’s Guard also <b>pulls single-target hits off Io</b> onto herself.</p>
+    <p><b>Flee</b> only appears in random wild fights. Against a pack it works half the time (two in three with the Bogstriders keepsake). Against any Bramble Horror or the Bramble Colossus it <b>always works</b>, because they’re rooted to the spot. A fled fight gives nothing, and anyone knocked out stays down.</p>
+    <div class="box warn"><span class="tag">Warning</span><h5>Guard has a hidden cost</h5><p>Guard shows no price tag, but it takes up to <b>40 of Sol’s Heat</b>. Don’t Guard when you’re saving up for Envoi or Solar Crest.</p></div>
+    <h3>Herbs in battle</h3>
+    <p>Either hero can use an herb on her turn, but <b>each kind only once per fight</b>, however many you carry. That’s one Moonpetal, one Lavender, one Mugwort, one Lily and one Nightrose per battle. Herbs don’t use up a Trance turn.</p>
+  </div>
+  <div class="strip" style="margin-top:8px">
+    <figure class="shot"><div class="frame"><img src="images/shots/b-gw-sol-arts-sub.webp" alt="Sol at 0 Heat: every Sword Art is greyed out. Attack first, or let Io cast Moonsteel." loading="lazy" width="960" height="640"></div><figcaption><span class="n">1</span><span>Sol at <b>0 Heat</b>: every Sword Art is greyed out. Attack first, or let Io cast Moonsteel.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/b1-flame-fx900.webp" alt="The move’s name drops in at the top as it’s cast. Here, Io’s Flame Bolt." loading="lazy" width="960" height="640"></div><figcaption><span class="n">2</span><span>The move’s name drops in at the top as it’s cast. Here, Io’s Flame Bolt.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/b-first-04.webp" alt="Story fights open with a short scene. Skip intro sits top right." loading="lazy" width="960" height="640"></div><figcaption><span class="n">3</span><span>Story fights open with a short scene. <b>Skip intro</b> sits top right.</span></figcaption></figure>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Battle school</span><span class="pg">5</span></footer>
+</section>
+
+<section class="page" style="--sec: var(--wraith)">
+  <header class="runner"><span class="sec">Battle school</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Battle school · part 2</span>
+  <h2 class="headline"><span class="small">The two systems that win fights</span>Heat &amp; Trance</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:var(--sol)">Sol’s Heat</h3>
+      <div class="bar" aria-hidden="true"><i style="width:70%"></i></div>
+      <p class="note" style="margin-top:4px">0 ······ 70: Sunburn ······ 100</p>
+      <ul class="tight">
+        <li>Sol starts every fight at <b>0 Heat</b> (10 or 20 with the right keepsakes).</li>
+        <li><b>+20</b> for each Attack, <b>+10</b> for every hit she takes, <b>+40</b> from Io’s Moonsteel, <b>+70</b> from Harvest Moon.</li>
+        <li>Sword Arts spend it: Flare Cut −25, Sunder −20, Ember Rush −40, Kestrel Stoop −40. Solar Crest needs 50 and spends <b>all of it</b>.</li>
+      </ul>
+      <h4>Sunburn</h4>
+      <p>At <b>70 Heat or more</b>, Sol’s Heat number glows and every action she takes hits <b>1.35× harder</b>. The catch: if she <i>ends</i> an action still at 70+, the heat burns her for <b>6% of her max HP</b>.</p>
+      <div class="box secret"><span class="tag">Secret</span><span class="stamp">Pro move</span><p>The game checks Sunburn <b>before</b> it takes the Heat cost. At 75 Heat, Ember Rush gets the full 1.35× bonus and drops Sol to 35, so she never burns. Bank Heat to 70+, then spend it in one big art.</p></div>
+    </div>
+    <div>
+      <h3 style="color:#ff8fc8">Trance</h3>
+      <p>The pink gauge under each hero fills two ways:</p>
+      <ul class="tight">
+        <li><b>+2% for every hit she lands.</b> Multi-hit moves fill it faster: Crescent Blades is five hits, so +10% a cast. Lunara’s and Envoi’s hits count for Io.</li>
+        <li><b>Taking damage.</b> Lose about three-quarters of her max HP in total and it fills from empty.</li>
+      </ul>
+      <p>Dealing damage alone stops at <b>99%</b>. The last push always comes from taking a hit. When the gauge fills, Trance starts at the beginning of that hero’s next turn and lasts <b>4 of her actions</b>.</p>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th></th><th>Io: Lunar Trance</th><th>Sol: Dawnbreaker</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Perks</td><td>Moonlore costs half. Lunar Mend heals the whole party.</td><td>Heat pinned at 100. Every art is free and hits 1.35×, with no burn.</td></tr>
+          <tr><td class="nm">Finisher</td><td><b>Moonlight</b>: 3 moon hits, 1,250 base. Ends Trance.</td><td><b>High Noon</b>: 7 sun hits, 1,860 base. Ends Trance.</td></tr>
+          <tr><td class="nm">Also</td><td>Envoi is always ready for Io while Sol is in Trance.</td><td>Attack becomes <b>Daybreak</b> (5 hits, 740 base).</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box secret"><span class="tag">Secret</span><span class="stamp">Big damage</span><p>In Dawnbreaker, <b>Solar Crest</b> is free and always fires at the full 100 Heat: 1,620 base after the bonus, more than Daybreak, and it doesn’t end Trance. Our favorite pattern is <b>Solar Crest, Solar Crest, Solar Crest, then High Noon</b>.</p></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <h3>Warnings: the charged moves</h3>
+      <p>The nastiest enemy moves take two turns. First you see <span class="fell">“…gathers Void Sphere. It falls on its next turn.”</span> Then it lands. You always get one turn to answer:</p>
+      <ul class="tight">
+        <li><b>Defend / Guard:</b> halves it for that hero.</li>
+        <li><b>Lunara:</b> 60% heal now, and only 60% damage until she strikes.</li>
+        <li><b>Envoi:</b> the Folding Ward cancels the whole move.</li>
+        <li><b>Kestrel Stoop:</b> Sol rises out of reach and can’t be hit at all.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Status at a glance</h3>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>Word on screen</th><th>What it means</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Bound</td><td>Nightbloom Briars: the foe’s gauge drops 40% and fills at half speed until its turn.</td></tr>
+          <tr><td class="nm">Sundered</td><td>The foe takes 1.25× from the party for its next 3 turns.</td></tr>
+          <tr><td class="nm">Frost</td><td>The party’s gauges fill at 60% speed for a while.</td></tr>
+          <tr><td class="nm">Lured / Held</td><td>A bramble’s fruit has caught her: her gauge stops, then it Grabs her. Fire breaks the lure.</td></tr>
+          <tr><td class="nm">Charmed</td><td>Siren Bloom’s pollen: half-speed gauges until Devour, or until the bloom is broken.</td></tr>
+          <tr><td class="nm">Severed</td><td>Halcyon’s cut: that hero can’t be healed until her next turn.</td></tr>
+          <tr><td class="nm">Guttering</td><td>A wisp: the next move aimed at it misses.</td></tr>
+          <tr><td class="nm">Warded</td><td>Envoi will swallow the next attack.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <h3>After the fight</h3>
+      <p>The end card shows battle time, damage dealt, <b>experience</b> and <b>sunstone shards</b>, and a level-up box when you earn one: <span class="fell">“Every move hits and heals about 20% harder.”</span></p>
+      <p>HP and MP <b>carry over</b> to the next fight; there’s no free heal. Anyone knocked out gets up with 10% HP. Rest, cast Moonlore from the menu, or use herbs between fights.</p>
+    </div>
+    <div>
+      <h3>Why levels matter so much</h3>
+      <p>Heroes and foes both grow 1.2× per level, so a fight against foes at your level feels the same at level 3 or level 18. What changes everything is the <b>gap</b>: each level you are ahead makes your hits about 20% bigger against their HP, and their hits a smaller bite out of yours. Spell MP costs never go up, so Io gets more casts as she levels: about 10 Flame Bolts at level 1 and 30 at level 20.</p>
+    </div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Battle school</span><span class="pg">6</span></footer>
+</section>
+
+
+<section class="page" id="spells" style="--sec: var(--io)">
+  <header class="runner"><span class="sec">The spellbook</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">The spellbook · Io</span>
+  <h2 class="headline"><span class="small">Witchcraft, Moonlore and summons</span>Io’s grimoire</h2>
+  <p class="deck">Power is the base number at level 1. Multiply by 1.2 for every level after that. Moonlore costs are halved in Trance (shown in brackets).</p>
+  <div class="tablewrap"><table class="stat">
+    <thead><tr><th>Spell</th><th>Menu</th><th class="num">MP</th><th class="num">Power</th><th>Element</th><th>What it does</th><th>Learned</th></tr></thead>
+    <tbody>
+      <tr><td class="nm">Attack</td><td>—</td><td class="num">—</td><td class="num">265</td><td>—</td><td>Three quick hits (70, 75, 120).</td><td>Start</td></tr>
+      <tr><td class="nm">Flame Bolt</td><td>Witchcraft</td><td class="num">12</td><td class="num">330</td><td>Fire</td><td>One hard hit. Makes brambles <b>recoil</b>, and breaks a <b>Lure</b> or a <b>Siren Bloom</b>.</td><td>Start</td></tr>
+      <tr><td class="nm">Crescent Blades</td><td>Witchcraft</td><td class="num">24</td><td class="num">440</td><td>Moon</td><td>Five moon hits of 88. Your best spell against wraiths and wisps, and +10% Trance a cast.</td><td>Start</td></tr>
+      <tr><td class="nm">Nightbloom Briars</td><td>Witchcraft</td><td class="num">18</td><td class="num">260</td><td>—</td><td><b>Binds</b> the foe: its Turn gauge drops 40% and fills at half speed until its next turn.</td><td>Start</td></tr>
+      <tr><td class="nm">Lunar Mend</td><td>Moonlore</td><td class="num">16 (8)</td><td class="num">heal 380</td><td>—</td><td>Heals one ally. <b>In Trance it heals the whole party.</b> Works from the menu too.</td><td>Start</td></tr>
+      <tr><td class="nm">Waxing Light</td><td>Moonlore</td><td class="num">24 (12)</td><td class="num">heal 270</td><td>—</td><td>Heals both heroes. Works from the menu.</td><td>Sol joins</td></tr>
+      <tr><td class="nm">Moonsteel</td><td>Moonlore</td><td class="num">18 (9)</td><td class="num">—</td><td>—</td><td>Sol <b>+40 Heat</b>, and her next plain move (Attack, Sunder, Ember Rush, Solar Crest) strikes as <b>moon</b>.</td><td>Sol joins</td></tr>
+      <tr><td class="nm">Harvest Moon</td><td>Moonlore</td><td class="num">28 (14)</td><td class="num">—</td><td>—</td><td>Sol <b>+70 Heat</b> at once: instant Sunburn, Solar Crest or Envoi.</td><td>Bogmire refit</td></tr>
+      <tr><td class="nm">Defend</td><td>—</td><td class="num">—</td><td class="num">—</td><td>—</td><td>Io takes half damage until her next turn.</td><td>Start</td></tr>
+      <tr><td class="nm">Moonlight</td><td>Trance</td><td class="num">free</td><td class="num">1,250</td><td>Moon</td><td>Three moon hits (420, 380, 450). <b>Ends Trance.</b></td><td>Trance</td></tr>
+      <tr><td class="nm">Lunara</td><td>Summon</td><td class="num">once</td><td class="num">2,050</td><td>Moon</td><td>Heals all 60%, revives the fallen at 60%, cuts damage to 60%. Strikes on Io’s next turn.</td><td>Start</td></tr>
+      <tr><td class="nm">Envoi</td><td>Summon</td><td class="num">once</td><td class="num">3,240</td><td>Sun</td><td>Needs Sol at <b>70+ Heat</b> and empties it. The Folding Ward cancels the next enemy move. Strikes on Io’s next turn and ends any Frost.</td><td>Dawnroost win</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid2">
+    <div>
+      <h3>Summon: Lunara</h3>
+      <figure class="shot"><div class="frame"><img src="images/shots/b-lun-lunara-fx12000.webp" alt="“Lunara, the Pale Mother, rises from the Moonwell.” Even in the first fight, Io can call her." loading="lazy" width="960" height="640"></div><figcaption><span class="n">L</span><span>“Lunara, the Pale Mother, rises from the Moonwell.” Even in the first fight, Io can call her.</span></figcaption></figure>
+      <ol class="plan">
+        <li><b>Pale Mother’s Embrace.</b> Everyone heals 60% of max HP. Anyone down gets back up at 60%. Until Lunara strikes, the party takes only <b>60% damage</b>.</li>
+        <li><b>Silver Requiem.</b> On Io’s next turn: six 150-power moon bolts at random foes, then <b>Moonfall</b>, 1,150 at the foe you picked.</li>
+      </ol>
+      <p>She’s available from the very first fight, once per battle. Think of her as a full heal, a revive and a shield in one. Call her the turn <b>before</b> a big hit lands.</p>
+    </div>
+    <div>
+      <h3>Summon: Envoi</h3>
+      <figure class="shot"><div class="frame"><img src="images/shots/b-fin-envoi-fx5000.webp" alt="“Io’s letters to the dead fold into Envoi, the Letter Wyrm.”" loading="lazy" width="960" height="640"></div><figcaption><span class="n">E</span><span>“Io’s letters to the dead fold into Envoi, the Letter Wyrm.”</span></figcaption></figure>
+      <ol class="plan">
+        <li><b>Heart Lantern, Seal Break, Folding Ward.</b> Sol’s Heat goes into Envoi’s heart (unless she’s in Trance). <span class="fell">“Envoi will take the next attack whole.”</span> The next enemy move is cancelled outright, whether it hits one hero or both.</li>
+        <li><b>Letting Go, Last Word.</b> On Io’s next turn: eight 180-power sun strikes and a 1,800 finisher, all into one foe. The ward ends here whether it was used or not.</li>
+      </ol>
+      <p>Line Envoi up with Harvest Moon: one cast takes Sol from 0 to 70 Heat.</p>
+    </div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · The spellbook</span><span class="pg">7</span></footer>
+</section>
+
+<section class="page" style="--sec: var(--sol)">
+  <header class="runner"><span class="sec">The spellbook</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">The spellbook · Sol</span>
+  <h2 class="headline"><span class="small">The Warden’s Sword Arts</span>Sol’s blade</h2>
+  <p class="deck">Sol never runs out of MP, because she doesn’t have any. Everything runs on Heat. Every art below gets 1.35× when she uses it at 70 Heat or more, or in Trance.</p>
+  <div class="tablewrap"><table class="stat">
+    <thead><tr><th>Art</th><th>Menu</th><th class="num">Heat</th><th class="num">Power</th><th>Element</th><th>What it does</th><th>Learned</th></tr></thead>
+    <tbody>
+      <tr><td class="nm">Attack</td><td>—</td><td class="num">+20</td><td class="num">335</td><td>—</td><td>Three hits (90, 95, 150). The main way to build Heat.</td><td>Start</td></tr>
+      <tr><td class="nm">Flare Cut</td><td>Sword Arts</td><td class="num">−25</td><td class="num">520</td><td>Sun</td><td>One hard sun cut. <b>Severs a bramble cane</b> and makes brambles recoil.</td><td>Start</td></tr>
+      <tr><td class="nm">Sunder</td><td>Sword Arts</td><td class="num">−20</td><td class="num">280</td><td>—</td><td><b>Sundered:</b> the foe takes 1.25× from the whole party for its next 3 turns.</td><td>Start</td></tr>
+      <tr><td class="nm">Ember Rush</td><td>Sword Arts</td><td class="num">−40</td><td class="num">680</td><td>—</td><td>Four strikes of 170.</td><td>Start</td></tr>
+      <tr><td class="nm">Solar Crest</td><td>Sword Arts</td><td class="num">all (50+)</td><td class="num">12 × Heat</td><td>—</td><td>One blow worth 12 per point of Heat: 600 at 50, <b>1,200 at 100</b>. Leaves her at 0, so no burn.</td><td>Start</td></tr>
+      <tr><td class="nm">Kestrel Stoop</td><td>Sword Arts</td><td class="num">−40</td><td class="num">1,500</td><td>Sun</td><td>She rises and <b>can’t be targeted</b>, then dives automatically on her next turn.</td><td>Halcyon fight</td></tr>
+      <tr><td class="nm">Guard</td><td>—</td><td class="num">up to −40</td><td class="num">—</td><td>—</td><td>Half damage until her next turn, and takes single-target hits meant for Io.</td><td>Start</td></tr>
+      <tr><td class="nm">Daybreak</td><td>Trance</td><td class="num">free</td><td class="num">740</td><td>—</td><td>Replaces Attack in Trance. Four hits of 120, then 260.</td><td>Trance</td></tr>
+      <tr><td class="nm">High Noon</td><td>Trance</td><td class="num">free</td><td class="num">1,860</td><td>Sun</td><td>Six hits of 160 and a 900 finisher. <b>Ends Trance.</b></td><td>Trance</td></tr>
+      <tr><td class="nm">Kestrel</td><td>Top menu</td><td class="num">once</td><td class="num">—</td><td>—</td><td>Only against the Gloam Knight: Sol calls her by name and she <b>loses her next turn</b>.</td><td>Story</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid2">
+    <div>
+      <h3>What hits hardest at your level?</h3>
+      <p class="note">Base damage before weakness, Sunder or Sunburn. Averages; each hit rolls ±25%.</p>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>Move</th><th class="num">L1</th><th class="num">L5</th><th class="num">L10</th><th class="num">L15</th><th class="num">L20</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Flame Bolt</td><td class="num">330</td><td class="num">684</td><td class="num">1,703</td><td class="num">4,237</td><td class="num">10,543</td></tr>
+          <tr><td class="nm">Crescent Blades</td><td class="num">440</td><td class="num">912</td><td class="num">2,270</td><td class="num">5,649</td><td class="num">14,057</td></tr>
+          <tr><td class="nm">Moonlight</td><td class="num">1,250</td><td class="num">2,592</td><td class="num">6,450</td><td class="num">16,049</td><td class="num">39,935</td></tr>
+          <tr><td class="nm">Flare Cut</td><td class="num">520</td><td class="num">1,078</td><td class="num">2,683</td><td class="num">6,676</td><td class="num">16,613</td></tr>
+          <tr><td class="nm">Solar Crest at 100</td><td class="num">1,200</td><td class="num">2,488</td><td class="num">6,192</td><td class="num">15,407</td><td class="num">38,338</td></tr>
+          <tr><td class="nm">Kestrel Stoop</td><td class="num">1,500</td><td class="num">3,110</td><td class="num">7,740</td><td class="num">19,259</td><td class="num">47,922</td></tr>
+          <tr><td class="nm">High Noon</td><td class="num">1,860</td><td class="num">3,857</td><td class="num">9,597</td><td class="num">23,881</td><td class="num">59,423</td></tr>
+          <tr><td class="nm">Lunara</td><td class="num">2,050</td><td class="num">4,251</td><td class="num">10,578</td><td class="num">26,320</td><td class="num">65,493</td></tr>
+          <tr><td class="nm">Envoi</td><td class="num">3,240</td><td class="num">6,718</td><td class="num">16,718</td><td class="num">41,599</td><td class="num">103,512</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div>
+      <h3>Which spell, which foe?</h3>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>Against</th><th>Weak to</th><th>Reach for</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Wisps, wraiths</td><td>Moon ×1.5</td><td>Crescent Blades, Moonlight, Lunara; Moonsteel before Sol swings</td></tr>
+          <tr><td class="nm">Frost wisps</td><td>Fire ×1.5, moon ×1.3</td><td>Flame Bolt</td></tr>
+          <tr><td class="nm">Brambles, Colossus</td><td>Fire ×1.5, sun ×1.25</td><td>Flame Bolt, Flare Cut</td></tr>
+          <tr><td class="nm">Halcyon</td><td>Sun ×1.5</td><td>Flare Cut, High Noon, Kestrel Stoop, Envoi</td></tr>
+          <tr><td class="nm">Noctara</td><td>Nothing</td><td>Raw damage, and fast</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box tip"><span class="tag">Tip</span><p><b>Sunder first, then the big hit.</b> Sundered stacks with everything: weakness, Sunburn, the Ember-star Lily, even the Colossus’s bare heart. Sundered, Sunburned and sun-weak Halcyon takes about 2.5× from a Flare Cut.</p></div>
+      <div class="box tip"><span class="tag">Tip</span><p>Make <b>Sol</b> the last hero to hit a foe before it acts. Moves like Soul Reaper, Strike and Thorn Lance go after whoever hit them last, and Sol has more HP and gains Heat from every blow.</p></div>
+    </div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · The spellbook</span><span class="pg">8</span></footer>
+</section>
+
+
+<section class="page" id="atlas" style="--sec: var(--sol)">
+  <header class="runner"><span class="sec">The atlas</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">The atlas</span>
+  <h2 class="headline"><span class="small">Aethermoor, by land and by air</span>The world &amp; the Magpie</h2>
+  <p class="deck">The world is one painted continent split into four bands. Each band’s wild foes come in a fixed level range, whatever level you are, and a cold mist keeps you out of any band the Magpie can’t yet reach.</p>
+  <figure class="areamap"><div class="frame"><img src="images/maps/world.jpg" alt="The painted world map of Aethermoor with every town, camp and node marked" loading="lazy" width="2304" height="1536"><span class="title">Aethermoor</span><span class="mk band b1" style="left:29.25%;top:59.83%" title="&lt;b&gt;Wickhollow&lt;/b&gt; and Io’s cottage. Band 1. The Magpie starts at its jetty."><span>1</span></span><span class="mk band b1" style="left:33.20%;top:70.31%" title="&lt;b&gt;The Thornwood.&lt;/b&gt; Band 1."><span>2</span></span><span class="mk band b1" style="left:38.02%;top:81.77%" title="&lt;b&gt;Bogmire&lt;/b&gt; and the fen’s dark heart. Band 1. Landing once its lamps are lit."><span>3</span></span><span class="mk band b2" style="left:17.80%;top:50.78%" title="&lt;b&gt;The Warm Roads camp.&lt;/b&gt; Band 2. Landing and rest point."><span>4</span></span><span class="mk band b2" style="left:20.83%;top:46.22%" title="&lt;b&gt;Ember Line node.&lt;/b&gt; Sol relights it: 300 shards."><span>N</span></span><span class="mk band b2" style="left:25.61%;top:43.29%" title="&lt;b&gt;Ember Line node.&lt;/b&gt; 300 shards."><span>N</span></span><span class="mk band b2" style="left:16.49%;top:40.69%" title="&lt;b&gt;Ember Line node.&lt;/b&gt; 300 shards."><span>N</span></span><span class="mk band b2" style="left:28.75%;top:35.74%" title="&lt;b&gt;Dawnroost&lt;/b&gt; and its living node. Band 2. Landing after your first visit."><span>5</span></span><span class="mk band b3" style="left:24.96%;top:20.18%" title="&lt;b&gt;The northern camp.&lt;/b&gt; Band 3. Landing and rest point."><span>6</span></span><span class="mk band b3" style="left:42.53%;top:26.69%" title="&lt;b&gt;The northern crossroads.&lt;/b&gt; Band 3. The Gloam Knight waits on its north road."><span>7</span></span><span class="mk band b3" style="left:45.51%;top:19.50%" title="&lt;b&gt;The shipyard.&lt;/b&gt; Band 3. Ysmera’s yard; opens after the crossroads."><span>8</span></span><span class="mk band b4" style="left:59.90%;top:36.46%" title="&lt;b&gt;The frozen camp&lt;/b&gt; in the northeast peaks. Band 4. Landing and rest point."><span>9</span></span><span class="mk band b4" style="left:70.96%;top:31.90%" title="&lt;b&gt;The frozen pass.&lt;/b&gt; Band 4. Bramble Colossus country."><span>10</span></span><span class="mk band b4" style="left:75.95%;top:23.93%" title="&lt;b&gt;Misthollow&lt;/b&gt; and the dead Moonwell. Band 4. The finale."><span>11</span></span></div><ul class="legend"><li><span class="mk band b1"><span>1</span></span><span><b>Wickhollow</b> and Io’s cottage. Band 1. The Magpie starts at its jetty.</span></li><li><span class="mk band b1"><span>2</span></span><span><b>The Thornwood.</b> Band 1.</span></li><li><span class="mk band b1"><span>3</span></span><span><b>Bogmire</b> and the fen’s dark heart. Band 1. Landing once its lamps are lit.</span></li><li><span class="mk band b2"><span>4</span></span><span><b>The Warm Roads camp.</b> Band 2. Landing and rest point.</span></li><li><span class="mk band b2"><span>N</span></span><span><b>Ember Line node.</b> Sol relights it: 300 shards.</span></li><li><span class="mk band b2"><span>N</span></span><span><b>Ember Line node.</b> 300 shards.</span></li><li><span class="mk band b2"><span>N</span></span><span><b>Ember Line node.</b> 300 shards.</span></li><li><span class="mk band b2"><span>5</span></span><span><b>Dawnroost</b> and its living node. Band 2. Landing after your first visit.</span></li><li><span class="mk band b3"><span>6</span></span><span><b>The northern camp.</b> Band 3. Landing and rest point.</span></li><li><span class="mk band b3"><span>7</span></span><span><b>The northern crossroads.</b> Band 3. The Gloam Knight waits on its north road.</span></li><li><span class="mk band b3"><span>8</span></span><span><b>The shipyard.</b> Band 3. Ysmera’s yard; opens after the crossroads.</span></li><li><span class="mk band b4"><span>9</span></span><span><b>The frozen camp</b> in the northeast peaks. Band 4. Landing and rest point.</span></li><li><span class="mk band b4"><span>10</span></span><span><b>The frozen pass.</b> Band 4. Bramble Colossus country.</span></li><li><span class="mk band b4"><span>11</span></span><span><b>Misthollow</b> and the dead Moonwell. Band 4. The finale.</span></li></ul></figure>
+  <p class="note">Pins are colored by band: <b style="color:var(--band1)">1</b>, <b style="color:var(--band2)">2</b>, <b style="color:var(--band3)">3</b>, <b style="color:var(--band4)">4</b>. N marks an Ember Line node.</p>
+  <div class="grid2">
+    <div>
+      <h3>The four bands</h3>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>Band</th><th>Region</th><th class="num">Foe levels</th><th>Opened by</th></tr></thead>
+        <tbody>
+          <tr><td class="nm" style="color:var(--band1)">1</td><td>The Gloamwood and the Gloomfen</td><td class="num">1–5</td><td>From the start</td></tr>
+          <tr><td class="nm" style="color:var(--band2)">2</td><td>The Verdant Wilds</td><td class="num">6–10</td><td>The Bogmire refit</td></tr>
+          <tr><td class="nm" style="color:var(--band3)">3</td><td>The northern wilds</td><td class="num">11–15</td><td>The node charge</td></tr>
+          <tr><td class="nm" style="color:var(--band4)">4</td><td>The Ironspire Peaks</td><td class="num">16–20</td><td>The moon-sail</td></tr>
+        </tbody>
+      </table></div>
+      <p>Walk into a band you haven’t opened and you’ll see <span class="fell">“Cold mist lies over the way. The Magpie needs more lift to cross it.”</span></p>
+      <h3>Walking the world map</h3>
+      <p>Once Sol joins, the cottage’s south, west and east paths lead out onto the world map. Io walks it at a steady pace with no running, and you enter a place by walking onto its glowing dot. Random fights come after roughly 4 to 11 seconds of walking, but <b>never within a short radius of a town, camp or the moored Magpie</b>, so you can always reach safety.</p>
+      <div class="box tip"><span class="tag">Tip</span><p>The land is all connected. Once a band is open you can <b>walk</b> anywhere in it: straight to Bogmire without going through the Thornwood, or straight to Misthollow without the frozen pass. Flying is faster, though, and the Magpie never runs into fights.</p></div>
+    </div>
+    <div>
+      <h3>The Magpie’s three upgrades</h3>
+      <p>Each band after the first costs a Magpie upgrade. You need both the <b>level</b> and the <b>sunstone shards</b>; if you’re short, the shipwright tells you how far.</p>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>Upgrade</th><th>From</th><th class="num">Level</th><th class="num">Shards</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">The Bogmire refit</td><td>Quill, Bogmire’s west dock</td><td class="num">5</td><td class="num">650</td></tr>
+          <tr><td class="nm">The node charge</td><td>Brann, Dawnroost</td><td class="num">10</td><td class="num">2,300</td></tr>
+          <tr><td class="nm">The moon-sail</td><td>Ysmera, the shipyard</td><td class="num">15</td><td class="num">4,500</td></tr>
+        </tbody>
+      </table></div>
+      <p>The refit also teaches Io <b>Harvest Moon</b>. Each upgrade moors the Magpie at the town where you bought it.</p>
+      <h3>Flying</h3>
+      <p>Use the Magpie where she’s moored and answer <b>Fly</b> to <span class="fell">“Take the Magpie up?”</span> Tap the map to fly to a point, or steer: <b>▲</b> faster, <b>▼</b> slower, <b>◀ ▶</b> to turn. The <b>+ / −</b> buttons zoom. Get close to a lit stop and a <b>Land here</b> card appears.</p>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>Landing</th><th>Opens</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Wickhollow</td><td>Always (you come down at the jetty)</td></tr>
+          <tr><td class="nm">Bogmire</td><td>Once its lamps are lit</td></tr>
+          <tr><td class="nm">The Warm Roads</td><td>Band 2</td></tr>
+          <tr><td class="nm">Dawnroost</td><td>After your first visit on foot</td></tr>
+          <tr><td class="nm">The northern wilds</td><td>Band 3</td></tr>
+          <tr><td class="nm">The shipyard</td><td>After your first visit on foot</td></tr>
+          <tr><td class="nm">The northeast peaks</td><td>Band 4</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="strip">
+    <figure class="shot"><div class="frame"><img src="images/shots/fly-1.webp" alt="The Magpie over Aethermoor. No fights in the air." loading="lazy" width="960" height="640"></div><figcaption><span class="n">F</span><span>The Magpie over Aethermoor. No fights in the air.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/world-dawnroost.webp" alt="On foot on the world map, by Dawnroost." loading="lazy" width="960" height="640"></div><figcaption><span class="n">W</span><span>On foot on the world map, by Dawnroost.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/world-frozen.webp" alt="The Ironspire Peaks: band 4, foes level 16 to 20." loading="lazy" width="960" height="640"></div><figcaption><span class="n">P</span><span>The Ironspire Peaks: band 4, foes level 16 to 20.</span></figcaption></figure>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · The atlas</span><span class="pg">9</span></footer>
+</section>
+
+
+<section class="page paper" id="walk1" style="--sec: var(--band1)">
+  <header class="runner"><span class="sec">Walkthrough · Part I</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Walkthrough · Part I · Band 1</span>
+  <h2 class="headline"><span class="small">Levels 1–5</span>Wickhollow to the fen</h2>
+  <div class="bandhead" style="color:#3c6e22"><span>Foes: level 1–5</span><span>Keepsakes: 9</span><span>Letter wells: 2</span><span>Boss: the great wraith</span></div>
+  <p class="deck">Three nights before the longest night, the lamps by Wickhollow’s bridge start going out one by one. Io should go up to the square.</p>
+
+  <figure class="areamap"><div class="frame"><img src="images/maps/cottage.jpg" alt="Painted map of Io&#x27;s cottage with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">Io&#x27;s cottage</span><span class="mk r" style="left:54.56%;top:45.90%" title="&lt;b&gt;Io’s bed.&lt;/b&gt; Rest and save."><span>1</span></span><span class="mk n" style="left:38.54%;top:45.51%" title="&lt;b&gt;The letters.&lt;/b&gt; Io’s bundle of letters to the dead. Look at them before you leave."><span>2</span></span><span class="mk x" style="left:35.94%;top:3.20%" title="&lt;b&gt;Up to Wickhollow’s square.&lt;/b&gt;"><span>↑</span></span><span class="mk x" style="left:2.20%;top:41.02%" title="&lt;b&gt;To the world map&lt;/b&gt; (west, south and east paths). Io won’t leave until she’s been to the square."><span>W</span></span><span class="mk x" style="left:48.57%;top:96.80%" title="&lt;b&gt;To the world map&lt;/b&gt; (south)."><span>S</span></span><span class="mk x" style="left:97.80%;top:72.85%" title="&lt;b&gt;To the world map&lt;/b&gt; (east)."><span>E</span></span></div><ul class="legend"><li><span class="mk r"><span>1</span></span><span><b>Io’s bed.</b> Rest and save.</span></li><li><span class="mk n"><span>2</span></span><span><b>The letters.</b> Io’s bundle of letters to the dead. Look at them before you leave.</span></li><li><span class="mk x"><span>↑</span></span><span><b>Up to Wickhollow’s square.</b></span></li><li><span class="mk x"><span>W</span></span><span><b>To the world map</b> (west, south and east paths). Io won’t leave until she’s been to the square.</span></li><li><span class="mk x"><span>S</span></span><span><b>To the world map</b> (south).</span></li><li><span class="mk x"><span>E</span></span><span><b>To the world map</b> (east).</span></li></ul></figure>
+  <div class="key"><span><i style="background:var(--gold);transform:rotate(45deg)"></i>Keepsake</span><span><i style="background:var(--io);transform:rotate(45deg)"></i>Secret keepsake</span><span><i style="background:var(--wraith);border-radius:50%"></i>Rest &amp; save</span><span><i style="background:var(--frost);border-radius:50%"></i>Herb shop</span><span><i style="background:#e9e4ff;border-radius:50%"></i>Person</span><span><i style="background:#b98cff;border-radius:50%"></i>Letter well</span><span><i style="background:var(--blood);border-radius:50%"></i>Boss / story fight</span><span><i style="background:var(--sol);border-radius:50%"></i>The Magpie</span><span><i style="background:#fff"></i>Exit</span></div>
+  <div class="cols" style="margin-top:18px">
+    <ol class="steps">
+      <li><b>Io’s cottage</b>The game opens with the prologue, then saves and hands you Io in her cottage. Tap <b>the letters</b> on the table to read about them; they matter later. The bed is a rest point. The paths out to the world map won’t let you leave yet: <span class="fell">“Something is wrong up in the square. I should go and see first.”</span> Take the north path up to the village.</li>
+      <li><b>Wickhollow</b>The square, the Moonwell, Nettie’s stall and Hilde’s forge are all up here. Nettie’s stall sells all five herbs, but you start with 3 of each, which is plenty for now.</li>
+    </ol>
+    <div class="box secret"><span class="tag">Secret</span><span class="stamp">Don’t miss</span><p>You can reach the <b>Crescent Locket</b> before the first fight. It’s hidden on the red roof just south of Nettie’s stall, and you can get up there without setting foot in the square. Route on <a href="#secrets">page 23</a>. Nettie, Hilde and the jetty are all open now too.</p></div>
+    <ol class="steps" start="3" style="counter-reset: st 2">
+      <li><b>The first fight</b>Step into the square and Mayor Gretch runs up: something came out of the Thornwood. Io faces a <b>Shadow Wraith alone</b>. It has 4,200 HP and is weak to moon. Open with <b>Crescent Blades</b> two or three times. When Io drops to about half HP, call <b>Lunara</b>: she heals 60%, shields you, and her Silver Requiem does about 3,000 damage to a lone wraith. If you lose, Io just wakes in her bed and the wraith waits on the bridge.</li>
+      <li><b>Sol arrives</b>The win pays 220 experience, enough for level 2. A Warden comes running over the bridge with her sword burning: Sol, of Dawnroost, the last of the Wardens. She joins the party for good. Gretch sends you west to Quill at the jetty.</li>
+      <li><b>Before you go</b>Talk to <b>Nettie</b> again: she gives Io her <b>Knotted Shawl</b>. Then cross the square to the house nearest the east bridge, go down the lane on its west side and along its south front: the <b>Forge Horseshoe</b> glints in a leafy nook. Now that Sol is here, Io also has <b>Waxing Light</b> and <b>Moonsteel</b> in her Moonlore list.</li>
+    </ol>
+  </div>
+  <figure class="areamap"><div class="frame"><img src="images/maps/wickhollow.jpg" alt="Painted map of Wickhollow with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">Wickhollow</span><span class="mk x" style="left:50.78%;top:96.80%" title="&lt;b&gt;Down to Io’s cottage.&lt;/b&gt;"><span>↓</span></span><span class="mk b" style="left:60.55%;top:62.50%" title="&lt;b&gt;The Night square.&lt;/b&gt; Stepping in starts the first fight: Io alone against a Shadow Wraith."><span>2</span></span><span class="mk r" style="left:50.59%;top:51.76%" title="&lt;b&gt;The Moonwell.&lt;/b&gt; Rest and save. Lunara sleeps here."><span>3</span></span><span class="mk n" style="left:45.90%;top:58.01%" title="&lt;b&gt;Mayor Gretch.&lt;/b&gt;"><span>4</span></span><span class="mk s" style="left:36.98%;top:41.60%" title="&lt;b&gt;Nettie’s herbs.&lt;/b&gt; Once Sol has joined, Nettie gives Io her Knotted Shawl."><span>5</span></span><span class="mk n" style="left:66.08%;top:35.55%" title="&lt;b&gt;Hilde,&lt;/b&gt; the smith."><span>6</span></span><span class="mk k secret" style="left:29.82%;top:54.88%" title="&lt;b&gt;SECRET: The Crescent Locket,&lt;/b&gt; at the end of the red roof’s ridge. Reachable before the first fight. Route on page 23."><span>7</span></span><span class="mk k" style="left:77.80%;top:67.38%" title="&lt;b&gt;The Forge Horseshoe,&lt;/b&gt; in the nook behind the house by the east bridge. Reachable after the first fight."><span>8</span></span><span class="mk x" style="left:97.80%;top:36.62%" title="&lt;b&gt;East bridge to the Thornwood.&lt;/b&gt; Io won’t go alone; open once Sol joins."><span>→</span></span><span class="mk x" style="left:2.20%;top:71.58%" title="&lt;b&gt;West steps down to the jetty.&lt;/b&gt;"><span>←</span></span></div><ul class="legend"><li><span class="mk x"><span>↓</span></span><span><b>Down to Io’s cottage.</b></span></li><li><span class="mk b"><span>2</span></span><span><b>The Night square.</b> Stepping in starts the first fight: Io alone against a Shadow Wraith.</span></li><li><span class="mk r"><span>3</span></span><span><b>The Moonwell.</b> Rest and save. Lunara sleeps here.</span></li><li><span class="mk n"><span>4</span></span><span><b>Mayor Gretch.</b></span></li><li><span class="mk s"><span>5</span></span><span><b>Nettie’s herbs.</b> Once Sol has joined, Nettie gives Io her Knotted Shawl.</span></li><li><span class="mk n"><span>6</span></span><span><b>Hilde,</b> the smith.</span></li><li><span class="mk k secret"><span>7</span></span><span><b>SECRET: The Crescent Locket,</b> at the end of the red roof’s ridge. Reachable before the first fight. Route on page 23.</span></li><li><span class="mk k"><span>8</span></span><span><b>The Forge Horseshoe,</b> in the nook behind the house by the east bridge. Reachable after the first fight.</span></li><li><span class="mk x"><span>→</span></span><span><b>East bridge to the Thornwood.</b> Io won’t go alone; open once Sol joins.</span></li><li><span class="mk x"><span>←</span></span><span><b>West steps down to the jetty.</b></span></li></ul></figure>
+  <div class="strip">
+    <figure class="shot"><div class="frame"><img src="images/shots/b-lun-lunara-sub.webp" alt="The first fight. The game’s own tip explains the Turn gauge, and Lunara is already waiting in the Summon menu." loading="lazy" width="960" height="640"></div><figcaption><span class="n">1</span><span>The first fight. The game’s own tip explains the Turn gauge, and Lunara is already waiting in the Summon menu.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/talk-nettie2.webp" alt="Nettie: “Fill your satchel, but in a fight you’ll only have the hands for one of each.”" loading="lazy" width="960" height="640"></div><figcaption><span class="n">2</span><span>Nettie: “Fill your satchel, but in a fight you’ll only have the hands for one of each.”</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/talk-nettie.webp" alt="Nettie at her striped stall. The red roof just below her hides the Crescent Locket." loading="lazy" width="960" height="640"></div><figcaption><span class="n">3</span><span>Nettie at her striped stall. The red roof just below her hides the Crescent Locket.</span></figcaption></figure>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Walkthrough · Part I</span><span class="pg">10</span></footer>
+</section>
+
+<section class="page paper" style="--sec: var(--band1)">
+  <header class="runner"><span class="sec">Walkthrough · Part I</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Walkthrough · Part I · Band 1</span>
+  <h2 class="headline"><span class="small">The jetty and the woods</span>Into the Thornwood</h2>
+  <div class="grid2">
+    <div>
+      <figure class="areamap"><div class="frame"><img src="images/maps/jetty.jpg" alt="Painted map of The jetty with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">The jetty</span><span class="mk x" style="left:50.00%;top:3.20%" title="&lt;b&gt;Steps up to Wickhollow.&lt;/b&gt;"><span>↑</span></span><span class="mk s" style="left:74.87%;top:37.60%" title="&lt;b&gt;Quill.&lt;/b&gt; Sells herbs until Bogmire’s lights are back. Talk to him after Sol joins to get the Magpie."><span>2</span></span><span class="mk m" style="left:50.00%;top:74.22%" title="&lt;b&gt;The Magpie,&lt;/b&gt; Quill’s old skiff, at the end of the pier."><span>3</span></span><span class="mk k" style="left:30.60%;top:36.33%" title="&lt;b&gt;The Jetty Coin,&lt;/b&gt; at the far end of the lakeshore walk, under the willows."><span>4</span></span></div><ul class="legend"><li><span class="mk x"><span>↑</span></span><span><b>Steps up to Wickhollow.</b></span></li><li><span class="mk s"><span>2</span></span><span><b>Quill.</b> Sells herbs until Bogmire’s lights are back. Talk to him after Sol joins to get the Magpie.</span></li><li><span class="mk m"><span>3</span></span><span><b>The Magpie,</b> Quill’s old skiff, at the end of the pier.</span></li><li><span class="mk k"><span>4</span></span><span><b>The Jetty Coin,</b> at the far end of the lakeshore walk, under the willows.</span></li></ul></figure>
+      <ol class="steps" start="6" style="counter-reset: st 5">
+        <li><b>The jetty</b>Take the west steps down from the square. Quill grumbles that the Magpie hasn’t flown in years, but she’ll lift for you, just not into the dark. With Bogmire’s lamps out there’s nowhere to land, so you’ll be walking: <span class="fell">“The Thornwood road starts at the stone bridge east of the square.”</span></li>
+        <li><b>The Jetty Coin</b>Before you leave, follow the lakeshore walk west to its far end under the willows. The coin makes <b>every herb 10% cheaper</b> for the rest of the game, so get it now.</li>
+      </ol>
+    </div>
+    <div>
+      <div class="box tip"><span class="tag">Tip</span><p>Quill sells herbs too, but only until Bogmire’s lights come back. After that he moves to Bogmire’s west dock and stops trading. Prices are the same as Nettie’s.</p></div>
+      <div class="ffwin"><b>Quill</b><p>“Evening, witch. Lamps by the bridge are going out. You’d best see to it before Inkblot starts fretting.”</p></div>
+    </div>
+  </div>
+
+  <figure class="areamap"><div class="frame"><img src="images/maps/thornwood.jpg" alt="Painted map of The Thornwood with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">The Thornwood</span><span class="mk x" style="left:2.20%;top:42.09%" title="&lt;b&gt;Back to Wickhollow.&lt;/b&gt;"><span>←</span></span><span class="mk w" style="left:65.76%;top:32.81%" title="&lt;b&gt;The moon stone.&lt;/b&gt; A letter, and a Moonpetal left at its foot."><span>2</span></span><span class="mk k" style="left:89.84%;top:18.55%" title="&lt;b&gt;The Thornwood Frog-Ring,&lt;/b&gt; where the north-east trail gives out past the moon stone."><span>3</span></span><span class="mk k secret" style="left:83.59%;top:79.69%" title="&lt;b&gt;SECRET: The Warden’s Brooch,&lt;/b&gt; where the southern side trail gives out among the thorns."><span>4</span></span><span class="mk x" style="left:97.80%;top:52.05%" title="&lt;b&gt;On to Bogmire.&lt;/b&gt;"><span>→</span></span></div><ul class="legend"><li><span class="mk x"><span>←</span></span><span><b>Back to Wickhollow.</b></span></li><li><span class="mk w"><span>2</span></span><span><b>The moon stone.</b> A letter, and a Moonpetal left at its foot.</span></li><li><span class="mk k"><span>3</span></span><span><b>The Thornwood Frog-Ring,</b> where the north-east trail gives out past the moon stone.</span></li><li><span class="mk k secret"><span>4</span></span><span><b>SECRET: The Warden’s Brooch,</b> where the southern side trail gives out among the thorns.</span></li><li><span class="mk x"><span>→</span></span><span><b>On to Bogmire.</b></span></li></ul></figure>
+  <div class="cols">
+    <ol class="steps" start="8" style="counter-reset: st 7">
+      <li><b>The Thornwood</b>Cross the east bridge out of Wickhollow. This is the first place with <b>random fights</b>: wisps and Shadow Wraiths, level 1 to 5, in packs of up to three. Both are weak to <b>moon</b>, so Crescent Blades is your best friend.</li>
+      <li><b>The moon stone</b>In the central clearing stands a stone with a crescent cut into it. Someone has left a letter at its foot (“Aldo. The bridge lamp is lit every night now…”), and a <b>Moonpetal</b>.</li>
+      <li><b>The north-east trail</b>From the clearing, a trail runs off to the north-east. At its end: the <b>Thornwood Frog-Ring</b>. Io’s reaction: <span class="fell">“Hello, you.”</span></li>
+      <li><b>The southern side trail</b>Back on the main path, a narrower trail drops south-east along the bottom of the wood. It looks like it goes nowhere, and that’s the point. Where it gives out among the thorns lies the hidden <b>Warden’s Brooch</b>.</li>
+      <li><b>East to Bogmire</b>The main path leaves the wood on the east side.</li>
+    </ol>
+    <div class="box tip"><span class="tag">Tip</span><h5>Level up here</h5><p>The great wraith is a level 5 boss, and the Magpie refit after it needs <b>level 5 and 650 shards</b>. A band-1 fight averages about 120 experience and 95 shards. Set <b>Random fights</b> to <i>More</i> while you grind.</p></div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Walkthrough · Part I</span><span class="pg">11</span></footer>
+</section>
+
+<section class="page paper" style="--sec: var(--band1)">
+  <header class="runner"><span class="sec">Walkthrough · Part I</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Walkthrough · Part I · Band 1</span>
+  <h2 class="headline"><span class="small">A town with no lamps</span>Bogmire &amp; the fen’s heart</h2>
+  <p class="deck">“Bogmire. Not one lamp burns on the boardwalks. The townsfolk sit in the dark behind shut doors.”</p>
+  <figure class="areamap"><div class="frame"><img src="images/maps/bogmire.jpg" alt="Painted map of Bogmire with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">Bogmire</span><span class="mk x" style="left:2.80%;top:35.74%" title="&lt;b&gt;Back to the Thornwood.&lt;/b&gt; Bogmire has no exit to the world map; leave on foot or by Magpie."><span>←</span></span><span class="mk m" style="left:5.47%;top:34.38%" title="&lt;b&gt;West dock.&lt;/b&gt; The Magpie ties up here once the lights are back. Quill waits nearby to sell the refit."><span>2</span></span><span class="mk s" style="left:42.45%;top:45.90%" title="&lt;b&gt;Old Wenna’s herbs.&lt;/b&gt;"><span>3</span></span><span class="mk n" style="left:48.44%;top:34.57%" title="&lt;b&gt;Pell.&lt;/b&gt; Tells you where the great wraith sits."><span>4</span></span><span class="mk r" style="left:78.65%;top:27.44%" title="&lt;b&gt;Tobb’s Lanternless Inn.&lt;/b&gt; Rest and save."><span>5</span></span><span class="mk k" style="left:35.16%;top:23.44%" title="&lt;b&gt;The Bogmire Hag-Stone,&lt;/b&gt; out along the north-west boardwalk."><span>6</span></span><span class="mk k" style="left:92.45%;top:73.24%" title="&lt;b&gt;The Bogstriders,&lt;/b&gt; at the east end of the southern boardwalk."><span>7</span></span><span class="mk w" style="left:46.29%;top:84.57%" title="&lt;b&gt;The water stair.&lt;/b&gt; A letter from Pell to Mam, and 120 shards."><span>8</span></span><span class="mk x" style="left:51.43%;top:3.20%" title="&lt;b&gt;The long walk north&lt;/b&gt; to the fen’s dark heart."><span>↑</span></span></div><ul class="legend"><li><span class="mk x"><span>←</span></span><span><b>Back to the Thornwood.</b> Bogmire has no exit to the world map; leave on foot or by Magpie.</span></li><li><span class="mk m"><span>2</span></span><span><b>West dock.</b> The Magpie ties up here once the lights are back. Quill waits nearby to sell the refit.</span></li><li><span class="mk s"><span>3</span></span><span><b>Old Wenna’s herbs.</b></span></li><li><span class="mk n"><span>4</span></span><span><b>Pell.</b> Tells you where the great wraith sits.</span></li><li><span class="mk r"><span>5</span></span><span><b>Tobb’s Lanternless Inn.</b> Rest and save.</span></li><li><span class="mk k"><span>6</span></span><span><b>The Bogmire Hag-Stone,</b> out along the north-west boardwalk.</span></li><li><span class="mk k"><span>7</span></span><span><b>The Bogstriders,</b> at the east end of the southern boardwalk.</span></li><li><span class="mk w"><span>8</span></span><span><b>The water stair.</b> A letter from Pell to Mam, and 120 shards.</span></li><li><span class="mk x"><span>↑</span></span><span><b>The long walk north</b> to the fen’s dark heart.</span></li></ul></figure>
+  <div class="cols">
+    <ol class="steps" start="13" style="counter-reset: st 12">
+      <li><b>Bogmire in the dark</b>The whole town is dim until you fix it. Talk to <b>Pell</b>, the child by the square: <span class="fell">“It took the lights. All of them. It sits out in the fen’s heart, up the long walk north, with them burning in its ribs.”</span> Old Wenna sells herbs by touch, and Tobb’s <b>Lanternless Inn</b> is a free rest point.</li>
+      <li><b>Bogmire’s keepsakes</b>Two here. The <b>Hag-Stone</b> hangs on a post out along the north-west boardwalk. The <b>Bogstriders</b> sit by the last plank at the east end of the southern boardwalk.</li>
+      <li><b>The water stair</b>Down at the south of town, a bucket on a rope has something wrapped in oilcloth tied to it: a letter from Pell to Mam, and <b>120 shards</b>.</li>
+      <li><b>The long walk north</b>When you’re level 5, rest at the inn and take the boardwalk north out of town to the fen’s dark heart. Walk into the square and the great wraith rises.</li>
+    </ol>
+    <div class="box warn"><span class="tag">Warning</span><h5>Boss: the great wraith</h5><p>Level 5, 26,542 HP, weak to moon. Its <b>Eclipse</b> hits both heroes for about 1,400 once it drops below 35%. Full strategy in the <a href="#bosses">Boss files</a>.</p></div>
+    <ol class="steps" start="17" style="counter-reset: st 16">
+      <li><b>The lights come home</b>Win and the stolen lamplight flies back over the water to every window. In town, Tobb promises you’ll never pay for a bed again, and Quill has flown the Magpie over to the west dock.</li>
+      <li><b>Back to the fen’s heart</b>Now walk back up to where the wraith sat. At the top of the square, the <b>Fen-Heart Lamp</b> is still burning: <span class="fell">“It kept burning all through the dark.”</span></li>
+      <li><b>The refit</b>Talk to Quill at the west dock. For <b>650 shards at level 5</b>, Bogmire’s shipwrights fit warm sunstone into the Magpie’s keel. Io learns <b>Harvest Moon</b> (+70 Heat to Sol in one cast), and the Magpie can now fly the western forests: band 2.</li>
+    </ol>
+  </div>
+  <div class="strip">
+    <figure class="shot"><div class="frame"><img src="images/shots/scene-sol-0.webp" alt="Sol: “Bogmire’s lamps went out three nights ago. That’s where the trail goes.”" loading="lazy" width="960" height="640"></div><figcaption><span class="n">4</span><span>Sol: “Bogmire’s lamps went out three nights ago. That’s where the trail goes.”</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/scene-refit-0.webp" alt="Quill: “Bogmire’s shipwrights could refit her, with sunstone enough.”" loading="lazy" width="960" height="640"></div><figcaption><span class="n">5</span><span>Quill: “Bogmire’s shipwrights could refit her, with sunstone enough.”</span></figcaption></figure>
+  </div>
+  <div class="grid2">
+    <figure class="areamap"><div class="frame"><img src="images/maps/bogmire-heart.jpg" alt="Painted map of The fen&#x27;s dark heart with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">The fen&#x27;s dark heart</span><span class="mk x" style="left:50.00%;top:96.80%" title="&lt;b&gt;Back to Bogmire.&lt;/b&gt;"><span>↓</span></span><span class="mk b" style="left:50.26%;top:44.92%" title="&lt;b&gt;BOSS: the great wraith&lt;/b&gt; (level 5). Walk into the square to start it."><span>2</span></span><span class="mk k" style="left:50.46%;top:21.00%" title="&lt;b&gt;The Fen-Heart Lamp,&lt;/b&gt; at the top of the square. Appears after you beat the great wraith."><span>3</span></span></div><ul class="legend"><li><span class="mk x"><span>↓</span></span><span><b>Back to Bogmire.</b></span></li><li><span class="mk b"><span>2</span></span><span><b>BOSS: the great wraith</b> (level 5). Walk into the square to start it.</span></li><li><span class="mk k"><span>3</span></span><span><b>The Fen-Heart Lamp,</b> at the top of the square. Appears after you beat the great wraith.</span></li></ul></figure>
+    <div>
+      <figure class="shot"><div class="frame"><img src="images/shots/b-gw-intro.webp" alt="The great wraith on the boardwalk, “the town’s stolen lamplight burning in its ribs.”" loading="lazy" width="960" height="640"></div><figcaption><span class="n">6</span><span>The great wraith on the boardwalk, “the town’s stolen lamplight burning in its ribs.”</span></figcaption></figure>
+      <div class="box tip"><span class="tag">Tip</span><p>The great wraith pays <b>415 shards</b> on its own. Add the water stair’s 120 and a handful of wild fights and you’ll have the 650 for the refit by the time you’re back at the dock.</p></div>
+    </div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Walkthrough · Part I</span><span class="pg">12</span></footer>
+</section>
+
+
+<section class="page paper" id="walk2" style="--sec: var(--band2)">
+  <header class="runner"><span class="sec">Walkthrough · Part II</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Walkthrough · Part II · Band 2</span>
+  <h2 class="headline"><span class="small">Levels 5–10</span>The Warm Roads</h2>
+  <div class="bandhead" style="color:#a24d0e"><span>Foes: level 6–10</span><span>Keepsakes: 3</span><span>Letter wells: 1</span><span>Ember Line nodes: 3</span><span>Gate fight: three wraiths</span></div>
+  <p class="deck">The Ember Line runs under the Warm Roads from node to node, all the way to Dawnroost. It should be warm underfoot. It isn’t.</p>
+  <div class="cols">
+    <ol class="steps" start="20" style="counter-reset: st 19">
+      <li><b>Take the Magpie up</b>From Bogmire’s west dock, fly north-west to the only new stop, <b>the Warm Roads</b>. The first landing plays a short scene with Sol, then offers a rest. The camp is a full rest point.</li>
+      <li><b>Relight the Ember Line</b>Three dark <b>nodes</b> stand on the world map between the camp and Dawnroost. The golden arrow ignores them, but walk onto each one: Sol lays her hand on the stone, her Heat runs into it, and it gives back <b>300 shards</b>. That’s <b>900 shards</b> for a short detour. Two lie north-east of the camp, on the way to Dawnroost; the third is north, a little to the west.</li>
+      <li><b>North to Dawnroost</b>The Wardens’ hill-fort is through the forest to the north. <span class="fell">“There were forty Wardens in that hall.” “And now there’s you.”</span></li>
+      <li><b>Around Dawnroost</b>Talk to <b>Marta</b> at the Warden hall door: she gives Sol the <b>Wardens’ Hall Gauntlets</b>, and the hall is a free rest point. <b>Brann</b> runs the forge and sells herbs. The <b>yard well</b> in the middle holds Marta’s letter to the Wardens who never came home, and a <b>Lavender</b>.</li>
+      <li><b>The wall-walk</b>Just inside the north gate, a narrow walkway runs west between the hall roof and the north wall. It looks like scenery. Follow it to the end for the <b>Dawnroost Kettle-Helm</b>.</li>
+    </ol>
+    <div class="box tip"><span class="tag">Tip</span><h5>Shopping trick</h5><p>Herb prices depend on the <b>shop’s</b> band, not yours. Brann charges about 2.5× Nettie’s prices, and the far north is worse. The Magpie can always land at Wickhollow, so fly back and stock up at Nettie’s when you’re rich.</p></div>
+    <ol class="steps" start="25" style="counter-reset: st 24">
+      <li><b>The living node</b>Through the north gate is a courtyard paved with a cracked sun mosaic, and the last node on the Line still blazing. The wraiths know it. Step into the courtyard and <b>three level 12 wraiths</b> rise around it. Go in at <b>level 10 or higher</b>.</li>
+      <li><b>Envoi is made</b>When the last moth rises, Io takes out the letters she was meant to burn and folds them into a wyrm, and Sol lights its heart from the node. From now on Io can summon <b>Envoi</b> once per battle while Sol has 70 Heat or more.</li>
+      <li><b>The Node Sunstone</b>Before you leave, climb the stair in the courtyard’s <b>north-west</b> corner. A chip of the node’s sunstone has come loose at the top. The north-east stair has nothing.</li>
+      <li><b>The charge</b>Back down in Dawnroost, talk to <b>Brann</b>. For <b>2,300 shards at level 10</b>, the living node’s light pours into the Magpie’s keel and band 3 opens: the northern wilds.</li>
+    </ol>
+  </div>
+  <div class="grid2">
+    <figure class="areamap"><div class="frame"><img src="images/maps/dawnroost.jpg" alt="Painted map of Dawnroost with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">Dawnroost</span><span class="mk x" style="left:41.73%;top:96.80%" title="&lt;b&gt;South gate,&lt;/b&gt; out to the world map."><span>↓</span></span><span class="mk r" style="left:22.79%;top:44.43%" title="&lt;b&gt;Marta and the Warden hall.&lt;/b&gt; Rest and save. Marta gives Sol the Wardens’ Hall Gauntlets."><span>2</span></span><span class="mk n" style="left:57.29%;top:46.68%" title="&lt;b&gt;Tamsin.&lt;/b&gt;"><span>3</span></span><span class="mk w" style="left:51.30%;top:61.91%" title="&lt;b&gt;The yard well.&lt;/b&gt; Marta’s letter, and a Lavender."><span>4</span></span><span class="mk s" style="left:70.57%;top:67.38%" title="&lt;b&gt;Brann’s forge.&lt;/b&gt; Herbs, and the node charge (level 10, 2,300 shards) after the living node is saved."><span>5</span></span><span class="mk k" style="left:14.00%;top:22.66%" title="&lt;b&gt;The Dawnroost Kettle-Helm,&lt;/b&gt; at the west end of the wall-walk above the hall."><span>6</span></span><span class="mk m" style="left:91.15%;top:29.30%" title="&lt;b&gt;The Warden dock.&lt;/b&gt; The Magpie moors here."><span>7</span></span><span class="mk x" style="left:40.30%;top:3.20%" title="&lt;b&gt;North gate&lt;/b&gt; to the living node."><span>↑</span></span></div><ul class="legend"><li><span class="mk x"><span>↓</span></span><span><b>South gate,</b> out to the world map.</span></li><li><span class="mk r"><span>2</span></span><span><b>Marta and the Warden hall.</b> Rest and save. Marta gives Sol the Wardens’ Hall Gauntlets.</span></li><li><span class="mk n"><span>3</span></span><span><b>Tamsin.</b></span></li><li><span class="mk w"><span>4</span></span><span><b>The yard well.</b> Marta’s letter, and a Lavender.</span></li><li><span class="mk s"><span>5</span></span><span><b>Brann’s forge.</b> Herbs, and the node charge (level 10, 2,300 shards) after the living node is saved.</span></li><li><span class="mk k"><span>6</span></span><span><b>The Dawnroost Kettle-Helm,</b> at the west end of the wall-walk above the hall.</span></li><li><span class="mk m"><span>7</span></span><span><b>The Warden dock.</b> The Magpie moors here.</span></li><li><span class="mk x"><span>↑</span></span><span><b>North gate</b> to the living node.</span></li></ul></figure>
+    <figure class="areamap"><div class="frame"><img src="images/maps/dawnroost-node.jpg" alt="Painted map of Dawnroost&#x27;s living node with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">Dawnroost&#x27;s living node</span><span class="mk x" style="left:50.00%;top:96.80%" title="&lt;b&gt;Back down to Dawnroost.&lt;/b&gt;"><span>↓</span></span><span class="mk b" style="left:50.13%;top:41.02%" title="&lt;b&gt;GATE FIGHT: three wraiths&lt;/b&gt; (level 12). Envoi is made when you win."><span>2</span></span><span class="mk k" style="left:13.35%;top:13.18%" title="&lt;b&gt;The Node Sunstone,&lt;/b&gt; at the top of the west stair, after the fight."><span>3</span></span></div><ul class="legend"><li><span class="mk x"><span>↓</span></span><span><b>Back down to Dawnroost.</b></span></li><li><span class="mk b"><span>2</span></span><span><b>GATE FIGHT: three wraiths</b> (level 12). Envoi is made when you win.</span></li><li><span class="mk k"><span>3</span></span><span><b>The Node Sunstone,</b> at the top of the west stair, after the fight.</span></li></ul></figure>
+  </div>
+  <div class="strip">
+    <figure class="shot"><div class="frame"><img src="images/shots/b-dr-intro.webp" alt="“Three wraiths, stronger than any the party has met, rise around the node.”" loading="lazy" width="960" height="640"></div><figcaption><span class="n">7</span><span>“Three wraiths, stronger than any the party has met, rise around the node.”</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/b-dr-briars-fx1500.webp" alt="Nightbloom Briars slows one wraith while you burn down another." loading="lazy" width="960" height="640"></div><figcaption><span class="n">8</span><span>Nightbloom Briars slows one wraith while you burn down another.</span></figcaption></figure>
+  </div>
+  <div class="box warn"><span class="tag">Warning</span><h5>Gate fight: three wraiths at the node</h5><p>Each has 19,318 HP and its <b>own</b> once-only Eclipse (about 2,700 to both heroes) below 35%. Kill them one at a time, and try to take each one from above 35% to zero in one burst. There’s no Envoi yet: it’s made at the end of this fight. Full plan in the <a href="#bosses">Boss files</a>.</p></div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Walkthrough · Part II</span><span class="pg">13</span></footer>
+</section>
+
+
+<section class="page paper" id="walk3" style="--sec: var(--band3)">
+  <header class="runner"><span class="sec">Walkthrough · Part III</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Walkthrough · Part III · Band 3</span>
+  <h2 class="headline"><span class="small">Levels 10–15</span>The north road</h2>
+  <div class="bandhead" style="color:#2b5aa8"><span>Foes: level 11–15</span><span>Keepsakes: 3</span><span>Letter wells: 1</span><span>Boss: the Gloam Knight</span></div>
+  <p class="deck">“Halcyon came north eight years ago. My teacher. She never came back.” “Maybe we’ll find out why.”</p>
+  <div class="cols">
+    <ol class="steps" start="29" style="counter-reset: st 28">
+      <li><b>The northern wilds</b>Fly north from Dawnroost’s Warden dock to <b>the northern wilds</b> camp. Sol tells you about Halcyon, and the camp is a rest point. Band 3 brings <b>frost wisps</b> (weak to fire) and, in about one wild fight in five, a <b>Bramble Horror</b>: a blackberry thicket that wasn’t a thicket. See the <a href="#bestiary">Bestiary</a> before you wander.</li>
+      <li><b>The northern crossroads</b>Walk east across the moor to the crossroads, where four old roads meet at a ruined plaza. Random fights happen here too. Before you cross the plaza, keep to its south-west rim and read the letter on the <b>crossroads well</b> (“To my love at the yard…”) for a <b>Silver Mugwort</b>.</li>
+      <li><b>The ambush</b>The first time you step into the plaza, someone comes down the north road out of the dark: a knight in dark armor, blade already drawn. <b>The Gloam Knight</b> is level 20 no matter what level you are.</li>
+    </ol>
+    <div class="box secret"><span class="tag">Secret</span><span class="stamp">You can’t lose</span><p>This fight can’t go wrong. Bring the knight down to <b>20% HP</b> and she retreats, paying <b>2,556 experience and 3,834 shards</b>. If the party falls instead, she <b>spares</b> you for her old squire’s sake. You get nothing, but the story carries on exactly the same, and either way Sol learns <b>Kestrel Stoop</b>. At level 15 you won’t drive her off; at level 18 it’s about a coin flip.</p></div>
+    <ol class="steps" start="32" style="counter-reset: st 31">
+      <li><b>Sol knows her</b>Partway through, Sol recognizes the way this knight fights: <span class="fell">“Halcyon?”</span> A new command appears at the top of Sol’s menu, <b>Kestrel</b>. Use it once and Halcyon loses her next turn. Save it for her <b>Black Noon</b>.</li>
+      <li><b>Kestrel Stoop</b>Win or lose, the fight stirs an old memory of the waystation yard, and Sol learns to hang in the air like a kestrel before she strikes. The party rests by the well, fully healed.</li>
+      <li><b>The Pennant</b>With the plaza clear, follow the <b>east road</b> almost to the map’s edge. A Wardens’ red pennant is tied to a waymark: <span class="fell">“They came this way. Some of them did.”</span></li>
+    </ol>
+  </div>
+  <figure class="areamap"><div class="frame"><img src="images/maps/crossroads.jpg" alt="Painted map of The northern crossroads with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">The northern crossroads</span><span class="mk x" style="left:49.80%;top:96.80%" title="&lt;b&gt;South road,&lt;/b&gt; to the world map."><span>↓</span></span><span class="mk x" style="left:2.20%;top:47.36%" title="&lt;b&gt;West road,&lt;/b&gt; to the world map."><span>←</span></span><span class="mk w" style="left:37.11%;top:58.40%" title="&lt;b&gt;The crossroads well.&lt;/b&gt; Ennis’s letter, and a Silver Mugwort. Keep to the plaza’s south-west rim and you can read it before the ambush."><span>3</span></span><span class="mk b" style="left:50.13%;top:45.90%" title="&lt;b&gt;BOSS: the Gloam Knight.&lt;/b&gt; She steps out the first time you take the north road."><span>4</span></span><span class="mk k" style="left:90.82%;top:45.90%" title="&lt;b&gt;The Crossroads Pennant,&lt;/b&gt; tied to a waymark far down the east road. Reachable after the Gloam Knight."><span>5</span></span><span class="mk x" style="left:97.80%;top:47.66%" title="&lt;b&gt;East road,&lt;/b&gt; to the world map."><span>→</span></span><span class="mk x" style="left:50.00%;top:3.20%" title="&lt;b&gt;North road&lt;/b&gt; to the shipyard."><span>↑</span></span></div><ul class="legend"><li><span class="mk x"><span>↓</span></span><span><b>South road,</b> to the world map.</span></li><li><span class="mk x"><span>←</span></span><span><b>West road,</b> to the world map.</span></li><li><span class="mk w"><span>3</span></span><span><b>The crossroads well.</b> Ennis’s letter, and a Silver Mugwort. Keep to the plaza’s south-west rim and you can read it before the ambush.</span></li><li><span class="mk b"><span>4</span></span><span><b>BOSS: the Gloam Knight.</b> She steps out the first time you take the north road.</span></li><li><span class="mk k"><span>5</span></span><span><b>The Crossroads Pennant,</b> tied to a waymark far down the east road. Reachable after the Gloam Knight.</span></li><li><span class="mk x"><span>→</span></span><span><b>East road,</b> to the world map.</span></li><li><span class="mk x"><span>↑</span></span><span><b>North road</b> to the shipyard.</span></li></ul></figure>
+  <div class="strip">
+    <figure class="shot"><div class="frame"><img src="images/shots/b-hal-intro.webp" alt="The Gloam Knight steps out at the crossroads." loading="lazy" width="960" height="640"></div><figcaption><span class="n">9</span><span>The Gloam Knight steps out at the crossroads.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/b-hal-moonlight-fx1500.webp" alt="Moonlight in a Lunar Trance. Halcyon is weak to sun, so save Sol’s Trance for High Noon." loading="lazy" width="960" height="640"></div><figcaption><span class="n">10</span><span>Moonlight in a Lunar Trance. Halcyon is weak to sun, so save Sol’s Trance for High Noon.</span></figcaption></figure>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Walkthrough · Part III</span><span class="pg">14</span></footer>
+</section>
+
+<section class="page paper" style="--sec: var(--band3)">
+  <header class="runner"><span class="sec">Walkthrough · Part III</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Walkthrough · Part III · Band 3</span>
+  <h2 class="headline"><span class="small">Ysmera’s yard</span>The shipyard</h2>
+  <div class="grid2">
+    <div>
+      <ol class="steps" start="35" style="counter-reset: st 34">
+        <li><b>North to the shipyard</b>The north road from the crossroads leads to a snowy harbour fortress. On the world map, the shipyard only appears after the ambush.</li>
+        <li><b>Ysmera Brightkeel</b>The Aurosi shipmaster meets you inside the gatehouse and asks about a knight with a black sun on her hilt. <span class="fell">“That is the Starless’s mark. Noctara’s. The knight serves her.”</span> Noctara will be at Misthollow’s Moonwell on the longest night. If she eclipses the moon from there, the night won’t end.</li>
+        <li><b>Gifts and errands</b>Talk to Ysmera again for <b>Ysmera’s Moonglass</b> (+10% MP for Io). <b>Pim</b> the gnome sells herbs, <b>Tock</b> admires your skiff, and <b>Old Gil</b>’s bunkhouse is a free rest point.</li>
+        <li><b>The cove dock</b>From the bunkhouse go west and down the stairs to the cove. At the west end of the dock: the <b>Dockhand’s Gloves</b>, worth +10% shards from every fight.</li>
+        <li><b>The moon-sail</b>Ysmera’s gnomes will rig the Magpie with a moon-sail of Aurosi silk for <b>4,500 shards at level 15</b>. That opens band 4: the Ironspire Peaks.</li>
+      </ol>
+      <div class="box tip"><span class="tag">Tip</span><p>Short on shards? Wear the <b>Forge Horseshoe</b> and the <b>Dockhand’s Gloves</b> together for +15% shards from every fight. And if you drove Halcyon off rather than being spared, her 3,834 shards nearly cover the moon-sail on their own.</p></div>
+    </div>
+    <div>
+      <figure class="areamap"><div class="frame"><img src="images/maps/shipyard.jpg" alt="Painted map of The shipyard with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">The shipyard</span><span class="mk x" style="left:49.41%;top:96.80%" title="&lt;b&gt;Back to the crossroads.&lt;/b&gt;"><span>↓</span></span><span class="mk n" style="left:49.80%;top:48.83%" title="&lt;b&gt;Ysmera Brightkeel.&lt;/b&gt; Gives Io the Moonglass, and fits the moon-sail (level 15, 4,500 shards)."><span>2</span></span><span class="mk r" style="left:26.69%;top:47.27%" title="&lt;b&gt;Old Gil’s bunkhouse.&lt;/b&gt; Rest and save."><span>3</span></span><span class="mk n" style="left:65.10%;top:39.06%" title="&lt;b&gt;Tock,&lt;/b&gt; a gnome shipwright."><span>4</span></span><span class="mk s" style="left:77.41%;top:51.95%" title="&lt;b&gt;Pim’s herbs.&lt;/b&gt;"><span>5</span></span><span class="mk k" style="left:11.07%;top:62.50%" title="&lt;b&gt;The Dockhand’s Gloves,&lt;/b&gt; at the end of the west dock, down in the cove."><span>6</span></span><span class="mk m" style="left:49.74%;top:23.44%" title="&lt;b&gt;The Magpie,&lt;/b&gt; up on the slip in Ysmera’s cradle."><span>7</span></span></div><ul class="legend"><li><span class="mk x"><span>↓</span></span><span><b>Back to the crossroads.</b></span></li><li><span class="mk n"><span>2</span></span><span><b>Ysmera Brightkeel.</b> Gives Io the Moonglass, and fits the moon-sail (level 15, 4,500 shards).</span></li><li><span class="mk r"><span>3</span></span><span><b>Old Gil’s bunkhouse.</b> Rest and save.</span></li><li><span class="mk n"><span>4</span></span><span><b>Tock,</b> a gnome shipwright.</span></li><li><span class="mk s"><span>5</span></span><span><b>Pim’s herbs.</b></span></li><li><span class="mk k"><span>6</span></span><span><b>The Dockhand’s Gloves,</b> at the end of the west dock, down in the cove.</span></li><li><span class="mk m"><span>7</span></span><span><b>The Magpie,</b> up on the slip in Ysmera’s cradle.</span></li></ul></figure>
+      <div class="hero" style="--c: var(--band3); grid-template-columns: minmax(0,140px) minmax(0,1fr); margin-top: 16px">
+        <img class="face" src="images/art/portrait-ysmera.jpg" alt="Ysmera Brightkeel, the Aurosi shipmaster, silver-haired in a gold-trimmed blue coat" width="480" height="480" loading="lazy">
+        <p class="say" style="margin:0"><b>Ysmera Brightkeel</b>“A witch and the last of the Wardens, at my yard. Your little ship will need more than courage to fly north.”</p>
+      </div>
+      <div class="ffwin"><b>Tock</b><p>“A skiff that flies on sunstone and stubbornness. We’ve fixed worse. Not much worse.”</p></div>
+    </div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Walkthrough · Part III</span><span class="pg">15</span></footer>
+</section>
+
+
+<section class="page paper" id="walk4" style="--sec: var(--band4)">
+  <header class="runner"><span class="sec">Walkthrough · Part IV</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Walkthrough · Part IV · Band 4</span>
+  <h2 class="headline"><span class="small">Levels 15–20</span>Over the peaks</h2>
+  <div class="bandhead" style="color:#16708d"><span>Foes: level 16–20</span><span>Keepsakes: 5</span><span>Letter wells: 1</span><span>Rare boss: the Bramble Colossus</span><span>Final boss: Noctara</span></div>
+  <p class="deck">“Misthollow is up through the pass. The cold is coming from there.” “Then so is she.”</p>
+  <div class="cols">
+    <ol class="steps" start="40" style="counter-reset: st 39">
+      <li><b>The northeast peaks</b>Fly east over the peaks to the frozen camp, a rest point. Misthollow has no landing of its own: you walk from here.</li>
+      <li><b>The frozen pass</b>Climb the snowy road north. Random fights here are band 4 (frost wisps and wraiths, level 16 to 20). Just south of the stone bridge are the <b>sled camp</b>, a free rest point on the east verge, and a lamp post on the west verge. Half buried in the snow under that lamp is the <b>Pass Bell</b>.</li>
+      <li><b>Grind to level 20</b>This is the step that matters most. The finale <b>cannot be won below level 19</b>, and even at 19 it’s close to hopeless. The curve jumps here: level 16 takes 3,257 experience, but level 17 takes 10,763, so expect to spend real time in the pass. A band-4 fight averages about 4,000 experience.</li>
+    </ol>
+    <div class="box warn"><span class="tag">Warning</span><h5>The Bramble Colossus</h5><p>From your <b>4th</b> wild fight in band 4 onward, each fight has a 1-in-12 chance of being a <b>Bramble Colossus</b>: a thicket as big as a house that heaves itself out of the snow. It has 260,000 to 540,000 HP. You can always run, because it’s rooted. Beat one once and it leaves two keepsakes in its heart, the <b>Heart-Seed</b> and the <b>Colossus Thorn</b>. It also pays up to 15,000 experience, the best haul in the game.</p></div>
+    <ol class="steps" start="43" style="counter-reset: st 42">
+      <li><b>Misthollow</b>Up the pass is a town of pale stone towers, dark and frosted. Io can feel the dead Moonwell from the gate: <span class="fell">“It’s like a hole in the night.”</span></li>
+      <li><b>Last errands</b><b>Ede</b> at the Lantern House gives Sol her <b>Hearth-Coal</b> (+10 Heat at the start of every fight), and the inn is a free rest point. <b>Sorrel</b> sells herbs at band-4 prices. The <b>frozen trough</b> at the west end of the lower terrace holds the children’s letter to the Moon, and a <b>Nightrose</b>.</li>
+      <li><b>The balcony bridge</b>From the west end of the upper square by Sorrel’s, climb the far-west stairs north and turn west onto the balcony bridge. At its end: the <b>Misthollow Cowl</b>, which halves Frost. You want it for Noctara.</li>
+    </ol>
+  </div>
+  <div class="grid2">
+    <figure class="areamap"><div class="frame"><img src="images/maps/frozen-pass.jpg" alt="Painted map of The frozen pass with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">The frozen pass</span><span class="mk x" style="left:51.30%;top:96.80%" title="&lt;b&gt;Down to the world map.&lt;/b&gt;"><span>↓</span></span><span class="mk k" style="left:40.04%;top:61.04%" title="&lt;b&gt;The Pass Bell,&lt;/b&gt; in the snow under the lamp beside the road."><span>2</span></span><span class="mk r" style="left:54.69%;top:65.62%" title="&lt;b&gt;The sled camp.&lt;/b&gt; Rest and save."><span>3</span></span><span class="mk x" style="left:50.39%;top:3.20%" title="&lt;b&gt;Up to Misthollow.&lt;/b&gt;"><span>↑</span></span></div><ul class="legend"><li><span class="mk x"><span>↓</span></span><span><b>Down to the world map.</b></span></li><li><span class="mk k"><span>2</span></span><span><b>The Pass Bell,</b> in the snow under the lamp beside the road.</span></li><li><span class="mk r"><span>3</span></span><span><b>The sled camp.</b> Rest and save.</span></li><li><span class="mk x"><span>↑</span></span><span><b>Up to Misthollow.</b></span></li></ul></figure>
+    <figure class="areamap"><div class="frame"><img src="images/maps/misthollow.jpg" alt="Painted map of Misthollow with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">Misthollow</span><span class="mk x" style="left:49.80%;top:96.80%" title="&lt;b&gt;Back to the frozen pass.&lt;/b&gt;"><span>↓</span></span><span class="mk n" style="left:45.57%;top:78.32%" title="&lt;b&gt;The watchwoman.&lt;/b&gt;"><span>2</span></span><span class="mk w" style="left:25.13%;top:86.91%" title="&lt;b&gt;A frozen trough.&lt;/b&gt; The children’s letter to the Moon, and a Nightrose."><span>3</span></span><span class="mk s" style="left:31.25%;top:61.52%" title="&lt;b&gt;Sorrel’s herbs.&lt;/b&gt;"><span>4</span></span><span class="mk r" style="left:63.80%;top:65.43%" title="&lt;b&gt;Ede and the Lantern House.&lt;/b&gt; Rest and save. Ede gives Sol her Hearth-Coal."><span>5</span></span><span class="mk k" style="left:8.79%;top:23.93%" title="&lt;b&gt;The Misthollow Cowl,&lt;/b&gt; at the end of the balcony bridge, up the west stairs."><span>6</span></span><span class="mk x" style="left:49.80%;top:3.20%" title="&lt;b&gt;Up the street to the dead Moonwell.&lt;/b&gt;"><span>↑</span></span></div><ul class="legend"><li><span class="mk x"><span>↓</span></span><span><b>Back to the frozen pass.</b></span></li><li><span class="mk n"><span>2</span></span><span><b>The watchwoman.</b></span></li><li><span class="mk w"><span>3</span></span><span><b>A frozen trough.</b> The children’s letter to the Moon, and a Nightrose.</span></li><li><span class="mk s"><span>4</span></span><span><b>Sorrel’s herbs.</b></span></li><li><span class="mk r"><span>5</span></span><span><b>Ede and the Lantern House.</b> Rest and save. Ede gives Sol her Hearth-Coal.</span></li><li><span class="mk k"><span>6</span></span><span><b>The Misthollow Cowl,</b> at the end of the balcony bridge, up the west stairs.</span></li><li><span class="mk x"><span>↑</span></span><span><b>Up the street to the dead Moonwell.</b></span></li></ul></figure>
+  </div>
+  <div class="strip">
+    <figure class="shot"><div class="frame"><img src="images/shots/b-col-intro.webp" alt="“Beside the frozen road stands a thicket as big as a house, green where nothing else is.” Run, or fight." loading="lazy" width="960" height="640"></div><figcaption><span class="n">11</span><span>“Beside the frozen road stands a thicket as big as a house, green where nothing else is.” Run, or fight.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/b-col-stoop-fx4500.webp" alt="A level 19 Bramble Colossus, its thorned bud open on a glowing heart." loading="lazy" width="960" height="640"></div><figcaption><span class="n">12</span><span>A level 19 Bramble Colossus, its thorned bud open on a glowing heart.</span></figcaption></figure>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Walkthrough · Part IV</span><span class="pg">16</span></footer>
+</section>
+
+<section class="page" style="--sec: var(--band4)">
+  <header class="runner"><span class="sec">Walkthrough · Part IV</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Walkthrough · Part IV · The finale</span>
+  <h2 class="headline"><span class="small">The longest night</span>The dead Moonwell</h2>
+  <div class="grid2">
+    <div>
+      <figure class="areamap"><div class="frame"><img src="images/maps/moonwell.jpg" alt="Painted map of The dead Moonwell with numbered callouts" loading="lazy" width="1280" height="853"><span class="title">The dead Moonwell</span><span class="mk x" style="left:50.00%;top:96.80%" title="&lt;b&gt;Back to Misthollow.&lt;/b&gt;"><span>↓</span></span><span class="mk b" style="left:49.93%;top:71.00%" title="&lt;b&gt;FINAL BOSS: Noctara the Starless,&lt;/b&gt; with Halcyon at her side. Step up to the well to begin."><span>2</span></span></div><ul class="legend"><li><span class="mk x"><span>↓</span></span><span><b>Back to Misthollow.</b></span></li><li><span class="mk b"><span>2</span></span><span><b>FINAL BOSS: Noctara the Starless,</b> with Halcyon at her side. Step up to the well to begin.</span></li></ul></figure>
+      <ol class="steps" start="46" style="counter-reset: st 45">
+        <li><b>Get ready</b>Level 20. Rest at the Lantern House. Carry at least one of every herb, especially a <b>Nightrose</b> and an <b>Ember-star Lily</b>. Wear the <b>Misthollow Cowl</b> and Sol’s Heat keepsakes.</li>
+        <li><b>Up the street</b>Take the long street north out of Misthollow to a vast round plaza and the dead Moonwell, a black shaft that gives no light. Step onto the top of the stair and the finale begins with a cutscene (about a minute; skippable, and you can watch it again from Settings later).</li>
+        <li><b>Noctara the Starless</b>…with Halcyon at her side. You fight both. If you fall, you wake at your last rest with all your herbs back and can try again as often as you like.</li>
+        <li><b>The ending</b>Win and Io takes out the last of her letters. Stay for the ending and the credits card, which counts your letters sent, fights and play time.</li>
+      </ol>
+    </div>
+    <div>
+      <figure class="shot"><div class="frame"><img src="images/shots/b-fin-intro.webp" alt="“Noctara the Starless waits at the well, and Halcyon stands at her side.”" loading="lazy" width="960" height="640"></div><figcaption><span class="n">13</span><span>“Noctara the Starless waits at the well, and Halcyon stands at her side.”</span></figcaption></figure>
+      <div class="box warn"><span class="tag">Warning</span><h5>Final boss: Noctara &amp; Halcyon</h5><p>926,492 HP for Noctara, 253,028 for Halcyon, both level 20. Every action Noctara takes makes her hit <b>11.5% harder</b>, shown as “Cold +N%”. Kill Halcyon first, strike hard and early, and save Envoi and Lunara for <b>Void Sphere</b>. Full plan in the <a href="#bosses">Boss files</a>.</p></div>
+      <p class="pullquote">“The cold deepens every turn: strike hard and early, and keep Envoi’s ward and Lunara for Void Sphere.”<cite>The game’s own hint, on the defeat card</cite></p>
+      <div class="box tip"><span class="tag">After the credits</span><p>Choose <b>Continue</b> on the title and you’re back at the Moonwell, free to explore. Gretch, Sorrel, Ede and the watchwoman all have new lines, and any keepsakes or letters you missed are still out there.</p></div>
+    </div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Walkthrough · Part IV</span><span class="pg">17</span></footer>
+</section>
+
+
+<section class="page" id="bosses" style="--sec: var(--blood)">
+  <header class="runner"><span class="sec">Boss files</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Classified</span>
+  <h2 class="headline"><span class="small">Every story fight, broken down</span>Boss files</h2>
+  <p class="deck">HP and damage are the real numbers at the level you’ll fight them, before the ±25% roll. Danger runs from one pip to five, and ◆ means sunstone shards.</p>
+
+  <article class="bossfile">
+    <header><h3>Shadow Wraith</h3><span class="where">The first fight · Wickhollow’s Night square · Io alone</span></header>
+    <div class="inner">
+      <div>
+        <div class="vitals">
+          <div><small>Level</small><b>1</b></div>
+          <div><small>HP</small><b>4,200</b></div>
+          <div><small>Weak to</small><b>Moon ×1.5</b></div>
+          <div><small>Reward</small><b>220 XP · 60 ◆</b></div>
+        </div>
+        <p class="note">Danger <span class="threat"><i></i><i class="off"></i><i class="off"></i><i class="off"></i><i class="off"></i></span></p>
+        <ul class="moves">
+          <li><b>Soul Reaper</b> 220 to whoever hit it last.</li>
+          <li><b>Soul Bolts</b> three bolts of 80 at random.</li>
+          <li><b>Shadow Grasp</b> 290, always at Io.</li>
+          <li><b>Eclipse</b> <span class="pill">Once, below 35%</span> about 550 to everyone.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>The plan</h4>
+        <ol class="plan">
+          <li>Io starts with her Turn gauge 60% full. Open with <b>Crescent Blades</b>: about 660 a cast against its moon weakness.</li>
+          <li>When Io is near half HP, call <b>Lunara</b>. She heals 60%, softens every hit, and her Silver Requiem lands about 3,000 on a lone wraith.</li>
+          <li>Finish with Crescent Blades, or <b>Moonlight</b> if Trance comes up. <b>Defend</b> if Io is low when it nears 35%.</li>
+        </ol>
+      </div>
+    </div>
+  </article>
+
+  <article class="bossfile">
+    <header><h3>The great wraith</h3><span class="where">Gate 5 · The fen’s dark heart, Bogmire</span></header>
+    <div class="inner">
+      <div>
+        <div class="vitals">
+          <div><small>Level</small><b>5</b></div>
+          <div><small>HP</small><b>26,542</b></div>
+          <div><small>Weak to</small><b>Moon ×1.5</b></div>
+          <div><small>Reward</small><b>415 XP · 415 ◆</b></div>
+        </div>
+        <p class="note">Danger <span class="threat"><i></i><i></i><i class="off"></i><i class="off"></i><i class="off"></i></span></p>
+        <ul class="moves">
+          <li><b>Soul Reaper</b> 829 to whoever hit it last.</li>
+          <li><b>Soul Bolts</b> four bolts of 270 at random.</li>
+          <li><b>Stolen Fire</b> 705 to everyone.</li>
+          <li><b>Swallow Lamplight</b> <span class="pill">Below 70%</span> heals itself 1,593. Then can’t again for 3 turns.</li>
+          <li><b>Eclipse</b> <span class="pill">Once, below 35%</span> 1,389 to everyone.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>The plan</h4>
+        <ol class="plan">
+          <li><b>Moon is everything.</b> Io’s Crescent Blades do about 1,370. Cast <b>Moonsteel</b> on Sol: +40 Heat, and her next Attack hits as moon for about 1,040.</li>
+          <li>Keep up the pressure through its heals; Swallow Lamplight can only come every fourth turn.</li>
+          <li>Eclipse fires once it’s under 9,290 HP. Either have <b>Lunara</b> out to cut it to 60%, or burst it from above that line to zero: Lunara (about 6,400) plus Moonlight (about 3,900) nearly does it alone.</li>
+          <li>Go in at <b>level 5</b>. At level 4 a careful player still loses about a third of the time.</li>
+        </ol>
+      </div>
+    </div>
+  </article>
+
+  <article class="bossfile">
+    <header><h3>Three wraiths at the node</h3><span class="where">Gate 10 · Dawnroost’s living node</span></header>
+    <div class="inner">
+      <div>
+        <div class="vitals">
+          <div><small>Level</small><b>12 each</b></div>
+          <div><small>HP</small><b>19,318 ×3</b></div>
+          <div><small>Weak to</small><b>Moon ×1.5</b></div>
+          <div><small>Reward</small><b>891 XP · 669 ◆</b></div>
+        </div>
+        <p class="note">Danger <span class="threat"><i></i><i></i><i></i><i class="off"></i><i class="off"></i></span></p>
+        <ul class="moves">
+          <li><b>Soul Reaper</b> about 1,400 to whoever hit it last.</li>
+          <li><b>Soul Bolts</b> three bolts of about 520.</li>
+          <li><b>Shadow Grasp</b> about 1,860, always at Io.</li>
+          <li><b>Eclipse</b> <span class="pill">Once each, below 35%</span> 2,675 to everyone. Three wraiths means three Eclipses.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>The plan</h4>
+        <ol class="plan">
+          <li><b>One at a time.</b> Pick a wraith and keep hitting it until it’s gone.</li>
+          <li>Finish each one from above 35% in a single burst so its Eclipse never fires. At level 10, Moonlight does about 9,700, more than a wraith’s 35% line of 6,761.</li>
+          <li>Shadow Grasp always goes for Io. When she’s low, let Sol <b>Guard</b> to take the hit for her.</li>
+          <li>Waxing Light and Lavender cover the spread damage. Save Lunara for when someone drops. Go in at level 10, or 11 to be safe.</li>
+        </ol>
+      </div>
+    </div>
+  </article>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Boss files</span><span class="pg">18</span></footer>
+</section>
+
+<section class="page" style="--sec: var(--blood)">
+  <header class="runner"><span class="sec">Boss files</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <article class="bossfile">
+    <header><h3>The Gloam Knight (Halcyon)</h3><span class="where">Gate 15 · The northern crossroads</span></header>
+    <div class="inner">
+      <div>
+        <div class="vitals">
+          <div><small>Level</small><b>20, always</b></div>
+          <div><small>HP</small><b>632,570</b></div>
+          <div><small>Weak to</small><b>Sun ×1.5</b></div>
+          <div><small>Retreats at</small><b>20% HP</b></div>
+          <div><small>Reward</small><b>2,556 XP · 3,834 ◆</b></div>
+        </div>
+        <p class="note">Danger <span class="threat"><i></i><i></i><i></i><i></i><i class="off"></i></span> but you can’t lose</p>
+        <ul class="moves">
+          <li><b>Gloam Cleave</b> 14,377 to one hero.</li>
+          <li><b>Dusk Arc</b> 10,543 to everyone.</li>
+          <li><b>Severance</b> 11,821 to the hero with the lowest HP, who then <b>can’t be healed</b> until her next turn.</li>
+          <li><b>Light-Drinker</b> 9,105, healing Halcyon; also drains 40 of Sol’s Heat or some of Io’s MP.</li>
+          <li><b>Warden’s Vow</b> until her next turn she <b>counters every physical blow</b> for 11,821. Magic doesn’t set it off.</li>
+          <li><b>Black Noon</b> <span class="pill">Once, below 30%, charged</span> 31,149 to everyone.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>The plan</h4>
+        <ol class="plan">
+          <li>You’re fighting for the payout, not survival. Being wiped out just means she spares you. At level 15 you can’t win this, at 18 it’s even odds, and at 20 it’s reliable.</li>
+          <li><b>When she takes Warden’s Vow, stop hitting physically</b>, and that includes Io’s plain Attack. Use Io’s spells and summons, or let Sol Guard.</li>
+          <li>Hit with sun: <b>Flare Cut</b>, <b>High Noon</b>, <b>Kestrel Stoop</b> and above all <b>Envoi</b>. <b>Sunder</b> her first.</li>
+          <li>When she starts gathering <b>Black Noon</b>, have Sol call <b>Kestrel</b>. Halcyon loses a turn, which buys you time to push her from 30% down to 20%. Envoi’s ward or Lunara also blunts it.</li>
+          <li>Severance targets whoever has the lowest raw HP, usually Io. Heal her <b>before</b> she needs it.</li>
+        </ol>
+      </div>
+    </div>
+  </article>
+
+  <article class="bossfile">
+    <header><h3>The Bramble Colossus</h3><span class="where">Rare · Band 4 wilds · Optional</span></header>
+    <div class="inner">
+      <div>
+        <div class="vitals">
+          <div><small>Level</small><b>16–20</b></div>
+          <div><small>HP</small><b>262k–543k</b></div>
+          <div><small>Weak to</small><b>Fire ×1.5 · Sun ×1.25</b></div>
+          <div><small>Reward at L20</small><b>15,096 XP · 10,903 ◆</b></div>
+        </div>
+        <p class="note">Danger <span class="threat"><i></i><i></i><i></i><i></i><i></i></span> but you can always run</p>
+        <ul class="moves">
+          <li><b>Thorn Lance</b> about 17,900 to whoever hit it last.</li>
+          <li><b>Hammerfall</b> about 14,500 to one, then a 5,300 shockwave to all.</li>
+          <li><b>Maelstrom</b> / <b>Thorn Volley</b> about 13,000 to everyone.</li>
+          <li><b>Thornwood</b> about 21,000 to one.</li>
+          <li><b>Siren Bloom</b> <span class="pill">Charged</span> charms the party to half speed and bares its heart. Next turn: <b>Devour</b>, about 34,700 to one hero, healing itself.</li>
+          <li><b>Wrath</b> <span class="pill">Once, below 50%</span> faster, hits 20% harder, and bares its heart.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>The plan</h4>
+        <ol class="plan">
+          <li><b>Always break the Siren Bloom.</b> Any fire or sun hit does it. <b>Flame Bolt</b> is perfect: fire weakness and the bare heart make it worth three normal casts. So does any single hit of 450 base power or more.</li>
+          <li><b>Hit the heart.</b> While its heart is bare, every blow does <b>double</b>: during the bloom, and until its next turn after Wrath or after a Devour. Save <b>Solar Crest at 100 Heat</b> or <b>High Noon</b> for those windows.</li>
+          <li><b>Cut its canes.</b> Flare Cut and Solar Crest each sever a cane, and every cane gone takes 8% off all its damage, down to two canes.</li>
+          <li>Nightbloom Briars slows it, and Envoi’s ward can swallow a Devour or a Maelstrom whole.</li>
+          <li>Losing badly? <b>Flee.</b> It always works against the Colossus.</li>
+        </ol>
+      </div>
+    </div>
+  </article>
+
+  <article class="bossfile">
+    <header><h3>Noctara the Starless &amp; Halcyon</h3><span class="where">The finale · The dead Moonwell, Misthollow</span></header>
+    <div class="inner">
+      <div>
+        <div class="vitals">
+          <div><small>Level</small><b>20 &amp; 20</b></div>
+          <div><small>Noctara HP</small><b>926,492</b></div>
+          <div><small>Halcyon HP</small><b>253,028</b></div>
+          <div><small>Weak to</small><b>Nothing</b></div>
+        </div>
+        <p class="note">Danger <span class="threat"><i></i><i></i><i></i><i></i><i></i></span></p>
+        <ul class="moves">
+          <li><b>The Cold</b> every action Noctara takes adds <b>+11.5%</b> to her damage. After 10 actions she hits 2.15× as hard. Halcyon’s damage grows the same way, though the game doesn’t show it.</li>
+          <li><b>Crown Shards</b> three shards of about 1,660 at random.</li>
+          <li><b>Void Sphere</b> <span class="pill">Charged</span> about 8,900 to everyone, before the Cold.</li>
+          <li><b>Frost Dust</b> slows the party for 10 seconds; its hit lands when the frost thaws.</li>
+          <li><b>Blackout</b> only while Halcyon stands: her Gloam Cleave at 1.25×.</li>
+          <li>Halcyon brings her full move list, including Warden’s Vow and Black Noon, at 35% damage.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>The plan</h4>
+        <ol class="plan">
+          <li><b>Be level 20.</b> The game’s balance notes are blunt: below 19 it can’t be won.</li>
+          <li><b>Take Halcyon down first.</b> She has a quarter of Noctara’s HP, she’s weak to sun, and while she stands Noctara can cast Blackout. When she falls she kneels on her blade and stays down.</li>
+          <li><b>Race the Cold.</b> Use the Ember-star Lily on turn one, Sunder Noctara, and spend Trances on damage.</li>
+          <li><b>Answer every Void Sphere.</b> You get one turn’s warning. Envoi’s ward cancels it, Lunara cuts it to 60%, and Kestrel Stoop lifts Sol out of reach. Keep Sol at 70+ Heat with Harvest Moon so Envoi is always ready.</li>
+          <li>The <b>Misthollow Cowl</b> halves Frost Dust’s slow. Envoi’s strike ends the frost but brings its hit down at once.</li>
+        </ol>
+      </div>
+    </div>
+  </article>
+  <div class="strip">
+    <figure class="shot"><div class="frame"><img src="images/shots/b-gw-io-crescent-fx1500.webp" alt="The great wraith takes 1.5× from moon." loading="lazy" width="960" height="640"></div><figcaption><span class="n">A</span><span>The great wraith takes 1.5× from moon.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/b-col-stoop-fx1500.webp" alt="A Colossus in bloom. Its window reads “Heart bare: blows land double”, and the tick on its HP bar marks Wrath at 50%." loading="lazy" width="960" height="640"></div><figcaption><span class="n">B</span><span>A Colossus in bloom. Its window reads “Heart bare: blows land double”, and the tick on its HP bar marks Wrath at 50%.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/b-fin-envoi-fx2500.webp" alt="Calling Envoi at the dead Moonwell. After one action, Noctara’s window already reads “Cold +12%”." loading="lazy" width="960" height="640"></div><figcaption><span class="n">C</span><span>Calling Envoi at the dead Moonwell. After one action, Noctara’s window already reads “Cold +12%”.</span></figcaption></figure>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Boss files</span><span class="pg">19</span></footer>
+</section>
+
+
+<section class="page" id="bestiary" style="--sec: var(--wraith)">
+  <header class="runner"><span class="sec">Bestiary</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Field notes</span>
+  <h2 class="headline"><span class="small">What walks the roads at night</span>Bestiary</h2>
+  <p class="deck">Wild foes roll their own level inside the band you’re in. HP and rewards below run from the lowest level you’ll meet to the highest. Wild fights pay 1.75× what a story fight would, which is why grinding works so well.</p>
+  <div class="tablewrap"><table class="stat">
+    <thead><tr><th>Foe</th><th>Where</th><th class="num">HP</th><th>Turn</th><th>Weak to</th><th class="num">Experience</th><th class="num">Shards</th></tr></thead>
+    <tbody>
+      <tr><td class="nm">Wisp</td><td>Bands 1–3</td><td class="num">1,100–14,100</td><td>2.8 s</td><td>Moon ×1.5</td><td class="num">32–404</td><td class="num">24–315</td></tr>
+      <tr><td class="nm">Shadow Wraith</td><td>Bands 1–4</td><td class="num">2,600–83,000</td><td>3.2 s</td><td>Moon ×1.5</td><td class="num">70–2,236</td><td class="num">52–1,677</td></tr>
+      <tr><td class="nm">Frost wisp</td><td>Bands 3–4</td><td class="num">7,400–38,300</td><td>2.8 s</td><td>Fire ×1.5, moon ×1.3</td><td class="num">238–1,230</td><td class="num">195–1,006</td></tr>
+      <tr><td class="nm">Bramble Horror</td><td>Band 3</td><td class="num">56,000–193,000</td><td>1.7–2.0 s</td><td>Fire ×1.5, sun ×1.25</td><td class="num">758–3,370</td><td class="num">412–2,022</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid2">
+    <div>
+      <h3>Wisp</h3>
+      <ul class="moves">
+        <li><b>Flicker</b> one quick hit.</li>
+        <li><b>Cling</b> three small draining hits.</li>
+        <li><b>Wail</b> a weak hit on everyone.</li>
+        <li><b>Gutter</b> it flickers low, and the next move aimed at it <b>misses</b>. It never does this twice running.</li>
+      </ul>
+      <p class="note">When a wisp is Guttering, hit it with something cheap (Sol’s Attack still builds Heat) or turn on its friends.</p>
+      <h3>Frost wisp</h3>
+      <p>Like a wisp, but with <b>Frost Breath</b>: a hit on everyone that slows the party’s gauges to 60% for a few seconds. One Flame Bolt does most of the work. The <b>Misthollow Cowl</b> halves the slow for its wearer.</p>
+      <h3>Shadow Wraith</h3>
+      <ul class="moves">
+        <li><b>Soul Reaper</b> a heavy hit on whoever hit it last.</li>
+        <li><b>Soul Bolts</b> three bolts at random.</li>
+        <li><b>Shadow Grasp</b> always at Io.</li>
+        <li><b>Eclipse</b> <span class="pill">Once, below 35%</span> hits everyone.</li>
+      </ul>
+      <p class="note">Two or three wraiths means two or three Eclipses. Finish wraiths one at a time.</p>
+    </div>
+    <div>
+      <h3>Bramble Horror</h3>
+      <p class="say"><b>The warning sign</b>“A blackberry thicket stands by the road, lusher than it should be, and heavy with fruit.”</p>
+      <p>About one band-3 wild fight in five is a lone Bramble Horror in one of four forms. It fears fire: every fire or sun hit makes it <b>recoil</b>, pushing its next turn back.</p>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>Form</th><th class="num">HP ×</th><th>Turn</th><th>Special</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Classic Horror</td><td class="num">10,000</td><td>1.9 s</td><td>—</td></tr>
+          <tr><td class="nm">Low Ambush</td><td class="num">9,000</td><td>1.9 s</td><td>Acts before you can move</td></tr>
+          <tr><td class="nm">Towering Reach</td><td class="num">9,000</td><td>1.7 s</td><td>Fastest; hits 10% harder</td></tr>
+          <tr><td class="nm">Ancient Crown</td><td class="num">15,000</td><td>2.0 s</td><td>Hits 25% harder; the worst thing in the wilds</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">HP × means base HP; multiply by 1.2 for each level after 1.</p>
+      <ul class="moves">
+        <li><b>Strike</b> a heavy hit on whoever hit it last.</li>
+        <li><b>Thorn Sweep</b> hits everyone.</li>
+        <li><b>Lure, then Grab</b> one hero is drawn to the fruit and her gauge stops; next turn it Grabs her and her turn starts over. <b>Fire breaks the lure.</b></li>
+        <li><b>Consume</b> <span class="pill">Below 70%</span> three draining hits on the hero with the least HP.</li>
+        <li><b>Undergrowth</b> two big hits on one hero.</li>
+      </ul>
+      <div class="box tip"><span class="tag">Tip</span><p>Flame Bolt from Io, Flare Cut from Sol. Each Flare Cut also <b>severs a cane</b>, and each cane gone takes 8% off its damage. Up against an Ancient Crown at a low level? <b>Flee.</b> Running from any bramble always works.</p></div>
+    </div>
+  </div>
+  <figure class="shot"><div class="frame"><img src="images/shots/b-br-intro.webp" alt="An Ancient Crown at the northern crossroads. Old woody horns rise out of its crown." loading="lazy" width="960" height="640"></div><figcaption><span class="n">14</span><span>An Ancient Crown at the northern crossroads. Old woody horns rise out of its crown.</span></figcaption></figure>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Bestiary</span><span class="pg">20</span></footer>
+</section>
+
+
+<section class="page" id="keepsakes" style="--sec: var(--gold)">
+  <header class="runner"><span class="sec">The keepsakes</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Collector’s checklist</span>
+  <h2 class="headline"><span class="small">All twenty, and where they hide</span>The keepsakes</h2>
+  <div class="grid2">
+    <div>
+      <p class="lede">Keepsakes are the game’s equipment: small charms with one main effect and one extra. Fourteen lie on the maps as a faint <b>“Something glinting”</b>, four are gifts, and two come out of the first Bramble Colossus you fell.</p>
+      <ul class="tight">
+        <li>There are no slots. <b>Each hero can wear as many as she likes.</b></li>
+        <li>New finds are put on straight away. Io-only and Sol-only charms go to their owner; “either” charms go to Sol once she has joined.</li>
+        <li>Move “either” charms between heroes under <b>Menu → Items</b>. Tap one for its card.</li>
+        <li>Nothing can be missed for good. Every keepsake is still there after the ending.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="box secret"><span class="tag">Secret</span><span class="stamp">Treasure finder</span><p>The glints are tiny and only flare every four or five seconds. Pick up the <b>Bogmire Hag-Stone</b> early (north-west boardwalk) and keep it on: while it’s worn, every hidden keepsake shines <b>steadily and much brighter</b>.</p></div>
+      <div class="box tip"><span class="tag">Best combos</span>
+        <ul class="tight">
+          <li><b>Faster Trance:</b> Io with the Crescent Locket and Pass Bell (+20%); Sol with the Warden’s Brooch and Crossroads Pennant (+20%).</li>
+          <li><b>Hot start:</b> the Node Sunstone and Ede’s Hearth-Coal put Sol at 20 Heat when every fight begins.</li>
+          <li><b>Rich run:</b> the Forge Horseshoe and Dockhand’s Gloves add 15% shards to every win.</li>
+          <li><b>All of Io’s healing charms</b> together add exactly +25% to Lunar Mend and Waxing Light.</li>
+        </ul>
+      </div>
+      <p class="tally" aria-live="polite"><span id="ktally">0</span> of 20 found</p>
+    </div>
+  </div>
+  <div class="strip">
+    <figure class="shot"><div class="frame"><img src="images/shots/card-horseshoe.webp" alt="A keepsake card: who wears it, where it was found, and what it does in and out of fights." loading="lazy" width="960" height="640"></div><figcaption><span class="n">K</span><span>A keepsake card: who wears it, where it was found, and what it does in and out of fights.</span></figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="images/shots/ui-tab-items2.webp" alt="Menu → Items shows what each hero wears. Tap a keepsake to move it." loading="lazy" width="960" height="640"></div><figcaption><span class="n">I</span><span>Menu → Items shows what each hero wears. Tap a keepsake to move it.</span></figcaption></figure>
+  </div>
+  <h3>The list, in the order you’ll find them</h3>
+  <div class="kgrid"><article class="kcard secret" id="k-crescent-locket"><span class="sticker">SECRET!</span><img src="images/keepsakes/crescent-locket.webp" alt="a little locket with a crescent moon on its lid and a moonstone in it, on a fine chain" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Io wears it · Hidden</span><h4>The Crescent Locket</h4><p class="fx"><b>Lunar Mend and Waxing Light heal 6.25% more.</b> Her Trance fills 10% faster.</p><p class="where"><b>Wickhollow, part I.</b> On the red roof just south of Nettie’s stall, at the end of Chris’s secret way. You can get it before the first fight. <a href="#secrets">Route on page 23</a>.</p></div><label class="ck" for="ks-crescent-locket"><input type="checkbox" id="ks-crescent-locket" data-k="crescent-locket">Got it</label></article><article class="kcard" id="k-forge-horseshoe"><img src="images/keepsakes/forge-horseshoe.webp" alt="an iron horseshoe still glowing copper at its edges, its nail holes empty" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Either hero · Found</span><h4>The Forge Horseshoe</h4><p class="fx"><b>She has 1% more HP.</b> Fights give 5% more shards.</p><p class="where"><b>Wickhollow, part I.</b> After the first fight. Take the lane down the west side of the house nearest the east bridge and turn east along its south front, into a leafy nook.</p></div><label class="ck" for="ks-forge-horseshoe"><input type="checkbox" id="ks-forge-horseshoe" data-k="forge-horseshoe">Got it</label></article><article class="kcard" id="k-knotted-shawl"><img src="images/keepsakes/knotted-shawl.webp" alt="a plum-purple shawl knotted at the front, edged with cream lace and tassels, a little crescent moon stitched in its corner" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Io wears it · Gift</span><h4>Nettie’s Knotted Shawl</h4><p class="fx"><b>Lunar Mend and Waxing Light heal 2.5% more.</b> The herbs she uses in a fight heal 10% more.</p><p class="where"><b>Wickhollow, part I.</b> Talk to Nettie at her stall once Sol has joined.</p></div><label class="ck" for="ks-knotted-shawl"><input type="checkbox" id="ks-knotted-shawl" data-k="knotted-shawl">Got it</label></article><article class="kcard" id="k-jetty-coin"><img src="images/keepsakes/jetty-coin.webp" alt="an old copper coin with a little sailing boat on its face, green with age at the rim" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Either hero · Found</span><h4>The Jetty Coin</h4><p class="fx"><b>Her blows and spells land 1% harder.</b> Herbs cost 10% less in the shops.</p><p class="where"><b>The jetty, part I.</b> Walk the lakeshore path west from the pier to its far end, under the willows.</p></div><label class="ck" for="ks-jetty-coin"><input type="checkbox" id="ks-jetty-coin" data-k="jetty-coin">Got it</label></article><article class="kcard secret" id="k-wardens-brooch"><span class="sticker">SECRET!</span><img src="images/keepsakes/wardens-brooch.webp" alt="a round bronze brooch, a bird with its wings spread round a glowing ember-red stone" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Sol wears it · Hidden</span><h4>The Warden’s Brooch</h4><p class="fx"><b>She has 2.5% more HP, and her blows land 2.5% harder.</b> Her Trance fills 10% faster.</p><p class="where"><b>The Thornwood, part I.</b> A side trail branches off the main path and runs east along the bottom of the wood. It dead-ends among thorns, south-west of the Bogmire exit.</p></div><label class="ck" for="ks-wardens-brooch"><input type="checkbox" id="ks-wardens-brooch" data-k="wardens-brooch">Got it</label></article><article class="kcard" id="k-frog-ring"><img src="images/keepsakes/frog-ring.webp" alt="a bronze ring with a little green frog sitting on it" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Either hero · Found</span><h4>The Thornwood Frog-Ring</h4><p class="fx"><b>She has 1% more HP.</b> After each fight she gets back 5% of her HP.</p><p class="where"><b>The Thornwood, part I.</b> Past the moon stone, take the north-east trail to where it gives out.</p></div><label class="ck" for="ks-frog-ring"><input type="checkbox" id="ks-frog-ring" data-k="frog-ring">Got it</label></article><article class="kcard" id="k-hag-stone"><img src="images/keepsakes/hag-stone.webp" alt="a speckled grey stone with a hole worn through it, on a loop of rough twine" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Either hero · Found</span><h4>The Bogmire Hag-Stone</h4><p class="fx"><b>Her blows and spells land 1% harder.</b> Hidden things glint brighter on the maps.</p><p class="where"><b>Bogmire, part I.</b> From the west dock, take the boardwalk north, then east along the upper walkway. It hangs on a post partway along. Wear it: every hidden glint shines brighter.</p></div><label class="ck" for="ks-hag-stone"><input type="checkbox" id="ks-hag-stone" data-k="hag-stone">Got it</label></article><article class="kcard" id="k-bogstriders"><img src="images/keepsakes/bogstriders.webp" alt="worn leather boots with moss-green cuffs and thick studded soles" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Either hero · Found</span><h4>The Bogstriders</h4><p class="fx"><b>She has 1% more HP.</b> Running from a pack works 2 times in 3, not 1 in 2.</p><p class="where"><b>Bogmire, part I.</b> At the east end of the southern boardwalk, by the last plank.</p></div><label class="ck" for="ks-bogstriders"><input type="checkbox" id="ks-bogstriders" data-k="bogstriders">Got it</label></article><article class="kcard" id="k-fen-heart-lamp"><img src="images/keepsakes/fen-heart-lamp.webp" alt="a little brass lantern with green glass panes, a warm flame still burning inside" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Io wears it · Found</span><h4>The Fen-Heart Lamp</h4><p class="fx"><b>Lunar Mend and Waxing Light heal 3% more.</b> After each fight she gets back 5% of her MP.</p><p class="where"><b>The fen’s dark heart, part I.</b> Only after the great wraith: walk back up to the top of the square where it sat.</p></div><label class="ck" for="ks-fen-heart-lamp"><input type="checkbox" id="ks-fen-heart-lamp" data-k="fen-heart-lamp">Got it</label></article><article class="kcard" id="k-hall-gauntlets"><img src="images/keepsakes/hall-gauntlets.webp" alt="a pair of plate gauntlets in steel and bronze, every plate engraved" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Sol wears it · Gift</span><h4>The Wardens’ Hall Gauntlets</h4><p class="fx"><b>Her blows land 1.5% harder.</b> Her Sunder lasts a turn longer.</p><p class="where"><b>Dawnroost, part II.</b> Talk to Marta in the Warden hall.</p></div><label class="ck" for="ks-hall-gauntlets"><input type="checkbox" id="ks-hall-gauntlets" data-k="hall-gauntlets">Got it</label></article><article class="kcard" id="k-kettle-helm"><img src="images/keepsakes/kettle-helm.webp" alt="a round iron helm with bronze studs, a little rooster weather vane on top" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Either hero · Found</span><h4>The Dawnroost Kettle-Helm</h4><p class="fx"><b>She has 1% more HP.</b> The big blows a foe warns of hit her 10% softer.</p><p class="where"><b>Dawnroost, part II.</b> Just inside the north gate, a narrow wall-walk runs west between the hall roof and the north wall. The helm is at its west end.</p></div><label class="ck" for="ks-kettle-helm"><input type="checkbox" id="ks-kettle-helm" data-k="kettle-helm">Got it</label></article><article class="kcard" id="k-node-sunstone"><img src="images/keepsakes/node-sunstone.webp" alt="a glowing amber sunstone in a bronze setting, a little sun worked beneath it" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Sol wears it · Found</span><h4>The Node Sunstone</h4><p class="fx"><b>Her blows land 1% harder.</b> She starts each fight with 10 Heat.</p><p class="where"><b>The living node, part II.</b> After the three-wraith fight, climb to the top of the west stair.</p></div><label class="ck" for="ks-node-sunstone"><input type="checkbox" id="ks-node-sunstone" data-k="node-sunstone">Got it</label></article><article class="kcard" id="k-crossroads-pennant"><img src="images/keepsakes/crossroads-pennant.webp" alt="a red pennant edged in gold, tasselled, on a short staff" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Sol wears it · Found</span><h4>The Crossroads Pennant</h4><p class="fx"><b>She has 1% more HP.</b> Her Trance fills 10% faster.</p><p class="where"><b>The northern crossroads, part III.</b> After the Gloam Knight fight, follow the east road almost to the map’s edge; it’s tied to a waymark.</p></div><label class="ck" for="ks-crossroads-pennant"><input type="checkbox" id="ks-crossroads-pennant" data-k="crossroads-pennant">Got it</label></article><article class="kcard" id="k-moonglass"><img src="images/keepsakes/moonglass.webp" alt="a hand mirror of pale, pearly moon-glass in a gilded frame, a crescent at its crown" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Io wears it · Gift</span><h4>Ysmera’s Moonglass</h4><p class="fx"><b>Lunar Mend and Waxing Light heal 3.75% more.</b> She has 10% more MP.</p><p class="where"><b>The shipyard, part III.</b> Talk to Ysmera after her first scene.</p></div><label class="ck" for="ks-moonglass"><input type="checkbox" id="ks-moonglass" data-k="moonglass">Got it</label></article><article class="kcard" id="k-dockhand-gloves"><img src="images/keepsakes/dockhand-gloves.webp" alt="worn brown leather gloves with sea-green cuffs" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Either hero · Found</span><h4>The Dockhand’s Gloves</h4><p class="fx"><b>Her blows and spells land 1% harder.</b> Fights give 10% more shards.</p><p class="where"><b>The shipyard, part III.</b> From the bunkhouse, go west and down the stairs to the cove dock. The gloves are at its west end.</p></div><label class="ck" for="ks-dockhand-gloves"><input type="checkbox" id="ks-dockhand-gloves" data-k="dockhand-gloves">Got it</label></article><article class="kcard" id="k-pass-bell"><img src="images/keepsakes/pass-bell.webp" alt="a bronze hand-bell rimed with frost and hung with icicles, on a leather-wrapped handle" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Io wears it · Found</span><h4>The Pass Bell</h4><p class="fx"><b>Lunar Mend and Waxing Light heal 4% more.</b> Her Trance fills 10% faster.</p><p class="where"><b>The frozen pass, part IV.</b> Half buried in the snow under the lamp beside the road, just west of the sled camp.</p></div><label class="ck" for="ks-pass-bell"><input type="checkbox" id="ks-pass-bell" data-k="pass-bell">Got it</label></article><article class="kcard" id="k-hearth-coal"><img src="images/keepsakes/hearth-coal.webp" alt="a glowing coal in a little cage of bronze wire on a leather cord" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Sol wears it · Gift</span><h4>Ede’s Hearth-Coal</h4><p class="fx"><b>She has 1.5% more HP.</b> She starts each fight with 10 Heat.</p><p class="where"><b>Misthollow, part IV.</b> Talk to Ede at the Lantern House.</p></div><label class="ck" for="ks-hearth-coal"><input type="checkbox" id="ks-hearth-coal" data-k="hearth-coal">Got it</label></article><article class="kcard" id="k-misthollow-cowl"><img src="images/keepsakes/misthollow-cowl.webp" alt="a frost-white hooded cowl, blue snowflakes stitched round its edge, a silver clasp" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Either hero · Found</span><h4>The Misthollow Cowl</h4><p class="fx"><b>She has 1% more HP.</b> Frost slows her for half as long.</p><p class="where"><b>Misthollow, part IV.</b> From the west end of the upper square by Sorrel’s, climb the far-west stairs north, then turn west along the balcony bridge to its end.</p></div><label class="ck" for="ks-misthollow-cowl"><input type="checkbox" id="ks-misthollow-cowl" data-k="misthollow-cowl">Got it</label></article><article class="kcard" id="k-heart-seed"><img src="images/keepsakes/heart-seed.webp" alt="a seed shaped like a heart, woven of bramble round a glowing amber core, a green leaf at its top" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Io wears it · Won in a fight</span><h4>The Colossus Heart-Seed</h4><p class="fx"><b>Lunar Mend and Waxing Light heal 5.5% more.</b> At the start of each of her turns she heals 1% of her HP.</p><p class="where"><b>The first Bramble Colossus, part IV.</b> Beat one in the band-4 wilds. It only shows up from your 4th wild fight up there, 1 time in 12.</p></div><label class="ck" for="ks-heart-seed"><input type="checkbox" id="ks-heart-seed" data-k="heart-seed">Got it</label></article><article class="kcard" id="k-colossus-thorn"><img src="images/keepsakes/colossus-thorn.webp" alt="a great curved thorn, red as embers, its base bound in leather as a grip" loading="lazy" width="92" height="92"><div style="min-width:0"><span class="who">Sol wears it · Won in a fight</span><h4>The Colossus Thorn</h4><p class="fx"><b>Her blows land 2% harder.</b> Kestrel Stoop lands 10% harder.</p><p class="where"><b>The first Bramble Colossus, part IV.</b> It comes with the Heart-Seed from the same first win.</p></div><label class="ck" for="ks-colossus-thorn"><input type="checkbox" id="ks-colossus-thorn" data-k="colossus-thorn">Got it</label></article></div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · The keepsakes</span><span class="pg">21</span></footer>
+</section>
+
+
+<section class="page paper" id="herbs" style="--sec: var(--band1)">
+  <header class="runner"><span class="sec">Herbs, shops &amp; levels</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">The herbalist’s ledger</span>
+  <h2 class="headline"><span class="small">What to buy, where to buy it</span>Herbs, shops &amp; levels</h2>
+  <div class="grid2">
+    <div>
+      <p>Every shop in the game is an herb stall, and every one sells the same five herbs for <b>sunstone shards</b>. You can carry <b>99</b> of each, but in a fight each kind can only be used <b>once</b>.</p>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>Herb</th><th>Does</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Moonpetal</td><td>Heals one hero for 1.2× a Lunar Mend.</td></tr>
+          <tr><td class="nm">Lavender</td><td>Heals both for 1.2× a Waxing Light.</td></tr>
+          <tr><td class="nm">Silver Mugwort</td><td>Gives Io back 40 MP (more at higher levels).</td></tr>
+          <tr><td class="nm">Ember-star Lily</td><td>Every blow the party lands is 10% harder for the rest of the fight. Battle only.</td></tr>
+          <tr><td class="nm">Nightrose</td><td>Brings a fallen hero back at 25% HP.</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Prices by shop</h3>
+      <p class="note">Bracketed: with the Jetty Coin worn.</p>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>Herb</th><th class="num">Band 1</th><th class="num">Band 2</th><th class="num">Band 3</th><th class="num">Band 4</th></tr></thead>
+        <tbody>
+          <tr><td class="nm">Moonpetal</td><td class="num">58 (52)</td><td class="num">143</td><td class="num">357</td><td class="num">887</td></tr>
+          <tr><td class="nm">Lavender</td><td class="num">86 (77)</td><td class="num">215</td><td class="num">535</td><td class="num">1,331</td></tr>
+          <tr><td class="nm">Silver Mugwort</td><td class="num">72 (65)</td><td class="num">179</td><td class="num">446</td><td class="num">1,109</td></tr>
+          <tr><td class="nm">Ember-star Lily</td><td class="num">43 (39)</td><td class="num">107</td><td class="num">267</td><td class="num">666</td></tr>
+          <tr><td class="nm">Nightrose</td><td class="num">173 (156)</td><td class="num">430</td><td class="num">1,070</td><td class="num">2,662</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note"><b>Band 1:</b> Nettie (Wickhollow), Quill (the jetty, until the lights return), Old Wenna (Bogmire). <b>Band 2:</b> Brann (Dawnroost). <b>Band 3:</b> Pim (the shipyard). <b>Band 4:</b> Sorrel (Misthollow).</p>
+      <div class="box secret"><span class="tag">Secret</span><span class="stamp">Save 93%</span><p>A shop charges for <b>its own</b> band, not yours. Nettie and Old Wenna keep band-1 prices for the whole game, about one fifteenth of Sorrel’s. Fly the Magpie back to Wickhollow, wear the Jetty Coin, and fill up to 99 of everything.</p></div>
+    </div>
+    <div>
+      <h3>The level chart</h3>
+      <p class="note">Max HP and MP at each level, and the experience to reach the next. The cap is level 20.</p>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th class="num">Lv</th><th class="num">Io HP</th><th class="num">Io MP</th><th class="num">Sol HP</th><th class="num">To next</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td class="num">1,400</td><td class="num">120</td><td class="num">1,800</td><td class="num">160</td></tr>
+          <tr><td class="num">2</td><td class="num">1,680</td><td class="num">127</td><td class="num">2,160</td><td class="num">192</td></tr>
+          <tr><td class="num">3</td><td class="num">2,016</td><td class="num">135</td><td class="num">2,592</td><td class="num">230</td></tr>
+          <tr><td class="num">4</td><td class="num">2,419</td><td class="num">143</td><td class="num">3,110</td><td class="num">282</td></tr>
+          <tr><td class="num">5</td><td class="num">2,903</td><td class="num">151</td><td class="num">3,732</td><td class="num">345</td></tr>
+          <tr><td class="num">6</td><td class="num">3,484</td><td class="num">161</td><td class="num">4,479</td><td class="num">528</td></tr>
+          <tr><td class="num">7</td><td class="num">4,180</td><td class="num">170</td><td class="num">5,375</td><td class="num">646</td></tr>
+          <tr><td class="num">8</td><td class="num">5,016</td><td class="num">180</td><td class="num">6,450</td><td class="num">791</td></tr>
+          <tr><td class="num">9</td><td class="num">6,020</td><td class="num">191</td><td class="num">7,740</td><td class="num">968</td></tr>
+          <tr><td class="num">10</td><td class="num">7,224</td><td class="num">203</td><td class="num">9,288</td><td class="num">1,185</td></tr>
+          <tr><td class="num">11</td><td class="num">8,668</td><td class="num">215</td><td class="num">11,145</td><td class="num">1,451</td></tr>
+          <tr><td class="num">12</td><td class="num">10,402</td><td class="num">228</td><td class="num">13,374</td><td class="num">1,776</td></tr>
+          <tr><td class="num">13</td><td class="num">12,483</td><td class="num">241</td><td class="num">16,049</td><td class="num">2,174</td></tr>
+          <tr><td class="num">14</td><td class="num">14,979</td><td class="num">256</td><td class="num">19,259</td><td class="num">2,661</td></tr>
+          <tr><td class="num">15</td><td class="num">17,975</td><td class="num">271</td><td class="num">23,111</td><td class="num">3,257</td></tr>
+          <tr><td class="num">16</td><td class="num">21,570</td><td class="num">288</td><td class="num">27,733</td><td class="num"><b>10,763</b></td></tr>
+          <tr><td class="num">17</td><td class="num">25,884</td><td class="num">305</td><td class="num">33,279</td><td class="num">13,173</td></tr>
+          <tr><td class="num">18</td><td class="num">31,061</td><td class="num">323</td><td class="num">39,935</td><td class="num">16,124</td></tr>
+          <tr><td class="num">19</td><td class="num">37,273</td><td class="num">343</td><td class="num">47,922</td><td class="num">19,736</td></tr>
+          <tr><td class="num">20</td><td class="num">44,727</td><td class="num">363</td><td class="num">57,506</td><td class="num">—</td></tr>
+        </tbody>
+      </table></div>
+      <h4>Average wild fight</h4>
+      <div class="tablewrap"><table class="stat narrow">
+        <thead><tr><th>Band</th><th class="num">Experience</th><th class="num">Shards</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="num">123</td><td class="num">95</td></tr>
+          <tr><td>2</td><td class="num">434</td><td class="num">331</td></tr>
+          <tr><td>3</td><td class="num">1,276</td><td class="num">921</td></tr>
+          <tr><td>4</td><td class="num">3,957</td><td class="num">3,024</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Herbs, shops &amp; levels</span><span class="pg">22</span></footer>
+</section>
+
+
+<section class="page" id="secrets" style="--sec: var(--io)">
+  <header class="runner"><span class="sec">Secrets &amp; letters</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Top secret</span>
+  <h2 class="headline"><span class="small">The things the game never tells you</span>Secrets &amp; letters</h2>
+  <div class="grid2">
+    <div>
+      <h3>1 · The red roof</h3>
+      <figure class="areamap inset" style="--sec: var(--io)"><div class="frame">
+<img src="images/maps/inset-red-roof.jpg" alt="Close-up of the red roof south of Nettie’s stall, with the walkable strip and the route to the Crescent Locket traced" width="720" height="540" loading="lazy">
+<svg viewBox="380 420 240 180" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%">
+<defs><marker id="ah-wickhollow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ffd66e"/></marker></defs>
+<polygon points="262,405 299,400 336,401 352,389 380,389 394,408 441,409 435,384 448,374 496,378 515,407 559,406 589,389 614,373 622,296 735,296 742,275 742,232 774,211 810,232 812,275 822,294 950,292 967,351 1004,330 1016,355 1046,354 1047,331 1075,352 1080,372 1114,386 1161,361 1197,385 1240,376 1300,354 1426,334 1536,354 1536,396 1416,405 1264,429 1256,412 1084,411 1078,498 1040,500 1038,548 1080,560 1086,618 1125,620 1128,602 1150,602 1160,625 1162,670 1040,670 1037,598 966,598 962,645 850,655 816,700 816,1024 745,1024 748,685 701,642 683,662 669,628 640,608 606,610 604,581 576,583 576,550 560,523 549,517 546,478 531,471 531,517 522,547 494,530 473,499 467,574 449,576 455,482 456,471 486,476 511,519 512,468 514,455 375,458 376,507 365,504 346,495 320,488 243,440" fill="rgba(68,227,160,.20)" stroke="rgba(68,227,160,.75)" stroke-width="0.96" stroke-dasharray="3.2 2.2"/>
+<polyline points="521,460 522,536 480,494 460,566" fill="none" stroke="#000" stroke-width="4.16" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/>
+<polyline points="521,460 522,536 480,494 460,566" fill="none" stroke="#ffd66e" stroke-width="2.24" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4.8 3.2" marker-end="url(#ah-wickhollow)"/>
+<circle cx="521" cy="460" r="5.1" fill="#fff" stroke="#000" stroke-width="1.28"/>
+<circle cx="460" cy="566" r="5.8" fill="#c8226d" stroke="#fff" stroke-width="1.44"/>
+</svg>
+<span class="title">Chris’s secret way</span></div></figure>
+      <p>The Crescent Locket’s card says it plainly: <span class="fell">“Hidden on top of the red roof in Wickhollow, at the end of Chris’s secret way.”</span> The roof belongs to the red-tiled cottage just <b>south of Nettie’s stall</b>, west of the Moonwell.</p>
+      <ol class="plan">
+        <li>Stand on the lane on the cottage’s north side, just <b>east of its tall chimney</b>.</li>
+        <li>Walk <b>south</b> down the chimney’s east side, onto the roof.</li>
+        <li>Double back <b>north-west</b> up the slope to the ridge.</li>
+        <li>Follow the ridge <b>south</b> to its very end, above the front gable.</li>
+      </ol>
+      <p class="note">The path is only a few steps wide, and tap-to-walk may refuse to route there. <b>Steer with the arrow pad or the keys.</b> No story lock: you can take it before the first fight.</p>
+      <div class="ffwin"><b>Io</b><p>“Whoever hid this didn’t want it found from the ground.”</p></div>
+    </div>
+    <div>
+      <h3>2 · The Thornwood’s hidden trail</h3>
+      <figure class="areamap inset" style="--sec: var(--io)"><div class="frame">
+<img src="images/maps/inset-brooch-trail.jpg" alt="Close-up of the Thornwood’s hidden southern trail, with the route to the Warden’s Brooch traced" width="720" height="480" loading="lazy">
+<svg viewBox="880 560 480 320" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%">
+<defs><marker id="ah-thornwood" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ffd66e"/></marker></defs>
+<polygon points="981,643 979,684 1001,720 1046,751 1075,783 1110,800 1153,805 1218,819 1275,805 1305,795 1307,834 1208,856 1092,845 1021,811 971,754 924,655 932,625" fill="rgba(68,227,160,.20)" stroke="rgba(68,227,160,.75)" stroke-width="1.92" stroke-dasharray="6.4 4.5"/>
+<polyline points="952,628 958,690 990,745 1040,782 1100,815 1170,828 1240,824 1284,816" fill="none" stroke="#000" stroke-width="8.32" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/>
+<polyline points="952,628 958,690 990,745 1040,782 1100,815 1170,828 1240,824 1284,816" fill="none" stroke="#ffd66e" stroke-width="4.48" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="9.6 6.4" marker-end="url(#ah-thornwood)"/>
+<circle cx="952" cy="628" r="10.2" fill="#fff" stroke="#000" stroke-width="2.56"/>
+<circle cx="1284" cy="816" r="11.5" fill="#c8226d" stroke="#fff" stroke-width="2.88"/>
+</svg>
+<span class="title">The hidden south trail</span></div></figure>
+      <p>The painting only shows the road and the moon-stone clearing, but there are more trails through the thorns than it lets on. Just south of the road, about two-thirds of the way east, a faint trail drops into the dark woods. It curves south-east, then runs east along the bottom of the map to a dead end. That’s where the <b>Warden’s Brooch</b> lies, <span class="fell">“sunk in the moss among the thorns.”</span></p>
+      <p>The trail from the north-east corner of the moon-stone clearing hides the <b>Frog-Ring</b> the same way.</p>
+      <div class="box tip"><span class="tag">Paths that look like scenery</span><p>Three more keepsakes sit on walkways that look painted on: Dawnroost’s <b>wall-walk</b> (Kettle-Helm), the shipyard’s <b>cove dock</b> (Dockhand’s Gloves) and Misthollow’s <b>balcony bridge</b> (Misthollow Cowl). If it looks like you could walk there, try it.</p></div>
+    </div>
+  </div>
+
+  <h3>3 · The five letter wells</h3>
+  <p>Scattered across the world are letters left for the lost, each with a small gift beside it. They’re optional, but the ending counts them: the credits card shows <b>Letters sent</b>, from 1 (Io’s own) up to <b>6</b> if you read all five.</p>
+  <div class="tablewrap"><table class="stat">
+    <thead><tr><th>Where</th><th>The letter</th><th>Gift</th></tr></thead>
+    <tbody>
+      <tr><td class="nm">The moon stone, the Thornwood</td><td class="fell">“Aldo. The bridge lamp is lit every night now. If you’re still in the woods, come home by it. — your sister.”</td><td>Moonpetal</td></tr>
+      <tr><td class="nm">The water stair, Bogmire</td><td class="fell">“Mam. The boardwalks are dark and I’m not scared. I keep your lamp in the window even with no flame in it. — Pell.”</td><td>120 shards</td></tr>
+      <tr><td class="nm">The yard well, Dawnroost</td><td class="fell">“To the Wardens who didn’t come back from the north. We kept your bunks.”</td><td>Lavender</td></tr>
+      <tr><td class="nm">The crossroads well</td><td class="fell">“To my love at the yard: the cold is coming down the road early this year. Light the lamps. I’ll find my way. — Ennis.”</td><td>Silver Mugwort</td></tr>
+      <tr><td class="nm">A frozen trough, Misthollow</td><td class="fell">“To the Moon. Please come back. — the children of Misthollow.”</td><td>Nightrose</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid2">
+    <div>
+      <h3>4 · Hidden rules</h3>
+      <ul class="tight">
+        <li><b>Heroes win ties.</b> If a hero and a foe are ready at the same moment, the hero goes first.</li>
+        <li><b>No crits, no misses.</b> The only things that can dodge are a Guttering wisp, a hovering Sol and Envoi’s ward.</li>
+        <li><b>Herbs don’t burn Trance.</b> Using an item during Trance doesn’t count toward her four actions.</li>
+        <li><b>Dealing damage only fills Trance to 99%.</b> The last 1% always comes from taking a hit.</li>
+        <li><b>A hovering Sol can’t be touched.</b> Even hit-everyone moves skip her while Kestrel Stoop has her in the air.</li>
+        <li><b>Envoi is always ready in Dawnbreaker.</b> Sol’s Trance pins her Heat at 100, and Envoi doesn’t drain it.</li>
+        <li><b>Guard costs up to 40 Heat</b>, with no cost shown.</li>
+        <li><b>Fleeing leaves the fallen down.</b> Only a win gets knocked-out heroes back on their feet, at 10% HP.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>5 · Curiosities</h3>
+      <ul class="tight">
+        <li><b>Places you can’t reach.</b> The world painting shows a walled castle on an island in the inner sea, and badlands with roads and villages to the south-east. Both are wrapped in cold mist for good, even after the last upgrade.</li>
+        <li><b>Who is Inkblot?</b> Quill tells Io to fix the lamps “before Inkblot starts fretting.” Nobody ever explains.</li>
+        <li><b>A spell that isn’t there.</b> The game files hold the full visual effect for an Io spell called <b>Moth Veil</b>, but it has no menu slot in this version.</li>
+        <li><b>The Moonwell pose.</b> Resting at Wickhollow’s Moonwell is the only rest where Io raises her hands in a casting pose.</li>
+        <li><b>Shortcuts.</b> Once a band is open you can walk the world map straight to Bogmire or Misthollow, skipping the Thornwood and the frozen pass.</li>
+      </ul>
+      <div class="box secret"><span class="tag">Codes corner</span><p>There are no cheat codes. The closest thing is <b>Chapters</b> on the title screen, a built-in level select that starts you at any gate with the right level and shards. It doesn’t give you keepsakes, though.</p></div>
+    </div>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Secrets &amp; letters</span><span class="pg">23</span></footer>
+</section>
+
+
+<section class="page paper" id="tips" style="--sec: var(--gold)">
+  <header class="runner"><span class="sec">Top 20 tips</span><span class="mag">Mothlight Special · Envoi on the Longest Night</span></header>
+  <span class="kicker">Clip ’n’ keep</span>
+  <h2 class="headline"><span class="small">What we wish we’d known on night one</span>Top 20 tips</h2>
+  <div class="cols">
+    <ol class="steps">
+      <li><b>Climb the red roof first</b>The Crescent Locket is reachable before the first fight, and it’s one of Io’s two best charms.</li>
+      <li><b>Get the Jetty Coin early</b>10% off every herb for the whole game, and it’s a short walk from where Quill gives you the Magpie.</li>
+      <li><b>Wear the Hag-Stone</b>Every hidden glint shines steadily instead of flickering once every few seconds.</li>
+      <li><b>Shop at home</b>Band-1 shops keep band-1 prices all game. A Nightrose is 173 shards from Nettie and 2,662 from Sorrel.</li>
+      <li><b>Losing is free</b>You wake at your last rest with full HP, full MP and every herb back. Try a boss early just to see it.</li>
+      <li><b>Tune the fight rate</b>Settings → Random fights. <i>More</i> for grinding, <i>Fewer</i> when you just want to explore.</li>
+      <li><b>Lunara before, not after</b>Call her the turn before a big hit lands. The heal is nice; the 60% damage until she strikes is what saves you.</li>
+      <li><b>Harvest Moon into Envoi</b>One cast takes Sol from 0 to 70 Heat, which is exactly what Envoi needs.</li>
+      <li><b>Sunder first</b>+25% from the whole party for three of the foe’s turns, and it stacks with everything.</li>
+      <li><b>Spend Heat from 70+</b>The 1.35× Sunburn bonus is checked before the cost is paid, so spend it in one big art and Sol never burns.</li>
+      <li><b>Crest, Crest, Crest, Noon</b>In Dawnbreaker, Solar Crest is free and fires at full 100 Heat. Three of them, then finish with High Noon.</li>
+      <li><b>Trance heals cheap</b>In a Lunar Trance, Lunar Mend heals the whole party for 8 MP.</li>
+      <li><b>Let Sol take the hit</b>“Last attacker” moves go for whoever hit last. Make that Sol: more HP, and Heat from every blow she takes.</li>
+      <li><b>Read the target list</b>It’s the only place the game shows enemy HP as a number (a percentage).</li>
+      <li><b>Skip the Eclipse</b>Take a wraith from above 35% to zero in one burst and its Eclipse never fires.</li>
+      <li><b>Respect the Vow</b>When Halcyon takes Warden’s Vow, no physical moves until her next turn, not even Io’s Attack.</li>
+      <li><b>Relight the nodes</b>Three Ember Line nodes on the Warm Roads give 300 shards each. The golden arrow never points at them.</li>
+      <li><b>Fly to travel, walk to grind</b>The Magpie never meets a fight. The world map and the three wild field maps do.</li>
+      <li><b>Level 20, no exceptions</b>The finale can’t be won below 19 and is barely winnable at 19. The frozen pass is your training ground.</li>
+      <li><b>Read every letter</b>The five wells are quiet, easy to miss, and the credits count them.</li>
+    </ol>
+  </div>
+  <footer class="folio"><span>Mothlight · Player’s Guide · Top 20 tips</span><span class="pg">24</span></footer>
+</section>
+
+<section class="page cover" id="back" aria-label="Back cover" style="--sec: var(--gold)">
+  <div class="art"><img src="images/maps/moonwell.jpg" alt="The dead Moonwell in Misthollow, a dark shaft in a ring carved with moths and crescents" width="1280" height="853" loading="lazy"></div>
+  <div class="coverbody" style="grid-template-columns:minmax(0,1fr)">
+    <div>
+      <p class="gamename">“Everyone goes home, in the end. That’s what the letters were for.”</p>
+      <p class="strap" style="font-size:clamp(18px,2.6vw,26px)">The longest night is over</p>
+    </div>
+  </div>
+  <div style="padding:0 clamp(16px,4vw,40px) 22px">
+    <p class="colophon"><b>About this guide.</b> MOTHLIGHT is a made-up magazine, in the style of the game guides and gaming magazines of the late ’90s. This issue covers <i>Envoi on the Longest Night</i> as built in October 2026. Every picture comes from the game: Chris’s title painting, character portraits, area maps and keepsake cards, plus screenshots taken in the game itself. Every number was read from the game’s own rules. Written by Claude, for Chris.</p>
+    <p class="colophon fell" style="font-size:18px">“Envoi on the Longest Night. Made for Chris, from his story, his art and his world.”</p>
+  </div>
+</section>
+
+<a class="toplink" href="#contents">▲ Contents</a>
+<script>
+// The keepsake checklist: ticks are kept on this device only.
+(function () {
+  var KEY = 'mothlight.envoi.keepsakes';
+  var got = {};
+  try { got = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { got = {}; }
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('input[data-k]'));
+  var tally = document.getElementById('ktally');
+  function count() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    if (tally) tally.textContent = String(n);
+  }
+  boxes.forEach(function (b) {
+    b.checked = !!got[b.getAttribute('data-k')];
+    b.addEventListener('change', function () {
+      got[b.getAttribute('data-k')] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(got)); } catch (e) {}
+      count();
+    });
+  });
+  count();
+})();
+
+</script>
+</body>
+</html>
