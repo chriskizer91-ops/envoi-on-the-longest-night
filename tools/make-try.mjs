@@ -1,8 +1,9 @@
-// make-try.mjs: the page where Chris tries three small ideas he hasn't said yes to (handoff/tasks.md, I06, I08 and I12):
-// words that move on by themselves (a reading setting beside the words' speed, which starts on there), a door's sound
-// when Io walks from one map to the next, and Buy 10 in the herb shops. It is the built game exactly as built, with its
-// own title and one line before the game starts that switches the three on (window.ENVOI_TRY, read by src/game/game.js).
-// The game itself has them off, and plays as it did. Build the game first.
+// make-try.mjs: the page where Chris tries four small ideas he hasn't said yes to (handoff/tasks.md, I01, I06, I08 and
+// I12): footsteps (a sound setting, soft steps at first there, or a cloak's swish, or none), words that move on by
+// themselves (a reading setting beside the words' speed, which starts on there), a door's sound when Io walks from one
+// map to the next, and Buy 10 in the herb shops. It is the built game exactly as built, with its own title and one line
+// before the game starts that switches the four on (window.ENVOI_TRY, read by src/game/game.js). The game itself has them
+// off, and plays as it did. Build the game first.
 // Usage: node tools/build.mjs --min putting-it-all-together/game.html && node tools/make-try.mjs
 // Writes dist/try.html (to open here) and dist/try.artifact.html (to publish, with the files dist/try.beside.json lists
 // beside it at the same paths, the game's songs and keepsake pictures). Check it with node tools/try-test.mjs.
@@ -10,7 +11,7 @@ import fs from 'fs';
 import path from 'path';
 
 const R = path.resolve(new URL('..', import.meta.url).pathname), dist = path.join(R, 'dist');
-const TITLE = 'Envoi: Polish to Try', SWITCHES = { words: true, door: true, buy10: true };
+const TITLE = 'Envoi Polish to Try', SWITCHES = { steps: true, words: true, door: true, buy10: true };
 for (const [from, to] of [['game.html', 'try.html'], ['game.artifact.html', 'try.artifact.html']]) {
   const src = path.join(dist, from);
   if (!fs.existsSync(src)) { console.error('build the game first: no dist/' + from); process.exit(1); }
