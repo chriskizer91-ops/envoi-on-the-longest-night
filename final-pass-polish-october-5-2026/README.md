@@ -30,4 +30,76 @@ So the pass is, in order:
 
 ## The branch
 
-`claude/send-note-gigdew`. It carries the game's branch, `ccr-31761774-76j8j3`, as the old hub left it at `856f522` (a fast-forward: nothing of either was lost), with this pass on top.
+`claude/send-note-gigdew`. It carries the game's branch, `ccr-31761774-76j8j3`, as the old hub left it at `856f522` (a fast-forward: nothing of either was lost), with this pass on top. The game's branch itself is untouched: bring this one into it (or merge it wherever Chris wants the game to live) when the next session starts.
+
+## What this pass fixed
+
+All 35 of the audit's other findings (T17 in `../handoff/tasks.md`, each listed with its file and line in `../handoff/wrap-up-2026-10-05.md`), the things the audit didn't cover, and what turned up on the way. Four fixers worked side by side, each in its own copy of the game and its own files (walking, the game, the battles, the tools), and every fix is proven by a check that fails on the old code and passes on the new one. The checks are in `checks/`, one folder per fixer, each with a note at its top saying what it proves and how to run it.
+
+### Walking and the flight
+
+| What was wrong | Now | Check |
+|---|---|---|
+| Coming onto a map at its top edge (ten arrivals: the cottage, the jetty, Bogmire, the forest road, Dawnroost, the crossroads, Frostmere's shore, the frozen pass, Misthollow, the Ember Line road), Io's head and shoulders were above the screen | She arrives a little lower on the same path, all of her on the screen | `walking/arrivals.mjs` |
+| 21 arrivals had her face the viewer: at a map's bottom edge that was back out through the way she came in | She faces into the map, the way she was walking | `walking/arrivals.mjs` |
+| A random fight could start a step or two after Halcyon's ambush | The ambush starts the count to the next fight again, as a fight does | `walking/field-check.mjs` |
+| The d-pad showed above and through a short question box | It hides while the game asks something, talks or shows the menu | `walking/field-check.mjs` |
+| The mini-map, tapped big, ran under the d-pad's Up button on the phone | It stays above the d-pad, at every height down to Chrome's | `walking/field-check.mjs` |
+| Flying into the mist that never lifts, the Magpie said she needed more lift | There she says "Cold mist that never lifts: the Magpie turns back." (more lift is still asked for at a band she can't reach yet) | `walking/field-check.mjs` |
+| **Found in the pass:** the walking map could freeze (until a reload) when someone in a scene was walked to the exact point she stood on | It can't now: she simply arrives | `walking/still-walk.mjs` |
+| Not covered by the audit: the flying map at every screen size | Looked at on the phone held sideways and upright, a laptop and a smaller phone: nothing overlaps or runs off the screen. Nothing to fix | (screenshots only) |
+
+### The game: title, menus, saves, sound
+
+| What was wrong | Now | Check |
+|---|---|---|
+| The Gate 15 chapter started, and a fight lost there woke the party, on the crossroads' south road, which has been closed since October 5 | It starts where the cold moor's road comes into the crossroads, facing in, and the party wakes at the northern camp, by the Magpie | `game/chapter-start-rest.mjs` |
+| On the phone with a save, the game's name was cut off at the top of the title | All of the title fits, on the phone and with Chrome's address bar showing | `game/title-fits.mjs` |
+| Closing the game during the scene after the first fight, or after Halcyon's ambush, brought the fight back on Continue | Each is saved as fought before its scene plays | `game/set-fights.mjs` |
+| An ambush whose battle failed to run counted as fought, and Kestrel Stoop as learned | It isn't, and the party wakes at its rest, as at the other set fights | `game/set-fights.mjs` |
+| Moonlore from the menu spent MP on heroes already at full HP | It says "No one needs it." and keeps her MP, as a herb does | `game/moonlore-full.mjs` |
+| The made-up music and the battle's sound kept playing with the page hidden (another app, the screen off) | They wait, as Chris's songs already did, and the cutscenes' own sound too | `game/hidden-audio.mjs`, `game/cutscene-audio.mjs` |
+| Taking off a keepsake that adds HP or MP and putting it back on refilled that share | It doesn't: she stays at what she had, and full stays full | `game/keepsake-refill.mjs` |
+| On a keyboard, Esc stopped closing the menu after a choice in it, and the shop and the save code boxes had no Esc | Esc closes each, as its own Close, Done or Back does | `game/esc-closes.mjs` |
+| **Found in the pass:** in Chrome on the phone (the address bar stays, since the game has no full screen) a keepsake's card put its buttons below the screen | On a short screen held sideways who wears it and the buttons stand beside the card. Every screen of the game was measured at those sizes: the title, its questions, the prologue, all six menu tabs, every keepsake card, the save code boxes, a shop, a talk and the ending | `game/short-screens.mjs` |
+| **Found in the pass:** saves made on the old world map (before the wilderness scenes) came down facing out of their map, and the one by the crossroads on its closed south road | They come down facing in, the crossroads' where the cold moor's road comes in | `game/old-world-crossroads.mjs`, `game/old-world-facing.mjs` |
+
+### The battles
+
+| What was wrong | Now | Check |
+|---|---|---|
+| On the phone, Sol's Kestrel Stoop hover was above the screen in every arena, and "Sol learns Kestrel Stoop" at gate 15's end showed Io alone | The camera keeps all of her as she rises and as she learns it. (In the dive itself, at Chrome's shortest heights, the shot keeps the fighters on the ground first and as much of her as it can) | `battles/stoop-framing.mjs` |
+| Envoi's "Last Word" (its banner, flash and shake) never played when its strike ended Noctara's Frost Dust, about one finale strike in four | It plays | `battles/last-word.mjs` |
+| A hero who was down when a fight opened (after a fled fight) stood upright, sword out, at HP 0 | She kneels, as one who falls does, and rises when revived (only the models' own actions, Io's look and moves untouched) | `battles/downed-kneels.mjs` |
+| The command, sub-menu and target rows were 27 px tall, edge to edge, so a thumb could pick the neighbour; and a win's end card with a level-up put Continue below the screen | Rows are 36 px; on a short screen the windows take the width and Io's eight commands go in three rows, with every fighter above them; the end card fits, Continue on the screen, also with Chrome's address bar | `battles/battle-fit.mjs` |
+| In the Bramble Colossus's arena Lunara rose inside the Colossus | She rises off to its left | `battles/lunara-spot.mjs` |
+| Damage numbers on the same foe printed over each other, and could leave the screen | Each new one lifts the others a line, and all stay on the screen | `battles/numbers.mjs` |
+| The level-up card's HP and MP left out the keepsakes | They count them, as the game then has them | `battles/levelup-keepsakes.mjs` |
+| The balance simulator's expert attacked into Halcyon's Warden's Vow | It guards, as an expert would; all 51 balance targets are still met (Halcyon's ambush at level 18: the expert wins 63%, against 53%, inside its 40 to 85%) | `battles/vow-guard.mjs`, `node tools/balance.mjs` |
+| Sol's Guard didn't say what it costs | "Guard [−40 Heat]", as her Sword Arts do | `battles/guard-tag.mjs` |
+| The end card's frame-rate line (the October 2 decision) never showed | It shows: the average, the slowest second and the cap | `battles/fps-line.mjs` |
+| Losing the first fight, the card said Io wakes by the Moonwell; she wakes in her own bed | It says her own bed | `battles/first-lose.mjs` |
+| Not covered by the audit: the finale's ending and the spared ending, in their arenas | Both played through the game to their end screens ("The End" and back to the title), with no error | `battles/endings.mjs` |
+
+### The tools (how Chris's map edits get into the game, the build, the tests)
+
+| What was wrong | Now | Check |
+|---|---|---|
+| **The important one:** `apply-edits.mjs` silently applied nothing from the map editor's "Copy my work", though `check-edits.mjs` had just passed it as safe | It reads every kind of file `check-edits.mjs` reads, writes nothing at all if anything is wrong, and names the keepsakes Chris moved (they go into `items.js` by hand) | `tools/apply-edits-shapes.mjs` |
+| The map editor's "Download my work" said "Downloaded" though nothing downloaded | It's gone; where the editor can't send, it says to press Copy my work | `tools/map-editor-copy.mjs` |
+| Art left outside the page (a path in single quotes) got no warning, and the offline test couldn't notice, since it ran beside the repository's own art | The build fails and names it; the offline test plays the file from a folder of its own. A plain build still needs nothing installed, as Mooncart builds it | `tools/build-guards.mjs`, `tools/game-test-plants.mjs` |
+| With the arenas on, the game test passed a fight that fell back to the flat painting | It fails (the first fight, flat by design, excepted) | `tools/game-test-plants.mjs` |
+| `check-edits.mjs` no longer checked the keepsakes could still be reached | It does, where Chris put them | `tools/check-edits-keepsakes.mjs` |
+| The map editor's stale document `edits/wickhollow` (already in the game) | Its README says applied documents are deleted from its database. The document itself is on the other account (below) | none (a note) |
+| The game test's scenes step couldn't fail, its save step passed on any old save, and nothing saved over a full slot by a tap or checked Effects and Surroundings at Off are silent | Each fails where it should | `tools/game-test-plants.mjs` |
+| Nothing checked the sizes: the published page against 16,000,000 bytes, Chris's file against 30 MB | The build prints both in bytes and fails over either | `tools/build-guards.mjs` |
+| The map editor stored every keepsake's place on Chris's first visit, so a later move in `items.js` would have been undone by his next send | It keeps and sends only the ones he moved | `tools/map-editor-keepsake-places.mjs` |
+| The keepsakes step rolled its fight at random, so it took 100 s or 300 s | It fights one wraith in clear weather every time | `tools/keepsakes-fight-pinned.mjs` |
+
+### Left as they are, on purpose
+
+- **While landing, the Magpie ignores the mist,** so "Land where we took off" pressed far from the take-off stop flies her straight back over it (the audit's walking 6; it was so before the landing fix too).
+- **The phone held upright (390 × 844) in a fight:** the arena's picture must fill the screen's height, so Io stands off its left edge (before this pass too). Chris plays sideways.
+- **The cottage's old world-map arrival** is on its south road, closed since October 5; she faces up it now and walks on home. Only saves made on the world map before October 5 come down there.
+- **The map editor's database** (the stale `edits/wickhollow`, and the keepsakes' places its older version stored) is on the account that published it, which this session's isn't. Nothing in it is pending (Chris: "All of the edits I made with the map editor are already implemented").
+- **Every sound,** until Chris has heard them in the sound tool (below).
