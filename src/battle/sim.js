@@ -367,7 +367,8 @@
       }
       // Ember-star Lily: early in a boss fight, or while there's nothing to hit but Warden's Vow
       if (v.ok('herb:emberLily') && v.boss && (vowed(mainFoe) || v.boss.hp > v.boss.maxHp * 0.6)) return ['herb:emberLily'];
-      if (vowed(mainFoe)) return v.ok('guard') && u.heat >= 40 ? ['guard'] : ['attack', tgt];
+      // Warden's Vow counters every blow: Sol guards through it, whatever her Heat (Guard takes what she has, up to 40)
+      if (vowed(mainFoe)) return v.ok('guard') ? ['guard'] : ['attack', tgt];
       // keep 70 Heat for Envoi while it's still to come in a boss fight
       const hold = v.boss && v.io && B.alive(v.io) && B.envoi === 0 && B.flags.envoi ? 70 : 0;
       if (v.boss && mainFoe.sunder === 0 && v.ok('sunder') && u.heat - 20 >= hold) return ['sunder', tgt];
