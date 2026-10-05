@@ -158,23 +158,29 @@
       shot((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2 - 18, s, k);
     }
     // the wide shot: every point (with a height) in frame, for summons, big attacks and the whole field
-    function shotFit(pts, zoom, k, top) {
+    function shotFit(pts, zoom, k, keepTop) {
       let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
       for (const p of pts) { const q = toPx(tmpV.set(p.x, p.y || 0, p.z)); x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }
       const availH = Math.max(120, view.h - view.uiH - 40), s = Math.min((view.w - 16) / (x1 - x0 + 120 * ZK), availH / (y1 - y0 + 70 * ZK)) * (zoom || 1);
       // an arena's frame is only so tall: when a giant won't fit above the menus, its head goes out of the top rather
-      // than everyone's feet out of the bottom. A shot of Sol in the air (Kestrel Stoop) asks for the opposite (top): the
-      // highest point is kept a little below the top edge, and the ground goes behind the windows
+      // than everyone's feet out of the bottom. A shot of Sol in the air (Kestrel Stoop) asks for the top instead
+      // (keepTop): the frame rises until the highest point is a little below the top edge, the ground sinking behind
+      // the windows by at most keepTop pixels of the screen (Infinity: as far as it takes)
       let cy = (y0 + y1) / 2;
       if (AF) {
         const sMin = Math.max(view.w / IW, view.h / IH), sE = Math.min(Math.max(s, sMin), sMin * ZMAX);
-        if ((y1 - y0 + 70 * ZK) * sE > availH) cy = top ? y0 - 20 * ZK + ((view.h - view.uiH) / 2 + 20) / sE : y1 + 20 * ZK - availH / 2 / sE;
+        if ((y1 - y0 + 70 * ZK) * sE > availH) {
+          cy = y1 + 20 * ZK - availH / 2 / sE;
+          if (keepTop) cy = Math.max(y0 - 20 * ZK + ((view.h - view.uiH) / 2 + 20) / sE, cy - keepTop / sE);
+        }
       }
       shot((x0 + x1) / 2, cy, s, k);
     }
     // Sol hanging in the air on Kestrel Stoop's first turn (her model's held stoopRise) is about 3 m up (src/models/sol.js, UP)
     const STOOP_UP = 2.95;
-    // everyone still standing, heads included: Sol in the air where she hangs, and then the shot keeps the top
+    // everyone still standing, heads included: Sol in the air where she hangs. The shot keeps her in it as far as the
+    // others' feet can sink behind the windows by a short way (on the phone held sideways, full screen); on a shorter
+    // screen the fighters on the ground, who are the ones fighting while she hangs out of reach, come first
     function shotField(k) {
       const pts = []; let air = false;
       for (const f of standing()) {
@@ -183,7 +189,7 @@
         const w = (f.look && f.look.halfW) || 0; // a sprawling foe (the Bramble Horror's canes) is framed by its width too
         if (w) pts.push({ x: f.pos.x + w, y: 0, z: f.pos.z }, { x: f.pos.x - w, y: 0, z: f.pos.z });
       }
-      if (pts.length) shotFit(pts, 1, k || 2, air);
+      if (pts.length) shotFit(pts, 1, k || 2, air ? 44 : 0);
     }
     function addShake(px) { if (!REDUCED) shake.amp = Math.max(shake.amp, px); if (BF) BF.shake(px); }
     function applyCam(rdt) {
@@ -825,15 +831,17 @@
       // Kestrel Stoop, turn one: she springs up and hangs in the air; the stoop comes on her next turn. The shot keeps her
       // head as she hangs in it, with a little room above it (on a short screen the ground goes behind the windows)
       async stoopRise(h, t, ev) {
-        faceTo(h, t); shotFit([h.pos, t.pos, { x: h.pos.x, y: STOOP_UP + h.tall + 0.3, z: h.pos.z }], 1, 2.4, true);
+        faceTo(h, t); shotFit([h.pos, t.pos, { x: h.pos.x, y: STOOP_UP + h.tall + 0.3, z: h.pos.z }], 1, 2.4, Infinity);
         h.aimAt = t; h.m.play('stoopRise', true); SND.sfx.swish();
         await untilP(h.m, 0.95);
         UI.note('Sol hangs in the air like a kestrel, out of reach. She stoops on her next turn.', 2.2);
         ev.rest();
       },
+      // the stoop, from where she hangs down onto her foe: the shot keeps her as she starts as far as it keeps the foe in
+      // it too, since the blow it lands is the point (on a short screen she dives in from above)
       async stoop(h, t, ev) {
         D[h.key].aloft = false;
-        faceTo(h, t); shotFit([h.pos, t.pos, { x: h.pos.x, y: STOOP_UP + h.tall + 0.3, z: h.pos.z }], 1, 3, true);
+        faceTo(h, t); shotFit([t.pos, { x: h.pos.x, y: STOOP_UP + h.tall + 0.3, z: h.pos.z }], 1, 3, 36);
         h.aim = t; h.m.play('stoop', true); SND.sfx.swish();
         await untilP(h.m, h.m.ACTIONS.stoop.hits[0]);
         if (ev.has() && !countering(ev)) { const p = chest(t); strikeFx(t, true, 0xffe8a0); FX.ring(t.pos, 0xffd070, 0.3, 3.5, 0.7, 1); FX.flashLight(p, 0xffe0a0, 6, 0.5, 8); UI.flash('#fff1c8', 0.55, 0.35); SND.sfx.boom(1.2); addShake(16); ev.show({ big: true }); }
@@ -2052,7 +2060,7 @@
       if (L[0]) { UI.msg(L[0], true); await wait(3.6); }
       s.m.play('stoopRise', true); SND.sfx.swish();
       // the camera rises with her and keeps her head in the shot as she hangs, below the letterbox and the banner
-      shotFit([s.pos, { x: s.pos.x, y: STOOP_UP + s.tall + 0.7, z: s.pos.z }], 1, 2, true);
+      shotFit([s.pos, { x: s.pos.x, y: STOOP_UP + s.tall + 0.7, z: s.pos.z }], 1, 2, Infinity);
       FX.ring(s.pos, 0xffd070, 0.3, 2.6, 0.8, 1); FX.rise(() => s.pos, [1, 0.8, 0.45], 1.4, 40, 0.5);
       await untilP(s.m, 0.6); SND.sfx.chime(); UI.banner('Sol learns Kestrel Stoop', 2.8);
       if (L[1]) UI.msg(L[1], true);

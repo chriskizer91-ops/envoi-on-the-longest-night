@@ -15,7 +15,8 @@ for (const f of fs.readdirSync(path.join(R, 'src/stage')).filter((f) => f.starts
 for (const f of ['rules', 'engine', 'sim']) require(path.join(R, 'src/battle', f + '.js'));
 require(path.join(R, 'src/game/fights.js'));
 
-export const SRC = fs.readFileSync(path.join(R, 'src/battle/screen.js'), 'utf8');
+// (SCREEN_JS=<file> runs a check on another copy of screen.js, such as the one before a fix: git show <commit>:src/battle/screen.js)
+export const SRC = fs.readFileSync(process.env.SCREEN_JS || path.join(R, 'src/battle/screen.js'), 'utf8');
 // the text of a function or method of screen.js, from its first words to its closing brace
 export function grab(marker, src = SRC) {
   const i = src.indexOf(marker); if (i < 0) throw new Error('screen.js has no ' + marker);

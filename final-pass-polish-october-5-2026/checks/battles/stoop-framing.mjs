@@ -1,14 +1,16 @@
-// stoop-framing.mjs: Sol's Kestrel Stoop hover is in the shot in every arena, on the phone held sideways (915 x 412), held
-// upright (390 x 844) and on a laptop (1366 x 768). The battle screen's own camera director, its stoopRise and stoop
-// actions and learnStoop (src/battle/screen.js) frame each of the game's fights in its arena (src/game/fights.js), with
-// the battle windows as tall as the game draws them there; then her head as she hangs (about 3 m up, src/models/sol.js)
-// is put through the shot's camera:
-//   - Kestrel Stoop's rise, and the stoop that starts from the hover: her head inside the frame, her hanging feet above
-//     the windows, and the foe she aims at shown above the windows (on the laptop the whole shot fits: her ground and
-//     the foe's feet above the windows too)
-//   - the whole field (shotField) while she hangs there: her head inside the frame
+// stoop-framing.mjs: Sol's Kestrel Stoop hover is in the shot in every arena, on the phone held sideways (915 x 412 full
+// screen; 915 x 356 and 915 x 330 in Chrome, under its address bar), held upright (390 x 844) and on a laptop (1366 x
+// 768). The battle screen's own camera director, its stoopRise and stoop actions and learnStoop (src/battle/screen.js)
+// frame each of the game's fights in its arena (src/game/fights.js), with the battle windows as tall as the game draws
+// them there; then her head as she hangs (about 3 m up, src/models/sol.js) is put through the shot's camera:
+//   - Kestrel Stoop's rise: all of her as she hangs, head to feet, above the windows (on the laptop the whole shot fits:
+//     her ground and the foe's feet above the windows too)
+//   - the stoop that starts from the hover: the foe she lands on shown above the windows, and her head inside the frame
+//     as she starts (on the shorter screens at least her hanging feet: there she dives in from above)
+//   - the whole field (shotField) while she hangs there: the fighters on the ground shown above the windows, and her head
+//     inside the frame (on the shorter screens at least her hanging feet)
 //   - gate 15's end, "Sol learns Kestrel Stoop": her head below the letterbox and the banner
-// Exits 1 if any is off.
+// Exits 1 if any is off. VERBOSE=1 lists every shot.
 // Usage (from the repository's top folder): node final-pass-polish-october-5-2026/checks/battles/stoop-framing.mjs
 import { grab, director, fighter } from './rig.mjs';
 const GF = globalThis.GameFights;
@@ -16,7 +18,7 @@ const GF = globalThis.GameFights;
 const UP = 2.95, BOB = 0.055; // her hover's height and its bob (src/models/sol.js, UP and stoopRise's post)
 // the windows as the game draws them while a move plays (measured in the game: the party's window 132 px tall, 172 on
 // the upright phone; layoutView adds 12)
-const SIZES = [{ w: 915, h: 412, uiH: 144 }, { w: 390, h: 844, uiH: 184 }, { w: 1366, h: 768, uiH: 144 }];
+const SIZES = [{ w: 915, h: 412, uiH: 144 }, { w: 915, h: 356, uiH: 144 }, { w: 915, h: 330, uiH: 144 }, { w: 390, h: 844, uiH: 184 }, { w: 1366, h: 768, uiH: 144 }];
 const FIGHTS = [
   ['band 1 wilds', 'wild', { band: 1, pack: ['wisp', 'wisp', 'wraith'] }], ['band 2 wilds', 'wild', { band: 2, pack: ['wisp', 'wraith', 'wraith'] }],
   ['band 3 wilds', 'wild', { band: 3, pack: ['frostWisp', 'wraith', 'wraith'] }], ['band 4 wilds', 'wild', { band: 4, pack: ['frostWisp', 'frostWisp', 'wraith'] }],
@@ -51,8 +53,9 @@ for (const size of SIZES) {
         d.settle();
         const head = d.screenOf(sol.pos.x, UP + sol.tall + BOB, sol.pos.z).y, feet = d.screenOf(sol.pos.x, UP - BOB, sol.pos.z).y;
         const chest = d.screenOf(t.pos.x, t.tall * 0.6, t.pos.z).y, tFeet = d.screenOf(t.pos.x, 0, t.pos.z).y, ground = d.screenOf(sol.pos.x, 0, sol.pos.z).y;
-        const laptop = size.w >= 1200;
-        const ok = head >= 4 && feet <= winTop && chest <= winTop - 8 && (!laptop || (tFeet <= winTop && ground <= winTop));
+        const laptop = size.w >= 1200, short = size.h < 400;
+        const ok = act === 'stoopRise' ? head >= 4 && feet <= winTop && (!laptop || (tFeet <= winTop && ground <= winTop))
+          : chest <= winTop - 8 && (short ? feet >= 8 : head >= 4) && (!laptop || tFeet <= winTop);
         worst[act === 'stoop' ? 'stoop' : 'rise'] = Math.min(worst[act === 'stoop' ? 'stoop' : 'rise'], head);
         say(ok, where + ', ' + (act === 'stoop' ? 'the stoop' : 'the rise') + ' at ' + t.kind + ': her head at y ' + head.toFixed(0) + ', her hanging feet ' + feet.toFixed(0) +
           ', the foe’s chest ' + chest.toFixed(0) + ' and feet ' + tFeet.toFixed(0) + ', her ground ' + ground.toFixed(0) + ' (the windows from ' + winTop + ')');
@@ -63,9 +66,11 @@ for (const size of SIZES) {
       sol.m.action = 'stoopRise';
       const d = director(c.arena, size, all);
       d.shotField(2); d.settle();
-      const head = d.screenOf(sol.pos.x, UP + sol.tall + BOB, sol.pos.z).y;
+      const head = d.screenOf(sol.pos.x, UP + sol.tall + BOB, sol.pos.z).y, feet = d.screenOf(sol.pos.x, UP - BOB, sol.pos.z).y;
+      const ground = all.filter((f) => f !== sol).map((f) => [f.kind, d.screenOf(f.pos.x, f.tall * 0.6, f.pos.z).y]), low = Math.max(...ground.map((g) => g[1]));
       worst.field = Math.min(worst.field, head);
-      say(head >= 4, where + ', the whole field while she hangs: her head at y ' + head.toFixed(0));
+      say(low <= winTop - 8 && (size.h < 400 ? feet >= 8 : head >= 4), where + ', the whole field while she hangs: her head at y ' + head.toFixed(0) + ', her hanging feet ' + feet.toFixed(0) +
+        ', the lowest chest on the ground ' + low.toFixed(0) + ' (the windows from ' + winTop + ')');
       sol.m.action = '';
     }
     // gate 15's end: Sol learns Kestrel Stoop
