@@ -34,16 +34,17 @@
     misthollow: { at: [3500, 735], band: 4, map: 'misthollow', arrive: [768, 985] },
   };
   // where the Magpie can land: a dock on a ground map, or a camp's landing ground (maps.js land: she sets down there,
-  // and Io steps down 40 px south of it, in reach of her); a camp's first landing plays its scene, then offers a rest
-  // (sky: where she docks on the flying map, in atlas pixels; Wickhollow's and Bogmire's are the world travel demo's)
+  // and Io steps down 50 px east of it, beside her and in reach of her); a camp's first landing plays its scene, then
+  // offers a rest (sky: where she docks on the flying map, in atlas pixels; Wickhollow's and Bogmire's are the world
+  // travel demo's)
   const LANDINGS = {
     wickhollow: { name: 'Wickhollow', band: 1, field: ['jetty', [768, 700]], sky: [1446, 1806] },
     bogmire: { name: 'Bogmire', band: 1, field: ['bogmire', [100, 372]], need: (st) => st.flags.lights, sky: [1886, 2462] },
-    warmCamp: { name: 'The Warm Roads', band: 2, field: ['warm-roads-camp', [318, 465]], scene: 'warmRoads', sky: [820, 1530] },
+    warmCamp: { name: 'The Warm Roads', band: 2, field: ['warm-roads-camp', [368, 425]], scene: 'warmRoads', sky: [820, 1530] },
     dawnroost: { name: 'Dawnroost', band: 2, field: ['dawnroost', [1400, 330]], need: (st) => st.done['visit:dawnroost'], sky: [1365, 1085] },
-    northCamp: { name: 'The northern wilds', band: 3, field: ['northern-camp', [336, 495]], scene: 'northern', sky: [1150, 590] },
+    northCamp: { name: 'The northern wilds', band: 3, field: ['northern-camp', [386, 455]], scene: 'northern', sky: [1150, 590] },
     shipyard: { name: 'The shipyard', band: 3, field: ['shipyard', [764, 290]], need: (st) => st.done['visit:shipyard'], sky: [2097, 580] },
-    frozenCamp: { name: 'The northeast peaks', band: 4, field: ['frozen-camp', [306, 482]], scene: 'frozen', sky: [2760, 1090] },
+    frozenCamp: { name: 'The northeast peaks', band: 4, field: ['frozen-camp', [356, 442]], scene: 'frozen', sky: [2760, 1090] },
   };
   // the chapters: the start, and each gate with the party as the story leaves it there (story.js's path), for trying a
   // later part without playing up to it (Chris, October 3). Each starts just before its gate, in the town on its
@@ -419,7 +420,19 @@
       if (ex.to === 'world') { await say(!st.flags.party ? [['io', 'Something is wrong up in the square. I should go and see first.']] : S.scenes[ex.say] || S.scenes.roadOut); stepBack(ex); return; }
       await goField(ex.to, ex.at, ex.dir);
     }
-    function stepBack(ex) { const r = ex.rect, cx = (r[0] + r[2]) / 2, cy = (r[1] + r[3]) / 2; const dx = 768 - cx, dy = 512 - cy, L = Math.hypot(dx, dy) || 1; field.P.x += dx / L * 30; field.P.y += dy / L * 30; }
+    // she steps 30 px straight back in from the edge the road leaves by (exitMark's out), the way she came, so she stays
+    // on the path (toward the map's middle took her off the cottage's footbridge, which runs along its edge); where the
+    // path bends at the edge, a few px to one side, the nearest spot she can walk straight back to (field.canStand).
+    // She stops there, rather than drifting on toward the road
+    function stepBack(ex) {
+      const P = field.P, o = exitMark(ex).out, ux = -Math.cos(o), uy = -Math.sin(o);
+      const clear = (x, y) => { for (let i = 1; i <= 15; i++) if (!field.canStand(P.x + (x - P.x) * i / 15, P.y + (y - P.y) * i / 15)) return false; return true; };
+      P.vx = P.vy = 0;
+      for (const d of [30, 20]) for (let s = 0; s <= 14; s += 2) for (const side of s ? [s, -s] : [0]) {
+        const x = P.x + ux * d - uy * side, y = P.y + uy * d + ux * side;
+        if (clear(x, y)) { P.x = x; P.y = y; return; }
+      }
+    }
 
     // ---------- the story's events and set fights ----------
     async function onEvent(s) {

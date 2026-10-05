@@ -13,7 +13,8 @@
 // The camera follows her; the mini-map in the corner shows the whole map, the view, the exits (not the roads out of the
 // picture that she turns back from, to: 'world') and the people.
 // Map coordinates are the paintings' own 1536 x 1024 pixels whatever size they ship at.
-// Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw(), stage, setPicture(url) }
+// Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw(), stage, setPicture(url),
+//   canStand(x, y) (whether her feet fit there, on the map she is on: the rule her every step follows) }
 //   stage: the story's actors, walking on the map while a scene plays (handoff, section 5): add(id, look, [x, y], dir),
 //   walk(id, path, speed) -> Promise (path: points to walk through), face(id, dir), remove(id), clear(), io(path, speed)
 //   -> Promise (Io walks it, even while the field is paused for the scene), ioFace(dir), focus([x, y], an actor's id, or
@@ -540,7 +541,7 @@
     layout(); const ro = new ResizeObserver(layout); ro.observe(root);
     requestAnimationFrame(frame);
     return {
-      root, P, cam, load, near, useNear, stage,
+      root, P, cam, load, near, useNear, stage, canStand,
       get map() { return map; },
       pause() { paused = true; held.clear(); route = null; target = null; act.hidden = true; },
       resume() { paused = false; last = performance.now(); },

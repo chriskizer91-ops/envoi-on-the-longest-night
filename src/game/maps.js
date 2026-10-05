@@ -22,7 +22,8 @@
 //           the game adds them, as `keepsake`)
 //   kind:   'camp' for the three camps (a rest by the fire, a landing ground, no fights) and 'wild' for the five walks;
 //           land: a camp's landing ground (its middle), where the Magpie sets down: game.js puts her spot there and
-//           Io steps down 40 px south of it. (`music` on the scenes is read by nothing: game.js's MUSIC picks the songs)
+//           Io steps down 50 px east of it, beside her. (`music` on the scenes is read by nothing: game.js's MUSIC picks
+//           the songs)
 //   wild:   random encounters on this map: the band, the battle backdrop, and the encounter rate
 // Defines globalThis.MAPS.
 (function (G) {

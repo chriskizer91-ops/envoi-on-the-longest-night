@@ -18,7 +18,7 @@
 //             arrow points the way on, the camps have no random fights and the walks do (the hidden counter grows,
 //             though no fight is let start), on the Ember Line road Sol relights a node by a tap (300 shards) while one
 //             lit before offers nothing, and from the town the road back leads into the last scene. Not a default step
-//             (3 to 4 minutes for the three)
+//             (about two minutes for the three)
 //   menu:     the menu opens on every tab and closes; Settings plays a cutscene again ("Watch again", once a game has
 //             shown it), over the menu, and Esc skips it
 //   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load; then saves made
@@ -337,8 +337,8 @@ try {
       await shot('world-road-out');
       await talkThrough(30000);
       await waitFor(() => !window.__game.busy, null, 10000, 'the game after her line');
-      const back = await page.evaluate((r) => { const g = window.__game, P = g.field.P; return { map: g.field.map.id, mode: g.mode, P: [Math.round(P.x), Math.round(P.y)], inside: P.x >= r[0] - 8 && P.x <= r[2] + 8 && P.y >= r[1] - 8 && P.y <= r[3] + 8 }; }, road.rect);
-      if (back.map !== 'cottage' || back.mode !== 'field' || back.inside) throw new Error('the road out of the cottage: ' + JSON.stringify(back));
+      const back = await page.evaluate((r) => { const g = window.__game, P = g.field.P; return { map: g.field.map.id, mode: g.mode, P: [Math.round(P.x), Math.round(P.y)], inside: P.x >= r[0] - 8 && P.x <= r[2] + 8 && P.y >= r[1] - 8 && P.y <= r[3] + 8, stand: g.field.canStand(P.x, P.y) }; }, road.rect);
+      if (back.map !== 'cottage' || back.mode !== 'field' || back.inside || !back.stand) throw new Error('the road out of the cottage: ' + JSON.stringify(back));
       log('  the cottage’s south road turns her back with her line, at ' + back.P);
       // the Magpie at the end of the jetty, by a tap: she walks there and is asked to take her up
       await page.evaluate(() => { window.__game.goField('jetty', [768, 700]); });
@@ -361,9 +361,11 @@ try {
       await talkThrough(120000, () => window.__game.mode === 'field' && !window.__game.busy && !!window.__game.field.map && window.__game.field.map.id === 'warm-roads-camp' && !!window.__game.state.done['camp:warmCamp']);
       log('  flew from Wickhollow to the Warm Roads in ' + ((Date.now() - t1) / 1000).toFixed(0) + ' s');
       await sleep(600);
-      const w = await page.evaluate(() => { const g = window.__game, st = g.state, L = g.LANDINGS.warmCamp, n = g.field.near(); return { magpie: st.magpie, camp: !!st.done['camp:warmCamp'], P: [g.field.P.x, g.field.P.y], at: L.field && L.field[1], rest: st.rest, near: n && n.label, goal: g.goal }; });
-      if (w.magpie !== 'warmCamp' || !w.camp || !w.at || Math.hypot(w.P[0] - w.at[0], w.P[1] - w.at[1]) > 40 || w.rest.map !== 'warm-roads-camp' || w.near !== 'The Magpie' || !w.goal || w.goal.kind !== 'exit') throw new Error('the landing at the Warm Roads: ' + JSON.stringify(w));
-      log('  landed at the Warm Roads camp: its scene, a rest there, the Magpie in reach; the arrow points the way on');
+      const w = await page.evaluate(() => { const g = window.__game, st = g.state, L = g.LANDINGS.warmCamp, n = g.field.near(), sp = g.field.map.spots.find((s) => s.kind === 'magpie' && !(s.hide && s.hide())); return { magpie: st.magpie, camp: !!st.done['camp:warmCamp'], P: [g.field.P.x, g.field.P.y], at: L.field && L.field[1], rest: st.rest, near: n && n.label, goal: g.goal, glow: sp && sp.at }; });
+      // her glow beside Io, not drawn behind her (field.js draws a spot's glow before the figures, 6 px above its point)
+      const hid = !w.glow || (Math.abs(w.glow[0] - w.P[0]) < 30 && w.glow[1] - 6 <= w.P[1]);
+      if (w.magpie !== 'warmCamp' || !w.camp || !w.at || Math.hypot(w.P[0] - w.at[0], w.P[1] - w.at[1]) > 40 || w.rest.map !== 'warm-roads-camp' || w.near !== 'The Magpie' || hid || !w.goal || w.goal.kind !== 'exit') throw new Error('the landing at the Warm Roads: ' + JSON.stringify(w));
+      log('  landed at the Warm Roads camp: its scene, a rest there, the Magpie in reach, her glow beside Io; the arrow points the way on');
       await shot('world');
     } else if (step === 'wilds') {
       // each band's row of wilderness scenes, from the camp where the Magpie is moored to the band's town, walked by taps

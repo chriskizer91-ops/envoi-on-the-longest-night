@@ -34,7 +34,7 @@
     { scene: 'sol', at: 'wickhollow', flags: { party: true } },
     { scene: 'magpie', at: 'wickhollow' },
     { shop: 'wickhollow' },
-    { walk: 'thornwood', band: 1, fights: 2 }, // 1,492 px (Chris's path edits shortened it)
+    { walk: 'thornwood', band: 1, fights: 2 }, // 1,492 px, about as on October 3 (1,474): its 3 then came from that day's count, not a longer walk
     { rest: 'bogmire' },
     { shop: 'bogmire' },
     { fight: 'greatWraith', at: 'bogmire', gate: true, level: 5 },

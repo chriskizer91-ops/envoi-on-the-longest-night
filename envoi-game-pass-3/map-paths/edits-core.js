@@ -13,7 +13,7 @@
   // flown since the wilderness scenes, Chris's of October 5), so WORLD_IN is empty: it stays for the arrivals Chris
   // may have moved before then, which are left out with a note (validate)
   const WORLD_IN = {};
-  const MAGPIE_IN = { wickhollow: ['jetty', [768, 700]], bogmire: ['bogmire', [100, 372]], warmCamp: ['warm-roads-camp', [318, 465]], dawnroost: ['dawnroost', [1400, 330]], northCamp: ['northern-camp', [336, 495]], shipyard: ['shipyard', [764, 290]], frozenCamp: ['frozen-camp', [306, 482]] };
+  const MAGPIE_IN = { wickhollow: ['jetty', [768, 700]], bogmire: ['bogmire', [100, 372]], warmCamp: ['warm-roads-camp', [368, 425]], dawnroost: ['dawnroost', [1400, 330]], northCamp: ['northern-camp', [386, 455]], shipyard: ['shipyard', [764, 290]], frozenCamp: ['frozen-camp', [356, 442]] };
   // the parts of a map the page edits. Walk areas, blocks and fronts are free shapes; exits, people, spots and
   // arrivals only move (their other fields stay as maps.js has them, and none is added or taken away)
   const FIELDS = ['walk', 'block', 'front', 'exits', 'people', 'spots', 'start', 'arrivals'];
