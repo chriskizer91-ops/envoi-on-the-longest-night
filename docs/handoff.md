@@ -149,7 +149,7 @@ That is just under 30 MB. For more room, the battle paintings (4.2 MB of files) 
   - The unbuilt page can't load the flight's textures from `file://`; test the built page (`node tools/build.mjs --min putting-it-all-together/game.html`) or serve the folder.
 - **Map tracing:** `node tools/check-maps.mjs` after any change to `src/game/maps.js`; `node tools/trace-overlay.mjs <map> <out.png>` to see it.
 - **Balance:**
-  - `node tools/balance.mjs` for the fights' 52 targets.
-  - `node tools/chain.mjs` for the whole journey. Its walks are the game's measured ones (3, 5, 6 and 5 fights a band), and wild fights are worth 1.75 times their table (`rules.js` `WILD_REWARD`).
+  - `node tools/balance.mjs` for the fights' 51 targets.
+  - `node tools/chain.mjs` for the whole journey. Its walks are the game's measured ones (2, 3, 5 and 3 fights a band, measured by `tools/walks.mjs`), and wild fights are worth 1.75 times their table (`rules.js` `WILD_REWARD`).
 - **Each battle** makes its own WebGL context and frees it at the end. Fine so far; keeping one renderer for the whole game would be gentler on old phones.
 - **Retired:** the walking test page (`demos/walk-test.html`) is superseded by the game.

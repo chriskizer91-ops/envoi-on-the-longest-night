@@ -41,6 +41,6 @@ Everything is kept in the browser as he works.
 | `map-editor.html`, `map-editor.css`, `map-editor.js` | The page. It loads Walking Paths' stylesheet and rules (`map-paths.css`, `edits-core.js`), the game's field, maps, painted Io and paper dolls, and the keepsakes (`../items/items.js`) |
 | `page-test.mjs` | The headless test: `node envoi-final-draft/map-editor/page-test.mjs [--out dir]`. It runs every step of Walking Paths' own test, then the keepsakes' steps, and every step must pass |
 
-Build: `node tools/build.mjs envoi-final-draft/map-editor/map-editor.html` (`dist/map-editor.html`, 7.24 MB, 7,586,616 bytes, with the eight wilderness scenes; October 5), then publish `dist/map-editor.artifact.html` to the link above (read it with the Artifact tool first, and publish without `capabilities` so its database is kept).
+Build: `node tools/build.mjs envoi-final-draft/map-editor/map-editor.html` (`dist/map-editor.html`, 7.24 MB, 7,586,755 bytes, with the eight wilderness scenes; October 5), then publish `dist/map-editor.artifact.html` to the link above (read it with the Artifact tool first, and publish without `capabilities` so its database is kept).
 
 `map-editor.js` is a copy of `map-paths.js` with the keepsakes added. The Walking Paths files stay as they were, as the record of that page.

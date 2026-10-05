@@ -175,7 +175,7 @@ When the published game passes 16 MB:
 
 The game test's steps:
 
-- `--steps` picks them from title, new, walk, controls, world, wilds, menu, saves, scenes, save, wild, colossus, finale, keepsakes, songs and chapters. `world` flies the Magpie from Wickhollow's jetty to the Warm Roads camp (after a road out of the cottage turns Io back); `wilds` walks each band's row of scenes by taps from its camp to its town and back (3 to 4 minutes, not a default step); `saves` loads saves made on the world map; the chapters step checks each chapter's town, its arrival scene, the arrow and the Magpie's landing; keepsakes walks Io by taps up the roof and down the Thornwood's trail to both and checks them in a fight; songs checks each song plays where it should, from where it was.
+- `--steps` picks them from title, new, walk, controls, world, wilds, menu, saves, scenes, save, wild, colossus, finale, keepsakes, songs and chapters. `world` flies the Magpie from Wickhollow's jetty to the Warm Roads camp (after a road out of the cottage turns Io back); `wilds` walks each band's row of scenes by taps from its camp to its town and back (about two minutes, not a default step); `saves` loads saves made on the world map; the chapters step checks each chapter's town, its arrival scene, the arrow and the Magpie's landing; keepsakes walks Io by taps up the roof and down the Thornwood's trail to both and checks them in a fight; songs checks each song plays where it should, from where it was.
 - `--size 915x412` is a Pixel 7a held sideways.
 
 ## Lessons from this session
