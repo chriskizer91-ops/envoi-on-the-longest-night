@@ -472,7 +472,8 @@
       if (id === 'first') {
         await scene('firstFight');
         const r = await battle('first');
-        if (r.outcome === 'win') { st.done.first = true; await scene('sol'); st.flags.party = true; save(); }
+        // the fight's flags are saved before Sol's scene, so closing the game during it doesn't bring the fight back
+        if (r.outcome === 'win') { st.done.first = true; st.flags.party = true; save(); await scene('sol'); }
         else { await wake('firstLost'); }
         return;
       }
@@ -495,9 +496,12 @@
         await scene('ambush');
         const r = await battle('halcyon');
         field.stage.clear();
-        st.done.halcyon = true; st.flags.stoop = true; await scene('kestrel');
-        // whichever way it ended, the party gets its breath back by the crossroads well
-        GS.restore(st); await say(['The party rests by the crossroads well until their hands stop shaking.']); save();
+        if (r.outcome === 'error') { await wake(); return; } // a battle that couldn't run isn't fought, as at the other set fights
+        // whichever way it ended, the party gets its breath back by the crossroads well; saved before the Kestrel scene,
+        // so closing the game during it doesn't bring the ambush back
+        st.done.halcyon = true; st.flags.stoop = true; GS.restore(st); save();
+        await scene('kestrel');
+        await say(['The party rests by the crossroads well until their hands stop shaking.']); save();
         return;
       }
       if (id === 'finale') {
