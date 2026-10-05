@@ -1,7 +1,5 @@
 # Art Request 12: The Wilderness Scenes, at Night
 
-**Received October 5, 2026,** all eight, in three packs from Chris's generator (Warm Roads, Northern Wilds, Frostmere), each 1536 × 1024 at night with the camps' landing ground empty, under the file names below in `../../reference/art/walk/wilds/`. The packs' notes (a preview of each band's scenes, which candidate he kept and why, the prompts, and this brief as it was supplied) are kept as they came in `../../reference/art/walk/wilds/packs/`. What happens next is the wilderness scenes task in `../../handoff/tasks.md` (or the workshop's `wilds` job, `../../envoi-final-draft/workshop/wilds.md`).
-
 October 5, 2026. Chris decided on October 3 that the world map is only for flying the Magpie and that walking happens only on painted scenes, like his wilderness path example. On October 5 he approved the plan for those scenes ("The walking plan is good, make the scenes at night"). These are the eight painted wilderness scenes that replace walking on the world map in bands 2, 3 and 4. Band 1 needs none: the Thornwood is its wild walk already.
 
 **Why:** today bands 2 and 3 (and the start of band 4) are walked on the world map. With these, every step Io takes is on a painted scene, with random fights on the way and side paths to explore, and the world map is for flying.
@@ -32,8 +30,6 @@ Each band starts at a camp where the Magpie lands, and its scenes join up in a r
 4. **Landscape 3:2, at least 1536 × 1024.** Generate each two to four times and keep the one whose paths read most clearly.
 5. **Leave the camps' landing ground empty.** The game draws the Magpie, Io, Sol and everyone else.
 6. Save them in `reference/art/walk/wilds/` under the file names above.
-
-**Where to send them:** to the game's session, or to a new session with the workshop's wilderness script (`../../envoi-final-draft/workshop/README.md`), which does the next part while the game's session works on other things.
 
 **What happens next:** Claude squeezes each to your "100% extra light" (as the wild maps are, about 0.1 MB each), traces where Io can walk, joins the scenes to the places around them, moves the three Ember Line nodes from the world map onto the Ember Line road, and takes the walking off the world map (it stays for flying). A demo page on your phone first, then the game.
 

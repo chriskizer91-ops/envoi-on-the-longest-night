@@ -1,0 +1,50 @@
+ENVOI — SELECTED WILDERNESS ART PROMPTS
+
+SCENE 7: walk-frozen-camp.png
+Selected candidate: B
+
+Asset type: finished in-game walking-map background for Envoi on the Longest Night, rich detailed hand-painted fantasy RPG painterly PIXEL ART, single cohesive scene.
+
+Reference roles, in order:
+1. The CHOSEN Ember Line road is the PRIMARY style lock. Match its rich crisp small brushwork/pixel texture, overhead game-camera angle, object size, intricate natural materials, moonlit indigo-violet night shadows, subdued silver-blue highlights, and consistent local ground scale. Do not copy its geography, its stone nodes, bridge or side-path placement into this new scene.
+2. Wilderness path example is for OVERHEAD VIEW and clear exploration layout only; IGNORE its daytime color.
+3. Actual Thornwood game walking map is the secondary nighttime rendering reference.
+4. Regional battle painting is ONLY for region colors and materials. Completely IGNORE its horizon, sky, moon, perspective, any figures or scenic backdrop.
+
+Follow the supplied scene brief precisely. This is a playable map for a small pixel person about 1/14 of frame height. The ground is seen from high overhead, north up and straight, with only SHORT front faces of objects. Never isometric, never a low camera, no horizon, no sky, no vignette or atmospheric loss toward the top. Show ground at a uniform scale up to all four edges. Clear paths must touch and continue off the specified edges, unobstructed by props or foliage. Natural tiny jagged brush/pixel edges like the style lock, not smooth vector or a glossy 3D render. No people, creatures, animals, boats, airships, text, numerals, letters, UI, borders or grid. OPAQUE landscape PNG at least 1536 x 1024, exact 3:2. Night lighting from upper left, short soft shadows lower right.
+
+SCENE BRIEF:
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of rocks, ruins and trees, like a classic 16-bit JRPG map but richly painted. Never isometric, no horizon, no sky. A wilderness scene laid out like the attached example: a clear path crossing the picture through open wild ground, with a side path or two leading off to small places worth exploring. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, and warm amber light only where a fire or lantern burns. Paths, clearings and bridges are clear and easy to read, at least as wide as two people walking side by side, never hidden under branches or overhanging rocks, and the main path runs right off the picture where it leaves. A person would stand about one fourteenth of the picture's height. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+A camp on a broad snowy shelf among the northeastern peaks. On the left, a broad flat landing ground of packed snow, empty, marked at its corners by four wooden stakes with rope between them, where a small airship sets down. Beside it: a campfire glowing in a stone ring with the snow melted round it, two canvas tents heavy with snow, a wooden sled loaded with crates, firewood, a lantern on a post. Snow-laden pines, frosted boulders and the dark faces of low cliffs close round the shelf. A trodden path through the snow leaves at the right edge. A side path leads to a frozen waterfall against the cliff, another to a lookout of flat rocks at the bottom edge.
+
+Composition planning: the large empty packed-snow landing ground is on the LEFT third, x=80..625,y=300..800 at 1536x1024. EXACTLY FOUR wooden stakes one at each corner, rope around perimeter only, plain snowy interior entirely empty. Two snow-heavy canvas tents, melted-ring campfire, crate sled, firewood and lantern all sit beside it on the center/right, no supplies or trees inside the rectangle. Continuous clear trodden snowy path leaves flush off the RIGHT edge at about 58 percent height; keep 110–140px width. Short side path to a frozen waterfall against a LOW nearby cliff face, another to flat lookout rocks at the BOTTOM edge, seen overhead with no vista. Snow-laden pines and frosted rocks enclose a local mountain shelf; NO distant mountains, skyline or big scenic backdrop. Only campfire and lantern amber, otherwise night-blue snow and indigo shadow. No other buildings or stone nodes.
+
+Candidate B: Create an alternative natural arrangement with more weathered rocks and intricate frost details along the margins. Maintain generous continuous clear paths and an entirely empty landing field where required. Keep all specified road exits.
+
+----------------------------------------------------------------------
+
+SCENE 8: walk-frostmere-shore.png
+Selected candidate: A
+
+Asset type: finished in-game walking-map background for Envoi on the Longest Night, rich detailed hand-painted fantasy RPG painterly PIXEL ART, single cohesive scene.
+
+Reference roles, in order:
+1. The CHOSEN Ember Line road is the PRIMARY style lock. Match its rich crisp small brushwork/pixel texture, overhead game-camera angle, object size, intricate natural materials, moonlit indigo-violet night shadows, subdued silver-blue highlights, and consistent local ground scale. Do not copy its geography, its stone nodes, bridge or side-path placement into this new scene.
+2. Wilderness path example is for OVERHEAD VIEW and clear exploration layout only; IGNORE its daytime color.
+3. Actual Thornwood game walking map is the secondary nighttime rendering reference.
+4. Regional battle painting is ONLY for region colors and materials. Completely IGNORE its horizon, sky, moon, perspective, any figures or scenic backdrop.
+
+Follow the supplied scene brief precisely. This is a playable map for a small pixel person about 1/14 of frame height. The ground is seen from high overhead, north up and straight, with only SHORT front faces of objects. Never isometric, never a low camera, no horizon, no sky, no vignette or atmospheric loss toward the top. Show ground at a uniform scale up to all four edges. Clear paths must touch and continue off the specified edges, unobstructed by props or foliage. Natural tiny jagged brush/pixel edges like the style lock, not smooth vector or a glossy 3D render. No people, creatures, animals, boats, airships, text, numerals, letters, UI, borders or grid. OPAQUE landscape PNG at least 1536 x 1024, exact 3:2. Night lighting from upper left, short soft shadows lower right.
+
+SCENE BRIEF:
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of rocks, ruins and trees, like a classic 16-bit JRPG map but richly painted. Never isometric, no horizon, no sky. A wilderness scene laid out like the attached example: a clear path crossing the picture through open wild ground, with a side path or two leading off to small places worth exploring. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, and warm amber light only where a fire or lantern burns. Paths, clearings and bridges are clear and easy to read, at least as wide as two people walking side by side, never hidden under branches or overhanging rocks, and the main path runs right off the picture where it leaves. A person would stand about one fourteenth of the picture's height. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+The shore of Frostmere, a great frozen lake in the mountains: the right part of the picture is the lake, smooth ice dusted with snow, with long pale cracks glowing faintly blue-white and dark patches of clear ice. A snowy road follows the shore, coming in at the left edge and climbing to leave at the top edge, toward a mountain pass. Along the shore: reeds frozen stiff, snow-covered rocks, a few snow-laden pines, an old iced-in fishing jetty and a small boathouse with snow on its roof and a cold lantern. A side path leads out along the jetty onto the ice, another to a sheltered hollow among the rocks.
+
+Composition planning: the frozen lake takes the RIGHT part, roughly right 35–40 percent, a local sheet of smooth snow-dusted ice with long faint blue-white cracks and scattered dark clear-ice patches. Main snowy road enters flush from LEFT at about 58 percent height, follows the shore with an open bend, and leaves flush off TOP at about 44 percent width. A continuous 110–140px width, no reeds/rocks/branches over the walking path. One side trail goes along the small iced-in timber fishing jetty onto the ice; another to a sheltered rock hollow on the landward side. Small snow-roof boathouse next to the jetty has a COLD UNLIT lantern; no amber glow or fire. Snow-laden pines, frozen reeds, snow-covered rocks. Entire canvas is the local shore seen high overhead. No distant opposite shore, mountain backdrop, sky, moon, boats, ships, people, camp or nodes.
+
+Candidate A: A wide, simple clear shore path with a smooth bend, lake occupying the right 40 percent, and well-separated side trails.
+
+----------------------------------------------------------------------
+

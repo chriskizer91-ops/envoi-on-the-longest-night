@@ -1,21 +1,23 @@
 # Still to Come
 
-What we've already decided goes into *Envoi on the Longest Night* but isn't in the game yet, as of October 5, 2026, just after midnight. The game file sent with this note has everything else: the whole story from the title to the ending, both cutscenes, the twenty keepsakes with your pictures, 99 of each herb, and your songs.
+What we've already decided goes into *Envoi on the Longest Night* but isn't in the game yet, as of October 5, 2026, early morning. The game file sent with this note has everything else: the whole story from the title to the ending, both cutscenes, the twenty keepsakes with your pictures, 99 of each herb, and your songs.
 
 ## Being built now
 
 **1. The new battle arenas.** Every fight will be fought the way the Colossus in the Meadow page fights: a locked camera, live 3D ground in front (grass, mist, weather, everything the blows throw up) and your battle paintings far off behind, at the settings you picked (the Strong squeeze, 30 frames a second, 3/4 sharpness). The same 3D models and moves; only the stage changes.
 
-- A helper session is building it. The demo page with every fight in its arena is built and being tested.
+- Built, as a demo page with every fight in its arena: https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea (October 5). The game still fights on the flat paintings until you've played it and said yes.
 - You see it on your phone first, then it goes into the game.
 - Your words (October 4): "put all of the fights into an arena like that ... with the different battle backgrounds."
 
-## Decided, and waiting on you
+## Ready to build (your part is done)
 
 **2. Walking without the world map.** You decided the world map is only for flying the Magpie, and walking happens only on painted scenes like your wilderness path example. Bands 2 to 4 are still walked on the world map today.
 
-- Missing: eight painted wilderness scenes (three in band 2, three in band 3, two in band 4), each with its random fights, and a camp scene in each band where the Magpie lands.
-- You agreed the plan on October 5, with the scenes at night. Your pictures can go straight to a new session with the workshop's wilderness script (`../envoi-final-draft/workshop/README.md`), which traces them and makes the demo page. Waiting on: your pictures for art request 12 (`art-requests/12-wilderness-scenes.md`), one prompt per scene in your example's style: the Warm Roads camp, the Ember Line road, the forest road to Dawnroost, the northern camp, Eldergrove's edge, the cold moor, the frozen camp and Frostmere's shore. Then they're traced, joined up and put in, with a demo page first.
+- Missing: the eight painted wilderness scenes made into walking maps (three in band 2, three in band 3, two in band 4), each with its random fights, and the camp in each band where the Magpie lands.
+- You agreed the plan on October 5, with the scenes at night, and **your eight pictures came the same night** (art request 12: the Warm Roads camp, the Ember Line road, the forest road to Dawnroost, the northern camp, Eldergrove's edge, the cold moor, the frozen camp and Frostmere's shore). They're kept as you sent them in `../reference/art/walk/wilds/`. Next they're traced, joined up and put in, with a demo page first: by the ultracode session, or by a session you start with the workshop's wilderness script (`../envoi-final-draft/workshop/README.md`).
+
+## Decided, and waiting on you
 
 **3. Creatures of the wild.** New beasts for the wilderness fights, with your rule that the closer the party gets to Noctara, the more upset the wild becomes (the wisps and wraiths stay hers). Today about nine wild fights in ten are against the same three foes.
 

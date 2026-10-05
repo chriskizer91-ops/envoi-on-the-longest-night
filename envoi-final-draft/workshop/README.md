@@ -21,7 +21,7 @@ Each piece of work that can go ahead on its own has a **brief** here and a **sta
 
 | Job | What it does | Brief | Branch | State |
 |---|---|---|---|---|
-| `wilds` | The eight wilderness scenes from Chris's pictures (art request 12): traced, joined in a row, a demo page where Io walks them | `wilds.md` | `work/wilds` | Waiting on the pictures (on the way, October 5) |
+| `wilds` | The eight wilderness scenes from Chris's pictures (art request 12): traced, joined in a row, a demo page where Io walks them | `wilds.md` | `work/wilds` | Ready: the pictures came on October 5 and are on the game's branch (`reference/art/walk/wilds/`) |
 | `words` | Every word of the game, written with Chris: his lore conversation | `words.md` | `work/words` | Ready |
 | `model-<id>` | A creature of the wild, from Chris's two sheets (art request 13) | `../model-studio/` | `work/model-<id>` | Waiting on the sheets |
 | `study-<name>` | Sol, Halcyon or Noctara built finer, for the finale's cutscene (optional) | `../../3d-model-main-characters/README.md`, starter in `../cutscenes/README.md` | `work/study-<name>` | Optional |
@@ -35,7 +35,7 @@ Anything else that can go ahead on its own gets a brief from `_template.md` firs
 
 ```text
 You're a workshop session for Envoi on the Longest Night: the wilderness scenes. Start from the game on your own branch: git fetch origin ccr-31761774-76j8j3 && git checkout -B work/wilds FETCH_HEAD
-Then read envoi-final-draft/workshop/README.md and envoi-final-draft/workshop/wilds.md, and make the eight wilderness scenes from my pictures, attached. Push to work/wilds as you go. Show me the demo page when it's ready.
+Then read envoi-final-draft/workshop/README.md and envoi-final-draft/workshop/wilds.md, and make the eight wilderness scenes from my pictures, which are in reference/art/walk/wilds/. Push to work/wilds as you go. Show me the demo page when it's ready.
 ```
 
 **Every word:**

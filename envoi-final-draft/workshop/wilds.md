@@ -1,6 +1,6 @@
 # Workshop Brief: the Eight Wilderness Scenes
 
-**Job:** `wilds`. **Branch:** `work/wilds`. **From Chris:** his eight pictures for art request 12 (`../../docs/art-requests/12-wilderness-scenes.md`), attached to the session.
+**Job:** `wilds`. **Branch:** `work/wilds`. **From Chris:** nothing more: his eight pictures for art request 12 (`../../docs/art-requests/12-wilderness-scenes.md`) came on October 5 and are on the game's branch already, as they came, in `../../reference/art/walk/wilds/` (his packs' notes in `packs/` there).
 
 Read `README.md` here first: the loop, the rules every workshop session keeps, and the slip.
 
@@ -27,7 +27,7 @@ Exits from Dawnroost, the crossroads and the frozen pass back into these scenes 
 
 **In each scene:**
 
-- `wild: { band, scene, rate: 1 }` on the six walks, with the band's battle scene from `GameFights.WILD_SCENE` in `src/game/fights.js` (band 2 `'warm-road'`, band 3 `'northern-crossroads'`, band 4 `'frozen-road'`). The three camps are rests and have no random fights.
+- `wild: { band, scene, rate: 1 }` on the five walks, with the band's battle scene from `GameFights.WILD_SCENE` in `src/game/fights.js` (band 2 `'warm-road'`, band 3 `'northern-crossroads'`, band 4 `'frozen-road'`). The three camps are rests and have no random fights.
 - **The camps:** a rest spot at the fire, `{ kind: 'rest', at, label: '<the camp's name>', note: 'A camp. Rest, and the game is saved.' }`, and `land: [x, y]`, the middle of the empty landing ground, where the hub will draw the Magpie.
 - **The Ember Line road:** its three nodes as spots with the world map's ids, so saves carry over: `{ kind: 'node', id: 'node1' }`, `'node2'` and `'node3'`, each with `at` and `label: 'An Ember Line node'`, where the picture puts them (one beside the road, two at the ends of side paths).
 - **Side paths:** walkable, but no spots of their own; list each side path's end in your slip, as places for things to find later.
@@ -35,7 +35,7 @@ Exits from Dawnroost, the crossroads and the frozen pass back into these scenes 
 ## Steps
 
 1. **Start** as `README.md` says, on `work/wilds`.
-2. **Keep Chris's pictures as they came** in `reference/art/walk/wilds/`, under art request 12's file names. If one isn't 3:2, note it: the hub and Chris decide how to crop it; never stretch.
+2. **Chris's pictures are in** `reference/art/walk/wilds/` already, under art request 12's file names, all eight 1536 × 1024 (3:2), as they came: never change them. His packs' notes (`packs/*/MANIFEST.json`) say what he chose each for (the Ember Line road's three unlit nodes: one beside the road, two at the ends of side trails).
 3. **Squeeze each** to Chris's "100% extra light" (full size, AVIF quality 20, as the game's three wild maps are): `node tools/compress.mjs reference/art/walk/wilds/<file>.png --out art/walk --avif --q 20 --width 1536`. About 0.1 MB each.
 4. **Trace each scene** as a new entry at the end of `MAPS` in `src/game/maps.js`, in the same shape as the others (read the file's header, and the Thornwood's entry as the nearest example): `name`, `src: "art/walk/<file>.avif"` (double quotes, so the build finds it), `band`, `kind: 'wild'`, `music: 'wild'`, `start`, `walk` close to the painted ground, `block`s cut out, `front`s for the trees, rocks and ruins Io walks behind (each with its base line), `exits` with their arrival points, `people: []`, `spots`, `wild`, and the camps' `land`. Every position is in the painting's own 1536 × 1024 pixels.
    - See a scene's paths over its painting: `node tools/trace-overlay.mjs <map id> /tmp/<map id>.png 1600 --grid 25`.

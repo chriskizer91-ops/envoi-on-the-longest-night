@@ -1,0 +1,33 @@
+{
+  "project": "Envoi on the Longest Night",
+  "art_request": "Art Request 12: The Wilderness Scenes, at Night",
+  "date": "2026-10-05",
+  "band": 4,
+  "region": "Frostmere",
+  "format": "PNG",
+  "style_reference": "walk-ember-line-road.png",
+  "images": [
+    {
+      "id": 7,
+      "file_name": "walk-frozen-camp.png",
+      "band": 4,
+      "width": 1536,
+      "height": 1024,
+      "bytes": 4057407,
+      "sha256": "cbde5650862a9e5d1a2538678ecdc8641bc580e7f42b465386328922657d7ad1",
+      "selected_candidate": "B",
+      "selection_reason": "Wider empty packed-snow landing ground; four plain corner stakes; clear right exit, waterfall trail and bottom lookout."
+    },
+    {
+      "id": 8,
+      "file_name": "walk-frostmere-shore.png",
+      "band": 4,
+      "width": 1536,
+      "height": 1024,
+      "bytes": 4158962,
+      "sha256": "6e6e29e597d9f2c023ce2d1652adcea00495b2dbbce9df0ee95acb2823a56bdd",
+      "selected_candidate": "A",
+      "selection_reason": "Clear left-to-top shore road, cold boathouse lantern, broad jetty access, and sheltered landward rock hollow; frozen lake fills the right."
+    }
+  ]
+}

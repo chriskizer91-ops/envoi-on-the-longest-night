@@ -1,0 +1,74 @@
+ENVOI — SELECTED WILDERNESS ART PROMPTS
+
+SCENE 4: walk-northern-camp.png
+Selected candidate: B
+
+Asset type: finished in-game walking-map background for Envoi on the Longest Night, rich detailed hand-painted fantasy RPG painterly PIXEL ART, single cohesive scene.
+
+Reference roles, in order:
+1. The CHOSEN Ember Line road is the PRIMARY style lock. Match its rich crisp small brushwork/pixel texture, overhead game-camera angle, object size, intricate natural materials, moonlit indigo-violet night shadows, subdued silver-blue highlights, and consistent local ground scale. Do not copy its geography, its stone nodes, bridge or side-path placement into this new scene.
+2. Wilderness path example is for OVERHEAD VIEW and clear exploration layout only; IGNORE its daytime color.
+3. Actual Thornwood game walking map is the secondary nighttime rendering reference.
+4. Regional battle painting is ONLY for region colors and materials. Completely IGNORE its horizon, sky, moon, perspective, any figures or scenic backdrop.
+
+Follow the supplied scene brief precisely. This is a playable map for a small pixel person about 1/14 of frame height. The ground is seen from high overhead, north up and straight, with only SHORT front faces of objects. Never isometric, never a low camera, no horizon, no sky, no vignette or atmospheric loss toward the top. Show ground at a uniform scale up to all four edges. Clear paths must touch and continue off the specified edges, unobstructed by props or foliage. Natural tiny jagged brush/pixel edges like the style lock, not smooth vector or a glossy 3D render. No people, creatures, animals, boats, airships, text, numerals, letters, UI, borders or grid. OPAQUE landscape PNG at least 1536 x 1024, exact 3:2. Night lighting from upper left, short soft shadows lower right.
+
+SCENE BRIEF:
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of rocks, ruins and trees, like a classic 16-bit JRPG map but richly painted. Never isometric, no horizon, no sky. A wilderness scene laid out like the attached example: a clear path crossing the picture through open wild ground, with a side path or two leading off to small places worth exploring. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, and warm amber light only where a fire or lantern burns. Paths, clearings and bridges are clear and easy to read, at least as wide as two people walking side by side, never hidden under branches or overhanging rocks, and the main path runs right off the picture where it leaves. A person would stand about one fourteenth of the picture's height. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+A camp in a clearing at the edge of the great northern forests, where the cold is setting in: the first frost silvers the grass and lies white in the hollows. On the left, a broad flat landing ground of frosted short grass, empty, marked at its corners by four wooden stakes with rope between them, where a small airship sets down. Beside it: a campfire glowing in a stone ring, two canvas tents with frost on their ridges, bedrolls, firewood, a lantern on a post. Tall dark pines and old firs close round the clearing. A path leaves at the right edge into the forest. A side path leads to a half-frozen stream with a plank bridge, another to a mossy boulder with a hollow under it.
+
+Composition planning: the empty landing field takes the left third, x=80..625,y=310..790 at 1536x1024, a generous uninterrupted rectangle of frosted short grass. EXACTLY FOUR wooden stakes, one per corner, low rope around perimeter only. No cargo, vehicle, objects or vegetation within it. The two frost-ridged canvas tents, fire and lantern sit outside the field toward the center-right. First frost only: much grass and moss visible, pale white in hollows, not a deep-snow landscape. Main trodden earth path exits flush off the RIGHT edge near 58 percent height, 110–140px clear width. Two smaller, clear side trails: one to a half-frozen stream with a plank bridge near the lower part, one to a mossy boulder with a hollow near the upper part. Tall dark pines and old firs frame open playable ground, not a horizon. No hut, stone nodes or glowing road veins.
+
+Candidate B: An alternative natural arrangement of the required features, with slightly more rugged vegetation and roots along the margins. Maintain equally generous unobstructed paths and entirely empty landing ground. Keep all specified edge exits.
+
+----------------------------------------------------------------------
+
+SCENE 5: walk-eldergrove-edge.png
+Selected candidate: B
+
+Asset type: finished in-game walking-map background for Envoi on the Longest Night, rich detailed hand-painted fantasy RPG painterly PIXEL ART, single cohesive scene.
+
+Reference roles, in order:
+1. The CHOSEN Ember Line road is the PRIMARY style lock. Match its rich crisp small brushwork/pixel texture, overhead game-camera angle, object size, intricate natural materials, moonlit indigo-violet night shadows, subdued silver-blue highlights, and consistent local ground scale. Do not copy its geography, its stone nodes, bridge or side-path placement into this new scene.
+2. Wilderness path example is for OVERHEAD VIEW and clear exploration layout only; IGNORE its daytime color.
+3. Actual Thornwood game walking map is the secondary nighttime rendering reference.
+4. Regional battle painting is ONLY for region colors and materials. Completely IGNORE its horizon, sky, moon, perspective, any figures or scenic backdrop.
+
+Follow the supplied scene brief precisely. This is a playable map for a small pixel person about 1/14 of frame height. The ground is seen from high overhead, north up and straight, with only SHORT front faces of objects. Never isometric, never a low camera, no horizon, no sky, no vignette or atmospheric loss toward the top. Show ground at a uniform scale up to all four edges. Clear paths must touch and continue off the specified edges, unobstructed by props or foliage. Natural tiny jagged brush/pixel edges like the style lock, not smooth vector or a glossy 3D render. No people, creatures, animals, boats, airships, text, numerals, letters, UI, borders or grid. OPAQUE landscape PNG at least 1536 x 1024, exact 3:2. Night lighting from upper left, short soft shadows lower right.
+
+SCENE BRIEF:
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of rocks, ruins and trees, like a classic 16-bit JRPG map but richly painted. Never isometric, no horizon, no sky. A wilderness scene laid out like the attached example: a clear path crossing the picture through open wild ground, with a side path or two leading off to small places worth exploring. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, and warm amber light only where a fire or lantern burns. Paths, clearings and bridges are clear and easy to read, at least as wide as two people walking side by side, never hidden under branches or overhanging rocks, and the main path runs right off the picture where it leaves. A person would stand about one fourteenth of the picture's height. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+The edge of Eldergrove, an ancient first-age forest: trees of enormous girth with roots like low walls, their bark silvered by moonlight and the first frost. A worn earth path comes in at the left edge, winds between the great trunks and roots, and leaves at the right edge. Old standing stones carved with faded sun and moon signs lean among the trees, and a ruined stone archway stands half swallowed by roots. Pale glowing fungus on fallen logs, frost on the moss, ferns gone brown. A side path leads into a hollow at the foot of the largest tree, another to a small ring of standing stones.
+
+Composition planning: a clear 110–140px main earth path enters flush from LEFT near 58 percent height and winds through a gently bending corridor to leave RIGHT near 58 percent height. Keep all giant roots, rocks and tree canopies OUT of this playable corridor. Ancient enormous first-age tree trunks and long exposed roots frame the sides. Side trail one leads to a spacious dark hollow at the base of the largest tree; side trail two to a small ring of leaning standing stones. Root-swallowed ruined stone arch is off the main road, beside a clearing, never a path-width obstruction. Faded sun and moon carvings are pictorial symbols, no letters. Frost-silver bark, patchy first frost on moss, brown ferns and faint pale cold luminous fungus on fallen wood; NO fire, lanterns, amber road veins, camp or crystal nodes. Local forest ground only, no distant view.
+
+Candidate B: An alternative natural arrangement of the required features, with slightly more rugged vegetation and roots along the margins. Maintain equally generous unobstructed paths and entirely empty landing ground. Keep all specified edge exits.
+
+----------------------------------------------------------------------
+
+SCENE 6: walk-cold-moor.png
+Selected candidate: B
+
+Asset type: finished in-game walking-map background for Envoi on the Longest Night, rich detailed hand-painted fantasy RPG painterly PIXEL ART, single cohesive scene.
+
+Reference roles, in order:
+1. The CHOSEN Ember Line road is the PRIMARY style lock. Match its rich crisp small brushwork/pixel texture, overhead game-camera angle, object size, intricate natural materials, moonlit indigo-violet night shadows, subdued silver-blue highlights, and consistent local ground scale. Do not copy its geography, its stone nodes, bridge or side-path placement into this new scene.
+2. Wilderness path example is for OVERHEAD VIEW and clear exploration layout only; IGNORE its daytime color.
+3. Actual Thornwood game walking map is the secondary nighttime rendering reference.
+4. Regional battle painting is ONLY for region colors and materials. Completely IGNORE its horizon, sky, moon, perspective, any figures or scenic backdrop.
+
+Follow the supplied scene brief precisely. This is a playable map for a small pixel person about 1/14 of frame height. The ground is seen from high overhead, north up and straight, with only SHORT front faces of objects. Never isometric, never a low camera, no horizon, no sky, no vignette or atmospheric loss toward the top. Show ground at a uniform scale up to all four edges. Clear paths must touch and continue off the specified edges, unobstructed by props or foliage. Natural tiny jagged brush/pixel edges like the style lock, not smooth vector or a glossy 3D render. No people, creatures, animals, boats, airships, text, numerals, letters, UI, borders or grid. OPAQUE landscape PNG at least 1536 x 1024, exact 3:2. Night lighting from upper left, short soft shadows lower right.
+
+SCENE BRIEF:
+Highly detailed hand-painted fantasy RPG ground-level map in a rich painterly pixel-art style, for a game where a small pixel character walks on top of it. A high overhead view, straight on and not rotated: you see the ground from above and the front faces of rocks, ruins and trees, like a classic 16-bit JRPG map but richly painted. Never isometric, no horizon, no sky. A wilderness scene laid out like the attached example: a clear path crossing the picture through open wild ground, with a side path or two leading off to small places worth exploring. Night: deep violet and indigo shadows, silver-blue moonlight from the upper left with soft short shadows to the lower right, and warm amber light only where a fire or lantern burns. Paths, clearings and bridges are clear and easy to read, at least as wide as two people walking side by side, never hidden under branches or overhanging rocks, and the main path runs right off the picture where it leaves. A person would stand about one fourteenth of the picture's height. No people, animals, creatures, ships, text, lettering, UI, borders, grid lines or vignette. Landscape 3:2, at least 1536 × 1024.
+
+A bleak upland moor in the cold north: frost-silvered heather and dead bracken, thin snow lying in the hollows, a few wind-bent dark pines, scattered boulders. An old road of broken flagstones, half grown over, comes in at the left edge and runs across the moor to leave at the right edge, with small stone cairns marking its way. To one side, a ruined shepherd's hut and a tumbled stone sheepfold; on the other, a small frozen tarn with reeds stiff with ice. A side path leads to the hut, another to a cairn on a low rise.
+
+Composition planning: the broken flagstone road enters flush from LEFT at about 58 percent height and crosses the open frost moor with a mild curve to exit RIGHT at about 58 percent height. Continuous clear 110–140px walkable width. Small cairns stand only on the shoulders, not in the corridor. One side trail runs to the roofless ruined shepherd hut and tumbled sheepfold in the upper-left/upper-middle; another to a single cairn on a low rise on the lower side. A small frozen tarn with icy reeds is on the opposite side from the hut. Open heath, dead bracken, patchy thin snow, few wind-bent pines, mostly exposed frosty dark ground, no deep snow. NO camps, landing field, ships, nodes, lanterns, amber glow, sunstone veins or live sheep. Entire canvas is local ground from overhead, no horizon.
+
+Candidate B: Create an alternative natural arrangement with more weathered rocks and intricate frost details along the margins. Maintain generous continuous clear paths and an entirely empty landing field where required. Keep all specified road exits.
+
+----------------------------------------------------------------------
+

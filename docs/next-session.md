@@ -74,7 +74,7 @@ Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: t
 ## Waiting on Chris
 
 1. **The five demos:** his notes from playing each, from just before its gate on to the next.
-2. **The wilderness scenes' pictures:** art request 12 (`art-requests/12-wilderness-scenes.md`), eight scenes at night. Chris agreed the plan on October 5 ("The walking plan is good, make the scenes at night").
+2. ~~**The wilderness scenes' pictures**~~: received October 5, all eight at night (`../reference/art/walk/wilds/`; art request 12). Building them is a task in `../handoff/tasks.md`.
 3. **More map path edits**, whenever he sends them (both his rounds are in the game).
 4. **The lore conversation:** every word of the script is still a placeholder.
 5. **Art requests 06 and 07** (townsfolk portraits, story stills), and the footsteps.

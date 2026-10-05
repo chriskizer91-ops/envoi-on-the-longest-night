@@ -1,0 +1,44 @@
+{
+  "project": "Envoi on the Longest Night",
+  "art_request": "Art Request 12: The Wilderness Scenes, at Night",
+  "date": "2026-10-05",
+  "band": 2,
+  "region": "Warm Roads",
+  "format": "PNG",
+  "style_reference": "walk-ember-line-road.png",
+  "images": [
+    {
+      "id": 1,
+      "file_name": "walk-warm-roads-camp.png",
+      "band": 2,
+      "width": 1536,
+      "height": 1024,
+      "bytes": 4049663,
+      "sha256": "39a079f7e0ec97f301cd94bf2ddf0e6ce49c78a28908ef9f01da1f94d6f244c2",
+      "selected_candidate": "B",
+      "selection_reason": "Wider clear landing field; four corner stakes; distinct camp, turf-roof shelter and two exploration trails."
+    },
+    {
+      "id": 2,
+      "file_name": "walk-ember-line-road.png",
+      "band": 2,
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3875791,
+      "sha256": "222ae39686916e5bb0d061af279e87afa95bd674f3b4d382023e096f714aee6f",
+      "selected_candidate": "C",
+      "selection_reason": "Three unlit nodes: one beside the road, two at side-trail endpoints."
+    },
+    {
+      "id": 3,
+      "file_name": "walk-dawnroost-forest-road.png",
+      "band": 2,
+      "width": 1536,
+      "height": 1024,
+      "bytes": 3965278,
+      "sha256": "48226b996064b740d9a9b0a590389a71a8f3370b81707f881bc2ef9c916ebdd7",
+      "selected_candidate": "A",
+      "selection_reason": "Clear bottom-to-top route with clean moonlit flagstones; separate pool and woodcutter trails; one lantern."
+    }
+  ]
+}

@@ -80,3 +80,11 @@ Art request 14 (`../../docs/art-requests/14-keepsake-items.md`), received Octobe
 - In each: `items/NN-<name>.png` (1254 × 1254, transparent), `cards/NN-<name>-card.png` (900 × 1260, each keepsake's card as his generator laid it out), `preview.png` (the cards together), `items.json` (the data the cards were made from), `generation-prompts.txt` and `README.txt`.
 - The numbers follow `envoi-final-draft/items/items.js`. The game's tiny copies are in `../../art/keepsakes/`, made by `node tools/keepsake-pictures.mjs`; the game draws its cards itself, in the look of these.
 
+## Wilderness scenes
+
+Art request 12 (`../../docs/art-requests/12-wilderness-scenes.md`), received October 5, 2026, in three packs from Chris's generator, the eight scenes at night that replace walking on the world map in bands 2 to 4. In `walk/wilds/`, beside his daytime `wilderness-path-example.webp`:
+
+- the eight scenes as they came, 1536 × 1024 PNGs under the request's file names: `walk-warm-roads-camp.png`, `walk-ember-line-road.png` (the style reference for the rest), `walk-dawnroost-forest-road.png` (band 2), `walk-northern-camp.png`, `walk-eldergrove-edge.png`, `walk-cold-moor.png` (band 3), `walk-frozen-camp.png` and `walk-frostmere-shore.png` (band 4);
+- `packs/Envoi-Wilderness-01-Warm-Roads/`, `-02-Northern-Wilds/` and `-03-Frostmere/`: each pack's `PREVIEW.png` (its scenes together), `MANIFEST.json` (sizes, checksums, and which of the candidates he kept and why), `PROMPTS.txt`, `README.md`, and `ART_BRIEF.md` (the request as it was supplied, the same in all three).
+
+The game's squeezed copies go in `../../art/walk/` when the scenes are built (`node tools/compress.mjs ... --avif --q 20 --width 1536`, as the wild maps are).

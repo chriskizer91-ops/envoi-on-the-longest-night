@@ -1,0 +1,44 @@
+{
+  "project": "Envoi on the Longest Night",
+  "art_request": "Art Request 12: The Wilderness Scenes, at Night",
+  "date": "2026-10-05",
+  "band": 3,
+  "region": "Northern Wilds",
+  "format": "PNG",
+  "style_reference": "walk-ember-line-road.png",
+  "images": [
+    {
+      "id": 4,
+      "file_name": "walk-northern-camp.png",
+      "band": 3,
+      "width": 1536,
+      "height": 1024,
+      "bytes": 4087063,
+      "sha256": "d0c2f793e3cc786df2b71a4fff59caff7554eeb336840778921b84bd13a4e395",
+      "selected_candidate": "B",
+      "selection_reason": "Broad clear frost-grass landing field with four corner stakes; fully visible plank bridge and clear right exit."
+    },
+    {
+      "id": 5,
+      "file_name": "walk-eldergrove-edge.png",
+      "band": 3,
+      "width": 1536,
+      "height": 1024,
+      "bytes": 4201839,
+      "sha256": "fe5231010657b35e777b720fd7025943056f48e47a8a6c50b67b4bcde838f9a5",
+      "selected_candidate": "B",
+      "selection_reason": "Large ancient hollow tree, distinct standing-stone clearing, and uninterrupted left-to-right earth path; root-swallowed arch stays clear of the main route."
+    },
+    {
+      "id": 6,
+      "file_name": "walk-cold-moor.png",
+      "band": 3,
+      "width": 1536,
+      "height": 1024,
+      "bytes": 4425402,
+      "sha256": "eb0a59a2e2399ce0b3c015aa733f4b8ed1a527087aec844486025da0a0fe7b49",
+      "selected_candidate": "B",
+      "selection_reason": "Clear left-to-right broken flagstone road; cairns are stacked stones with no copied crystal nodes; distinct ruined hut and frozen tarn."
+    }
+  ]
+}
