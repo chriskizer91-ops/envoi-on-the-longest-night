@@ -10,7 +10,7 @@ A switch at the top picks what the painting is for.
 
 **Walking paths** works as Walking Paths did:
 
-- every map's walk areas, blocks, fronts, exits and arrivals, people and spots;
+- every map's walk areas, blocks, fronts, exits and arrivals, people and spots: all twenty-one, the eight wilderness scenes included since October 5 (an arrival at a camp is where Io steps down when the Magpie lands; nothing comes from the world map any more, since it is only flown, so an arrival from it in older edits is left out with a note);
 - dragging points and shapes, new shapes, Smooth, undo and redo;
 - the check of where Io can reach.
 
@@ -41,6 +41,6 @@ Everything is kept in the browser as he works.
 | `map-editor.html`, `map-editor.css`, `map-editor.js` | The page. It loads Walking Paths' stylesheet and rules (`map-paths.css`, `edits-core.js`), the game's field, maps, painted Io and paper dolls, and the keepsakes (`../items/items.js`) |
 | `page-test.mjs` | The headless test: `node envoi-final-draft/map-editor/page-test.mjs [--out dir]`. It runs every step of Walking Paths' own test, then the keepsakes' steps, and every step must pass |
 
-Build: `node tools/build.mjs envoi-final-draft/map-editor/map-editor.html` (`dist/map-editor.html`, 4.9 MB), then publish `dist/map-editor.artifact.html` to the link above.
+Build: `node tools/build.mjs envoi-final-draft/map-editor/map-editor.html` (`dist/map-editor.html`, 7.24 MB, 7,586,616 bytes, with the eight wilderness scenes; October 5), then publish `dist/map-editor.artifact.html` to the link above (read it with the Artifact tool first, and publish without `capabilities` so its database is kept).
 
 `map-editor.js` is a copy of `map-paths.js` with the keepsakes added. The Walking Paths files stay as they were, as the record of that page.

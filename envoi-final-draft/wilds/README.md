@@ -1,6 +1,6 @@
 # Wilderness at Night
 
-The demo page for Chris's eight wilderness scenes (art request 12, painted at night, October 5, 2026): Io walks them the way the game will, before they go into the game. It is steps 5 and 6 of the workshop's `wilds` job (`../workshop/wilds.md`).
+The demo page for Chris's eight wilderness scenes (art request 12, painted at night, October 5, 2026): Io walks them the way the game does. It is steps 5 and 6 of the workshop's `wilds` job (`../workshop/wilds.md`). **In the game since October 5** (`plan-into-the-game.md`, at Chris's go-ahead with his four calls left to the defaults: `../../docs/design-decisions.md`, "October 5, 2026: the wilderness scenes in the game"): the scenes are traced in `../../src/game/maps.js`, the camps are the Magpie's landings, and the world map is only flown.
 
 **The page:** https://claude.ai/artifact/2WSu7uWvtDUmF5JwxV5xwC (published privately, October 5). It is `wilds.html` here, built into `dist/wilds.html` and `dist/wilds.artifact.html`, the copy that is published; republish that file to the same link after any change to the scenes or the page.
 
@@ -23,7 +23,7 @@ It works on a phone held sideways or upright, and on a laptop.
 node tools/build.mjs envoi-final-draft/wilds/wilds.html
 ```
 
-This makes `dist/wilds.html` (about 6.3 MB, with every picture inside it) and `dist/wilds.artifact.html` (the same page, the copy to publish).
+This makes `dist/wilds.html` (about 6.4 MB, 6,681,096 bytes on October 5, with every picture inside it) and `dist/wilds.artifact.html` (the same page, the copy to publish).
 
 ```
 node envoi-final-draft/wilds/page-test.mjs [dist/wilds.html] [--out <dir>] [--size 915x412]
@@ -35,23 +35,24 @@ The test opens the built page in a browser with no screen and plays it the way a
 
 | File | What it is |
 |---|---|
-| `wilds.html`, `wilds.css`, `wilds.js` | The page. It loads the game's own pieces as the map editor does: `game.css`, the pixel and painted Io, the paper dolls, `sprites.js`, `maps.js`, `maps-wilds.js` (the eight scenes) and `field.js`. Where `wilds.js` copies from the map editor and the game, its first lines say so |
+| `wilds.html`, `wilds.css`, `wilds.js` | The page. It loads the game's own pieces as the map editor does: `game.css`, the pixel and painted Io, the paper dolls, `sprites.js`, `maps.js` (with the eight scenes) and `field.js`. Where `wilds.js` copies from the map editor and the game, its first lines say so |
+| `plan-into-the-game.md` | The checked plan that put the scenes into the game (October 5), as it was written before that |
 | `page-test.mjs` | The test above |
 | `README.md` | This file |
 
 ## What the page needs from the scenes
 
-The page reads only what every traced scene has, so the tracing can change without the page changing. The eight scenes come from `src/game/maps-wilds.js`, which adds them to the game's maps after `src/game/maps.js`, under these ids:
+The page reads only what every traced scene has, so the tracing can change without the page changing. The eight scenes are in the game's maps, `src/game/maps.js`, under these ids:
 
 - band 2: `warm-roads-camp`, `ember-line-road`, `dawnroost-road`, then the exit to `dawnroost`;
 - band 3: `northern-camp`, `eldergrove-edge`, `cold-moor`, then the exit to `crossroads`;
 - band 4: `frozen-camp`, `frostmere-shore`, then the exit to `frozen-pass`.
 
-Each camp needs its `start`, a `rest` spot and `land` (the middle of the landing ground). Each scene needs an exit to the next one in its row. The five walks need `wild` for their fights, and the Ember Line road needs its three `node` spots. Rebuild the page whenever `maps-wilds.js` changes, then run the test at both sizes.
+Each camp needs its `start`, a `rest` spot and `land` (the middle of the landing ground). Each scene needs an exit to the next one in its row. The five walks need `wild` for their fights, and the Ember Line road needs its three `node` spots. Rebuild the page whenever `maps.js` changes (Chris's path edits from the map editor too), then run the test at both sizes.
 
 ## The eight scenes (October 5)
 
-Traced by the ultracode hub as a workflow: each scene by one agent in a file of its own, then checked against the painting, region by region, by a second agent that tried to find everything wrong with it, then fixed by a third; joined into `src/game/maps-wilds.js` with every exit pointed at its neighbour's arrival point. The game doesn't load that file yet: on Chris's okay the scenes move into `src/game/maps.js` (`plan-into-the-game.md` here, and `../../handoff/tasks.md`, T02).
+Traced by the ultracode hub as a workflow: each scene by one agent in a file of its own, then checked against the painting, region by region, by a second agent that tried to find everything wrong with it, then fixed by a third; joined (staged in `src/game/maps-wilds.js` until Chris's okay) with every exit pointed at its neighbour's arrival point. Moved unchanged into `src/game/maps.js` on October 5, and `maps-wilds.js` went (`plan-into-the-game.md` here, and `../../handoff/tasks.md`, T02).
 
 | Map id | Scene | Band | Picture (AVIF) | Walk areas | Blocks | Fronts | Exits to | Spots |
 |---|---|---|---|---|---|---|---|---|
@@ -64,9 +65,9 @@ Traced by the ultracode hub as a workflow: each scene by one agent in a file of 
 | `frozen-camp` | The frozen camp | 4 | 117 KB | 4 | 18 | 32 | frostmere-shore | rest; land 306, 442 |
 | `frostmere-shore` | Frostmere's shore | 4 | 148 KB | 5 | 0 | 16 | frozen-camp, frozen-pass | fights (band 4, frozen-road) |
 
-**Checked:** `node tools/check-maps.mjs` prints ✓ for all twenty-one maps (the thirteen old ones, the eight scenes, and every arrival between them); the page test passed at 915 × 412 (band 2 to Dawnroost in 22 taps and 3 fights, band 3 to the crossroads in 15 taps and 3 fights, band 4 to the frozen pass in 12 taps and 1 fight) and at 1366 × 768, with no errors.
+**Checked:** `node tools/check-maps.mjs` prints ✓ for all twenty-one maps (the thirteen old ones, the eight scenes, and every arrival between them); the page test passed at 915 × 412 (band 2 to Dawnroost in 22 taps and 3 fights, band 3 to the crossroads in 15 taps and 3 fights, band 4 to the frozen pass in 12 taps and 1 fight) and at 1366 × 768, with no errors. Again once the scenes were in the game (October 5, rebuilt from `maps.js`, where the next fight's threshold now carries from scene to scene as in the game): passed at 915 × 412 (band 2 in 23 taps and 3 fights, band 3 in 17 taps and 3 fights, band 4 in 11 taps and 1 fight) and at 1366 × 768 (band 2 in 26 taps and 4 fights, band 3 in 19 taps and 4 fights, band 4 in 13 taps and 1 fight), with no errors.
 
-**Arrivals from the towns, for when they go in** (each scene's port by its edge): from Dawnroost's south road into `dawnroost-road` at its top, `[762, 52]`; from the crossroads' west road into `cold-moor` at its right, `[1486, 564]`; from the frozen pass's south end into `frostmere-shore` at its top, `[786, 52]`. Between the scenes: the Warm Roads camp's right `[1484, 456]`, the Ember Line road's left `[50, 592]` and top `[995, 56]`, the forest road's bottom `[1000, 970]`; the northern camp's right `[1478, 512]`, Eldergrove's edge's left `[50, 470]` and right `[1484, 594]`, the cold moor's left `[50, 564]`; the frozen camp's right `[1478, 562]`, Frostmere's shore's left `[50, 622]`.
+**Arrivals from the towns** (each scene's port by its edge; in the game since October 5, the towns' old ways onto the world map): from Dawnroost's south road into `dawnroost-road` at its top, `[762, 52]`; from the crossroads' west road into `cold-moor` at its right, `[1486, 564]`; from the frozen pass's south end into `frostmere-shore` at its top, `[786, 52]`. Between the scenes: the Warm Roads camp's right `[1484, 456]`, the Ember Line road's left `[50, 592]` and top `[995, 56]`, the forest road's bottom `[1000, 970]`; the northern camp's right `[1478, 512]`, Eldergrove's edge's left `[50, 470]` and right `[1484, 594]`, the cold moor's left `[50, 564]`; the frozen camp's right `[1478, 562]`, Frostmere's shore's left `[50, 622]`.
 
 **Where the side paths end** (places for things to find later, ideas I02 and I13):
 

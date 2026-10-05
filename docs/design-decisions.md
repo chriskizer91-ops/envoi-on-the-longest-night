@@ -849,21 +849,21 @@ Chris asked for every decision to be made here (October 3). These are the ones p
 
 - **How the world is travelled:**
   - Towns, the gate places and three wild places (the Thornwood, the northern crossroads, the frozen pass) are ground-level maps.
-  - The world map is walked between them, on land only, in the four bands; a band the Magpie can't reach yet lies under cold mist and can't be walked into.
+  - The world map is walked between them, on land only, in the four bands; a band the Magpie can't reach yet lies under cold mist and can't be walked into. (Since October 5: see "October 5, 2026: the wilderness scenes in the game".)
   - The Magpie flies between landings: the docks at Wickhollow's jetty, Bogmire, Dawnroost and the shipyard, and a camp in each of bands 2, 3 and 4.
 - **The Magpie in band 1:** Quill gives Io his skiff once Sol has joined. She flies, but nobody can land in the fen while Bogmire's lamps are out, so the way to Bogmire is the Thornwood on foot. Once the lights come home, Quill flies her over to Bogmire's west dock.
 - **Who makes the upgrades:** Quill does the refit at Bogmire, Brann the smith fits the node's charge at Dawnroost, and Ysmera's gnomes rig the moon-sail at the shipyard. Each costs its shards and needs its level (`rules.js` `MAGPIE`).
 - **The wilds between stops** (lore answer 14):
   - Three dark Ember Line nodes in band 2 that Sol relights, for 300 shards each.
   - Five letters left at small wells, each with a gift: the moon stone in the Thornwood, Bogmire's water stair, Dawnroost's yard well, the crossroads well and a frozen trough in Misthollow. Io keeps every letter to send with hers, and the end card counts them.
-- **Camps:** the Warm Roads camp, the northern camp and the frozen camp on the world map, and a sled camp in the frozen pass. A camp is a rest and a landing.
+- **Camps:** the Warm Roads camp, the northern camp and the frozen camp on the world map, and a sled camp in the frozen pass. A camp is a rest and a landing. (Since October 5: see "October 5, 2026: the wilderness scenes in the game".)
 - **Random fights** come by the distance walked in wild country, never near a place:
   - on a wild ground map about every 7 seconds of walking (770 map pixels, never under 440);
-  - on the world map about as often (330 atlas pixels at Io's world pace of 45 a second).
+  - on the world map about as often (330 atlas pixels at Io's world pace of 45 a second). (Since October 5: see "October 5, 2026: the wilderness scenes in the game".)
 
   The menu can make them fewer or more.
 - **Wild fights are worth 1.75 times their table's experience and shards** (`rules.js` `WILD_REWARD`, applied by the engine, so the end card shows it).
-  - A straight walk between stops on the game's own maps meets about 3 fights in band 1, 5 in band 2, 6 in band 3 and 5 in band 4, against the simulator's first 10, 10, 9 and 22.
+  - A straight walk between stops on the game's own maps meets about 3 fights in band 1, 5 in band 2, 6 in band 3 and 5 in band 4, against the simulator's first 10, 10, 9 and 22. (Since October 5: see "October 5, 2026: the wilderness scenes in the game".)
   - At the old rewards that left an attentive player about 66 fights of walking the wilds to keep up, and nearly six hours of fighting.
   - At 1.75 times, the journey's numbers are back where the design put them (`story.js` now uses the measured walks; medians of 40):
 
@@ -1033,7 +1033,7 @@ Chris played pass three's pages and the game, and sent the last four battle pain
 ### Walking
 
 - **The walking maps go back to full size.** Chris found the town too compressed. At phone scale the old 75%-size maps were blocky and smeared, and quality 20 at full size still smears cobbles. So the ten towns and gates are full size at AVIF quality 45, and the three wild maps (the Thornwood, the crossroads, the frozen pass) full size at quality 20, Chris's "100% extra light" pick for wilderness scenes. 2.66 MB for all thirteen.
-- **A little golden arrow shows Io where to go next** (Chris: "a little arrow that tells her where to walk in town whenever she gets a quest"). While the goal is in view the arrow bobs over it (a person's head, a place, or just inside the way out, pointing out); otherwise it stands beside Io, pointing the way. The mini-map rings the goal, and the world map shows it the same way. The goal is the story's next step, read from the save: the square, Quill at the jetty, the fen's heart, Quill's refit, the Magpie, the living node, Brann, the crossroads, Ysmera, the Magpie again, the Moonwell. On another map it points to the exit on the way there, or to the Magpie or the world map when no road leads there on foot.
+- **A little golden arrow shows Io where to go next** (Chris: "a little arrow that tells her where to walk in town whenever she gets a quest"). While the goal is in view the arrow bobs over it (a person's head, a place, or just inside the way out, pointing out); otherwise it stands beside Io, pointing the way. The mini-map rings the goal, and the world map shows it the same way. The goal is the story's next step, read from the save: the square, Quill at the jetty, the fen's heart, Quill's refit, the Magpie, the living node, Brann, the crossroads, Ysmera, the Magpie again, the Moonwell. On another map it points to the exit on the way there, or to the Magpie when no road leads there on foot (the world map too, until it was only flown: October 5).
 - **The Magpie is moored where the script says:** after the lights Quill says she's tied up at Bogmire's west dock, so she is; and each upgrade is fitted to her where it's made, so afterwards she's moored at Bogmire, Dawnroost or the shipyard.
 - **Chris's walking paths go in exactly as he draws them,** secret ways included (Chris: "the thing on the roof is a secret... you go up a tree and up"). Green ground may go anywhere she should be able to walk, purple fronts hide her behind things. A narrow secret way is walked with the pad or by holding to steer (she needs 12 px); a tap far off plans its route only along ground about 24 px wide, which suits a secret: it has to be found by hand. The editor's orange marks that difference, and is a note, not an error.
 - **Io's paper doll had thin lines across her** where the bands of her cape's ripple met. A technical fix: the bands are put together on a canvas of her own in whole pixel rows, then drawn once. How she looks and moves is unchanged.
@@ -1153,3 +1153,24 @@ Chris: "The walking plan is good, make the scenes at night" (questions 20 and 21
 - **Art request 12** has a prompt for each, in the walking maps' style with the layout of Chris's example: a clear path across open wild ground, side paths to small places worth exploring, and the paths' edges matched so one scene leads into the next (`art-requests/12-wilderness-scenes.md`).
 - **When the pictures come:** squeezed to "100% extra light", traced, joined up, the nodes moved from the world map, random fights on the walks (none in the camps, which are rests), and the walking taken off the world map. A demo page first, then the game.
 
+
+## October 5, 2026: the wilderness scenes in the game
+
+Chris gave the go-ahead to put his eight night scenes into the game ("let's get through as many of these upgrades and polish passes as we can over the next few hours"), and left the four calls put to him (`../handoff/tasks.md`, T10, 6 to 9) to the defaults offered:
+
+1. **The five roads out close.** The cottage's south road, its west footbridge and its east forest path, and the crossroads' south and east roads, all opened the world map. Now Io (Sol, at the crossroads) says a short line and turns back. No band's way uses them, and the crossroads' east road would have walked her into band 4 before the Magpie can fly there. The lines are placeholders for the words job.
+2. **Fights on the new walks come as often as in the Thornwood:** about every 770 map pixels walked, never under 440, at the menu's Normal. None in the camps.
+3. **The Magpie at a camp is a soft glow on the landing ground,** as at the four docks.
+4. **The Ember Line nodes work as they did on the world map:** the golden arrow follows the story, and a node Sol has relit goes dark.
+
+What that made:
+
+- **The eight scenes are walking maps in `src/game/maps.js`,** twenty-one maps in all. **The camps are the Magpie's landings:** she sets down on the landing ground, Io steps down beside her, and the first landing plays the camp's scene and offers a rest, as the world map's camps did.
+- **The towns' old ways onto the world map lead into the scenes:** Dawnroost's south road into the forest road, the crossroads' west road into the cold moor, and the frozen pass's south end into Frostmere's shore. Coming the other way, she arrives facing into the town, as before.
+- **The world map is only flown.** Its nine walking tiles are out of the page and out of `art/world/` (the originals stay in `../reference/art/world-map/night/`); the flight keeps its far view and its clouds.
+- **The three Ember Line nodes stand on the Ember Line road,** with the world map's names for them, so a node lit in an old save stays lit.
+- **Old saves:** a game saved out on the world map loads at the place it was nearest (a node's on the Ember Line road), and a rest taken there wakes the party by its camp's fire. Wherever the party wakes or a save loads, the Magpie is moored where Io can walk to her, with a note saying where: the bands' scenes only meet by air now.
+- **A row of scenes is one walk:** the fights' hidden count carries from scene to scene, so fights don't bunch where one scene meets the next. The Thornwood counts the same way.
+- **The fights, measured** (`tools/walks.mjs`): walking straight through meets about 3 fights in band 2 (2,200 map pixels, or about 4.6 fights lighting the three nodes), 5 in band 3 (4,067) and 3 in band 4 (2,028), against 5, 6 and 5 on the world map. The Thornwood is about 2 (1,492: Chris's path edits shortened it). The journey's simulator (`story.js`) uses these.
+- **The journey** (`tools/chain.mjs`, medians of 40): the attentive player meets 20 wild fights on the way and 29 more walking for levels (before: 30 and 18), loses 17 fights over 2.8 hours of fighting, and takes 16 tries at the finale; the expert 19 and 25 (before: 29 and 15), 2 losses, 1.6 hours. The same number of fights in all: the walks give fewer, and walking back and forth before Dawnroost, Halcyon and the finale makes up the rest. Every gate is reached at its level, every upgrade is paid for on arrival, and the fights' targets are still all met (51 of 51).
+- **Sizes:** the published page is 14,051,253 bytes (15,160,493 before); the file Chris keeps 17,660,152 (18,769,392 before); the map editor, which now edits all twenty-one maps, 7,586,616.
