@@ -62,6 +62,10 @@ The whole pass (`checks/full-pass.sh`), at a Pixel 7a held sideways (915 × 412)
 | The game test: the finale's cutscene into its fight | Pass |
 | The file Chris keeps, with the four ideas off, played with the internet blocked | Pass |
 | **His file** (the four ideas on), played with the internet blocked | Pass |
+| The game test catches every fault planted for it (an arena fight on the flat painting, a scene that never plays, a lost save, sounds at Off, the offline file reading beside itself) | Pass |
+| The page of polish to try (the four ideas on), and the game with the four off | Both pass |
+| The map editor's page test, Copy my work, and the keepsakes it keeps | All pass |
+| Every arena, on the new battles' demo (`tools/arena-test.mjs`, all twelve fights) | Pass |
 | The four ideas on his file (the offline try page, which is his file but for its title, byte for byte) | Pass: words that move on (and a tap still moves a line at once), the door each way, 47 soft steps and 43 of the cloak's swish (none at None or Effects off), Buy 10 |
 
 ## What this pass fixed
