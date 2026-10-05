@@ -1,5 +1,6 @@
 // songs.js: Chris's songs (art/music/, sent October 3; "The three compressed songs are needed to go in", October 4):
-// Moonlit Forest Path in the towns, and Herbal Decay in the wilds and over the world map. Each loops from an <audio>
+// Moonlit Forest Path in the towns, and Herbal Decay in the wilds (over the world map too, while it was walked; since the
+// wilderness scenes, on them, the Thornwood, the crossroads and the frozen pass). Each loops from an <audio>
 // element, streamed as it plays rather than decoded whole, fades in and out, and carries on where it left off after a
 // fight or a visit elsewhere. The songs pause while the game is out of sight. The made-up music (thareia-audio.js) keeps
 // the rest: the title, the marsh, the ruins and the flight; and the fights keep their original battle theme (sound.js),

@@ -1,5 +1,5 @@
 // wilds.js: the wilderness demo page (the workshop's wilds job, steps 5 and 6: envoi-final-draft/workshop/wilds.md). Io
-// walks Chris's eight night wilderness scenes (art request 12, traced in src/game/maps-wilds.js) on the game's own field
+// walks Chris's eight night wilderness scenes (art request 12, traced in src/game/maps.js) on the game's own field
 // (src/game/field.js), at the game's settings exactly as src/game/game.js makes its field: 52 map px tall and 15% of the
 // screen's shorter side, walking 1.7 of her heights a second (speed 110 and zoom 0.7 stand in until her painting loads),
 // painted Io and the paper dolls, a random fight about every 770 map px walked and never under 440, and the paintings as
@@ -16,7 +16,7 @@
 // address, and the field made with the game's options, its own menu button giving way to this page's way back. From the
 // game (src/game/game.js): the fade between maps (fadeTo), the note (note), and act(), which holds the field still while
 // something happens.
-// Needs MAPS (maps.js, then maps-wilds.js), Field (field.js), makePaintedIo (painted-io.js), makePaintedFolk
+// Needs MAPS (maps.js, with the eight scenes), Field (field.js), makePaintedIo (painted-io.js), makePaintedFolk
 // (painted-folk.js, with WALKERS from walkers.js), makePixelIo (pixel-io.js) and makeFolk (sprites.js). Defines
 // window.Wilds, which the page's test reads (page-test.mjs).
 (function () {

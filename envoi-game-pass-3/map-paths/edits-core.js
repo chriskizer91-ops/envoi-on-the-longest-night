@@ -7,11 +7,13 @@
 (function (G) {
   'use strict';
   const MW = 1536, MH = 1024, CELL = 12, GW = Math.ceil(MW / CELL), GH = Math.ceil(MH / CELL), REACH = 58;
-  // where Io comes onto a ground map from the world map (game.js PLACES: its `map` and `arrive`) and from the Magpie
-  // (game.js LANDINGS: `field`). They live in game.js, which the page doesn't load (it would carry the world map's art
-  // with it), so they are copied here; check-edits.mjs compares this copy with game.js
-  const WORLD_IN = { wickhollow: ['cottage', [790, 990]], thornwood: ['thornwood', [60, 456]], bogmire: ['bogmire', [70, 368]], dawnroost: ['dawnroost', [645, 990]], crossroads: ['crossroads', [768, 990]], shipyard: ['shipyard', [760, 990]], frozenPass: ['frozen-pass', [790, 990]], misthollow: ['misthollow', [768, 985]] };
-  const MAGPIE_IN = { wickhollow: ['jetty', [768, 700]], bogmire: ['bogmire', [100, 372]], dawnroost: ['dawnroost', [1400, 330]], shipyard: ['shipyard', [764, 290]] };
+  // where Io comes onto a ground map from the Magpie (game.js LANDINGS: `field`, a dock or a camp's landing ground). It
+  // lives in game.js, which the page doesn't load (it would carry the whole game with it), so it is copied here;
+  // check-edits.mjs compares this copy with game.js. Nothing comes onto a map from the world map any more (it is only
+  // flown since the wilderness scenes, Chris's of October 5), so WORLD_IN is empty: it stays for the arrivals Chris
+  // may have moved before then, which are left out with a note (validate)
+  const WORLD_IN = {};
+  const MAGPIE_IN = { wickhollow: ['jetty', [768, 700]], bogmire: ['bogmire', [100, 372]], warmCamp: ['warm-roads-camp', [368, 425]], dawnroost: ['dawnroost', [1400, 330]], northCamp: ['northern-camp', [386, 455]], shipyard: ['shipyard', [764, 290]], frozenCamp: ['frozen-camp', [356, 442]] };
   // the parts of a map the page edits. Walk areas, blocks and fronts are free shapes; exits, people, spots and
   // arrivals only move (their other fields stay as maps.js has them, and none is added or taken away)
   const FIELDS = ['walk', 'block', 'front', 'exits', 'people', 'spots', 'start', 'arrivals'];
@@ -21,7 +23,8 @@
   const bbox = (pts) => pts.reduce((b, [x, y]) => [Math.min(b[0], x), Math.min(b[1], y), Math.max(b[2], x), Math.max(b[3], y)], [Infinity, Infinity, -Infinity, -Infinity]);
   const area = (pts) => { let a = 0; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) a += (pts[j][0] + pts[i][0]) * (pts[j][1] - pts[i][1]); return Math.abs(a / 2); };
   const centre = (r) => [Math.round((r[0] + r[2]) / 2), Math.round((r[1] + r[3]) / 2)];
-  const placeName = (MAPS, to) => (to === 'world' ? 'the world map' : MAPS[to] ? MAPS[to].name : String(to));
+  // an exit's place ('world': a road out of the picture that she turns back from, since the world map is only flown)
+  const placeName = (MAPS, to) => (to === 'world' ? 'the wide world (she turns back)' : MAPS[to] ? MAPS[to].name : String(to));
 
   // ---------- arrivals: where Io comes onto a map ----------
   // from another map's exit (that exit's `at`, kept in the map it leaves), from the world map, and from the Magpie
@@ -265,6 +268,10 @@
     if (Array.isArray(doc.exits) && exits.length !== ex0.length) err('there are ' + exits.length + ' exits here and ' + ex0.length + ' in maps.js');
     exits.forEach((e, k) => {
       const o = ex0[k]; if (!o || !e) return;
+      // a road that led out to the world map when these edits were made, and leads into a wilderness scene now
+      // (Dawnroost's south road, the crossroads' west road, the frozen pass's south end): its rectangle is still the
+      // edits', and where she arrives is the game's
+      if (e.to === 'world' && o.to !== 'world' && MAPS[o.to]) { warn('exit ' + k + ' led out to the world map when this was edited, and leads to ' + placeName(MAPS, o.to) + ' now'); rectOK(e.rect, 'exit ' + k + ' (to ' + o.to + ')'); return; }
       if (e.to !== o.to) err('exit ' + k + ' leads to ' + e.to + ' here and to ' + o.to + ' in maps.js');
       rectOK(e.rect, 'exit ' + k + ' (to ' + o.to + ')');
       if (!Array.isArray(o.at)) { if (e.at !== o.at) err('exit ' + k + ' comes out at ' + JSON.stringify(e.at) + ' here and at ' + JSON.stringify(o.at) + ' in maps.js'); }
@@ -286,7 +293,8 @@
       if (!a || typeof a !== 'object') { err('arrival ' + k + ' is not an arrival'); return; }
       const what = 'the arrival from ' + arrivalName(MAPS, a);
       let now = null;
-      if (a.from === 'world') { const p = GAME && GAME.PLACES && GAME.PLACES[a.place]; if (!p || p.map !== id) err(what + ' (' + a.place + ') doesn’t lead here in game.js'); else now = p.arrive; }
+      // an arrival from the world map, in edits made before the wilderness scenes: nothing comes from there now
+      if (a.from === 'world') { const p = GAME && GAME.PLACES && GAME.PLACES[a.place]; if (!p || !p.map) { warn(what + ' (' + a.place + ') is gone: the world map is only flown now, so it is left out'); return; } if (p.map !== id) err(what + ' (' + a.place + ') doesn’t lead here in game.js'); else now = p.arrive; }
       else if (a.from === 'magpie') { const L = GAME && GAME.LANDINGS && GAME.LANDINGS[a.landing]; if (!L || !L.field || L.field[0] !== id) err(what + ' (' + a.landing + ') doesn’t land here in game.js'); else now = L.field[1]; }
       else { const om = MAPS[a.from], e = om && (om.exits || [])[a.exit]; if (!e || e.to !== id) err(what + ' (its exit ' + a.exit + ') doesn’t lead here in maps.js'); else now = e.at; }
       ptOK(a.at, what);

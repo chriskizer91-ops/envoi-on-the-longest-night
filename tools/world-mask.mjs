@@ -1,4 +1,5 @@
-// world-mask.mjs: the world map's walking mask (plan phase 4), made from Chris's day atlas, which lines up exactly with the
+// world-mask.mjs: the world map's land mask (plan phase 4; walked until the wilderness scenes of October 5, and now only
+// the flight's mini-map draws it), made from Chris's day atlas, which lines up exactly with the
 // night one and shows water plainly (blue and teal) where the night hides it. Each 8 x 8 atlas cell is water or land;
 // rivers and straits narrower than about 32 px are closed over (the pixel Io crosses them as if by a ford or a bridge),
 // specks of water inside the land are filled, and the land round every place is kept open. Writes src/game/world-mask.js

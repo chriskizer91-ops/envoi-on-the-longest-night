@@ -2,6 +2,8 @@
 
 # T02 step 2, merged plan: the wilderness scenes in the game, and no walking on the world map
 
+**Built October 5** (commit A `8dd7b7b`, commit B `d5dce10`), at Chris's go-ahead with the four questions in §6 left to their defaults. Where the build differs from this plan, the code and `../../handoff/tasks.md` (T02) are right: the town arrivals come from the final traces ([762, 52], [1486, 564], [786, 52]); the camps' landings set Io down 50 px east of `land`, beside the Magpie's glow ([368, 425], [386, 455], [356, 442]), not 40 px south of it, where the glow was drawn behind her hat (the review); a closed road steps her 30 px straight back in from the edge it leaves by, not toward the map's middle, which took her off the cottage's footbridge; check-maps also checks that each closed road has its line and that a camp's landing sets Io down within reach of the Magpie; `edits-core.js` also takes an old edit's world exit, now leading into a scene, by its rectangle only; the `world` test step first walks Io into the cottage's south road and starts from the story's state before the Warm Roads (band 1 won); the walks measure 1,492, 2,200, 4,067 and 2,028 px (`story.js` 2, 3, 5 and 3, the Thornwood's optional change taken); `tools/walks.mjs` is kept, its threshold carried from map to map as `field.js` now does; the dead `.flight` styles are gone.
+
 Base: branch `ccr-31761774-76j8j3` at `23145a4`. All line numbers below are from that commit. This is planning only: nothing in the repo was changed.
 
 My own checks are in `/tmp/claude-0/-home-user/d2fba9bd-f8b3-5281-8483-658756176613/scratchpad/plan-tmp/critic/`:

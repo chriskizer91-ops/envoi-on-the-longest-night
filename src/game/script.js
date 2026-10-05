@@ -211,7 +211,7 @@
       { map: 'crossroads', add: 'halcyon', look: 'halcyon', at: [770, 30], dir: 's' }, { focus: { on: 'halcyon' } },
       'Someone is coming down the north road, out of the dark.',
       { walk: 'halcyon', path: [[770, 330], [768, 430]], speed: 60 },
-      { face: 'io', dir: 'n' }, { wait: 0.6 }, { keep: true },
+      { face: 'io', to: 'halcyon' }, { wait: 0.6 }, { keep: true }, // Io turns to the knight, from the west road or the south
     ],
     shipyard: [
       // Ysmera comes down from the slip to meet them on the bridge
@@ -250,6 +250,11 @@
     ],
     noMagpie: [['io', 'The Magpie is moored at Wickhollow’s jetty.']],
     bogmireLanding: [['quill', 'Not to Bogmire, not till its lamps are lit. There’s nothing to land by.']],
+    // the roads that run out of the picture into the wide world, which Io turns back from (maps.js exits' `say`): the
+    // world map is only flown now. New placeholders (October 5), like every line here
+    roadOut: [['io', 'That road runs on for days, and the night won’t wait. Our way is up through the village.']],
+    crossroadsSouth: [['sol', 'That road runs back south, days on foot. The shipyard is up the north road.']],
+    crossroadsEast: [['sol', 'The east road climbs into the peaks. Nothing crosses them on foot.']],
   };
   window.SCRIPT = { people, wells, keepsakes, gifts, colossusGifts, scenes, cast };
 })();

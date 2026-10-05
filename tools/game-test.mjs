@@ -1,7 +1,7 @@
 // game-test.mjs: plays the built game headless (Chromium + SwiftShader, as tools/check.mjs does) and reports any error.
 // Build the page first: node tools/build.mjs --min putting-it-all-together/game.html
 // Usage: node tools/game-test.mjs [dist/game.html]
-//        [--steps title,new,walk,controls,world,menu,saves,scenes,save,wild,colossus,finale,keepsakes,songs,chapters]
+//        [--steps title,new,walk,controls,world,wilds,menu,saves,scenes,save,wild,colossus,finale,keepsakes,songs,chapters]
 //        [--band 4] [--level 18] [--out <dir>] [--size 960x540] [--turbo 8] [--offline] [--sharp 0.5]
 // Without --steps it runs title,new,walk,world,menu,saves,save. --sharp plays the fights at that sharpness of their 3D
 // (the Settings' Battle sharpness: 1, 0.75 or 0.5), and the fight steps check it.
@@ -10,11 +10,23 @@
 //   walk:     Io walks up Wickhollow's south road with the arrow keys
 //   controls: the three ways to move her by pointer, on the same road: holding on the map steers her toward it, a quick
 //             tap walks her there, and one thumb on the pad (here a mouse) walks her north and rolls round to north-east
-//   world:    Io walks the world map
+//   world:    the Magpie (the world map is only for flying since the wilderness scenes): a road out of Io's cottage turns
+//             her back with her line; then she walks to the Magpie at the end of Wickhollow's jetty by a tap and takes
+//             her up, flies to the Warm Roads and lands at its camp, where its scene plays and she rests, the Magpie's
+//             glow beside her
+//   wilds:    a band's row of wilderness scenes walked by taps, from its camp, where the Magpie is moored, to its town (the
+//             party as that band's gate chapter has it; --band 2, 3 or 4, else all three): on every scene the little
+//             arrow points the way on, the camps have no random fights and the walks do (the hidden counter grows,
+//             though no fight is let start), on the Ember Line road Sol relights a node by a tap (300 shards) while one
+//             lit before offers nothing, and from the town the road back leads into the last scene. Not a default step
+//             (about two minutes for the three)
 //   menu:     the menu opens on every tab and closes; Settings has the battles' sharpness beside their frame rate (3/4
 //             unless another is picked, and a pick is kept where the battle screen reads it); Settings plays a cutscene
 //             again ("Watch again", once a game has shown it), over the menu, and Esc skips it
-//   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load
+//   saves:    the game is saved in slot 2, its save code copied, and loaded back from the title's Load; then saves made
+//             on the world map before the wilderness scenes: one by a node loads on the Ember Line road with its rest at
+//             the Warm Roads camp's fire, one whose Magpie was left at Bogmire finds her moored at the camp, and the
+//             title's Continue names where such a save opens
 //   scenes:   the staged scenes play on their maps (Sol at the bridge, Quill at the jetty, the knight, Ysmera)
 //   save:     the save is written, and the title offers Continue
 //   wild:     a wild fight in the band (--band, at --level) is played to its end by the expert play style
@@ -32,11 +44,13 @@
 //             trail to the Warden's Brooch; Nettie gives her shawl; each shows its card, which never counts them. The Items
 //             page shows only what has been found and hands the horseshoe to Io; the Party tab adds them up; they count in
 //             a fight and after it (more shards); and the first Bramble Colossus (cut short) leaves its two
-//   songs:    Chris's songs play where they belong (the towns', the wilds'), each from where it was; the fights play
-//             their own theme, and the made-up music plays everywhere else; Music Off quietens them (run after title or new)
+//   songs:    Chris's songs play where they belong (the towns', the wilds': the Thornwood, then on into a wilderness
+//             scene), each from where it was; the fights play their own theme, and the made-up music plays everywhere
+//             else; Music Off quietens them (run after title or new)
 //   chapters: the title's Chapters, for gates 5, 10 and 15 and the finale: each opens in the town before its gate (the
 //             crossroads' own south road for gate 15, Misthollow for the finale), the party at the gate's level and saved,
-//             after the town's arrival scene, with the little arrow pointing her on
+//             after the town's arrival scene, with the little arrow pointing her on, and the Magpie moored at a landing
+//             on a ground map
 // Each step saves a screenshot in --out (tools/.cache/game-test by default). Exits 1 on any page error.
 // three.js r128 comes from npm into tools/.cache, since the CDN is unreachable from the sandbox; the fonts are skipped.
 // --offline tests the file Chris keeps (node tools/build.mjs --min --offline putting-it-all-together/game.html):
@@ -138,6 +152,134 @@ async function talkThrough(ms, until) {
   throw new Error('the dialogue never closed');
 }
 
+// ---------- walking by taps, as a player does (from envoi-final-draft/wilds/page-test.mjs: plan, settle, walkOut and
+// useSpot, reading the game's field) ----------
+// in the page: where to tap next toward a goal ({ rect } an exit, or { at } a spot): the goal itself when it is on screen
+// (a spot, or a point inside an exit), else the farthest point of the way there that is, found on the field's own grid
+// (field.js: her feet and 6 px either side inside a walk area and outside every block and person, on 12 px cells) and
+// put on the screen as the field's camera puts it. A tap never lands near anything else she could walk up to and use
+function tapToward(goal) {
+  const f = window.__game.field, m = f.map, P = f.P, cam = f.cam;
+  const cv = f.root.querySelector('.field-cv'), r = cv.getBoundingClientRect();
+  const CELL = 12, GW = Math.ceil(1536 / CELL), GH = Math.ceil(1024 / CELL), REACH = 58;
+  const inPoly = (pts, x, y) => { let ins = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) ins = !ins; } return ins; };
+  const free = (x, y) => m.walk.some((p) => inPoly(p, x, y)) && !(m.block || []).some((p) => inPoly(p, x, y)) && !(m.people || []).some((n) => Math.abs(n.at[0] - x) < 11 && Math.abs(n.at[1] - y) < 7);
+  const stand = (x, y) => free(x, y) && free(x - 6, y) && free(x + 6, y);
+  const G = (window.__gtGrids = window.__gtGrids || {}), gk = m.id + ':' + (m.people || []).map((n) => n.at.join(',')).join(';');
+  let grid = G[gk];
+  if (!grid) {
+    grid = new Uint8Array(GW * GH);
+    for (let j = 0; j < GH; j++) for (let i = 0; i < GW; i++) { const x = i * CELL + 6, y = j * CELL + 6; grid[j * GW + i] = stand(x, y) && stand(x, y - 5) && stand(x, y + 5) && stand(x - 5, y) && stand(x + 5, y) ? 1 : 0; }
+    G[gk] = grid;
+  }
+  const centre = (c) => [(c % GW) * CELL + 6, Math.floor(c / GW) * CELL + 6];
+  const isGoal = goal.rect ? (x, y) => x >= goal.rect[0] - 8 && x <= goal.rect[2] + 8 && y >= goal.rect[1] - 8 && y <= goal.rect[3] + 8
+    : (x, y) => Math.hypot(x - goal.at[0], (y - goal.at[1]) * 1.3) < REACH - 4; // in reach of the spot (field.js, near)
+  const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]];
+  const start = Math.min(GH - 1, Math.floor(P.y / CELL)) * GW + Math.min(GW - 1, Math.floor(P.x / CELL));
+  const prev = new Int32Array(GW * GH).fill(-1), way = []; let end = -1;
+  if (grid[start]) {
+    prev[start] = start; const q = [start];
+    for (let h = 0; h < q.length; h++) {
+      const c = q[h], [x, y] = centre(c);
+      if (end < 0 && isGoal(x, y)) end = c;
+      const ci = c % GW, cj = (c - ci) / GW;
+      for (const [di, dj] of DIRS) {
+        const i = ci + di, j = cj + dj; if (i < 0 || j < 0 || i >= GW || j >= GH) continue;
+        const n = j * GW + i; if (prev[n] >= 0 || !grid[n]) continue;
+        if (di && dj && (!grid[cj * GW + i] || !grid[j * GW + ci])) continue; // no cutting corners
+        prev[n] = c; q.push(n);
+      }
+    }
+    if (end >= 0) { for (let c = end; c !== start; c = prev[c]) way.push(centre(c)); way.reverse(); }
+  }
+  // where she stands on a narrow way, or the goal lies along one, the way as the field's fine search finds it
+  if (end < 0) {
+    const F = 4, x0 = P.x, y0 = P.y, key = (i, j) => (i + 512) * 1024 + j + 512, ok = new Map(), from = new Map([[key(0, 0), null]]), q = [[0, 0]];
+    const can = (i, j) => { const k = key(i, j); let v = ok.get(k); if (v === undefined) ok.set(k, (v = stand(x0 + i * F, y0 + j * F))); return v; };
+    let hit = null;
+    for (let h = 0; h < q.length && h < 200000 && !hit; h++) {
+      const [ci, cj] = q[h];
+      if (isGoal(x0 + ci * F, y0 + cj * F)) { hit = [ci, cj]; break; }
+      for (const [di, dj] of DIRS) {
+        const i = ci + di, j = cj + dj, k = key(i, j);
+        if (from.has(k) || !can(i, j) || (di && dj && (!can(ci + di, cj) || !can(ci, cj + dj)))) continue;
+        from.set(k, [ci, cj]); q.push([i, j]);
+      }
+    }
+    if (!hit) return { error: 'no way on ' + m.id + ' from ' + [Math.round(P.x), Math.round(P.y)] + ' to ' + JSON.stringify(goal) };
+    for (let c = hit; c && (c[0] || c[1]); c = from.get(key(c[0], c[1]))) way.push([x0 + c[0] * F, y0 + c[1] * F]);
+    way.reverse();
+  }
+  const toS = ([x, y]) => [r.left + (x - cam.x) * cam.z, r.top + (y - cam.y) * cam.z];
+  const onField = ([sx, sy]) => sx >= r.left + 6 && sx <= r.right - 6 && sy >= r.top + 6 && sy <= r.bottom - 6 && document.elementFromPoint(sx, sy) === cv;
+  // everything else she could walk up to and use: the spots showing, and the people
+  const others = (m.spots || []).filter((s) => s.at && !(s.hide && s.hide()) && !(goal.at && s.at[0] === goal.at[0] && s.at[1] === goal.at[1])).concat((m.people || []).filter((n) => !n.hidden));
+  const clearOf = ([x, y]) => others.every((s) => Math.hypot(s.at[0] - x, s.at[1] - 20 - y) > 40 && Math.hypot(s.at[0] - x, s.at[1] - y) > 36);
+  const fine = end < 0, onNarrow = !grid[start], narrowAt = ([x, y]) => !grid[Math.min(GH - 1, Math.floor(y / CELL)) * GW + Math.min(GW - 1, Math.floor(x / CELL))] && stand(x, y);
+  let pick = null;
+  if (fine && !onNarrow) for (let k = way.length - 1; k >= 0 && !pick; k--) { const s = toS(way[k]); if (narrowAt(way[k]) && onField(s) && clearOf(way[k])) pick = { s, at: way[k], direct: false }; }
+  if (pick) { /* onto the narrow way first */ }
+  else if (goal.at) { const s = toS(goal.at); if (onField(s)) pick = { s, at: goal.at, direct: true }; }
+  else {
+    // a cell inside the exit she can get to, nearest its middle
+    const cx = (goal.rect[0] + goal.rect[2]) / 2, cy = (goal.rect[1] + goal.rect[3]) / 2; let bd = 1e9;
+    for (let c = 0; c < GW * GH; c++) {
+      if (prev[c] < 0) continue; const p = centre(c); if (!isGoal(p[0], p[1]) || !clearOf(p)) continue;
+      const s = toS(p); if (!onField(s)) continue;
+      const d = (p[0] - cx) ** 2 + (p[1] - cy) ** 2; if (d < bd) { bd = d; pick = { s, at: p, direct: true }; }
+    }
+  }
+  if (!pick) for (let k = way.length - 1; k >= 0 && !pick; k--) { const s = toS(way[k]); if (onField(s) && clearOf(way[k])) pick = { s, at: way[k], direct: false }; }
+  if (!pick) return { error: 'nothing on the way to tap on ' + m.id + ' from ' + [Math.round(P.x), Math.round(P.y)] };
+  return { sx: pick.s[0], sy: pick.s[1], at: pick.at.map(Math.round), direct: pick.direct, cells: way.length };
+}
+// wait while she walks: until she has stopped (still for a few polls), or something happens (the game is busy, or she
+// is on another map), or 40 s have passed
+async function settle(map0) {
+  const now = () => page.evaluate(() => { const g = window.__game, f = g.field; return { map: f.map && f.map.id, mode: g.mode, busy: g.busy, moving: f.P.moving, x: f.P.x, y: f.P.y }; });
+  const s0 = await now(), t = Date.now();
+  let still = 0, moved = false;
+  await sleep(120);
+  while (Date.now() - t < 40000) {
+    const s = await now();
+    if (s.busy || s.mode !== 'field' || s.map !== map0) return 'changed';
+    if (Math.hypot(s.x - s0.x, s.y - s0.y) > 2) moved = true;
+    still = s.moving ? 0 : still + 1;
+    if (still >= 3 && (moved || Date.now() - t > 1200)) return 'stopped';
+    await sleep(100);
+  }
+  return 'timeout';
+}
+// walk her out of the map by an exit, by taps, and through whatever the next map's arrival plays; the taps it took
+async function walkOut(ex, next) {
+  const map0 = await page.evaluate(() => window.__game.field.map.id);
+  for (let k = 0; k < 60; k++) {
+    const p = await page.evaluate(tapToward, { rect: ex.rect });
+    if (p.error) throw new Error(p.error);
+    await page.mouse.click(p.sx, p.sy);
+    const r = await settle(map0);
+    if (r === 'timeout') throw new Error('she was still walking after 40 s on ' + map0);
+    if (r === 'changed') { await talkThrough(60000, "window.__game.mode === 'field' && !window.__game.busy && !!window.__game.field.map && window.__game.field.map.id === " + JSON.stringify(next)); return k + 1; }
+  }
+  throw new Error('60 taps did not take her out of ' + map0 + ' to ' + next);
+}
+// walk her to a spot by taps and use it (a tap on it walks her there and uses it; in reach, Enter): true once its words
+// have played through, false when she stands by it and nothing is offered (it is hidden: used already)
+async function useSpot(spot) {
+  const map0 = await page.evaluate(() => window.__game.field.map.id);
+  for (let k = 0; k < 40; k++) {
+    const s = await page.evaluate(([x, y]) => { const g = window.__game, f = g.field, n = f.near(); return { busy: g.busy, d: Math.hypot(f.P.x - x, (f.P.y - y) * 1.3), it: !!(n && n.ref && n.ref.at && n.ref.at[0] === x && n.ref.at[1] === y) }; }, spot.at);
+    if (s.busy) { await talkThrough(60000, () => !window.__game.busy); return true; }
+    if (s.it) { await page.keyboard.press('Enter'); await sleep(300); continue; }
+    if (s.d < 50) return false;
+    const p = await page.evaluate(tapToward, { at: spot.at }); if (p.error) throw new Error(p.error);
+    await page.mouse.click(p.sx, p.sy);
+    if (await settle(map0) === 'timeout') throw new Error('walking to ' + (spot.label || spot.id) + ' on ' + map0);
+  }
+  throw new Error('40 taps did not bring Io to ' + (spot.label || spot.id));
+}
+
 let failed = false;
 try {
   await page.goto('file://' + file);
@@ -203,14 +345,105 @@ try {
       log('  the pad: ' + Math.round(p0[1] - p1[1]) + ' px north, rolling to ' + lit2.replace(/pad-/g, ''));
       await shot('controls');
     } else if (step === 'world') {
-      await page.evaluate(() => { window.__game.goWorld(1348, 1900); });
-      await waitFor(() => window.__game.mode === 'world' && !window.__game.busy, null, 30000, 'the world map');
+      // the world map is only for flying the Magpie (Chris, October 3): the party as the story has it when the Magpie first
+      // flies to the Warm Roads (band 1 won, Bogmire's refit fitted), the Magpie at Wickhollow's jetty
+      await inPlay();
+      await page.evaluate(() => { const g = window.__game, st = g.state; Object.assign(st.done, { first: true, 'visit:bogmire': true, greatWraith: true }); Object.assign(st.flags, { party: true, magpie: true, lights: true, refit: true }); st.magpie = 'wickhollow'; st.band = Math.max(st.band, 2); g.goField('cottage', [760, 950]); });
+      await waitFor(() => window.__game.field.map.id === 'cottage' && !window.__game.busy, null, 30000, 'the cottage');
+      await sleep(400);
+      // a road out of the picture turns her back: the cottage's south road, with her line
+      const road = await page.evaluate(() => window.MAPS.cottage.exits.find((e) => e.to === 'world' && e.rect[3] >= 1024));
+      const line = await page.evaluate((k) => window.SCRIPT.scenes[k][0][1], road.say);
+      const r0 = await page.evaluate(tapToward, { rect: road.rect });
+      if (r0.error) throw new Error(r0.error);
+      await page.mouse.click(r0.sx, r0.sy);
+      await waitFor((t) => { const b = document.querySelector('.talk'), s = document.querySelector('.talk-said'); return !!b && !b.hidden && !!s && s.textContent === t; }, line, 30000, 'her line at the road out');
+      await shot('world-road-out');
+      await talkThrough(30000);
+      await waitFor(() => !window.__game.busy, null, 10000, 'the game after her line');
+      const back = await page.evaluate((r) => { const g = window.__game, P = g.field.P; return { map: g.field.map.id, mode: g.mode, P: [Math.round(P.x), Math.round(P.y)], inside: P.x >= r[0] - 8 && P.x <= r[2] + 8 && P.y >= r[1] - 8 && P.y <= r[3] + 8, stand: g.field.canStand(P.x, P.y) }; }, road.rect);
+      if (back.map !== 'cottage' || back.mode !== 'field' || back.inside || !back.stand) throw new Error('the road out of the cottage: ' + JSON.stringify(back));
+      log('  the cottage’s south road turns her back with her line, at ' + back.P);
+      // the Magpie at the end of the jetty, by a tap: she walks there and is asked to take her up
+      await page.evaluate(() => { window.__game.goField('jetty', [768, 700]); });
+      await waitFor(() => window.__game.field.map.id === 'jetty' && !window.__game.busy, null, 30000, 'the jetty');
+      await sleep(400);
+      const mag = await page.evaluate(() => window.__game.field.map.spots.find((s) => s.kind === 'magpie').at);
+      const p = await page.evaluate(tapToward, { at: mag });
+      if (p.error || !p.direct) throw new Error('the Magpie is not there to tap: ' + JSON.stringify(p));
+      await page.mouse.click(p.sx, p.sy);
+      await waitFor(() => document.querySelectorAll('.talk-choices button').length > 0, null, 30000, 'the Magpie to offer a flight');
+      await page.click('.talk-choices button:text-is("Fly")');
+      const t1 = Date.now();
+      await waitFor(() => window.__game.mode === 'fly' && !!window.__game.flyer && window.__game.flyer.state.mode === 'fly', null, 120000, 'the Magpie to take off');
+      await sleep(500); await shot('world-fly');
+      // her own steering toward a stop (fly.js), as a tap on it would set it
+      await page.evaluate(() => window.__game.flyer.flyTo('warmCamp'));
+      await waitFor(() => { const c = document.querySelector('.fly-card'); return !!c && !c.hidden && /Warm Roads/.test(c.textContent); }, null, 300000, 'the Warm Roads to offer a landing');
+      await page.click('.fly-card button');
+      // the camp's first landing: its scene, then Rest
+      await talkThrough(120000, () => window.__game.mode === 'field' && !window.__game.busy && !!window.__game.field.map && window.__game.field.map.id === 'warm-roads-camp' && !!window.__game.state.done['camp:warmCamp']);
+      log('  flew from Wickhollow to the Warm Roads in ' + ((Date.now() - t1) / 1000).toFixed(0) + ' s');
       await sleep(600);
-      const w0 = await page.evaluate(() => [window.__game.world.P.x, window.__game.world.P.y]);
-      await page.keyboard.down('ArrowRight'); await sleep(900); await page.keyboard.up('ArrowRight');
-      const w1 = await page.evaluate(() => [window.__game.world.P.x, window.__game.world.P.y]);
-      if (Math.hypot(w1[0] - w0[0], w1[1] - w0[1]) < 10) throw new Error('Io did not walk the world map: ' + w0 + ' to ' + w1);
+      const w = await page.evaluate(() => { const g = window.__game, st = g.state, L = g.LANDINGS.warmCamp, n = g.field.near(), sp = g.field.map.spots.find((s) => s.kind === 'magpie' && !(s.hide && s.hide())); return { magpie: st.magpie, camp: !!st.done['camp:warmCamp'], P: [g.field.P.x, g.field.P.y], at: L.field && L.field[1], rest: st.rest, near: n && n.label, goal: g.goal, glow: sp && sp.at }; });
+      // her glow beside Io, not drawn behind her (field.js draws a spot's glow before the figures, 6 px above its point)
+      const hid = !w.glow || (Math.abs(w.glow[0] - w.P[0]) < 30 && w.glow[1] - 6 <= w.P[1]);
+      if (w.magpie !== 'warmCamp' || !w.camp || !w.at || Math.hypot(w.P[0] - w.at[0], w.P[1] - w.at[1]) > 40 || w.rest.map !== 'warm-roads-camp' || w.near !== 'The Magpie' || hid || !w.goal || w.goal.kind !== 'exit') throw new Error('the landing at the Warm Roads: ' + JSON.stringify(w));
+      log('  landed at the Warm Roads camp: its scene, a rest there, the Magpie in reach, her glow beside Io; the arrow points the way on');
       await shot('world');
+    } else if (step === 'wilds') {
+      // each band's row of wilderness scenes, from the camp where the Magpie is moored to the band's town, walked by taps
+      const ROWS = { 2: ['warmCamp', ['warm-roads-camp', 'ember-line-road', 'dawnroost-road'], 'dawnroost'], 3: ['northCamp', ['northern-camp', 'eldergrove-edge', 'cold-moor'], 'crossroads'], 4: ['frozenCamp', ['frozen-camp', 'frostmere-shore'], 'frozen-pass'] };
+      // the Ember Line nodes, field spots with the world map's ids: node2 lit by a tap; node1, lit before, offers nothing
+      const emberNodes = async () => {
+        const node = (id) => page.evaluate((id) => window.MAPS['ember-line-road'].spots.find((s) => s.kind === 'node' && s.id === id), id);
+        const shards = () => page.evaluate(() => window.__game.state.shards);
+        const sh0 = await shards();
+        if (!await useSpot(await node('node2'))) throw new Error('node2 was not offered');
+        const lit = await page.evaluate(() => ({ done: !!window.__game.state.done.node2, shown: window.__game.field.map.spots.some((s) => s.id === 'node2' && !(s.hide && s.hide())) })), sh1 = await shards();
+        if (!lit.done || lit.shown || sh1 !== sh0 + 300) throw new Error('node2: ' + JSON.stringify(lit) + ', shards ' + sh0 + ' → ' + sh1); // 150 a band, as on the world map
+        await shot('wilds-node2');
+        if (await useSpot(await node('node1'))) throw new Error('node1, lit before, was offered again');
+        if (await shards() !== sh1) throw new Error('node1, lit before, gave shards again');
+        log('  Sol relit node2 by a tap (+300 shards), and it went dark; node1, lit before, offers nothing');
+      };
+      for (const b of band >= 2 && band <= 4 ? [band] : [2, 3, 4]) {
+        const [camp, row, end] = ROWS[b], last = row[row.length - 1], tb = Date.now();
+        await inPlay();
+        // the party as the band's gate chapter has it (its camp's scene played), the Magpie moored at the camp; node1 lit
+        await page.evaluate(([b, camp]) => { const g = window.__game, st = g.chapterState(g.CHAPTERS[b]); st.magpie = camp; if (b === 2) st.done.node1 = true; g.state = st; const L = g.LANDINGS[camp]; g.goField(L.field[0], L.field[1], 's'); }, [b, camp]);
+        await talkThrough(60000, "window.__game.mode === 'field' && !window.__game.busy && window.__game.field.map.id === '" + row[0] + "'");
+        await sleep(400);
+        const m0 = await page.evaluate(() => { const g = window.__game, n = g.field.near(); return { near: n && n.label, magpie: g.field.map.spots.filter((s) => s.kind === 'magpie' && !(s.hide && s.hide())).length }; });
+        if (m0.near !== 'The Magpie' || m0.magpie !== 1) throw new Error('band ' + b + ': the Magpie at ' + row[0] + ': ' + JSON.stringify(m0));
+        await page.evaluate(() => window.__game.field.setCounter(-1e6)); // no random fight starts on the row: the counter carries map to map
+        for (let i = 0; i < row.length; i++) {
+          const id = row[i], next = row[i + 1] || end;
+          const s = await page.evaluate(([id, next]) => { const g = window.__game, m = window.MAPS[id]; return { on: g.field.map.id, kind: m.kind, wild: m.wild || null, scene: window.GameFights.WILD_SCENE[m.band], ex: (m.exits || []).find((e) => e.to === next) || null, goal: g.goal, counter: g.field.P.counter }; }, [id, next]);
+          if (s.on !== id || !s.ex) throw new Error('band ' + b + ': on ' + s.on + ', looking for ' + id + '’s way to ' + next);
+          const isCamp = s.kind === 'camp';
+          if (isCamp ? !!s.wild : !(s.wild && s.wild.band === b && s.wild.scene === s.scene)) throw new Error(id + '’s random fights: ' + JSON.stringify(s.wild));
+          const r = s.ex.rect, gl = s.goal; // game.js exitMark: 30 px inside the exit's middle
+          if (!gl || gl.kind !== 'exit' || gl.x < r[0] - 40 || gl.x > r[2] + 40 || gl.y < r[1] - 40 || gl.y > r[3] + 40) throw new Error('on ' + id + ' the arrow doesn’t point the way to ' + next + ': ' + JSON.stringify(gl));
+          await shot('wilds-' + id);
+          if (id === 'ember-line-road') await emberNodes();
+          const c0 = await page.evaluate(() => window.__game.field.P.counter);
+          const taps = await walkOut(s.ex, next);
+          const grew = (await page.evaluate(() => window.__game.field.P.counter)) - c0;
+          if (isCamp ? grew !== 0 : grew < 300) throw new Error(id + ': the fights’ counter grew ' + Math.round(grew) + ' px' + (isCamp ? ' in a camp' : ''));
+          log('  ' + id + ' → ' + next + ', ' + taps + (taps === 1 ? ' tap' : ' taps') + (isCamp ? ' (a camp: no fights)' : ', ' + Math.round(grew) + ' px toward a fight'));
+        }
+        // the town at the end of the row, where the last scene's exit brings her, facing into it; and the road back
+        const e = await page.evaluate(([last, end]) => { const g = window.__game, x = window.MAPS[last].exits.find((q) => q.to === end); return { on: g.field.map.id, P: [g.field.P.x, g.field.P.y], dir: g.field.P.dir, at: x.at, want: x.dir, goal: g.goal, back: (window.MAPS[end].exits || []).find((q) => q.to === last) || null }; }, [last, end]);
+        if (e.on !== end || Math.hypot(e.P[0] - e.at[0], e.P[1] - e.at[1]) > 20 || !e.goal || (e.want && e.dir !== e.want)) throw new Error('the end of band ' + b + '’s road: ' + JSON.stringify(e));
+        await shot('wilds-' + end);
+        if (!e.back) throw new Error(end + ' has no road back into ' + last);
+        await walkOut(e.back, last);
+        const P2 = await page.evaluate(() => [window.__game.field.P.x, window.__game.field.P.y]);
+        if (Math.hypot(P2[0] - e.back.at[0], P2[1] - e.back.at[1]) > 20) throw new Error('back into ' + last + ' at ' + P2.map(Math.round) + ', not ' + e.back.at);
+        await shot('wilds-back-' + last);
+        log('  band ' + b + ': ' + row.join(' → ') + ' → ' + end + ' (arriving facing ' + e.dir + '), and back into ' + last + ', in ' + ((Date.now() - tb) / 1000).toFixed(0) + ' s');
+      }
     } else if (step === 'menu') {
       await page.evaluate(() => { window.__game.menu(); });
       await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');
@@ -442,6 +675,12 @@ try {
       await talkThrough(30000);
       s = await hear('wilds', 'back in the Thornwood');
       if (s.songs.wilds.at < wildAt) throw new Error('the wilds song started again instead of going on: ' + s.songs.wilds.at + ' < ' + wildAt);
+      // the wilderness scenes play it too, carrying on from where it was
+      const wildAt2 = s.songs.wilds.at;
+      await page.evaluate(() => { window.__game.goField('ember-line-road', window.MAPS['ember-line-road'].start); });
+      await waitFor(() => window.__game.field.map.id === 'ember-line-road' && !window.__game.busy, null, 30000, 'the Ember Line road');
+      s = await hear('wilds', 'the Ember Line road');
+      if (s.songs.wilds.at < wildAt2) throw new Error('the wilds song started again on the Ember Line road: ' + s.songs.wilds.at + ' < ' + wildAt2);
       await page.evaluate(() => { window.__game.goField('cottage', [838, 520]); });
       await waitFor(() => window.__game.field.map.id === 'cottage' && !window.__game.busy, null, 30000, 'the cottage');
       s = await hear('title', 'the cottage');
@@ -491,9 +730,10 @@ try {
         await page.click('.talk-choices button:nth-child(' + (k + 1) + ')');
         await waitFor((m) => window.__game && window.__game.mode === 'field' && window.__game.field.map && window.__game.field.map.id === m, want[k][0], 30000, 'chapter ' + k);
         await talkThrough(30000, () => !window.__game.busy);
-        const st = await page.evaluate(() => ({ level: window.__game.state.level, band: window.__game.state.band, flags: Object.keys(window.__game.state.flags).join(' '), saved: !!localStorage.getItem('envoi.save.v1'), goal: window.__game.goal }));
-        if (st.level !== want[k][1] || !st.saved || !st.goal) throw new Error('chapter ' + k + ': ' + JSON.stringify(st));
-        log('  ' + want[k][0] + ': level ' + st.level + ', band ' + st.band + ', flags ' + st.flags + '; the arrow: ' + st.goal.kind + ' at ' + Math.round(st.goal.x) + ', ' + Math.round(st.goal.y));
+        // (the Magpie moored at a landing on a ground map: a dock, or a camp's landing ground)
+        const st = await page.evaluate(() => ({ level: window.__game.state.level, band: window.__game.state.band, flags: Object.keys(window.__game.state.flags).join(' '), saved: !!localStorage.getItem('envoi.save.v1'), goal: window.__game.goal, magpie: window.__game.state.magpie, moored: (() => { const g = window.__game, L = g.LANDINGS[g.state.magpie]; return L && L.field && window.MAPS[L.field[0]] ? L.field[0] : null; })() }));
+        if (st.level !== want[k][1] || !st.saved || !st.goal || !st.moored) throw new Error('chapter ' + k + ': ' + JSON.stringify(st));
+        log('  ' + want[k][0] + ': level ' + st.level + ', band ' + st.band + ', flags ' + st.flags + '; the arrow: ' + st.goal.kind + ' at ' + Math.round(st.goal.x) + ', ' + Math.round(st.goal.y) + '; the Magpie at ' + st.magpie + ' (' + st.moored + ')');
         await sleep(500); await shot('chapter-' + k);
       }
     } else if (step === 'saves') {
@@ -519,6 +759,52 @@ try {
       await page.click('.gmenu-foot button:text-is("Load it")');
       await waitFor((m) => window.__game.mode === m && !window.__game.busy, savedMode, 30000, 'the loaded game');
       await shot('saves-loaded');
+      // saves made on the world map before the wilderness scenes (nobody walks it now): each loads on the ground maps
+      const worldSave = (magpie, at, rest) => page.evaluate(([magpie, at, rest]) => {
+        const GS = window.GameState, s = GS.fresh();
+        Object.assign(s, { level: 9, band: 2, magpie, shards: 1234 }); Object.assign(s.flags, { party: true, magpie: true, lights: true, refit: true });
+        Object.assign(s.done, { first: true, 'visit:bogmire': true, greatWraith: true, 'camp:warmCamp': true, node1: true });
+        s.landings = { wickhollow: true, bogmire: true, warmCamp: true };
+        s.where = { mode: 'world', at, dir: 's' }; s.rest = rest; return GS.code(s);
+      }, [magpie, at, rest]);
+      const loadCode = async (code, until) => {
+        await page.evaluate(() => { window.__game.menu(); });
+        await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');
+        await page.click('.gmenu-foot button:text-is("Title")');
+        await waitFor(() => !!document.querySelector('.title h1'), null, 10000, 'the title');
+        await page.click('.title-box button:text-is("Load")');
+        await page.click('.talk-choices button:text-is("Paste a save code")');
+        await page.fill('textarea.code', code);
+        await page.click('.gmenu-foot button:text-is("Load it")');
+        await talkThrough(30000, until || (() => window.__game.mode === 'field' && !window.__game.busy));
+        return page.evaluate(() => { const g = window.__game, s = g.state, P = g.field.P; return { map: g.field.map && g.field.map.id, P: [Math.round(P.x), Math.round(P.y)], where: s.where.mode, rest: s.rest, magpie: s.magpie, node1: !!s.done.node1, level: s.level }; });
+      };
+      // by node1's old marker, its rest at the Warm Roads camp: on the Ember Line road, the rest by the camp's fire
+      const o = await loadCode(await worldSave('warmCamp', [960, 1440], { mode: 'world', at: [820, 1560] }));
+      const fire = await page.evaluate(() => window.MAPS['warm-roads-camp'].spots.find((s) => s.kind === 'rest').at), elr = await page.evaluate(() => window.MAPS['ember-line-road'].start);
+      if (o.map !== 'ember-line-road' || Math.hypot(o.P[0] - elr[0], o.P[1] - elr[1]) > 20 || o.where !== 'field' || o.rest.mode !== 'field' || o.rest.map !== 'warm-roads-camp' || JSON.stringify(o.rest.at) !== JSON.stringify(fire) || !o.node1 || o.level !== 9) throw new Error('a save from the world map: ' + JSON.stringify(o));
+      log('  a save from the world map by a node loads on ' + o.map + ' at ' + o.P + ', its rest by the camp’s fire');
+      await shot('saves-old-world');
+      // its Magpie left at Bogmire, which no road reaches from here now: she is moored at the camp, and a note says so
+      await page.evaluate(() => { const t = document.querySelector('.game .toast'); window.__toasts = []; new MutationObserver(() => window.__toasts.push(t.textContent)).observe(t, { childList: true, characterData: true, subtree: true }); });
+      const o2 = await loadCode(await worldSave('bogmire', [1000, 1450], { mode: 'field', map: 'bogmire', at: [1208, 281] }));
+      const toast = (await page.evaluate(() => window.__toasts)).find((x) => /moored at/.test(x)) || '';
+      if (o2.map !== 'ember-line-road' || o2.magpie !== 'warmCamp' || !toast || o2.rest.map !== 'bogmire') throw new Error('a save from the world map, its Magpie at Bogmire: ' + JSON.stringify(o2) + ' ' + JSON.stringify(await page.evaluate(() => window.__toasts)));
+      log('  one with the Magpie at Bogmire: ' + toast);
+      // the title's Continue names where such a save opens
+      await page.evaluate((code) => { const s = window.GameState.fromCode(code); s.saved = Date.now() + 60000; localStorage.setItem('envoi.save.v1.3', JSON.stringify(s)); }, await worldSave('warmCamp', [960, 1440], { mode: 'world', at: [820, 1560] }));
+      await page.evaluate(() => { window.__game.menu(); });
+      await waitFor(() => !!document.querySelector('.gmenu'), null, 10000, 'the menu');
+      await page.click('.gmenu-foot button:text-is("Title")');
+      await waitFor(() => !!document.querySelector('.title h1'), null, 10000, 'the title');
+      await page.reload();
+      await waitFor(() => !!document.querySelector('.title-save'), null, 30000, 'the title after a reload');
+      const tl = await page.$eval('.title-save', (e) => e.textContent);
+      if (!/^Slot 3 · .*The Ember Line road$/.test(tl)) throw new Error('the title’s Continue line for a save from the world map: ' + tl);
+      log('  the title: "' + tl + '"');
+      await page.click('.title-box button:text-is("Continue")');
+      await waitFor(() => window.__game.mode === 'field' && !window.__game.busy && window.__game.field.map.id === 'ember-line-road', null, 30000, 'Continue to open on the Ember Line road');
+      await shot('saves-old-continue');
     } else if (step === 'scenes') {
       // the staged scenes: each one's people walk in on its map; a screenshot as they arrive, and at the scene's end
       // as the story stands when each scene plays: the first fight won, Sol with Io, and so on

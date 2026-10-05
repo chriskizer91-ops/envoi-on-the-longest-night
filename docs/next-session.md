@@ -2,7 +2,9 @@
 
 October 4, 2026: the session that started **pass three** (October 3, evening), through Chris's notes on its pages, five chapter demos, his walking paths, herbs for the wilds, and a polish round: his songs, three volumes and two hidden keepsakes. Read this first. Then:
 
-- **Newest of all, October 5: a new hub.** The game's hub is now a session Chris started in ultracode. Start with `../handoff/README.md`: who does what now, the old hub's last results in `../handoff/relay/` (the new battles, delivered on `work/arenas` with their demo page, https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea, and brought into the game's branch on October 5 with the switch off). The same day the hub traced Chris's eight night scenes onto a demo page, https://claude.ai/artifact/2WSu7uWvtDUmF5JwxV5xwC (`../envoi-final-draft/wilds/`), staged in `../src/game/maps-wilds.js` until he says yes; the plan for putting them into the game is `../envoi-final-draft/wilds/plan-into-the-game.md`, and every task left in the game, defined one by one, in `../handoff/tasks.md`.
+- **Newest of all, October 5, morning: the wilderness scenes are in the game.** At Chris's go-ahead (his four calls left to the defaults: `design-decisions.md`, "October 5, 2026: the wilderness scenes in the game"), his eight night scenes are walking maps in `../src/game/maps.js` (twenty-one maps), the camps are the Magpie's landings, the towns' old ways onto the world map lead into the scenes, the five other roads out turn Io back with a line, and the world map is only flown: its nine walking tiles are out of the page. Old saves made on it load at the nearest place, and the Magpie is always moored where Io can walk to her. The game test's `world` step flies now, and a `wilds` step walks each band's row by taps. The plan it followed: `../envoi-final-draft/wilds/plan-into-the-game.md`; the task: `../handoff/tasks.md`, T02.
+
+- **Newest, October 5: a new hub.** The game's hub is now a session Chris started in ultracode. Start with `../handoff/README.md`: who does what now, the old hub's last results in `../handoff/relay/` (the new battles, delivered on `work/arenas` with their demo page, https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea, and brought into the game's branch on October 5 with the switch off). The same day the hub traced Chris's eight night scenes onto a demo page, https://claude.ai/artifact/2WSu7uWvtDUmF5JwxV5xwC (`../envoi-final-draft/wilds/`), staged in `../src/game/maps-wilds.js` until he says yes; the plan for putting them into the game is `../envoi-final-draft/wilds/plan-into-the-game.md` (done the same morning, above), and every task left in the game, defined one by one, in `../handoff/tasks.md`.
 
 - **Newest, October 4, evening: the final draft.** Chris sent the file he keeps and called it the final draft. `../envoi-final-draft/README.md` has it, a review of the game, how to spend the rest of the 30 MB, art request 13 (the wild's own creatures) and the model studio, where modeling sessions Chris starts build new creatures in their own folders and hand them back. That work is on the branch `ccr-31761774-76j8j3`: this game, from `claude/practical-franklin-l1ctf9`, with the new folder on top. Later that evening: `../envoi-final-draft/cutscenes/` (briefs for two cutscenes, the Colossus first met and the finale's opening), and this branch took in `3d-cutscenes/`, `3d-model-field-studies/` and `3d-model-main-characters/` from their branches, so a session started from it has them all. The game itself didn't change: it still builds byte for byte the file Chris keeps.
 
@@ -39,7 +41,7 @@ October 4, 2026: the session that started **pass three** (October 3, evening), t
 | Battle Backgrounds: the game's eight paintings behind live 3D ground, at Chris's picks | https://claude.ai/artifact/F7GsYnn8Z21EEndmWXxUQw |
 | Wilderness at Night: the eight night scenes traced and joined, Io walking each band's road from its camp (October 5; `../envoi-final-draft/wilds/README.md`) | https://claude.ai/artifact/2WSu7uWvtDUmF5JwxV5xwC |
 | Wilderness Walk: Io on Chris's wilderness path, nine squeezes | https://claude.ai/artifact/BcRjgVynWymYim84Yb7STk |
-| Map Editor: the walking paths and the twenty keepsakes in one laptop tool (collections `edits` and `places`; October 4, evening) | https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5 |
+| Map Editor: the walking paths of all twenty-one maps and the twenty keepsakes in one laptop tool (collections `edits` and `places`; October 4, evening; the eight wilderness scenes since October 5) | https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5 |
 | Walking Paths: the paths editor before the map editor (its edits came back through its database, collection `edits`; this account couldn't update it on October 4) | https://claude.ai/artifact/8BmLZd8sJjYBQ6kRbX2enm |
 | Io on Foot: her walk, with sliders and the footstep ideas | https://claude.ai/artifact/G1B5cMkYzBq4RiausDAAQj |
 | Walking Map Resolution: the town maps' compression choices | https://claude.ai/artifact/7F4pu4v3BQiKAZAtVJkC1i |
@@ -75,7 +77,7 @@ Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: t
 ## Waiting on Chris
 
 1. **The five demos:** his notes from playing each, from just before its gate on to the next.
-2. ~~**The wilderness scenes' pictures**~~: received October 5, all eight at night (`../reference/art/walk/wilds/`; art request 12). Building them is a task in `../handoff/tasks.md`.
+2. ~~**The wilderness scenes' pictures**~~: received October 5, all eight at night (`../reference/art/walk/wilds/`; art request 12), and in the game the same morning (`../handoff/tasks.md`, T02). His notes after playing them, as they come.
 3. **More map path edits**, whenever he sends them (both his rounds are in the game).
 4. **The lore conversation:** every word of the script is still a placeholder.
 5. **Art requests 06 and 07** (townsfolk portraits, story stills), and the footsteps.
@@ -85,7 +87,7 @@ Later on October 4, from Chris's notes on it: its sounds are new (`sounds.js`: t
 
 1. **The new battles:** built as a demo page with every fight in its arena (October 5, https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea), and in the game's branch since then with the switch off. Switch them on at Chris's yes (`../handoff/tasks.md`, T01 part B; `../envoi-final-draft/arena/README.md`, "Switching the game over").
 2. **His notes on the demos**, as they come.
-3. **Walking without the world map:** Chris agreed the plan on October 5 (the scenes at night); his eight pictures are traced into walking maps and on their demo page (https://claude.ai/artifact/2WSu7uWvtDUmF5JwxV5xwC). On his okay they go into the game (`../handoff/tasks.md`, T02 step 2; the plan: `../envoi-final-draft/wilds/plan-into-the-game.md`).
+3. ~~**Walking without the world map**~~: done October 5 (`../handoff/tasks.md`, T02). Left for the hub: publishing the game (with its beside files) and the map editor, and sending Chris his file (T14).
 4. **His map path edits**, when he sends more from the map editor, which took over from Walking Paths: list `edits` on its link (https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5) with `ArtifactData` (`out_dir`), `check-edits.mjs`, then `apply-edits.mjs`, `check-maps`, build, `make-demos`, test, publish (`../envoi-final-draft/map-editor/README.md`, "Reading what Chris sent"). His shapes go in as drawn: secret ways and orange patches are meant.
 5. **The twenty keepsakes are in** (October 4, late evening). If Chris moves one in the map editor, list `places` on its link with `ArtifactData` and copy the new `at` into `../envoi-final-draft/items/items.js`; then `node tools/check-maps.mjs`, build, test (`--steps title,new,keepsakes`) and publish the game with its beside files.
 6. **The 20 frames a second freeze** on the Battle Backgrounds page is unexplained (the test browser can't pace like his phone). 20 is off the page and the game never offered it; if the new battles freeze or go black on his phone, look here first.
@@ -99,7 +101,7 @@ Small things that would make it nicer, none started:
 - **Quicker fights to start:** every battle builds its models from scratch; keeping the heroes, Lunara and Envoi built between fights would cut the wait, if it shows on the phone.
 - **More to find:** more wells, letters and nodes, and the D&D map's named places as landmarks (`docs/handoff.md`, section 6); more townsfolk with lines that change with the story (section 4); and more of Inkblot: Quill's paper doll already carries the crow on his shoulder in every frame, in his scenes too, so what's left is Inkblot on his own in the story's scenes or on the Magpie's perch (`src/models/magpie.js` has the perch).
 - **More of the story staged,** with the people walking on the map while they talk, as the four big scenes already are (section 5).
-- ~~**Room for the art**~~ (squeezing the battle paintings and the world map): overtaken. The new battles use Chris's paintings at his "Strong" squeeze, and once the wilderness scenes are in (T02), the world map's walking tiles leave the page ("More room, if it's needed", below).
+- ~~**Room for the art**~~ (squeezing the battle paintings and the world map): overtaken. The new battles use Chris's paintings at his "Strong" squeeze, and the world map's walking tiles left the page with the wilderness scenes (October 5).
 - **Mooncart:** the game reaches it only once this branch is merged into the repository's default branch, which is Chris's call.
 
 ### When the game is finished
@@ -141,7 +143,7 @@ Follow the eight steps in `putting-it-all-together/README.md`:
 | File | Where it plays |
 |---|---|
 | `art/music/towns-moonlit-forest-path.webm` | the towns: maps whose `MUSIC` in `game.js` is `'town'` (`SONG` maps it to the song) |
-| `art/music/wilds-herbal-decay.webm` | the wilds: `'travel'` (the Thornwood, the crossroads, the frozen pass, the world map) |
+| `art/music/wilds-herbal-decay.webm` | the wilds: `'travel'` (the Thornwood, the eight wilderness scenes, the crossroads, the frozen pass) |
 | `art/music/battle-herbal-decay.webm` | nowhere: the fights keep their original battle theme (`src/battle/sound.js`), at Chris's word (October 4) |
 
 - `src/game/songs.js` loops each from an `<audio>` element, at the level measured to match the made-up music (`SONGS[id].level`, at Normal), fades, and pauses while the page is hidden. A song that can't play hands over to the made-up music.
@@ -150,7 +152,7 @@ Follow the eight steps in `putting-it-all-together/README.md`:
 
 ### More room, if it's needed
 
-Squeezing the battle paintings and the world map is overtaken. The new battles use Chris's paintings at his "Strong" squeeze (0.24 MB for all eight), and once they're switched on and nothing flat uses the eight flat paintings they replace, those can leave the page (the Night square's stays, for the first fight and the prologue). Once the wilderness scenes are in, the world map's nine walking tiles leave the page too; flying keeps the far view and the clouds (`../handoff/tasks.md`, T02 and T13).
+Squeezing the battle paintings and the world map is overtaken. The new battles use Chris's paintings at his "Strong" squeeze (0.24 MB for all eight), and once they're switched on and nothing flat uses the eight flat paintings they replace, those can leave the page (the Night square's stays, for the first fight and the prologue). The world map's nine walking tiles left the page with the wilderness scenes (October 5); flying keeps the far view and the clouds (`../handoff/tasks.md`, T02 and T13).
 
 When the published game passes 16 MB:
 
@@ -163,16 +165,17 @@ When the published game passes 16 MB:
 |---|---|
 | Once per new container | `npm install --prefix tools` |
 | Build the game | `node tools/build.mjs --min putting-it-all-together/game.html` |
-| The five chapter demos | after building the game, `node tools/make-demos.mjs` (dist/demo-*.artifact.html, to publish at the demo links above) |
+| The five chapter demos | after building the game, `node tools/make-demos.mjs` (dist/demo-*.artifact.html: new links only, since the old ones came from the other account) |
 | Play it headless | `node tools/game-test.mjs` (must end with "game test passed") |
 | The file Chris keeps | `node tools/build.mjs --min --offline putting-it-all-together/game.html`, then `node tools/game-test.mjs --offline` (plays with the internet blocked) |
-| The walking maps | `node tools/check-maps.mjs` (every map must print ✓) |
+| The walking maps | `node tools/check-maps.mjs` (every map must print ✓: twenty-one, with the Magpie's landings, the chapters' starts and rests and the camps' rules too) |
+| The walks' fights | `node tools/walks.mjs` (each walk's length and fights on the game's maps, beside `story.js`'s; run it after path edits) |
 | One map up close | `node tools/trace-overlay.mjs <map> out.png 1600 --grid 25 --crop x,y,w,h`, which draws the walk areas, blocks and fronts over the painting |
 | Balance | `node tools/balance.mjs` |
 
 The game test's steps:
 
-- `--steps` picks them from title, new, walk, controls, world, menu, saves, scenes, save, wild, colossus, finale, keepsakes, songs and chapters. The chapters step checks each chapter's town, its arrival scene and the arrow; keepsakes walks Io by taps up the roof and down the Thornwood's trail to both and checks them in a fight; songs checks each song plays where it should, from where it was.
+- `--steps` picks them from title, new, walk, controls, world, wilds, menu, saves, scenes, save, wild, colossus, finale, keepsakes, songs and chapters. `world` flies the Magpie from Wickhollow's jetty to the Warm Roads camp (after a road out of the cottage turns Io back); `wilds` walks each band's row of scenes by taps from its camp to its town and back (about two minutes, not a default step); `saves` loads saves made on the world map; the chapters step checks each chapter's town, its arrival scene, the arrow and the Magpie's landing; keepsakes walks Io by taps up the roof and down the Thornwood's trail to both and checks them in a fight; songs checks each song plays where it should, from where it was.
 - `--size 915x412` is a Pixel 7a held sideways.
 
 ## Lessons from this session
@@ -182,7 +185,7 @@ The game test's steps:
 - **Art paths** in the scripts must be in double quotes (`"art/..."`) for the build to put the pictures inside the page.
 - **Chris's PNGs** can carry a content-credentials block that sharp won't read. `compress.mjs`, `trace-overlay.mjs` and `cut-sheet.mjs` strip it.
 - **Sibling repositories** are read-only. When copying from one, name the source repository and path in the commit message (CLAUDE.md).
-- **Headless walking tests:** start Io on ground she can stand on (`goField` doesn't move her off a bad point), mark the square's first scene done (`state.done.first`) or she walks into it, and hold off the wilds' random fights with `field.setCounter(-1e6)`.
+- **Headless walking tests:** start Io on ground she can stand on (`goField` doesn't move her off a bad point), mark the square's first scene done (`state.done.first`) or she walks into it, and hold off the wilds' random fights with `field.setCounter(-1e6)`: the counter carries from map to map, so once holds a whole row of scenes.
 - **Measuring music:** `ffmpeg -i <file> -af ebur128 -f null -` gives a song's loudness; the made-up music can be rendered offline with an `OfflineAudioContext` (`ThareiaAudio.musicPlay(id, { ctx, at: 0, until })`) and measured the same way.
 
 ## Chris's preferences, from this session

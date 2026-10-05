@@ -1,48 +1,50 @@
-// game.js: the game itself (plan phase 5), joining the pieces: the title, the ground maps (field.js), the world map
-// (world.js), the dialogue box (talk.js), the battles (the battle screen in its game mode, with fights.js), the story's
+// game.js: the game itself (plan phase 5), joining the pieces: the title, the ground maps (field.js), the flying map
+// (fly.js), the dialogue box (talk.js), the battles (the battle screen in its game mode, with fights.js), the story's
 // beats and words (script.js), the menus, the herb shops, the rests and the save (state.js), and the music: Chris's
 // songs in the towns and the wilds (songs.js), his library from 20-min everywhere else (thareia-audio.js), and the
 // battles' own theme (sound.js).
 // The story runs on flags in the save: party (Sol has joined), magpie (Quill's skiff is Io's), lights (Bogmire's lamps
 // are back), refit, envoi, charge, stoop, shipyard, upgrade2, ending. The highest band the Magpie can reach (st.band)
-// opens the world map's bands; the rest lie under cold mist.
-// Until the flying demo (plan step 19) is joined in, boarding the Magpie picks a landing and the flight is a short
-// crossing of the night sky.
+// opens the flying map's bands; the rest lie under cold mist.
+// Io walks only on the ground maps: the world map is only for flying the Magpie (Chris, October 3), and since his eight
+// wilderness scenes (October 5) each band's row of them leads on foot from its camp, where the Magpie lands, to its town.
 // Game.start({ host, src(path) -> URL, skipTitle, state, chapter }) -> the game (chapter: a CHAPTERS index, for a page
-// that plays only that chapter: its title offers to begin it or carry on). Defines window.Game (with Game.arenaFor(cfg):
-// what a fight's cutscene is given of its arena, below).
+// that plays only that chapter: its title offers to begin it or carry on). Defines window.Game = { start, LANDINGS,
+// CHAPTERS, arenaFor } (Game.arenaFor(cfg): what a fight's cutscene is given of its arena, below).
 (function () {
   'use strict';
   function el(tag, attrs, parent, text) { const e = document.createElement(tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; if (parent) parent.appendChild(e); return e; }
   const nf = (n) => Math.round(n).toLocaleString('en-US');
   const wait = (s) => new Promise((r) => setTimeout(r, s * 1000));
-  // the world map's places: where each lies on the atlas, its band, where walking onto it leads, and where Io comes out
-  const PLACES = {
-    wickhollow: { name: 'Wickhollow', at: [1348, 1838], band: 1, map: 'cottage', arrive: [790, 990], out: [1348, 1880] },
-    thornwood: { name: 'The Thornwood', at: [1530, 2160], band: 1, map: 'thornwood', arrive: [60, 456], dir: 'e', out: [1530, 2200] },
-    bogmire: { name: 'Bogmire', at: [1752, 2512], band: 1, map: 'bogmire', arrive: [70, 368], dir: 'e', out: [1752, 2550] },
-    warmCamp: { name: 'The Warm Roads camp', at: [820, 1560], band: 2, kind: 'camp', label: 'Camp' },
-    node1: { name: 'An Ember Line node', at: [960, 1420], band: 2, kind: 'node', label: 'The node' },
-    node2: { name: 'An Ember Line node', at: [1180, 1330], band: 2, kind: 'node', label: 'The node' },
-    node3: { name: 'An Ember Line node', at: [760, 1250], band: 2, kind: 'node', label: 'The node' },
-    dawnroost: { name: 'Dawnroost', at: [1325, 1098], band: 2, map: 'dawnroost', arrive: [645, 990], out: [1325, 1140] },
-    northCamp: { name: 'The northern camp', at: [1150, 620], band: 3, kind: 'camp', label: 'Camp' },
-    crossroads: { name: 'The northern crossroads', at: [1960, 820], band: 3, map: 'crossroads', arrive: [768, 990], out: [1960, 860] },
-    shipyard: { name: 'The shipyard', at: [2097, 599], band: 3, map: 'shipyard', arrive: [760, 990], out: [2097, 640], need: (st) => st.flags.stoop },
-    frozenCamp: { name: 'The frozen camp', at: [2760, 1120], band: 4, kind: 'camp', label: 'Camp' },
-    frozenPass: { name: 'The frozen pass', at: [3270, 980], band: 4, map: 'frozen-pass', arrive: [790, 990], out: [3270, 1020] },
-    misthollow: { name: 'Misthollow', at: [3500, 735], band: 4, map: 'misthollow', arrive: [768, 985], out: [3500, 780] },
+  // where each place lay on the world map (atlas px), read only for saves made there before the wilderness scenes:
+  // nobody walks it now (Chris, October 3: it is for flying). A place's ground map and where Io came onto it from the
+  // world map, a camp (its landing), or a node (its road, the Ember Line road)
+  const OLD_WORLD = {
+    wickhollow: { at: [1348, 1838], band: 1, map: 'cottage', arrive: [790, 990] },
+    thornwood: { at: [1530, 2160], band: 1, map: 'thornwood', arrive: [60, 456] },
+    bogmire: { at: [1752, 2512], band: 1, map: 'bogmire', arrive: [70, 368] },
+    warmCamp: { at: [820, 1560], band: 2, camp: 'warmCamp' },
+    node1: { at: [960, 1420], band: 2, map: 'ember-line-road' }, node2: { at: [1180, 1330], band: 2, map: 'ember-line-road' }, node3: { at: [760, 1250], band: 2, map: 'ember-line-road' },
+    dawnroost: { at: [1325, 1098], band: 2, map: 'dawnroost', arrive: [645, 990] },
+    northCamp: { at: [1150, 620], band: 3, camp: 'northCamp' },
+    crossroads: { at: [1960, 820], band: 3, map: 'crossroads', arrive: [768, 990] },
+    shipyard: { at: [2097, 599], band: 3, map: 'shipyard', arrive: [760, 990], need: (sv) => sv.flags.stoop },
+    frozenCamp: { at: [2760, 1120], band: 4, camp: 'frozenCamp' },
+    frozenPass: { at: [3270, 980], band: 4, map: 'frozen-pass', arrive: [790, 990] },
+    misthollow: { at: [3500, 735], band: 4, map: 'misthollow', arrive: [768, 985] },
   };
-  // where the Magpie can land: a dock on a ground map, or a camp on the world map
-  // (sky: where she docks on the flying map, in atlas pixels; Wickhollow's and Bogmire's are the world travel demo's)
+  // where the Magpie can land: a dock on a ground map, or a camp's landing ground (maps.js land: she sets down there,
+  // and Io steps down 50 px east of it, beside her and in reach of her); a camp's first landing plays its scene, then
+  // offers a rest (sky: where she docks on the flying map, in atlas pixels; Wickhollow's and Bogmire's are the world
+  // travel demo's)
   const LANDINGS = {
     wickhollow: { name: 'Wickhollow', band: 1, field: ['jetty', [768, 700]], sky: [1446, 1806] },
     bogmire: { name: 'Bogmire', band: 1, field: ['bogmire', [100, 372]], need: (st) => st.flags.lights, sky: [1886, 2462] },
-    warmCamp: { name: 'The Warm Roads', band: 2, world: 'warmCamp', sky: [820, 1530] },
+    warmCamp: { name: 'The Warm Roads', band: 2, field: ['warm-roads-camp', [368, 425]], scene: 'warmRoads', sky: [820, 1530] },
     dawnroost: { name: 'Dawnroost', band: 2, field: ['dawnroost', [1400, 330]], need: (st) => st.done['visit:dawnroost'], sky: [1365, 1085] },
-    northCamp: { name: 'The northern wilds', band: 3, world: 'northCamp', sky: [1150, 590] },
+    northCamp: { name: 'The northern wilds', band: 3, field: ['northern-camp', [386, 455]], scene: 'northern', sky: [1150, 590] },
     shipyard: { name: 'The shipyard', band: 3, field: ['shipyard', [764, 290]], need: (st) => st.done['visit:shipyard'], sky: [2097, 580] },
-    frozenCamp: { name: 'The northeast peaks', band: 4, world: 'frozenCamp', sky: [2760, 1090] },
+    frozenCamp: { name: 'The northeast peaks', band: 4, field: ['frozen-camp', [356, 442]], scene: 'frozen', sky: [2760, 1090] },
   };
   // the chapters: the start, and each gate with the party as the story leaves it there (story.js's path), for trying a
   // later part without playing up to it (Chris, October 3). Each starts just before its gate, in the town on its
@@ -103,11 +105,20 @@
     'frozen-pass': [['wind', 5, 9, 0.32], ['blizzard', 12, 22, 0.2]],
     misthollow: [['wind', 6, 11, 0.25], ['bell', 25, 50, 0.15], ['owl', 16, 30, 0.2]],
     moonwell: [['wind', 6, 11, 0.25]],
-    world: [['wind', 8, 15, 0.2], ['crickets', 10, 18, 0.18]],
+    // the wilderness scenes, from what each picture shows: the camps' fires, the Ember Line road's stream and nodes, the
+    // forest road's woods, the northern camp's stream, Eldergrove's trees, the open moor, the frozen camp and shore
+    'warm-roads-camp': [['campfire', 5, 9, 0.28], ['crickets', 7, 13, 0.22], ['owl', 16, 30, 0.18]],
+    'ember-line-road': [['crickets', 6, 12, 0.25], ['river', 9, 16, 0.2], ['vein-pulse', 14, 26, 0.12]],
+    'dawnroost-road': [['owl', 10, 22, 0.25], ['leaves', 8, 15, 0.25], ['crickets', 9, 16, 0.18]],
+    'northern-camp': [['campfire', 5, 9, 0.28], ['river', 9, 16, 0.2], ['owl', 14, 28, 0.2]],
+    'eldergrove-edge': [['leaves', 7, 14, 0.25], ['owl', 10, 20, 0.25], ['wind', 12, 22, 0.15]],
+    'cold-moor': [['wind', 6, 11, 0.28], ['owl', 16, 30, 0.16]],
+    'frozen-camp': [['campfire', 5, 9, 0.28], ['wind', 6, 11, 0.25], ['blizzard', 18, 30, 0.12]],
+    'frostmere-shore': [['wind', 5, 10, 0.3], ['blizzard', 14, 24, 0.16]],
   };
-  const MUSIC = { cottage: 'title', wickhollow: 'town', jetty: 'town', thornwood: 'travel', bogmire: 'marsh', 'bogmire-heart': 'ruins', dawnroost: 'town', 'dawnroost-node': 'ruins', crossroads: 'travel', shipyard: 'town', 'frozen-pass': 'travel', misthollow: 'ruins', moonwell: 'ruins' };
-  // the night atlas in nine tiles (the build inlines each path)
-  const TILES = { '00': "art/world/night-00.webp", '01': "art/world/night-01.webp", '02': "art/world/night-02.webp", '10': "art/world/night-10.webp", '11': "art/world/night-11.webp", '12': "art/world/night-12.webp", '20': "art/world/night-20.webp", '21': "art/world/night-21.webp", '22': "art/world/night-22.webp" };
+  // each map's music ('travel' is Chris's wilds song, as on the world map's camps and walks before the wilderness scenes)
+  const MUSIC = { cottage: 'title', wickhollow: 'town', jetty: 'town', thornwood: 'travel', bogmire: 'marsh', 'bogmire-heart': 'ruins', dawnroost: 'town', 'dawnroost-node': 'ruins', crossroads: 'travel', shipyard: 'town', 'frozen-pass': 'travel', misthollow: 'ruins', moonwell: 'ruins',
+    'warm-roads-camp': 'travel', 'ember-line-road': 'travel', 'dawnroost-road': 'travel', 'northern-camp': 'travel', 'eldergrove-edge': 'travel', 'cold-moor': 'travel', 'frozen-camp': 'travel', 'frostmere-shore': 'travel' };
   // the regions' names on Chris's D&D map (design decisions, place names)
   const REGION = { 2: 'The Verdant Wilds', 3: 'The northern wilds', 4: 'The Ironspire Peaks' };
 
@@ -132,7 +143,7 @@
     const RL = window.BattleRules, GS = window.GameState, S = window.SCRIPT, MAPS = window.MAPS, AUD = window.ThareiaAudio, K = window.Keepsakes;
     const host = opts.host || document.body;
     const root = el('div', { class: 'game' }, host);
-    const fieldHost = el('div', { class: 'layer' }, root), worldHost = el('div', { class: 'layer' }, root);
+    const fieldHost = el('div', { class: 'layer' }, root);
     let st = opts.state || GS.fresh();
     // music, effects and amb (the places' own sounds: crickets, wind, water): 0 (off) to 1; text: how fast the words
     // come (0 for all at once); big: larger text
@@ -177,7 +188,7 @@
     const ambNext = {};
     setInterval(() => {
       if (!audioOn || !settings.amb || busy || document.hidden) return;
-      const id = mode === 'field' ? field.map && field.map.id : mode === 'world' ? 'world' : null, list = id && AMBIENCE[id];
+      const id = mode === 'field' ? field.map && field.map.id : null, list = id && AMBIENCE[id];
       if (!list) return;
       const now = performance.now() / 1000;
       for (const [snd, a, b, v] of list) {
@@ -221,18 +232,7 @@
       onSpot: (s) => act(() => onSpot(s)), onEncounter: (m) => act(() => wild(m.wild.band, m.wild.scene)), onMenu: () => act(menu),
       goal: (id) => goalOn(id),
     });
-    // ---------- the world map ----------
-    const world = World.create(worldHost, {
-      tiles: (r, c) => src(TILES[r + '' + c]), speed: 45, zoom: 2, paintedIo,
-      encounter: { get mean() { return 330 / settings.rate; }, get min() { return 190 / settings.rate; } },
-      places: Object.fromEntries(Object.entries(PLACES).map(([id, p]) => [id, Object.assign({}, p, { hidden: () => (p.need && !p.need(st)) || (p.kind === 'node' && st.done[id]) })])),
-      open: (b) => b <= st.band,
-      magpie: () => magpieOnWorld(), goal: () => goalOnWorld(),
-      regionName: (x, y, b) => (b === 1 ? (x < 1600 && y < 2250 ? 'The Gloamwood' : 'The Gloomfen') : REGION[b] || 'Aethermoor'),
-      onEnter: (id) => act(() => enterPlace(id)), onEncounter: (b) => act(() => wild(b, GameFights.WILD_SCENE[b])),
-      onMagpie: () => act(board), onMenu: () => act(menu),
-    });
-    // the people who come and go with the story, and the Magpie where it's moored
+    // the people who come and go with the story, the Magpie where it's moored, and the Ember Line's nodes
     function setupMaps() {
       const extra = {
         bogmire: { people: [{ id: 'quill', name: 'Quill', at: [190, 560], look: 'sailor', when: () => st.flags.lights }], spots: [{ kind: 'magpie', at: [84, 352], label: 'The Magpie', note: 'Tied up at the west dock.' }] },
@@ -244,10 +244,13 @@
         const m = it.home && it.at && MAPS[it.home];
         if (m && !(m.spots || []).some((s) => s.kind === 'keepsake' && s.id === it.id)) m.spots = (m.spots || []).concat({ kind: 'keepsake', id: it.id, at: it.at, label: 'Something glinting' });
       }
+      // each camp's Magpie, on its landing ground (maps.js land): a soft glow, as at the docks, while she's moored there
+      for (const L of Object.values(LANDINGS)) { const m = MAPS[L.field[0]]; if (m && m.land && !(m.spots || []).some((s) => s.kind === 'magpie')) m.spots = (m.spots || []).concat({ kind: 'magpie', at: m.land.slice(), label: 'The Magpie', note: 'Down on the landing ground.' }); }
       for (const id in MAPS) {
         const m = MAPS[id]; m.people0 = m.people0 || m.people || [];
         for (const s of m.spots || []) {
-          if (s.kind === 'magpie') s.hide = () => !(st.magpie && LANDINGS[st.magpie].field && LANDINGS[st.magpie].field[0] === id);
+          if (s.kind === 'magpie') s.hide = () => { const L = st.magpie && LANDINGS[st.magpie]; return !(L && L.field && L.field[0] === id); };
+          if (s.kind === 'node') s.hide = () => !!st.done[s.id]; // a node Sol has relit goes dark, as its marker did on the world map
           // a keepsake is gone once found, and one whose gate isn't won yet (items.js after) isn't there yet
           if (s.kind === 'keepsake') { const it = K.get(s.id); s.hide = () => K.found(st, s.id) || !!(it && it.after && !st.done[it.after]); }
         }
@@ -302,41 +305,52 @@
       const sp = (m.spots || []).find((x) => x.kind === 'magpie' && !(x.hide && x.hide())); return sp ? { x: sp.at[0], y: sp.at[1], kind: 'spot' } : null;
     }
     const magpieMap = () => { const L = st.magpie && LANDINGS[st.magpie]; return L && L.field ? L.field[0] : null; };
-    // on a ground map: the step itself when it's here; else the way there on foot; with no road there, the Magpie when
-    // she's moored on this side; else the way out to the world map
+    // on a ground map: the step itself when it's here; else the way there on foot (through the wilderness scenes too);
+    // with no road there, the Magpie, here or on foot (keepMagpieNear keeps her where she can be walked to)
     function goalOn(id) {
       const s = nextStep(); if (!s || !MAPS[id]) return null;
       const mag = magpieMap(), to = s.magpie ? mag : s.map;
       if (to === id) return markOn(id, s);
       let ex = to && wayOut(id, (m) => m === to);
       if (!ex && !s.magpie && mag) { if (mag === id) return markOn(id, { magpie: true }); ex = wayOut(id, (m) => m === mag); }
-      if (ex) return exitMark(ex);
-      const out = (MAPS[id].exits || []).filter((e) => e.to === 'world'), P = field.P;
-      const d = (e) => Math.hypot((e.rect[0] + e.rect[2]) / 2 - P.x, (e.rect[1] + e.rect[3]) / 2 - P.y);
-      if (out.length) return exitMark(out.reduce((a, b) => (d(b) < d(a) ? b : a)));
-      ex = wayOut(id, (m) => (MAPS[m].exits || []).some((e) => e.to === 'world'));
       return ex ? exitMark(ex) : null;
     }
-    // where the Magpie sits on the world map when she's moored at a camp
-    const magpieOnWorld = () => { const L = st.magpie && LANDINGS[st.magpie]; return L && L.world ? PLACES[L.world].at.map((v, i) => v + (i ? -26 : 34)) : null; };
-    // on the world map: the Magpie at her camp; else the place that opens onto the step's own map; else the nearest open
-    // place that leads to it on foot
-    function goalOnWorld() {
-      const s = nextStep(); if (!s) return null;
-      if (s.magpie && magpieOnWorld()) return magpieOnWorld();
-      const to = s.magpie ? magpieMap() : s.map; if (!to) return null;
-      let best = null, bd = Infinity;
-      for (const id in PLACES) {
-        const p = PLACES[id];
-        if (!p.map || p.band > st.band || (p.need && !p.need(st)) || (p.map !== to && !wayOut(p.map, (m) => m === to))) continue;
-        const dd = (p.map === to ? 0 : 1e6) + Math.hypot(p.at[0] - world.P.x, p.at[1] - world.P.y); if (dd < bd) { bd = dd; best = p.at; }
+    // ---------- the Magpie within reach on foot, and saves from the world map ----------
+    // the ground maps fall into four parts, one for each band, that only the Magpie joins: nobody walks the world map now
+    const onFoot = (a, b) => a === b || !!wayOut(a, (m) => m === b);
+    // on a map from which she can't be reached on foot (a lost fight woke the party at a rest in another band, a save
+    // from before the wilderness scenes), she's moored at the landing nearest on foot that she may use, so the party is
+    // never stranded
+    function keepMagpieNear(here) {
+      const L = st.magpie && LANDINGS[st.magpie];
+      if (!st.flags.magpie || !MAPS[here] || (L && L.field && onFoot(here, L.field[0]))) return;
+      const seen = new Set([here]), q = [here];
+      for (let h = 0; h < q.length; h++) {
+        const k = Object.keys(LANDINGS).find((id) => { const N = LANDINGS[id]; return N.field[0] === q[h] && N.band <= st.band && (!N.need || N.need(st)); });
+        if (k) { st.magpie = k; note('The Magpie is moored at ' + LANDINGS[k].name.replace(/^The /, 'the ') + '.'); return; }
+        for (const ex of MAPS[q[h]].exits || []) if (MAPS[ex.to] && !seen.has(ex.to)) { seen.add(ex.to); q.push(ex.to); }
       }
-      return best;
+    }
+    // a world-map position from a save made before the wilderness scenes: the place it was nearest, of those open to
+    // that save; a rest there was always a camp's (its fire)
+    function fromWorldAt(sv, at, rest) {
+      let best = null, bd = Infinity;
+      for (const k in OLD_WORLD) { const p = OLD_WORLD[k]; if (p.band > (sv.band || 1) || (p.need && !p.need(sv)) || (rest && !p.camp)) continue; const d = Math.hypot(p.at[0] - at[0], p.at[1] - at[1]); if (d < bd) { bd = d; best = p; } }
+      if (!best) return rest ? ['cottage', [838, 520]] : ['cottage', [790, 990]];
+      if (!best.camp) return [best.map, (best.arrive || MAPS[best.map].start).slice()];
+      const L = LANDINGS[best.camp], fire = (MAPS[L.field[0]].spots || []).find((s) => s.kind === 'rest');
+      return [L.field[0], (rest && fire ? fire.at : L.field[1]).slice()];
+    }
+    // such a save, where and its last rest moved onto the ground maps (and left as it is if it has nothing on the world map)
+    function fromWorld(sv) {
+      const W = sv.where, R = sv.rest, home = [1348, 1880];
+      if (W && W.mode === 'world') { const [map, at] = fromWorldAt(sv, W.at || home); sv.where = { mode: 'field', map, at, dir: 's' }; }
+      if (R && R.mode === 'world') { const [map, at] = fromWorldAt(sv, R.at || home, true); sv.rest = { mode: 'field', map, at }; }
     }
 
     // ---------- running one thing at a time ----------
-    function pauseAll() { field.pause(); world.pause(); }
-    function resumeAll() { if (busy) return; if (mode === 'field') field.resume(); else if (mode === 'world') world.resume(); }
+    function pauseAll() { field.pause(); }
+    function resumeAll() { if (busy) return; if (mode === 'field') field.resume(); }
     async function act(fn) {
       if (busy && fn !== menu) return; busy++; pauseAll();
       try { await fn(); } catch (e) { console.error(e); } finally { busy--; resumeAll(); }
@@ -357,7 +371,7 @@
     // A direction: { map } (only on that map), { add: id, look, at, dir }, { walk: id, path, speed, wait },
     // { io: path, speed }, { face: id or 'io', dir or to }, { focus: point, id, 'io' or null }, { wait: seconds },
     // { until: id } (her walk ends), { remove: id }, { person: id, hide }, { keep: true } (the actors stay afterwards). A point is [x, y] on the map, 'io', an
-    // actor's id, or { near: 'io' or an id, dx, dy }. Off the field (a still, the world map) only the words play
+    // actor's id, or { near: 'io' or an id, dx, dy }. Off the field (a still) only the words play
     async function stagePlay(lines) {
       if (!lines || !lines.length) return;
       const F = field.stage, walks = {};
@@ -385,47 +399,54 @@
       if (staged && !keep) F.clear();
     }
     async function ask(who, text, choices) { return talk.ask(who, text, choices); }
-    function save() { st.where = mode === 'world' ? { mode: 'world', at: [Math.round(world.P.x), Math.round(world.P.y)], dir: world.P.dir } : { mode: 'field', map: field.map && field.map.id, at: [Math.round(field.P.x), Math.round(field.P.y)], dir: field.P.dir }; GS.save(st); }
+    function save() { st.where = { mode: 'field', map: field.map && field.map.id, at: [Math.round(field.P.x), Math.round(field.P.y)], dir: field.P.dir }; GS.save(st); }
 
     // ---------- moving between maps ----------
     async function goField(id, at, dir, quiet) {
       if (!quiet) await fadeTo(true, 0.3);
-      mode = 'field'; world.show(false); field.show(true);
+      mode = 'field'; field.show(true);
       const m = MAPS[id]; m.people = peopleFor(m);
       await field.load(id, at, dir);
+      keepMagpieNear(id);
       music(MUSIC[id] || 'travel'); save();
       await fadeTo(false, 0.3);
       await arrive(id);
     }
-    async function goWorld(x, y, dir) {
-      await fadeTo(true, 0.3);
-      mode = 'world'; field.show(false); world.show(true); world.place(x, y, dir || 's');
-      music('travel'); save();
-      await fadeTo(false, 0.3);
-    }
-    // a scene the first time a place is reached
+    // a scene the first time a place is reached; a camp's own, the first time the party comes down there
     async function arrive(id) {
       const first = !st.done['visit:' + id]; st.done['visit:' + id] = true;
+      const c = Object.keys(LANDINGS).find((k) => LANDINGS[k].scene && LANDINGS[k].field[0] === id);
+      if (c && !st.done['camp:' + c]) { // its scene, then the offer of a rest, as the world map's camps did
+        st.done['camp:' + c] = true; await scene(LANDINGS[c].scene);
+        const fire = (MAPS[id].spots || []).find((x) => x.kind === 'rest'); await rest(fire ? fire.label : MAPS[id].name); save(); return;
+      }
       if (!first) return;
       if (id === 'bogmire' && !st.flags.lights) await scene('bogmireDark');
       else if (id === 'dawnroost') await scene('dawnroostHome');
-      else if (id === 'frozen-pass') await scene('frozen');
+      else if (id === 'frozen-pass') { if (!st.done['camp:frozenCamp']) await scene('frozen'); } // the frozen camp has said it
       else if (id === 'misthollow') await scene('misthollow');
       else if (id === 'shipyard') { await scene('shipyard'); st.flags.shipyard = true; }
       save();
     }
     async function onExit(ex) {
       if (ex.to === 'thornwood' && field.map.id === 'wickhollow' && !st.flags.party) { await scene('thornwoodShut'); stepBack(ex); return; }
-      if (ex.to === 'world' && !st.flags.party) { await say([['io', 'Something is wrong up in the square. I should go and see first.']]); stepBack(ex); return; }
-      if (ex.to === 'world') { const p = PLACES[ex.at]; await goWorld(p.out[0], p.out[1], 's'); return; }
-      await goField(ex.to, ex.at);
+      // a road out of the picture into the wide world (the cottage's three, the crossroads' south and east): the world map
+      // is only flown now, so she turns back, saying why
+      if (ex.to === 'world') { await say(!st.flags.party ? [['io', 'Something is wrong up in the square. I should go and see first.']] : S.scenes[ex.say] || S.scenes.roadOut); stepBack(ex); return; }
+      await goField(ex.to, ex.at, ex.dir);
     }
-    function stepBack(ex) { const r = ex.rect, cx = (r[0] + r[2]) / 2, cy = (r[1] + r[3]) / 2; const dx = 768 - cx, dy = 512 - cy, L = Math.hypot(dx, dy) || 1; field.P.x += dx / L * 30; field.P.y += dy / L * 30; }
-    async function enterPlace(id) {
-      const p = PLACES[id];
-      if (p.kind === 'camp') { await camp(id); return; }
-      if (p.kind === 'node') { if (!st.done[id]) { await scene('node'); st.done[id] = true; const sh = 150 * p.band; st.shards += sh; sfx('node-wake'); await say(['The node’s warmth gives back a little sunstone: ' + sh + ' shards.']); save(); } return; }
-      await goField(p.map, p.arrive, p.dir || 'n');
+    // she steps 30 px straight back in from the edge the road leaves by (exitMark's out), the way she came, so she stays
+    // on the path (toward the map's middle took her off the cottage's footbridge, which runs along its edge); where the
+    // path bends at the edge, a few px to one side, the nearest spot she can walk straight back to (field.canStand).
+    // She stops there, rather than drifting on toward the road
+    function stepBack(ex) {
+      const P = field.P, o = exitMark(ex).out, ux = -Math.cos(o), uy = -Math.sin(o);
+      const clear = (x, y) => { for (let i = 1; i <= 15; i++) if (!field.canStand(P.x + (x - P.x) * i / 15, P.y + (y - P.y) * i / 15)) return false; return true; };
+      P.vx = P.vy = 0;
+      for (const d of [30, 20]) for (let s = 0; s <= 14; s += 2) for (const side of s ? [s, -s] : [0]) {
+        const x = P.x + ux * d - uy * side, y = P.y + uy * d + ux * side;
+        if (clear(x, y)) { P.x = x; P.y = y; return; }
+      }
     }
 
     // ---------- the story's events and set fights ----------
@@ -471,8 +492,8 @@
     // a lost fight: the party wakes at its last rest with everything it had before the fight
     async function wake(sceneId) {
       GS.restore(st); st.herbs = Object.assign({}, preHerbs);
-      const R = st.rest;
-      if (R.mode === 'world') await goWorld(R.at[0], R.at[1]); else await goField(R.map, R.at, 's');
+      fromWorld(st); // a rest from before the wilderness scenes, on the world map: its camp's fire
+      await goField(st.rest.map, st.rest.at, 's'); // the Magpie is moored within reach on foot (keepMagpieNear)
       if (sceneId) await scene(sceneId); else await say(['The party wakes at the last place it rested, with everything it had.']);
       save();
     }
@@ -493,6 +514,12 @@
       if (s.kind === 'look') { await say([s.note]); return; }
       if (s.kind === 'magpie') { await board(); return; }
       if (s.kind === 'keepsake') { await keepsake(s.id); return; }
+      if (s.kind === 'node') { // an Ember Line node on its road, with the world map's ids (st.done carries over): Sol relights it
+        if (st.done[s.id]) return;
+        await scene('node'); st.done[s.id] = true;
+        const sh = 150 * bandHere(); st.shards += sh; sfx('node-wake'); // 300 in band 2, as before
+        await say(['The node’s warmth gives back a little sunstone: ' + sh + ' shards.']); save(); return;
+      }
       if (s.kind === 'well') {
         const W = S.wells[s.id];
         if (st.done['well:' + s.id] || !W) { await say(['The water lies still and dark.']); return; }
@@ -556,20 +583,15 @@
       if (gi.mpBack) st.mp = Math.min(GS.maxMp(st), GS.mpOf(st) + Math.round(GS.maxMp(st) * gi.mpBack / 100));
       GS.fit(st);
     }
-    const bandHere = () => (mode === 'world' ? world.bandAt(world.P.x, world.P.y) || 1 : (field.map && field.map.band) || 1);
+    const bandHere = () => (field.map && field.map.band) || 1;
     async function rest(name) {
       const i = await ask(null, 'Rest here? HP and MP come back, and the game is saved.', ['Rest', 'Not now']);
       if (i) return;
       if (mode === 'field' && /Moonwell/.test(name)) await field.pose('cast', 2.1); // at a Moonwell she casts moonlight into it
       await fadeTo(true, 0.6); sfx('hearthfire'); GS.restore(st);
-      st.rest = mode === 'world' ? { mode: 'world', at: [Math.round(world.P.x), Math.round(world.P.y)] } : { mode: 'field', map: field.map.id, at: [Math.round(field.P.x), Math.round(field.P.y)] };
+      st.rest = { mode: 'field', map: field.map.id, at: [Math.round(field.P.x), Math.round(field.P.y)] };
       save(); await wait(0.6); await fadeTo(false, 0.6);
       note('Rested at ' + name + '. The game is saved.');
-    }
-    async function camp(id) {
-      const first = !st.done['camp:' + id]; st.done['camp:' + id] = true;
-      if (first) await scene(id === 'warmCamp' ? 'warmRoads' : id === 'northCamp' ? 'northern' : 'frozen');
-      await rest(PLACES[id].name);
     }
     async function upgrade(U) {
       const i = UPGRADES.indexOf(U), M = RL.MAGPIE[i];
@@ -589,11 +611,9 @@
       const k = await ask(null, 'Take the Magpie up?', ['Fly', 'Not now']);
       if (k) return;
       const id = await flyNow(here);
-      if (!id || id === here) { const L0 = LANDINGS[here]; if (L0.world) { const p = PLACES[L0.world].at; await goWorld(p[0], p[1] + 30); } else await goField(L0.field[0], L0.field[1], 's'); return; }
-      const L = LANDINGS[id];
-      st.magpie = id;
-      if (L.world) { const p = PLACES[L.world].at; await goWorld(p[0], p[1] + 30); if (!st.done['camp:' + L.world]) await camp(L.world); }
-      else await goField(L.field[0], L.field[1], 's');
+      if (id && id !== here) st.magpie = id;
+      const L = LANDINGS[st.magpie];
+      await goField(L.field[0], L.field[1], 's'); // a camp's first landing plays its scene and offers a rest (arrive)
       save();
     }
     // the flying map (fly.js): the Magpie over the far view, landing at any stop she can reach
@@ -605,18 +625,11 @@
         open: (b) => b <= st.band, bandAt: (x, y) => World.bandAt(x, y), music, sfx,
         regionName: (x, y) => { const b = World.bandAt(x, y); return b === 1 ? (x < 1600 && y < 2250 ? 'Over the Gloamwood' : 'Over the Gloomfen') : b ? 'Over ' + REGION[b].replace('The ', 'the ') : 'Over the open sea'; },
       });
-      await fadeTo(true, 0.3); field.show(false); world.show(false); mode = 'fly';
+      await fadeTo(true, 0.3); field.show(false); mode = 'fly';
       const p = flyer.fly(from); await fadeTo(false, 0.3);
       const id = await p;
       await fadeTo(true, 0.3);
       return id;
-    }
-    // the crossing: the night sky, the moon, and the clouds going by
-    async function flight(to) {
-      const sky = el('div', { class: 'flight' }, root); el('div', { class: 'flight-moon' }, sky); for (let i = 0; i < 5; i++) el('div', { class: 'flight-cloud c' + i }, sky);
-      el('p', { class: 'flight-text' }, sky, 'The Magpie lifts into the night… to ' + to + '.');
-      music('flight'); sfx('ship-takeoff');
-      await wait(3.2); sfx('ship-land'); sky.classList.add('out'); await wait(0.5); sky.remove();
     }
 
     // ---------- battles ----------
@@ -669,7 +682,7 @@
       stage.innerHTML = BattleScreen.markup();
       sw.remove();
       // the map under the battle stops drawing until the fight is over
-      const was = mode; field.show(false); world.show(false);
+      const was = mode; field.show(false);
       const cfg = GameFights.config(kind, st, o);
       const colossus = kind === 'wild' && (cfg.fight().foes || []).some((f) => f.id === 'colossus');
       // a cutscene first, when this fight has one that hasn't played
@@ -688,9 +701,9 @@
       });
       if (still && cfg.arena) { clearTimeout(late); if (still.parentNode) still.remove(); } // (an arena's battle that ended before it drew)
       layer.ctl.stop(); layer.remove();
-      if (was === 'field') field.show(true); else if (was === 'world') world.show(true);
+      if (was === 'field') field.show(true);
       if (r.outcome !== 'error') { moreShards(r); GS.applyBattle(st, r); backAfter(r); }
-      if (mode === 'field') music(MUSIC[field.map.id] || 'travel'); else if (mode === 'world') music('travel');
+      if (mode === 'field') music(MUSIC[field.map.id] || 'travel');
       save();
       if (colossus && r.outcome === 'win') await colossusGifts();
       if (r.keepsakeShards) note('The keepsakes find ' + nf(r.keepsakeShards) + ' more shards.');
@@ -764,7 +777,7 @@
         const ks = K.summary(st, id);
         if (ks) el('p', { class: 'gm-note' }, c, 'Her keepsakes: ' + ks + '.');
       }
-      el('p', { class: 'gm-note' }, b, 'Played ' + clock(st.time) + ' · ' + st.wins + ' fights won · The Magpie: ' + (st.flags.magpie ? 'band ' + st.band + (st.magpie ? ', at ' + LANDINGS[st.magpie].name : '') : 'not yet yours'));
+      el('p', { class: 'gm-note' }, b, 'Played ' + clock(st.time) + ' · ' + st.wins + ' fights won · The Magpie: ' + (st.flags.magpie ? 'band ' + st.band + (st.magpie && LANDINGS[st.magpie] ? ', at ' + LANDINGS[st.magpie].name : '') : 'not yet yours'));
     }
     function pickHero(b, then) { const r = el('div', { class: 'gm-pick' }, b); for (const id of heroes()) { const x = el('button', { type: 'button', class: 'go alt' }, r, RL.HEROES[id].name); x.addEventListener('click', () => then(id)); } }
     function herbs(b, redraw) {
@@ -824,7 +837,8 @@
     }
 
     // ---------- the saves: three slots, and a save code to carry a game to another device or copy of the game ----------
-    function whereOf(sv) { const W = sv.where || {}; return W.mode === 'world' ? 'the world map' : (MAPS[W.map] && MAPS[W.map].name) || 'Wickhollow'; }
+    // where a save is: a save from the world map, from before the wilderness scenes, by the place Continue will open
+    function whereOf(sv) { const W = sv.where || {}, map = W.mode === 'world' ? fromWorldAt(sv, W.at || [1348, 1880])[0] : W.map; return (MAPS[map] && MAPS[map].name) || 'Wickhollow'; }
     const saveLine = (sv) => 'Level ' + sv.level + ' · ' + clock(sv.time) + ' played · ' + whereOf(sv);
     function saves(b, redraw) {
       el('p', { class: 'gm-top' }, b, 'The game saves itself in the slot in use (slot ' + GS.slot() + ') at every rest and every change of place. Save in another slot to keep this moment as it is.');
@@ -895,7 +909,7 @@
     // ---------- the title ----------
     let titleEl = null;
     function showTitle() {
-      mode = 'title'; field.show(false); world.show(false); pauseAll();
+      mode = 'title'; field.show(false); pauseAll();
       if (titleEl) titleEl.remove();
       titleEl = el('div', { class: 'title' }, root);
       const img = el('img', { class: 'title-art', alt: '' }, titleEl); img.src = src("art/title/key-art.webp");
@@ -960,9 +974,10 @@
     async function begin(isNew) {
       titleEl.remove(); titleEl = null; busy++;
       K.migrate(st); // a save from before the twenty keeps its two keepsakes
+      fromWorld(st); // and one from before the wilderness scenes, made on the world map, comes down onto the ground maps
       try {
         if (isNew) { music('title'); await prologue(); await goField('cottage', [838, 520], 's'); }
-        else { const W = st.where; if (W.mode === 'world') await goWorld(W.at[0], W.at[1], W.dir); else await goField(W.map, W.at, W.dir); }
+        else { const W = st.where; await goField(W.map, W.at, W.dir); }
       } finally { busy--; resumeAll(); }
     }
     async function prologue() {
@@ -975,10 +990,10 @@
     // time played
     setInterval(() => { if (mode !== 'title' && !document.hidden) st.time += 1; }, 1000);
     if (opts.skipTitle) { audioOn = false; begin(!opts.state); } else showTitle();
-    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, world, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at) => act(() => goField(id, at)), goWorld: (x, y) => act(() => goWorld(x, y)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, PLACES, LANDINGS, menu: () => act(menu), audioInit, songs, get music() { return songs.playing() || AUD.musicPlaying(); }, get battleTheme() { return SND.musicOn; },
-      get goal() { return mode === 'field' && field.map ? goalOn(field.map.id) : mode === 'world' ? goalOnWorld() : null; } };
+    const api = { get flyer() { return flyer; }, get state() { return st; }, set state(v) { st = v; }, field, talk, CHAPTERS, chapterState, battle: (k, o) => act(() => battle(k, o)), goField: (id, at, dir) => act(() => goField(id, at, dir)), scene: (id) => act(() => scene(id)), get mode() { return mode; }, get busy() { return busy; }, LANDINGS, menu: () => act(menu), audioInit, songs, get music() { return songs.playing() || AUD.musicPlaying(); }, get battleTheme() { return SND.musicOn; },
+      get goal() { return mode === 'field' && field.map ? goalOn(field.map.id) : null; } };
     window.__game = api;
     return api;
   }
-  window.Game = { start, PLACES, LANDINGS, arenaFor };
+  window.Game = { start, LANDINGS, CHAPTERS, arenaFor };
 })();

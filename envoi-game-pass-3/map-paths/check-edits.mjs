@@ -5,11 +5,12 @@
 //   - every walk area, block and front is a closed shape: three or more different points round some ground, every
 //     point inside the painting's 1536 x 1024 (a repeated closing point or a shape crossing itself is a warning)
 //   - the exits, people and spots are maps.js's own, in its order, and inside the painting
-//   - each arrival leads to this map in maps.js (another map's exit) or game.js (the world map, the Magpie)
+//   - each arrival leads to this map in maps.js (another map's exit) or game.js (the Magpie); one from the world map
+//     (in edits made before the wilderness scenes, since when nobody walks it) is left out with a note
 //   - the edits were made on the game's tracing as it is now (or it says what changed since)
 //   - with the edits applied, Io can still reach every exit, person, spot and arrival (tools/check-maps.mjs's rule),
 //     and no walk area is cut off from the rest; only problems the game's tracing doesn't already have count
-// It also checks that the page's copy of game.js's world and Magpie arrivals (edits-core.js) still matches game.js.
+// It also checks that the page's copy of game.js's Magpie arrivals (edits-core.js) still matches game.js.
 // Usage: node envoi-game-pass-3/map-paths/check-edits.mjs <edits.json> [more.json ...]
 // Exits 1 when a map's edits can't go into the game as they are (an error, something she could reach before and can't
 // now, or 12 or more of the field's 12 px cells of walk area newly cut off: ground meant to go can still be applied,
@@ -22,7 +23,8 @@ const HERE = path.dirname(new URL(import.meta.url).pathname), R = path.resolve(H
 require(path.join(R, 'src/game/maps.js'));
 require(path.join(HERE, 'edits-core.js'));
 globalThis.window = globalThis; require(path.join(R, 'src/game/game.js'));
-const MAPS = globalThis.MAPS, E = globalThis.MapEdits, GAME = { PLACES: globalThis.Game.PLACES, LANDINGS: globalThis.Game.LANDINGS };
+// (game.js has no world-map places since the wilderness scenes: nothing comes onto a map from the world map now)
+const MAPS = globalThis.MAPS, E = globalThis.MapEdits, GAME = { PLACES: globalThis.Game.PLACES || {}, LANDINGS: globalThis.Game.LANDINGS || {} };
 
 const files = process.argv.slice(2);
 if (!files.length) { console.log('Usage: node envoi-game-pass-3/map-paths/check-edits.mjs <edits.json> [more.json ...]'); process.exit(2); }
