@@ -109,9 +109,10 @@
 
     // a place on the floor: painting pixels on a flat battle's painting, metres in an arena
     const spot = (p) => (AF ? { x: p[0], z: p[1] } : g(p[0], p[1]));
-    // the wraith's route in from the bridge (the first fight), and the Moonwell, where Lunara rises
+    // the wraith's route in from the bridge (the first fight), and the Moonwell, where Lunara rises (in an arena, the
+    // place's spot for her, unless the fight names its own: the Bramble Colossus stands where she would rise)
     const ROUTE = AF ? [] : [[1185, 452], [1120, 520], [1000, 690], [860, 800]].map((p) => g(p[0], p[1]));
-    const WELL = AF ? spot(ARENA.summon) : g(...(SC.summon || [712, 725])), LUN = { x: WELL.x, z: WELL.z - 0.9 };
+    const WELL = AF ? spot(cfg.summon || ARENA.summon) : g(...(SC.summon || [712, 725])), LUN = { x: WELL.x, z: WELL.z - 0.9 };
     const SUMMON_FROM = SC.summonFrom || 'the Moonwell';
     // an arena's frame shows the fight bigger than a flat painting does (the camera is near, at eye height): every zoom
     // asked for below is in a flat painting's terms, and is scaled by how much bigger (ZK; 1 on a flat painting), a little
@@ -120,7 +121,8 @@
     // (A cutscene that ends on its fight's opening frame works that frame out as shotField, shotFit and applyCam below
     // do, with ZK, ZMAX and BELOW: arenaFrame in envoi-final-draft/cutscenes/*/src/player.js. A change to any of them is
     // a change there too, in both, and both modules rebuilt; tools/game-test.mjs's colossus and finale steps compare the
-    // two crops once the arenas are on)
+    // two crops once the arenas are on. Sol in the air, which shotFit's top and shotField's STOOP_UP are for, never
+    // comes into an opening frame, so the cutscenes leave them out)
     const ZK = AF ? AF.ppm / 54 * 1.2 : 1, ZMAX = 1.5;
     // an arena's fight stands low in its frame (the camera is at eye height), so on a phone a tall menu (Io's seven
     // commands) would hide it: there a shot may slide down past the painting's bottom edge, up to this many of its
@@ -157,25 +159,38 @@
       shot((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2 - 18, s, k);
     }
     // the wide shot: every point (with a height) in frame, for summons, big attacks and the whole field
-    function shotFit(pts, zoom, k) {
+    function shotFit(pts, zoom, k, keepTop) {
       let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
       for (const p of pts) { const q = toPx(tmpV.set(p.x, p.y || 0, p.z)); x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }
       const availH = Math.max(120, view.h - view.uiH - 40), s = Math.min((view.w - 16) / (x1 - x0 + 120 * ZK), availH / (y1 - y0 + 70 * ZK)) * (zoom || 1);
       // an arena's frame is only so tall: when a giant won't fit above the menus, its head goes out of the top rather
-      // than everyone's feet out of the bottom
+      // than everyone's feet out of the bottom. A shot of Sol in the air (Kestrel Stoop) asks for the top instead
+      // (keepTop): the frame rises until the highest point is a little below the top edge, the ground sinking behind
+      // the windows by at most keepTop pixels of the screen (Infinity: as far as it takes)
       let cy = (y0 + y1) / 2;
-      if (AF) { const sMin = Math.max(view.w / IW, view.h / IH), sE = Math.min(Math.max(s, sMin), sMin * ZMAX); if ((y1 - y0 + 70 * ZK) * sE > availH) cy = y1 + 20 * ZK - availH / 2 / sE; }
+      if (AF) {
+        const sMin = Math.max(view.w / IW, view.h / IH), sE = Math.min(Math.max(s, sMin), sMin * ZMAX);
+        if ((y1 - y0 + 70 * ZK) * sE > availH) {
+          cy = y1 + 20 * ZK - availH / 2 / sE;
+          if (keepTop) cy = Math.max(y0 - 20 * ZK + ((view.h - view.uiH) / 2 + 20) / sE, cy - keepTop / sE);
+        }
+      }
       shot((x0 + x1) / 2, cy, s, k);
     }
-    // everyone still standing, heads included
+    // Sol hanging in the air on Kestrel Stoop's first turn (her model's held stoopRise) is about 3 m up (src/models/sol.js, UP)
+    const STOOP_UP = 2.95;
+    // everyone still standing, heads included: Sol in the air where she hangs. The shot keeps her in it as far as the
+    // others' feet can sink behind the windows by a short way (on the phone held sideways, full screen); on a shorter
+    // screen the fighters on the ground, who are the ones fighting while she hangs out of reach, come first
     function shotField(k) {
-      const pts = [];
+      const pts = []; let air = false;
       for (const f of standing()) {
-        pts.push({ x: f.pos.x, y: 0, z: f.pos.z }, { x: f.pos.x, y: f.tall, z: f.pos.z });
+        const up = f.m.action === 'stoopRise' ? STOOP_UP : 0; if (up) air = true;
+        pts.push({ x: f.pos.x, y: up, z: f.pos.z }, { x: f.pos.x, y: up + f.tall, z: f.pos.z });
         const w = (f.look && f.look.halfW) || 0; // a sprawling foe (the Bramble Horror's canes) is framed by its width too
         if (w) pts.push({ x: f.pos.x + w, y: 0, z: f.pos.z }, { x: f.pos.x - w, y: 0, z: f.pos.z });
       }
-      if (pts.length) shotFit(pts, 1, k || 2);
+      if (pts.length) shotFit(pts, 1, k || 2, air ? 44 : 0);
     }
     function addShake(px) { if (!REDUCED) shake.amp = Math.max(shake.amp, px); if (BF) BF.shake(px); }
     function applyCam(rdt) {
@@ -321,6 +336,10 @@
       let items = [], sel = 0, cb = null, onSel = null, bannerTO = 0, flashA = 0, flashDur = 0.3, markOn = null;
       function render(list, title) {
         items = list; cmdEl.innerHTML = '';
+        // on a short screen (a phone held sideways) the list goes in up to three columns, down the first and on down the
+        // next, so Io's eight commands take three rows and don't cover the fight (screen.css)
+        const rowsN = Math.max(1, Math.ceil(list.length / 3));
+        cmdEl.classList.add('cols'); cmdEl.style.setProperty('--rows', rowsN); cmdEl.style.setProperty('--cols', Math.ceil(list.length / rowsN));
         if (title) el('div', { class: 'title' }, cmdEl, title);
         list.forEach((it, i) => {
           const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem');
@@ -344,7 +363,7 @@
       }
       function pick(i) { const it = items[i]; if (!it || it.disabled || !cb) return; const f = cb; SND.sfx.select(); f(it.id); }
       function open(list, title, fn, selFn) { cb = fn; onSel = selFn || null; render(list, title); }
-      function waitMenu() { cb = null; onSel = null; items = []; cmdEl.innerHTML = '<div class="wait">Waiting…</div>'; mark(null); }
+      function waitMenu() { cb = null; onSel = null; items = []; cmdEl.classList.remove('cols'); cmdEl.innerHTML = '<div class="wait">Waiting…</div>'; mark(null); }
       on(window, 'keydown', (e) => {
         if (!cb) return;
         if (e.key === 'ArrowDown') { move(1); e.preventDefault(); }
@@ -359,15 +378,27 @@
       function note(text, sec) { msg(text, true); clearTimeout(noteTO); noteTO = setTimeout(hideMsg, (sec || 1.5) * 1000); }
       // a number is placed as soon as it is made, so it never shows for a frame in the corner
       const nums = [];
+      // (kept on the screen, however short it is: below its top edge and above the windows, a line below each older
+      // number on the same fighter and a line above each newer one, so a stack against an edge keeps its order)
       function place(n) {
         const u = n.t / n.dur, s = toScreen(n.p), rise = 44 * (1 - Math.pow(1 - Math.min(1, u * 1.6), 3)), pop = u < 0.12 ? 1.4 - u * 3.3 : 1;
-        n.el.style.transform = 'translate(' + (s[0] + n.dx).toFixed(1) + 'px,' + (s[1] - 34 - rise - n.dy).toFixed(1) + 'px) translate(-50%,-50%) scale(' + pop.toFixed(3) + ')';
+        let older = 0, newer = 0;
+        for (const m of nums) if (m !== n && m.p.distanceTo(n.p) < 1) { if (m.born < n.born) older++; else newer++; }
+        const y = clamp(s[1] - 34 - rise - n.dy, 22 + 26 * older, view.h - view.uiH - 12 - 26 * newer);
+        n.el.style.transform = 'translate(' + (s[0] + n.dx).toFixed(1) + 'px,' + y.toFixed(1) + 'px) translate(-50%,-50%) scale(' + pop.toFixed(3) + ')';
         n.el.style.opacity = String(u > 0.75 ? 1 - (u - 0.75) / 0.25 : 1);
       }
+      // a fighter who already has numbers up makes room for a new one: they go up a line, so blows in a row (Envoi's
+      // eight) don't print over each other (all rise alike, so an older one stays above a newer one); past three, the
+      // oldest fades out early
+      let numsMade = 0;
       function number(p, text, cls, dy) {
         const e = document.createElement('div'); e.className = 'num' + (cls ? ' ' + cls : ''); e.textContent = String(text);
-        const n = { el: e, p: new THREE.Vector3(p.x, p.y, p.z), t: 0, dur: 1.2, dx: rnd(-16, 16), dy: dy || 0 };
-        place(n); numsEl.appendChild(e); nums.push(n);
+        const P = new THREE.Vector3(p.x, p.y, p.z), up = nums.filter((m) => m.t < m.dur * 0.85 && m.p.distanceTo(P) < 1);
+        for (const m of up) m.dy += 26;
+        if (up.length >= 3) up[0].t = up[0].dur * 0.85;
+        const n = { el: e, p: P, t: 0, dur: 1.2, dx: rnd(-16, 16), dy: dy || 0, born: numsMade++ };
+        numsEl.appendChild(e); nums.push(n); place(n);
       }
       // the arrow over the fighter a menu is pointing at
       function mark(f) { markOn = f; markEl.hidden = !f; }
@@ -505,7 +536,8 @@
     function newEngine() {
       const seed = cfg.seed || (1 + Math.floor(Math.random() * 1e9));
       S.rand = BE.rng(seed * 2654435761 + 97);
-      E = BE.create(Object.assign({ seed }, cfg.fight(PICK.level, PICK.pack)));
+      const fight = cfg.fight(PICK.level, PICK.pack);
+      E = BE.create(Object.assign({ seed }, fight)); S.party = fight.party; // (with each hero's keepsakes, for the level-up)
       for (const k in D) delete D[k];
       for (const u of E.units) D[u.key] = { hp: u.hp, mp: u.mp, heat: u.heat || 0, tr: u.trance || 0, inTrance: false };
       S.dealt = 0; S.guard = {}; S.choosing = null;
@@ -814,17 +846,20 @@
         h.m.play('guardStep', true); h.m.guard(true); S.guard[h.key] = true;
         await until(() => !h.m.busy); ev.rest();
       },
-      // Kestrel Stoop, turn one: she springs up and hangs in the air; the stoop comes on her next turn
+      // Kestrel Stoop, turn one: she springs up and hangs in the air; the stoop comes on her next turn. The shot keeps her
+      // head as she hangs in it, with a little room above it (on a short screen the ground goes behind the windows)
       async stoopRise(h, t, ev) {
-        faceTo(h, t); shotFit([h.pos, t.pos, { x: h.pos.x, y: 4.6, z: h.pos.z }], 1, 2.4);
+        faceTo(h, t); shotFit([h.pos, t.pos, { x: h.pos.x, y: STOOP_UP + h.tall + 0.3, z: h.pos.z }], 1, 2.4, Infinity);
         h.aimAt = t; h.m.play('stoopRise', true); SND.sfx.swish();
         await untilP(h.m, 0.95);
         UI.note('Sol hangs in the air like a kestrel, out of reach. She stoops on her next turn.', 2.2);
         ev.rest();
       },
+      // the stoop, from where she hangs down onto her foe: the shot keeps her as she starts as far as it keeps the foe in
+      // it too, since the blow it lands is the point (on a short screen she dives in from above)
       async stoop(h, t, ev) {
         D[h.key].aloft = false;
-        faceTo(h, t); shotFit([h.pos, t.pos, { x: h.pos.x, y: 4.2, z: h.pos.z }], 1, 3);
+        faceTo(h, t); shotFit([t.pos, { x: h.pos.x, y: STOOP_UP + h.tall + 0.3, z: h.pos.z }], 1, 3, 36);
         h.aim = t; h.m.play('stoop', true); SND.sfx.swish();
         await untilP(h.m, h.m.ACTIONS.stoop.hits[0]);
         if (ev.has() && !countering(ev)) { const p = chest(t); strikeFx(t, true, 0xffe8a0); FX.ring(t.pos, 0xffd070, 0.3, 3.5, 0.7, 1); FX.flashLight(p, 0xffe0a0, 6, 0.5, 8); UI.flash('#fff1c8', 0.55, 0.35); SND.sfx.boom(1.2); addShake(16); ev.show({ big: true }); }
@@ -1702,13 +1737,15 @@
     }
 
     // ---------- playing a turn's log ----------
-    // The log splits into parts, each starting at a move, a strike, a Trance, a herb or a turn; each part plays its
-    // own choreography, and the blows inside it are shown at that choreography's hit times
+    // The log splits into parts, each starting at a move, a strike, a Trance, a herb, a turn or the frost's end; each part
+    // plays its own choreography, and the blows inside it are shown at that choreography's hit times. (The frost's end
+    // starts its own part: when Envoi's strike ends it, the blow waiting in the frost lands after the strike, and counted
+    // among Envoi's blows it would cost the strike its Last Word)
     const OWN_BANNER = { defend: 1, guard: 1, lunara: 1, envoi: 1 };
     async function playLog(log) {
       const parts = [];
       for (const e of log) {
-        if (['turn', 'move', 'strike', 'trance', 'charge', 'herb', 'stagger'].includes(e.t) || !parts.length) parts.push([e]);
+        if (['turn', 'move', 'strike', 'trance', 'charge', 'herb', 'stagger', 'frostEnds'].includes(e.t) || !parts.length) parts.push([e]);
         else parts[parts.length - 1].push(e);
       }
       for (const part of parts) {
@@ -1761,7 +1798,7 @@
         list.push({ id: 'arts', label: 'Sword Arts' });
       }
       if (s.options.some((o) => o.herb)) list.push({ id: 'item', label: 'Item', disabled: !s.options.some((o) => o.herb && o.ok) });
-      list.push(h.id === 'io' ? { id: 'defend', label: 'Defend' } : { id: 'guard', label: 'Guard' });
+      list.push(h.id === 'io' ? { id: 'defend', label: 'Defend' } : { id: 'guard', label: 'Guard', tag: has('guard') ? tagOf(has('guard')) : '' });
       if (has('flee')) list.push({ id: 'flee', label: 'Flee' });
       return list;
     }
@@ -1899,7 +1936,8 @@
       }
       UI.showBattle(true); UI.buildWindows(); UI.status(); layoutView();
       shotField(2);
-      io().m.play('cast'); UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic();
+      if (D.io.hp > 0) io().m.play('cast');
+      UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic();
       await wait(1.4); UI.hideMsg();
       S.state = 'battle'; S.t0 = clock.t;
     }
@@ -2039,6 +2077,8 @@
       s.m.guard(false); s.tyaw = s.home.yaw; shotFit([s.pos, { x: s.pos.x, y: 4.6, z: s.pos.z }], 1, 1.6);
       if (L[0]) { UI.msg(L[0], true); await wait(3.6); }
       s.m.play('stoopRise', true); SND.sfx.swish();
+      // the camera rises with her and keeps her head in the shot as she hangs, below the letterbox and the banner
+      shotFit([s.pos, { x: s.pos.x, y: STOOP_UP + s.tall + 0.7, z: s.pos.z }], 1, 2, Infinity);
       FX.ring(s.pos, 0xffd070, 0.3, 2.6, 0.8, 1); FX.rise(() => s.pos, [1, 0.8, 0.45], 1.4, 40, 0.5);
       await untilP(s.m, 0.6); SND.sfx.chime(); UI.banner('Sol learns Kestrel Stoop', 2.8);
       if (L[1]) UI.msg(L[1], true);
@@ -2117,8 +2157,10 @@
           const k0 = RL.scale(lead.level), k1 = RL.scale(lv), dl = $('lvlList');
           $('lvlTitle').textContent = (heroes.length > 1 ? 'The party is level ' : 'Io is level ') + lv + '!';
           dl.textContent = '';
-          for (const h of heroes) { const H = RL.HEROES[h.key]; el('dt', null, dl, H.name + '’s HP'); el('dd', null, dl, nf(H.hp * k0) + ' → ' + nf(H.hp * k1)); }
-          el('dt', null, dl, 'Io’s MP'); el('dd', null, dl, Math.round(RL.HEROES.io.mp * RL.mpScale(lead.level)) + ' → ' + Math.round(RL.HEROES.io.mp * RL.mpScale(lv)));
+          // HP and MP as the game will have them, with what each hero's keepsakes add (fights.js hands them to the engine)
+          const kept = (id, k) => ((S.party || []).find((p) => p.id === id) || {})[k] || 1, mpK = kept('io', 'mpMul');
+          for (const h of heroes) { const H = RL.HEROES[h.key], m = kept(h.key, 'hpMul'); el('dt', null, dl, H.name + '’s HP'); el('dd', null, dl, nf(H.hp * k0 * m) + ' → ' + nf(H.hp * k1 * m)); }
+          el('dt', null, dl, 'Io’s MP'); el('dd', null, dl, Math.round(RL.HEROES.io.mp * RL.mpScale(lead.level) * mpK) + ' → ' + Math.round(RL.HEROES.io.mp * RL.mpScale(lv) * mpK));
           el('dt', null, dl, 'Flame Bolt'); el('dd', null, dl, nf(330 * k0) + ' → ' + nf(330 * k1));
           $('lvlBox').hidden = false;
           SND.sfx.chime();
@@ -2171,6 +2213,9 @@
       PACE.fps = { n: 0, t: 0, secN: 0, secT: 0, low: 0, prev: 0 };
       UI.vignette(0); UI.cinematic(false); UI.tint(0); UI.showBattle(false);
       newEngine(); resetHeroes(); buildFoes();
+      // a hero who is down as the fight opens (a fled fight leaves her so: only a win revives) kneels, as one who goes
+      // down in it does, until a herb gets her up
+      for (const h of heroes) if (D[h.key].hp <= 0) h.m.play('kneel', true);
       // an arena's weather for this fight (a wild fight's now and then rolls rain or a storm), and its painted lamps,
       // dark while a great wraith has their light
       if (AF) { AF.setWeather(cfg.weather || 'clear'); if (cfg.winLights) AF.setLamps(0, true); }
@@ -2459,6 +2504,14 @@
         get sharp() { const s = renderer ? renderer.getDrawingBufferSize(new THREE.Vector2()) : null; return { sharp: SHARP, ratio: renderer ? renderer.getPixelRatio() : 0, dpr: DPR, w: s ? s.x : 0, h: s ? s.y : 0 }; },
         // in an arena after a cutscene, the lens and crop the fight held while the cutscene's last picture faded into it
         get opening() { return S.opening || null; },
+        // where each fighter still standing is on the screen (its feet and the top of its head, Sol's where she hangs), for
+        // the layout checks
+        get spots() {
+          return standing().map((f) => {
+            const up = f.m.action === 'stoopRise' ? STOOP_UP : 0, a = toScreen(V().set(f.pos.x, up, f.pos.z)), b = toScreen(V().set(f.pos.x, up + f.tall, f.pos.z));
+            return { key: f.key, kind: f.kind, tall: f.tall, feet: [a[0], a[1]], head: [b[0], b[1]] };
+          });
+        },
       };
     }
     setTimeout(() => {
@@ -2499,6 +2552,7 @@
       '<div id="start" class="overlay"><div class="card win"><button type="button" class="go" id="begin" disabled>Setting the scene…</button></div></div>' +
       '<div id="end" class="overlay" hidden><div class="card win"><h2 id="endTitle">Victory!</h2><p id="endText"></p>' +
       '<div class="stats"><div><b id="stTime">0:00</b><span>Battle time</span></div><div><b id="stDmg">0</b><span>Damage dealt</span></div></div>' +
+      '<p class="fpsline" id="stFps"></p>' +
       '<div class="xp" id="xpBox" hidden><div class="stats"><div><b id="xpGain">+0</b><span>Experience</span></div><div><b id="shardGain">+0</b><span>Sunstone shards</span></div></div>' +
       '<div class="row"><span>Next level</span><b id="xpNext"></b></div><div class="gauge"><i id="xpBar"></i></div></div>' +
       '<div class="lvl" id="lvlBox" hidden><h3 id="lvlTitle">Level up!</h3><dl id="lvlList"></dl><p>Every move hits and heals about 20% harder.</p></div>' +

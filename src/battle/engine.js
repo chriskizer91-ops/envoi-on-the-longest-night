@@ -422,7 +422,7 @@
           const ok = hal.acted >= 2 || hal.hp <= hal.maxHp * 0.5 || !!hal.vowed;
           add('kestrel', { ok, why: ok ? '' : 'not yet', targets: [hal.key] });
         }
-        add('guard', {});
+        add('guard', { heat: -h.def.moves.guard.heat }); // Guard takes Heat too (what she has, up to 40): her menu says so
         if (B.ends.canFlee) add('flee', {});
       }
       // in the game (setup.carried) every herb carried is listed in order, and one already used this fight shows as
