@@ -2,8 +2,9 @@
 // Build the page first: node tools/build.mjs --min putting-it-all-together/game.html
 // Usage: node tools/game-test.mjs [dist/game.html]
 //        [--steps title,new,walk,controls,world,menu,saves,scenes,save,wild,colossus,finale,keepsakes,songs,chapters]
-//        [--band 4] [--level 18] [--out <dir>] [--size 960x540] [--turbo 8] [--offline]
-// Without --steps it runs title,new,walk,world,menu,saves,save.
+//        [--band 4] [--level 18] [--out <dir>] [--size 960x540] [--turbo 8] [--offline] [--sharp 0.5]
+// Without --steps it runs title,new,walk,world,menu,saves,save. --sharp plays the fights at that sharpness of their 3D
+// (the Settings' Battle sharpness: 1, 0.75 or 0.5), and the fight steps check it.
 //   title:    the title screen comes up
 //   new:      a new game starts, the prologue plays, and Io stands in her cottage
 //   walk:     Io walks up Wickhollow's south road with the arrow keys
@@ -50,7 +51,7 @@ const THREE_JS = fs.readFileSync(cache);
 
 const args = process.argv.slice(2);
 let file = path.join(R, 'dist/game.html'), out = path.join(R, 'tools/.cache/game-test'), size = [960, 540];
-let steps = ['title', 'new', 'walk', 'world', 'menu', 'saves', 'save'], band = 1, level = 3, turbo = 8, offline = false;
+let steps = ['title', 'new', 'walk', 'world', 'menu', 'saves', 'save'], band = 1, level = 3, turbo = 8, offline = false, sharp = 0;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--steps') steps = args[++i].split(',');
   else if (args[i] === '--band') band = +args[++i];
@@ -59,6 +60,7 @@ for (let i = 0; i < args.length; i++) {
   else if (args[i] === '--size') size = args[++i].split('x').map(Number);
   else if (args[i] === '--turbo') turbo = +args[++i];
   else if (args[i] === '--offline') offline = true;
+  else if (args[i] === '--sharp') sharp = +args[++i];
   else file = path.resolve(args[i]);
 }
 fs.mkdirSync(out, { recursive: true });
@@ -122,6 +124,8 @@ try {
   await page.goto('file://' + file);
   await page.evaluate(() => { try { localStorage.clear(); } catch (e) { /* none */ } });
   await page.reload();
+  // the battles' sharpness, kept where the game's Settings keep it
+  if (sharp) await page.evaluate((v) => { localStorage.setItem('envoi.sharp', String(v)); }, sharp);
   for (const step of steps) {
     log('step ' + step);
     if (step === 'title') {
@@ -194,23 +198,24 @@ try {
       for (const tab of await page.$$eval('.gmenu-tabs button', (b) => b.map((x) => x.textContent))) {
         await page.click('.gmenu-tabs button:text-is("' + tab + '")'); await sleep(200); await shot('menu-' + tab.toLowerCase());
       }
-      // Settings has the battles' sharpness beside their frame rate: 3/4 unless another is picked, and a pick is kept
-      // where the battle screen reads it ('envoi.sharp')
+      // Settings has the battles' sharpness beside their frame rate: 3/4 unless another is picked (--sharp), and a pick
+      // is kept where the battle screen reads it ('envoi.sharp'); the test picks another, then its own again
       {
         await page.click('.gmenu-tabs button:text-is("Settings")'); await sleep(200);
+        const NAME = { 1: 'Full', 0.75: '3/4', 0.5: 'Half' }, want = sharp || 0.75, other = want === 0.5 ? 1 : 0.5;
+        const sharpRow = () => page.locator('.gmenu-body .gm-item').filter({ has: page.locator('span', { hasText: 'Battle sharpness' }) });
         const row = (label) => page.evaluate((lb) => {
           const r = [...document.querySelectorAll('.gmenu-body .gm-item')].find((x) => x.firstChild && x.firstChild.textContent === lb);
           return r ? { opts: [...r.querySelectorAll('button')].map((b) => b.textContent + (b.getAttribute('aria-pressed') === 'true' ? '*' : '')).join(', '), kept: localStorage.getItem('envoi.sharp') } : null;
         }, label);
-        const pick = async (t) => {
-          await page.locator('.gmenu-body .gm-item').filter({ has: page.locator('span', { hasText: 'Battle sharpness' }) }).getByRole('button', { name: t, exact: true }).click();
-          await sleep(200); return row('Battle sharpness');
-        };
+        const pick = async (v) => { await sharpRow().getByRole('button', { name: NAME[v], exact: true }).click(); await sleep(200); return row('Battle sharpness'); };
+        const picked = (r, v) => r.opts.split(', ').filter((o) => o.endsWith('*')).join() === NAME[v] + '*';
         const fr = await row('Battle frame rate'), s0 = await row('Battle sharpness');
-        if (!fr || !s0 || s0.opts !== 'Full, 3/4*, Half') throw new Error('Settings: no Battle sharpness choice beside the frame rate, or 3/4 isn’t picked: ' + JSON.stringify(s0));
-        const s1 = await pick('Half'), s2 = await pick('3/4');
-        if (s1.kept !== '0.5' || !/Half\*/.test(s1.opts) || s2.kept !== '0.75' || !/3\/4\*/.test(s2.opts)) throw new Error('Settings: Battle sharpness isn’t kept: ' + JSON.stringify([s1, s2]));
-        log('  Settings: Battle frame rate ' + fr.opts + '; Battle sharpness ' + s0.opts + ' (Half kept as ' + s1.kept + ', then 3/4 again)');
+        if (!fr || !s0 || s0.opts.replace(/\*/g, '') !== 'Full, 3/4, Half' || !picked(s0, want)) throw new Error('Settings: no Battle sharpness choice beside the frame rate, or ' + NAME[want] + ' isn’t picked: ' + JSON.stringify(s0));
+        const s1 = await pick(other), s2 = await pick(want);
+        if (s1.kept !== String(other) || !picked(s1, other) || s2.kept !== String(want) || !picked(s2, want)) throw new Error('Settings: Battle sharpness isn’t kept: ' + JSON.stringify([s1, s2]));
+        await sharpRow().scrollIntoViewIfNeeded(); await sleep(200); await shot('menu-settings-battles');
+        log('  Settings: Battle frame rate ' + fr.opts + '; Battle sharpness ' + s0.opts + ' (' + NAME[other] + ' kept as ' + s1.kept + ', then ' + NAME[want] + ' again)');
       }
       // a cutscene the game has shown can be watched again from Settings, over the menu
       if (await page.evaluate(() => !!(window.CUTSCENES && window.CUTSCENES['colossus-first-meeting']))) {
@@ -238,6 +243,10 @@ try {
       await page.evaluate((tb) => { window.__battle.auto = 'expert'; window.__battle.turbo = tb; }, turbo);
       await waitFor(() => window.__battle && window.__battle.state && window.__battle.state !== 'boot' && window.__battle.state !== 'intro', null, 240000, 'the fight to begin');
       await shot(step + '-fight');
+      // where it is fought (on the flat painting while the arenas are switched off), and how sharp its 3D is drawn
+      const how = await page.evaluate(() => { const B = window.__battle, s = B.sharp, A = B.arena; return { arena: A ? A.place.id : null, sharp: s ? s.sharp : null, w: s ? s.w : 0, h: s ? s.h : 0 }; });
+      log('  fought ' + (how.arena ? 'in the arena at ' + how.arena : 'on the flat painting') + (how.sharp != null ? ', its 3D at ' + ({ 1: 'full', 0.75: '3/4', 0.5: 'half' }[how.sharp] || how.sharp) + ' sharpness (' + how.w + ' x ' + how.h + ')' : ''));
+      if (sharp && how.sharp !== sharp) throw new Error('the fight’s 3D is at ' + how.sharp + ' sharpness, not ' + sharp);
       await waitFor(() => window.__battle && window.__battle.state === 'over' && !document.getElementById('end').hidden, null, 1500000, 'the fight to end');
       const res = await page.evaluate(() => ({ outcome: window.__battle.result.outcome, title: document.getElementById('endTitle').textContent }));
       log('  ' + res.title + ' (' + res.outcome + ')');

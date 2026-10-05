@@ -15,6 +15,7 @@ The game itself hasn't changed yet. It switches over once you've played the demo
 - **Play** it, choosing every move, or **Watch** it play itself.
 - It runs at your settings: 30 frames a second, the 3D at 3/4 sharpness, the paintings at Strong. The painting behind stays sharp: it's drawn the way the battles draw theirs today, and the live 3D layer goes over it.
 - The fps button in the corner changes the frame rate (the screen's own, 60, 45 or 30), as in the game. **Fights** goes back to the list.
+- The **Sharpness** button beside it changes how sharp the 3D is drawn: 3/4 (yours), Half or Full, at once, even in the middle of a fight. The painting behind always stays sharp. Half is the lever for a fight that runs slow: it draws the 3D with fewer than half the dots that 3/4 does. The page remembers your pick, and the game's Settings has the same choice, **Battle sharpness**, beside Battle frame rate. (Added October 5, after the page was published: it is on the page once it is published again.)
 - It works on the phone held sideways (915 × 412, a Pixel 7a) and on a laptop.
 
 ## What changes in a fight
@@ -55,21 +56,25 @@ The test browser can't tell how fast a fight runs on your phone; what it can cou
 
 | Fight | Place | Weather | Who | Draw calls | Triangles | The arena's part |
 |---|---|---|---|---|---|---|
-| The first fight | the Night square (flat, as today) | | Io, a wraith | 83 | 156,000 | |
-| Band 1 wilds | the river glade | a storm | Io, Sol, a wraith | 101 | 282,000 | 14 and 28,000 |
-| Band 2 wilds | the Warm Roads' moor | a storm | Io, Sol, a wisp, a wraith | 111 | 297,000 | 14 and 27,000 |
-| Band 3 wilds | Eldergrove | a storm | Io, Sol, a wraith, two wisps | 121 | 314,000 | 14 and 28,000 |
+| The first fight | the Night square (flat, as today) | | Io, a wraith | 84 | 156,000 | |
+| Band 1 wilds | the river glade | a storm | Io, Sol, a wisp, a wraith | 111 | 298,000 | 14 and 28,000 |
+| Band 2 wilds | the Warm Roads' moor | a storm | Io, Sol, a wraith, two wisps | 121 | 314,000 | 14 and 27,000 |
+| Band 3 wilds | Eldergrove | clear | Io, Sol, a wraith, a frost wisp | 110 | 291,000 | 13 and 21,000 |
 | Band 4 wilds | Frostmere | clear | Io, Sol, three frost wisps | 115 | 264,000 | 14 and 20,000 |
-| The Bramble Horror | Eldergrove | clear | Io, Sol, the Horror | 97 | 295,000 | 13 and 21,000 |
-| The Bramble Colossus | Frostmere | clear | Io, Sol, the Colossus | 101 | 322,000 | 14 and 20,000 |
-| Gate 5 | Bogmire | clear | Io, Sol, the great wraith | 113 | 272,000 | 19 and 9,000 |
+| The Bramble Horror | Eldergrove | clear | Io, Sol, the Horror (its low ambush) | 96 | 290,000 | 12 and 18,000 |
+| The Bramble Colossus | Frostmere | a blizzard | Io, Sol, the Colossus | 100 | 319,000 | 13 and 17,000 |
+| Gate 5 | Bogmire | clear | Io, Sol, the great wraith | 112 | 269,000 | 20 and 7,000 |
 | Gate 10 | Dawnroost's node | clear | Io, Sol, three wraiths | 129 | 378,000 | 10 and 6,000 |
-| Gate 15 | the northern crossroads | clear | Io, Sol, Halcyon | 111 | 308,000 | 13 and 23,000 |
-| The finale | the dead Moonwell | clear | Io, Sol, Halcyon, Noctara | 155 | 373,000 | 12 and 4,000 |
+| Gate 15 | the northern crossroads | clear | Io, Sol, Halcyon | 110 | 305,000 | 12 and 20,000 |
+| The finale | the dead Moonwell | clear | Io, Sol, Halcyon, Noctara | 155 | 370,000 | 11 and 2,000 |
 
-The wilds roll their weather, as the game will; three of these rolled a storm, whose rain costs one more draw call and about 7,000 triangles. In clear weather the river glade counted 114 and 266,000 with three wisps, the moor 116 and 333,000 with two wraiths.
+Counted again on October 5, after the tidy-up below, with the wilds' foes and weather rolled the same way as in a count just before it (`node tools/arena-test.mjs --seed 5`). Two wilds rolled a storm, whose rain costs one more draw call and 6,400 triangles, and the Colossus a blizzard. Other rolls, counted on October 4 and 5: in clear weather the river glade 114 and 266,000 with three wisps, the moor 116 and 333,000 with two wraiths; Eldergrove in a storm 121 and 314,000 with a wraith and two wisps.
 
-For comparison: Colossus in the Meadow, which you measured at 29 to 30 frames a second on your phone even in the storm, draws 96 things and 319,000 triangles; today's first fight, 83 and 156,000. The arena's own part is small, 10 to 19 draw calls and 4,000 to 28,000 triangles; most of every frame is the fighters themselves, as in today's fights, and they are the same models.
+For comparison: Colossus in the Meadow, which you measured at 29 to 30 frames a second on your phone even in the storm, draws 96 things and 319,000 triangles; today's first fight, 83 and 156,000. The arena's own part is small, 10 to 20 draw calls and 2,000 to 28,000 triangles; most of every frame is the fighters themselves, as in today's fights, and they are the same models.
+
+**The tidy-up** (October 5). The arena leaves out its stones and clods while none are up, and its birds or bats while none fly: two things fewer to draw and about 2,900 triangles fewer in every quiet moment of a fight. The counts above are taken at a command just after a turn's blows, while the birds are still up, so they show less of it: in five of the ten arena fights no stones were up, and the arena's part counted one draw call and 2,800 triangles fewer than the same fight before the tidy-up; in the other five it counted the same. The rain's puddles and ripples on the painted ground are only worked out now while it rains (dry, they came to nothing). None of it changes the picture: every place was drawn with the arena before and after, on a clear night, in a storm and just after a heavy blow, and not one dot changed.
+
+The lever for a fight that runs slow is the **Sharpness** button (The page, above): at Half, the 3D layer is drawn with under half the dots of 3/4, which every frame pays for, while these counts stay the same.
 
 Each fight takes a little longer to set up than today: its arena is built while the "Setting the scene…" card shows, about a tenth more than the fighters' own build, which every fight already pays. It never slows the fight itself.
 
@@ -107,7 +112,7 @@ More moments, the same size:
 
 ## Not finished, or worth a look
 
-1. **How fast it runs on your phone** is the one thing the test browser can't tell. The counts above are close to Colossus in the Meadow's, but the busiest fights (gate 10's three wraiths, the finale) ask more of it than the meadow did. If one runs slow, tell the game's session which fight. This page has no lever for it: its fps button only goes up from 30 (to 45, 60 or the screen's own), and the 3D stays at your 3/4 sharpness. The levers you know from the Battle Backgrounds page, half sharpness and a cap of 24 (20 froze there), are a small change each, and the session can put a sharpness button on this page for you to try first.
+1. **How fast it runs on your phone** is the one thing the test browser can't tell. The counts above are close to Colossus in the Meadow's, but the busiest fights (gate 10's three wraiths, the finale) ask more of it than the meadow did. If one runs slow, try the **Sharpness** button at Half first (the 3D a little softer, the painting as sharp as ever), and tell the game's session which fight, and whether Half fixed it. The fps button only goes up from 30 (to 45, 60 or the screen's own). The other lever you know from the Battle Backgrounds page, a cap of 24 frames a second (20 froze there), is still a small change if Half isn't enough.
 2. **If a fight freezes or goes black on your phone**, the 20 frames a second freeze you saw on the Battle Backgrounds page is the first place to look (it is still unexplained; 20 isn't offered here).
 3. **Close-ups are less close** than in today's fights, so that the painting behind never blurs. Say if you'd rather have them closer and a little softer.
 4. **The Colossus and the great wraith** are too tall to fit above the menus on the phone in some shots; then their heads go out of the top rather than everyone's feet out of the bottom.
@@ -125,6 +130,7 @@ Headless, in the test browser (Chromium with SwiftShader drawing in software), o
 - **The great wraith's fall**, its stolen lamplight flying home and the town's lamps lighting again; **the Colossus's Wrath**; **a storm** in the river glade; **a blizzard** by Frostmere; **Envoi** folding in at the crossroads, summoned by hand. No errors.
 - **The game, with the switch off** (measured October 4, before the keepsakes went in): the file you keep, built from this work with the two files it shares with the game (`src/battle/screen.js` and `src/game/fights.js`) put back as they were, is byte for byte yours (SHA-256 `6396cfcc…`), so nothing else here reaches the game. With them as they are now it is 16.31 MB (SHA-256 `96433868…`), and the game test passes: the title, a new game, and a band 2 wild fight at level 8 on the flat Warm Road painting, played to a win and back to the map.
 - **The game, with the switch on** (in a copy of the game page that isn't kept): the same test passes, with its band 2 wild fight fought on the Warm Roads' moor and won.
+- **The tidy-up and the Sharpness button** (October 5): every place drawn with the arena before and after the tidy-up, on a clear night, in a storm and just after a heavy blow: the same picture, dot for dot, with two draw calls fewer whenever no stones or birds are up. Every fight on the phone's screen before and after, with the same foes and weather (the counts above; both tables are in `../../handoff/tasks.md`, T01), no errors. The Sharpness button pressed round in a fight: the 3D drawn 271, 181, 362 and 271 dots tall on a stage 362 tall (3/4, Half, Full, 3/4). The game with the switch off: the title, a new game, and a band 2 wild fight at level 8 on the flat Warm Road painting at 3/4 sharpness, won; the menu's Settings shows **Battle sharpness** with 3/4 picked, and keeps a pick. The balance: 51 of 51 targets.
 
 ## Switching the game over
 
@@ -145,7 +151,7 @@ Not done: the game still fights on its flat paintings, and builds as before with
 <script src="../src/stage/arena-dead-moonwell.js"></script>
 ```
 
-Then it builds the file you keep as always (`node tools/build.mjs --min --offline putting-it-all-together/game.html`) and plays it (`node tools/game-test.mjs --steps title,new,wild --band 2 --level 8`). Every fight but the first is then fought in its arena. It makes the file 0.4 MB bigger (the eight paintings and the arena's code): with the keepsakes in (October 5), the file you keep goes from 17.9 MB to 18.3 MB of its 30, and the published page from 14.5 MB to 14.9 MB as the build counts them (15,572,999 bytes, built with `--min` and without `--offline`), under its 16 MB. (An `--offline` build writes a copy to publish too, with three.js and the fonts inside: 16,379,946 bytes. Never publish that one: build with `--min` again after making the file you keep.) Without step 2, step 1 does nothing: a fight whose arena isn't in the page stays on its flat painting.
+Then it builds the file you keep as always (`node tools/build.mjs --min --offline putting-it-all-together/game.html`) and plays it (`node tools/game-test.mjs --steps title,new,wild --band 2 --level 8`). Every fight but the first is then fought in its arena. It makes the file 0.4 MB bigger (the eight paintings and the arena's code): with the keepsakes in (October 5), the file you keep goes from 17.9 MB to 18.3 MB of its 30, and the published page from 14.5 MB to 14.9 MB as the build counts them (15,574,356 bytes with the tidy-up and the Sharpness setting of October 5, built with `--min` and without `--offline`), under its 16 MB. (An `--offline` build writes a copy to publish too, with three.js and the fonts inside: 16,379,946 bytes. Never publish that one: build with `--min` again after making the file you keep.) Without step 2, step 1 does nothing: a fight whose arena isn't in the page stays on its flat painting.
 
 Both were tried here (How it was checked, above).
 
@@ -158,10 +164,11 @@ The pieces:
 | `src/fx/arena.js` | The arena: the locked camera, the sheet that brings the painting to life, the live ground (tufts, trees, a boardwalk over water), the air (mist, fireflies, snow, rain, lightning, birds and bats), what a blow throws up, the weather and a Wrath. Made from `living-battlefields/field.js` (the meadow's field, left as it is for the Battle Backgrounds page). |
 | `src/stage/arena-*.js` | One per place: its painting, the camera, its skyline and ground line (traced by hand on the painting), its ground, tree, air, weather, lamps, and where Lunara rises and Envoi coils. `arena-river-glade.js` explains the shape. |
 | `art/arena/*.avif` | The eight paintings at Strong, copied from `envoi-game-pass-3/battle-backgrounds/img/<number>-q20.avif`. |
-| `src/battle/screen.js` | The battle screen's arena mode. Everything it does there hangs on `AF` (the arena), so a flat battle runs exactly as before. |
+| `src/battle/screen.js` | The battle screen's arena mode. Everything it does there hangs on `AF` (the arena), so a flat battle runs exactly as before. Also the 3D's sharpness for every battle, flat or arena: read like the frame rate from this browser (`envoi.sharp`: 1, 0.75 or 0.5; 3/4 unless another is picked) or handed in as `cfg.sharp`, and changed mid-fight by `start(cfg).sharpness(v)` (`renderer.setPixelRatio`, then the stage laid out again). |
 | `src/game/fights.js` | The switch (`ARENA`), which arena each fight is fought in (`ARENA_OF`), and where everyone stands there (`ARENA_AT`, in metres). |
-| `demos/arena.html` | The demo page. |
-| `tools/arena-test.mjs` | Plays the demo headless, counts what each frame costs, and saves the pictures. |
+| `demos/arena.html` | The demo page, with its Sharpness button (the page keeps the pick in `envoi.sharp` and hands it to each fight). |
+| `src/game/game.js` | The game's Settings: **Battle sharpness** (Full, 3/4, Half) beside Battle frame rate, kept in `envoi.sharp` for the battle screen. |
+| `tools/arena-test.mjs` | Plays the demo headless, counts what each frame costs (and how many stones and birds were up), checks the Sharpness button, and saves the pictures. `--seed N` makes each fight roll the same foes and weather every run, to compare two versions. |
 
 Building and checking:
 
@@ -172,6 +179,7 @@ node tools/arena-test.mjs                                 # every fight to 6 s o
 node tools/arena-test.mjs --fights band2,gate5 --to end   # whole fights, to their end cards
 node tools/arena-test.mjs --fights finale --to turns:4    # the finale's opening turns
 node tools/arena-test.mjs --size 1280x800                 # a laptop's screen
+node tools/arena-test.mjs --seed 5 [page.html]            # the same foes and weather every run: before and after a change
 node tools/arena-test.mjs --jpg envoi-final-draft/arena/renders   # eleven of the pictures: each fight's, named after its place
 ```
 

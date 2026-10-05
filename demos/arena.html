@@ -36,7 +36,9 @@
 .pbtns .go{flex:1 1 0;min-width:110px}
 .pbtns .go small{display:block;font-size:11px;font-weight:400;opacity:.8}
 .plast{margin:0;font-size:12.5px;color:var(--dim);min-height:1em}
-#sharp span{min-width:4.7em;text-align:left}
+#sharp span{min-width:5.3em;text-align:left}
+/* on a phone held upright the header's four buttons take two rows rather than run off the screen */
+.hbtns{flex-wrap:wrap;justify-content:flex-end;row-gap:6px}
 @media (max-width:640px){.pbody{grid-template-columns:1fr}.plist{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}}
 @media (max-height:480px){.pcard{padding:9px 11px 11px}.pcard h2{font-size:20px}.pcard .lead{display:none}.fb img{height:30px}}
 </style>
