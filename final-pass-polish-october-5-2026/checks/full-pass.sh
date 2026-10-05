@@ -10,7 +10,8 @@
 #   4. the page of polish to try, and the game with its four ideas off;
 #   5. the map editor's page and its two checks; the new battles' demo, every arena;
 #   6. the file Chris keeps (--min --offline), played with the internet blocked, and his copy of it: the same with the
-#      four ideas on (window.ENVOI_TRY, as the file he sent), played with the internet blocked too;
+#      four ideas on (window.ENVOI_TRY, as the file he sent), played with the internet blocked too, and the four checked
+#      on the offline try page, which is his file but for its title;
 #   7. the game built with --min again, so dist/ isn't left as the offline copy.
 # Usage, from the repository's top folder: bash final-pass-polish-october-5-2026/checks/full-pass.sh [out-dir]
 # (out-dir: /tmp/claude-0/full-pass by default: one log per check, their screenshots, and summary.txt). It takes about
@@ -100,7 +101,14 @@ run make-chris-file node -e '
   fs.writeFileSync(process.argv[1], html.replace(/<\/title>/, () => "</title>\n<script>window.ENVOI_TRY = {\"steps\":true,\"words\":true,\"door\":true,\"buy10\":true};</script>"));
   console.log(process.argv[1] + ": " + fs.statSync(process.argv[1]).size.toLocaleString("en-US") + " bytes");' "$KEEP"
 gt chris-file-offline "$KEEP" --offline --size 915x412
-run chris-file-try-test b node tools/try-test.mjs "$KEEP" --size 915x412 --out "$OUT/shots-chris-file-try"
+# try-test.mjs only plays a page titled as the try page: the offline try page is his file but for its title (checked
+# byte for byte), so its test is his file's
+run make-try-offline node tools/make-try.mjs
+run chris-file-is-the-try-page node -e '
+  const fs = require("fs"), a = fs.readFileSync("dist/try.html", "latin1"), b = fs.readFileSync(process.argv[1], "latin1");
+  if (a.replace("<title>Envoi Polish to Try</title>", "<title>Envoi on the Longest Night</title>") !== b) throw new Error("his file is not the offline try page with the game title");
+  console.log("his file is the offline try page, but for its title");' "$KEEP"
+run chris-file-try-test b node tools/try-test.mjs dist/try.html --size 915x412 --out "$OUT/shots-chris-file-try"
 fi
 
 # 7. dist/ back to the copy to publish

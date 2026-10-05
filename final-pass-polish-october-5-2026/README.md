@@ -32,6 +32,38 @@ So the pass is, in order:
 
 `claude/send-note-gigdew`. It carries the game's branch, `ccr-31761774-76j8j3`, as the old hub left it at `856f522` (a fast-forward: nothing of either was lost), with this pass on top. The game's branch itself is untouched: bring this one into it (or merge it wherever Chris wants the game to live) when the next session starts.
 
+## The file Chris has
+
+**"Envoi on the Longest Night - final polish.html"**, here in this folder, made for him on October 5, at night: 18,095,301 bytes (17.26 MB of his 30), SHA-256 `f24d524826bf626bf9f8ac72755c0527f5b2b173349f136f7c9b33c5d6c63a16`.
+
+- The whole game, everything inside: it plays with no internet. Its title inside is the game's own, "Envoi on the Longest Night"; the file's name says which copy it is, so it isn't mixed up with the one he sent.
+- The four ideas of the try page are on, as in the file he sent ("the entire game at its current state"): footsteps (Settings, Footsteps: None turns them off), words that move on by themselves (Settings, Words move on: On a tap turns it back), the door's sound between maps and Buy 10 in the herb shops (no setting).
+- Made from this branch with `node tools/build.mjs --min --offline putting-it-all-together/game.html` and the one line after its `<title>`: `<script>window.ENVOI_TRY = {"steps":true,"words":true,"door":true,"buy10":true};</script>`. The game's source is as it stands at `b31afe5` (the commits after it change only records and checks).
+- Its saves are its own, as before: a save code (Menu, Saves) carries a game over from the file he had.
+
+## What was checked before it went
+
+The whole pass (`checks/full-pass.sh`), at a Pixel 7a held sideways (915 × 412) unless it says otherwise:
+
+| Check | Result |
+|---|---|
+| Every map (`tools/check-maps.mjs`) | All 21 ✓ |
+| The balance (`tools/balance.mjs`) | 51 of 51 targets met |
+| This pass's 20 node checks (walking, game, battles, tools) | All pass |
+| This pass's browser checks: the walking map (also at 915 × 356), the freeze, the title, every screen at Chrome's heights (144 measured), Esc, sound while hidden, the set fights, the cutscenes' sound, both endings in their arenas | All pass |
+| The battle's menus, sub-menus, targets and end card at five sizes (`checks/battles/battle-fit.mjs`) | Pass. (In the full pass its fight once took longer than its 15-minute wait, and one measurement caught the view mid-slide at 915 × 330; run again alone, all of it passed. See `handoff.md`) |
+| The game test: title, new game, walking, the Magpie's flights and landings, menu, saves, save | Pass, at 915 × 412 and at 915 × 356 (Chrome's address bar showing) |
+| The game test: the three ways to walk, the four staged scenes, every band's night walks | Pass |
+| The game test: the chapters | Pass |
+| The game test: a band 3 wild fight played to its end | Pass |
+| The game test: the Bramble Colossus (its cutscene, its fight in its arena, its keepsakes) | Pass |
+| The game test: the twenty keepsakes (found, worn, counted in a fight) | Pass |
+| The game test: Chris's songs where they belong | Pass |
+| The game test: the finale's cutscene into its fight | Pass |
+| The file Chris keeps, with the four ideas off, played with the internet blocked | Pass |
+| **His file** (the four ideas on), played with the internet blocked | Pass |
+| The four ideas on his file (the offline try page, which is his file but for its title, byte for byte) | Running as this was written |
+
 ## What this pass fixed
 
 All 35 of the audit's other findings (T17 in `../handoff/tasks.md`, each listed with its file and line in `../handoff/wrap-up-2026-10-05.md`), the things the audit didn't cover, and what turned up on the way. Four fixers worked side by side, each in its own copy of the game and its own files (walking, the game, the battles, the tools), and every fix is proven by a check that fails on the old code and passes on the new one. The checks are in `checks/`, one folder per fixer, each with a note at its top saying what it proves and how to run it.
