@@ -49,9 +49,10 @@
   };
   // the chapters: the start, and each gate with the party as the story leaves it there (story.js's path), for trying a
   // later part without playing up to it (Chris, October 3). Each starts just before its gate, in the town on its
-  // doorstep (the crossroads' gate is the crossroads itself, so that one starts on its south road), with three of each
-  // herb and the shards for the band's Magpie upgrade; the town's first-arrival scene plays, and losing wakes the
-  // party at the town's rest. The last one starts at the foot of Misthollow, on the approach to the finale.
+  // doorstep (the crossroads' gate is the crossroads itself, so that one starts where the cold moor's road brings her
+  // in, and its rest is the northern camp, by the Magpie: the crossroads has none, and its south road is closed), with
+  // three of each herb and the shards for the band's Magpie upgrade; the town's first-arrival scene plays, and losing
+  // wakes the party at the town's rest. The last one starts at the foot of Misthollow, on the approach to the finale.
   const BEEN = ['first', 'visit:bogmire'];
   const CHAPTERS = [
     { name: 'The start' },
@@ -62,7 +63,7 @@
       where: ['dawnroost', [645, 990]], rest: ['dawnroost', [340, 447]], shards: 2300 },
     { name: 'Gate 15: Halcyon', level: 15, band: 3, magpie: 'northCamp', flags: ['party', 'magpie', 'lights', 'refit', 'envoi', 'charge'],
       done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp', 'dawnroost', 'camp:northCamp'), landings: ['bogmire', 'warmCamp', 'dawnroost', 'northCamp'],
-      where: ['crossroads', [768, 990]], rest: ['crossroads', [768, 990]], shards: 4500 },
+      where: ['crossroads', [40, 485], 'e'], rest: ['northern-camp', [386, 455]], shards: 4500 },
     { name: 'The approach to the finale', level: 20, band: 4, magpie: 'frozenCamp', flags: ['party', 'magpie', 'lights', 'refit', 'envoi', 'charge', 'stoop', 'shipyard', 'upgrade2'],
       done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp', 'dawnroost', 'camp:northCamp', 'halcyon', 'visit:shipyard', 'camp:frozenCamp', 'visit:frozen-pass'),
       landings: ['bogmire', 'warmCamp', 'dawnroost', 'northCamp', 'shipyard', 'frozenCamp'], wilds: { 4: 5 },
@@ -471,7 +472,8 @@
       if (id === 'first') {
         await scene('firstFight');
         const r = await battle('first');
-        if (r.outcome === 'win') { st.done.first = true; await scene('sol'); st.flags.party = true; save(); }
+        // the fight's flags are saved before Sol's scene, so closing the game during it doesn't bring the fight back
+        if (r.outcome === 'win') { st.done.first = true; st.flags.party = true; save(); await scene('sol'); }
         else { await wake('firstLost'); }
         return;
       }
@@ -494,9 +496,12 @@
         await scene('ambush');
         const r = await battle('halcyon');
         field.stage.clear();
-        st.done.halcyon = true; st.flags.stoop = true; await scene('kestrel');
-        // whichever way it ended, the party gets its breath back by the crossroads well
-        GS.restore(st); await say(['The party rests by the crossroads well until their hands stop shaking.']); save();
+        if (r.outcome === 'error') { await wake(); return; } // a battle that couldn't run isn't fought, as at the other set fights
+        // whichever way it ended, the party gets its breath back by the crossroads well; saved before the Kestrel scene,
+        // so closing the game during it doesn't bring the ambush back
+        st.done.halcyon = true; st.flags.stoop = true; GS.restore(st); save();
+        await scene('kestrel');
+        await say(['The party rests by the crossroads well until their hands stop shaking.']); save();
         return;
       }
       if (id === 'finale') {
@@ -591,13 +596,13 @@
     }
     function backAfter(r) {
       if (r.outcome !== 'win' && r.outcome !== 'retreat' && r.outcome !== 'fled') return;
+      // back up to the maximum is marked full (null), as after a fight: GS.fit only holds HP and MP inside the maximums
       for (const id of heroes()) {
-        const g = GS.gearOf(st, id), max = GS.maxHp(st, id), hp = GS.hpOf(st, id);
-        if (g.hpBack && hp > 0) st.hp[id] = Math.min(max, hp + Math.round(max * g.hpBack / 100));
+        const g = GS.gearOf(st, id), max = GS.maxHp(st, id), hp = GS.hpOf(st, id), v = hp + Math.round(max * g.hpBack / 100);
+        if (g.hpBack && hp > 0) st.hp[id] = v >= max ? null : v;
       }
-      const gi = GS.gearOf(st, 'io');
-      if (gi.mpBack) st.mp = Math.min(GS.maxMp(st), GS.mpOf(st) + Math.round(GS.maxMp(st) * gi.mpBack / 100));
-      GS.fit(st);
+      const gi = GS.gearOf(st, 'io'), mx = GS.maxMp(st), mv = GS.mpOf(st) + Math.round(mx * gi.mpBack / 100);
+      if (gi.mpBack) st.mp = mv >= mx ? null : mv;
     }
     const bandHere = () => (field.map && field.map.band) || 1;
     async function rest(name) {
@@ -769,7 +774,7 @@
         const ov = el('div', { class: 'gmenu', role: 'dialog', 'aria-label': 'Menu' }, root); menuOpen = ov;
         const card = el('div', { class: 'gmenu-card win' }, ov);
         const tabs = el('div', { class: 'gmenu-tabs', role: 'tablist' }, card), body = el('div', { class: 'gmenu-body' }, card);
-        const close = () => { ov.remove(); menuOpen = null; done(); };
+        const close = () => { document.removeEventListener('keydown', onKey); ov.remove(); menuOpen = null; done(); };
         const T = { Party: party, Herbs: herbs, Items: items, Moonlore: lore, Saves: saves, Settings: setup };
         let cur = 'Party';
         const btns = Object.keys(T).map((k) => { const b = el('button', { type: 'button', role: 'tab', class: 'tab' }, tabs, k); b.addEventListener('click', () => { cur = k; draw(); }); return b; });
@@ -777,7 +782,15 @@
         const saveB = el('button', { type: 'button', class: 'go alt' }, foot, 'Save'); saveB.addEventListener('click', () => { save(); note('Saved in slot ' + GS.slot() + '.'); sfx('ui-save'); });
         const titleB = el('button', { type: 'button', class: 'go alt' }, foot, 'Title'); titleB.addEventListener('click', () => { save(); close(); showTitle(); });
         const closeB = el('button', { type: 'button', class: 'go' }, foot, 'Close'); closeB.addEventListener('click', close);
-        ov.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
+        // Esc closes it from anywhere in it, and once a choice has redrawn the page and taken the focus with it (onto the
+        // page itself); a keepsake's card and the save code's box over it take their own Esc first, and a cutscene
+        // watched again over it is skipped by its own
+        const onKey = (e) => {
+          const t = e.target;
+          if (e.key !== 'Escape' || !(ov.contains(t) || t === document.body || t === document.documentElement) || root.querySelector('.cutscene-layer')) return;
+          e.stopPropagation(); close();
+        };
+        document.addEventListener('keydown', onKey);
         function draw() { btns.forEach((b, i) => b.setAttribute('aria-selected', String(Object.keys(T)[i] === cur))); body.textContent = ''; T[cur](body, draw); }
         draw(); setTimeout(() => closeB.focus({ preventScroll: true }), 30);
       });
@@ -888,7 +901,12 @@
       const ta = el('textarea', { class: 'code', readonly: '', rows: '5', 'aria-label': 'Save code' }, card); ta.value = text;
       const foot = el('div', { class: 'gmenu-foot' }, card), cp = el('button', { type: 'button', class: 'go alt' }, foot, 'Copy'), x = el('button', { type: 'button', class: 'go' }, foot, 'Done');
       cp.addEventListener('click', async () => { ta.select(); let ok = false; try { await navigator.clipboard.writeText(text); ok = true; } catch (e) { try { ok = document.execCommand('copy'); } catch (e2) { /* select it by hand */ } } note(ok ? 'Copied.' : 'Select the code and copy it.'); });
-      x.addEventListener('click', () => ov.remove());
+      // Esc closes it as Done does (not the menu under it), and the focus goes back where it was
+      const prev = document.activeElement;
+      const close = () => { document.removeEventListener('keydown', onKey, true); ov.remove(); if (prev && prev.isConnected && prev.focus) prev.focus({ preventScroll: true }); };
+      const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } };
+      document.addEventListener('keydown', onKey, true);
+      x.addEventListener('click', close);
       setTimeout(() => { ta.focus({ preventScroll: true }); ta.select(); }, 30);
     }
     // a pasted save code: a game to load into a slot
@@ -904,9 +922,13 @@
           if (!sv) { msg.textContent = 'That isn’t a whole save code. Copy it again, all of it.'; return; }
           // a code from a newer copy of the game, saved somewhere this copy doesn't have, would open on nothing
           if ([sv.where, sv.rest].some((w) => w && w.mode !== 'world' && w.map && !MAPS[w.map])) { msg.textContent = 'That code is from a newer copy of the game, saved in a place this copy doesn’t have.'; return; }
-          ov.remove(); done(sv);
+          close(sv);
         });
-        no.addEventListener('click', () => { ov.remove(); done(null); });
+        // Esc goes back as Back does
+        const close = (sv) => { document.removeEventListener('keydown', onKey, true); ov.remove(); done(sv); };
+        const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(null); } };
+        document.addEventListener('keydown', onKey, true);
+        no.addEventListener('click', () => close(null));
         setTimeout(() => ta.focus({ preventScroll: true }), 30);
       });
     }
@@ -940,7 +962,11 @@
         }
         draw();
         const foot = el('div', { class: 'gmenu-foot' }, card), x = el('button', { type: 'button', class: 'go' }, foot, 'Done');
-        x.addEventListener('click', () => { ov.remove(); done(); }); setTimeout(() => x.focus({ preventScroll: true }), 30);
+        // Esc leaves as Done does, wherever the focus is (a purchase redraws the shelf, and the focus with it)
+        const close = () => { document.removeEventListener('keydown', onKey, true); ov.remove(); done(); };
+        const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } };
+        document.addEventListener('keydown', onKey, true);
+        x.addEventListener('click', close); setTimeout(() => x.focus({ preventScroll: true }), 30);
       });
     }
 

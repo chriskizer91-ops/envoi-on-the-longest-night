@@ -66,10 +66,11 @@
     return ups;
   }
   function restore(st) { st.hp = { io: null, sol: null }; st.mp = null; }
-  // after a keepsake goes on or comes off: HP and MP inside the new maximums (full stays full)
+  // after a keepsake goes on or comes off: HP and MP inside the new maximums (full stays full). One who wasn't full is
+  // held at the lower maximum, not marked full, so taking a keepsake off and on again gives no HP or MP back
   function fit(st) {
-    for (const id of ['io', 'sol']) if (st.hp[id] != null && st.hp[id] >= maxHp(st, id)) st.hp[id] = null;
-    if (st.mp != null && st.mp >= maxMp(st)) st.mp = null;
+    for (const id of ['io', 'sol']) if (st.hp[id] != null && st.hp[id] > maxHp(st, id)) st.hp[id] = maxHp(st, id);
+    if (st.mp != null && st.mp > maxMp(st)) st.mp = maxMp(st);
   }
   // after a fight: HP and MP as the battle left them, and the herbs it used taken from those carried (the fight had at
   // most BATTLE_USE of each: fights.js); a win gives its experience and shards. A hero who fell in a fight the party won
@@ -96,6 +97,7 @@
     if (!M || mp < M.mp) return 'Not enough MP.';
     const ids = move === 'waxing' ? (st.flags.party ? ['io', 'sol'] : ['io']) : [who];
     if (ids.every((id) => hpOf(st, id) <= 0)) return 'She is down: a Nightrose or a rest will bring her back.';
+    if (ids.every((id) => hpOf(st, id) <= 0 || hpOf(st, id) >= maxHp(st, id))) return 'No one needs it.'; // as a herb: her MP is kept
     st.mp = mp - M.mp;
     for (const id of ids) { if (hpOf(st, id) <= 0) continue; st.hp[id] = Math.min(maxHp(st, id), hpOf(st, id) + Math.round(M.heal * k * (1 + gearOf(st, 'io').heal / 100))); if (st.hp[id] >= maxHp(st, id)) st.hp[id] = null; }
     return null;

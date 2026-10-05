@@ -1,16 +1,16 @@
 // sound.js: the battle's music and sound effects, all synthesized in the browser. Imported unchanged from
 // reference/demos/night-square-shadow-wraith.html (its SND module): a D minor battle theme at 132 BPM and the swish, hit,
 // fire, boom, chime, blade, heal, guard, moon, shriek, grasp, eclipse, menu, select, trance, victory and defeat effects.
-// Added for the game: a longer fanfare for set fights, setVolumes(music, effects) for the game's volume settings, and
-// musicOn (whether the theme is playing, for tests). The game's fights keep this theme (Chris, October 4: "replace the
-// battle mp3 with the original battle music").
+// Added for the game: a longer fanfare for set fights, setVolumes(music, effects) for the game's volume settings,
+// musicOn (whether the theme is playing, for tests), and a pause while the page is hidden. The game's fights keep this
+// theme (Chris, October 4: "replace the battle mp3 with the original battle music").
 // Defines makeBattleSound() -> { init, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes, muted, musicOn }.
 // Call init() from a tap or a click: browsers only start audio after the player touches the page.
 function makeBattleSound() {
   'use strict';
   let ctx = null, master = null, sfxBus = null, musBus = null, noiseBuf = null, muted = false, musOn = false, timer = 0, fadeTO = 0, nextT = 0, step = 0;
   function init() {
-    if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
+    if (ctx) { if (ctx.state === 'suspended' && !document.hidden) ctx.resume(); return; } // (hidden, it waits: below)
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
     ctx = new AC(); master = ctx.createGain(); master.gain.value = muted ? 0 : 0.6;
     const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4; master.connect(comp); comp.connect(ctx.destination);
@@ -94,5 +94,13 @@ function makeBattleSound() {
     if (musOn) musBus.gain.setTargetAtTime(0.3 * musVol, ctx.currentTime, 0.05);
   }
   let vols = null;
+  // the page hidden (another app, the screen off): the theme and the effects wait, as Chris's songs pause in the game,
+  // and go on when it shows again; only what this stopped is started again
+  let hidStopped = false;
+  document.addEventListener('visibilitychange', () => {
+    if (!ctx) return;
+    if (document.hidden) { if (ctx.state === 'running') { hidStopped = true; ctx.suspend(); } }
+    else if (hidStopped) { hidStopped = false; ctx.resume(); }
+  });
   return { init() { init(); if (vols) setVolumes(vols[0], vols[1]); }, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes, get muted() { return muted; }, get musicOn() { return musOn; } };
 }

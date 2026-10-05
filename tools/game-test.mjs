@@ -52,9 +52,9 @@
 //             scene), each from where it was; the fights play their own theme, and the made-up music plays everywhere
 //             else; Music Off quietens them (run after title or new)
 //   chapters: the title's Chapters, for gates 5, 10 and 15 and the finale: each opens in the town before its gate (the
-//             crossroads' own south road for gate 15, Misthollow for the finale), the party at the gate's level and saved,
-//             after the town's arrival scene, with the little arrow pointing her on, and the Magpie moored at a landing
-//             on a ground map
+//             crossroads for gate 15, where the cold moor's road comes in; Misthollow for the finale), the party at
+//             the gate's level and saved, after the town's arrival scene, with the little arrow pointing her on, and
+//             the Magpie moored at a landing on a ground map
 // Each step saves a screenshot in --out (tools/.cache/game-test by default). Exits 1 on any page error.
 // three.js r128 comes from npm into tools/.cache, since the CDN is unreachable from the sandbox; the fonts are skipped.
 // --offline tests the file Chris keeps (node tools/build.mjs --min --offline putting-it-all-together/game.html):
@@ -750,9 +750,9 @@ try {
       await shot('finale-fight');
       log('  the finale began after its cutscene, which won’t play again');
     } else if (step === 'chapters') {
-      // each gate's chapter from the title: Io in the town before the gate (the crossroads' own south road; Misthollow
-      // for the finale), the party at the gate's level, saved, after the town's arrival scene; and the little arrow
-      // pointing her on
+      // each gate's chapter from the title: Io in the town before the gate (the crossroads, where the cold moor's road
+      // comes in; Misthollow for the finale), the party at the gate's level, saved, after the town's arrival scene; and
+      // the little arrow pointing her on
       const want = [null, ['bogmire', 5], ['dawnroost', 10], ['crossroads', 15], ['misthollow', 20]];
       for (let k = 1; k < want.length; k++) {
         await page.evaluate(() => { try { localStorage.clear(); } catch (e) { /* none */ } });

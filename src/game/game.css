@@ -113,6 +113,9 @@
 .fly-hint{position:absolute;left:16px;right:16px;top:42%;margin:0;text-align:center;font-size:15px;color:#f1e6c8;text-shadow:0 2px 6px #000;pointer-events:none}
 .fly-hint[hidden]{display:none}
 .title-help{margin:6px 0 0;max-width:340px;text-align:center;font-size:13px;line-height:1.4;color:#cfd4f4}
+/* a phone held sideways: closer rows and the help on two wide lines, so with a save (Continue and its line) the
+   game's name isn't cut off at the top */
+@media (max-height:460px){.title-box{gap:6px;padding-top:8px}.title-help{max-width:600px}}
 /* larger text (the menu's Text size) */
 .game.big-text .talk-said{font-size:19.5px;line-height:1.38}
 .game.big-text .talk-who{font-size:22px}
