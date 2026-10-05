@@ -173,7 +173,7 @@ node tools/arena-test.mjs --size 1280x800                 # a laptop's screen
 node tools/arena-test.mjs --jpg envoi-final-draft/arena/renders   # these pictures
 ```
 
-This work began from the game at commit `ae4a864`, before the keepsakes and the cutscenes went in; it merges with the game's branch as it stood at `7b47b46` without a clash.
+This work began from the game at commit `ae4a864`, before the keepsakes and the cutscenes went in. It merges with the game's branch as it stood at `0757ee8` without a clash, and a scratch copy of the two merged was tried: the demo's band 2 and Colossus fights, and the game test with the switch on (its band 2 wild fight on the moor, won). No errors.
 
 Ideas for later:
 
