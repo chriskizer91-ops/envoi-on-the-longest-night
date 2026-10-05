@@ -786,6 +786,11 @@
       let fps = 30; try { const v = localStorage.getItem('envoi.fps'); if (v !== null) fps = +v; } catch (e) { /* default */ }
       const r = el('div', { class: 'gm-item' }, b); el('span', null, r, 'Battle frame rate'); const gp = el('div', { class: 'gm-pick' }, r);
       for (const [t, v] of [['30', 30], ['45', 45], ['60', 60], ['Screen', 0]]) { const x = el('button', { type: 'button', class: 'go small' + (fps === v ? '' : ' alt'), 'aria-pressed': String(fps === v) }, gp, t); x.addEventListener('click', () => { try { localStorage.setItem('envoi.fps', String(v)); } catch (e) { /* not kept */ } redraw(); }); }
+      // how sharp the battles' 3D is drawn, kept where the battle screen reads it (3/4 by default, Chris; half is the lever
+      // for a phone that runs a fight slow; the painting behind is always full)
+      let sharp = 0.75; try { const v = +localStorage.getItem('envoi.sharp'); if (v === 1 || v === 0.5) sharp = v; } catch (e) { /* default */ }
+      const rs = el('div', { class: 'gm-item' }, b); el('span', null, rs, 'Battle sharpness'); const gs = el('div', { class: 'gm-pick' }, rs);
+      for (const [t, v] of [['Full', 1], ['3/4', 0.75], ['Half', 0.5]]) { const x = el('button', { type: 'button', class: 'go small' + (sharp === v ? '' : ' alt'), 'aria-pressed': String(sharp === v) }, gs, t); x.addEventListener('click', () => { try { localStorage.setItem('envoi.sharp', String(v)); } catch (e) { /* not kept */ } redraw(); }); }
       // the cutscenes this game has shown, to watch again
       const seen = Object.keys(st.seen || {}).filter((id) => window.CUTSCENES && window.CUTSCENES[id]);
       if (seen.length) {

@@ -53,8 +53,13 @@
     const DIST = (IH / 2) / (PXM * Math.tan(FOV / 2 * Math.PI / 180));
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
     // the 3D layer draws at 3/4 of that (Chris, October 3: he could hardly tell it from full, and it spares the phone's
-    // drawing); the painting behind it stays at full sharpness, which costs one picture a camera move
-    const GL_DPR = DPR * 0.75;
+    // drawing); the painting behind it stays at full sharpness, which costs one picture a camera move. The 3D's sharpness
+    // is a setting, kept in this browser as the frame rate is ('envoi.sharp': 1 full, 0.75 or 0.5 half; 3/4 unless
+    // another is picked, in the game's Settings or on a page's Sharpness button, which hands it in as cfg.sharp)
+    const SHARPS = [1, 0.75, 0.5];
+    let SHARP = 0.75;
+    try { const v = +localStorage.getItem('envoi.sharp'); if (SHARPS.includes(v)) SHARP = v; } catch (e) { /* storage blocked: 3/4 */ }
+    if (SHARPS.includes(cfg.sharp)) SHARP = cfg.sharp;
     // the frame rate: the screen's own (measured), or a cap of 60, 45 or 30 frames a second for phones that stutter in
     // the busiest moments. Frames are paced to the screen's refreshes, so 45 and 30 stay even on a 90 Hz phone. The
     // choice is kept in this browser; fps counts the fight's frames for the end card
@@ -2344,7 +2349,7 @@
       for (const id of ['cold', 'dark']) if (!$(id)) { const d = el('div', { id, class: 'fill', 'aria-hidden': 'true' }); stage.insertBefore(d, $('flash')); }
       if (!$('sky')) stage.insertBefore(el('div', { id: 'sky', class: 'fill', 'aria-hidden': 'true' }), glCanvas);
       renderer = new THREE.WebGLRenderer({ canvas: glCanvas, alpha: true, antialias: true });
-      renderer.setPixelRatio(GL_DPR); renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(DPR * SHARP); renderer.setClearColor(0x000000, 0);
       scene = new THREE.Scene();
       shadowTex = radialTex('rgba(10,4,16,0.62)', 'rgba(10,4,16,0.3)', 'rgba(10,4,16,0)');
       lightTex = radialTex('rgba(255,255,255,1)', 'rgba(255,255,255,0.28)');
@@ -2433,6 +2438,8 @@
         weaken(n, who) { const f = who ? E.unit(who) : E.foes[0]; f.hp = Math.min(f.hp, n); D[f.key].hp = f.hp; },
         // the arena this fight is in (null on a flat painting), and what the last frame cost to draw (frame: its number)
         get arena() { return AF; }, get drawn() { const i = renderer ? renderer.info.render : {}; return { frame: i.frame, calls: i.calls, triangles: i.triangles, points: i.points, lines: i.lines }; },
+        // the 3D's sharpness (1, 0.75 or 0.5), and the pixel ratio and the size it is drawn at
+        get sharp() { const s = renderer ? renderer.getDrawingBufferSize(new THREE.Vector2()) : null; return { sharp: SHARP, ratio: renderer ? renderer.getPixelRatio() : 0, dpr: DPR, w: s ? s.x : 0, h: s ? s.y : 0 }; },
       };
     }
     setTimeout(() => {
@@ -2452,7 +2459,13 @@
       if (renderer) { renderer.dispose(); renderer.forceContextLoss(); renderer = null; }
       if (window.__battle && window.__battle.engine === E) window.__battle = null;
     }
-    return { stop };
+    // the 3D's sharpness changed in the middle of a fight (a page's Sharpness button): the 3D layer is drawn at once at
+    // the new size, and the stage laid out again. Returns the sharpness in use
+    function sharpness(v) {
+      if (SHARPS.includes(v) && v !== SHARP) { SHARP = v; if (renderer) { renderer.setPixelRatio(DPR * SHARP); layoutView(); } }
+      return SHARP;
+    }
+    return { stop, sharpness };
   }
 
   // the stage's inner markup, as the demo pages write it, for the game to build a battle in (cfg.game)

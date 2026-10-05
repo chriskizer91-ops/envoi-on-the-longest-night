@@ -1,11 +1,16 @@
 // arena-test.mjs: plays the new battles' demo (dist/arena.html) headless (Chromium + SwiftShader, as game-test.mjs does)
 // and reports any page error. Build it first: node tools/build.mjs demos/arena.html
 // Usage: node tools/arena-test.mjs [dist/arena.html] [--fights band1,gate5,...] [--size 915x412] [--level 8]
-//        [--weather clear|rain|storm] [--to shot|end|turns:N] [--at 6] [--turbo 6] [--out <dir>] [--jpg <dir>]
+//        [--weather clear|rain|storm] [--to shot|end|turns:N] [--at 6] [--turbo 6] [--seed N] [--out <dir>] [--jpg <dir>]
 //   --fights: the demo's fight ids (first, band1 to band4, horror, colossus, gate5, gate10, gate15, finale); all by default
+//   --seed: each fight's rolls (the wilds' pack, its foes' levels, the weather) come from a generator seeded with N and
+//           the fight's id, so two runs (before and after a change) fight the same foes in the same weather; the fights
+//           themselves play as they come
 //   --to shot: each fight is watched (the expert play style) until it has run --at seconds of battle, then a moment at
 //            normal speed and a screenshot; then the next hero's command is waited for, and what that frame costs to
-//            draw (draw calls, triangles) is counted with the arena and without it (report.json has every count);
+//            draw (draw calls, triangles) is counted with the arena and without it (report.json has every count, and
+//            how many stones and birds were up); in the first arena fight the Sharpness button is then pressed round
+//            its three settings, each checked in the 3D layer's size;
 //        end: the screenshot, then on to the fight's end card; turns:N: the screenshot, then on for N more turns'
 //            worth of battle (about six seconds each)
 //   --jpg: also save each screenshot as a small JPEG named after its place, for a README (a second fight in a place
@@ -24,9 +29,10 @@ if (!fs.existsSync(cache)) execSync('npm pack three@0.128.0 --silent && tar xzf 
 const THREE_JS = fs.readFileSync(cache);
 
 const args = process.argv.slice(2);
-let file = path.join(R, 'dist/arena.html'), out = path.join(R, 'tools/.cache/arena-test'), size = [915, 412], fights = null, level = null, weather = null, to = 'shot', at = 6, turbo = 6, jpg = null;
+let file = path.join(R, 'dist/arena.html'), out = path.join(R, 'tools/.cache/arena-test'), size = [915, 412], fights = null, level = null, weather = null, to = 'shot', at = 6, turbo = 6, jpg = null, seed = 0;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--fights') fights = args[++i].split(',');
+  else if (args[i] === '--seed') seed = Math.abs(Math.round(+args[++i])) || 0;
   else if (args[i] === '--size') size = args[++i].split('x').map(Number);
   else if (args[i] === '--level') level = +args[++i];
   else if (args[i] === '--weather') weather = args[++i];
@@ -76,11 +82,17 @@ log('the demo is up at ' + size.join('x'));
 await page.screenshot({ path: path.join(out, '00-list.png') });
 const ids = fights || (await page.evaluate(() => window.__arena.FIGHTS.map((F) => F.id)));
 const report = [], named = new Set();
-let failed = false;
+let failed = false, sharpDone = false;
 for (const id of ids) {
   const before = errs.length;
   try {
-    const info = await page.evaluate(([id2, o]) => { const c = window.__arena.start(id2, o); return { arena: c.arena || null, weather: c.weather || null, scene: c.scene }; }, [id, { level: level || undefined, weather: weather || undefined, watch: 'expert' }]);
+    const info = await page.evaluate(([id2, o, sd]) => {
+      // --seed: the rolls made as the fight is set up come from a seeded generator, then the page's own comes back
+      const own = Math.random;
+      if (sd) { let s = sd % 2147483646 + 1; for (const ch of id2) s = (s * 31 + ch.charCodeAt(0)) % 2147483646 + 1; Math.random = () => (s = (s * 16807) % 2147483647) / 2147483647; }
+      try { const c = window.__arena.start(id2, o); return { arena: c.arena || null, weather: c.weather || null, scene: c.scene }; }
+      finally { Math.random = own; }
+    }, [id, { level: level || undefined, weather: weather || undefined, watch: 'expert' }, seed]);
     await waitFor(() => !!window.__battle, null, 120000, id + ' to build');
     await page.evaluate((tb) => { window.__battle.turbo = tb; }, turbo);
     await waitFor(() => window.__battle && window.__battle.state === 'battle', null, 400000, id + ' to begin');
@@ -104,6 +116,9 @@ for (const id of ids) {
       await page.evaluate(() => { window.__battle.turbo = 0; });
       const full = await settle();
       Object.assign(drawn, full, { at: 'the command shot' });
+      // what of the arena's own was up in that frame: the stones and clods still flying or lying, and the birds or bats
+      // in the air (an arena that has these counts draws neither while there are none)
+      Object.assign(drawn, await page.evaluate(() => { const A = window.__battle.arena, st = A && A.stats; return st && st.debris != null ? { debris: st.debris, birds: st.birds } : {}; }));
       if (info.arena) {
         await page.evaluate(() => { window.__battle.arena.root.visible = false; });
         const bare = await settle();
@@ -111,6 +126,18 @@ for (const id of ids) {
         drawn.fieldCalls = full.calls - bare.calls; drawn.fieldTriangles = full.triangles - bare.triangles;
       }
       await page.screenshot({ path: path.join(out, id + '-counted.png') });
+      // the Sharpness button (once a run, in the first arena fight counted, on a page that has it): each press draws the
+      // 3D at once at the next sharpness, 3/4 to half to full and back to 3/4, and keeps it for the next fight
+      if (info.arena && !sharpDone && await page.evaluate(() => !!document.getElementById('sharp') && !!(window.__battle && window.__battle.sharp))) {
+        sharpDone = true;
+        const now = () => page.evaluate(() => Object.assign({ label: document.querySelector('#sharp span').textContent, kept: localStorage.getItem('envoi.sharp'), css: document.getElementById('gl').clientHeight }, window.__battle.sharp));
+        const seen = [await now()];
+        for (let k = 0; k < 3; k++) { await page.click('#sharp'); await sleep(500); seen.push(await now()); if (k === 0) await page.screenshot({ path: path.join(out, id + '-half-sharp.png') }); }
+        const want = [0.75, 0.5, 1, 0.75];
+        const bad = seen.filter((s, k) => s.sharp !== want[k] || Math.abs(s.ratio - s.dpr * want[k]) > 1e-6 || s.h !== Math.floor(s.css * s.ratio) || (k && s.kept !== String(want[k])));
+        log('  the Sharpness button: ' + seen.map((s) => s.label).join(', ') + '; the 3D drawn ' + seen.map((s) => s.h).join(', ') + ' pixels tall on a stage ' + seen[0].css + ' tall' + (bad.length ? ': WRONG ' + JSON.stringify(seen) : ''));
+        if (bad.length) failed = true;
+      }
     }
     if (jpg) {
       // named after the place; a second fight in the same place (the Bramble Horror, the Colossus) adds its own name
@@ -121,7 +148,8 @@ for (const id of ids) {
       await sharp(shot).jpeg({ quality: 72, mozjpeg: true }).toFile(path.join(jpg, name + '.jpg'));
     }
     log(id + ' (' + (info.arena || 'flat: ' + info.scene) + ', ' + (drawn.weather || 'clear') + '): ' + drawn.calls + ' draw calls, ' + Math.round(drawn.triangles / 1000) + 'k triangles' +
-      (drawn.fieldCalls != null ? ' (the arena itself ' + drawn.fieldCalls + ' calls, ' + Math.round(drawn.fieldTriangles / 1000) + 'k triangles)' : '') + '; ' + drawn.party + ' against ' + drawn.foes + '; ' + drawn.tufts + ' live tufts');
+      (drawn.fieldCalls != null ? ' (the arena itself ' + drawn.fieldCalls + ' calls, ' + Math.round(drawn.fieldTriangles / 1000) + 'k triangles)' : '') + '; ' + drawn.party + ' against ' + drawn.foes + '; ' + drawn.tufts + ' live tufts' +
+      (drawn.debris != null ? '; ' + drawn.debris + ' stones up, ' + drawn.birds + ' birds up' : ''));
     let outcome = null;
     if (to === 'end' || to.startsWith('turns:')) {
       await page.evaluate((t) => { window.__battle.turbo = t; }, turbo);
@@ -138,7 +166,7 @@ for (const id of ids) {
         log(id + ': played on to ' + Math.round(await page.evaluate(() => window.__battle.t)) + ' s of battle (' + turns0 + ')');
       }
     }
-    report.push({ id, arena: info.arena, weather: drawn.weather, calls: drawn.calls, triangles: drawn.triangles, fieldCalls: drawn.fieldCalls, fieldTriangles: drawn.fieldTriangles, party: drawn.party, foes: drawn.foes, tufts: drawn.tufts, outcome: outcome && outcome.outcome });
+    report.push({ id, arena: info.arena, weather: drawn.weather, calls: drawn.calls, triangles: drawn.triangles, fieldCalls: drawn.fieldCalls, fieldTriangles: drawn.fieldTriangles, party: drawn.party, foes: drawn.foes, tufts: drawn.tufts, debris: drawn.debris, birds: drawn.birds, outcome: outcome && outcome.outcome });
     await page.evaluate(() => window.__arena.stop());
   } catch (e) {
     failed = true; log(id + ': ' + e.message);
