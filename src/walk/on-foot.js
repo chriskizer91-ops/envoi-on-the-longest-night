@@ -72,7 +72,7 @@
       get ioH() { return S.ioH; }, get ioScreen() { return S.ioScreen; }, get pace() { return S.pace; }, get showWalk() { return S.showWalk; },
       paintedIo: makePaintedIo(cfg.src),
       onExit: (ex) => {
-        if (ex.to === 'world') { note(ex.label + ': the game goes out to the world map here.'); return; }
+        if (ex.to === 'world') { note(ex.label + ': a road out of the picture; in the game she turns back here.'); return; }
         go(ex.to, ex.at);
       },
       onEvent: () => {}, onEncounter: () => {}, onMenu: () => note('The game opens its menu here.'),

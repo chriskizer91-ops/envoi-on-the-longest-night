@@ -1,7 +1,8 @@
 // goal-arrow.js: the little golden arrow that shows Io where the story wants her next (Chris, October 3: "a little arrow
-// that tells her where to walk in town whenever she gets a quest"). The ground maps (field.js) and the world map
-// (world.js) draw it alike: while the goal is in view, the arrow bobs over it (over a person's head, over a place, or
-// just inside a way out, pointing out through it); when it isn't, the arrow stands beside Io, pointing the way.
+// that tells her where to walk in town whenever she gets a quest"). The ground maps (field.js) draw it, through the
+// wilderness scenes too (the world map is only flown now): while the goal is in view, the arrow bobs over it (over a
+// person's head, over a place, or just inside a way out, pointing out through it); when it isn't, the arrow stands
+// beside Io, pointing the way.
 // GoalArrow.draw(g, { x, y, over, out, ix, iy, ih, W, H, t })
 //   x, y: the goal on the screen (canvas px); over: how high over that point the arrow floats (a person's height);
 //   out: an angle, when the goal is a way out; ix, iy, ih: Io's feet on the screen and her height there; W, H: the

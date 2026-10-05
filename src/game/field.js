@@ -8,8 +8,10 @@
 // Walking into a corner, she slips sideways round it, as Witch Way's walker does. The townsfolk stand in their places (sprites.js) and turn to her when she talks to them. The action
 // button names what is in reach: a person to talk to, a well, a rest, something to look at, the Magpie. Exits take her
 // to the next map, event areas start a story beat or a set fight once, and in the wilds every step fills a hidden
-// counter that starts a random fight when it passes a threshold, so fights come evenly: never two back to back.
-// The camera follows her; the mini-map in the corner shows the whole map, the view, the exits and the people.
+// counter that starts a random fight when it passes a threshold, so fights come evenly: never two back to back. The
+// counter and its threshold carry from map to map, so a row of wild scenes is walked as one.
+// The camera follows her; the mini-map in the corner shows the whole map, the view, the exits (not the roads out of the
+// picture that she turns back from, to: 'world') and the people.
 // Map coordinates are the paintings' own 1536 x 1024 pixels whatever size they ship at.
 // Field.create(host, opts) -> { load(id, at, dir), pause(), resume(), P, map, near(), redraw(), stage, setPicture(url) }
 //   stage: the story's actors, walking on the map while a scene plays (handoff, section 5): add(id, look, [x, y], dir),
@@ -264,7 +266,9 @@
       buildGrid();
       // never start inside a wall: the nearest open cell
       if (!canStand(P.x, P.y)) { const r = findRoute(P.x, P.y); if (r && r.length) { P.x = r[r.length - 1][0]; P.y = r[r.length - 1][1]; } }
-      P.next = nextGap();
+      // the threshold carries from map to map with the counter, so a row of wild scenes is one walk and fights don't
+      // bunch where one scene meets the next (it is drawn again only after a fight)
+      if (!P.next) P.next = nextGap();
       plate.textContent = m.name;
       return new Promise((res) => {
         const next = new Image();
@@ -525,7 +529,7 @@
       mg.fillStyle = 'rgba(5,3,14,0.35)'; mg.fillRect(0, 0, w, h);
       mg.lineWidth = Math.max(1, DPR); mg.strokeStyle = 'rgba(244,246,255,.85)';
       mg.strokeRect(Math.max(0, cam.x) * k, Math.max(0, cam.y) * k, Math.min(vw, MW) * k, Math.min(vh, MH) * k);
-      mg.fillStyle = 'rgba(120,180,255,.9)'; for (const ex of map.exits || []) mg.fillRect(ex.rect[0] * k - DPR, ex.rect[1] * k - DPR, Math.max(3 * DPR, (ex.rect[2] - ex.rect[0]) * k), Math.max(3 * DPR, (ex.rect[3] - ex.rect[1]) * k));
+      mg.fillStyle = 'rgba(120,180,255,.9)'; for (const ex of map.exits || []) if (ex.to !== 'world') mg.fillRect(ex.rect[0] * k - DPR, ex.rect[1] * k - DPR, Math.max(3 * DPR, (ex.rect[2] - ex.rect[0]) * k), Math.max(3 * DPR, (ex.rect[3] - ex.rect[1]) * k));
       mg.fillStyle = '#ffd36e'; for (const n of map.people || []) { mg.beginPath(); mg.arc(n.at[0] * k, n.at[1] * k, 2 * DPR, 0, Math.PI * 2); mg.fill(); }
       const pulse = 0.5 + 0.5 * Math.sin(t / 180);
       // the story's next step, ringed in gold

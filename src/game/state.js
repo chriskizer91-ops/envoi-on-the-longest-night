@@ -2,7 +2,9 @@
 // the one in use is written at every rest, at every change of map and from the menu. A save code carries a save as text,
 // to another device or another copy of the game (handoff, section 9). The state is the party (level, experience, each
 // hero's HP, Io's MP), the shards, the herbs carried, the story's flags, what has been done once (events, wells), the
-// highest band the Magpie can reach, where Io is, where she last rested, the keepsakes found and who wears each (items:
+// highest band the Magpie can reach, where Io is and where she last rested (always on a ground map: a save from before
+// the wilderness scenes, October 5, may hold { mode: 'world', at }, which game.js's fromWorld moves onto the ground maps
+// as it loads), the keepsakes found and who wears each (items:
 // keepsakes.js; a save from before them has keepsakes: { io, sol }, the two hidden ones) and the time played. HP or MP of
 // null means full.
 // Defines window.GameState = { fresh, load, save, has, clear, slot, use, list, latest, code, fromCode, SLOTS, maxHp,

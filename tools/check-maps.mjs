@@ -2,19 +2,33 @@
 // feet and 6 px either side inside a walk area and outside every block and person) from the map's start and from every
 // arrival point, and reports any exit, person, spot (the keepsakes in items.js among them) or arrival she can't reach. Whatever the grid misses is looked for
 // again along the narrow ways (field.js's fine search: 4 px steps on the same rule), where Chris's secret paths run, and
-// is named as reached that way. Usage: [MAPS_EXTRA=file.js,...] node tools/check-maps.mjs [mapId]
-import path from 'path'; import { createRequire } from 'module';
+// is named as reached that way. The other ways onto a map are checked like the arrivals from other maps (a point she can
+// stand on, or one within 14 px of a cell she can reach, and outside every exit): where the Magpie lands (game.js
+// LANDINGS) and each chapter's start and rest (game.js CHAPTERS). And each map's own rules: every exit leads to a map,
+// or is a road out of the picture that she turns back from (`to: 'world'`, with its line in script.js); a camp has a
+// rest, no random fights, and a landing ground (`land`) she can reach where the Magpie lands, with Io set down in reach
+// of her; a map's fights are its own band's; and its painting is there.
+// Usage: [MAPS_EXTRA=file.js,...] node tools/check-maps.mjs [mapId]  (MAPS_EXTRA: maps traced in files of their own,
+// before they join maps.js)
+import fs from 'fs'; import path from 'path'; import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const R = path.resolve(new URL('..', import.meta.url).pathname);
 require(path.join(R, 'src/game/maps.js'));
-// maps traced but not yet in the game (the wilderness scenes, src/game/maps-wilds.js, until Chris's okay), and any
-// files named in MAPS_EXTRA (comma-separated: a map traced in a file of its own, before it joins the others)
-import fs from 'fs';
-for (const f of [path.join(R, 'src/game/maps-wilds.js'), ...(process.env.MAPS_EXTRA || '').split(',').filter(Boolean).map((x) => path.resolve(x))]) if (fs.existsSync(f)) require(f);
+// maps traced in files of their own (comma-separated), before they join maps.js: a mistyped file stops the check
+for (const f of (process.env.MAPS_EXTRA || '').split(',').filter(Boolean)) require(path.resolve(f));
 const MAPS = globalThis.MAPS, CELL = 12, GW = 128, GH = 86, REACH = 58;
 // the keepsakes that lie on a map are spots too (the game adds them from items.js)
 globalThis.window = globalThis; require(path.join(R, 'envoi-final-draft/items/items.js'));
 for (const it of globalThis.LOOT.ITEMS) if (it.home && it.at && MAPS[it.home]) MAPS[it.home].spots = (MAPS[it.home].spots || []).concat({ kind: 'keepsake', id: it.id, at: it.at });
+// where else Io comes onto a map: the Magpie's landings and the chapters' starts and rests (game.js only defines
+// window.Game as it loads), and the roads' lines (script.js)
+let GAME = {}, SCENES = null;
+try { require(path.join(R, 'src/game/game.js')); GAME = globalThis.Game || {}; } catch (e) { console.log('(game.js would not load, so the landings and the chapters go unchecked: ' + e.message + ')'); }
+try { require(path.join(R, 'src/game/script.js')); SCENES = globalThis.SCRIPT.scenes; } catch (e) { console.log('(script.js would not load, so the roads’ lines go unchecked: ' + e.message + ')'); }
+const intoMap = (id) => [
+  ...Object.entries(GAME.LANDINGS || {}).filter(([, L]) => L.field && L.field[0] === id).map(([k, L]) => ['the Magpie’s landing ' + k, L.field[1]]),
+  ...(GAME.CHAPTERS || []).flatMap((c) => [[c.where, 'start'], [c.rest, 'rest']].filter(([w]) => w && w[0] === id).map(([w, k]) => ['chapter “' + c.name + '”’s ' + k, w[1]])),
+];
 const inPoly = (pts, x, y) => { let ins = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) ins = !ins; } return ins; };
 let bad = 0;
 for (const [id, m] of Object.entries(MAPS)) {
@@ -59,6 +73,33 @@ for (const [id, m] of Object.entries(MAPS)) {
   const inExit = (r, x, y) => x >= r[0] - 8 && x <= r[2] + 8 && y >= r[1] - 8 && y <= r[3] + 8;
   for (const [oid, om] of Object.entries(MAPS)) for (const ex of om.exits || []) if (ex.to === id) {
     for (const e2 of m.exits || []) if (inExit(e2.rect, ex.at[0], ex.at[1])) probs.push('arrival from ' + oid + ' at ' + ex.at + ' is inside the exit to ' + e2.to); const [c, d] = near(...ex.at); if (!seen[c] || d > 14) probs.push('arrival from ' + oid + ' at ' + ex.at + (d > 14 ? ' (' + Math.round(d) + ' px off the walk)' : ' (cut off)')); }
+  // where the Magpie lands, and the chapters' starts and rests (a point she can stand on passes too: Dawnroost's
+  // chapter rest stands 15 px from a whole open cell)
+  for (const [what, at] of intoMap(id)) {
+    for (const e2 of m.exits || []) if (inExit(e2.rect, at[0], at[1])) probs.push(what + ' at ' + at + ' is inside the exit to ' + e2.to);
+    const [c, d] = near(...at);
+    if (!stand(at[0], at[1]) && d > 14) probs.push(what + ' at ' + at + ' (' + Math.round(d) + ' px off the walk)'); else if (!seen[c]) probs.push(what + ' at ' + at + ' (cut off)');
+  }
+  // every exit leads to a map, or is a road out of the picture that she turns back from, saying its line
+  for (const ex of m.exits || []) {
+    if (ex.to === 'world') { if (SCENES && !(SCENES[ex.say] || []).length) probs.push('the road out ' + JSON.stringify(ex.rect) + ' has no line to say (`say`: ' + ex.say + ', in script.js scenes)'); }
+    else if (!MAPS[ex.to]) probs.push('exit to ' + ex.to + ': no such map');
+  }
+  // a camp: a rest, no random fights, and a landing ground she can reach, where the Magpie lands and sets her down in
+  // reach of her (game.js puts the Magpie's spot at land)
+  if (m.kind === 'camp' || m.land) {
+    if (!(m.spots || []).some((s) => s.kind === 'rest')) probs.push('a camp with no rest');
+    if (m.wild) probs.push('random fights in a camp');
+    if (!Array.isArray(m.land)) probs.push('a camp with no land');
+    else {
+      const [c, d] = near(...m.land); if (d > 14 || !seen[c]) probs.push('its land at ' + m.land + ' is off the ground she can reach');
+      const Ls = Object.entries(GAME.LANDINGS || {}).filter(([, L]) => L.field && L.field[0] === id);
+      if (GAME.LANDINGS && !Ls.length) probs.push('a landing ground the Magpie never lands on (game.js LANDINGS)');
+      for (const [k, L] of Ls) if (Math.hypot(L.field[1][0] - m.land[0], (L.field[1][1] - m.land[1]) * 1.3) >= REACH) probs.push('the Magpie’s landing ' + k + ' sets Io down at ' + L.field[1] + ', out of reach of her at ' + m.land);
+    }
+  }
+  if (m.wild && m.wild.band !== m.band) probs.push('band ' + m.wild.band + ' fights on a band ' + m.band + ' map');
+  if (!m.src || !fs.existsSync(path.join(R, m.src))) probs.push('no painting at ' + m.src); // a bad src leaves the field undrawn and Io frozen (field.js, load)
   const open = q.length;
   console.log((probs.length ? '✗ ' : '✓ ') + id + ': ' + open + ' cells reachable' + (narrow.length ? ' (along a narrow way: ' + narrow.join('; ') + ')' : '') + (probs.length ? '\n    ' + probs.join('\n    ') : ''));
   bad += probs.length;

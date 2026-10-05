@@ -1,4 +1,4 @@
-// map-editor.js: the map editor (the final draft, October 4, 2026), Chris's one tool for the game's 13 walking maps. It
+// map-editor.js: the map editor (the final draft, October 4, 2026), Chris's one tool for the game's 21 walking maps. It
 // is the Walking Paths page (envoi-game-pass-3/map-paths/map-paths.js), whose path tools it keeps as they were, with the
 // keepsakes placed on the same maps. In Walking paths he fixes where Io can walk: the walk areas and the blocks cut out
 // of them, the fronts drawn over her, and the places of the exits, people, spots and arrivals. In Keepsakes he puts each

@@ -2,15 +2,15 @@
 // to check the tracing by eye. Usage: [MAPS_EXTRA=file.js,...] node tools/trace-overlay.mjs <mapId> <out.png> [width] [--grid 50] [--crop x,y,w,h]
 //   [--plain] (the painting and the grid only)
 // Walk areas are green, blocks red, fronts (the painting's pieces drawn over Io when she's behind them) violet with their
-// base line, exits blue, people gold, other spots white, event areas pink; labels name each. --crop draws only that part
-// of the map (in map px), scaled to width; the grid's numbers are map px.
+// base line, exits blue, people gold, other spots white, event areas pink, a camp's landing ground (land) cyan; labels
+// name each. --crop draws only that part of the map (in map px), scaled to width; the grid's numbers are map px.
 import fs from 'fs'; import path from 'path'; import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const R = path.resolve(new URL('..', import.meta.url).pathname);
 const sharp = require(path.join(R, 'tools/node_modules/sharp'));
 require(path.join(R, 'src/game/maps.js'));
-// maps traced but not yet in the game (src/game/maps-wilds.js), and any files named in MAPS_EXTRA (comma-separated)
-for (const f of [path.join(R, 'src/game/maps-wilds.js'), ...(process.env.MAPS_EXTRA || '').split(',').filter(Boolean).map((x) => path.resolve(x))]) if (fs.existsSync(f)) require(f);
+// maps traced in files of their own (MAPS_EXTRA, comma-separated), before they join maps.js: a mistyped file stops it
+for (const f of (process.env.MAPS_EXTRA || '').split(',').filter(Boolean)) require(path.resolve(f));
 const args = process.argv.slice(2), pos = [];
 let grid = 100, crop = null, plain = false;
 for (let i = 0; i < args.length; i++) {
@@ -50,6 +50,7 @@ if (!plain) {
   for (const n of M.people || []) { svg += '<circle cx="' + X(n.at[0]) + '" cy="' + Y(n.at[1]) + '" r="' + 6 * k + '" fill="rgba(255,210,80,0.8)" stroke="#000"/>' + label(n.at[0] + 10, n.at[1] + 6, n.name, '#fd6'); }
   for (const s of M.spots || []) { if (s.rect) { svg += rect(s.rect, 'rgba(255,120,255,0.12)', 'rgba(255,120,255,0.9)') + label(s.rect[0] + 4, s.rect[1] + 24, s.kind + ':' + s.id, '#f9f'); continue; } svg += '<circle cx="' + X(s.at[0]) + '" cy="' + Y(s.at[1]) + '" r="' + 5 * k + '" fill="rgba(255,255,255,0.8)" stroke="#000"/>' + label(s.at[0] + 10, s.at[1] + 6, s.kind + (s.id ? ':' + s.id : ''), '#fff'); }
   if (M.start) svg += '<circle cx="' + X(M.start[0]) + '" cy="' + Y(M.start[1]) + '" r="' + 5 * k + '" fill="#f6f" stroke="#000"/>';
+  if (M.land) svg += '<circle cx="' + X(M.land[0]) + '" cy="' + Y(M.land[1]) + '" r="' + 8 * k + '" fill="rgba(110,230,255,0.85)" stroke="#000"/>' + label(M.land[0] + 12, M.land[1] + 6, 'land', '#8ef');
 }
 svg += '</svg>';
 const base = await sharp(plainPng(fs.readFileSync(src))).extract({ left: cx, top: cy, width: cw, height: ch }).resize(width, height, { kernel: 'nearest' }).png().toBuffer();
