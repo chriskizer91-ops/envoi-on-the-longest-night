@@ -774,7 +774,7 @@
         const ov = el('div', { class: 'gmenu', role: 'dialog', 'aria-label': 'Menu' }, root); menuOpen = ov;
         const card = el('div', { class: 'gmenu-card win' }, ov);
         const tabs = el('div', { class: 'gmenu-tabs', role: 'tablist' }, card), body = el('div', { class: 'gmenu-body' }, card);
-        const close = () => { ov.remove(); menuOpen = null; done(); };
+        const close = () => { document.removeEventListener('keydown', onKey); ov.remove(); menuOpen = null; done(); };
         const T = { Party: party, Herbs: herbs, Items: items, Moonlore: lore, Saves: saves, Settings: setup };
         let cur = 'Party';
         const btns = Object.keys(T).map((k) => { const b = el('button', { type: 'button', role: 'tab', class: 'tab' }, tabs, k); b.addEventListener('click', () => { cur = k; draw(); }); return b; });
@@ -782,7 +782,15 @@
         const saveB = el('button', { type: 'button', class: 'go alt' }, foot, 'Save'); saveB.addEventListener('click', () => { save(); note('Saved in slot ' + GS.slot() + '.'); sfx('ui-save'); });
         const titleB = el('button', { type: 'button', class: 'go alt' }, foot, 'Title'); titleB.addEventListener('click', () => { save(); close(); showTitle(); });
         const closeB = el('button', { type: 'button', class: 'go' }, foot, 'Close'); closeB.addEventListener('click', close);
-        ov.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
+        // Esc closes it from anywhere in it, and once a choice has redrawn the page and taken the focus with it (onto the
+        // page itself); a keepsake's card and the save code's box over it take their own Esc first, and a cutscene
+        // watched again over it is skipped by its own
+        const onKey = (e) => {
+          const t = e.target;
+          if (e.key !== 'Escape' || !(ov.contains(t) || t === document.body || t === document.documentElement) || root.querySelector('.cutscene-layer')) return;
+          e.stopPropagation(); close();
+        };
+        document.addEventListener('keydown', onKey);
         function draw() { btns.forEach((b, i) => b.setAttribute('aria-selected', String(Object.keys(T)[i] === cur))); body.textContent = ''; T[cur](body, draw); }
         draw(); setTimeout(() => closeB.focus({ preventScroll: true }), 30);
       });
@@ -893,7 +901,12 @@
       const ta = el('textarea', { class: 'code', readonly: '', rows: '5', 'aria-label': 'Save code' }, card); ta.value = text;
       const foot = el('div', { class: 'gmenu-foot' }, card), cp = el('button', { type: 'button', class: 'go alt' }, foot, 'Copy'), x = el('button', { type: 'button', class: 'go' }, foot, 'Done');
       cp.addEventListener('click', async () => { ta.select(); let ok = false; try { await navigator.clipboard.writeText(text); ok = true; } catch (e) { try { ok = document.execCommand('copy'); } catch (e2) { /* select it by hand */ } } note(ok ? 'Copied.' : 'Select the code and copy it.'); });
-      x.addEventListener('click', () => ov.remove());
+      // Esc closes it as Done does (not the menu under it), and the focus goes back where it was
+      const prev = document.activeElement;
+      const close = () => { document.removeEventListener('keydown', onKey, true); ov.remove(); if (prev && prev.isConnected && prev.focus) prev.focus({ preventScroll: true }); };
+      const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } };
+      document.addEventListener('keydown', onKey, true);
+      x.addEventListener('click', close);
       setTimeout(() => { ta.focus({ preventScroll: true }); ta.select(); }, 30);
     }
     // a pasted save code: a game to load into a slot
@@ -909,9 +922,13 @@
           if (!sv) { msg.textContent = 'That isn’t a whole save code. Copy it again, all of it.'; return; }
           // a code from a newer copy of the game, saved somewhere this copy doesn't have, would open on nothing
           if ([sv.where, sv.rest].some((w) => w && w.mode !== 'world' && w.map && !MAPS[w.map])) { msg.textContent = 'That code is from a newer copy of the game, saved in a place this copy doesn’t have.'; return; }
-          ov.remove(); done(sv);
+          close(sv);
         });
-        no.addEventListener('click', () => { ov.remove(); done(null); });
+        // Esc goes back as Back does
+        const close = (sv) => { document.removeEventListener('keydown', onKey, true); ov.remove(); done(sv); };
+        const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(null); } };
+        document.addEventListener('keydown', onKey, true);
+        no.addEventListener('click', () => close(null));
         setTimeout(() => ta.focus({ preventScroll: true }), 30);
       });
     }
@@ -945,7 +962,11 @@
         }
         draw();
         const foot = el('div', { class: 'gmenu-foot' }, card), x = el('button', { type: 'button', class: 'go' }, foot, 'Done');
-        x.addEventListener('click', () => { ov.remove(); done(); }); setTimeout(() => x.focus({ preventScroll: true }), 30);
+        // Esc leaves as Done does, wherever the focus is (a purchase redraws the shelf, and the focus with it)
+        const close = () => { document.removeEventListener('keydown', onKey, true); ov.remove(); done(); };
+        const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } };
+        document.addEventListener('keydown', onKey, true);
+        x.addEventListener('click', close); setTimeout(() => x.focus({ preventScroll: true }), 30);
       });
     }
 
