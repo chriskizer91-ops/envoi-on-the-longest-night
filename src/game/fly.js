@@ -107,7 +107,8 @@
       if (!ready) build();
       root.hidden = false; layout();
       const L = opts.landings[from];
-      S.pos.copy(toW(...L.at)); S.alt = 0.5; S.yaw = Math.PI / 2; S.speed = 0; S.mode = 'takeoff'; S.from = from; target = null; held.clear();
+      // no stop is near yet, so the one she rises from offers to land again even when she came down there by its card
+      S.pos.copy(toW(...L.at)); S.alt = 0.5; S.yaw = Math.PI / 2; S.speed = 0; S.mode = 'takeoff'; S.from = from; target = null; near = null; held.clear();
       if (opts.music) opts.music('flight'); if (opts.sfx) opts.sfx('ship-takeoff');
       hint.hidden = false; setTimeout(() => { hint.hidden = true; }, 6000);
       last = performance.now(); cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
@@ -122,6 +123,8 @@
       let turn = 0, climb = 0;
       if (S.mode === 'takeoff') { S.alt += dt * 3; climb = 1; S.speed = Math.min(CRUISE, S.speed + dt * 2); if (S.alt >= ALT) { S.alt = ALT; S.mode = 'fly'; } }
       else if (S.mode === 'fly' || S.mode === 'land') {
+        // landing, she makes for the stop whatever is touched meanwhile (the pad and the arrows let go of a tapped point)
+        if (S.mode === 'land') target = toW(...opts.landings[S.landing].at);
         let want = S.speed;
         if (held.size && S.mode === 'fly') {
           if (held.has('w')) turn = TURN; if (held.has('e')) turn = -TURN;
@@ -130,8 +133,11 @@
           const dx = target.x - S.pos.x, dz = target.z - S.pos.z, d = Math.hypot(dx, dz);
           const ang = Math.atan2(dx, dz); let diff = ang - S.yaw; while (diff > Math.PI) diff -= Math.PI * 2; while (diff < -Math.PI) diff += Math.PI * 2;
           turn = Math.max(-TURN, Math.min(TURN, diff * 2.5));
-          want = d < 3 ? 0 : Math.min(CRUISE, d * 0.8);
-          if (d < 0.6) { target = null; want = 0; }
+          // she slows to a halt short of a tapped point; landing, she comes all the way in, since she only comes down
+          // within 1.5 m of the stop
+          const landing = S.mode === 'land';
+          want = d < 3 && !landing ? 0 : Math.min(CRUISE, d * 0.8);
+          if (d < 0.6 && !landing) { target = null; want = 0; }
         } else want = 0;
         S.speed += (want - S.speed) * Math.min(1, dt * 1.6);
         S.yaw += turn * dt;
