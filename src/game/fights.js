@@ -180,7 +180,7 @@
         attackText: () => 'The Shadow Wraith attacks!',
         winMoth: 'A pale moth rises from the empty robe and drifts down into the Moonwell.',
         winText: 'The wraith’s robe falls empty, and its soul goes home at last as a pale moth. The Moonwell shines again.',
-        loseText: 'The wraith’s shadow swallows the square. Io wakes by the Moonwell; the wraith still waits on the bridge.',
+        loseText: 'The wraith’s shadow swallows the square. Io wakes in her own bed; the wraith still waits on the bridge.',
       });
     }
     if (kind === 'greatWraith') {
