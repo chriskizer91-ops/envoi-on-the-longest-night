@@ -26,6 +26,7 @@ October 5, 2026, early morning. Everything still to do for *Envoi on the Longest
 | T14 | The file Chris keeps, after each round | Technical | Nothing | After any round |
 | T15 | The tests: slow steps, and keeping them true | Technical | Nothing | Anything |
 | T16 | The unexplained freeze at 20 frames a second | Technical | A freeze on his phone | With T01 B |
+| T17 | The audit's findings (October 5, evening): none breaks the game | Ready | Nothing | One fixer per owner (tools, battles, game, walking), never two in the same file |
 | I01 to I22 | Ideas, one line each, at the end | Idea | His yes | |
 
 **What can run at once.** Never two agents in `src/game/game.js`, `src/battle/screen.js`, `src/game/fights.js` or `src/game/maps.js` at the same time: those four are where the tasks meet. T01 owns `screen.js` and `fights.js` until it's in; T02 owned `maps.js`, `world.js` and the landings in `game.js` until it was done (October 5); T04's intake and T05's words both touch `fights.js`, so bring T01's part A in first. Art, docs, demo pages and new folders can always run beside anything.
@@ -253,6 +254,10 @@ After any round he wants to keep: `node tools/build.mjs --min --offline putting-
 ### T16: The 20 frames a second freeze
 
 Unexplained (`../docs/next-session.md`): on the Battle Backgrounds page, his phone froze at 20 fps. Neither the game nor the arena demo offers 20. If a fight freezes or goes black on his phone after T01 B, start here.
+
+### T17: The audit's findings
+
+On the evening of October 5 six auditors read and tried the whole game. What would break it was fixed and tested that evening: the Magpie's landing, the Thornwood before the Magpie, Continue from a spot off the ground, save codes and saving over another slot, the shipyard's landing (`wrap-up-2026-10-05.md`, "Fixed in the audit"). Everything else they found is listed there, with each one's file and line and its fix, by owner: tools (10, the first of them high: `apply-edits.mjs` drops "Copy my work" exports, so fix it before Chris sends more map edits), battles (10), game (9) and walking (6). Take them in the order that note's "First moves" gives, one fixer per owner in its own worktree, each fix proven by a test that fails on the old code.
 
 ## Ideas Chris hasn't said yes to
 

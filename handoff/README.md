@@ -1,5 +1,7 @@
 # Handoff: the Ultracode Hub
 
+**Newest: `wrap-up-2026-10-05.md`.** The first ultracode hub stopped on the evening of October 5 (usage limits). Its wrap-up says where everything stands, what Chris has, what the audit fixed, and the audit's other findings (T17 in `tasks.md`): read it before this page's own first moves, which are done.
+
 October 5, 2026. For the new session Chris starts in ultracode, which becomes **the hub**: the one session that changes the game and merges everyone else's work into it. Read this first, then `../docs/next-session.md` (where everything stands, the pages and the commands) and `../docs/still-to-come.md` (the short list, in Chris's terms).
 
 ## Who is who
