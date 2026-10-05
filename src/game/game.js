@@ -660,8 +660,8 @@
       // a battle that can't even start (an arena that fails to build) hands back to the map instead of leaving its layer up
       const r = await new Promise((res) => {
         cfg.game = { onEnd: res, onError: () => res({ outcome: 'error' }) }; cfg.sound = SND;
-        try { layer.ctl = BattleScreen.start(cfg); } catch (err) { console.error(err); layer.ctl = { stop() {} }; res({ outcome: 'error' }); return; }
-        if (still) fadeStill(still);
+        try { layer.ctl = BattleScreen.start(cfg); } catch (err) { console.error(err); layer.ctl = { stop() {} }; res({ outcome: 'error' }); }
+        if (still) fadeStill(still); // a cutscene's last picture goes in the error case too
       });
       layer.ctl.stop(); layer.remove();
       if (was === 'field') field.show(true); else if (was === 'world') world.show(true);

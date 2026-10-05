@@ -71,6 +71,8 @@ The wilds roll their weather, as the game will; three of these rolled a storm, w
 
 For comparison: Colossus in the Meadow, which you measured at 29 to 30 frames a second on your phone even in the storm, draws 96 things and 319,000 triangles; today's first fight, 83 and 156,000. The arena's own part is small, 10 to 19 draw calls and 4,000 to 28,000 triangles; most of every frame is the fighters themselves, as in today's fights, and they are the same models.
 
+Each fight takes a little longer to set up than today: its arena is built while the "Setting the scene…" card shows, about a tenth more than the fighters' own build, which every fight already pays. It never slows the fight itself.
+
 The demo page is 2.2 MB, the eight paintings 0.33 MB of it (250 KB as files; written into the page they take a third more).
 
 ## Pictures
