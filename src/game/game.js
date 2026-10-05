@@ -49,9 +49,10 @@
   };
   // the chapters: the start, and each gate with the party as the story leaves it there (story.js's path), for trying a
   // later part without playing up to it (Chris, October 3). Each starts just before its gate, in the town on its
-  // doorstep (the crossroads' gate is the crossroads itself, so that one starts on its south road), with three of each
-  // herb and the shards for the band's Magpie upgrade; the town's first-arrival scene plays, and losing wakes the
-  // party at the town's rest. The last one starts at the foot of Misthollow, on the approach to the finale.
+  // doorstep (the crossroads' gate is the crossroads itself, so that one starts where the cold moor's road brings her
+  // in, and its rest is the northern camp, by the Magpie: the crossroads has none, and its south road is closed), with
+  // three of each herb and the shards for the band's Magpie upgrade; the town's first-arrival scene plays, and losing
+  // wakes the party at the town's rest. The last one starts at the foot of Misthollow, on the approach to the finale.
   const BEEN = ['first', 'visit:bogmire'];
   const CHAPTERS = [
     { name: 'The start' },
@@ -62,7 +63,7 @@
       where: ['dawnroost', [645, 990]], rest: ['dawnroost', [340, 447]], shards: 2300 },
     { name: 'Gate 15: Halcyon', level: 15, band: 3, magpie: 'northCamp', flags: ['party', 'magpie', 'lights', 'refit', 'envoi', 'charge'],
       done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp', 'dawnroost', 'camp:northCamp'), landings: ['bogmire', 'warmCamp', 'dawnroost', 'northCamp'],
-      where: ['crossroads', [768, 990]], rest: ['crossroads', [768, 990]], shards: 4500 },
+      where: ['crossroads', [40, 485], 'e'], rest: ['northern-camp', [386, 455]], shards: 4500 },
     { name: 'The approach to the finale', level: 20, band: 4, magpie: 'frozenCamp', flags: ['party', 'magpie', 'lights', 'refit', 'envoi', 'charge', 'stoop', 'shipyard', 'upgrade2'],
       done: BEEN.concat('greatWraith', 'visit:dawnroost', 'camp:warmCamp', 'dawnroost', 'camp:northCamp', 'halcyon', 'visit:shipyard', 'camp:frozenCamp', 'visit:frozen-pass'),
       landings: ['bogmire', 'warmCamp', 'dawnroost', 'northCamp', 'shipyard', 'frozenCamp'], wilds: { 4: 5 },
