@@ -1702,13 +1702,15 @@
     }
 
     // ---------- playing a turn's log ----------
-    // The log splits into parts, each starting at a move, a strike, a Trance, a herb or a turn; each part plays its
-    // own choreography, and the blows inside it are shown at that choreography's hit times
+    // The log splits into parts, each starting at a move, a strike, a Trance, a herb, a turn or the frost's end; each part
+    // plays its own choreography, and the blows inside it are shown at that choreography's hit times. (The frost's end
+    // starts its own part: when Envoi's strike ends it, the blow waiting in the frost lands after the strike, and counted
+    // among Envoi's blows it would cost the strike its Last Word)
     const OWN_BANNER = { defend: 1, guard: 1, lunara: 1, envoi: 1 };
     async function playLog(log) {
       const parts = [];
       for (const e of log) {
-        if (['turn', 'move', 'strike', 'trance', 'charge', 'herb', 'stagger'].includes(e.t) || !parts.length) parts.push([e]);
+        if (['turn', 'move', 'strike', 'trance', 'charge', 'herb', 'stagger', 'frostEnds'].includes(e.t) || !parts.length) parts.push([e]);
         else parts[parts.length - 1].push(e);
       }
       for (const part of parts) {
