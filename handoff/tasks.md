@@ -2,7 +2,7 @@
 
 October 5, 2026, early morning. Everything still to do for *Envoi on the Longest Night*, task by task, for the ultracode hub (`README.md`). Written by the old hub from three surveys of the repository (the decision records, what waits on Chris, and the code itself, each claim checked against a file or a command), and from Chris's own messages.
 
-**A checked version is coming.** A workflow in the old hub is writing each task out against the files and having it checked adversarially. When it ends, it lands in `relay/tasks-verified.md` (`relay/STATUS.md`, row `tasks-verified`). Where it differs from this file, check the repository and bring the correction in here. From now on this file is yours: keep it current as tasks finish or Chris decides new ones.
+**This file is yours from now on:** keep it current as tasks finish or Chris decides new ones. (A second pass that would have checked it against the files was stopped at Chris's word, so where a step here doesn't match the code, trust the code and fix the step.)
 
 **Kinds.** *Ready*: decided, and nothing to wait for. *Waiting on Chris*: decided, and blocked on his art, answers, notes or yes. *Finishing pass*: decided for the finished game, deliberately later. *Technical*: health of the build, the tests and the docs. *Idea*: offered, not decided. Nothing of an idea is built until Chris says yes; at most a demo page for him to judge.
 

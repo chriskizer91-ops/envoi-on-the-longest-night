@@ -5,7 +5,7 @@ October 5, 2026. For the new session Chris starts in ultracode, which becomes **
 ## Who is who
 
 - **You, the ultracode hub.** From now on you own the game's branch, `ccr-31761774-76j8j3`: you change the game, merge other sessions' work into it, test it and publish it. Work on that branch and push to it (Chris's starter line gives you leave).
-- **The old hub,** the session that built the game from October 3 to 5. Its arena helper's work is delivered in `relay/` here (T01); its last helper, a workflow checking this task list, posts there when it ends; anything more Chris gives it (most likely pictures) it posts there too. It changes nothing on the game's branch except `handoff/relay/`.
+- **The old hub,** the session that built the game from October 3 to 5. Its arena helper's work is delivered in `relay/` here (T01), and it has nothing else running; anything more Chris gives it (most likely pictures) it posts there too. It changes nothing on the game's branch except `handoff/relay/`.
 - **Workshop sessions,** which Chris starts himself with the scripts in `../envoi-final-draft/workshop/README.md`: each works on its own branch, `work/<job>`, and leaves a slip. Two jobs are written (`wilds`, `words`); the model studio's creatures (`work/model-<id>`) and the optional character studies (`work/study-<name>`) follow the same rules.
 - **Chris** decides what goes in. He plays on his phone (a Pixel 7a, held sideways: 915 × 412), edits on his laptop, makes the art from our requests, and answers lore questions. He isn't a programmer: write what he reads in plain words.
 
@@ -76,7 +76,7 @@ Every task left in the game is defined one by one in **`tasks.md`** here: why (C
 - **Always:** T13 size and publishing, T14 his file after each round, T15 the tests, T16 the 20 fps freeze.
 - **Ideas,** I01 to I21: nothing is built until he says yes.
 
-**Still coming from the old hub:** a checked version of the list (`relay/tasks-verified.md`, row `tasks-verified` in `relay/STATUS.md`). When it lands, bring its corrections into `tasks.md`, which is yours to keep from now on.
+`tasks.md` is yours to keep from now on: mark tasks done as they finish, and add what Chris decides.
 
 ## Your first moves
 
