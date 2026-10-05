@@ -3,13 +3,17 @@
 // the Io on Foot page (src/walk/on-foot.js), as he heard them there. Soft steps are Path Polish's footsteps
 // (follow-me-down-witch-way, versions/path-polish/game/src/sound.js): one short, quiet, filtered breath of noise as each
 // foot lands, its colour from the ground (earth, stone or wood); the cloak is a soft swish with each step, no footfall.
-// Defines window.Footsteps = { make(ctx) }: ctx() gives the game's audio context (or null before the first touch);
+// Defines window.Footsteps = { make(ctx), fix }: ctx() gives the game's audio context (or null before the first touch);
 // make returns { play(kind, mapId, volume) }, kind 'soft' or 'cloak', volume the game's effects volume (0.75 Normal,
 // as loud as on the Io on Foot page).
 (function () {
   'use strict';
   // what each map is underfoot: the Io on Foot page's, and the wilderness scenes (earth, the frozen ones too)
   const GROUND = { cottage: 'earth', wickhollow: 'stone', jetty: 'wood', thornwood: 'earth', bogmire: 'wood', 'bogmire-heart': 'wood', dawnroost: 'stone', 'dawnroost-node': 'stone', crossroads: 'stone', shipyard: 'wood', 'frozen-pass': 'earth', misthollow: 'stone', moonwell: 'stone' };
+  // fixes waiting on Chris's word (October 5): the final pass's sound tool plays them beside the game's own steps, and the
+  // game leaves them off until he says yes. run: a step may follow the last after 0.12 s, not 0.19, so a running step (one
+  // every 0.18 s) isn't dropped; stone: a step on stone two and a half times as loud, near an earth one (it was a faint tick)
+  const FIX = { run: false, stone: false };
   function make(ctx) {
     let AC = null, noise = null, lastT = 0;
     function ready() {
@@ -34,7 +38,7 @@
     }
     return {
       play(kind, mapId, volume) {
-        if ((kind !== 'soft' && kind !== 'cloak') || !(volume > 0) || !ready() || AC.currentTime - lastT < 0.19) return false;
+        if ((kind !== 'soft' && kind !== 'cloak') || !(volume > 0) || !ready() || AC.currentTime - lastT < (FIX.run ? 0.12 : 0.19)) return false;
         lastT = AC.currentTime;
         // each step through a gain of its own at the effects' volume, freed when the step has sounded
         const out = AC.createGain(); out.gain.value = volume / 0.75; out.connect(AC.destination);
@@ -42,11 +46,11 @@
         if (kind === 'cloak') { burst(out, 'bandpass', 1900 + Math.random() * 500, 0.9, 0.07, 0.24, 0.045); return true; }
         const ground = GROUND[mapId] || 'earth';
         const s = { earth: ['lowpass', 560, 0.10, 0.052], stone: ['highpass', 1350, 0.045, 0.017], wood: ['bandpass', 340, 0.075, 0.061] }[ground];
-        burst(out, s[0], s[1], 0.7, 0.006, s[2], s[3] * 2.2);
+        burst(out, s[0], s[1], 0.7, 0.006, s[2], s[3] * 2.2 * (ground === 'stone' && FIX.stone ? 2.5 : 1));
         if (ground === 'wood') knock(out, 135 + Math.random() * 25, 0.065, s[3] * 0.25);
         return true;
       },
     };
   }
-  window.Footsteps = { make };
+  window.Footsteps = { make, fix: FIX };
 })();

@@ -10,7 +10,8 @@
 // wilderness scenes (October 5) each band's row of them leads on foot from its camp, where the Magpie lands, to its town.
 // Game.start({ host, src(path) -> URL, skipTitle, state, chapter }) -> the game (chapter: a CHAPTERS index, for a page
 // that plays only that chapter: its title offers to begin it or carry on). Defines window.Game = { start, LANDINGS,
-// CHAPTERS, arenaFor } (Game.arenaFor(cfg): what a fight's cutscene is given of its arena, below).
+// CHAPTERS, arenaFor, AMBIENCE, MUSIC } (Game.arenaFor(cfg): what a fight's cutscene is given of its arena, below;
+// AMBIENCE and MUSIC: each place's sounds and music, read by the final pass's sound tool too).
 (function () {
   'use strict';
   function el(tag, attrs, parent, text) { const e = document.createElement(tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (text !== undefined) e.textContent = text; if (parent) parent.appendChild(e); return e; }
@@ -1073,5 +1074,5 @@
     window.__game = api;
     return api;
   }
-  window.Game = { start, LANDINGS, CHAPTERS, arenaFor };
+  window.Game = { start, LANDINGS, CHAPTERS, arenaFor, AMBIENCE, MUSIC };
 })();

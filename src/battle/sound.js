@@ -4,11 +4,14 @@
 // Added for the game: a longer fanfare for set fights, setVolumes(music, effects) for the game's volume settings,
 // musicOn (whether the theme is playing, for tests), and a pause while the page is hidden. The game's fights keep this
 // theme (Chris, October 4: "replace the battle mp3 with the original battle music").
-// Defines makeBattleSound() -> { init, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes, muted, musicOn }.
+// Defines makeBattleSound() -> { init, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes, muted, musicOn, fix }.
 // Call init() from a tap or a click: browsers only start audio after the player touches the page.
 function makeBattleSound() {
   'use strict';
   let ctx = null, master = null, sfxBus = null, musBus = null, noiseBuf = null, muted = false, musOn = false, timer = 0, fadeTO = 0, nextT = 0, step = 0;
+  // a fix waiting on Chris's word (October 5): the final pass's sound tool plays it beside the game's own sound, and the
+  // game leaves it off until he says yes. noise: the noise loops, so eclipse's 2.4 s swell isn't cut at 1 to 1.5 s
+  const fix = { noise: false };
   function init() {
     if (ctx) { if (ctx.state === 'suspended' && !document.hidden) ctx.resume(); return; } // (hidden, it waits: below)
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
@@ -27,7 +30,7 @@ function makeBattleSound() {
   function noise(t, dur, peak, ftype, f0, f1, q, bus, att) {
     const s = ctx.createBufferSource(); s.buffer = noiseBuf; const f = ctx.createBiquadFilter(); f.type = ftype || 'lowpass'; f.Q.value = q || 0.8;
     f.frequency.setValueAtTime(f0, t); if (f1) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
-    const gn = ctx.createGain(); env(gn, t, att || 0.005, peak, dur); s.connect(f); f.connect(gn); gn.connect(bus || sfxBus); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
+    const gn = ctx.createGain(); env(gn, t, att || 0.005, peak, dur); s.connect(f); f.connect(gn); gn.connect(bus || sfxBus); if (fix.noise) s.loop = true; s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
   }
   const S = {
     swish() { const t = now(); noise(t, 0.2, 0.35, 'bandpass', 2600, 700, 1.4); },
@@ -102,5 +105,5 @@ function makeBattleSound() {
     if (document.hidden) { if (ctx.state === 'running') { hidStopped = true; ctx.suspend(); } }
     else if (hidStopped) { hidStopped = false; ctx.resume(); }
   });
-  return { init() { init(); if (vols) setVolumes(vols[0], vols[1]); }, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes, get muted() { return muted; }, get musicOn() { return musOn; } };
+  return { init() { init(); if (vols) setVolumes(vols[0], vols[1]); }, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes, get muted() { return muted; }, get musicOn() { return musOn; }, fix };
 }

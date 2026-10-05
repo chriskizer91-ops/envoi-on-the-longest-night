@@ -68,6 +68,10 @@ The whole pass (`checks/full-pass.sh`), at a Pixel 7a held sideways (915 × 412)
 | Every arena, on the new battles' demo (`tools/arena-test.mjs`, all twelve fights) | Pass |
 | The four ideas on his file (the offline try page, which is his file but for its title, byte for byte) | Pass: words that move on (and a tap still moves a line at once), the door each way, 47 soft steps and 43 of the cloak's swish (none at None or Effects off), Buy 10 |
 
+## The sound tool (after his file, at his word)
+
+**"Envoi Sound Check.html"**, here in this folder (built from `sound-tool/`, whose README says how): every sound the game plays, 113 cards, each played the way the game plays it through the game's own sound code: a place for a minute on the game's own timer with its music (so the wind is heard as it blows in the game), Io's footsteps as she walks and breaks into a run, a fight from the sting to the win, each piece of music and the loops of his songs, and both cutscenes' soundtracks. Where the code shows a sound broken (the wind and every other noisy sound stopping dead at half a second to two seconds; running footsteps dropping every other step; stone footsteps barely heard; the battle's eclipse cut short; the mist's wind four times too loud), a **Fixed** button plays the fix beside it. The fixes are switches in the game's sound code, off in the game until he says yes. He marks each sound Keep, Fix or Drop with a note, and **Copy my notes** gives them back to paste to Claude.
+
 ## What this pass fixed
 
 All 35 of the audit's other findings (T17 in `../handoff/tasks.md`, each listed with its file and line in `../handoff/wrap-up-2026-10-05.md`), the things the audit didn't cover, and what turned up on the way. Four fixers worked side by side, each in its own copy of the game and its own files (walking, the game, the battles, the tools), and every fix is proven by a check that fails on the old code and passes on the new one. The checks are in `checks/`, one folder per fixer, each with a note at its top saying what it proves and how to run it.

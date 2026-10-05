@@ -9,7 +9,11 @@ For the next session. Read this first, then `README.md` here (every fix, in Chri
 - **The published pages are a pass behind.** This session ran on Chris's other account, which can't update the pages the old hub published (the game https://claude.ai/artifact/BgSiyXBu53iW7DJVF1seV8, the try page https://claude.ai/artifact/NZ7C68JJTJ2taFJJgmkcMw, the map editor https://claude.ai/artifact/M3PokTZsXbbxbx2BSDSrC5) nor read the map editor's database. Chris didn't need them: his map edits are all in the game already, at his word. A session on that account can republish them as `../handoff/wrap-up-2026-10-05.md` says ("Before publishing"); the map editor now builds to about 7.59 MB (its README's "Build:" line wants its new size then).
 - **Every check:** `checks/full-pass.sh` runs the whole pass, one browser at a time, about two and a half hours (`SECTIONS="1 2"` and `SECTIONS="3 4 5 6 7"` split it in two). Each fixer's checks are in `checks/<area>/`, each with a note at its top.
 
-## Next: the sound tool (Chris asked for it, after the file)
+## Next: Chris's notes from the sound tool
+
+**The tool is made and sent** ("Envoi Sound Check.html" in this folder; `sound-tool/README.md`). When his notes come back (pasted from its Copy my notes, each with its card's id), put each verdict into the game: a Fix whose card has a Fixed button and he liked it, by switching its fix on (`sound-tool/README.md`, "The Fixed buttons"); any other Fix by changing the sound in the game's sound code (the tool plays it again from there once rebuilt, `sound-tool/make.mjs`); a Drop by taking the sound out where the game plays it (`sounds/inventory.md` names the place). Rebuild the tool so he can hear the changes, then the full pass and his file.
+
+### Background: what the tool came from
 
 His words are in `README.md` ("His word during the pass"): every sound the game uses, one by one, each played "in the way that they'll be in the game ... wind can't just be a real quick sound", and nothing in the game's sound changed before he has heard them.
 

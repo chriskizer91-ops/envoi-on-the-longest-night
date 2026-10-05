@@ -1,0 +1,66 @@
+/* sound-tool.css: Envoi Sound Check, in the game's night colours; one column that reads on a phone held either way */
+:root {
+  --bg: #0b0912; --card: #16132a; --card2: #1d1938; --line: rgba(214, 222, 255, .22); --text: #f1efff; --dim: #b9b6d6;
+  --gold: #ffd36e; --gold2: #f0b84a; --warn: #ffb37a; --keep: #8fe0a6; --fix: #ffd36e; --drop: #ff8f9a;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; } /* the bar's Stop before the sound is on, the copied text before Copy */
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.45 "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+h1, h2, h3 { font-family: "IM Fell English", Georgia, serif; font-weight: 400; }
+.top { padding: 14px 16px 4px; max-width: 900px; margin: 0 auto; }
+.top h1 { margin: 0 0 4px; font-size: 28px; color: var(--gold); }
+.lead { margin: 0; color: var(--dim); font-size: 15px; }
+/* the bar: the first tap, what's playing, and the game's three volumes; it stays at the top */
+.bar { position: sticky; top: 0; z-index: 5; background: rgba(11, 9, 18, .96); border-bottom: 1px solid var(--line); padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.bar > * { max-width: 900px; }
+.now { display: flex; align-items: center; gap: 10px; flex: 1 1 260px; min-width: 0; }
+#nowText { flex: 1 1 auto; min-width: 0; color: var(--gold); font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vols { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 13.5px; color: var(--dim); }
+.vol { display: flex; align-items: center; gap: 4px; }
+.vol b { font-weight: 700; color: var(--text); margin-right: 2px; }
+.vol button { min-height: 32px; padding: 0 8px; font-size: 13px; }
+.vol button[aria-pressed="true"] { background: var(--gold); color: #2a1d05; border-color: var(--gold); }
+button { appearance: none; border: 1px solid var(--line); border-radius: 10px; background: var(--card2); color: var(--text); font: inherit; font-size: 14.5px; min-height: 40px; padding: 0 12px; cursor: pointer; touch-action: manipulation; }
+button:active { filter: brightness(1.25); }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.go { background: linear-gradient(180deg, #ffe28f, var(--gold2)); color: #2a1d05; border: 0; font-weight: 700; }
+.stop { background: #3a2140; border-color: #8a5a8e; }
+main { max-width: 900px; margin: 0 auto; padding: 8px 12px 16px; }
+details.group { border: 1px solid var(--line); border-radius: 12px; margin: 10px 0; background: rgba(22, 19, 42, .55); }
+details.group > summary { cursor: pointer; padding: 12px 14px; list-style: none; display: flex; align-items: baseline; gap: 10px; }
+details.group > summary::-webkit-details-marker { display: none; }
+details.group > summary h2 { margin: 0; font-size: 21px; color: var(--gold); flex: 1 1 auto; }
+details.group > summary .tally { font-size: 13px; color: var(--dim); white-space: nowrap; }
+details.group > summary::before { content: '▸'; color: var(--gold); }
+details.group[open] > summary::before { content: '▾'; }
+.gnote { margin: -4px 14px 8px; color: var(--dim); font-size: 14px; }
+.opts { margin: 0 14px 8px; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 14px; color: var(--dim); }
+.opts label { display: flex; align-items: center; gap: 6px; min-height: 32px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin: 8px 10px; padding: 10px 12px; }
+.card.marked-keep { border-left: 4px solid var(--keep); }
+.card.marked-fix { border-left: 4px solid var(--fix); }
+.card.marked-drop { border-left: 4px solid var(--drop); }
+.card h3 { margin: 0; font-size: 18.5px; color: var(--text); }
+.where { margin: 2px 0 6px; color: var(--dim); font-size: 14px; }
+.wrong { margin: 6px 0; padding: 6px 9px; border-radius: 8px; background: rgba(255, 179, 122, .1); color: var(--warn); font-size: 14px; }
+.wrong b { color: var(--warn); }
+.plays { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+.plays button.fixed { border-color: #6fbf8a; color: #bdf5cc; }
+.plays button.on { background: #2c2552; border-color: var(--gold); }
+.judge { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.judge button { min-height: 34px; font-size: 13.5px; padding: 0 10px; background: transparent; }
+.judge button[data-v="keep"][aria-pressed="true"] { background: var(--keep); color: #0d2414; border-color: var(--keep); }
+.judge button[data-v="fix"][aria-pressed="true"] { background: var(--fix); color: #2a1d05; border-color: var(--fix); }
+.judge button[data-v="drop"][aria-pressed="true"] { background: var(--drop); color: #2a0d12; border-color: var(--drop); }
+.judge input { flex: 1 1 180px; min-width: 0; min-height: 34px; border-radius: 8px; border: 1px solid var(--line); background: #0f0d1d; color: var(--text); font: inherit; font-size: 14px; padding: 0 9px; }
+.log { margin: 4px 0 0; color: var(--dim); font-size: 13px; min-height: 0; }
+.foot { max-width: 900px; margin: 0 auto; padding: 8px 16px 40px; text-align: center; }
+.foot #count { color: var(--dim); margin: 6px 0 10px; }
+.copied { color: var(--keep); margin: 8px 0 0; }
+.copybox { width: 100%; margin-top: 10px; background: #0f0d1d; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px; font: 13px/1.4 ui-monospace, Menlo, Consolas, monospace; }
+@media (max-width: 520px) {
+  .top h1 { font-size: 24px; }
+  .card { margin: 8px 6px; padding: 9px 10px; }
+  details.group > summary h2 { font-size: 19px; }
+}

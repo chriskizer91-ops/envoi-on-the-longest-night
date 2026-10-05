@@ -1,7 +1,7 @@
 // thareia-audio.js: Chris's sound library and music from the 20-min repo (vendor/thareia-sfx/sounds.js and music.js,
 // read-only), joined unchanged into one plain script for the game: 100 sound effects and nine pieces of music, all
 // made in code with Web Audio. Only the module wrapping changed (no import or export).
-// Defines window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, setVolume }.
+// Defines window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, sfxContext, setVolume, fix }.
 // Additions for the game (October 3 and 4, 2026): setVolume(music, effects, surroundings), the game's volume settings
 // (0 to 1; 0.75 is the library's own level), and for playSfx a gain, for its quieter sounds, and a bus: 'amb' for a
 // place's own sounds (crickets, wind, water), which follow the surroundings volume instead of the effects'. And
@@ -24,6 +24,10 @@ const rnd = (a, b) => a + Math.random() * (b - a);
 
 let AC = null, OUT = null, REV = null, NOISE = null, BUS = null, BUSREV = null, ECHO = null;
 const VOL = { music: 1, sfx: 1, amb: 1 }; // the game's volume settings (setVolume)
+// a fix waiting on Chris's word (October 5): the final pass's sound tool plays it beside the game's own sound, and the
+// game leaves it off until he says yes. noise: the noise loops, so a noisy sound lasts as long as it is written. Without
+// it the 2 s noise, started up to 1.5 s in, stops the wind's 3 s gust, the river, the leaves and the rest dead at 0.5 to 2 s
+const FIX = { noise: false };
 function sfxInit(given) {
   if (AC && !given) { if (AC.state === 'suspended' && !document.hidden) AC.resume(); return AC; } // (hidden, it waits: below)
   AC = given || new (window.AudioContext || window.webkitAudioContext)();
@@ -81,7 +85,7 @@ function tone(t, o) {
 }
 // filtered noise: { d, g, a, hold, lp|bp|hp, f2, fg, q, pan, rv, am }
 function noise(t, o) {
-  const s = AC.createBufferSource(); s.buffer = NOISE; if (o.rate) s.playbackRate.value = o.rate;
+  const s = AC.createBufferSource(); s.buffer = NOISE; if (o.rate) s.playbackRate.value = o.rate; if (FIX.noise) s.loop = true;
   const e = envelope(t, o); filter(t, o, s).connect(e); e.out.connect(route(o.pan, o.rv, o.echo));
   s.start(t, Math.random() * 1.5); s.stop(t + o.d + .05);
 }
@@ -643,5 +647,5 @@ document.addEventListener('visibilitychange', () => {
   else if (hidStopped) { hidStopped = false; AC.resume(); }
 });
 
-window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, sfxContext, setVolume };
+window.ThareiaAudio = { sfxInit, playSfx, SFX, musicPlay, musicStop, musicPlaying, MUSIC, sfxContext, setVolume, fix: FIX };
 })();

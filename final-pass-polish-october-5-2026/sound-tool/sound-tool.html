@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Envoi Sound Check</title>
+<link rel="stylesheet" href="./sound-tool.css">
+</head>
+<body>
+<header class="top">
+  <h1>Envoi Sound Check</h1>
+  <p class="lead">Every sound the game plays, played the way the game plays it, from the game's own sound code. Mark each one Keep, Fix or Drop, write a note if you like, then press <b>Copy my notes</b> at the bottom and paste them to Claude.</p>
+</header>
+<div class="bar" id="bar">
+  <button type="button" class="go" id="start">Tap to start the sound</button>
+  <div class="now" id="now" hidden><span id="nowText">Nothing playing</span><button type="button" class="stop" id="stopAll">Stop</button></div>
+  <div class="vols" id="vols"></div>
+</div>
+<main id="list"></main>
+<footer class="foot">
+  <p id="count"></p>
+  <button type="button" class="go" id="copy">Copy my notes</button>
+  <p class="copied" id="copied" hidden></p>
+  <textarea id="copyBox" class="copybox" rows="8" readonly hidden></textarea>
+</footer>
+<!-- the game's own sound code, exactly as the game has it (src/), and its places' sounds and music (game-tables.js,
+     made from src/game/game.js by make.mjs) -->
+<script src="../../src/game/thareia-audio.js"></script>
+<script src="../../src/game/songs.js"></script>
+<script src="../../src/game/footsteps.js"></script>
+<script src="../../src/battle/sound.js"></script>
+<script src="../../envoi-final-draft/cutscenes/colossus-first-meeting/copies/sounds.js"></script>
+<script src="../../envoi-final-draft/cutscenes/colossus-first-meeting/src/sfx.js"></script>
+<script src="../../envoi-final-draft/cutscenes/finale-opening/src/sound.js"></script>
+<script src="./game-tables.js"></script>
+<script src="./sound-tool.js"></script>
+</body>
+</html>
