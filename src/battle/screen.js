@@ -1901,7 +1901,8 @@
       }
       UI.showBattle(true); UI.buildWindows(); UI.status(); layoutView();
       shotField(2);
-      io().m.play('cast'); UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic();
+      if (D.io.hp > 0) io().m.play('cast');
+      UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic();
       await wait(1.4); UI.hideMsg();
       S.state = 'battle'; S.t0 = clock.t;
     }
@@ -2173,6 +2174,9 @@
       PACE.fps = { n: 0, t: 0, secN: 0, secT: 0, low: 0, prev: 0 };
       UI.vignette(0); UI.cinematic(false); UI.tint(0); UI.showBattle(false);
       newEngine(); resetHeroes(); buildFoes();
+      // a hero who is down as the fight opens (a fled fight leaves her so: only a win revives) kneels, as one who goes
+      // down in it does, until a herb gets her up
+      for (const h of heroes) if (D[h.key].hp <= 0) h.m.play('kneel', true);
       // an arena's weather for this fight (a wild fight's now and then rolls rain or a storm), and its painted lamps,
       // dark while a great wraith has their light
       if (AF) { AF.setWeather(cfg.weather || 'clear'); if (cfg.winLights) AF.setLamps(0, true); }
