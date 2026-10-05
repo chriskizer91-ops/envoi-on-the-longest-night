@@ -113,10 +113,14 @@
     // wider still, to keep the place in view. And an arena's shot never zooms in more than half as far again as its
     // widest, so the painting behind is never blown up blurred (ZMAX)
     const ZK = AF ? AF.ppm / 54 * 1.2 : 1, ZMAX = 1.5;
+    // an arena's fight stands low in its frame (the camera is at eye height), so on a phone a tall menu (Io's seven
+    // commands) would hide it: there a shot may slide down past the painting's bottom edge, up to this many of its
+    // pixels, and the strip below is the painting's own nearest ground again, mirrored and in shadow (BELOW; 0 when flat)
+    const BELOW = AF ? Math.round(IH * 0.14) : 0;
 
     // ---------- camera director: every shot is a point on the painting plus a zoom ----------
     const view = { w: 1, h: 1, uiH: 0 };
-    const cam = { cx: 1185, cy: 430, s: 1.4, tx: 1185, ty: 430, ts: 1.4, k: 3, follow: null, fs: 1.5 };
+    const cam = { cx: 1185, cy: 430, s: 1.4, tx: 1185, ty: 430, ts: 1.4, k: 3, follow: null, fs: 1.5, lift: 0 };
     const shake = { amp: 0, x: 0, y: 0 };
     let renderer = null, lastTf = '';
     function layoutView() {
@@ -174,14 +178,36 @@
       shake.amp *= Math.exp(-rdt * 7);
       shake.x = (Math.random() - 0.5) * 2 * shake.amp; shake.y = (Math.random() - 0.5) * 2 * shake.amp;
       let ox = cam.cx * S2 - view.w / 2 + shake.x, oy = cam.cy * S2 - midY + shake.y;
-      ox = clamp(ox, 0, IW * S2 - view.w); oy = clamp(oy, 0, IH * S2 - view.h);
+      // in an arena, while a command is chosen, the view slides down (past the painting's edge if it must) until
+      // everyone's feet are above the menus, however tall they have grown
+      if (AF) {
+        let need = 0;
+        if (UI.menuOpen && view.uiNow) {
+          let low = 0; for (const f of standing()) low = Math.max(low, toPx(tmpV.set(f.pos.x, 0, f.pos.z))[1]);
+          need = Math.max(0, low * S2 - (view.h - view.uiNow - 14) - oy);
+        }
+        cam.lift += (need - cam.lift) * k; oy += cam.lift;
+      }
+      ox = clamp(ox, 0, IW * S2 - view.w); oy = clamp(oy, 0, IH * S2 - view.h + BELOW * S2);
       ox = Math.round(ox * DPR) / DPR; oy = Math.round(oy * DPR) / DPR;
       camera.setViewOffset(IW * S2, IH * S2, ox, oy, view.w, view.h); view.s2 = S2;
       // the painting is drawn into a canvas the size of the stage, only the part the camera shows (bench.js)
       const tf = ox + ',' + oy + ',' + S2.toFixed(5) + ',' + view.w + ',' + view.h + ',' + TOWN.ver;
       if (tf !== lastTf && paintImg.complete && paintImg.naturalWidth) {
         paintCtx.imageSmoothingEnabled = true; paintCtx.imageSmoothingQuality = 'high';
-        paintCtx.drawImage(paintImg, ox / S2, oy / S2, view.w / S2, view.h / S2, 0, 0, paintCv.width, paintCv.height);
+        const sy = oy / S2, sh = view.h / S2, on = Math.min(sh, IH - sy), k = paintCv.height / sh;
+        if (!BELOW || on > sh - 0.5) paintCtx.drawImage(paintImg, ox / S2, oy / S2, view.w / S2, view.h / S2, 0, 0, paintCv.width, paintCv.height);
+        else {
+          // an arena's shot below the painting's edge: the painting down to it, then its last rows mirrored, darkening
+          const y0 = on * k, ex = sh - on;
+          paintCtx.drawImage(paintImg, ox / S2, sy, view.w / S2, on, 0, 0, paintCv.width, y0);
+          paintCtx.save(); paintCtx.translate(0, 2 * y0); paintCtx.scale(1, -1);
+          paintCtx.drawImage(paintImg, ox / S2, IH - ex, view.w / S2, ex, 0, y0 - ex * k, paintCv.width, ex * k);
+          paintCtx.restore();
+          const sh2 = paintCtx.createLinearGradient(0, y0, 0, y0 + BELOW * k);
+          sh2.addColorStop(0, 'rgba(6,4,14,0.15)'); sh2.addColorStop(1, 'rgba(6,4,14,0.6)');
+          paintCtx.fillStyle = sh2; paintCtx.fillRect(0, y0, paintCv.width, paintCv.height - y0);
+        }
         drawTown(ox, oy, S2);
         lastTf = tf;
       }
@@ -259,7 +285,7 @@
     const IOS = window.makeIoSpells ? window.makeIoSpells(FX) : null;
     const SND = cfg.sound || window.makeBattleSound();
     // listeners on the window, kept so stop() can take them off again
-    const offs = []; let ro = null;
+    const offs = []; let ro = null, uiRo = null;
     const on = (t, ty, fn) => { t.addEventListener(ty, fn); offs.push([t, ty, fn]); };
 
     // ---------- the fighters and the battle's state ----------
@@ -2390,6 +2416,8 @@
       let tmr = 0;
       const onResize = () => { clearTimeout(tmr); tmr = setTimeout(layoutView, 100); };
       if (window.ResizeObserver) { ro = new ResizeObserver(onResize); ro.observe(stage); } else on(window, 'resize', onResize);
+      // an arena keeps the fighters' feet above the menus while a command is chosen (applyCam), so it follows their height
+      if (AF && window.ResizeObserver) { const ui = $('ui'); uiRo = new ResizeObserver(() => { view.uiNow = ui.hidden ? 0 : ui.offsetHeight + 12; }); uiRo.observe(ui); }
 
       // test hooks for headless checks
       window.__battle = {
@@ -2415,6 +2443,7 @@
       S.dead = true; SND.stopMusic(0.3);
       for (const [t, ty, fn] of offs) t.removeEventListener(ty, fn);
       if (ro) ro.disconnect();
+      if (uiRo) uiRo.disconnect();
       for (const f of heroes.concat(foes)) dispose(f.m);
       if (LU) dispose(LU.m); if (EN) dispose(EN.m);
       if (renderer) { renderer.dispose(); renderer.forceContextLoss(); renderer = null; }
