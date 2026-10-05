@@ -98,9 +98,9 @@
         { pts: [[1169, 720], [1222, 678], [1232, 675], [1240, 685], [1250, 686], [1258, 690], [1274, 711], [1279, 740], [1245, 753], [1169, 726]], base: 753 }, // the bushes in front of that nook
       ],
       exits: [
-        { rect: [1514, 354, 1536, 396], to: 'thornwood', at: [60, 456], label: 'The Thornwood' },
-        { rect: [745, 1006, 816, 1024], to: 'cottage', at: [567, 40], label: "Io's cottage" },
-        { rect: [0, 706, 18, 760], to: 'jetty', at: [782, 50], label: 'The jetty' },
+        { rect: [1514, 354, 1536, 396], to: 'thornwood', at: [60, 456], dir: 'e', label: 'The Thornwood' },
+        { rect: [745, 1006, 816, 1024], to: 'cottage', at: [567, 64], label: "Io's cottage" },
+        { rect: [0, 706, 18, 760], to: 'jetty', at: [782, 64], label: 'The jetty' },
       ],
       people: [
         { id: 'nettie', name: 'Nettie', at: [568, 426], look: 'witch2', talk: 'nettie', role: 'shop' },
@@ -159,7 +159,7 @@
         { pts: [[1349, 382], [1362, 382], [1362, 395], [1396, 397], [1398, 446], [1376, 446], [1374, 410], [1362, 410], [1362, 470], [1349, 470]], base: 469 }, // the lantern post at the forest path
       ],
       exits: [
-        { rect: [500, 0, 604, 20], to: 'wickhollow', at: [788, 975], label: 'Wickhollow' },
+        { rect: [500, 0, 604, 20], to: 'wickhollow', at: [788, 975], dir: 'n', label: 'Wickhollow' },
         { rect: [680, 1004, 812, 1024], to: 'world', at: 'wickhollow', label: 'The world', say: 'roadOut' },
         { rect: [0, 397, 18, 442], to: 'world', at: 'wickhollow', label: 'The world', say: 'roadOut' },
         { rect: [1516, 704, 1536, 770], to: 'world', at: 'wickhollow', label: 'The world', say: 'roadOut' },
@@ -195,7 +195,7 @@
         { pts: [[715, 766], [739, 766], [739, 816], [715, 816]], base: 815 }, { pts: [[803, 766], [825, 766], [825, 816], [803, 816]], base: 815 }, // the two bollards at the pier's end
       ],
       exits: [
-        { rect: [706, 0, 830, 20], to: 'wickhollow', at: [40, 740], label: 'Wickhollow' },
+        { rect: [706, 0, 830, 20], to: 'wickhollow', at: [40, 740], dir: 'e', label: 'Wickhollow' },
       ],
       people: [
         { id: 'quill', name: 'Quill', at: [1150, 385], look: 'sailor', talk: 'quill', role: 'shop' },
@@ -228,8 +228,8 @@
         { pts: [[1150, 520], [1180, 508], [1240, 512], [1290, 540], [1290, 600], [1240, 620], [1150, 620]], base: 620 }, // the dead tree over the road east of the fork
       ],
       exits: [
-        { rect: [0, 400, 18, 462], to: 'wickhollow', at: [1490, 378], label: 'Wickhollow' },
-        { rect: [1518, 504, 1536, 562], to: 'bogmire', at: [70, 368], label: 'Bogmire' },
+        { rect: [0, 400, 18, 462], to: 'wickhollow', at: [1490, 378], dir: 'w', label: 'Wickhollow' },
+        { rect: [1518, 504, 1536, 562], to: 'bogmire', at: [70, 368], dir: 'e', label: 'Bogmire' },
       ],
       people: [],
       spots: [
@@ -295,8 +295,8 @@
         { pts: [[735, 828], [780, 828], [780, 880], [735, 880]], base: 879 }, // crates and a barrel on the water stair
       ],
       exits: [
-        { rect: [34, 341, 52, 391], to: 'thornwood', at: [1500, 532], label: 'The Thornwood' },
-        { rect: [765, 0, 814, 18], to: 'bogmire-heart', at: [768, 980], label: "The fen's dark heart" },
+        { rect: [34, 341, 52, 391], to: 'thornwood', at: [1500, 532], dir: 'w', label: 'The Thornwood' },
+        { rect: [765, 0, 814, 18], to: 'bogmire-heart', at: [768, 980], dir: 'n', label: "The fen's dark heart" },
       ],
       people: [
         { id: 'wenna', name: 'Old Wenna', at: [652, 470], look: 'elder', talk: 'wenna', role: 'shop' },
@@ -328,7 +328,7 @@
       ],
       front: [...lampFronts(HEART_LAMPS)],
       exits: [
-        { rect: [727, 1006, 810, 1024], to: 'bogmire', at: [790, 30], label: 'Bogmire' },
+        { rect: [727, 1006, 810, 1024], to: 'bogmire', at: [790, 64], label: 'Bogmire' },
       ],
       people: [],
       spots: [
@@ -383,8 +383,8 @@
         { pts: [[1351, 364], [1375, 364], [1375, 406], [1351, 406]], base: 403 }, { pts: [[1435, 364], [1459, 364], [1459, 406], [1435, 406]], base: 403 }, // the mooring posts
       ],
       exits: [
-        { rect: [590, 0, 648, 18], to: 'dawnroost-node', at: [768, 990], label: 'The living node' },
-        { rect: [592, 1006, 690, 1024], to: 'dawnroost-road', at: [762, 52], label: 'The forest road' },
+        { rect: [590, 0, 648, 18], to: 'dawnroost-node', at: [768, 990], dir: 'n', label: 'The living node' },
+        { rect: [592, 1006, 690, 1024], to: 'dawnroost-road', at: [762, 64], label: 'The forest road' },
       ],
       people: [
         { id: 'marta', name: 'Marta', at: [376, 462], look: 'elder', talk: 'marta', role: 'inn' },
@@ -440,7 +440,7 @@
         { pts: [[1291, 694], [1403, 621], [1411, 686], [1324, 708]], base: 708 },
       ],
       exits: [
-        { rect: [699, 1004, 836, 1024], to: 'dawnroost', at: [626, 30], label: 'Dawnroost' },
+        { rect: [699, 1004, 836, 1024], to: 'dawnroost', at: [626, 64], label: 'Dawnroost' },
       ],
       people: [],
       spots: [
@@ -469,9 +469,9 @@
         { pts: [[834, 648], [858, 648], [859, 698], [898, 700], [898, 722], [812, 722], [812, 698], [833, 696]], base: 720 },
       ],
       exits: [
-        { rect: [706, 0, 830, 18], to: 'shipyard', at: [760, 990], label: 'The shipyard' },
+        { rect: [706, 0, 830, 18], to: 'shipyard', at: [760, 990], dir: 'n', label: 'The shipyard' },
         { rect: [678, 1004, 852, 1024], to: 'world', at: 'crossroads', label: 'The world', say: 'crossroadsSouth' },
-        { rect: [0, 440, 18, 530], to: 'cold-moor', at: [1486, 564], label: 'The cold moor' },
+        { rect: [0, 440, 18, 530], to: 'cold-moor', at: [1486, 564], dir: 'w', label: 'The cold moor' },
         { rect: [1518, 438, 1536, 538], to: 'world', at: 'crossroads', label: 'The world', say: 'crossroadsEast' },
       ],
       people: [],
@@ -520,7 +520,7 @@
         { pts: [[189, 634], [208, 634], [208, 696], [189, 696]], base: 694 }, { pts: [[266, 634], [282, 634], [282, 696], [266, 696]], base: 694 },
       ],
       exits: [
-        { rect: [708, 1004, 810, 1024], to: 'crossroads', at: [770, 30], label: 'The crossroads' },
+        { rect: [708, 1004, 810, 1024], to: 'crossroads', at: [770, 64], label: 'The crossroads' },
       ],
       people: [
         { id: 'ysmera', name: 'Ysmera Brightkeel', at: [765, 500], look: 'aurosi', talk: 'ysmera', portrait: 'shipmaster' },
@@ -558,8 +558,8 @@
         { pts: [[659, 445], [690, 445], [694, 458], [694, 524], [654, 524], [654, 458]], base: 523 }, { pts: [[853, 447], [882, 447], [886, 460], [886, 522], [848, 522], [848, 460]], base: 521 }, // and its south pillars
       ],
       exits: [
-        { rect: [684, 0, 864, 18], to: 'misthollow', at: [768, 985], label: 'Misthollow' },
-        { rect: [674, 1006, 902, 1024], to: 'frostmere-shore', at: [786, 52], label: "Frostmere's shore" },
+        { rect: [684, 0, 864, 18], to: 'misthollow', at: [768, 985], dir: 'n', label: 'Misthollow' },
+        { rect: [674, 1006, 902, 1024], to: 'frostmere-shore', at: [786, 64], label: "Frostmere's shore" },
       ],
       people: [],
       spots: [
@@ -614,8 +614,8 @@
         { pts: [[218, 392], [282, 392], [284, 470], [277, 494], [240, 498], [238, 522], [218, 522]], base: 520 }, // the pine by the snowy way up the west stairs
       ],
       exits: [
-        { rect: [712, 0, 818, 18], to: 'moonwell', at: [775, 990], label: 'The dead Moonwell' },
-        { rect: [670, 1006, 860, 1024], to: 'frozen-pass', at: [777, 30], label: 'The frozen pass' },
+        { rect: [712, 0, 818, 18], to: 'moonwell', at: [775, 990], dir: 'n', label: 'The dead Moonwell' },
+        { rect: [670, 1006, 860, 1024], to: 'frozen-pass', at: [777, 64], label: 'The frozen pass' },
       ],
       people: [
         { id: 'sorrel', name: 'Sorrel', at: [480, 630], look: 'witch2', talk: 'sorrel', role: 'shop' },
@@ -659,7 +659,7 @@
         { pts: [[223, 702], [216, 647], [293, 591], [372, 613], [355, 735]], base: 735 },
       ],
       exits: [
-        { rect: [660, 1006, 876, 1024], to: 'misthollow', at: [768, 30], label: 'Misthollow' },
+        { rect: [660, 1006, 876, 1024], to: 'misthollow', at: [768, 64], label: 'Misthollow' },
       ],
       people: [],
       spots: [
@@ -731,7 +731,7 @@
         { pts: [[1058, 55], [1078, 55], [1078, 80], [1070, 100], [1048, 100], [1048, 84], [1056, 80]], base: 99 }, // and its east stones
       ],
       exits: [
-        { rect: [1518, 412, 1536, 494], to: 'ember-line-road', at: [50, 592], label: 'The Ember Line road' },
+        { rect: [1518, 412, 1536, 494], to: 'ember-line-road', at: [50, 592], dir: 'e', label: 'The Ember Line road' },
       ],
       people: [],
       spots: [
@@ -784,8 +784,8 @@
         { pts: [[1333, 176], [1332, 140], [1336, 115], [1345, 107], [1362, 106], [1371, 114], [1374, 140], [1375, 176]], base: 175 }, // the node stone on the rise
       ],
       exits: [
-        { rect: [0, 556, 18, 630], to: 'warm-roads-camp', at: [1484, 456], label: 'The Warm Roads camp' },
-        { rect: [952, 0, 1036, 18], to: 'dawnroost-road', at: [1000, 970], label: 'The forest road to Dawnroost' },
+        { rect: [0, 556, 18, 630], to: 'warm-roads-camp', at: [1484, 456], dir: 'w', label: 'The Warm Roads camp' },
+        { rect: [952, 0, 1036, 18], to: 'dawnroost-road', at: [1000, 970], dir: 'n', label: 'The forest road to Dawnroost' },
       ],
       people: [],
       spots: [
@@ -837,7 +837,7 @@
         { pts: [[416, 372], [420, 362], [432, 357], [446, 359], [452, 368], [454, 384], [450, 398], [436, 402], [420, 398]], base: 400 }, // the boulder at the arm's west edge
       ],
       exits: [
-        { rect: [936, 1006, 1092, 1024], to: 'ember-line-road', at: [995, 56], label: 'The Ember Line road' },
+        { rect: [936, 1006, 1092, 1024], to: 'ember-line-road', at: [995, 64], label: 'The Ember Line road' },
         { rect: [678, 0, 836, 18], to: 'dawnroost', at: [641, 985], dir: 'n', label: 'Dawnroost' },
       ],
       people: [],
@@ -891,7 +891,7 @@
         { pts: [[889, 742], [901, 748], [857, 842], [843, 836]], base: 836 }, // the bridge's east rail
       ],
       exits: [
-        { rect: [1518, 489, 1536, 543], to: 'eldergrove-edge', at: [50, 470], label: "Eldergrove's edge" },
+        { rect: [1518, 489, 1536, 543], to: 'eldergrove-edge', at: [50, 470], dir: 'e', label: "Eldergrove's edge" },
       ],
       people: [],
       spots: [
@@ -947,8 +947,8 @@
         { pts: [[969, 564], [978, 578], [990, 590], [995, 606], [1006, 618], [1014, 634], [1032, 648], [1042, 670], [1044, 700], [888, 700], [892, 680], [910, 652], [928, 624], [944, 600], [956, 584]], base: 740 }, // the pine below the path
       ],
       exits: [
-        { rect: [0, 436, 18, 504], to: 'northern-camp', at: [1478, 512], label: 'The northern camp' },
-        { rect: [1518, 556, 1536, 630], to: 'cold-moor', at: [50, 564], label: 'The cold moor' },
+        { rect: [0, 436, 18, 504], to: 'northern-camp', at: [1478, 512], dir: 'w', label: 'The northern camp' },
+        { rect: [1518, 556, 1536, 630], to: 'cold-moor', at: [50, 564], dir: 'e', label: 'The cold moor' },
       ],
       people: [],
       spots: [],
@@ -982,7 +982,7 @@
         { pts: [[496, 300], [496, 257], [506, 251], [516, 243], [523, 237], [532, 235], [541, 236], [548, 241], [550, 250], [549, 300]], base: 300 }, // the end of the sheepfold's wall and its capstone, beside the hut's open front
       ],
       exits: [
-        { rect: [0, 510, 18, 622], to: 'eldergrove-edge', at: [1484, 594], label: "Eldergrove's edge" },
+        { rect: [0, 510, 18, 622], to: 'eldergrove-edge', at: [1484, 594], dir: 'w', label: "Eldergrove's edge" },
         { rect: [1518, 517, 1536, 605], to: 'crossroads', at: [40, 485], dir: 'e', label: 'The northern crossroads' },
       ],
       people: [],
@@ -1052,7 +1052,7 @@
         { pts: [[1284, 600], [1310, 560], [1324, 546], [1340, 565], [1355, 600], [1353, 640], [1284, 640]], base: 636 }, // the pine beside the path
       ],
       exits: [
-        { rect: [1518, 524, 1536, 616], to: 'frostmere-shore', at: [50, 622], label: "Frostmere's shore" },
+        { rect: [1518, 524, 1536, 616], to: 'frostmere-shore', at: [50, 622], dir: 'e', label: "Frostmere's shore" },
       ],
       people: [],
       spots: [
@@ -1093,7 +1093,7 @@
         { pts: [[1177, 434], [1196, 433], [1222, 436], [1222, 481], [1202, 481], [1202, 452], [1192, 452], [1192, 511], [1177, 511]], base: 511 }, // the cold lantern on its post
       ],
       exits: [
-        { rect: [0, 589, 18, 657], to: 'frozen-camp', at: [1478, 562], label: 'The frozen camp' },
+        { rect: [0, 589, 18, 657], to: 'frozen-camp', at: [1478, 562], dir: 'w', label: 'The frozen camp' },
         { rect: [740, 0, 812, 18], to: 'frozen-pass', at: [788, 990], dir: 'n', label: 'The frozen pass' },
       ],
       people: [],
