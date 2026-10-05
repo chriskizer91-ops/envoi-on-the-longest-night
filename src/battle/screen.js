@@ -336,6 +336,10 @@
       let items = [], sel = 0, cb = null, onSel = null, bannerTO = 0, flashA = 0, flashDur = 0.3, markOn = null;
       function render(list, title) {
         items = list; cmdEl.innerHTML = '';
+        // on a short screen (a phone held sideways) the list goes in up to three columns, down the first and on down the
+        // next, so Io's eight commands take three rows and don't cover the fight (screen.css)
+        const rowsN = Math.max(1, Math.ceil(list.length / 3));
+        cmdEl.classList.add('cols'); cmdEl.style.setProperty('--rows', rowsN); cmdEl.style.setProperty('--cols', Math.ceil(list.length / rowsN));
         if (title) el('div', { class: 'title' }, cmdEl, title);
         list.forEach((it, i) => {
           const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem');
@@ -359,7 +363,7 @@
       }
       function pick(i) { const it = items[i]; if (!it || it.disabled || !cb) return; const f = cb; SND.sfx.select(); f(it.id); }
       function open(list, title, fn, selFn) { cb = fn; onSel = selFn || null; render(list, title); }
-      function waitMenu() { cb = null; onSel = null; items = []; cmdEl.innerHTML = '<div class="wait">Waiting…</div>'; mark(null); }
+      function waitMenu() { cb = null; onSel = null; items = []; cmdEl.classList.remove('cols'); cmdEl.innerHTML = '<div class="wait">Waiting…</div>'; mark(null); }
       on(window, 'keydown', (e) => {
         if (!cb) return;
         if (e.key === 'ArrowDown') { move(1); e.preventDefault(); }
@@ -2500,6 +2504,14 @@
         get sharp() { const s = renderer ? renderer.getDrawingBufferSize(new THREE.Vector2()) : null; return { sharp: SHARP, ratio: renderer ? renderer.getPixelRatio() : 0, dpr: DPR, w: s ? s.x : 0, h: s ? s.y : 0 }; },
         // in an arena after a cutscene, the lens and crop the fight held while the cutscene's last picture faded into it
         get opening() { return S.opening || null; },
+        // where each fighter still standing is on the screen (its feet and the top of its head, Sol's where she hangs), for
+        // the layout checks
+        get spots() {
+          return standing().map((f) => {
+            const up = f.m.action === 'stoopRise' ? STOOP_UP : 0, a = toScreen(V().set(f.pos.x, up, f.pos.z)), b = toScreen(V().set(f.pos.x, up + f.tall, f.pos.z));
+            return { key: f.key, kind: f.kind, tall: f.tall, feet: [a[0], a[1]], head: [b[0], b[1]] };
+          });
+        },
       };
     }
     setTimeout(() => {

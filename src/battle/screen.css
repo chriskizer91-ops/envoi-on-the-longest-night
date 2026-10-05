@@ -51,7 +51,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 #ui{position:absolute;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;max-width:760px;margin:0 auto;z-index:7}
 #cmd{padding:4px 3px;min-height:128px;display:flex;flex-direction:column}
 #cmd .title{font-size:10.5px;color:var(--dim);padding:1px 8px 3px;letter-spacing:.04em;text-transform:uppercase}
-#cmd button{appearance:none;border:0;background:none;color:var(--wt);text-shadow:inherit;text-align:left;display:flex;align-items:center;gap:5px;min-height:27px;padding:0 5px 0 3px;font-size:14.5px;border-radius:4px;position:relative}
+#cmd button{appearance:none;border:0;background:none;color:var(--wt);text-shadow:inherit;text-align:left;display:flex;align-items:center;gap:5px;min-height:36px;padding:0 5px 0 3px;font-size:14.5px;border-radius:4px;position:relative}
 #cmd button .hand{width:21px;height:13px;flex:none;opacity:0}
 #cmd button.sel .hand{opacity:1;animation:bob .7s ease-in-out infinite}
 #cmd button.sel{background:rgba(255,255,255,.08)}
@@ -121,7 +121,27 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .skipb{appearance:none;border:1px solid rgba(255,255,255,.35);background:rgba(10,8,18,.6);color:#fff;border-radius:18px;padding:8px 14px;font-size:14px}
 @media (min-width:700px){#cmd,#status{min-height:112px}}
 @media (max-width:560px){#banner{left:auto;right:10px;top:10px;transform:translate(0,-8px);font-size:16px;padding:6px 12px;white-space:normal;text-align:center;max-width:calc(100% - 196px)}#banner.on{transform:translate(0,0)}#msg{top:34%}}
-@media (max-width:420px){#cmd button{font-size:13.5px;gap:3px;min-height:26px}#cmd button .hand{width:18px}#cmd button .mp{font-size:10px}.stat .v{font-size:16px}#status .name{font-size:14.5px}header{padding-inline:12px}}
+@media (max-width:420px){#cmd button{font-size:13.5px;gap:3px;min-height:36px}#cmd button .hand{width:18px}#cmd button .mp{font-size:10px}.stat .v{font-size:16px}#status .name{font-size:14.5px}header{padding-inline:12px}}
+/* a short screen (a phone held sideways: 412 px tall full screen, about 356 or 330 in Chrome under its address bar):
+   the windows take the screen's width, and a list goes in up to three columns, down the first and on down the next
+   (screen.js, render), so Io's eight commands take three rows and cover less of the fight; and the end card sets the
+   battle's result, the experience and the level-up side by side, so all of it and Continue are on the screen without
+   scrolling */
+@media (max-height:560px){
+#ui{max-width:none;grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+#cmd.cols{display:grid;grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));grid-template-rows:auto repeat(var(--rows,3),auto);grid-auto-flow:column;column-gap:4px;align-content:start}
+#cmd.cols .title{grid-row:1;grid-column:1/-1}
+#cmd.cols button{flex-wrap:wrap;row-gap:0}
+#end .card{max-width:none;width:auto;display:grid;grid-template-columns:minmax(0,270px) auto auto;align-items:center;padding:12px 16px}
+#end .card>*{grid-column:1}
+#endTitle{grid-row:1;font-size:26px;margin-bottom:4px}
+#endText{grid-row:2;margin-bottom:8px}
+#end .card>.stats{grid-row:3;margin:0}
+#end .card>#xpBox{grid-row:1/4;grid-column:2;width:230px;margin:0 0 0 14px}
+#end .card>#lvlBox{grid-row:1/4;grid-column:3;margin:0 0 0 14px}
+#end .card>#stFps{grid-row:4;grid-column:1/-1;margin:10px 0 0}
+#end .card>.btns{grid-row:5;grid-column:1/-1;margin-top:10px}
+}
 /* the start card's choices: the party's level and the pack */
 .pickr{display:flex;flex-direction:column;gap:10px;margin:0 0 14px;text-align:left}
 .pickr label{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;font-size:14px;color:#dfe4ff}
