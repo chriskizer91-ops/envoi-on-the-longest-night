@@ -1153,3 +1153,15 @@ Chris: "The walking plan is good, make the scenes at night" (questions 20 and 21
 - **Art request 12** has a prompt for each, in the walking maps' style with the layout of Chris's example: a clear path across open wild ground, side paths to small places worth exploring, and the paths' edges matched so one scene leads into the next (`art-requests/12-wilderness-scenes.md`).
 - **When the pictures come:** squeezed to "100% extra light", traced, joined up, the nodes moved from the world map, random fights on the walks (none in the camps, which are rests), and the walking taken off the world map. A demo page first, then the game.
 
+
+## October 5, 2026: the new battles on, the night walks in
+
+Chris, answering the hub's questions that afternoon, after "let's get through as many of these upgrades and polish passes as we can over the next few hours":
+
+- **The new battles:** "Yes, switch them on." Every fight but the first is fought in its arena, as on the demo (https://claude.ai/artifact/FHpBiFsEhvUgvmu5hJaCea), and both cutscenes hand over into their arenas. If a fight runs slow on his phone, the arenas switch off again in one line, and the battles' 3D sharpness becomes a setting he can turn down.
+- **The night scenes:** "Yes, with your defaults." The eight scenes go into the game and walking leaves the world map, which stays for flying the Magpie. The defaults he took:
+  - the five roads out that opened the world map (the cottage's south road, west footbridge and east path; the crossroads' south and east roads) close: Io says a line and turns back;
+  - fights come on the new walks as often as in the Thornwood;
+  - the Ember Line nodes work as they did on the world map (the arrow follows the story, and a node Sol has relit goes dark).
+- **The Magpie at a camp:** "A soft glow, like the docks."
+- **The small polish ideas** (words that move on by themselves, a door's sound between maps, buy 10 in the shops, quicker fight starts): no preference. The first three are built behind switches, off in the game, with a page to try them; each goes in on his yes.
