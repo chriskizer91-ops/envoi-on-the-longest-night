@@ -2540,6 +2540,7 @@
       '<div id="start" class="overlay"><div class="card win"><button type="button" class="go" id="begin" disabled>Setting the scene…</button></div></div>' +
       '<div id="end" class="overlay" hidden><div class="card win"><h2 id="endTitle">Victory!</h2><p id="endText"></p>' +
       '<div class="stats"><div><b id="stTime">0:00</b><span>Battle time</span></div><div><b id="stDmg">0</b><span>Damage dealt</span></div></div>' +
+      '<p class="fpsline" id="stFps"></p>' +
       '<div class="xp" id="xpBox" hidden><div class="stats"><div><b id="xpGain">+0</b><span>Experience</span></div><div><b id="shardGain">+0</b><span>Sunstone shards</span></div></div>' +
       '<div class="row"><span>Next level</span><b id="xpNext"></b></div><div class="gauge"><i id="xpBar"></i></div></div>' +
       '<div class="lvl" id="lvlBox" hidden><h3 id="lvlTitle">Level up!</h3><dl id="lvlList"></dl><p>Every move hits and heals about 20% harder.</p></div>' +
