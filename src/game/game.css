@@ -116,6 +116,9 @@
 /* a phone held sideways: closer rows and the help on two wide lines, so with a save (Continue and its line) the
    game's name isn't cut off at the top */
 @media (max-height:460px){.title-box{gap:6px;padding-top:8px}.title-help{max-width:600px}}
+/* shorter still (sideways in Chrome, whose address bar stays: 356 px, 330 with the status bar): a smaller name and
+   closer, slimmer rows, so all of it fits with a save too */
+@media (max-height:380px){.title-box{gap:4px;padding-top:4px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}.game>.title h1{font-size:42px;margin-bottom:2px}.game>.title .go{min-height:38px}.title-help{margin-top:2px}}
 /* larger text (the menu's Text size) */
 .game.big-text .talk-said{font-size:19.5px;line-height:1.38}
 .game.big-text .talk-who{font-size:22px}
@@ -166,6 +169,14 @@
   .kcard-pic{width:150px}
   .kcard-body{text-align:left}
   .kcard-name{font-size:21px}
+}
+/* sideways and short (in Chrome, whose address bar stays): who wears it and the buttons beside the card, not under it,
+   so they stay on the screen */
+@media (max-height:400px) and (min-width:560px){
+  .kcard-box{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:14px;row-gap:4px;max-width:800px}
+  .kcard-kicker{grid-column:1/-1}
+  .kcard-foot{flex-direction:column;flex-wrap:nowrap;max-width:170px}
+  .kcard-actions{flex-direction:column;align-items:stretch}
 }
 /* the Items page: what each hero wears, as pictures; a tap shows the card */
 .ks-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}

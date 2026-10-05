@@ -18,7 +18,8 @@
   const wait = (s) => new Promise((r) => setTimeout(r, s * 1000));
   // where each place lay on the world map (atlas px), read only for saves made there before the wilderness scenes:
   // nobody walks it now (Chris, October 3: it is for flying). A place's ground map and where Io came onto it from the
-  // world map, a camp (its landing), or a node (its road, the Ember Line road)
+  // world map (and the way she faces there, south unless given), a camp (its landing), or a node (its road, the Ember
+  // Line road). The crossroads' south road is closed now, so she comes in where the cold moor's road does
   const OLD_WORLD = {
     wickhollow: { at: [1348, 1838], band: 1, map: 'cottage', arrive: [790, 990] },
     thornwood: { at: [1530, 2160], band: 1, map: 'thornwood', arrive: [60, 456] },
@@ -27,7 +28,7 @@
     node1: { at: [960, 1420], band: 2, map: 'ember-line-road' }, node2: { at: [1180, 1330], band: 2, map: 'ember-line-road' }, node3: { at: [760, 1250], band: 2, map: 'ember-line-road' },
     dawnroost: { at: [1325, 1098], band: 2, map: 'dawnroost', arrive: [645, 990] },
     northCamp: { at: [1150, 620], band: 3, camp: 'northCamp' },
-    crossroads: { at: [1960, 820], band: 3, map: 'crossroads', arrive: [768, 990] },
+    crossroads: { at: [1960, 820], band: 3, map: 'crossroads', arrive: [40, 485], dir: 'e' },
     shipyard: { at: [2097, 599], band: 3, map: 'shipyard', arrive: [760, 990], need: (sv) => sv.flags.stoop },
     frozenCamp: { at: [2760, 1120], band: 4, camp: 'frozenCamp' },
     frozenPass: { at: [3270, 980], band: 4, map: 'frozen-pass', arrive: [790, 990] },
@@ -351,14 +352,14 @@
       let best = null, bd = Infinity;
       for (const k in OLD_WORLD) { const p = OLD_WORLD[k]; if (p.band > (sv.band || 1) || (p.need && !p.need(sv)) || (rest && !p.camp)) continue; const d = Math.hypot(p.at[0] - at[0], p.at[1] - at[1]); if (d < bd) { bd = d; best = p; } }
       if (!best) return rest ? ['cottage', [838, 520]] : ['cottage', [790, 990]];
-      if (!best.camp) return [best.map, (best.arrive || MAPS[best.map].start).slice()];
+      if (!best.camp) return [best.map, (best.arrive || MAPS[best.map].start).slice(), best.dir];
       const L = LANDINGS[best.camp], fire = (MAPS[L.field[0]].spots || []).find((s) => s.kind === 'rest');
       return [L.field[0], (rest && fire ? fire.at : L.field[1]).slice()];
     }
     // such a save, where and its last rest moved onto the ground maps (and left as it is if it has nothing on the world map)
     function fromWorld(sv) {
       const W = sv.where, R = sv.rest, home = [1348, 1880];
-      if (W && W.mode === 'world') { const [map, at] = fromWorldAt(sv, W.at || home); sv.where = { mode: 'field', map, at, dir: 's' }; }
+      if (W && W.mode === 'world') { const [map, at, dir] = fromWorldAt(sv, W.at || home); sv.where = { mode: 'field', map, at, dir: dir || 's' }; }
       if (R && R.mode === 'world') { const [map, at] = fromWorldAt(sv, R.at || home, true); sv.rest = { mode: 'field', map, at }; }
     }
 
@@ -680,8 +681,17 @@
     async function cutscene(cs) {
       st.seen = st.seen || {}; st.seen[cs.id] = true; save();
       const box = el('div', { class: 'cutscene-layer' }, root);
-      try { await cs.C.play(box, csOpts(cs.level, cs.arena)); } catch (e) { /* a cutscene that can't play is passed over */ }
+      try { await playCut(cs.C, box, csOpts(cs.level, cs.arena)); } catch (e) { /* a cutscene that can't play is passed over */ }
       return box;
+    }
+    // a cutscene makes its sound in an AudioContext of its own, out of the game's reach: those made while it plays are
+    // kept, so they wait while the page is hidden, as the game's own do (and only what this stopped goes on again)
+    async function playCut(C, box, o) {
+      const AC = window.AudioContext, made = [], held = new Set();
+      const vis = () => { for (const c of made) { if (document.hidden) { if (c.state === 'running') { held.add(c); c.suspend(); } } else if (held.delete(c)) c.resume().catch(() => {}); } };
+      if (AC) { window.AudioContext = function (...a) { const c = new AC(...a); made.push(c); return c; }; window.AudioContext.prototype = AC.prototype; }
+      document.addEventListener('visibilitychange', vis);
+      try { return await C.play(box, o); } finally { if (AC) window.AudioContext = AC; document.removeEventListener('visibilitychange', vis); }
     }
     // the cutscene's last picture stays over the fight while it builds, then fades into it (after ms, 1200 by default)
     function fadeStill(box, ms) { setTimeout(() => { box.classList.add('is-gone'); setTimeout(() => box.remove(), 900); }, ms === undefined ? 1200 : ms); }
@@ -693,7 +703,7 @@
       const was = curMusic; music(null);
       let arena = null; try { if (GameFights.ARENA && CUT_FIGHT[id]) arena = arenaFor(GameFights.config(CUT_FIGHT[id][0], st, CUT_FIGHT[id][1])); } catch (e) { /* the flat painting's ending */ }
       const box = el('div', { class: 'cutscene-layer is-over', tabindex: '-1' }, root); box.focus({ preventScroll: true });
-      try { await C.play(box, csOpts(null, arena)); } catch (e) { /* passed over */ }
+      try { await playCut(C, box, csOpts(null, arena)); } catch (e) { /* passed over */ }
       box.remove(); music(was);
     }
     async function battle(kind, o) {
