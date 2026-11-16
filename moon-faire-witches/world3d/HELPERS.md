@@ -85,6 +85,23 @@ should do something it doesn't, build it in `extra(K)` for now and put the wish 
   - The checks' goals: every exit, every keepsake and every landmark. The whole place can be larger than 300,000
     triangles; what's in view past the fog should stay under about 200,000.
 
+## Chris's rule (November 16, 11:22): anywhere that looks walkable is walkable
+
+"If there's a lot of things that look walkable and are not walkable then people stop trying to walk places." So the engine
+now makes every place open ground inside its bounds (the painting unless you set `bounds`, or a wild place's
+`open.bounds`), less water, ground steeper than about 40 degrees, and anything solid that stands in Io's way. Everything
+you build with `K.B` counts as solid when it stands from about a hand above her feet to above her head (decks, roofs,
+cloth, windows and flowers never count); pass `{ solid: false }` as a box's last option, or set `K.B.solid = false` while
+building, for something she should walk through. The 2D walk, pockets (`walkAdd`), `decks` and `jetties` are always
+walkable (decks and jetties at their own height). A thicket of bushes runs along the bounds' edge, except across water,
+exits and paths (`thicket: false` turns it off).
+
+What you check: the stills plan's `{ "name": "walkable", "walkmap": true }` shows green wherever she can stand, over the
+3D from above. Look at it beside the painting: everything that looks like ground she could walk on should be green, and
+everything that isn't green should look closed (a wall, a fence, a building, water, a hedge, a cliff). If a walkable
+surface you built in extra(K) shows dark (a porch, a walkway, a ramp not in the 2D walk), make it a `deck` or a pocket
+with the right `walk_h`; if something looks open but leads nowhere, close it visibly or open it properly.
+
 ## The rules of Envoi's world
 
 - Night, as everywhere in Envoi (the story is one long night): moonlight and warm light from lamps, windows and fires. The
