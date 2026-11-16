@@ -1,0 +1,7125 @@
+{
+ "packs": [
+  {
+   "id": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "folder": "game/openworld/round",
+   "note": "The 56 pictures Chris made in ChatGPT from 52 prompts, in rounds."
+  },
+  {
+   "id": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "folder": "game/openworld/data/",
+   "note": "Smaller copies the game loads, plus atlases and its painted views."
+  },
+  {
+   "id": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "folder": "game/art/",
+   "note": "Also in HYPERDOT-ARCADE (the arcade copy)."
+  },
+  {
+   "id": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "folder": "models/textures/",
+   "note": ""
+  },
+  {
+   "id": "mud-lab",
+   "game": "Mud Lab",
+   "style": "Photo-like",
+   "repo": "mud-lab",
+   "folder": "base/textures/",
+   "note": "Same bog grass as Last Road H08."
+  },
+  {
+   "id": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "folder": "v2/src/molten3d/art/",
+   "note": ""
+  },
+  {
+   "id": "claw-fabrics",
+   "game": "Claw machine (arcade): plush fabrics",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "folder": "v2/src/claw3d/art/fabric/",
+   "note": ""
+  },
+  {
+   "id": "rc-dirt",
+   "game": "Back room RC track (arcade)",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "folder": "backroom/art/rc/",
+   "note": "Also in the back-room repo."
+  },
+  {
+   "id": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "folder": "creature-catch-model-sheets/chapter1/game/assets/tiles/",
+   "note": ""
+  },
+  {
+   "id": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "folder": "creature-catch/art/tiles/",
+   "note": "Top-down 2D tile sheets, not 3D textures."
+  },
+  {
+   "id": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "folder": "rut-access/textures/",
+   "note": ""
+  },
+  {
+   "id": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "folder": "assets/claim/",
+   "note": ""
+  },
+  {
+   "id": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "folder": "art-farm/assets/paper/",
+   "note": ""
+  }
+ ],
+ "textures": [
+  {
+   "pack": "rc-dirt",
+   "game": "Back room RC track (arcade)",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "backroom/art/rc/hay.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Wood, straw and bark",
+   "kb": 92,
+   "copies": [
+    "back-room/art/rc/hay.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "rc-dirt",
+   "game": "Back room RC track (arcade)",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "backroom/art/rc/mud.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Ground",
+   "kb": 75,
+   "copies": [
+    "back-room/art/rc/mud.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "rc-dirt",
+   "game": "Back room RC track (arcade)",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "backroom/art/rc/salt.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Water, ice and snow",
+   "kb": 78,
+   "copies": [
+    "back-room/art/rc/salt.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "rc-dirt",
+   "game": "Back room RC track (arcade)",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "backroom/art/rc/tracks.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Ground",
+   "kb": 90,
+   "copies": [
+    "back-room/art/rc/tracks.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "claw-fabrics",
+   "game": "Claw machine (arcade): plush fabrics",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/claw3d/art/fabric/felt.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 20,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "claw-fabrics",
+   "game": "Claw machine (arcade): plush fabrics",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/claw3d/art/fabric/longfur.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 18,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "claw-fabrics",
+   "game": "Claw machine (arcade): plush fabrics",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/claw3d/art/fabric/minky.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 14,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "claw-fabrics",
+   "game": "Claw machine (arcade): plush fabrics",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/claw3d/art/fabric/satin.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Objects (flat views)",
+   "kb": 48,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "claw-fabrics",
+   "game": "Claw machine (arcade): plush fabrics",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/claw3d/art/fabric/sherpa.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 22,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "claw-fabrics",
+   "game": "Claw machine (arcade): plush fabrics",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/claw3d/art/fabric/velvet.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 17,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/basalt.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Water, ice and snow",
+   "kb": 67,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/brick.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Stone and walls",
+   "kb": 84,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/columns.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Stone and walls",
+   "kb": 53,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/craze.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Stone and walls",
+   "kb": 48,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/crust.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Ground",
+   "kb": 93,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/crystal.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Water, ice and snow",
+   "kb": 70,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/frost.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Water, ice and snow",
+   "kb": 94,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/hammered.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Metal",
+   "kb": 36,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/ice.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Water, ice and snow",
+   "kb": 65,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/iron.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Metal",
+   "kb": 73,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/obsidian.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Stone and walls",
+   "kb": 47,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/plate.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Metal",
+   "kb": 47,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/rimeskin.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Water, ice and snow",
+   "kb": 62,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/ripples.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Water, ice and snow",
+   "kb": 16,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/rubble.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Stone and walls",
+   "kb": 75,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/snow.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Water, ice and snow",
+   "kb": 40,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "molten",
+   "game": "Molten (arcade): forge and frost",
+   "style": "Photo-like",
+   "repo": "HYPERDOT-ARCADE",
+   "path": "v2/src/molten3d/art/strata.webp",
+   "branches": [
+    "claude/happy-einstein-nek4li",
+    "claude/sharp-keller-x2gatb",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Stone and walls",
+   "kb": 70,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/bark.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Wood, straw and bark",
+   "kb": 13,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/bark.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/barrel_top.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 13,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/barrel_top.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/boards_grey.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Wood, straw and bark",
+   "kb": 13,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/boards_grey.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/boards_red.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Wood, straw and bark",
+   "kb": 9,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/boards_red.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/boards_white.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Wood, straw and bark",
+   "kb": 9,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/boards_white.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/books.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 15,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/books.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/brick_red.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Stone and walls",
+   "kb": 12,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/brick_red.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/checker_mint.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Cloth",
+   "kb": 5,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/checker_mint.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/clock_face.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 15,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/clock_face.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/cobblestone.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Stone and walls",
+   "kb": 13,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/cobblestone.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/cube_vault.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 17,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/cube_vault.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/door.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 13,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/door.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/door_round.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 17,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/door_round.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/doormat.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 17,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/doormat.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/floorboards.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Wood, straw and bark",
+   "kb": 11,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/floorboards.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/hay.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Wood, straw and bark",
+   "kb": 18,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/hay.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/hay_bale_end.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 23,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/hay_bale_end.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/healing_machine.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 15,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/healing_machine.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/herb_shelf.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 20,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/herb_shelf.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/iron_rivets.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Metal",
+   "kb": 7,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/iron_rivets.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/lamp_glass.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 13,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/lamp_glass.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/leaves.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Plants",
+   "kb": 15,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/leaves.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/leaves_berries.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Plants",
+   "kb": 16,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/leaves_berries.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/leaves_flowers.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Plants",
+   "kb": 18,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/leaves_flowers.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/mailbox.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 18,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/mailbox.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/notice_board.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 18,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/notice_board.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/piano_front.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 15,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/piano_front.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/planks_dark.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Wood, straw and bark",
+   "kb": 9,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/planks_dark.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/planks_light.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Wood, straw and bark",
+   "kb": 11,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/planks_light.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/plaster_cream.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Stone and walls",
+   "kb": 7,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/plaster_cream.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/quilt.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Cloth",
+   "kb": 16,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/quilt.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/rock.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Stone and walls",
+   "kb": 10,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/rock.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/roof_moss.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Roofs",
+   "kb": 15,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/roof_moss.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/roof_orange.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Roofs",
+   "kb": 13,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/roof_orange.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/roof_purple.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Roofs",
+   "kb": 13,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/roof_purple.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/roof_red.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Roofs",
+   "kb": 12,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/roof_red.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/rug_blue.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Cloth",
+   "kb": 22,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/rug_blue.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/rug_red.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Cloth",
+   "kb": 21,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/rug_red.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/shingles_barn.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Roofs",
+   "kb": 11,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/shingles_barn.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/sign_heart.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Signs and decals",
+   "kb": 14,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/sign_heart.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/sign_inn.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Signs and decals",
+   "kb": 17,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/sign_inn.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/stone_sandy.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Stone and walls",
+   "kb": 11,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/stone_sandy.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/stove_front.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 12,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/stove_front.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/stripes_mint.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Cloth",
+   "kb": 9,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/stripes_mint.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/window.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 10,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/window.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/window_round.webp",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Objects (flat views)",
+   "kb": 16,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/window_round.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/wood_cream.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Wood, straw and bark",
+   "kb": 6,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/wood_cream.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-tiles",
+   "game": "Creature Catch: cosy 3D tiles",
+   "style": "Cartoon",
+   "repo": "atoms-games-",
+   "path": "creature-catch-model-sheets/chapter1/game/assets/tiles/wood_polished.jpg",
+   "branches": [
+    "claude/nice-euler-ijjhsh"
+   ],
+   "size": "256x256",
+   "kind": "Wood, straw and bark",
+   "kb": 7,
+   "copies": [
+    "atoms-games-/creature-catch-model-sheets/chapter1/game/dist/assets/tiles/wood_polished.jpg"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/archive.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 31,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/bayou.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 32,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/cave-mushroom-patch.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "32x32",
+   "kind": "Tile sets (2D)",
+   "kb": 2,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/cave.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 29,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/copperbell.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 33,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/cove.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 34,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/dawn-temple.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 29,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/desert.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 28,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/forest.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 35,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/grassland-spawn-zone.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 30,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/grove.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 34,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/hollow-deep.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 31,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/home-village.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 28,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/interior.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "256x128",
+   "kind": "Tile sets (2D)",
+   "kb": 36,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/isle.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 35,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/mine.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 31,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/moonlit-spire.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "288x128",
+   "kind": "Tile sets (2D)",
+   "kb": 55,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/night-ruins.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 32,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/orchard.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 34,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/snow.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 23,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/springs.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 36,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/swamp.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 27,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "creature-catch-pixel",
+   "game": "Creature Catch: pixel tile sets",
+   "style": "Pixel art (2D)",
+   "repo": "atoms-games-",
+   "path": "creature-catch/art/tiles/water-shoreline.png",
+   "branches": [
+    "claude/vigilant-maxwell-dxhrgy",
+    "claude/youthful-wright-s9n5wh"
+   ],
+   "size": "128x128",
+   "kind": "Tile sets (2D)",
+   "kb": 22,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/boards.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Wood, straw and bark",
+   "kb": 62,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/brass.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Metal",
+   "kb": 84,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/canvas.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 112,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/cobbles.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "256x256",
+   "kind": "Stone and walls",
+   "kb": 17,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/copper.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Metal",
+   "kb": 91,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/dressed.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Stone and walls",
+   "kb": 81,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/earth.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "256x256",
+   "kind": "Ground",
+   "kb": 16,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/fern.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "384x384",
+   "kind": "Plants",
+   "kb": 44,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/herb.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "384x384",
+   "kind": "Plants",
+   "kb": 61,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/iron.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Metal",
+   "kb": 80,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/limestone.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "768x768",
+   "kind": "Stone and walls",
+   "kb": 150,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/loam.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Ground",
+   "kb": 128,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/meadow.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "384x384",
+   "kind": "Plants",
+   "kb": 60,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/oak.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Wood, straw and bark",
+   "kb": 57,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/plaster.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Stone and walls",
+   "kb": 50,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/reed.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "384x384",
+   "kind": "Plants",
+   "kb": 39,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/rock.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Stone and walls",
+   "kb": 98,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/slate.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "768x768",
+   "kind": "Roofs",
+   "kb": 132,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/turf.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Ground",
+   "kb": 96,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "brightvein-claim",
+   "game": "Brightvein: the claim",
+   "style": "Lightly painted",
+   "repo": "brightvein",
+   "path": "assets/claim/wool.webp",
+   "branches": [
+    "claude/zen-bardeen-nyw8c4",
+    "main",
+    "visual-pass-1"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 114,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/asphalt.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Stone and walls",
+   "kb": 1230,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/clay_red.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 1163,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/concrete.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Stone and walls",
+   "kb": 1158,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/dirt_red.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 1370,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/dirt_red_2.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 1328,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/grass_dry.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 1471,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/grass_dry_2.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 1411,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/gravel.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 1381,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/hay.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Wood, straw and bark",
+   "kb": 1225,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/mud_wet.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 1030,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/playa.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Water, ice and snow",
+   "kb": 1028,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/rock.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Stone and walls",
+   "kb": 1396,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/ruts_dry.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 1158,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/sheet_metal.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Metal",
+   "kb": 1000,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/strip_rubber.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Metal",
+   "kb": 1070,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/trail.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 1191,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "rut-access",
+   "game": "Rut Access: off-road ground",
+   "style": "Photo-like",
+   "repo": "cargames",
+   "path": "rut-access/textures/wood_planks.jpg",
+   "branches": [
+    "claude/practical-galileo-ko5a7t",
+    "claude/youthful-bell-jj1yix",
+    "suv-studio/hd-truck"
+   ],
+   "size": "1254x1254",
+   "kind": "Wood, straw and bark",
+   "kb": 1078,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/cutouts.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "2048x2048",
+   "kind": "Sheets and paintings",
+   "kb": 343,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/fence-chain.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "372x256",
+   "kind": "Objects (flat views)",
+   "kb": 62,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/fence-garden.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "262x256",
+   "kind": "Objects (flat views)",
+   "kb": 30,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/fence-rail.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "489x256",
+   "kind": "Objects (flat views)",
+   "kb": 35,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/fence-wire.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "757x256",
+   "kind": "Objects (flat views)",
+   "kb": 62,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/grass.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 394,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/gravel.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 335,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/grey-tin.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "150x330",
+   "kind": "Objects (flat views)",
+   "kb": 5,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/hero.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "2048x2048",
+   "kind": "Sheets and paintings",
+   "kb": 532,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/hero2.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "2048x2048",
+   "kind": "Sheets and paintings",
+   "kb": 595,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/red-boards.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "205x384",
+   "kind": "Objects (flat views)",
+   "kb": 3,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/roof-rust.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "792x300",
+   "kind": "Roofs",
+   "kb": 44,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/roof-silver.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "669x240",
+   "kind": "Roofs",
+   "kb": 32,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/roof-stripes.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "669x240",
+   "kind": "Roofs",
+   "kb": 37,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/sky.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "1536x768",
+   "kind": "Sky and effects",
+   "kb": 117,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/stone-ring.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "956x362",
+   "kind": "Objects (flat views)",
+   "kb": 106,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/things.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "2048x4096",
+   "kind": "Sheets and paintings",
+   "kb": 1566,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/tin.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "150x330",
+   "kind": "Objects (flat views)",
+   "kb": 7,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/trees.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "2048x2048",
+   "kind": "Sheets and paintings",
+   "kb": 1612,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/weathered-wood.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "143x476",
+   "kind": "Objects (flat views)",
+   "kb": 7,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "farm-paper",
+   "game": "Farm: paper cut-outs",
+   "style": "Paper cut-out",
+   "repo": "farm-project",
+   "path": "art-farm/assets/paper/white-siding.webp",
+   "branches": [
+    "claude/determined-cerf-bua9qu"
+   ],
+   "size": "240x233",
+   "kind": "Objects (flat views)",
+   "kb": 4,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/01-yard-concrete-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 67,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/01-yard-concrete-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/01-yard-concrete.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 297,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/01-yard-concrete.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/02-wet-concrete-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 56,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/02-wet-concrete-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/02-wet-concrete.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 267,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/02-wet-concrete.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/03-asphalt-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 90,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/03-asphalt-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/03-asphalt.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 375,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/03-asphalt.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/04-steel-tread-plate-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 103,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/04-steel-tread-plate-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/04-steel-tread-plate.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 207,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/04-steel-tread-plate.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/05-floor-grating.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 154,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/05-floor-grating.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/06-dirt-and-gravel-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 119,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/06-dirt-and-gravel-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/06-dirt-and-gravel.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 385,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/06-dirt-and-gravel.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/07-harbor-paving-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 76,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/07-harbor-paving-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/07-harbor-paving.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 302,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/07-harbor-paving.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/08-painted-hazard-floor.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Signs and decals",
+   "kb": 311,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/08-painted-hazard-floor.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/09-blast-wall-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 54,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/09-blast-wall-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/09-blast-wall.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 228,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/09-blast-wall.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/10-corrugated-metal-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 71,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/10-corrugated-metal-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/10-corrugated-metal.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Cloth",
+   "kb": 202,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/10-corrugated-metal.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/11-container-door-end.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Objects (flat views)",
+   "kb": 188,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/11-container-door-end.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/12-rusted-steel-plate-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 87,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/12-rusted-steel-plate-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/12-rusted-steel-plate.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 334,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/12-rusted-steel-plate.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/13-yard-building-facade.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 175,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/13-yard-building-facade.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/14-docks-building-facade.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 60,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/14-docks-building-facade.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/15-roof-gravel-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 115,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/15-roof-gravel-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/15-roof-gravel.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Roofs",
+   "kb": 363,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/15-roof-gravel.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/16-wooden-crate.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Objects (flat views)",
+   "kb": 274,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/16-wooden-crate.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/17-concrete-barrier-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 65,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/17-concrete-barrier-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/17-concrete-barrier.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 325,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/17-concrete-barrier.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/18-red-drum-label.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x512",
+   "kind": "Signs and decals",
+   "kb": 96,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/18-red-drum-label.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/19-blue-drum-label.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x512",
+   "kind": "Signs and decals",
+   "kb": 87,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/19-blue-drum-label.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/20-chain-link-fence.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 277,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/20-chain-link-fence.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/21-warning-signs-1.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x482",
+   "kind": "Signs and decals",
+   "kb": 98,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/21-warning-signs-1.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/21-warning-signs-2.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x482",
+   "kind": "Signs and decals",
+   "kb": 85,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/21-warning-signs-2.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/21-warning-signs-3.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x502",
+   "kind": "Signs and decals",
+   "kb": 96,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/21-warning-signs-3.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/21-warning-signs-4.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x502",
+   "kind": "Signs and decals",
+   "kb": 97,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/21-warning-signs-4.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/22-howler-armour-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 80,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/22-howler-armour-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/22-howler-armour.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 298,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/22-howler-armour.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/23-grey-armour-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 77,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/23-grey-armour-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/23-grey-armour.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 208,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/23-grey-armour.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/24-gunmetal-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 56,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/24-gunmetal-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/24-gunmetal.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 130,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/24-gunmetal.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/25-brushed-steel-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 59,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/25-brushed-steel-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/25-brushed-steel.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 111,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/25-brushed-steel.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/26-hazard-trim.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Signs and decals",
+   "kb": 305,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/26-hazard-trim.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/27-tank-track.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 166,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/27-tank-track.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/28-howler-decals.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Signs and decals",
+   "kb": 299,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/28-howler-decals.webp",
+    "iron-howler-4/archive/classes-kit/tex/howler-decals.webp",
+    "iron-howler-4/tools/classes-kit/tex/howler-decals.webp"
+   ],
+   "copies_n": 3
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/29-enemy-emblem.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Signs and decals",
+   "kb": 71,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/29-enemy-emblem.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/30-yard-night-sky.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "2048x1024",
+   "kind": "Sky and effects",
+   "kb": 48,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/30-yard-night-sky.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/31-docks-night-sky.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "2048x1024",
+   "kind": "Sky and effects",
+   "kb": 73,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/31-docks-night-sky.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/32-industrial-skyline.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "2172x514",
+   "kind": "Sky and effects",
+   "kb": 94,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/32-industrial-skyline.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/33-harbor-skyline.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "2172x502",
+   "kind": "Sky and effects",
+   "kb": 215,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/33-harbor-skyline.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/34-fog.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Sky and effects",
+   "kb": 10,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/34-fog.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/35-explosion-1.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Sky and effects",
+   "kb": 43,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/35-explosion-1.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/36-explosion-2.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Sky and effects",
+   "kb": 45,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/36-explosion-2.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/37-smoke-puff.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Sky and effects",
+   "kb": 9,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/37-smoke-puff.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/38-muzzle-flash.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Sky and effects",
+   "kb": 18,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/38-muzzle-flash.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/39-sparks.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Sky and effects",
+   "kb": 35,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/39-sparks.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/40-scorch-mark.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Sky and effects",
+   "kb": 114,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/40-scorch-mark.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/41-impact-cracks.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Sky and effects",
+   "kb": 109,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/41-impact-cracks.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/42-lens-dirt.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Sky and effects",
+   "kb": 10,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/42-lens-dirt.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/43-steam.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Sky and effects",
+   "kb": 8,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/43-steam.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/44-neon-sign-harbor-9.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Signs and decals",
+   "kb": 21,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/44-neon-sign-harbor-9.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/45-neon-sign-foundry-4.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Signs and decals",
+   "kb": 45,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/45-neon-sign-foundry-4.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/46-hyperdot-arcade-billboard.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Signs and decals",
+   "kb": 163,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/46-hyperdot-arcade-billboard.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/53-howler-armour-large-plates-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 78,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/53-howler-armour-large-plates-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/53-howler-armour-large-plates.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 319,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/53-howler-armour-large-plates.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/54-forge-armour-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 56,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/54-forge-armour-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/54-forge-armour.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 119,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/54-forge-armour.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/55-mech-innards.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 185,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/55-mech-innards.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/56-radiator-grille.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 178,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/56-radiator-grille.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/57-rubber-and-cables-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 63,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/57-rubber-and-cables-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/57-rubber-and-cables.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 218,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/57-rubber-and-cables.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/58-glowing-panel-lights.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 102,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/58-glowing-panel-lights.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/59-shield-hex-pattern.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 111,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/59-shield-hex-pattern.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/60-meadow-ground-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 96,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/60-meadow-ground-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/60-meadow-ground.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 470,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/60-meadow-ground.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/61-dry-prairie-ground-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 89,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/61-dry-prairie-ground-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/61-dry-prairie-ground.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 404,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/61-dry-prairie-ground.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/62-farm-track-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 83,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/62-farm-track-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/62-farm-track.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 360,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/62-farm-track.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/63-ploughed-field-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 67,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/63-ploughed-field-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/63-ploughed-field.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 328,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/63-ploughed-field.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/64-wheat-field-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 117,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/64-wheat-field-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/64-wheat-field.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Wood, straw and bark",
+   "kb": 410,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/64-wheat-field.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/65-hill-rock.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 372,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/65-hill-rock.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/66-red-barn-siding.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 260,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/66-red-barn-siding.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/67-wooden-fence-planks.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Objects (flat views)",
+   "kb": 311,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/67-wooden-fence-planks.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/68-round-hay-bale-end.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Wood, straw and bark",
+   "kb": 129,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/68-round-hay-bale-end.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/69-daytime-field-sky.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "2048x1024",
+   "kind": "Sky and effects",
+   "kb": 158,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/69-daytime-field-sky.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/70-distant-hills.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1774x171",
+   "kind": "Sky and effects",
+   "kb": 13,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/70-distant-hills.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/71-red-shipping-container-side-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 54,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/71-red-shipping-container-side-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/71-red-shipping-container-side.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x512",
+   "kind": "Objects (flat views)",
+   "kb": 80,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/71-red-shipping-container-side.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/72-blue-shipping-container-side-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 57,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/72-blue-shipping-container-side-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/72-blue-shipping-container-side.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x512",
+   "kind": "Objects (flat views)",
+   "kb": 88,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/72-blue-shipping-container-side.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/73-container-roof.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Objects (flat views)",
+   "kb": 142,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/73-container-roof.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/74-crane-truss.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 213,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/74-crane-truss.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/75-harbour-water.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Water, ice and snow",
+   "kb": 67,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/75-harbour-water.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/76-quay-edge-with-fenders.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x512",
+   "kind": "Stone and walls",
+   "kb": 143,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/76-quay-edge-with-fenders.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/77-ship-hull-side.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x512",
+   "kind": "Stone and walls",
+   "kb": 58,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/77-ship-hull-side.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/78-warehouse-roller-door.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Objects (flat views)",
+   "kb": 154,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/78-warehouse-roller-door.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/79-dock-lane-markings.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Signs and decals",
+   "kb": 251,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/79-dock-lane-markings.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/80-harbour-sunset-sky.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "2048x1024",
+   "kind": "Sky and effects",
+   "kb": 113,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/80-harbour-sunset-sky.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/81-forest-floor-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 112,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/81-forest-floor-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/81-forest-floor.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 507,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/81-forest-floor.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/82-mossy-ground-with-roots-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 102,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/82-mossy-ground-with-roots-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/82-mossy-ground-with-roots.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 423,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/82-mossy-ground-with-roots.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/83-mossy-boulder-rock-n.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Bump maps",
+   "kb": 94,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/83-mossy-boulder-rock-n.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/83-mossy-boulder-rock.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 432,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/83-mossy-boulder-rock.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/84-creek-bed.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 230,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/84-creek-bed.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/85-pickup-icons-1.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "226x227",
+   "kind": "Signs and decals",
+   "kb": 11,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/85-pickup-icons-1.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/85-pickup-icons-2.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "206x217",
+   "kind": "Signs and decals",
+   "kb": 10,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/85-pickup-icons-2.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/85-pickup-icons-3.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "208x231",
+   "kind": "Signs and decals",
+   "kb": 8,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/85-pickup-icons-3.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/85-pickup-icons-4.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "222x221",
+   "kind": "Signs and decals",
+   "kb": 12,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/85-pickup-icons-4.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/85-pickup-icons-5.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "194x227",
+   "kind": "Signs and decals",
+   "kb": 10,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/85-pickup-icons-5.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/86-mech-footprint.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "512x512",
+   "kind": "Signs and decals",
+   "kb": 48,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/86-mech-footprint.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "iron-howl",
+   "game": "Iron Howl 3: yard, docks and fields",
+   "style": "Photo-like, with bump maps",
+   "repo": "iron-howler-4",
+   "path": "game/art/fx-atlas.webp",
+   "branches": [
+    "claude/confident-albattani-9rx5p8",
+    "life-industrial",
+    "life-merge",
+    "life-outdoor",
+    "life-shared",
+    "main"
+   ],
+   "size": "1024x512",
+   "kind": "Sheets and paintings",
+   "kb": 62,
+   "copies": [
+    "HYPERDOT-ARCADE/v2/games/ironhowl3/art/fx-atlas.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/B03.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 315,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/B09.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 388,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/B13.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Wood, straw and bark",
+   "kb": 325,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/C06.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 437,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/C10.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 436,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/C13.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 403,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/C19.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 410,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/C24.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 451,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/C31.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 439,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H01.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 480,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H02.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 438,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H03.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 451,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H04.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 348,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H05.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Metal",
+   "kb": 317,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H06.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Wood, straw and bark",
+   "kb": 378,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H07.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 306,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H08.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 551,
+   "copies": [
+    "mud-lab/base/textures/H08-bog-grass.webp"
+   ],
+   "copies_n": 1
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H09.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 412,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H10.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 381,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H11.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 498,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H12.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 338,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H13.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 371,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H14.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 173,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H15.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 322,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H16.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 460,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H17.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 478,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H18.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 314,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H19.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 388,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "last-road",
+   "game": "Last Road: the outback",
+   "style": "Photo-like",
+   "repo": "last-road",
+   "path": "models/textures/H20.webp",
+   "branches": [
+    "ground-truth-continued",
+    "main"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 488,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/kit_atlas.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "2048x2048",
+   "kind": "Sheets and paintings",
+   "kb": 558,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/kit_plants.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x1024",
+   "kind": "Sheets and paintings",
+   "kb": 161,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/kit_trim.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x512",
+   "kind": "Sheets and paintings",
+   "kb": 97,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/macro.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Sheets and paintings",
+   "kb": 453,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/mat_awning.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 48,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/mat_stripe.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 27,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/mat_wood.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Wood, straw and bark",
+   "kb": 29,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/moon.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "128x128",
+   "kind": "Sky and effects",
+   "kb": 23,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/paint_W1.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1774x887",
+   "kind": "Sheets and paintings",
+   "kb": 414,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/paint_W2.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1774x887",
+   "kind": "Sheets and paintings",
+   "kb": 415,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/paint_W3.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1774x887",
+   "kind": "Sheets and paintings",
+   "kb": 374,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/paint_W4.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1774x887",
+   "kind": "Sheets and paintings",
+   "kb": 265,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/paint_W5.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1774x887",
+   "kind": "Sheets and paintings",
+   "kb": 328,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/paint_W6.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1774x887",
+   "kind": "Sheets and paintings",
+   "kb": 331,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/paint_W7.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1774x887",
+   "kind": "Sheets and paintings",
+   "kb": 321,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tent_skin.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "2048x1536",
+   "kind": "Sheets and paintings",
+   "kb": 526,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tent_wrap.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x2048",
+   "kind": "Sheets and paintings",
+   "kb": 335,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tex_earth.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 128,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tex_fair.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 118,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tex_field.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 190,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tex_grass.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 139,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tex_heather.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 186,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tex_marsh.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 162,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tex_rock.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x1024",
+   "kind": "Stone and walls",
+   "kb": 161,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tex_wall.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x683",
+   "kind": "Stone and walls",
+   "kb": 181,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tile_bluestripe.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 49,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tile_bracken.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Plants",
+   "kb": 58,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tile_damask.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Cloth",
+   "kb": 26,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tile_gorse.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Plants",
+   "kb": 87,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tile_leaves.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Plants",
+   "kb": 35,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tile_rubble.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Stone and walls",
+   "kb": 50,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tile_shingles.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Roofs",
+   "kb": 49,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tile_straw.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Wood, straw and bark",
+   "kb": 76,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld-game",
+   "game": "Moon Faire: the open world, game copies",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/data/tile_wooddark.webp",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "512x512",
+   "kind": "Wood, straw and bark",
+   "kb": 26,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Ground/ground_fair.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 2496,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Ground/ground_heather.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 2768,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Ground/ground_rock.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Stone and walls",
+   "kb": 2990,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Ground/ground_track.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 2712,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Ground/ground_turf.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 2847,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Ground/wall_drystone.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Stone and walls",
+   "kb": 3405,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Materials/cloth_blue_stars.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Cloth",
+   "kb": 2871,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Materials/cloth_cream_awning.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Cloth",
+   "kb": 3597,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Materials/cloth_gold_brocade.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Cloth",
+   "kb": 3567,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Materials/cloth_green_gold_leaf.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Cloth",
+   "kb": 3056,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Materials/cloth_red_cream_stripe.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Cloth",
+   "kb": 3191,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Materials/wood_planks.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Wood, straw and bark",
+   "kb": 2677,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Tents-Blue-Green/skin_green_tent_door.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2633,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Tents-Blue-Green/skin_green_tent_roof.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Objects (flat views)",
+   "kb": 2459,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Tents-Blue-Green/skin_star_tent_door.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2444,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Tents-Blue-Green/skin_star_tent_roof.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Objects (flat views)",
+   "kb": 3114,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Tents-Red-Gold/skin_gold_tent_door.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2390,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Tents-Red-Gold/skin_gold_tent_roof.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Objects (flat views)",
+   "kb": 3116,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Tents-Red-Gold/skin_red_tent_door.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2329,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round1/Moon-Faire-Round1-Tents-Red-Gold/skin_red_tent_roof.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Objects (flat views)",
+   "kb": 2592,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Materials/roof_shingles.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Roofs",
+   "kb": 2774,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Materials/stone_rubble.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Stone and walls",
+   "kb": 3104,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Materials/trim_scallop.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Cloth",
+   "kb": 1663,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Plants/plant_bracken.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Plants",
+   "kb": 2931,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Plants/plant_gorse.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Plants",
+   "kb": 3368,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Plants/plant_reeds.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Plants",
+   "kb": 1952,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Plants/plant_thorn_tree.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Plants",
+   "kb": 1711,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Props/skin_crates_barrels.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 1637,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Props/skin_lantern_post.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x1536",
+   "kind": "Objects (flat views)",
+   "kb": 1253,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Props/skin_wagon_end.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Objects (flat views)",
+   "kb": 1795,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Props/skin_wagon_side.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 1930,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Props/skin_well.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1024x1536",
+   "kind": "Objects (flat views)",
+   "kb": 2132,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Stalls/skin_stall_back.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2236,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Stalls/skin_stall_brass_front.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2423,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Stalls/skin_stall_herb_front.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2228,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Stalls/skin_stall_lamp_front.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2276,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round2/Moon-Faire-Round2-Stalls/skin_stall_moon_front.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2178,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Ground-Plants/ground_cobbles.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Stone and walls",
+   "kb": 3185,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Ground-Plants/ground_field.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 2957,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Ground-Plants/ground_marsh.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Ground",
+   "kb": 3054,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Ground-Plants/plant_leaves.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Plants",
+   "kb": 2490,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Materials/cloth_blue_cream_stripe.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Cloth",
+   "kb": 3494,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Materials/cloth_red_damask.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Cloth",
+   "kb": 3028,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Materials/straw.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Wood, straw and bark",
+   "kb": 3017,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Materials/wood_dark.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Wood, straw and bark",
+   "kb": 2394,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Tent-Props/skin_big_top_door.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2306,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Tent-Props/skin_big_top_roof.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Objects (flat views)",
+   "kb": 2662,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Tent-Props/skin_booth_front.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 2121,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Tent-Props/skin_fair_gate.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1254x1254",
+   "kind": "Objects (flat views)",
+   "kb": 1542,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Tent-Props/skin_oven_cart.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 1988,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Tent-Props/skin_pie_cart.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Objects (flat views)",
+   "kb": 1948,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "moon-faire-openworld",
+   "game": "Moon Faire: the open world",
+   "style": "Painted (same style as Envoi)",
+   "repo": "moon-faire",
+   "path": "game/openworld/round3/Moon-Faire-Round3-Tent-Props/skin_small_things.png",
+   "branches": [
+    "claude/moon-faire-fair-folk-minds",
+    "claude/moon-faire-open-world"
+   ],
+   "size": "1536x1024",
+   "kind": "Sheets and paintings",
+   "kb": 1489,
+   "copies": [],
+   "copies_n": 0
+  },
+  {
+   "pack": "mud-lab",
+   "game": "Mud Lab",
+   "style": "Photo-like",
+   "repo": "mud-lab",
+   "path": "base/textures/H08-bog-grass.webp",
+   "branches": [
+    "claude/amazing-wright-rc9udj",
+    "main",
+    "mud-lab-10",
+    "mud-lab-11",
+    "mud-lab-12",
+    "mud-lab-13",
+    "mud-lab-14",
+    "mud-lab-21",
+    "mud-lab-8",
+    "mud-lab-9",
+    "packet-2026-11-13-handoff",
+    "salt-and-sand-showroom-3-handoff"
+   ],
+   "size": "1024x1024",
+   "kind": "Ground",
+   "kb": 551,
+   "copies": [
+    "last-road/models/textures/H08.webp"
+   ],
+   "copies_n": 1
+  }
+ ]
+}
