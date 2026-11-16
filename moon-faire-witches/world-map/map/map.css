@@ -1,0 +1,46 @@
+/* map.css: the 3D map's page: the map fills the screen, with as little on top of it as can be */
+html,body{margin:0;height:100%;background:#0b0d22;overflow:hidden;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;color:#f1eeff;font:15px/1.35 "Atkinson Hyperlegible",system-ui,sans-serif}
+#map{position:fixed;inset:0}
+#map canvas{position:absolute;inset:0;display:block;touch-action:none}
+/* names over the map */
+.map-labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.map-tag{position:absolute;left:0;top:0;white-space:nowrap;will-change:transform}
+.map-tag.place,.map-tag.landing,.map-tag.zone{font-family:"IM Fell English",Georgia,serif;color:#f3eedc;text-shadow:0 0 4px #000,0 1px 3px #000,0 0 10px rgba(0,0,0,.8)}
+.map-tag.place{font-size:13px;margin:-8px 0 0 0;translate:-50% -100%;opacity:.92}
+.map-tag.place::after{content:"";position:absolute;left:50%;bottom:-7px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#e9e4ff;box-shadow:0 0 6px #b9b0ff}
+.map-tag.place.lands{color:#ffe2a6}
+.map-tag.place.lands::before{content:"◆ ";color:#ffcf6e}
+.map-tag.landing{font-size:13px;translate:-50% -100%;margin-top:-10px;color:#ffe2a6}
+.map-tag.landing::before{content:"◆ ";color:#ffcf6e}
+.map-tag.zone{font-size:22px;letter-spacing:.06em;translate:-50% -50%;color:rgba(255,236,196,.88)}
+.map-tag.io{translate:-50% -100%;margin-top:-26px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 12px 6px;border-radius:14px;background:rgba(18,15,44,.78);border:1px solid rgba(214,206,255,.55);box-shadow:0 0 14px rgba(150,140,255,.35)}
+.map-tag.io b{font:700 14px/1 "Atkinson Hyperlegible",system-ui,sans-serif;color:#fff;letter-spacing:.04em}
+.map-tag.io span{font:13px/1.15 "IM Fell English",Georgia,serif;color:#e7e2ff}
+/* the place Io is in, at the top */
+.chip{position:absolute;left:calc(12px + env(safe-area-inset-left,0px));top:calc(12px + env(safe-area-inset-top,0px));z-index:4;display:flex;flex-direction:column;padding:7px 14px 8px;border-radius:16px;background:rgba(14,13,36,.66);border:1px solid rgba(214,222,255,.28);max-width:calc(100% - 100px)}
+.chip b{font:20px/1.1 "IM Fell English",Georgia,serif;font-weight:400}
+.chip span{font-size:13px;color:#cfc9ef}
+/* the two buttons */
+.round{position:absolute;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:4;appearance:none;width:54px;height:54px;border-radius:27px;border:1px solid rgba(214,222,255,.45);background:rgba(14,14,36,.7);display:grid;place-items:center;padding:0}
+.round svg{width:26px;height:26px}
+.pill{position:absolute;left:calc(14px + env(safe-area-inset-left,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:4;appearance:none;padding:11px 18px;border-radius:22px;border:1px solid rgba(214,222,255,.35);background:rgba(14,14,36,.66);color:#e9e5ff;font:15px "Atkinson Hyperlegible",system-ui,sans-serif}
+button{cursor:pointer}
+/* the list of places to put Io in (this demo only) */
+.sheet{position:fixed;inset:0;z-index:8;background:rgba(5,5,16,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet[hidden]{display:none}
+.sheet-card{width:min(520px,100%);max-height:78%;display:flex;flex-direction:column;background:rgba(18,16,40,.96);border:1px solid rgba(214,206,255,.3);border-bottom:0;border-radius:20px 20px 0 0;padding:14px 14px calc(12px + env(safe-area-inset-bottom,0px))}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:0 4px 6px}
+.sheet-head b{font:22px "IM Fell English",Georgia,serif;font-weight:400}
+.x{appearance:none;border:0;background:none;color:#cfc9ef;font-size:20px;padding:6px 10px}
+.sheet-list{overflow:auto;-webkit-overflow-scrolling:touch}
+.sheet-list h3{margin:12px 4px 6px;font-size:13px;font-weight:700;color:#cfc9ef;letter-spacing:.03em}
+.sheet-row{display:flex;flex-wrap:wrap;gap:7px}
+.place{appearance:none;padding:8px 12px;border-radius:14px;border:1px solid rgba(214,206,255,.28);background:rgba(40,36,80,.6);color:#f1eeff;font:14px "Atkinson Hyperlegible",system-ui,sans-serif}
+.place.on{background:rgba(150,120,40,.75);border-color:rgba(255,226,160,.7)}
+.sheet-nums{margin:10px 4px 0;font-size:12px;color:#9e98c4}
+/* the hint, and the loading screen */
+.hint{position:absolute;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:4;padding:8px 14px;border-radius:16px;background:rgba(14,12,34,.72);font-size:14px;white-space:nowrap;transition:opacity .6s;pointer-events:none}
+.hint.gone{opacity:0}
+.load{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:#0b0d22;transition:opacity .6s}
+.load.gone{opacity:0;pointer-events:none}
+.load p{font:italic 20px "IM Fell English",Georgia,serif;color:#d9d4f5;text-align:center;padding:0 24px}
