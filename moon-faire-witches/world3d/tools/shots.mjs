@@ -31,7 +31,7 @@ let n = 0;
 for (const p of plan) {
   const r = await page.evaluate(async (p) => {
     const w = window.__w3d;
-    w.guide(!!(p.guide || p.top), !p.top);
+    w.guide(!!(p.guide || p.top || p.walkmap), p.walkmap ? 'walk' : !p.top);
     if (p.io) w.setIo(p.io[0], p.io[1], p.io[2]);
     if (p.cam) w.setCam(p.cam[0], p.cam[1], p.cam[2]); else w.C.auto = 0;
     w.P.scene.updateMatrixWorld();

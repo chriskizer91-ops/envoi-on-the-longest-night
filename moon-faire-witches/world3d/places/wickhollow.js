@@ -143,7 +143,8 @@
       { pts: [[548, 248], [548, -60]], h: 0.6, t: 0.5, tex: 'stone', top: 'rail', topH: 1.3 },
       { pts: [[1000, 248], [1000, -60]], h: 0.6, t: 0.5, tex: 'stone', top: 'rail', topH: 1.3 },
       { pts: [[236, 190], [236, 336]], h: 0.9, t: 0.6, tex: 'dry', drop: true },                       // the lake wall by the lane
-      { pts: [[232, 336], [232, 504]], h: 0.7, t: 0.6, tex: 'dry', drop: true },
+      { pts: [[232, 336], [232, 418]], h: 0.7, t: 0.6, tex: 'dry', drop: true },                       // a gap onto the upper jetty
+      { pts: [[232, 472], [232, 504]], h: 0.7, t: 0.6, tex: 'dry', drop: true },
       { pts: [[236, 504], [168, 506], [168, 624]], h: 0.8, t: 0.6, tex: 'dry', drop: true },        // the west stairs' outer wall
       { pts: [[330, 806], [452, 806]], h: 0.55, t: 0.5, tex: 'dry', top: 'fence', topH: 0.95 },      // the garden fence on its wall
       { pts: [[490, 806], [742, 806]], h: 0.55, t: 0.5, tex: 'dry', top: 'fence', topH: 0.95 },
@@ -170,7 +171,7 @@
     lamps: [
       { at: [659, 392], kind: 'post' }, { at: [904, 392], kind: 'post' }, { at: [640, 595], kind: 'post' }, { at: [914, 595], kind: 'post' },
       { at: [260, 590], kind: 'post' }, { at: [628, 256], kind: 'post' }, { at: [910, 256], kind: 'post' },
-      { at: [182, 484], kind: 'post', y: -1.0 }, { at: [205, 740], kind: 'post' }, { at: [46, 700], kind: 'post', y: -1.22, short: true },
+      { at: [182, 484], kind: 'post', y: 0 }, { at: [205, 740], kind: 'post' }, { at: [46, 700], kind: 'post', y: -1.22, short: true },
       { at: [735, 765], kind: 'post' }, { at: [735, 912], kind: 'post' }, { at: [826, 730], kind: 'post' },
       { at: [1347, 328], kind: 'pillar' }, { at: [1505, 328], kind: 'pillar' }, { at: [1347, 436], kind: 'pillar' }, { at: [1505, 436], kind: 'pillar' },
       { at: [290, 254], kind: 'post' },
@@ -178,15 +179,15 @@
     // the jetties: the lower one (walked on: the way to the jetty) and the upper one (Nettie's crates)
     jetties: [
       { r: [0, 704, 154, 764], y: -1.22, posts: true },
-      { r: [56, 338, 232, 500], y: -1.0, posts: true },
-      { r: [112, 300, 160, 340], y: -1.0, posts: true },
+      { r: [56, 338, 236, 500], y: 0, posts: true },            // level with the lane, through the gap in the wall
+      { r: [112, 300, 160, 340], y: 0, posts: true },
     ],
     // small things: benches, barrels, crates, the anvil, pots of flowers, gravestones, the statue, bushes and beds
     props: [
       { k: 'bench', at: [1069, 648], face: 0 },
       { k: 'anvil', at: [1026, 318] }, { k: 'barrel', at: [968, 322] }, { k: 'barrel', at: [1052, 336] }, { k: 'barrel', at: [1082, 358] }, { k: 'barrel', at: [1098, 380] },
-      { k: 'barrel', at: [222, 470], y: -1.0 }, { k: 'barrel', at: [436, 402] }, { k: 'barrel', at: [1088, 840] },
-      { k: 'crates', at: [208, 360], y: -1.0 }, { k: 'crates', at: [212, 420], y: -1.0 }, { k: 'crates', at: [214, 470], y: -1.0 }, { k: 'crates', at: [596, 396] }, { k: 'crates', at: [534, 400] },
+      { k: 'barrel', at: [214, 482], y: 0 }, { k: 'barrel', at: [436, 402] }, { k: 'barrel', at: [1088, 840] },
+      { k: 'crates', at: [208, 360], y: 0 }, { k: 'crates', at: [120, 410], y: 0 }, { k: 'crates', at: [200, 488], y: 0 }, { k: 'crates', at: [596, 396] }, { k: 'crates', at: [534, 400] },
       { k: 'pot', at: [727, 548] }, { k: 'pot', at: [826, 548] }, { k: 'pot', at: [320, 396] }, { k: 'pot', at: [410, 400] }, { k: 'pot', at: [1112, 612] }, { k: 'pot', at: [1050, 530] },
       { k: 'pot', at: [450, 722] }, { k: 'pot', at: [492, 722] }, { k: 'pot', at: [960, 850] }, { k: 'pot', at: [1000, 852] },
       { k: 'statue', at: [1102, 712] },
