@@ -1,11 +1,15 @@
 // bogmire.js: Bogmire, the stilt town on the fen, in 3D, laid out on its painting (reference/art/walk/walk-bogmire.png,
 // 1536 x 1024) in the painting's own pixels, as src/game/maps.js keeps the walking map. Where Io can walk is that map's own
-// walk and block areas, unchanged (MAPS.bogmire), and the two pockets added here (walkAdd); everything stands round them.
+// walk and block areas, unchanged (MAPS.bogmire), the two pockets added here (walkAdd), and (Chris's rule, November 16,
+// 11:22: anywhere that looks walkable is walkable) every board the 2D walk leaves out: the porches end to end, the inn's
+// porch and the far east house's porch down a side stair, the east house's porch, the west dock's three fingers.
 // The texture ids are the texture pack's (texture-packs/bogmire-dawnroost/bogmire/inventory.md).
 // There is no dry ground in the town: everything stands on wooden stilts over still black water. Heights are metres: the
 // boardwalks, the square and the docks are 0; the water lies 1.5 m below them. The north-west house and the small thatched
 // house beside it stand on a porch 1.4 m up (the stair from the west boardwalk climbs to it), and the Lanternless Inn on a
-// porch 1.5 m up (its stair climbs from the east boardwalk). Past the painting the fen goes on to low banks of marsh grass
+// porch 1.5 m up (its stair climbs from the east boardwalk; a narrow stair at its east end goes down to the far east
+// house's porch, between the inn's wing and that house, where the painting has its plank walk). The west dock's three
+// fingers lie 0.1 m below it. Past the painting the fen goes on to low banks of marsh grass
 // and dark woods; the long walk north runs out to them (to the fen's dark heart), and a causeway runs west from the
 // landing (the Thornwood road).
 (function (G) {
@@ -16,12 +20,19 @@
   const WY = -1.5, BED = -2.4, BANK = -1.15;   // the water, its muddy bed, and the marsh banks past the painting
   const inR = (r, x, y) => x >= r[0] && x <= r[2] && y >= r[1] && y <= r[3];
   const NORTH = [248, 40, 704, 255], INN = [1084, 100, 1398, 317];
-  // the two stairs: x across, from the top (yt, the porch's edge) down to the bottom (yb, the boardwalk's edge), n treads
+  // the stairs: x across, from the top (yt, the porch's edge) down to the bottom (yb, the boardwalk's edge), n treads; m,
+  // how far past its sides Io's feet still take its height (pixels)
   const STAIRS = [
     { x0: 327, x1: 373, yt: 254, yb: 386, n: 10, h: H_N },   // up from the west boardwalk to the north-west house
     { x0: 1192, x1: 1236, yt: 316, yb: 400, n: 10, h: H_I }, // up from the east boardwalk to the inn
+    { x0: 1372, x1: 1396, yt: 278, yb: 340, n: 9, h: H_I, m: 1 },  // down from the inn's porch's east end to the far east house's
   ];
   const stairH = (s, y) => s.h * Math.max(0, Math.min(s.n, Math.ceil((s.yb - y) / (s.yb - s.yt) * s.n))) / s.n;
+  // the west dock's three fingers for the punts (0.1 m below the dock)
+  const FINGERS = [[24, 456, 143, 480], [24, 520, 143, 544], [24, 584, 143, 608]];
+  // Io's feet stand a hair (2 mm) over the boards: the engine takes feet at exactly the ground's own height to mean she
+  // is on the ground itself, and under the fen's water that is its bed, 2.4 m down
+  const FEET = 0.002;
 
   // the ground's height under any point of the painting (metres): the deck it is on, or the marsh banks past the town
   // (under the water the engine lays the fen's bed, whatever this says)
@@ -50,7 +61,7 @@
     [[759, -420, 820, 326], 0, 'ew'], [[734, 112, 759, 152], 0, 'ns'], [[820, 112, 845, 152], 0, 'ns'],  // the long walk north
     [[820, 200, 1030, 248], 0, 'ns'],                                                                  // the north-east house's porch
     [[1032, 400, 1310, 456], 0, 'ns'],                                                                 // the east boardwalk
-    [[1086, 278, 1396, 316], H_I, 'ns'],                                                               // the inn's porch
+    [[1086, 278, 1372, 316], H_I, 'ns'],                                                               // the inn's porch (its side stair east of it)
     [[1396, 300, 1536, 340], 0, 'ns'],                                                                 // the far east house's porch
     [[1256, 456, 1310, 686], 0, 'ew'],                                                                 // south on the east side
     [[1310, 580, 1486, 606], 0, 'ns'], [[1310, 492, 1330, 580], 0, 'ew'],                              // the east house's porch
@@ -61,15 +72,17 @@
     [[646, 706, 752, 760], 0, 'ns'],                                                                   // the bridge west
     [[607, 686, 646, 760], 0, 'ew'], [[364, 760, 646, 808], 0, 'ns'], [[364, 684, 404, 760], 0, 'ew'],  // round the south-west house
     [[296, 720, 364, 778], 0, 'ns'],                                                                   // the little dock
+    [[1372, 340, 1420, 352], 0, 'ns'],                                                                 // the landing at the foot of the inn's side stair
   ];
   // the market square: one deck with its corners cut, boards east-west
   const SQUARE = [[508, 548], [508, 394], [528, 356], [580, 326], [962, 326], [1002, 346], [1032, 382], [1032, 548]];
 
   // the rope railings: posts every couple of metres (they go down into the water as stilts), rope slung between them.
-  // [height, [[x, y], ...]]; a height of 's0' or 's1' follows that stair
+  // [height, [[x, y], ...]]; a height of 's0', 's1' or 's2' follows that stair
   const RAILS = [
     [0, [[22, 331], [250, 331]]], [0, [[22, 397], [143, 397]]], [0, [[-300, 345], [20, 345], [20, 331]]], [0, [[-300, 390], [20, 390], [20, 397]]],
-    [0, [[143, 397], [143, 662]]], [0, [[190, 662], [241, 662], [241, 456]]],
+    // the west dock's west side, open where each finger leaves it
+    [0, [[143, 397], [143, 456]]], [0, [[143, 480], [143, 520]]], [0, [[143, 544], [143, 584]]], [0, [[143, 608], [143, 662]]], [0, [[190, 662], [241, 662], [241, 456]]],
     [-0.1, [[143, 456], [24, 456], [24, 480], [143, 480]]], [-0.1, [[143, 520], [24, 520], [24, 544], [143, 544]]], [-0.1, [[143, 584], [24, 584], [24, 608], [143, 608]]],
     [0, [[241, 455], [508, 455]]], [0, [[252, 331], [252, 386], [327, 386]]], [0, [[373, 386], [380, 386], [380, 402], [508, 402]]],
     ['s0', [[327, 255], [327, 386]]], ['s0', [[373, 255], [373, 386]]],
@@ -82,9 +95,12 @@
     [0, [[820, 200], [852, 200]]], [0, [[1000, 200], [1030, 200], [1030, 248], [906, 248]]], [0, [[884, 248], [820, 248]]],
     [0, [[1032, 400], [1192, 400]]], [0, [[1236, 400], [1310, 400], [1310, 456]]], [0, [[1032, 456], [1256, 456], [1256, 652]]],
     ['s1', [[1192, 316], [1192, 400]]], ['s1', [[1236, 316], [1236, 400]]],
-    [H_I, [[1086, 278], [1086, 316], [1192, 316]]], [H_I, [[1236, 316], [1396, 316]]],
-    [0, [[1396, 300], [1396, 340], [1426, 340]]], [0, [[1446, 340], [1536, 340]]],
+    [H_I, [[1086, 278], [1086, 316], [1192, 316]]], [H_I, [[1236, 316], [1372, 316], [1372, 294]]],
+    // the inn's side stair, both sides, its landing, and the far east house's porch (its ladder's gap, its east end)
+    ['s2', [[1372, 316], [1372, 340]]], ['s2', [[1396, 300], [1396, 324]]],
+    [0, [[1372, 340], [1372, 352], [1420, 352], [1420, 340], [1426, 340]]], [0, [[1446, 340], [1536, 340], [1536, 300]]],
     [0, [[1310, 456], [1310, 580]]], [0, [[1310, 606], [1310, 686], [1342, 686], [1342, 716], [1486, 716], [1486, 726]]],
+    [0, [[1310, 493], [1330, 493]]],                                                                  // the north end of the east house's side walk
     [0, [[1310, 606], [1452, 606]]], [0, [[1472, 606], [1486, 606], [1486, 580]]],
     [0, [[1256, 812], [1342, 812], [1342, 768], [1486, 768], [1486, 758]]],
     [0, [[1486, 726], [1532, 726], [1532, 846]]], [0, [[1486, 758], [1502, 758], [1502, 846]]],
@@ -134,6 +150,29 @@
   const SNAGS = [[1262, 940, 1.6], [1204, 990, 1.1], [1396, 940, 1.8], [1344, 996, 1.2], [422, 1000, 1.3], [1490, 960, 1.4], [300, 470, 1.0], [600, 1010, 1.0],
     [40, 240, 1.2], [1080, 40, 1.3], [640, 40, 1.1], [1530, 520, 1.2]];
 
+  // Chris's rule (November 16, 11:22): everything that looks walkable is walkable. The boards the 2D walk leaves out, each
+  // to a few pixels inside its rails (Io's feet stand at each deck's own height: walk_h). Rope rails don't stop her; where
+  // two of these meet at different heights, a strip between them is left out, under a rail.
+  const R4 = (x0, y0, x1, y1) => [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+  const MORE = [
+    R4(36, 335, 248, 393), R4(147, 393, 237, 658),                                     // the landing, and the west dock to its south end
+    R4(28, 460, 151, 476), R4(28, 524, 151, 540), R4(28, 588, 151, 604),                // the dock's three fingers
+    [[245, 390], [376, 390], [376, 406], [512, 406], [512, 451], [245, 451]],            // the west boardwalk
+    R4(254, 211, 698, 251),                                                             // the north-west house's porch and the bridge, end to end
+    [[513, 398], [531, 362], [583, 331], [959, 331], [998, 350], [1027, 384], [1027, 543], [513, 543]],   // the market square
+    R4(816, 204, 1026, 244),                                                            // the north-east house's porch
+    R4(1036, 404, 1306, 452),                                                           // the east boardwalk
+    // the inn's porch end to end, onto its side stair's top; down the stair to its landing, and onto the far east house's porch
+    [[1090, 282], [1393, 282], [1393, 326], [1399, 326], [1399, 304], [1532, 304], [1532, 340], [1417, 340], [1417, 349], [1375, 349],
+      [1375, 294], [1368, 294], [1368, 312], [1090, 312]],
+    R4(1305, 583, 1482, 602), R4(1313, 496, 1327, 586),                                 // the east house's porch, and the side walk up its west wall
+    [[1260, 690], [1338, 690], [1338, 720], [1482, 720], [1482, 764], [1338, 764], [1338, 808], [1260, 808]],   // the south-east dock
+    R4(854, 764, 1260, 808), R4(1056, 720, 1094, 764),                                  // along the south houses, and the passage
+    [[756, 552], [814, 552], [814, 702], [842, 702], [842, 764], [854, 764], [854, 808], [826, 808], [826, 882], [720, 882], [720, 818], [756, 818]],   // south from the square, round the barrels, the water stair
+    [[611, 690], [642, 690], [642, 804], [368, 804], [368, 688], [400, 688], [400, 764], [611, 764]],   // round the south-west house
+    R4(300, 724, 368, 774),                                                             // the little dock
+  ];
+
   P.bogmire = {
     id: 'bogmire', name: 'Bogmire', painting: "art/walk/walk-bogmire.avif", size: [1536, 1024],
     mapId: 'bogmire', paintingPng: 'reference/art/walk/walk-bogmire.png',
@@ -143,7 +182,13 @@
       ['the thatched house’s door', 610, 216], ['the north-east house’s door', 892, 212], ['the inn’s door (up its stair)', 1212, 288], ['Old Wenna’s stall', 652, 470],
       ['the south-east dock', 1470, 742], ['the south-east house’s door', 1196, 782], ['the south house’s door', 943, 782], ['the passage between the south houses', 1075, 732],
       ['the water stair', 790, 860], ['the south-west house’s door', 511, 782], ['the little dock', 310, 752], ['the west dock’s south end', 200, 630],
-      ['the hag-stone’s back deck, behind the north-west house', 392, 79], ['the punt landing past the south-east dock', 1517, 836]] },
+      ['the hag-stone’s back deck, behind the north-west house', 392, 79], ['the punt landing past the south-east dock', 1517, 836],
+      // the boards opened on November 16 (anywhere that looks walkable is walkable): each one's far end
+      ['the north-west porch’s west end, by the barrels', 262, 236], ['the north-east porch’s east end', 1018, 238],
+      ['the inn’s porch, west end', 1094, 288], ['the inn’s porch, east end', 1340, 287], ['the far east house’s door (down the inn’s side stair)', 1439, 320],
+      ['the landing at the side stair’s foot', 1386, 345], ['the east house’s door (its porch)', 1396, 594], ['the east house’s porch, east end', 1476, 594],
+      ['up the east house’s side walk', 1320, 502], ['the west dock’s first finger', 34, 468], ['the second finger', 34, 532], ['the third finger', 34, 596],
+      ['the south-east dock’s corner, past the barrel', 1330, 800], ['past the barrels south of the square', 836, 798]] },
     // the trees: the painting is all water, so its own are put by hand (extraTrees); past it, the banks' woods
     treeGen: { dark: 0.62, fir: 0.15, roads: [[-460, 335, 30, 400], [750, -420, 830, 0]],
       out: { density: 0.62, clump: 260, clear: 0.28, kinds: [0.55, 0.15, 0.3], size: [1.0, 1.6] } },
@@ -173,10 +218,11 @@
       { id: 'wick_leaf_canopy', made: "./../texture-packs/made/wick_leaf_canopy.png", stand: "./../texture-packs/wickhollow/cottage/stand-in/wick_leaf_canopy.png" },
     ],
     ground_h: ground,
-    // where Io's feet stand: the deck she is on, or a stair's tread
+    // where Io's feet stand: the deck she is on, a stair's tread, or a finger of the west dock (a hair over each: FEET)
     walk_h(x, y) {
-      for (const s of STAIRS) if (x >= s.x0 - 4 && x <= s.x1 + 4 && y > s.yt && y < s.yb) return stairH(s, y);
-      return ground(x, y);
+      for (const s of STAIRS) { const m = s.m != null ? s.m : 4; if (x >= s.x0 - m && x <= s.x1 + m && y > s.yt && y < s.yb) return stairH(s, y) + FEET; }
+      for (const f of FINGERS) if (inR(f, x, y)) return -0.1 + FEET;
+      return ground(x, y) + FEET;
     },
     water: [{ poly: FEN, level: () => WY, tex: 'shared_water_dark', rep: 6, flow: [0.003, 0.0015], bed: BED }],
     lawns: [],
@@ -242,7 +288,8 @@
       { k: 'pot', at: [905, 772] }, { k: 'pot', at: [977, 772] }, { k: 'pot', at: [431, 771] }, { k: 'pot', at: [472, 771] },
       { k: 'crates', at: [748, 866] }, { k: 'barrel', at: [771, 860] },
       { k: 'barrel', at: [828, 742] }, { k: 'barrel', at: [838, 762] }, { k: 'barrel', at: [828, 782] },
-      { k: 'barrel', at: [1160, 302] }, { k: 'barrel', at: [1352, 300] }, { k: 'barrel', at: [1370, 302] }, { k: 'barrel', at: [1106, 300] },
+      // (the two at the inn porch's east end stand a little west of its side stair's top)
+      { k: 'barrel', at: [1160, 302] }, { k: 'barrel', at: [1336, 299] }, { k: 'barrel', at: [1354, 301] }, { k: 'barrel', at: [1106, 300] },
       { k: 'barrel', at: [586, 420] }, { k: 'barrel', at: [714, 420] },
       { k: 'barrel', at: [862, 396] }, { k: 'barrel', at: [884, 396] }, { k: 'barrel', at: [962, 420] }, { k: 'crates', at: [928, 412] },
       // potted herbs on the herb stall's counter and the porch tables
@@ -269,7 +316,7 @@
     walkAdd: [
       { poly: [[472, 214], [495, 214], [495, 66], [382, 66], [382, 92], [472, 92]], ground: 'cob' },
       { poly: [[1476, 731], [1528, 731], [1528, 842], [1506, 842], [1506, 753], [1476, 753]], ground: 'cob' },
-    ],
+    ].concat(MORE.map((poly) => ({ poly, ground: 'cob' }))),
     // where the 3D hides Bogmire's keepsakes: the Hag-Stone on the back deck behind the north-west house (in the 2D game it
     // lies out along the north-west boardwalk), the Bogstriders at the punt landing past the south-east dock's end
     items: { 'hag-stone': [390, 79], 'bogstriders': [1517, 834] },
@@ -296,7 +343,7 @@
       const mark = (x, z) => { const k = cellK(x, z); (posts.get(k) || posts.set(k, []).get(k)).push([x, z]); };
 
       // ---- the rope railings ----
-      const railY = (h, px, py) => typeof h === 'number' ? h : stairH(STAIRS[h === 's0' ? 0 : 1], py) || 0;
+      const railY = (h, px, py) => typeof h === 'number' ? h : stairH(STAIRS[+h.slice(1)], py) || 0;
       for (const [h, pts] of RAILS) {
         let prev = null;
         for (let k = 1; k < pts.length; k++) {
@@ -534,6 +581,11 @@
         for (let x = x0; x <= x1 + 0.01; x += (x1 - x0) / 10) B.box('wood', x, y, zf - 0.04, 0.06, 0.85, 0.06, 0, EDGE);
         B.box('wood', (x0 + x1) / 2, y + 0.85, zf - 0.04, x1 - x0 + 0.1, 0.07, 0.1, 0, EDGE);
         for (const x of [x0 + 0.2, x1 - 0.2]) rod('wood', [x, y - 0.9, zw], [x, y - 0.15, zf - 0.1], 0.05, EDGE);
+        // its railing round both ends too, back to the wall: an upper balcony, reached from inside the inn only
+        for (const x of [x0 + 0.03, x1 - 0.03]) {
+          B.box('wood', x, y + 0.85, (zw + zf) / 2, 0.08, 0.07, zf - zw, 0, EDGE);
+          for (const z of [zw + 0.2, zw + 0.45]) B.box('wood', x, y, z, 0.06, 0.85, 0.06, 0, EDGE);
+        }
         const sx = X(1100), sz = Z(236), sy = H_I + 4.0;
         rod('wood', [sx, sy, sz], [X(1036), sy, sz], 0.07, EDGE); rod('wood', [sx, sy - 0.8, sz], [X(1080), sy, sz], 0.04, EDGE);
         for (const px of [1050, 1078]) rod('iron', [X(px), sy, sz], [X(px), sy - 0.55, sz], 0.012, null, true);
