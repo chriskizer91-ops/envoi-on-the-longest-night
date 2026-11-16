@@ -1,0 +1,22 @@
+/* Everyone Who Fights: the spell book's look (../spellbook/spellbook.css), with a name and its state at the top left and
+   three rows at the bottom: the groups, who is in the group, and what the one picked can do. */
+#head { position: absolute; left: 12px; top: 8px; display: flex; align-items: center; gap: 8px; pointer-events: none; }
+#head #title { position: static; }
+.tag { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); background: rgba(18, 13, 26, 0.7); }
+.tag.in { color: var(--leaf); border-color: rgba(159, 224, 168, 0.5); }
+.tag.kept { color: #c9d4ff; border-color: rgba(201, 212, 255, 0.4); }
+.tag.change { color: #ffcf8a; border-color: rgba(255, 207, 138, 0.55); }
+.row { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; margin-top: 7px; align-items: center; }
+.row::-webkit-scrollbar { display: none; }
+.chip.move { font-size: 13px; padding: 7px 12px; }
+.chip.more { color: var(--muted); }
+.sep { flex: none; font-size: 11px; color: var(--muted); padding: 0 2px; }
+#who .chip { font-size: 13px; padding: 6px 12px; }
+#who .chip.on { border-color: var(--gold); color: var(--gold); background: rgba(226, 189, 106, 0.12); }
+@media (max-height: 500px) {
+  #panel { display: block; padding-top: 4px; }
+  .tabs { flex-direction: row; margin: 0; }
+  .tabs button { padding: 4px 8px; font-size: 11px; }
+  .row { margin-top: 5px; }
+  #cap { margin-bottom: 4px; }
+}
