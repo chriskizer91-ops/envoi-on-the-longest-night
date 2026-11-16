@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Io's Spell Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="./spellbook.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="paint"></canvas>
+  <canvas id="gl"></canvas>
+  <div id="vig" class="fill"></div>
+  <div id="flash" class="fill"></div>
+  <div class="bar top"></div><div class="bar bottom"></div>
+  <div id="title">Io's Spell Book</div>
+  <button id="look" type="button">Light: Moon Faire</button>
+  <div id="banner"></div>
+  <div id="panel">
+    <div id="cap"></div>
+    <div class="tabs" role="tablist">
+      <button type="button" data-book="mf">Her own spells</button>
+      <button type="button" data-book="envoi">Envoi Io's spells</button>
+    </div>
+    <div id="chips"></div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../../src/fx/arena.js"></script>
+<script src="../../src/stage/arena-river-glade.js"></script>
+<script src="../../src/fx/battle-fx.js"></script>
+<script src="../../src/fx/io-spells.js"></script>
+<script src="../../src/battle/sound.js"></script>
+<script src="../../src/models/wraith.js"></script>
+<script src="../../src/models/lunara.js"></script>
+<script src="../witches/meshopt_simplifier.js"></script>
+<script src="../witches/palette.js"></script>
+<script src="../witches/jester_tex.js"></script>
+<script src="../witches/jester_lod.js"></script>
+<script src="../witches/lod.js"></script>
+<script src="../witches/io_tex.js"></script>
+<script src="../build/io_plus.js"></script>
+<script src="../witches/witch_levels.js"></script>
+<script src="../src/moon-io.js"></script>
+<script src="../src/kit.js"></script>
+<script src="./spellbook.js"></script>
+</body>
+</html>
