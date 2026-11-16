@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Io on Foot: Moon Faire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../src/bench/bench.css">
+<link rel="stylesheet" href="../../src/game/game.css">
+<style>
+body{padding:0}
+.wrap.onfoot{position:fixed;inset:0;display:block}
+.onfoot #stage{position:absolute;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);left:env(safe-area-inset-left,0px);right:env(safe-area-inset-right,0px);border-radius:0;margin:0;min-height:0}
+.onfoot #panel{position:absolute;top:calc(8px + env(safe-area-inset-top,0px));right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px));width:min(380px,calc(100% - 32px));max-height:none;margin:0;z-index:7;overflow:auto;padding-top:10px}
+.onfoot #panel h1{font-size:21px;margin:0 30px 4px 0;color:var(--wt)}
+.onfoot .shut{position:sticky;top:0;float:right;appearance:none;width:36px;height:36px;margin:-4px -6px 0 0;border-radius:18px;border:1px solid rgba(214,222,255,.45);background:rgba(10,12,34,.6);color:var(--wt);font-size:16px}
+.onfoot .try{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;appearance:none;min-height:36px;padding:0 14px;border-radius:18px;border:1px solid rgba(214,222,255,.5);background:rgba(18,16,40,.7);color:#f4f6ff;font-weight:700;font-size:14px}
+#stage .toast{position:absolute;left:50%;top:52px;transform:translateX(-50%);max-width:calc(100% - 24px);padding:7px 12px;font-size:14px;z-index:5;pointer-events:none;text-align:center}
+</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../witches/meshopt_simplifier.js"></script>
+<script src="../witches/palette.js"></script>
+<script src="../witches/jester_tex.js"></script>
+<script src="../witches/jester_lod.js"></script>
+<script src="../witches/lod.js"></script>
+<script src="../witches/io_tex.js"></script>
+<script src="../build/io_plus.js"></script>
+<script src="../witches/witch_levels.js"></script>
+<script src="../src/moon-io.js"></script>
+<script src="../src/moon-io-walker.js"></script>
+<script src="../../src/walk/pixel-io.js"></script>
+<script src="../../src/walk/painted-io.js"></script>
+<script src="../../src/game/sprites.js"></script>
+<script src="../../src/game/maps.js"></script>
+<script src="../../src/game/field.js"></script>
+<script src="../../src/walk/on-foot.js"></script>
+<script>
+// Moon Faire's Io walking the game's own maps as her 3D model (src/moon-io-walker.js), in place of the painted walk sheet:
+// the field asks for makePaintedIo, and gets her.
+window.makePaintedIo = () => { const w = makeMoonIoWalker(); window.__walker = w; return w; };
+OnFoot.start({
+  title: 'Io on Foot: Moon Faire',
+  blurb: 'Moon Faire’s Io, her own 3D model at its lightest, walking Envoi’s maps. Walk with the arrows, the d-pad or a tap; walk off a map’s edge to the next one.',
+  src: (p) => (p.startsWith('data:') ? p : '../../' + p),
+  note: 'Her walk, her jog, her hair and her robe are her own 3D model’s; her step is sped up or slowed to keep pace with how fast the map moves her. At a small well she kneels; at a Moonwell she raises her arms. Close sets her height as a share of the screen; Height is how tall she stands on the painting; Pace is how fast she walks, in her own heights a second.',
+});
+// a 3D figure needs a little more of the screen to read than the painted sheet did: a quarter of the screen's height to
+// start (the game's painted Io stands at 15%); Close in Try things changes it
+for (const r of document.querySelectorAll('input[type=range]')) if (+r.min === 0.1 && +r.max === 0.26) { r.value = 0.24; r.dispatchEvent(new Event('input', { bubbles: true })); }
+if (window.__onfoot && window.__onfoot.S) window.__onfoot.S.ioScreen = 0.24;
+</script>
+</body>
+</html>

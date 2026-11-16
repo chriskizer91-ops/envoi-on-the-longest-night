@@ -26,7 +26,7 @@ function makeMoonIo(opts) {
   Object.freeze(ACTIONS);
   const A = {
     root: m.root, fx: null, model: m, ACTIONS, state: {}, trance: 0, moon: 0, dash: 0, flameLight: { intensity: 0 },
-    action: null, weight: opts.weight || 'lightest', triangles: m.triangles, practice: !!opts.practice, frozen: false,
+    action: null, stance: null, weight: opts.weight || 'lightest', triangles: m.triangles, practice: !!opts.practice, frozen: false,
   };
   let cur = null, guarding = false, downHeld = false;
   A.play = (name, force) => {
@@ -64,7 +64,7 @@ function makeMoonIo(opts) {
       if (cur === 'down' && m.moveT >= SEC.down.hold && !downHeld && A.busy) { downHeld = true; }
       if (m.move !== cur) { cur = null; A.action = null; }       // her move has run out: she is back at idle
     }
-    if (!cur) { const want = wb > 0.5 ? (A.walkRun ? 'jog' : 'walk') : 'idle'; if (m.move !== want) m.play(want); }
+    if (!cur) { const want = A.stance || (wb > 0.5 ? (A.walkRun ? 'jog' : 'walk') : 'idle'); if (m.move !== want) m.play(want); }       // stance: a held one of hers ('kneel', 'squat', 'hover', 'read')
     const freeze = cur === 'down' && downHeld;
     m.animate(freeze ? 0 : dt);
     if (!A.practice && m.spellFx) { m.spellFx.dummy.visible = false; m.spellFx.ally.visible = false; m.spellFx.ally2.visible = false; const FA = m.wood && m.wood.FALLEN; if (FA) { if (FA.isObject3D) FA.visible = false; else if (FA.G) FA.G.visible = false; } }

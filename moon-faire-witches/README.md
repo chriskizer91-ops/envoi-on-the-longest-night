@@ -18,6 +18,7 @@ The rest of Envoi is untouched: this folder is a new game made from its parts, a
 | Page | File | State |
 |---|---|---|
 | Io's Spell Book | `spellbook/spellbook.html` → `dist/spellbook.html` | November 15. Moon Faire's Io in Envoi's river glade, with the Jester and a Shadow Wraith. One tab plays her 7 own spells, the other Envoi Io's 9 spells on new moves of hers. For Chris to choose which spells she keeps. |
+| Io on Foot: Moon Faire | `walk/walk.html` → `dist/walk.html` | November 15. Envoi's Io on Foot page with Moon Faire's Io as her own 3D model on the 21 walking maps (`src/moon-io-walker.js`, the same face as the painted walk sheet, so `src/game/field.js` draws her unchanged). She kneels at wells and raises her arms at a Moonwell. Starts at 24% of the screen's height. |
 
 ## How it is made
 
@@ -55,5 +56,6 @@ From this repository: `src/fx/arena.js`, `src/stage/arena-river-glade.js`, `src/
 ## Next
 
 1. Chris picks Io's spells from the spell book.
-2. A test fight: Io and the Jester in Envoi's battle screen and arenas.
-3. The combat rebuild, the battle upgrades, then walking Io on the maps.
+2. The combat rebuild in a copy of Envoi's battle screen and engine: Io and the Jester in the arenas, new moves, names,
+   numbers and rules, checked with Envoi's balance simulator; the four battle upgrades.
+3. The whole game put together in this folder, with the 3D Io walking and fighting.
