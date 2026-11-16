@@ -59,6 +59,7 @@
       rock: m({ map: ST('rock'), rep: 1.8, shade: 0.7, cut: true }),
       hills: m({ lit: 0, nofog: true, side: DS, glow: 0 }),
       leafBush: m({ map: ST('leaves'), rep: 1, tint: TINT.bush, cut: true, shade: 0.6 }),
+      bark: m({ map: ST('bark'), rep: 1.2, cut: true, shade: 0.6 }),
     };
     for (const k of FLOWER_KINDS) MAT['fl_' + k] = m({ map: pics['fl_' + k], alphaTest: 0.5, side: DS, cut: true, shade: 0.5 });
     for (const k in place.extraMats || {}) { const e = place.extraMats[k]; MAT[k] = m({ map: T(e.tex), rep: e.rep || 2, tint: e.tint, cut: true, side: e.side === 'double' ? DS : THREE.FrontSide, shade: e.shade == null ? 0.4 : e.shade }); }
@@ -92,7 +93,8 @@
     });
     const walkH = (x, y) => {
       for (const s of STEPS) if (x >= s.x0 && x <= s.x1 && y >= s.y0 && y <= s.y1) { const t = s.treads[Math.min(s.treads.length - 1, Math.floor((y - s.y0) / (s.y1 - s.y0) * s.treads.length))]; return t.top; }
-      return place.walk_h(x, y);
+      const w = place.walk_h(x, y);
+      return Math.abs(w - gh(x, y)) < 1e-6 ? terrain(x, y) : w;
     };
 
     const B = W3D.Builder();
@@ -112,7 +114,7 @@
     const vnoise = W3D.vnoise;
     const WATER = (place.water || []).map((w) => Object.assign({}, w, { b: bbox(w.poly) }));
     const inWater = (x, y) => WATER.find((w) => x >= w.b[0] && x <= w.b[2] && y >= w.b[1] && y <= w.b[3] && inPoly(w.poly, x, y));
-    const nearWalkPx = (x, y, r) => WALK.some((q) => x >= q.b[0] - r && x <= q.b[2] + r && y >= q.b[1] - r && y <= q.b[3] + r && (inPoly(q.p, x, y) || edgeDist(q.p, x, y) < r));
+    const nearWalkPx = (x, y, r) => WALK.concat(ADD).some((q) => x >= q.b[0] - r && x <= q.b[2] + r && y >= q.b[1] - r && y <= q.b[3] + r && (inPoly(q.p, x, y) || edgeDist(q.p, x, y) < r));
     function terrain(x, y) {
       let h = gh(x, y);
       const w = inWater(x, y);
@@ -460,16 +462,17 @@
     for (const l of place.lamps || []) {
       const x = X(l.at[0]), z = Z(l.at[1]), y = l.y != null ? l.y : walkH(l.at[0], l.at[1]);
       if (l.kind === 'wood') {
-        const hh = l.short ? 1.8 : 2.6;
+        const hh = l.h || (l.short ? 1.8 : 2.6);
         B.box('wood', x, y - 0.3, z, 0.2, hh + 0.3, 0.2, 0, [0.62, 0.5, 0.44]); B.box('wood', x + 0.25, y + hh - 0.08, z, 0.62, 0.1, 0.1, 0, [0.62, 0.5, 0.44]);
         lantern(x + 0.48, y + hh - 0.55, z, null, 0.9, true);
         lights.push([l.at[0] + 0.48 / M.SX, l.at[1] - 4, 120, 1.0, 'warm']);
       } else if (l.kind === 'pillar') {
-        B.box('stone', x, y - 0.3, z, 0.62, 1.75, 0.62, 0, [0.95, 0.93, 0.98]); B.box('stone', x, y + 1.45, z, 0.76, 0.14, 0.76, 0, [0.8, 0.78, 0.84]);
-        lantern(x, y + 1.62, z, null, 1.05);
+        const ph = l.h || 1.45;
+        B.box('stone', x, y - 0.3, z, 0.62, ph + 0.3, 0.62, 0, [0.95, 0.93, 0.98]); B.box('stone', x, y + ph, z, 0.76, 0.14, 0.76, 0, [0.8, 0.78, 0.84]);
+        lantern(x, y + ph + 0.17, z, null, 1.05);
         lights.push([l.at[0], l.at[1] - 6, 140, 1.15, 'warm']);
       } else {
-        const hh = l.short ? 1.9 : 3.0;
+        const hh = l.h || (l.short ? 1.9 : 3.0);
         B.box('iron', x, y, z, 0.26, 0.3, 0.26, 0); B.cyl('iron', x, y + 0.3, z, 0.06, 0.045, hh - 0.3, 6);
         B.box('iron', x, y + hh - 0.06, z, 0.3, 0.06, 0.06, 0);
         lantern(x, y + hh + 0.02, z, null, 1.1);
