@@ -17,7 +17,9 @@ const report = [];
 const share = (name, pts) => { const n = pts.filter(([x, y]) => walkable(x, y)).length; report.push([name, n, pts.length]); };
 for (const b of P.buildings) { const [x0, y0, x1, y1] = b.fp, pts = []; for (let x = x0 + 1; x < x1; x += 3) for (let y = y0 + 1; y < y1; y += 3) pts.push([x, y]); share('building ' + b.id, pts); }
 for (const [i, w] of P.walls.entries()) { const pts = []; for (let k = 1; k < w.pts.length; k++) { const [ax, ay] = w.pts[k - 1], [bx, by] = w.pts[k], L = Math.hypot(bx - ax, by - ay); const nx = -(by - ay) / L, ny = (bx - ax) / L, half = (w.t / 2) / 0.045; for (let s = 0; s <= L; s += 2) for (const o of [-half, 0, half]) pts.push([ax + (bx - ax) * s / L + nx * o, ay + (by - ay) * s / L + ny * o]); } share('wall ' + i + ' ' + JSON.stringify(w.pts[0]), pts); }
-for (const l of P.lamps) share('lamp ' + l.kind + ' ' + l.at, [l.at]);
+for (const l of P.lamps || []) share('lamp ' + l.kind + ' ' + l.at, [l.at]);
+// bushes and flower beds are solid now (anywhere that looks walkable is walkable, so what blocks must be off the paths)
+for (const f of P.flowers || []) { const [x, y, r] = f, pts = [[x, y]]; for (let a = 0; a < 6.28; a += 0.8) pts.push([x + Math.cos(a) * r * 0.7 / 0.04, y + Math.sin(a) * r * 0.7 / 0.05]); share('bush ' + JSON.stringify(f), pts); }
 let bad = 0;
 for (const [n, k, of] of report) { if (k) { bad++; console.log((k / of * 100).toFixed(1).padStart(6) + '%  ' + n + ' (' + k + ' of ' + of + ' points on walkable ground)'); } }
 console.log(bad ? bad + ' things touch walkable ground' : 'nothing solid stands on walkable ground (' + report.length + ' things checked)');
