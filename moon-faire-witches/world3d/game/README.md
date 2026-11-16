@@ -7,17 +7,17 @@ memory at a time. Later, the Magpie flies her between zones (the airship game, t
 
 ## The zones
 
-The game's four level bands, as Chris confirmed them. A zone page has whichever of its places are built in 3D so far. A
-road to a place that isn't built yet just shows its name, as the single-place pages do.
+The game's four level bands, as Chris confirmed them. A zone page has whichever of its places are built in 3D (since
+November 16, all 21 are). A road to a place that isn't on the page just shows its name, as the single-place pages do.
 
-| Zone | Page | Its places (in 3D now in **bold**) | Starts at |
+| Zone | Page | Its places | Starts at (the first landing) |
 |---|---|---|---|
-| 1 Wickhollow and the fen | `zone-1.html` | **wickhollow**, **cottage**, **jetty**, **thornwood**, **bogmire**, **bogmire-heart** | Wickhollow's landing, on the jetty |
-| 2 The Warm Roads | `zone-2.html` | warm-roads-camp, ember-line-road, dawnroost-road, **dawnroost**, **dawnroost-node** | the Warm Roads camp (Dawnroost's dock until the camp is built) |
-| 3 The northern wilds | `zone-3.html` | northern-camp, eldergrove-edge, cold-moor, crossroads, **shipyard** | the northern camp (the shipyard's slip until the camp is built) |
-| 4 The northeast peaks | `zone-4.html` | frozen-camp, frostmere-shore, frozen-pass, **misthollow**, **moonwell** | the frozen camp (Misthollow until a landing's place is built) |
+| 1 Wickhollow and the fen | `zone-1.html` | wickhollow, cottage, jetty, thornwood, bogmire, bogmire-heart | Wickhollow's landing, on the jetty |
+| 2 The Warm Roads | `zone-2.html` | warm-roads-camp, ember-line-road, dawnroost-road, dawnroost, dawnroost-node | the Warm Roads camp |
+| 3 The northern wilds | `zone-3.html` | northern-camp, eldergrove-edge, cold-moor, crossroads, shipyard | the northern camp |
+| 4 The northeast peaks | `zone-4.html` | frozen-camp, frostmere-shore, frozen-pass, misthollow, moonwell | the frozen camp |
 
-Built sizes (November 16, offline, everything inside): zone 1 21.7 MB, zone 2 17.3 MB, zone 3 13.1 MB, zone 4 15.9 MB.
+Built sizes (November 16, offline, everything inside): zone 1 21.7 MB, zone 2 22.5 MB, zone 3 24.0 MB, zone 4 20.7 MB.
 
 ## Make and build
 
@@ -39,7 +39,7 @@ The same as the place pages: drag on the left half to walk (push far to jog), on
 button shows the painting from above. Walk on into the end of a road and keep going for a moment (a third of a second,
 heading out), and she goes: so brushing past a road's end doesn't take her anywhere. The screen fades to the night with
 the next place's name, and she arrives where the 2D game puts her, facing into the new place, the camera behind her.
-Where a wild place's 3D moved its road out to the edge of its open ground (the Thornwood's), she arrives by that road.
+Where a wild place's 3D moved its road out to the edge of its open ground (every wild place's), she arrives by that road.
 
 Walking up to the Magpie where she's moored (a soft violet glow at each landing), or into a road out to the wide world
 (the cottage's three, the crossroads' two), shows a small card: "The Magpie: flying comes next".
