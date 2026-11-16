@@ -117,3 +117,11 @@ willow_marsh.png,Willow marsh from above,"Ground, square",2,Envoi-Round2-Part-11
 grassland.png,Open grassland from above,"Ground, square",2,Envoi-Round2-Part-11,Open grassland from above,aethermoor,1254,1254,c7c54dd18104b0b63471ab9560dfde6175981668812fb2151f821ccd6723d2e9,
 farmland.png,Farm fields from above,"Ground, square",2,Envoi-Round2-Part-11,Farm fields from above,aethermoor,1254,1254,a8587c920903c04ad2484209d3260d8d7c5a8eba304ab2b3d08400e0133afdcc,
 beach_sand.png,Sand beach from above,"Ground, square",2,Envoi-Round2-Part-11,Sand beach from above,aethermoor,1254,1254,12751ec932ea018195b420e13ea5615371f8cc5f79bfc74dcf7a54c3c02e2292,
+desert_ground.png,Desert plain from above,"Ground, square",2,Envoi-Round2-Part-12,Desert plain from above,aethermoor,1254,1254,3d32a3666841475b77f9ffc8e31c756f6cc32a5019fd106cf017c249eb2a00ce,a faint line left to right where it repeats
+sandstone_mesa.png,Sandstone plateau from above,"Ground, square",2,Envoi-Round2-Part-12,Sandstone plateau from above,aethermoor,1254,1254,58a419b05f52c32bfed4fefb001875c5ce6b50f2b329e03021a56cc297cc7725,
+bare_rock.png,Bare mountain rock from above,"Ground, square",2,Envoi-Round2-Part-12,Bare mountain rock from above,aethermoor,1254,1254,8288083d005ddf3734a66e33c81373b936f22e103b4f6a27f8a32895b3e15e5b,
+snowy_mountainside.png,Snowy mountainside from above,"Ground, square",2,Envoi-Round2-Part-12,Snowy mountainside from above,aethermoor,1254,1254,43acdb25f2eb3284c92824ca61d7570c6c71d2a17576d838673883b6bcc92ddd,
+snowfield.png,Snowfield from above,"Ground, square",2,Envoi-Round2-Part-12,Snowfield from above,aethermoor,1254,1254,71d0084da60ec92bedee45d0f02774cbaa731ff1518dec5e265d3eb4cb38f53b,
+town_roofs.png,Town rooftops from above,"Ground, square",2,Envoi-Round2-Part-12,Town rooftops from above,aethermoor,1254,1254,264f8bcaf4f7deffde1a71ebfc16a420430be91c357a5b1c05900dead2d8cc99,
+deep_sea.png,Deep sea from above,"Material, square",2,Envoi-Round2-Part-12,Deep sea from above,aethermoor,1254,1254,50496f2cc196833332df800bc709025533049f2dbc8eff818813e18f1356d122,
+shallow_sea.png,Shallow coastal water from above,"Material, square",2,Envoi-Round2-Part-12,Shallow coastal water from above,aethermoor,1254,1254,6368afa418168a360b312f0c6615766daade531d4de946bee942ca4c46c139cb,
