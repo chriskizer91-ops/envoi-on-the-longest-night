@@ -231,6 +231,11 @@
     // anything between the camera and Io thins away in a fine dither, so she is never hidden
     void cutAway(vec3 w) {
       if (uCut < 0.5) return;
+      vec2 q0 = mod(floor(gl_FragCoord.xy), 4.0);
+      float dith0 = (mod(q0.x + q0.y * 2.0, 4.0) * 4.0 + mod(q0.x * 2.0 + q0.y * 3.0, 4.0) + 0.5) / 16.0;
+      // anything right against the camera (a crown, a trunk, a wall it brushes) thins away too
+      float dc = distance(w, uCam);
+      if (dc < 1.6 && dith0 < (1.0 - smoothstep(0.8, 1.6, dc)) * 0.95) discard;
       vec3 ab = uIo - uCam; float L = length(ab); vec3 d = ab / L;
       float t = dot(w - uCam, d);
       if (t > L - 0.7 || t < 0.4) return;

@@ -614,7 +614,7 @@
     const blobCol = (cy, r) => (v) => { const t = clamp((v.y - cy) / r * 0.5 + 0.5, 0, 1); const k = 0.42 + 0.68 * t; return [k * 0.95, k, k * 1.02]; };
     for (const [fx, fy, rr, kind] of place.flowers || []) {
       const x = X(fx), z = Z(fy), y = gh(fx, fy), h = rr * 0.75;
-      B.geom('leafBush', ico[(fx + fy) % 3], new THREE.Matrix4().compose(new THREE.Vector3(x, y + h * 0.55, z), new THREE.Quaternion(), new THREE.Vector3(rr, h, rr)), blobCol(y + h * 0.55, h), 2.2);
+      B.geom('leafBush', ico[(((fx + fy) % 3) + 3) % 3], new THREE.Matrix4().compose(new THREE.Vector3(x, y + h * 0.55, z), new THREE.Quaternion(), new THREE.Vector3(rr, h, rr)), blobCol(y + h * 0.55, h), 2.2);
       const n = Math.max(2, Math.round(rr * 4));
       for (let i = 0; i < n; i++) {
         const a = R() * TAU, d = R() * rr * 0.75, cx_ = x + Math.cos(a) * d, cz_ = z + Math.sin(a) * d, hh = y + h * (0.6 + R() * 0.6), s = 0.45 + R() * 0.25, r2 = R() * Math.PI;
@@ -684,7 +684,7 @@
         const nb = far ? 2 : 3;
         for (let i = 0; i < nb; i++) {
           const a = r() * TAU, d = i === 0 ? 0 : cr * 0.55, bx = x + Math.cos(a) * d, bz = z + Math.sin(a) * d, by = y + H + cr * (i === 0 ? 0.6 : 0.2 + r() * 0.35), br = cr * (i === 0 ? 1 : 0.68 + r() * 0.15);
-          TB.geom('leaves', ico[(seed + i) % 3], new THREE.Matrix4().compose(new THREE.Vector3(bx, by, bz), new THREE.Quaternion().setFromEuler(new THREE.Euler(r(), r() * TAU, 0)), new THREE.Vector3(br, br * 0.82, br)), blobCol(by, br * 0.82), 2.6);
+          TB.geom('leaves', ico[(((seed + i) % 3) + 3) % 3], new THREE.Matrix4().compose(new THREE.Vector3(bx, by, bz), new THREE.Quaternion().setFromEuler(new THREE.Euler(r(), r() * TAU, 0)), new THREE.Vector3(br, br * 0.82, br)), blobCol(by, br * 0.82), 2.6);
         }
         shadeMarks.push(['dot', tx, ty, cr / M.SX * 0.95, 0.5]);
       }
