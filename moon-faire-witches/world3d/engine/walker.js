@@ -82,11 +82,20 @@
       cam.fov = view.fov; cam.updateProjectionMatrix(); C.dist = view.dist; if (!C.pitchSet) C.pitch = view.pitch;
       if (guide.on) fitTop();
     }
-    const camPos = new THREE.Vector3(), camAim = new THREE.Vector3();
+    const camPos = new THREE.Vector3(), camAim = new THREE.Vector3(), CS = P.camSolids || [];
+    function insideSolid(v) {
+      for (const s of CS) {
+        if (v.y < s.y0 - 0.25 || v.y > s.y1 + 0.25 || v.x < s.b[0] - 0.3 || v.x > s.b[2] + 0.3 || v.z < s.b[1] - 0.3 || v.z > s.b[3] + 0.3) continue;
+        if (W3D.inPoly(s.p, v.x, v.z) || W3D.edgeDist(s.p, v.x, v.z) < 0.3) return true;
+      }
+      return false;
+    }
     function placeCamera(dt, snap) {
       const p = pos(), ah = view.ahead || 0, aim = new THREE.Vector3(p.x - Math.sin(C.yaw) * ah, p.y + C.aim, p.z - Math.cos(C.yaw) * ah);
       const cp = Math.cos(C.pitch), want = new THREE.Vector3(aim.x + Math.sin(C.yaw) * cp * C.dist, aim.y + Math.sin(C.pitch) * C.dist, aim.z + Math.cos(C.yaw) * cp * C.dist);
       const gpx = M.px(want.x), gpy = M.py(want.z), gy = P.terrain(gpx, gpy) + 1.2; if (want.y < gy) want.y = gy;
+      // never inside a wall, a house or a roof: slide in toward her until clear
+      if (insideSolid(want)) { const d = want.clone().sub(aim); for (let t = 0.92; t > 0.12; t -= 0.06) { const v = aim.clone().addScaledVector(d, t); if (!insideSolid(v)) { want.copy(v); break; } } }
       const k = snap ? 1 : 1 - Math.exp(-dt * 7);
       camPos.lerp(want, k); camAim.lerp(aim, snap ? 1 : 1 - Math.exp(-dt * 10));
       cam.position.copy(camPos); cam.lookAt(camAim);

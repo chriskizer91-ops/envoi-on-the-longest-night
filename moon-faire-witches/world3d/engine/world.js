@@ -911,7 +911,15 @@
     // the see-through trees' shaders, made ready at the start so the first time they're needed doesn't stutter
     function precompile(renderer, cam) { for (const mesh of treeMeshes) mesh.material = TM.cut[mesh.userData.tree]; renderer.compile(scene, cam); for (const mesh of treeMeshes) mesh.material = TM.whole[mesh.userData.tree]; renderer.compile(scene, cam); }
     stats.solids = solidCount;
-    return { scene, U, M, walkable, walkH, terrain, update, precompile, stats, used, place, lamps: lamps3d, items, takeItem, maps: { splat, glow, shade }, exits: place.exits || [],
+    // the big solid things the camera mustn't sit inside (walls, houses, towers, roofs): footprints over a square metre
+    const camSolids = [];
+    for (const sd of B.solids) {
+      if (/^(glass|win|winDark|winColour|rose|door|doorArch|doorArch2|moonwater|soil|hills|produce|cloth|leaves|firs)$|^fl_/.test(sd.k) || sd.y1 - sd.y0 < 1.2) continue;
+      const b = [1e9, 1e9, -1e9, -1e9]; for (const [x, z] of sd.poly) { b[0] = Math.min(b[0], x); b[1] = Math.min(b[1], z); b[2] = Math.max(b[2], x); b[3] = Math.max(b[3], z); }
+      if ((b[2] - b[0]) * (b[3] - b[1]) < 1) continue;
+      camSolids.push({ p: sd.poly, b, y0: sd.y0, y1: sd.y1 });
+    }
+    return { scene, U, M, walkable, walkH, terrain, update, precompile, stats, used, place, lamps: lamps3d, items, takeItem, maps: { splat, glow, shade }, exits: place.exits || [], camSolids,
       walkPic: () => walkPic, walkRect: [WX0, WY0, WX1, WY1] };
   };
 })(window);
