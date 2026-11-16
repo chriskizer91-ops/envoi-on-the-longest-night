@@ -38,6 +38,42 @@
   // the river falls three times: its level along the painting (metres)
   const riverLevel = (y) => -2.5 - 0.45 * ss(150, 185, y) - 0.45 * ss(462, 498, y) - 0.5 * ss(720, 760, y);
 
+  // ---- Chris's secret way (October 4), in 3D (walk pass 2): up the old oak at the lower house's north-east corner and along
+  // the red roof's ridge. In the 2D game it is the N of narrow strokes drawn over the lower house's roof: the right stroke
+  // (the oak, out over the roof), the middle one (down across the roof's slope) and the left one (the ridge, to the gable's
+  // peak). In 3D they are walked as drawn, each at its own height over the roof: the oak's branch (the right stroke) and a
+  // ladder laid up the roof from its end (the middle one) to a walk of planks along the ridge (the left one). The way up to
+  // the branch is the oak's long limb, which comes down to the ground along the house's back wall at its north-west corner.
+  // The lower house is built in two halves for it: the front half (y 580 to 712) is the engine's building; the back half
+  // (y 474 to 580), with the same walls, gable and roof, is built in extra, so the strokes over it aren't inside a footprint.
+  const LOW = ground(462, 716);                                              // the lower house's floor (-1.6, the gardens' level)
+  const LH = { x0: 378, y0: 474, x1: 546, y1: 712, split: 580, E: LOW + 3.2 + 2.5, rise: 4.4, over: 0.45 };
+  const WAY = {
+    ridge: LH.E + LH.rise + 0.2,                // the planks' tops along the ridge (8.7)
+    fork: 6.0,                                  // the oak's fork, and the branch out over the roof (the roof under it is 5.9 at most)
+    limb: [378, 466, 505, 474],                 // the limb's walkable band: from the ground at x 380 up to the fork at x 505
+    forkR: [505, 466, 532, 484],                // the fork, where the limb meets the branch
+    ridgeX: [446, 476], ridgeY0: 480,           // the ridge walk's band, from 480 (six pixels in from the back wall's line)
+    branchX: 510, branchY1: 524,                // the branch: the right stroke, x 510 to 533, down to y 524
+    foot: [526, 543], head: [478, 492],         // the ladder: its foot on the branch's end, its head on the ridge walk
+  };
+  const inRect = (r, x, y) => x >= r[0] && x <= r[2] && y >= r[1] && y <= r[3];
+  const ladderT = (x, y) => {
+    const ax = (WAY.foot[0] - LH.x0) * 0.04, az = WAY.foot[1] * 0.05, bx = (WAY.head[0] - LH.x0) * 0.04 - ax, bz = WAY.head[1] * 0.05 - az;
+    return Math.max(0, Math.min(1, (((x - LH.x0) * 0.04 - ax) * bx + (y * 0.05 - az) * bz) / (bx * bx + bz * bz)));
+  };
+  // where her feet are on the secret way (metres), or null off it
+  function wayH(x, y) {
+    if (y >= LH.y0 && y < LH.split && x >= LH.x0 && x <= LH.x1) {             // over the back half's roof
+      if (x <= WAY.ridgeX[1]) return WAY.ridge;
+      if (x >= WAY.branchX && y <= WAY.branchY1) return WAY.fork;
+      return WAY.fork + (WAY.ridge - WAY.fork) * ladderT(x, y);
+    }
+    if (inRect(WAY.forkR, x, y)) return WAY.fork;
+    if (x >= WAY.limb[0] && x < WAY.limb[2] && y >= WAY.limb[1] && y < WAY.limb[3]) return WAY.fork * Math.max(0, Math.min(1, (x - 380) / (WAY.limb[2] - 380)));
+    return null;
+  }
+
   P.wickhollow = {
     id: 'wickhollow', name: 'Wickhollow', painting: "art/walk/walk-wickhollow-square.avif", size: [1536, 1024],
     mapId: 'wickhollow', paintingPng: 'reference/art/walk/walk-wickhollow-square.png',
@@ -45,7 +81,8 @@
     checks: { from: [777, 590], goals: [
       ['the chapel door (north)', 776, 216], ['the forge (north-east)', 1010, 338], ['the bridge to the Thornwood (east edge)', 1530, 375],
       ['the nook behind the bridge house (east)', 1236, 696], ['the south road to Io’s cottage (south edge)', 780, 1018], ['the lower house’s door (south-west)', 464, 716],
-      ['the lower jetty (west edge)', 6, 732], ['the lane under the garden fence (south-west)', 300, 830], ['Nettie’s door (north-west)', 366, 392], ['the lane by Nettie’s house (north-west)', 280, 262]] },
+      ['the lower jetty (west edge)', 6, 732], ['the lane under the garden fence (south-west)', 300, 830], ['Nettie’s door (north-west)', 366, 392], ['the lane by Nettie’s house (north-west)', 280, 262],
+      ['the lower house’s ridge, up the old oak and along the roof (Chris’s secret way)', 460, 568], ['the strip down the lower house’s west side (pocket)', 358, 676]] },
     // the trees from the painting (tools/make-trees.mjs): how dark a patch must be, and where no tree goes
     treeGen: { dark: 0.62, keepOut: [[690, -100, 860, 230]], roads: [[740, 1024, 822, 1800], [1536, 330, 2200, 410], [-600, 700, 0, 770]] },
     // the ground's textures, and how many metres each repeats over
@@ -72,6 +109,7 @@
     ground_h: ground,
     // where Io's feet stand: the ground, or a deck over the water
     walk_h(x, y) {
+      const w = wayH(x, y); if (w != null) return w;
       if (x >= BRIDGE.x0 - 4 && y >= BRIDGE.y0 && y <= BRIDGE.y1) return Math.max(ground(x, y), deck(x));
       if (x < 160 && y > 700 && y < 766) return -1.22;
       return ground(x, y);
@@ -94,12 +132,14 @@
     // walls: storeys from the bottom, each { t: texture key, h: metres }; roof: { ridge: 'ns' | 'ew', rise, over }
     // windows and doors are placed along a side, at a pixel `x` (or `y` on an east or west side), lit: a warm window
     buildings: [
-      { id: 'nettie', name: 'Nettie’s house', fp: [298, 238, 430, 388], walls: [{ t: 'stone', h: 3.1 }, { t: 'timber', h: 2.7 }], roof: { ridge: 'ns', rise: 4.6, over: 0.45 },
+      // (walk pass 2: Nettie's west wall two pixels east and her wing's front two pixels north, so the window sills on them
+      // don't stand over the lane and the square's edge)
+      { id: 'nettie', name: 'Nettie’s house', fp: [300, 238, 430, 388], walls: [{ t: 'stone', h: 3.1 }, { t: 'timber', h: 2.7 }], roof: { ridge: 'ns', rise: 4.6, over: 0.45 },
         doors: [{ side: 's', x: 366, w: 1.5, h: 2.5, arch: true, double: true }],
         windows: [{ side: 's', x: 366, y: 3.6, w: 1.3, h: 1.2 }, { side: 's', x: 366, y: 7.0, w: 0.6, h: 0.7 }, { side: 'w', y: 300, z: 1.2, w: 0.8, h: 1.0 }, { side: 'w', y: 330, z: 3.8, w: 0.8, h: 1.0 }],
         lanterns: [{ side: 's', x: 327, y: 2.4 }, { side: 's', x: 405, y: 2.4 }, { side: 'w', y: 372, y2: 2.4 }],
         chimneys: [{ x: 425, y: 300, w: 0.9, d: 0.9, h: 2.4 }], beams: true },
-      { id: 'nettie-wing', fp: [430, 250, 552, 372], walls: [{ t: 'stone', h: 3.1 }, { t: 'timber', h: 2.4 }], roof: { ridge: 'ew', rise: 3.4, over: 0.45 },
+      { id: 'nettie-wing', fp: [430, 250, 552, 370], walls: [{ t: 'stone', h: 3.1 }, { t: 'timber', h: 2.4 }], roof: { ridge: 'ew', rise: 3.4, over: 0.45 },
         doors: [{ side: 's', x: 480, w: 1.1, h: 2.2 }],
         windows: [{ side: 's', x: 444, y: 3.6, w: 0.85, h: 1.1 }, { side: 's', x: 488, y: 3.6, w: 0.85, h: 1.1 }, { side: 's', x: 535, y: 3.6, w: 0.8, h: 1.0 }, { side: 's', x: 452, y: 1.0, w: 0.8, h: 0.9 }],
         lanterns: [{ side: 's', x: 505, y: 2.3 }], flowerbox: { side: 's', x0: 438, x1: 520, y: 3.45 },
@@ -113,7 +153,7 @@
       { id: 'forge-shed', name: 'Hilde’s forge, the open side', fp: [960, 212, 1080, 330], walls: [{ t: 'stone', h: 3.0 }], open: 's', roof: { ridge: 'ew', rise: 1.8, over: 0.6, lean: 'n' },
         posts: [968, 1022, 1074], fire: [1010, 300], lanterns: [{ side: 's', x: 1010, y: 2.6, hang: true }] },
       { id: 'forge', name: 'Hilde’s forge', fp: [1080, 196, 1236, 359], walls: [{ t: 'stone', h: 2.8 }, { t: 'timber', h: 2.4 }], roof: { ridge: 'ns', rise: 4.2, over: 0.5 },
-        hearth: { x: 1158, w: 2.6, h: 2.5 }, windows: [{ side: 's', x: 1158, y: 4.0, w: 0.8, h: 0.9 }],
+        windows: [{ side: 's', x: 1158, y: 4.0, w: 0.8, h: 0.9 }],   // (its hearth is built in extra, set into the wall)
         lanterns: [{ side: 's', x: 1110, y: 2.6 }], chimneys: [{ x: 1152, y: 230, w: 1.1, d: 1.1, h: 4.0 }], beams: true, sign: [1240, 338] },
       { id: 'east-a', name: 'the house by the bridge', fp: [1086, 418, 1162, 600], walls: [{ t: 'stone', h: 3.0 }, { t: 'timber', h: 2.4 }], roof: { ridge: 'ew', rise: 3.2, over: 0.45 },
         doors: [{ side: 's', x: 1140, w: 1.1, h: 2.3, red: true }], windows: [{ side: 's', x: 1110, y: 3.5, w: 0.8, h: 1.0 }, { side: 'w', y: 515, z: 3.6, w: 0.8, h: 1.0 }, { side: 'w', y: 560, z: 1.1, w: 0.8, h: 1.0 }],
@@ -121,10 +161,12 @@
       { id: 'east-b', fp: [1162, 418, 1254, 652], walls: [{ t: 'stone', h: 3.0 }, { t: 'timber', h: 2.6 }], roof: { ridge: 'ns', rise: 3.8, over: 0.45 },
         windows: [{ side: 's', x: 1198, y: 1.1, w: 0.85, h: 1.05 }, { side: 's', x: 1198, y: 3.6, w: 0.85, h: 1.1 }, { side: 'w', y: 600, z: 3.6, w: 0.7, h: 0.9 }],
         chimneys: [{ x: 1236, y: 470, w: 0.8, d: 0.8, h: 2.6 }], roses: true },
-      { id: 'lower', name: 'the lower house', fp: [378, 474, 546, 712], walls: [{ t: 'stone', h: 3.2 }, { t: 'timber', h: 2.5 }], roof: { ridge: 'ns', rise: 4.4, over: 0.45 },
+      // the lower house's front half (walk pass 2): its back half, y 474 to 580, is built in extra with the same walls and roof,
+      // so the secret way's strokes over it can be walked; its chimney is there, and its west window and dormer are here, at 596
+      { id: 'lower', name: 'the lower house', fp: [378, 580, 546, 712], walls: [{ t: 'stone', h: 3.2 }, { t: 'timber', h: 2.5 }], roof: { ridge: 'ns', rise: 4.4, over: 0.45 },
         doors: [{ side: 's', x: 464, w: 1.2, h: 2.3, arch: true }],
-        windows: [{ side: 's', x: 386, y: 1.1, w: 0.9, h: 1.1 }, { side: 's', x: 530, y: 1.1, w: 0.9, h: 1.1 }, { side: 's', x: 464, y: 3.7, w: 1.0, h: 1.1 }, { side: 'w', y: 572, z: 3.7, w: 0.8, h: 0.9 }],
-        lanterns: [{ side: 's', x: 436, y: 2.3 }, { side: 's', x: 492, y: 2.3 }], chimneys: [{ x: 498, y: 500, w: 0.9, d: 0.9, h: 3.0 }], beams: true, dormers: [{ side: 'w', y: 572, w: 1.2 }] },
+        windows: [{ side: 's', x: 386, y: 1.1, w: 0.9, h: 1.1 }, { side: 's', x: 530, y: 1.1, w: 0.9, h: 1.1 }, { side: 's', x: 464, y: 3.7, w: 1.0, h: 1.1 }, { side: 'w', y: 596, z: 3.7, w: 0.8, h: 0.9 }],
+        lanterns: [{ side: 's', x: 436, y: 2.3 }, { side: 's', x: 492, y: 2.3 }], beams: true, dormers: [{ side: 'w', y: 596, w: 1.2 }] },
       { id: 'cottage-se', name: 'the cottage in the south-east garden', fp: [922, 690, 1090, 846], walls: [{ t: 'stone', h: 3.0 }], roof: { ridge: 'ew', rise: 3.4, over: 0.5 },
         doors: [{ side: 's', x: 972, w: 1.1, h: 2.2, green: true }], windows: [{ side: 's', x: 1042, y: 1.0, w: 1.1, h: 1.0 }],
         lanterns: [{ side: 's', x: 945, y: 2.2 }, { side: 's', x: 1000, y: 2.2 }], dormers: [{ side: 's', x: 972, w: 1.4 }], chimneys: [{ x: 1080, y: 700, w: 0.9, d: 0.9, h: 2.2 }], flowerbox: { side: 's', x0: 1018, x1: 1066, y: 0.85 } },
@@ -160,7 +202,8 @@
     ],
     // the stone steps (drawn over the ground's slope): [x0, y0, x1, y1], the way down ('s', 'n', 'w'), how many
     steps: [
-      { r: [190, 548, 252, 638], down: 's', n: 9 },
+      { r: [190, 548, 252, 638], down: 's', n: 9, cheeks: [true, false] },   // (walk pass 2: open on the east, where the 2D walk goes on
+      // down beside the steps, past the lamp, on ground as high as the treads)
       { r: [208, 742, 266, 774], down: 's', n: 3 },
       { r: [738, 222, 814, 294], down: 's', n: 6 },
       { r: [446, 712, 486, 724], down: 's', n: 1 },
@@ -169,12 +212,14 @@
     moonwell: { c: [777, 458], ring: [3.35, 4.85], gap: 0.36, well: 1.45, wellH: 0.95, benches: [{ a: Math.PI }, { a: 0 }] },
     // lamps: an iron post (`post`), a stone pillar with a lantern (`pillar`), or a lantern on a wall (in `buildings`)
     lamps: [
-      { at: [659, 392], kind: 'post' }, { at: [904, 392], kind: 'post' }, { at: [640, 595], kind: 'post' }, { at: [914, 595], kind: 'post' },
-      { at: [260, 590], kind: 'post' }, { at: [628, 256], kind: 'post' }, { at: [910, 256], kind: 'post' },
-      { at: [182, 484], kind: 'post', y: 0 }, { at: [205, 740], kind: 'post' }, { at: [46, 700], kind: 'post', y: -1.22, short: true },
+      // (walk pass 2: the lamps the walking map has blocks for stand in the middle of their blocks, a few pixels north of where
+      // they stood; the one by the steps to the lower jetty off the walk's corner, the one at the lane's head just north of it)
+      { at: [659, 389], kind: 'post' }, { at: [904, 389], kind: 'post' }, { at: [640, 592], kind: 'post' }, { at: [914, 592], kind: 'post' },
+      { at: [260, 587], kind: 'post' }, { at: [628, 256], kind: 'post' }, { at: [910, 256], kind: 'post' },
+      { at: [182, 484], kind: 'post', y: 0 }, { at: [199, 747], kind: 'post' }, { at: [46, 700], kind: 'post', y: -1.22, short: true },
       { at: [735, 765], kind: 'post' }, { at: [735, 912], kind: 'post' }, { at: [826, 730], kind: 'post' },
       { at: [1347, 328], kind: 'pillar' }, { at: [1505, 328], kind: 'pillar' }, { at: [1347, 436], kind: 'pillar' }, { at: [1505, 436], kind: 'pillar' },
-      { at: [290, 254], kind: 'post' },
+      { at: [290, 248], kind: 'post' },
     ],
     // the jetties: the lower one (walked on: the way to the jetty) and the upper one (Nettie's crates)
     jetties: [
@@ -185,25 +230,30 @@
     // small things: benches, barrels, crates, the anvil, pots of flowers, gravestones, the statue, bushes and beds
     props: [
       { k: 'bench', at: [1069, 648], face: 0 },
-      { k: 'anvil', at: [1026, 318] }, { k: 'barrel', at: [968, 322] }, { k: 'barrel', at: [1052, 336] }, { k: 'barrel', at: [1082, 358] }, { k: 'barrel', at: [1098, 380] },
-      { k: 'barrel', at: [214, 482], y: 0 }, { k: 'barrel', at: [436, 402] }, { k: 'barrel', at: [1088, 840] },
-      { k: 'crates', at: [208, 360], y: 0 }, { k: 'crates', at: [120, 410], y: 0 }, { k: 'crates', at: [200, 488], y: 0 }, { k: 'crates', at: [596, 396] }, { k: 'crates', at: [534, 400] },
-      { k: 'pot', at: [727, 548] }, { k: 'pot', at: [826, 548] }, { k: 'pot', at: [320, 396] }, { k: 'pot', at: [410, 400] }, { k: 'pot', at: [1112, 612] }, { k: 'pot', at: [1050, 530] },
-      { k: 'pot', at: [450, 722] }, { k: 'pot', at: [492, 722] }, { k: 'pot', at: [960, 850] }, { k: 'pot', at: [1000, 852] },
+      // (walk pass 2: the barrels by the forge, by Nettie's door, the crates by her stall and the pots by the Moonwell and the
+      // lower house's door a few pixels off the 2D walk; the crates that stood on the street before the stall, where the
+      // painting has none, are gone)
+      { k: 'anvil', at: [1026, 318] }, { k: 'barrel', at: [968, 322] }, { k: 'barrel', at: [1060, 328] }, { k: 'barrel', at: [1082, 358] }, { k: 'barrel', at: [1096, 370] },
+      { k: 'barrel', at: [214, 482], y: 0 }, { k: 'barrel', at: [431, 402] }, { k: 'barrel', at: [1088, 840] },
+      { k: 'crates', at: [208, 360], y: 0 }, { k: 'crates', at: [120, 410], y: 0 }, { k: 'crates', at: [200, 488], y: 0 }, { k: 'crates', at: [534, 398] },
+      { k: 'pot', at: [727, 546] }, { k: 'pot', at: [826, 546] }, { k: 'pot', at: [320, 396] }, { k: 'pot', at: [410, 400] }, { k: 'pot', at: [1112, 612] }, { k: 'pot', at: [1050, 530] },
+      { k: 'pot', at: [424, 718] }, { k: 'pot', at: [508, 720] }, { k: 'pot', at: [960, 850] }, { k: 'pot', at: [1000, 852] },
       { k: 'statue', at: [1102, 712] },
       { k: 'grave', at: [578, 78], cross: true }, { k: 'grave', at: [624, 74] }, { k: 'grave', at: [652, 108] }, { k: 'grave', at: [566, 126] }, { k: 'grave', at: [612, 150] }, { k: 'grave', at: [680, 150] },
       { k: 'grave', at: [948, 70] }, { k: 'grave', at: [976, 102], cross: true }, { k: 'grave', at: [904, 146] }, { k: 'grave', at: [962, 146] }, { k: 'grave', at: [880, 70] },
       { k: 'post', at: [706, 236], h: 2.2 }, { k: 'post', at: [846, 236], h: 2.2 }, { k: 'post', at: [702, 248], h: 1.6 }, { k: 'post', at: [848, 248], h: 1.6 },
       { k: 'sunflowers', at: [1124, 880] },
     ],
-    // flower beds and bushes: [x, y, radius in metres, colours]
+    // flower beds and bushes: [x, y, radius in metres, colours] (walk pass 2: the white bush at the lower house's north-west
+    // corner a little smaller and just south of the square's walk, where it still closes the north end of the pocket down the
+    // house's west side, with the dark fir; the small one by the bridge house three pixels north)
     flowers: [
       [612, 268, 1.0, 'mix'], [656, 266, 1.1, 'white'], [884, 266, 1.1, 'white'], [936, 268, 0.9, 'mix'], [722, 252, 0.7, 'mix'], [828, 252, 0.7, 'mix'],
       [1046, 150, 1.8, 'white'], [590, 168, 1.2, 'mix'], [990, 140, 1.4, 'white'],
       [392, 383, 0.45, 'mix'], [342, 383, 0.45, 'mix'], [514, 382, 0.6, 'mix'], [560, 290, 0.8, 'white'], [1278, 702, 1.3, 'white'], [1262, 738, 0.9, 'mix'],
-      [322, 590, 0.8, 'white'], [360, 500, 1.2, 'white'], [356, 754, 0.9, 'white'], [342, 740, 1.0, 'violet'], [300, 690, 1.0, 'violet'], [602, 772, 1.0, 'mix'],
+      [322, 590, 0.8, 'white'], [360, 522, 0.8, 'white'], [356, 754, 0.9, 'white'], [342, 740, 1.0, 'violet'], [300, 690, 1.0, 'violet'], [602, 772, 1.0, 'mix'],
       [1180, 880, 1.0, 'mix'], [1060, 890, 1.0, 'violet'], [880, 870, 1.0, 'mix'], [940, 900, 1.1, 'mix'], [1000, 880, 0.9, 'violet'],
-      [1060, 524, 0.7, 'mix'], [1062, 546, 0.55, 'mix'], [1170, 600, 0.9, 'mix'], [588, 598, 0.6, 'white'], [565, 600, 0.9, 'mix'],
+      [1060, 524, 0.7, 'mix'], [1062, 543, 0.55, 'mix'], [1170, 600, 0.9, 'mix'], [588, 598, 0.6, 'white'], [565, 600, 0.9, 'mix'],
       [850, 700, 1.1, 'white'], [880, 760, 0.9, 'mix'], [212, 520, 0.8, 'mix'], [1290, 230, 1.2, 'mix'], [1250, 180, 1.0, 'violet'],
     ],
     // the lights for the light map: [x, y, radius px, strength, colour]. The lamps' own are added from `lamps`.
@@ -213,8 +263,10 @@
       [1198, 662, 50, 0.35, 'warm'], [1042, 852, 50, 0.35, 'warm'], [386, 722, 40, 0.3, 'warm'], [530, 722, 40, 0.3, 'warm'], [560, 404, 70, 0.4, 'warm'],
     ],
     trees: 'wickhollow',
+    // the old oak's leaves (it is built in extra, with the secret way): the same leaf texture and tint as the engine's trees
+    extraMats: { oakLeaves: { tex: 'wick_leaf_canopy', rep: 1, tint: 0xd8ffee, shade: 0.55 } },
     // pockets to find, past the 2D walk: a strip of garden down the lower house's west side, behind the white bush
-    walkAdd: [{ poly: [[350, 498], [377, 498], [377, 690], [342, 692], [336, 650], [346, 600]], ground: 'grass' }],
+    walkAdd: [{ poly: [[350, 534], [377, 534], [377, 690], [342, 692], [336, 650], [346, 600]], ground: 'grass' }],   // (from 534, south of the bush)
     // where the 3D hides the keepsakes: the Crescent Locket's spot in the 2D game is on the lower house's roof (Chris's
     // secret way, October 4); in 3D it lies at the end of that hidden strip. The Forge Horseshoe keeps its nook.
     items: { 'crescent-locket': [358, 676] },
@@ -222,5 +274,121 @@
     // the pine by the bench, the dark fir by the west stairs, the tree by the lower jetty, the lower house's garden
     extraTrees: [[1002, 640, 1.05, 1, 11], [332, 522, 0.78, 1, 12], [118, 690, 0.72, 0, 13], [640, 700, 1.05, 0, 14], [690, 690, 0.85, 1, 15],
       [880, 720, 0.85, 0, 16], [1270, 690, 0.75, 0, 17], [1100, 700, 0.6, 1, 18], [560, 642, 0.7, 0, 19]],
+
+    extra(K) {
+      const { B, X, Z } = K, T3 = G.THREE, UP = new T3.Vector3(0, 1, 0);
+      const BARK = [0.62, 0.52, 0.5], PLANK = [0.72, 0.6, 0.52];
+      // a round length of wood from a to b (metres), r0 thick at a and r1 at b
+      const cyl = new T3.CylinderGeometry(1, 1, 1, 8, 1, true); cyl.translate(0, 0.5, 0);
+      const pole = (k, a, b, r0, r1, col) => {
+        const d = new T3.Vector3(b[0] - a[0], b[1] - a[1], b[2] - a[2]), L = d.length(), g = new T3.CylinderGeometry(r1, r0, 1, 8, 1, true); g.translate(0, 0.5, 0);
+        B.geom(k, g, new T3.Matrix4().compose(new T3.Vector3(a[0], a[1], a[2]), new T3.Quaternion().setFromUnitVectors(UP, d.normalize()), new T3.Vector3(1, L, 1)), col, [1.2, L / 1.5]); g.dispose();
+      };
+      // a flat board from a to b (metres, its top's middle line), w wide, t thick, lying level across
+      const board = (k, a, b, w, t, col) => {
+        const d = new T3.Vector3(b[0] - a[0], b[1] - a[1], b[2] - a[2]), L = d.length(), g = new T3.BoxGeometry(w, t, L); g.translate(0, -t / 2, L / 2);
+        const yaw = Math.atan2(d.x, d.z), pitch = -Math.asin(d.y / L);
+        B.geom(k, g, new T3.Matrix4().compose(new T3.Vector3(a[0], a[1], a[2]), new T3.Quaternion().setFromEuler(new T3.Euler(pitch, yaw, 0, 'YXZ')), new T3.Vector3(1, 1, 1)), col, [w, L]); g.dispose();
+      };
+      B.solid = false;   // everything here is walked on or over; where she can't go is blocked below, cell by cell
+
+      // ---- Hilde's hearth, set into the forge's front wall (walk pass 2): the engine's stood 0.6 m out from the wall, over the
+      // 2D walk, where the painting's hearth is an arch in the wall. Its stone surround, the fire's glow and flames, a low
+      // hearthstone in front, and the fire's light ----
+      {
+        const hx = X(1158), z1 = Z(359), g = K.gh(1158, 363), hw = 2.6, hh = 2.5;
+        B.box('stone', hx, g, z1 - 0.25, hw + 0.9, hh + 0.7, 0.6, 0, [0.9, 0.86, 0.86]);
+        B.quad('glass', [hx - hw / 2, g + 0.1, z1 + 0.06], [hx + hw / 2, g + 0.1, z1 + 0.06], [hx + hw / 2, g + hh, z1 + 0.06], [hx - hw / 2, g + hh, z1 + 0.06], [0, 0, 1, 1], [0.32, 0.1, 0.05]);
+        B.box('glass', hx, g + 0.1, z1 + 0.02, hw * 0.7, 0.55, 0.22, 0, [2.0, 0.95, 0.35]);
+        B.box('stone', hx, g - 0.1, z1 + 0.45, hw + 0.5, 0.2, 0.8, 0, [0.7, 0.66, 0.66]);
+        K.halo(hx, g + 0.6, z1 + 0.5, 3.2, [1.0, 0.52, 0.22]); K.lamps3d.push({ x: hx, y: g + 0.8, z: z1 + 0.8, c: 0xff7a30, k: 2.2 });
+      }
+
+      // ---- the lower house's back half (y 474 to 580): the same walls, north gable, roof and ridge as the engine's front half,
+      // which runs on south from 580 (each texture carries on across the join) ----
+      const x0 = X(LH.x0), x1 = X(LH.x1), zN = Z(LH.y0), zS = Z(LH.split), cx = (x0 + x1) / 2, w = x1 - x0, E = LH.E, rise = LH.rise, o = LH.over;
+      const lo = LOW - 0.3, mid = LOW + 3.2, dB = zS - zN, dF = Z(LH.y1) - zS;
+      for (const [k, ya, yb] of [['stone', lo, mid], ['timber', mid, E]]) {
+        B.quad(k, [x1, ya, zN], [x0, ya, zN], [x0, yb, zN], [x1, yb, zN], [0, ya, w, yb]);                    // the back wall
+        B.quad(k, [x0, ya, zN], [x0, ya, zS], [x0, yb, zS], [x0, yb, zN], [-dB, ya, 0, yb]);                 // the west wall's back half
+        B.quad(k, [x1, ya, zS], [x1, ya, zN], [x1, yb, zN], [x1, yb, zS], [dF, ya, dF + dB, yb]);            // the east wall's back half
+      }
+      B.tri('timber', [x1, E, zN], [x0, E, zN], [cx, E + rise, zN], [[0, E], [w, E], [w / 2, E + rise]]);
+      {
+        const sl = rise / (w / 2), ye = E - o * sl, yr = E + rise, za = zN - o, zb = zS - o, len = Math.hypot(w / 2 + o, rise + o * sl), LF = dF + 2 * o;
+        B.quad('roof', [x0 - o, ye, za], [x0 - o, ye, zb], [cx, yr, zb], [cx, yr, za], [-dB, 0, 0, len]);
+        B.quad('roof', [x1 + o, ye, zb], [x1 + o, ye, za], [cx, yr, za], [cx, yr, zb], [LF, 0, LF + dB, len]);
+        B.box('roof', cx, yr - 0.08, (za + zb) / 2, 0.22, 0.2, zb - za, 0, [0.7, 0.66, 0.66]);
+        // its chimney, on the west slope (where the painting has the house's other chimney), clear of the strokes
+        const chx = X(420), chz = Z(492), ry = E + rise * (1 - Math.abs(chx - cx) / (w / 2));
+        B.box('stone', chx, ry - 1.2, chz, 0.6, 1.2 + 0.7 + 1.05, 0.6, 0, [0.9, 0.88, 0.92]);
+        B.box('stone', chx, ry + 0.7 + 1.05, chz, 0.76, 0.14, 0.76, 0, [0.6, 0.58, 0.62]);
+      }
+      K.shadeMarks.push(['rect', LH.x0, LH.y0, LH.x1, LH.split, 0.62]);
+
+      // ---- the old oak at the house's north-east corner: its trunk, its fork at 6 m, and its crown over the corner ----
+      // (its trunk stands just north of the fork's boards, its roots and upper limbs away from them, the crown over the corner)
+      const tx = X(520), tz = Z(461), F = WAY.fork;
+      pole('bark', [tx, -0.4, tz], [tx - 0.08, F - 0.15, tz + 0.08], 0.4, 0.33, BARK);
+      for (const [dx, dz] of [[-0.55, 0.05], [-0.25, -0.22], [0.3, -0.2], [0.36, 0.08]]) pole('bark', [tx + dx, -0.3, tz + dz], [tx + dx * 0.2, 1.0, tz + dz * 0.2], 0.12, 0.24, BARK);
+      for (const [dx, dy, dz, r] of [[0.8, 3.4, -1.0, 0.2], [0.2, 4.2, -1.4, 0.17], [1.3, 3.0, -0.3, 0.18], [-0.5, 3.8, -1.1, 0.16]]) pole('bark', [tx - 0.05, F - 0.6, tz - 0.05], [tx + dx, F + dy, tz + dz], 0.24, r, BARK);
+      const leafCol = (cy, h) => (v) => { const t = Math.max(0, Math.min(1, (v.y - cy) / h * 0.5 + 0.5)), k = 0.42 + 0.68 * t; return [k * 0.95, k, k * 1.02]; };
+      for (const [dx, dy, dz, r] of [[0.8, 9.6, -1.1, 2.3], [0.2, 10.4, -2.0, 2.0], [1.9, 8.9, -0.2, 1.8], [-0.9, 9.4, -1.5, 1.6], [1.4, 10.6, -2.7, 1.7]])
+        B.geom('oakLeaves', K.ico[Math.abs(Math.round(dx * 3 + dz)) % 3], new T3.Matrix4().compose(new T3.Vector3(tx + dx, dy, tz + dz), new T3.Quaternion().setFromEuler(new T3.Euler(0.3, dx, 0)), new T3.Vector3(r, r * 0.82, r)), leafCol(dy, r * 0.82), 2.6);
+
+      // ---- the limb: from the fork down west along the back wall, its tip on the ground at the house's north-west corner;
+      // knots and old nailed slats on it every few steps for her feet ----
+      const lz = Z(470), limbTop = (px) => F * Math.max(0, Math.min(1, (px - 380) / (WAY.limb[2] - 380)));
+      pole('bark', [X(WAY.limb[2] + 6), F - 0.32, lz], [X(376), -0.22, lz], 0.32, 0.17, BARK);
+      for (let px = 392; px < WAY.limb[2]; px += 7) B.box('wood', X(px), limbTop(px) - 0.07, lz, 0.1, 0.07, 0.42, 0, PLANK);
+      // the fork: a few boards across it, where the limb meets the branch
+      board('wood', [X(506), F, Z(475)], [X(531), F, Z(475)], 0.62, 0.07, PLANK);
+      // ---- the branch: from the fork south over the roof's east slope, boards laid along it ----
+      pole('bark', [X(522), F - 0.27, Z(468)], [X(521), F - 0.3, Z(528)], 0.28, 0.2, BARK);
+      board('wood', [X(512.5), F, Z(476)], [X(512.5), F, Z(526)], 0.3, 0.06, PLANK);
+      board('wood', [X(530.5), F, Z(476)], [X(530.5), F, Z(526)], 0.3, 0.06, PLANK);
+      board('wood', [X(521.5), F, Z(476)], [X(521.5), F, Z(526)], 0.3, 0.06, PLANK);
+      // ---- the ladder: its foot on the branch's end, its head on the ridge walk; two rails and rungs ----
+      {
+        const fa = [X(WAY.foot[0]), F, Z(WAY.foot[1])], fb = [X(WAY.head[0]), WAY.ridge, Z(WAY.head[1])];
+        const d = [fb[0] - fa[0], fb[1] - fa[1], fb[2] - fa[2]], L = Math.hypot(...d), side = [-d[2], 0, d[0]], sL = Math.hypot(side[0], side[2]), sd = [side[0] / sL, 0, side[2] / sL];
+        for (const s_ of [-0.27, 0.27]) board('wood', [fa[0] + sd[0] * s_, fa[1] - 0.04, fa[2] + sd[2] * s_], [fb[0] + sd[0] * s_, fb[1] - 0.04, fb[2] + sd[2] * s_], 0.08, 0.12, [0.66, 0.54, 0.46]);
+        for (let t = 0.04; t < 1; t += 0.3 / L) { const p = [fa[0] + d[0] * t, fa[1] + d[1] * t, fa[2] + d[2] * t]; board('wood', [p[0] - sd[0] * 0.3, p[1], p[2] - sd[2] * 0.3], [p[0] + sd[0] * 0.3, p[1], p[2] + sd[2] * 0.3], 0.07, 0.05, PLANK); }
+        // a board along its middle under the rungs, so her feet are on wood all the way
+        board('wood', [fa[0], fa[1] - 0.05, fa[2]], [fb[0], fb[1] - 0.05, fb[2]], 0.34, 0.04, [0.6, 0.5, 0.44]);
+      }
+      // ---- the ridge walk: planks along the ridge's top on little trestles, from the back gable to the front half's ridge ----
+      {
+        const rx = X(461), r0 = Z(WAY.ridgeY0 + 1), r1 = Z(LH.split - 2), yr = E + rise;
+        board('wood', [rx, WAY.ridge, r0], [rx, WAY.ridge, r1], 0.82, 0.07, PLANK);
+        for (let z = r0 + 0.3; z < r1; z += 1.2) for (const sx of [-1, 1]) pole('wood', [rx + sx * 0.36, yr - 0.5, z], [rx + sx * 0.36, WAY.ridge - 0.07, z], 0.05, 0.05, [0.55, 0.45, 0.4]);
+      }
+
+      // ---- where she can't go on and round the secret way: the house's back half but for the three strokes (each at its own
+      // height), and a band of the square's edge along the limb and round the oak's foot, so nobody steps from the cobbles up
+      // onto the limb or the fork. Blocked cell by cell (2 px, on the walk grid's own cells), in runs ----
+      const MAP = (G.MAPS || {}).wickhollow, inP = W3D.inPoly;
+      const on2D = (x, y) => MAP.walk.some((p) => inP(p, x, y)) && !MAP.block.some((p) => inP(p, x, y));
+      const open = (x, y) => {
+        if (inRect(WAY.forkR, x, y)) return true;
+        if (x >= WAY.limb[0] && x < WAY.limb[2] && y >= WAY.limb[1] && y < WAY.limb[3]) return true;
+        if (y >= LH.y0 && y < LH.split && x >= LH.x0 && x <= LH.x1) return (y >= WAY.ridgeY0 || x >= WAY.branchX) && on2D(x, y);
+        return false;
+      };
+      // (the bands round the limb and the oak's foot are 8 or 9 px: further than her feet can reach across in a step)
+      // (every zone's corners are even, on the grid's own cells)
+      const ZONES = [[LH.x0, LH.y0, LH.x1, LH.split], [378, 458, 506, 466], [506, 456, 534, 466], [532, 456, 542, 484]];   // the house, the limb's north side, the oak's foot (north, east)
+      for (const [a, b, c, d] of ZONES) for (let y = b; y < d; y += 2) {
+        let run = null;
+        for (let x = a; x < c; x += 2) {
+          const shut = !open(x + 1, y + 1);
+          if (shut && run == null) run = x;
+          if (!shut && run != null) { K.addBlock(W3D.rectPoly([run, y, x, y + 2])); run = null; }
+        }
+        if (run != null) K.addBlock(W3D.rectPoly([run, y, c, y + 2]));
+      }
+      B.solid = true;
+      cyl.dispose();
+    },
   };
 })(window);

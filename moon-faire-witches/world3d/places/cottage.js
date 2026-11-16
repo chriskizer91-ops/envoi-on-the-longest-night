@@ -104,6 +104,9 @@
       { poly: POND, level: pondLevel, tex: 'shared_water_dark', rep: 5, flow: [0.003, 0.002], bed: -1.7, tint: 0x8890b8 },
       { poly: STREAM, level: streamLevel, tex: 'shared_water_river', rep: 4, flow: [0.0, 0.05], bed: -4.4 },
     ],
+    // no bank boulders right under the footbridge's long sides (walk pass 2): the engine counts one as solid by the ground at
+    // its middle, down in the stream, so two of them took strips off the bridge's planks, a hand below her feet
+    noRocks: [[30, 362, 230, 478]],
     // lawns: the garden's beds, the grass round the cottage, the yards at the top: grass, and no generated trees
     lawns: [
       [[388, 497], [574, 497], [574, 742], [388, 742]],                                                          // lavender and white beds
@@ -170,7 +173,7 @@
       { pts: [[880, 554], [1048, 554], [1048, 640], [880, 640], [880, 554]], h: 0.0, t: 0.12, tex: 'dry', top: 'fence', topH: 0.75 }, // the delphinium bed's rails
     ],
     // the stone stairs on the west path, down to the lower ground
-    steps: [{ r: [287, 662, 361, 760], down: 's', n: 8 }],
+    steps: [{ r: [286, 662, 362, 760], down: 's', n: 8 }],   // (walk pass 2: a pixel wider each side, its cheeks just off the 2D walk)
     // the lamps are all the painting's own: stone pillars by the lane, the footbridge and the gate, a lantern post at the
     // forest path, built in extra (taller than the engine's pillars, as painted)
     lamps: [],
@@ -196,7 +199,8 @@
       [682, 726, 1.0, 'white'], [646, 728, 0.8, 'mix'], [896, 722, 1.0, 'white'], [928, 728, 0.8, 'mix'],                                  // either side of the gate
       [966, 694, 0.8, 'white'], [1018, 698, 0.8, 'violet'], [1066, 692, 0.9, 'violet'], [1118, 700, 0.8, 'mix'],                          // the garden's south-east corner
       [626, 520, 0.5, 'white'], [644, 528, 0.45, 'white'], [622, 536, 0.4, 'white'],                                                     // white flowers by the vegetables
-      [640, 822, 0.8, 'violet'], [612, 852, 0.6, 'violet'], [660, 930, 0.7, 'white'], [612, 958, 0.6, 'white'],                           // the south woods, and the hollow's way in
+      [640, 822, 0.8, 'violet'], [612, 852, 0.6, 'violet'], [660, 930, 0.7, 'white'], [590, 902, 0.6, 'white'],                           // the south woods, and the hollow's way in
+      // (walk pass 2: the white bush west of the hollow's way in stood on the curving path itself; now just off it, by the tree)
       [1290, 500, 0.7, 'violet'], [1120, 282, 0.7, 'white'], [740, 146, 0.8, 'mix'],
       [432, 780, 0.8, 'mix'], [470, 800, 1.0, 'white'], [522, 822, 1.2, 'mix'], [562, 850, 1.0, 'white'], [596, 880, 0.8, 'mix'],         // shrubs between the
       [380, 900, 1.2, 'mix'], [452, 966, 1.1, 'white'], [530, 1004, 1.2, 'mix'], [348, 840, 0.9, 'white'],                              // curving path and the garden, and south of it
@@ -369,8 +373,10 @@
         B.box('wood', a, g - 0.1, (c + d) / 2, 0.1, 0.38, d - c, 0, F); B.box('wood', b, g - 0.1, (c + d) / 2, 0.1, 0.38, d - c, 0, F);
         B.quad('soil', [a, g + 0.2, d], [b, g + 0.2, d], [b, g + 0.2, c], [a, g + 0.2, c], [a, d, b, c], [0.8, 0.75, 0.75]);
       };
-      frame(404, 500, 572, 588); frame(404, 600, 572, 682); frame(612, 544, 700, 602); frame(706, 544, 786, 602); frame(612, 612, 784, 678); frame(884, 558, 1044, 636);
-      for (const [x0, y0, x1, y1] of [[616, 548, 696, 598], [710, 548, 782, 598], [616, 616, 780, 674]]) {
+      // (walk pass 2: the long bed's east end at 756, where the painting's curved path cuts in and the 2D walk starts; it ran on
+      // to 784, its last row of vegetables on the path)
+      frame(404, 500, 572, 588); frame(404, 600, 572, 682); frame(612, 544, 700, 602); frame(706, 544, 786, 602); frame(612, 612, 756, 678); frame(884, 558, 1044, 636);
+      for (const [x0, y0, x1, y1] of [[616, 548, 696, 598], [710, 548, 782, 598], [616, 616, 752, 674]]) {
         for (let py = y0 + 9; py < y1; py += 15) for (let px = x0 + 9; px < x1; px += 19) {
           const g = gh(px, py) + 0.2, s = 0.3 + r() * 0.1;
           blob('leafBush', ico1, X(px) + (r() - 0.5) * 0.2, g + s * 0.3, Z(py), s, s * 0.6, s, (v) => { const k = 0.7 + 0.6 * Math.max(0, Math.min(1, (v.y - g) / (s * 0.8))); return [0.72 * k, 1.25 * k, 0.62 * k]; }, 0.8);

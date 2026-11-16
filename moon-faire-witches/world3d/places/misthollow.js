@@ -141,14 +141,15 @@
   // kind 'bal': a balustrade (a plinth, small posts, a rail, snow on it) standing on the higher side, its wall going down to
   // the lower; 'wall': a plain parapet wall; over: how far it stands above the higher side (metres)
   const LINES = [
-    // the balcony bridge and the lit landing
-    { kind: 'bal', pts: [[100, 219], [236, 219], [236, 193], [274, 159], [292, 166]], posts: [[100, 219], [170, 219], [236, 219], [274, 159]] },
-    { kind: 'bal', pts: [[52, 257], [240, 257], [238, 266], [252, 316], [262, 342]], posts: [[52, 257], [94, 257], [170, 257], [240, 257], [262, 342]] },
+    // the balcony bridge and the lit landing (walk pass 2: the landing's west side and its corners a pixel or two out, off the
+    // 2D walk's edge)
+    { kind: 'bal', pts: [[100, 219], [234, 219], [234, 193], [274, 155], [292, 162]], posts: [[100, 219], [170, 219], [234, 219], [274, 155]] },
+    { kind: 'bal', pts: [[52, 257], [238, 257], [236, 266], [252, 316], [262, 342]], posts: [[52, 257], [94, 257], [170, 257], [238, 257], [262, 342]] },
     // the stair beside the tall tower: its west parapet, and round the top landing
     { kind: 'wall', pts: [[293, 172], [293, 106], [282, 104], [282, 24]], over: 0.9 },
-    { kind: 'wall', pts: [[342, 160], [342, 106], [354, 104], [354, 30]], over: 0.9 },
+    { kind: 'wall', pts: [[344, 160], [344, 106], [354, 104], [354, 30]], over: 0.9 },
     // the second flight's west balustrade and its east wall
-    { kind: 'wall', pts: [[299, 262], [315, 316], [327, 320], [327, 342], [320, 346], [320, 436]], over: 0.8 },
+    { kind: 'wall', pts: [[299, 262], [315, 313], [327, 317], [327, 342], [320, 346], [320, 436]], over: 0.8 },   // (walk pass 2: its corner at the flight's head three pixels north, off the treads)
     // the tall tower's terrace: its south wall over the ledge, and its east side
     { kind: 'bal', pts: [[310, 294], [434, 294], [434, 240], [460, 240], [460, 234]], posts: [[330, 294], [393, 294], [434, 294], [434, 240], [460, 240]] },
     // the chapel ledge's balustrade, and the wall between the house by the chapel and the tower's terrace
@@ -164,12 +165,12 @@
     { kind: 'wall', pts: [[1097, 302], [1097, 144]], over: 0.9 }, { kind: 'wall', pts: [[1179, 302], [1179, 144]], over: 0.9 },
     { kind: 'bal', pts: [[1000, 148], [1097, 148]], posts: [[1000, 148]] }, { kind: 'bal', pts: [[1179, 148], [1354, 148]], posts: [[1266, 148]] },
     { kind: 'bal', pts: [[1460, 148], [1476, 148]] },
-    // the upper square's west terrace, over the hollow
-    { kind: 'bal', pts: [[237, 601], [279, 639], [297, 648], [297, 665], [385, 665], [385, 695], [437, 695]], posts: [[237, 601], [297, 648], [297, 665], [341, 665], [385, 665], [385, 695]] },
+    // the upper square's west terrace, over the hollow (walk pass 2: its two north-south runs two pixels west, off the walk)
+    { kind: 'bal', pts: [[237, 601], [279, 639], [295, 648], [295, 665], [383, 665], [383, 695], [437, 695]], posts: [[237, 601], [295, 648], [295, 665], [341, 665], [383, 665], [383, 695]] },
     // the raised block east of the inn
     { kind: 'bal', pts: [[1169, 630], [1169, 728], [1268, 728]], posts: [[1169, 640], [1169, 728], [1218, 728], [1268, 728]] },
     // the lower square: west (the lamp pillar, the iron gate's wall), south (either side of the stair down), east
-    { kind: 'bal', pts: [[438, 788], [350, 854]], posts: [[438, 788], [400, 816]] },
+    { kind: 'bal', pts: [[436, 786], [348, 852]], posts: [[436, 786], [398, 814]] },   // (walk pass 2: two pixels north-west, off the walk)
     { kind: 'bal', pts: [[342, 866], [306, 893], [296, 901]], posts: [[306, 893], [296, 901]] },
     { kind: 'bal', pts: [[262, 918], [224, 937], [220, 978], [650, 978]], posts: [[262, 918], [224, 937], [220, 978], [320, 978], [420, 978], [500, 978], [600, 978]] },
     { kind: 'bal', pts: [[880, 978], [1310, 980], [1312, 944], [1200, 868]], posts: [[1060, 978], [1140, 978], [1220, 979], [1310, 980], [1312, 944], [1256, 906]] },
@@ -309,7 +310,7 @@
     // lower square's corner pillars
     lamps: [
       { at: [697, 118], kind: 'pillar', h: 2.5 }, { at: [833, 118], kind: 'pillar', h: 2.5 }, { at: [697, 333], kind: 'pillar', h: 2.5 }, { at: [834, 330], kind: 'pillar', h: 2.5 },
-      { at: [697, 598], kind: 'pillar', h: 2.5 }, { at: [835, 598], kind: 'pillar', h: 2.5 }, { at: [598, 693], kind: 'pillar', h: 1.7 }, { at: [925, 693], kind: 'pillar', h: 1.7 },
+      { at: [697, 595], kind: 'pillar', h: 2.5 }, { at: [835, 595], kind: 'pillar', h: 2.5 }, { at: [598, 693], kind: 'pillar', h: 1.7 }, { at: [925, 693], kind: 'pillar', h: 1.7 },
       { at: [560, 952], kind: 'pillar', h: 1.25, y: 1.05 }, { at: [971, 952], kind: 'pillar', h: 1.25, y: 1.05 }, { at: [283, 255], kind: 'post', h: 2.3 },
       { at: [346, 860], kind: 'pillar', h: 1.9, y: 0.2 }, { at: [1185, 862], kind: 'pillar', h: 1.9, y: 0.05 },
     ],
@@ -334,7 +335,7 @@
     // the painting's own trees close to the paths (make-trees.mjs keeps its trees 30 px off the walk): the pines either side
     // of the steps between the pines, the pine by the east steps, the pines either side of the great stair, the pine east of
     // the street, the pine by the snowy way, the bare trees by the street, and the pines that hide the pockets
-    extraTrees: [[598, 590, 0.95, 1, 11], [660, 500, 1.05, 1, 12], [930, 572, 0.95, 1, 13], [410, 782, 1.05, 1, 14], [1122, 792, 1.0, 1, 15],
+    extraTrees: [[598, 590, 0.95, 1, 11], [674, 492, 1.05, 1, 12], [930, 572, 0.95, 1, 13], [410, 782, 1.05, 1, 14], [1122, 792, 1.0, 1, 15],
       [846, 286, 1.15, 1, 16], [228, 528, 0.95, 1, 17], [692, 206, 1.1, 2, 18], [882, 296, 0.9, 2, 19], [126, 184, 0.9, 1, 20], [38, 170, 1.0, 1, 21],
       [170, 112, 0.85, 1, 22], [252, 840, 0.8, 1, 23], [246, 760, 0.85, 1, 24], [1196, 616, 0.8, 1, 25], [1236, 640, 0.7, 1, 26], [520, 256, 0.75, 1, 27],
       // down the cliffs west and east, where the painting has them
@@ -402,13 +403,13 @@
         }
         for (const [px, py] of L.posts || []) post(px, py, L.kind === 'bal' ? 1.38 : 1.1);
       }
-      // a square post with a round stone finial and snow on it
+      // a square post with a round stone finial and snow on it (walk pass 2: its cap, a hand wider than the post at her
+      // shoulder, isn't counted as solid, so the walk beside a post reaches the post itself, as in the 2D game)
       function post(px, py, hgt, base) {
         const x = X(px), z = Z(py), lo = Math.min(ter(px, py), ter(px + 8, py), ter(px - 8, py), ter(px, py + 7), ter(px, py - 7)) - 0.4;
         const g = base != null ? base : Math.max(ter(px, py), wh(px, py), ter(px + 8, py), ter(px - 8, py), ter(px, py + 7), ter(px, py - 7));
         B.box('stone', x, lo, z, 0.5, g + hgt - lo, 0.5, 0, STONE);
-        B.box('stone', x, g + hgt, z, 0.62, 0.12, 0.62, 0, STONE_D);
-        ball(x, g + hgt + 0.12, z, 0.17);
+        soft(() => { B.box('stone', x, g + hgt, z, 0.62, 0.12, 0.62, 0, STONE_D); ball(x, g + hgt + 0.12, z, 0.17); });
         soft(() => B.box('snow', x, g + hgt + 0.12, z, 0.58, 0.06, 0.58, 0, SNOW));
       }
       for (const L of LINES) line(L);

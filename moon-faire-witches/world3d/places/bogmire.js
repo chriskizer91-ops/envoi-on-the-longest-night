@@ -93,7 +93,7 @@
     [0, [[759, -420], [759, 112], [734, 112], [734, 152], [759, 152], [759, 326]]],
     [0, [[820, -420], [820, 112], [845, 112], [845, 152], [820, 152], [820, 200]]], [0, [[820, 248], [820, 326]]],
     [0, [[820, 200], [852, 200]]], [0, [[1000, 200], [1030, 200], [1030, 248], [906, 248]]], [0, [[884, 248], [820, 248]]],
-    [0, [[1032, 400], [1192, 400]]], [0, [[1236, 400], [1310, 400], [1310, 456]]], [0, [[1032, 456], [1256, 456], [1256, 652]]],
+    [0, [[1032, 400], [1192, 400]]], [0, [[1236, 400], [1310, 400], [1310, 456]]], [0, [[1032, 456], [1255, 456], [1255, 652]]],   // (walk pass 2: a pixel west, its posts off the 2D walk's edge)
     ['s1', [[1192, 316], [1192, 400]]], ['s1', [[1236, 316], [1236, 400]]],
     [H_I, [[1086, 278], [1086, 316], [1192, 316]]], [H_I, [[1236, 316], [1372, 316], [1372, 294]]],
     // the inn's side stair, both sides, its landing, and the far east house's porch (its ladder's gap, its east end)
@@ -113,8 +113,9 @@
   // ladders from the decks down to the water: [x, y, deck height, which way the deck's edge faces]
   const LADDERS = [[612, 255, H_N, 's'], [895, 248, 0, 's'], [1436, 340, 0, 's'], [1462, 606, 0, 's'], [170, 662, 0, 's'], [324, 778, 0, 's'],
     [512, 808, 0, 's'], [729, 886, 0, 's'], [1517, 846, 0, 's']];
-  // the lanterns on wooden posts: [x, y, deck height, post height]; the walking map's six (BOG_LAMPS) first
-  const LAMPS = [[145, 482, 0, 1.75], [145, 620, 0, 1.75], [251, 462, 0, 1.75], [1007, 530, 0, 1.75], [1303, 432, 0, 1.75], [1460, 760, 0, 1.75],
+  // the lanterns on wooden posts: [x, y, deck height, post height]; the walking map's six (BOG_LAMPS) first (walk pass 2: the
+  // one by the east boardwalk two pixels north, inside its block on the walking map)
+  const LAMPS = [[145, 482, 0, 1.75], [145, 620, 0, 1.75], [251, 462, 0, 1.75], [1007, 530, 0, 1.75], [1303, 430, 0, 1.75], [1460, 760, 0, 1.75],
     [354, 718, 0, 1.75], [1090, 312, H_I, 1.6], [718, 840, 0, 1.75]];
 
   // the reeds and lily pads, read from the painting (pale grey-green on the dark water): reeds [x, base y, half width px,
@@ -279,11 +280,12 @@
     walls: [], steps: [],
     // the lamps are lanterns on wooden posts, built in extra; this list is the engine's iron posts and stone pillars (none here)
     lamps: [],
-    // small things: barrels, crates, planters, a bench (the walking map blocks each where it stands on the walk)
+    // small things: barrels, crates, planters, a bench (the walking map blocks each where it stands on the walk; walk pass 2:
+    // the bench on the north porch and the barrel by the north-east porch a few pixels in, inside their blocks)
     props: [
       { k: 'barrel', at: [181, 346] }, { k: 'barrel', at: [198, 345] }, { k: 'barrel', at: [234, 347] }, { k: 'barrel', at: [238, 371] }, { k: 'barrel', at: [163, 630] },
-      { k: 'barrel', at: [283, 216] }, { k: 'barrel', at: [399, 219] }, { k: 'pot', at: [584, 212] }, { k: 'bench', at: [659, 220], face: 0 },
-      { k: 'barrel', at: [972, 207] }, { k: 'barrel', at: [986, 209] },
+      { k: 'barrel', at: [283, 216] }, { k: 'barrel', at: [399, 219] }, { k: 'pot', at: [584, 212] }, { k: 'bench', at: [659, 218], face: 0 },
+      { k: 'barrel', at: [972, 207] }, { k: 'barrel', at: [983, 209] },
       { k: 'barrel', at: [1272, 418] }, { k: 'crates', at: [1005, 531] }, { k: 'barrel', at: [1309, 790] }, { k: 'barrel', at: [1124, 772] }, { k: 'barrel', at: [1150, 772] },
       { k: 'pot', at: [905, 772] }, { k: 'pot', at: [977, 772] }, { k: 'pot', at: [431, 771] }, { k: 'pot', at: [472, 771] },
       { k: 'crates', at: [748, 866] }, { k: 'barrel', at: [771, 860] },
@@ -476,14 +478,15 @@
         K.light(px, py - 4, 150, 1.25, 'warm');
         K.addBlock(K.circlePx(px, py, 0.2, 8));
       }
-      // the lamp pole by the long walk: a tall post, an arm out west, a lantern hanging from it
+      // the lamp pole by the long walk: a tall post, an arm out west, a lantern hanging from it (walk pass 2: two pixels west,
+      // off the 2D walk's edge)
       {
-        const x = X(737), z = Z(146);
+        const x = X(735), z = Z(146);
         B.cyl('dry', x, -0.05, z, 0.14, 0.11, 4.4, 7, STILT, [0.9, 3]);
         B.box('wood', x - 0.35, 4.0, z, 0.9, 0.1, 0.1, 0, EDGE); rod('wood', [x, 3.4, z], [x - 0.55, 4.0, z], 0.035, EDGE);
         rod('iron', [x - 0.7, 4.0, z], [x - 0.7, 3.65, z], 0.012, null, true);
         K.lantern(x - 0.7, 3.25, z, null, 0.95, true);
-        K.light(722, 140, 150, 1.15, 'warm'); K.addBlock(K.circlePx(737, 146, 0.2, 8));
+        K.light(720, 140, 150, 1.15, 'warm'); K.addBlock(K.circlePx(735, 146, 0.2, 8));
       }
 
       // ---- the market square ----
