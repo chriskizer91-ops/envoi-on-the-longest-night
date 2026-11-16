@@ -116,5 +116,109 @@
    1.57,
    null
   ]
+ },
+ {
+  "name": "walkable",
+  "walkmap": true
+ },
+ {
+  "name": "secret-way-1-the-limb-at-the-house-corner",
+  "io": [
+   372,
+   470,
+   1.57
+  ],
+  "cam": [
+   -1.57,
+   0.35,
+   6
+  ]
+ },
+ {
+  "name": "secret-way-2-up-the-limb",
+  "to": [
+   450,
+   470
+  ],
+  "mag": 0.7
+ },
+ {
+  "name": "secret-way-3-the-fork",
+  "to": [
+   518,
+   474
+  ],
+  "mag": 0.7
+ },
+ {
+  "name": "secret-way-4-along-the-branch",
+  "to": [
+   521,
+   512
+  ],
+  "mag": 0.7
+ },
+ {
+  "name": "secret-way-5-up-the-ladder",
+  "to": [
+   500,
+   518
+  ],
+  "mag": 0.7
+ },
+ {
+  "name": "secret-way-6-onto-the-ridge",
+  "to": [
+   462,
+   500
+  ],
+  "mag": 0.7
+ },
+ {
+  "name": "secret-way-7-along-the-ridge",
+  "to": [
+   460,
+   570
+  ],
+  "mag": 0.7
+ },
+ {
+  "name": "secret-way-8-the-ridge-walk-looking-north",
+  "io": [
+   460,
+   566,
+   3.14
+  ],
+  "cam": [
+   0,
+   0.45,
+   6
+  ]
+ },
+ {
+  "name": "secret-way-9-from-above",
+  "io": [
+   470,
+   520,
+   0
+  ],
+  "cam": [
+   0.5,
+   1.2,
+   22
+  ]
+ },
+ {
+  "name": "the-forge-hearth",
+  "io": [
+   1158,
+   382,
+   3.14
+  ],
+  "cam": [
+   0,
+   0.3,
+   5.5
+  ]
  }
 ]

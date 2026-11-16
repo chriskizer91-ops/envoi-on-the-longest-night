@@ -102,19 +102,21 @@
   }
   const springLevel = () => ground(SPRING.c[0], SPRING.c[1]) - 0.3;
 
-  // ---- the painting's boulders: [x, y, size] ----
+  // ---- the painting's boulders: [x, y, size] (walk pass 2: the one at 433, 382 three pixels west, off the 2D walk's edge) ----
   const ROCKS = [
     [257, 190, 1.7], [121, 385, 1.8], [150, 470, 1.4], [22, 52, 1.4], [20, 465, 1.2], [742, 305, 0.8], [446, 225, 1.1], [532, 245, 1.2], [618, 378, 1.4],
-    [436, 382, 1.0], [410, 452, 1.7], [418, 690, 1.9], [603, 772, 1.9], [618, 590, 1.5], [628, 664, 1.0], [518, 884, 1.7], [232, 892, 1.3], [165, 588, 1.1],
+    [433, 382, 1.0], [410, 452, 1.7], [418, 690, 1.9], [603, 772, 1.9], [618, 590, 1.5], [628, 664, 1.0], [518, 884, 1.7], [232, 892, 1.3], [165, 588, 1.1],
     [815, 872, 0.6], [1092, 165, 1.8], [1100, 236, 1.2], [1260, 498, 1.0], [1348, 748, 1.3], [1190, 985, 1.6], [1052, 692, 0.65], [1350, 980, 0.9],
     [880, 140, 0.9], [940, 60, 0.7],
-    // round the pool's rim, where the painting has them (the engine lays none there)
-    [380, 352, 0.75], [398, 410, 0.85], [364, 470, 0.7], [166, 318, 0.65], [168, 430, 0.75], [196, 492, 0.6], [334, 506, 0.6],
+    // round the pool's rim, where the painting has them (the engine lays none there). Walk pass 2: the one on the west rim
+    // was on the flat stone the 2D walk crosses, now on the round stone below it; the south one four pixels north, off the
+    // stepping stones
+    [380, 352, 0.75], [398, 410, 0.85], [364, 470, 0.7], [150, 334, 0.6], [168, 430, 0.75], [196, 492, 0.6], [334, 502, 0.6],
   ];
   // the painting's own great trees, and some past it: [x, y (where the trunk stands), size, kind (0 oak, 1 fir), seed]
   const BIG = [
     [588, 292, 2.4, 0, 11], [345, 178, 1.8, 0, 21], [100, 108, 1.9, 0, 22], [158, 992, 2.2, 0, 23], [325, 940, 1.5, 0, 24], [1440, 1000, 2.0, 0, 25],
-    [1528, 470, 1.6, 0, 26], [1285, 150, 1.7, 0, 27], [930, 965, 1.2, 1, 28],
+    [1528, 470, 1.6, 0, 26], [1285, 150, 1.7, 0, 27], [862, 985, 1.2, 1, 28],   // (walk pass 2: this fir stood on the cobbled road; now in the dark growth west of it)
     [50, 700, 1.3, 1, 31], [612, 960, 1.4, 1, 32], [1165, 800, 0.8, 1, 33], [1050, 330, 0.75, 1, 34], [745, 832, 0.7, 1, 35], [436, 604, 0.7, 1, 36],
     [1500, 600, 1.3, 1, 37], [1500, 360, 1.3, 1, 38],
     // past the painting: great oaks along the road and by the places to find
@@ -507,7 +509,8 @@
           K.addBlock(W.rectPoly([1306, 304, 1378, 342]));
         }
         // under the roof's low back: closed (the space behind the stack is too low to stand in)
-        K.addBlock([[1262, 278], [1292, 232], [1450, 298], [1450, 322], [1400, 360], [1380, 345], [1306, 345], [1306, 290]]);
+        // (walk pass 2: its front at the stack's face, y 342, not three pixels out on the 2D walk)
+        K.addBlock([[1262, 278], [1292, 232], [1450, 298], [1450, 322], [1400, 360], [1380, 342], [1306, 342], [1306, 290]]);
         // the chopping block: a sawn stump, the axe leaning on it
         {
           const px = 1256, py = 382, x = X(px), z = Z(py), y = TH(px, py);

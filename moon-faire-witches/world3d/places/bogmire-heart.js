@@ -42,8 +42,10 @@
   // the square itself: [x0, y0, x1, y1], built plank row by plank row round its broken boards
   const SQUARE = [493, 297, 1047, 702];
   // the broken boards (the walking map's blocks by the rails, and the painting's other gaps): water shows through
+  // (walk pass 2: the three on the east stop at the rail's line, x 1040, as the walking map's blocks and the painting do;
+  // the boards from there to the deck's edge are whole, and the 2D walk runs over them)
   const HOLES = [[497, 360, 541, 379], [497, 504, 541, 519], [497, 598, 531, 623], [549, 354, 566, 366], [549, 394, 566, 403],
-    [1005, 405, 1047, 428], [1013, 448, 1047, 458], [999, 494, 1047, 518], [613, 647, 642, 670], [878, 647, 927, 670]];
+    [1005, 405, 1040, 428], [1013, 448, 1040, 458], [999, 494, 1040, 518], [613, 647, 642, 670], [878, 647, 927, 670]];
   // the hall's steps: six treads down from its porch (0.9) to the square
   const STEPS = { x0: 729, x1: 807, y0: 222, y1: 300, n: 6 };
   const stepH = (y) => { const k = Math.min(STEPS.n - 1, Math.floor((y - STEPS.y0) / ((STEPS.y1 - STEPS.y0) / STEPS.n))); return NORTH * (STEPS.n - k) / (STEPS.n + 1); };
@@ -492,8 +494,10 @@
           for (const [px, h] of [[p.x0 + 3, p.ya], [p.x1 - 3, p.yb]]) beam('wood', [X(px), h - 0.1, Z(p.y0 - 1)], [X(px), h - 0.1, Z(p.y1 + 1)], 0.06, POST, 0.12);
         }
         B.solid = true;
-        // the square's broken boards are holes, exactly as built (the walking map's blocks are a pixel or three short of some)
-        for (const h of HOLES) K.addBlock(W3D.rectPoly(h));
+        // the square's broken boards are holes, exactly as built (the walking map's blocks are a pixel or three short of some).
+        // Walk pass 2: a pixel in from the south and east edges, where the walking map's own block has the same edge, so the
+        // walk grid's 2 px cell on that edge isn't filled twice (the 2D walk's edge stays where the 2D game has it)
+        for (const h of HOLES) K.addBlock(W3D.rectPoly([h[0], h[1], h[2] - 1, h[3] - 1]));
       }
       BOX.dispose();
     },

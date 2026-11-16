@@ -76,7 +76,8 @@
     [1360, 290, 2.3, 1.0, 4.0, -0.35, null], [1097, 308, 2.2, 0.95, 3.8, 0.05, null], [1256, 336, 2.6, 1.0, 4.2, -0.1, 'sun']];
 
   // ---- the ruin: walls [from, to, height (m), thickness (m)], the arch, the sun pillar, the outer pillar ----
-  const ARCH = { x0: 384, x1: 512, y: 659, open: [422, 478], t: 1.3, h: 4.4, oh: 3.3 };
+  // (walk pass 2: its opening two pixels wider each side, 420 to 480, as wide as the 2D walk through it)
+  const ARCH = { x0: 384, x1: 512, y: 659, open: [420, 480], t: 1.3, h: 4.4, oh: 3.3 };
   const RUIN = [
     [[300, 662], [384, 662], 2.2, 0.9], [[262, 668], [300, 664], 1.3, 0.9],                    // west of the arch (the west room's south wall)
     [[340, 646], [336, 528], 2.6, 0.9],                                                       // the west return, north of the arch
@@ -124,10 +125,12 @@
 
   // ---- the painting's boulders [x, y, size], its bare twisted trees [x, y, size, seed, lean x, lean z], its own firs and the
   // giants' kin past it [x, y, size, kind, seed] ----
+  // (walk pass 2: the boulder north-east of the giants a few pixels east and a little smaller, off the 2D walk's edge; the small
+  // one that stood on the cobbled path in the south-east, where the painting has no boulder, moved to the ferns at its south edge)
   const ROCKS = [
-    [886, 410, 1.5], [924, 466, 1.0], [790, 428, 0.7], [1122, 40, 0.7], [1320, 130, 1.1], [1210, 472, 0.8], [1450, 486, 1.2], [460, 316, 1.3], [430, 360, 0.8],
+    [886, 410, 1.5], [924, 466, 1.0], [790, 428, 0.7], [1122, 40, 0.7], [1326, 130, 1.05], [1210, 472, 0.8], [1450, 486, 1.2], [460, 316, 1.3], [430, 360, 0.8],
     [500, 350, 0.6], [244, 340, 1.1], [316, 360, 0.7], [690, 360, 0.6], [1055, 805, 1.6], [1035, 975, 1.4], [1250, 830, 0.9], [176, 690, 0.9], [120, 870, 1.3],
-    [760, 640, 0.8], [650, 905, 1.2], [818, 590, 0.7], [1404, 610, 0.6], [1500, 860, 1.1],
+    [760, 640, 0.8], [650, 905, 1.2], [818, 590, 0.7], [1404, 656, 0.6], [1500, 860, 1.1],
   ];
   const BARE = [[64, 780, 2.0, 1, 0.15, -0.1], [905, 985, 2.2, 2, -0.1, -0.2], [1478, 186, 1.9, 3, -0.2, 0.1], [190, 40, 1.6, 4, 0.1, 0.1], [1420, 760, 1.6, 5, 0, -0.2],
     [740, 840, 1.5, 6, 0.1, 0], [-200, 700, 1.8, 7, 0, 0], [2000, 700, 1.7, 8, -0.4, 0.05], [2420, 120, 1.5, 9, -0.35, 0], [2550, 1100, 1.6, 10, -0.4, 0.1],
