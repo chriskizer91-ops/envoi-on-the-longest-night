@@ -40,7 +40,7 @@ Draw the walk and block areas over the painting before placing anything.
   things built in `extra(K)`, `groundPatches: [{ poly, kind: 'dirt' | 'cob' | 'grass' | 'pave' }]` (lay earth, cobbles, grass
   or paving over part of the ground, under the walk too), `noRocks: [[x0, y0, x1, y1]]` (no shore boulders there), jetties
   with `posts: false`, a roof of its own texture with `roof: { mat: '<name>' }` and
-  `extraMats: { '<name>': { tex: '<texture id>', rep, tint, side: 'double' } }` (thatch, another bark; leave out `tex` for a plain colour, and `emis`, `lit`, `glow`, `spec`, `cut: false` for things that glow or shouldn't thin away near Io), steps that run any
+  `K.far(x, z)` (metres) gives a builder for that spot's 22 m patch: build rocks, walls and landmarks out in a wide place there instead of in `K.B`, and they aren't drawn past the fog (same materials and solids). `extraMats: { '<name>': { tex: '<texture id>', rep, tint, side: 'double' } }` (thatch, another bark; leave out `tex` for a plain colour, and `emis`, `lit`, `glow`, `spec`, `cut: false` for things that glow or shouldn't thin away near Io), steps that run any
   way (`down: 's' | 'n' | 'e' | 'w'`, `mat`, `tops: [...]` for each tread's height; otherwise each tread stands as high as the ground under its high edge and fills down to the ground, so a steep slope never pokes through; `cheeks: [true, false]` leaves out the south or east cheek, `[false, true]` the north or west), dormers with `dark: true`, and `startYaw`
   (which way the camera first looks: 0 is north, as the painting; turn by radians).
 - Each texture written out in full with double quotes, as in `places/wickhollow.js` (the offline build only packs
