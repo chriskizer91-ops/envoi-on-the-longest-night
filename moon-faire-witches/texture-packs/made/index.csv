@@ -1,0 +1,8 @@
+file,label,kind,round,zip,card,place,width,height,sha256,note
+shared_bark_oak.png,Old oak bark,"Material, square",1,Envoi-Round1-Part-01,Old oak bark,cottage,1254,1254,e629b15ecee92407250c165d9140f26027116a1a416de34d28b4e539cc86aebd,
+shared_boardwalk_planks.png,Pier planks,"Ground, square",1,Envoi-Round1-Part-01,Pier planks,jetty,1254,1254,a0a10f25bc924d26a1a23e62c17b546eae3c7ad82f5447446f0c05f0593e23cd,
+shared_water_dark.png,Dark lake water,"Material, square",1,Envoi-Round1-Part-01,Dark lake water,jetty,1254,1254,159034b94c66d2907d0af02eb3b0e6ab4ee364544c0be405fc66a424b9476f7c,
+shared_drystone.png,Rounded stone wall,"Material, square",1,Envoi-Round1-Part-01,Rounded stone wall,jetty,1254,1254,bf93db3fd27f8bd07c19e0f63b0fdfd31827ffc4e366f6016e9f44d50acfa08c,"repeats left to right only, as its card asks (top row at the top, foot at the bottom)"
+shared_awning_stripes.png,Striped awning cloth,"Material, square",1,Envoi-Round1-Part-01,Striped awning cloth,jetty,1254,1254,836f9de6687262ff92df679aaf63a068b0778ff23dc6705e4a5bfa2fd02b6c66,
+shared_dirt_track.png,Earth road,"Ground, square",1,Envoi-Round1-Part-01,Earth road,thornwood,1254,1254,4cd3037ae1623dab1454af5e9e55a4f1822eaf72b659796965149c668001380f,
+shared_water_river.png,Stream water,"Material, square",1,Envoi-Round1-Part-01,Stream water,thornwood,1254,1254,6ec842328b5a08648a77b7beabe78266f689dab6f8a38a38a37d3eb677c6fe5b,
