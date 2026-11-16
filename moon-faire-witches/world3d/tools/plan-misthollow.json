@@ -1,0 +1,318 @@
+[
+ {
+  "name": "top-3d",
+  "top": true
+ },
+ {
+  "name": "top-with-painting",
+  "guide": true
+ },
+ {
+  "name": "walkable",
+  "walkmap": true
+ },
+ {
+  "name": "overview",
+  "io": [
+   768,
+   760,
+   3.14
+  ],
+  "cam": [
+   0,
+   0.95,
+   34
+  ]
+ },
+ {
+  "name": "the-street-to-the-moonwell",
+  "io": [
+   765,
+   560,
+   3.14
+  ],
+  "cam": [
+   0,
+   null
+  ]
+ },
+ {
+  "name": "the-chapel",
+  "io": [
+   590,
+   338,
+   3.14
+  ],
+  "cam": [
+   0,
+   null
+  ]
+ },
+ {
+  "name": "the-lantern-house",
+  "io": [
+   1000,
+   672,
+   3.14
+  ],
+  "cam": [
+   0,
+   null
+  ]
+ },
+ {
+  "name": "sorrels-shop",
+  "io": [
+   470,
+   640,
+   3.14
+  ],
+  "cam": [
+   0,
+   null
+  ]
+ },
+ {
+  "name": "the-great-stair-from-below",
+  "io": [
+   768,
+   900,
+   3.14
+  ],
+  "cam": [
+   0,
+   0.35
+  ]
+ },
+ {
+  "name": "the-balcony-bridge-from-the-landing",
+  "io": [
+   262,
+   238,
+   -1.57
+  ],
+  "cam": [
+   1.57,
+   null
+  ]
+ },
+ {
+  "name": "the-stair-to-the-keep",
+  "io": [
+   319,
+   200,
+   3.14
+  ],
+  "cam": [
+   0,
+   null
+  ]
+ },
+ {
+  "name": "west-over-the-cliffs",
+  "io": [
+   262,
+   380,
+   -0.785
+  ],
+  "cam": [
+   2.4,
+   0.35
+  ]
+ },
+ {
+  "name": "pocket-the-iron-gate",
+  "io": [
+   312,
+   940,
+   -2.36
+  ],
+  "cam": [
+   0.785,
+   null
+  ]
+ },
+ {
+  "name": "pocket-the-hollow",
+  "io": [
+   332,
+   740,
+   3.14
+  ],
+  "cam": [
+   0,
+   null
+  ]
+ },
+ {
+  "name": "pocket-behind-the-east-pine",
+  "io": [
+   1150,
+   740,
+   1.57
+  ],
+  "cam": [
+   -1.57,
+   null
+  ]
+ },
+ {
+  "name": "the-east-terrace",
+  "io": [
+   1150,
+   380,
+   3.14
+  ],
+  "cam": [
+   0,
+   null
+  ]
+ },
+ {
+  "name": "the-castle-stair",
+  "io": [
+   1137,
+   296,
+   3.14
+  ],
+  "cam": [
+   0,
+   0.45
+  ]
+ },
+ {
+  "name": "south-over-the-mist",
+  "io": [
+   768,
+   955,
+   0
+  ],
+  "cam": [
+   3.14,
+   0.3
+  ]
+ },
+ {
+  "name": "walk-1-start",
+  "io": [
+   768,
+   950,
+   3.14
+  ],
+  "cam": [
+   0,
+   null
+  ]
+ },
+ {
+  "name": "walk-2-the-lower-square",
+  "to": [
+   768,
+   820
+  ]
+ },
+ {
+  "name": "walk-3-up-the-great-stair",
+  "to": [
+   768,
+   706
+  ]
+ },
+ {
+  "name": "walk-4-the-upper-square",
+  "to": [
+   768,
+   640
+  ]
+ },
+ {
+  "name": "walk-5-to-sorrels-shop",
+  "to": [
+   470,
+   632
+  ]
+ },
+ {
+  "name": "walk-6-past-the-bench",
+  "to": [
+   340,
+   648
+  ]
+ },
+ {
+  "name": "walk-7-to-the-west-stairs",
+  "to": [
+   268,
+   604
+  ]
+ },
+ {
+  "name": "walk-8-up-the-first-flight",
+  "to": [
+   266,
+   506
+  ]
+ },
+ {
+  "name": "walk-9-the-snowy-way",
+  "to": [
+   292,
+   400
+  ]
+ },
+ {
+  "name": "walk-10-the-second-flight",
+  "to": [
+   284,
+   300
+  ]
+ },
+ {
+  "name": "walk-11-the-lit-landing",
+  "to": [
+   268,
+   236
+  ]
+ },
+ {
+  "name": "walk-12-on-the-balcony-bridge",
+  "to": [
+   170,
+   238
+  ]
+ },
+ {
+  "name": "walk-13-past-the-bridges-end",
+  "to": [
+   76,
+   236
+  ]
+ },
+ {
+  "name": "walk-14-up-behind-the-pines",
+  "to": [
+   80,
+   160
+  ]
+ },
+ {
+  "name": "walk-15-the-cowl",
+  "to": [
+   90,
+   110
+  ]
+ },
+ {
+  "name": "the-cowls-shelf",
+  "io": [
+   120,
+   128,
+   -1.57
+  ],
+  "cam": [
+   1.1,
+   0.85,
+   11
+  ]
+ }
+]
