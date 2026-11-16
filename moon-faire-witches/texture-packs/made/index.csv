@@ -76,3 +76,8 @@ eldergrove_ruin_stone.png,Ruin stonework,"Material, square",2,Envoi-Round2-Part-
 ember_bridge_stone.png,Bridge stonework,"Material, square",2,Envoi-Round2-Part-04,Bridge stonework,ember-line-road,1254,1254,4fb0844768e5d991d2b6b6b87cd1438469a41783b4464b62c04787e50648f53d,
 camp_tent_canvas.png,Tent canvas,"Material, square",2,Envoi-Round2-Part-04,Tent canvas,warm-roads-camp,1254,1254,98db3a2769bcca13e47caa26a72dd96b0e5341d9283346b6f76e78b13bbf51ae,
 moor_road_flags.png,Broken flagstone road,"Ground, square",2,Envoi-Round2-Part-04,Broken flagstone road,cold-moor,1254,1254,65abc318abbc743090e271f4e79f2e28f0f66278793f48f1f8ecd8247a4874c0,
+frozen_earth_path.png,Frozen earth path,"Ground, square",2,Envoi-Round2-Part-05,Frozen earth path,cold-moor,1254,1254,04aa11a19ea76f04e9bcccdcd0391db870c0a31a8b31cd947d144506cec818f7,
+moor_heather_frost.png,Frosted moor heather,"Ground, square",2,Envoi-Round2-Part-05,Frosted moor heather,cold-moor,1254,1254,8a8352b3f5d80c4cb06018241799f5ed487e4253697eaaecfd01edb6e671c44b,
+moor_bracken_heather.png,Dead bracken and heather,"Ground, square",2,Envoi-Round2-Part-05,Dead bracken and heather,cold-moor,1254,1254,af63dba09092ea110542a722280396571cf09c7679ed0046d657771897de9147,
+road_cobbles_snow.png,Snow-dusted cobbled road,"Ground, square",2,Envoi-Round2-Part-05,Snow-dusted cobbled road,frostmere-shore,1254,1254,1704a38c6963cf6abbcbce2455ba38df2cc816323792c07ff031ff5ffe0d7d4e,a visible line left to right where it repeats
+lake_ice_snowcrust.png,Snow-crusted lake ice,"Ground, square",2,Envoi-Round2-Part-05,Snow-crusted lake ice,frostmere-shore,1254,1254,4c64691c81261f84bc35d83b209b7e1fd9171a08040642dab4f3e968ac3add70,
