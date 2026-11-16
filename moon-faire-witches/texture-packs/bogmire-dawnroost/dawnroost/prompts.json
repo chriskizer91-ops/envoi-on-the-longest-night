@@ -1,0 +1,282 @@
+[
+ {
+  "id": "dawn_grass_flowers",
+  "file": "dawn_grass_flowers.png",
+  "shape": "Square",
+  "rules": "ground",
+  "refs": [
+   "dawnroost/dawn_grass_flowers.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Night grass with tiny wildflowers",
+  "subject": "Subject: rough hillside grass at night, about 3 m across, seen from straight above. Dark olive-green grass in soft tufts, evenly speckled with tiny white, pale blue and a few pink wildflowers, small dark gaps of earth between the tufts. No stones, no bushes. Night colours, painted with even light.",
+  "use": "The grassy hillside round Dawnroost's walls and the slopes below the living node.",
+  "shared": false
+ },
+ {
+  "id": "stable_straw",
+  "file": "stable_straw.png",
+  "shape": "Square",
+  "rules": "ground",
+  "refs": [
+   "dawnroost/stable_straw.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Straw on a stable floor",
+  "subject": "Subject: loose straw spread over a stable floor, about 2 m across, seen from straight above. A thick, messy, even layer of dry golden-yellow and pale ochre straw stalks lying every which way, a few darker stalks and bits of chaff. Painted with even light.",
+  "use": "The floors of Dawnroost's stable stalls.",
+  "shared": false
+ },
+ {
+  "id": "shared_wall_castle",
+  "file": "shared_wall_castle.png",
+  "shape": "Square",
+  "rules": "material",
+  "refs": [
+   "dawnroost/shared_wall_castle.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Grey castle wall blocks",
+  "subject": "Subject: the face of a castle curtain wall, seen straight on: about 3 m of wall, 3 m high. Squared grey stone blocks of slightly different sizes laid in neat courses, their edges a little rounded and worn, cool blue-grey in the moonlight with the odd warmer or darker stone, thin pale mortar lines, a little moss low in a few joints. No crenellations, no windows, no plants.",
+  "use": "The walls, towers and gates of Dawnroost and the walls of its living node; fortress walls elsewhere.",
+  "shared": true
+ },
+ {
+  "id": "warden_hall_front",
+  "file": "warden_hall_front.png",
+  "shape": "Wide (3:2)",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/warden_hall_front.jpg",
+   "dawnroost.png"
+  ],
+  "title": "The Warden hall",
+  "subject": "Subject: the long Warden hall, seen flat from the front. Show the rough grey-brown stone walls, the steep red-brown tile roof with five small dormer windows (warm light in them) and four square stone chimneys on the ridge, the arched plank door in a stone surround with a lit lantern either side, a lit window at each end, two long blue banners with a gold sun hung either side of the door, and barrels by the door. The whole front is in the picture.",
+  "use": "The Warden hall in Dawnroost, where the game is saved.",
+  "shared": false
+ },
+ {
+  "id": "north_gate",
+  "file": "north_gate.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/north_gate.jpg",
+   "dawnroost.png"
+  ],
+  "title": "The north gate",
+  "subject": "Subject: a castle gatehouse seen flat from the front: two square towers of grey dressed stone with crenellated tops, joined by a wall with a wide round arch through it, the arch's stones picked out, an iron lantern with warm glass on each side of the arch, and the open dark passage under it. The whole gate is in the picture.",
+  "use": "Dawnroost's north gate, up to the living node.",
+  "shared": false
+ },
+ {
+  "id": "main_gate",
+  "file": "main_gate.png",
+  "shape": "Wide (3:2)",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/main_gate.jpg",
+   "dawnroost.png"
+  ],
+  "title": "The main gate",
+  "subject": "Subject: a castle's main gate seen flat from the front: two square towers of grey dressed stone with a lit iron lantern on top of each and another on each face, a pair of dark iron-bound doors standing open between them, and a section of crenellated wall at the left with a long blue banner bearing a gold sun. The whole gate is in the picture.",
+  "use": "Dawnroost's main gate, out to the forest road.",
+  "shared": false
+ },
+ {
+  "id": "stables_front",
+  "file": "stables_front.png",
+  "shape": "Wide (3:2)",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/stables_front.jpg",
+   "dawnroost.png"
+  ],
+  "title": "The stables",
+  "subject": "Subject: a stable block seen flat from the front: three wide round stone arches between square stone piers, each opening into a stall with golden straw and a hay rack, a lit lantern hanging under each arch, low wooden stall gates, timber posts, and the red-brown tile roof above. The whole front is in the picture.",
+  "use": "Dawnroost's stables.",
+  "shared": false
+ },
+ {
+  "id": "round_tower",
+  "file": "round_tower.png",
+  "shape": "Tall (2:3)",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/round_tower.jpg",
+   "dawnroost.png"
+  ],
+  "title": "The round tower",
+  "subject": "Subject: a tall round castle tower of grey dressed stone, seen flat from the side: courses of squared blocks, a crenellated top, two narrow slit windows with warm light, the stones cool blue-grey in the moonlight. The whole tower is in the picture.",
+  "use": "The round tower in Dawnroost's north wall.",
+  "shared": false
+ },
+ {
+  "id": "cottage_front",
+  "file": "cottage_front.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/cottage_front.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Stone cottage",
+  "subject": "Subject: a small stone cottage seen flat from the front: rough grey-brown stone walls, a steep red-brown tile roof with a little gable over the door, an arched plank door, a small window glowing warm, a lantern by the door, and flowers growing at its foot. The whole cottage is in the picture.",
+  "use": "The cottage in Dawnroost.",
+  "shared": false
+ },
+ {
+  "id": "forge_front",
+  "file": "forge_front.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/forge_front.jpg",
+   "dawnroost.png"
+  ],
+  "title": "The forge",
+  "subject": "Subject: an open-fronted village forge seen flat from the front: a red-brown tile roof held up on thick timber posts, a stone hearth with a tall stone chimney at the back, tools hanging on the back wall, two anvils on wooden blocks in front, a grindstone at the right, and a lit lantern. The whole forge is in the picture.",
+  "use": "Brann's forge in Dawnroost.",
+  "shared": false
+ },
+ {
+  "id": "yard_well",
+  "file": "yard_well.png",
+  "shape": "Tall (2:3)",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/yard_well.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Roofed yard well",
+  "subject": "Subject: a round village well seen flat from the front: a low round wall of grey stones, two wooden posts holding a small pitched roof of dark wooden shingles, a windlass with a rope between the posts, and a soft pale blue-white glow rising from the water inside. The whole well is in the picture.",
+  "use": "The well in Dawnroost's yard.",
+  "shared": false
+ },
+ {
+  "id": "banner_sun_blue",
+  "file": "banner_sun_blue.png",
+  "shape": "Tall (2:3)",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/banner_sun_blue.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Blue Warden banner",
+  "subject": "Subject: a long hanging banner seen flat from the front: deep blue cloth with a thin gold border, a round gold sun with straight rays in its upper half, ending in a point, hung from a short dark rod with gold finials. The whole banner is in the picture.",
+  "use": "The Warden banners on Dawnroost's walls, gates and hall.",
+  "shared": false
+ },
+ {
+  "id": "lamp_post_iron",
+  "file": "lamp_post_iron.png",
+  "shape": "Tall (2:3)",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/lamp_post_iron.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Iron lamp post",
+  "subject": "Subject: a street lamp seen flat from the side: a slim black iron post with a flared foot and a little collar, topped by a lantern with a pointed cap and warm glowing glass. The whole lamp post is in the picture.",
+  "use": "The lamp posts in Dawnroost's yards and on its dock.",
+  "shared": false
+ },
+ {
+  "id": "wall_lantern",
+  "file": "wall_lantern.png",
+  "shape": "Tall (2:3)",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/wall_lantern.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Wall lantern on a bracket",
+  "subject": "Subject: an iron wall lantern seen flat from the side: a dark iron lantern with a pointed cap and warm glowing glass, held out from the wall on a short curled bracket, with a small round back plate. The whole lantern is in the picture.",
+  "use": "The lanterns on Dawnroost's gate pillars and towers.",
+  "shared": false
+ },
+ {
+  "id": "dock_crane",
+  "file": "dock_crane.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/dock_crane.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Wooden dock crane",
+  "subject": "Subject: a wooden dock crane seen flat from the side: a thick upright post on a square base, a long arm reaching out at an angle with a pulley at its tip, a rope hanging from it to a big iron hook, and a winding drum with a handle at the post. The whole crane is in the picture.",
+  "use": "The crane on Dawnroost's dock, where the Magpie moors.",
+  "shared": false
+ },
+ {
+  "id": "weapon_rack",
+  "file": "weapon_rack.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/weapon_rack.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Weapon rack",
+  "subject": "Subject: a wooden weapon rack seen flat from the front: two posts and two rails, holding a row of spears and swords standing upright, their steel catching cold light. The whole rack is in the picture.",
+  "use": "The weapon racks in Dawnroost's training yard.",
+  "shared": false
+ },
+ {
+  "id": "rail_fence",
+  "file": "rail_fence.png",
+  "shape": "Wide (3:2)",
+  "rules": "skin",
+  "refs": [
+   "dawnroost/rail_fence.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Post-and-rail fence",
+  "subject": "Subject: one section of wooden fence seen flat from the side: three thick square posts with rounded tops and two plain rails between them, dark weathered wood. The whole section is in the picture.",
+  "use": "The fences in Dawnroost's yard.",
+  "shared": false
+ },
+ {
+  "id": "pine_dark",
+  "file": "pine_dark.png",
+  "shape": "Tall (2:3)",
+  "rules": "plant",
+  "refs": [
+   "dawnroost/pine_dark.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Dark pine",
+  "subject": "Subject: a young fir tree seen from the side: a narrow cone of dense dark blue-green needled branches in layers, cold moonlit tips, a short dark trunk at the base. The base is a flat line at the bottom.",
+  "use": "The pines round Dawnroost and its node.",
+  "shared": false
+ },
+ {
+  "id": "leafy_tree",
+  "file": "leafy_tree.png",
+  "shape": "Wide (3:2)",
+  "rules": "plant",
+  "refs": [
+   "dawnroost/leafy_tree.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Dark leafy tree",
+  "subject": "Subject: a round-crowned leafy tree at night, seen from the side: a short dark trunk, a full crown of small dark green leaves speckled with tiny pale yellow and white blossoms, moonlit at the top. The base is a flat line at the bottom.",
+  "use": "The leafy trees in and round Dawnroost.",
+  "shared": false
+ },
+ {
+  "id": "flower_bush",
+  "file": "flower_bush.png",
+  "shape": "Wide (3:2)",
+  "rules": "plant",
+  "refs": [
+   "dawnroost/flower_bush.jpg",
+   "dawnroost.png"
+  ],
+  "title": "Flowering bush",
+  "subject": "Subject: a low rounded bush seen from the side, thick with small dark leaves and covered in tiny yellow, white and pink flowers. Night colours. The base is a flat line at the bottom.",
+  "use": "The flower beds in Dawnroost and the living node.",
+  "shared": false
+ }
+]

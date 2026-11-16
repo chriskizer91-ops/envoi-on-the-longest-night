@@ -1,0 +1,72 @@
+[
+  {
+    "id": "bogmire_bank_grass",
+    "file": "bogmire_bank_grass.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "bogmire/bogmire_bank_grass.jpg",
+      "bogmire.png"
+    ],
+    "title": "Fen bank grass",
+    "subject": "Subject: the damp grass of a fen bank, about 3 m across, seen from above. Dark green and blue-green grass with clover, small muddy dark gaps, and a sparse even scatter of tiny pale flowers. Cold misty night colours with a little lavender in the light, but the texture itself evenly lit.",
+    "use": "The grassy banks round Bogmire's water in the fight.",
+    "shared": false
+  },
+  {
+    "id": "bogmire_reeds",
+    "file": "bogmire_reeds.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "bogmire/bogmire_reeds.jpg",
+      "bogmire.png"
+    ],
+    "title": "Reeds with feathery plumes",
+    "subject": "Subject: one clump of tall marsh reeds and rushes, about 1 m across and 1.8 m high: long dark green-grey leaves arching outwards and several stems topped with pale silvery-lavender feathery plumes. Cold night colours.",
+    "use": "Along the edges of the water round the Bogmire fight, many clumps side by side.",
+    "shared": false
+  },
+  {
+    "id": "bogmire_willow",
+    "file": "bogmire_willow.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "bogmire/bogmire_willow.jpg",
+      "bogmire.png"
+    ],
+    "title": "Weeping willow",
+    "subject": "Subject: one old weeping willow, whole, about 10 m high: a leaning dark trunk, branches arching over and long hanging curtains of thin dark green-grey leaves reaching almost to the ground, a few strands of hanging moss. Cold misty night colours.",
+    "use": "Round the edges of the fen in the Bogmire fight.",
+    "shared": false
+  },
+  {
+    "id": "bogmire_dead_snag",
+    "file": "bogmire_dead_snag.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "bogmire/bogmire_dead_snag.jpg",
+      "bogmire.png"
+    ],
+    "title": "Drowned dead stump",
+    "subject": "Subject: one dead drowned tree stump, whole, about 3 m high, its top broken into a jagged point, grey-black weathered wood with splits, a few short broken branch stubs, its foot flaring into roots (the part that stands in water). Cold night colours.",
+    "use": "Standing in the black water round the Bogmire fight, a few of them.",
+    "shared": false
+  },
+  {
+    "id": "bogmire_stilt_hall",
+    "file": "bogmire_stilt_hall.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "bogmire/bogmire_stilt_hall.jpg",
+      "bogmire.png"
+    ],
+    "title": "Bogmire's stilt hall and tower",
+    "subject": "Subject: a tall old timber hall on stilts over a fen, seen flat from the front: dark weathered plank walls, steep stacked gables with dark shingle roofs, several small warm amber windows, a covered porch, and beside it a tall open timber lookout tower with a little roof. The stilts at the bottom stop where the water would be. About 25 m across.",
+    "use": "A far backdrop piece across the water in the Bogmire fight (and a model guide for its houses).",
+    "shared": false
+  }
+]

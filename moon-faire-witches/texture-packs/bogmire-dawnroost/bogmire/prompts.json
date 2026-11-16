@@ -1,0 +1,408 @@
+[
+ {
+  "id": "shared_boardwalk_planks",
+  "file": "shared_boardwalk_planks.png",
+  "shape": "Square",
+  "rules": "ground",
+  "refs": [
+   "bogmire/shared_boardwalk_planks.jpg",
+   "bogmire.png"
+  ],
+  "title": "Boardwalk planks",
+  "subject": "Subject: the plank deck of a boardwalk town built on stilts over a fen, about 3 m across, seen from straight above. Long weathered boards about 25 cm wide, all running the same way (left to right), with thin dark gaps between them; grey-brown wood with a faint mauve tint, worn paler along the grain, small knots, a few dark nail heads where the boards cross the joists, ends of boards staggered so no joint lines up. Night-time colours under moonlight, painted with even light.",
+  "use": "The floor of Bogmire's market square, its boardwalks and docks, and the walks at the fen's heart and the Dawnroost dock.",
+  "shared": true
+ },
+ {
+  "id": "shared_water_dark",
+  "file": "shared_water_dark.png",
+  "shape": "Square",
+  "rules": "ground",
+  "refs": [
+   "bogmire/shared_water_dark.jpg",
+   "bogmire.png"
+  ],
+  "title": "Still black fen water",
+  "subject": "Subject: the still black water of a fen at night, about 4 m across, seen from straight above. Very dark blue-black water, almost without movement, with a few faint, small ripples and tiny pale glints of moonlight scattered evenly across it, and the faintest hint of dark green weed deep below. No lily pads, no reeds, no reflections of objects.",
+  "use": "All the open water round Bogmire's stilts, the fen's heart, and still water anywhere in the game.",
+  "shared": true
+ },
+ {
+  "id": "shared_planks_wall",
+  "file": "shared_planks_wall.png",
+  "shape": "Square",
+  "rules": "material",
+  "refs": [
+   "bogmire/shared_planks_wall.jpg",
+   "bogmire.png"
+  ],
+  "title": "Dark board house wall",
+  "subject": "Subject: the outside wall of a fen cottage, seen straight on: about 2 m of wall, 2 m high. Upright weathered boards about 20 cm wide, dark brown with a cold grey-blue sheen from damp, some boards a little paler or darker than their neighbours, thin dark gaps between them, faint grain and a few nail heads in two horizontal rows where they are fixed to rails behind. No windows, no doors, no beams across the front.",
+  "use": "The walls of Bogmire's houses and the inn, and the houses round the fen's heart.",
+  "shared": true
+ },
+ {
+  "id": "shared_roof_shingle",
+  "file": "shared_roof_shingle.png",
+  "shape": "Square",
+  "rules": "material",
+  "refs": [
+   "bogmire/shared_roof_shingle.jpg",
+   "bogmire.png"
+  ],
+  "title": "Mossy wooden shingle roof",
+  "subject": "Subject: a roof of big split wooden shingles, seen straight on and flat, about 2 m by 2 m of roof. Long rounded-ended shingles laid in overlapping rows, each row covering the top of the one below, the rows running left to right and each shingle offset from the ones above; weathered wood gone dark blue-grey, with tufts and streaks of green moss in the joints. Moonlit night colours, painted with even light.",
+  "use": "The roofs of Bogmire's houses and inn, and the blue-grey roofs round the fen's heart.",
+  "shared": true
+ },
+ {
+  "id": "shared_roof_thatch",
+  "file": "shared_roof_thatch.png",
+  "shape": "Square",
+  "rules": "material",
+  "refs": [
+   "bogmire/shared_roof_thatch.jpg",
+   "bogmire.png"
+  ],
+  "title": "Damp mossy thatch",
+  "subject": "Subject: a thatched roof seen straight on and flat, about 2 m by 2 m. Thick bundles of reed thatch, the stalks all running down the slope (top to bottom), combed but shaggy, dark grey-brown with a cold blue sheen from the damp, with soft patches of green moss here and there, evenly spread. Night colours, painted with even light.",
+  "use": "The thatched roofs in Bogmire, and thatch anywhere in the game.",
+  "shared": true
+ },
+ {
+  "id": "inn_front",
+  "file": "inn_front.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire/inn_front.jpg",
+   "bogmire.png"
+  ],
+  "title": "The Lanternless Inn",
+  "subject": "Subject: the Lanternless Inn, a tall gabled inn on stilts in a fen town, seen flat from the front. Show the dark vertical-board walls, the steep roof of big mossy wooden shingles with a stone chimney, the warm lit windows (one in the gable, two on the first floor, more by the door), the little railed balcony over the porch, the porch roof, the two small lanterns either side of the plank door, and the tables and barrels on the porch. The whole front is in the picture, down to the porch floor; no stilts or water.",
+  "use": "The front of Bogmire's inn, where Tobb keeps a bed.",
+  "shared": false
+ },
+ {
+  "id": "inn_sign",
+  "file": "inn_sign.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire/inn_sign.jpg",
+   "bogmire.png"
+  ],
+  "title": "The inn's hanging sign",
+  "subject": "Subject: the inn's hanging sign, seen flat from the front: a shield-shaped wooden board with a thin darker rim, hung by two short chains from a plain wooden arm. The board is blank weathered wood (no letters, no picture). The arm runs across the top of the picture.",
+  "use": "The sign hanging from its arm by the Lanternless Inn.",
+  "shared": false
+ },
+ {
+  "id": "house_nw_front",
+  "file": "house_nw_front.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire/house_nw_front.jpg",
+   "bogmire.png"
+  ],
+  "title": "Fen cottage with a big shingle roof",
+  "subject": "Subject: a wide fen cottage on stilts, seen flat from the front. Show the dark vertical-board front, the big low roof of mossy blue-grey wooden shingles coming down over it, the stone chimney at the left, a warm lit window and a plank door with a small lantern beside it, a second unlit window, and barrels standing on the plank porch in front. The whole house is in the picture, down to the porch floor; no stilts or water.",
+  "use": "The north-west house in Bogmire, and other houses of the town.",
+  "shared": false
+ },
+ {
+  "id": "house_thatch_front",
+  "file": "house_thatch_front.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire/house_thatch_front.jpg",
+   "bogmire.png"
+  ],
+  "title": "Thatched fen cottage",
+  "subject": "Subject: a long low fen cottage on stilts with a thatched roof, seen flat from the front. Show the dark vertical-board front with three small square windows (two glowing warm, one dark), a plank door in the middle, two small planters with herbs by the door, and the thick mossy thatch roof with its short hip at the left end. The whole house is in the picture, down to its plank porch; no stilts or water.",
+  "use": "The thatched houses in Bogmire.",
+  "shared": false
+ },
+ {
+  "id": "house_ne_front",
+  "file": "house_ne_front.png",
+  "shape": "Tall (2:3)",
+  "rules": "skin",
+  "refs": [
+   "bogmire/house_ne_front.jpg",
+   "bogmire.png"
+  ],
+  "title": "Small fen cabin",
+  "subject": "Subject: a small square fen cabin, seen flat from the front. Show the dark vertical-board walls, the low roof of blue-grey wooden shingles, the tall stone chimney at the right, a plank door, one small window with a wooden frame, and the plank porch in front with a rope railing and two barrels. The whole cabin is in the picture, down to the porch floor.",
+  "use": "The north-east house in Bogmire, and small houses anywhere on the fen.",
+  "shared": false
+ },
+ {
+  "id": "house_moss_front",
+  "file": "house_moss_front.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire/house_moss_front.jpg",
+   "bogmire.png"
+  ],
+  "title": "Fen house with a moss-grown roof",
+  "subject": "Subject: a fen house on stilts with an old roof so grown with moss it looks shaggy, seen flat from the front. Show the dark board front with two warm lit windows, the plank door, a small lantern on the wall, the stone chimney, and the little tables with pots of herbs on the plank porch. The whole house is in the picture, down to the porch floor.",
+  "use": "The house south of Bogmire's square.",
+  "shared": false
+ },
+ {
+  "id": "house_gable_front",
+  "file": "house_gable_front.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire/house_gable_front.jpg",
+   "bogmire.png"
+  ],
+  "title": "Gabled fen house",
+  "subject": "Subject: a narrow two-storey fen house with a steep gable facing us, seen flat from the front. Show the dark vertical-board walls, the steep blue-grey shingle roof, the window in the gable, the plank door, a warm lit window beside it, and two barrels by the door on the plank porch. The whole house is in the picture, down to the porch floor.",
+  "use": "The gabled houses in Bogmire.",
+  "shared": false
+ },
+ {
+  "id": "herb_stall_front",
+  "file": "herb_stall_front.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire/herb_stall_front.jpg",
+   "bogmire.png"
+  ],
+  "title": "Wenna's herb stall",
+  "subject": "Subject: a market herb stall on a plank boardwalk, seen flat from the front. Show the two thin wooden corner posts, the faded blue-green cloth awning with its scalloped yellow-green front edge, the bundles of herbs and little sunflowers hanging under it, the two low wooden tables with potted herbs, jars, a basket of vegetables and a pumpkin, and a small barrel at each end. The whole stall is in the picture.",
+  "use": "Old Wenna's shop stall in Bogmire's square.",
+  "shared": false
+ },
+ {
+  "id": "trader_stall_front",
+  "file": "trader_stall_front.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire/trader_stall_front.jpg",
+   "bogmire.png"
+  ],
+  "title": "The trader's stall",
+  "subject": "Subject: a trader's stall on a plank boardwalk, seen flat from the front. Show the thin wooden corner posts, the faded dusky-mauve cloth awning with a scalloped front edge, two barrels and stacked wooden crates of goods under it, two small wooden tables with bundles and pots, and a barrel and a tub of greens at the right end. The whole stall is in the picture.",
+  "use": "The second stall in Bogmire's square.",
+  "shared": false
+ },
+ {
+  "id": "square_lamp",
+  "file": "square_lamp.png",
+  "shape": "Tall (2:3)",
+  "rules": "skin",
+  "refs": [
+   "bogmire/square_lamp.jpg",
+   "bogmire.png"
+  ],
+  "title": "The square's two-lantern lamp",
+  "subject": "Subject: the lamp in the middle of the market square, seen flat from the front: a dark iron post with two curled arms, a small square lantern with warm glowing glass hanging from each arm and a little finial on top, standing in a big round wooden tub bound with iron hoops and planted with yellow flowers and dark leaves. The whole lamp and tub are in the picture.",
+  "use": "The lamp at the centre of Bogmire's square.",
+  "shared": false
+ },
+ {
+  "id": "notice_board",
+  "file": "notice_board.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire/notice_board.jpg",
+   "bogmire.png"
+  ],
+  "title": "Notice board",
+  "subject": "Subject: a small wooden notice board on two short legs, seen flat from the front: a dark wooden frame with a little roof-like top rail, four pale paper notices pinned to the board (blank, with only faint grey scribble lines, no readable letters). The whole board and its legs are in the picture.",
+  "use": "The notice board by the lamp in Bogmire's square.",
+  "shared": false
+ },
+ {
+  "id": "covered_cart",
+  "file": "covered_cart.png",
+  "shape": "Wide (3:2)",
+  "rules": "skin",
+  "refs": [
+   "bogmire/covered_cart.jpg",
+   "bogmire.png"
+  ],
+  "title": "Covered handcart",
+  "subject": "Subject: a low wooden handcart seen flat from the side, its load heaped under a pale grey-blue canvas cloth tied down with rope, a small wooden wheel, two short handles at one end. The whole cart is in the picture.",
+  "use": "The two covered handcarts at the south edge of Bogmire's square.",
+  "shared": false
+ },
+ {
+  "id": "lantern_post",
+  "file": "lantern_post.png",
+  "shape": "Tall (2:3)",
+  "rules": "skin",
+  "refs": [
+   "bogmire/lantern_post.jpg",
+   "bogmire.png"
+  ],
+  "title": "Lantern on a boardwalk post",
+  "subject": "Subject: a lantern standing on top of a round wooden boardwalk post, seen flat from the side: a small dark iron lantern with a pointed cap and warm glowing glass, on a thick round post of dark weathered wood with a band of coiled rope round it near the top. The whole lantern and post are in the picture.",
+  "use": "The six lit lanterns round Bogmire's boardwalks and docks.",
+  "shared": false
+ },
+ {
+  "id": "dark_lantern",
+  "file": "dark_lantern.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire/dark_lantern.jpg",
+   "bogmire.png"
+  ],
+  "title": "Unlit lantern",
+  "subject": "Subject: a tall iron floor lantern seen flat from the front, standing on its own small foot: dark iron frame, a pointed cap with a ring on top, its glass panes dark and empty (the light has gone out), a faint cold blue sheen of moonlight on the iron. The whole lantern is in the picture.",
+  "use": "The dark lanterns at the edge of Bogmire's square, whose light the great wraith has taken.",
+  "shared": false
+ },
+ {
+  "id": "mooring_crane",
+  "file": "mooring_crane.png",
+  "shape": "Wide (3:2)",
+  "rules": "skin",
+  "refs": [
+   "bogmire/mooring_crane.jpg",
+   "bogmire.png"
+  ],
+  "title": "Mooring crane with hanging lantern",
+  "subject": "Subject: a simple wooden mooring crane seen flat from the side: two tall round posts of dark wood, a long beam across their tops with an angled brace, rope lashings at the joints, and a small lantern with warm glowing glass hanging from the beam on a short chain. The whole crane is in the picture.",
+  "use": "The crane at the landing where the Thornwood road comes into Bogmire.",
+  "shared": false
+ },
+ {
+  "id": "rope_railing",
+  "file": "rope_railing.png",
+  "shape": "Wide (3:2)",
+  "rules": "skin",
+  "refs": [
+   "bogmire/rope_railing.jpg",
+   "bogmire.png"
+  ],
+  "title": "Rope railing section",
+  "subject": "Subject: one section of boardwalk railing seen flat from the side: four short thick round posts of dark weathered wood with flat tops, a thick hemp rope slung between them in sagging loops, the rope tied round each post. The whole section is in the picture, the posts standing on an invisible floor line.",
+  "use": "The railings along all of Bogmire's boardwalks and docks, and at the fen's heart.",
+  "shared": false
+ },
+ {
+  "id": "stilt_frame",
+  "file": "stilt_frame.png",
+  "shape": "Wide (3:2)",
+  "rules": "skin",
+  "refs": [
+   "bogmire/stilt_frame.jpg",
+   "bogmire.png"
+  ],
+  "title": "Stilts under a house",
+  "subject": "Subject: the stilt frame under a fen house, seen flat from the side: a row of thick round posts of dark wet wood under a plank deck edge, X-shaped cross braces between some of them, rope bands round the posts, green slime and weed near their feet, and a wooden ladder going down. The posts end at the bottom edge of the picture; no water.",
+  "use": "The stilts under every house and boardwalk in Bogmire and at the fen's heart.",
+  "shared": false
+ },
+ {
+  "id": "bog_reeds",
+  "file": "bog_reeds.png",
+  "shape": "Square",
+  "rules": "plant",
+  "refs": [
+   "bogmire/bog_reeds.jpg",
+   "bogmire.png"
+  ],
+  "title": "Clump of fen reeds",
+  "subject": "Subject: a clump of tall thin reeds growing out of fen water, seen from the side: dozens of long narrow blades, dark green fading to grey-green at the tips, some bent over, a few seed-heads. Night colours. The clump's base is a flat line at the bottom.",
+  "use": "The reed beds round Bogmire and on the fen.",
+  "shared": false
+ },
+ {
+  "id": "bog_lilypads",
+  "file": "bog_lilypads.png",
+  "shape": "Wide (3:2)",
+  "rules": "roof",
+  "refs": [
+   "bogmire/bog_lilypads.jpg",
+   "bogmire.png"
+  ],
+  "title": "Lily pads (seen from above)",
+  "subject": "Subject: a loose cluster of seven round lily pads floating flat, seen from straight above: dark green pads each with a notch, faint veins and a lighter rim, two with a small closed pink-red flower in the middle. The cluster fills the picture loosely.",
+  "use": "The lily pads on Bogmire's water and at the fen's heart.",
+  "shared": false
+ },
+ {
+  "id": "bog_dead_tree",
+  "file": "bog_dead_tree.png",
+  "shape": "Tall (2:3)",
+  "rules": "plant",
+  "refs": [
+   "bogmire/bog_dead_tree.jpg",
+   "bogmire.png"
+  ],
+  "title": "Dead fen tree",
+  "subject": "Subject: a dead tree standing in a fen, seen from the side: a bare, cracked grey-black trunk splitting into a few twisted broken branches, no leaves, a little moss low on the trunk, its roots spreading at the base. The base is a flat line at the bottom.",
+  "use": "The dead trees standing in the water round Bogmire.",
+  "shared": false
+ },
+ {
+  "id": "bog_snag",
+  "file": "bog_snag.png",
+  "shape": "Tall (2:3)",
+  "rules": "plant",
+  "refs": [
+   "bogmire/bog_snag.jpg",
+   "bogmire.png"
+  ],
+  "title": "Broken stump in the water",
+  "subject": "Subject: a broken dead tree stump sticking up out of fen water, seen from the side: a jagged splintered top, cracked grey-black bark, a few stubs of branches, a little moss. The base is a flat line at the bottom.",
+  "use": "The snags in the water round Bogmire.",
+  "shared": false
+ },
+ {
+  "id": "bog_tree_dark",
+  "file": "bog_tree_dark.png",
+  "shape": "Square",
+  "rules": "plant",
+  "refs": [
+   "bogmire/bog_tree_dark.jpg",
+   "bogmire.png"
+  ],
+  "title": "Dark fen tree",
+  "subject": "Subject: a broad, low-crowned tree growing out of a fen at night, seen from the side: a thick dark trunk, a dense round crown of small leaves in very dark blue-green, picked out with cold blue moonlit highlights on top. The base is a flat line at the bottom.",
+  "use": "The dark trees at the edges of Bogmire.",
+  "shared": false
+ },
+ {
+  "id": "bog_tree_bare",
+  "file": "bog_tree_bare.png",
+  "shape": "Tall (2:3)",
+  "rules": "plant",
+  "refs": [
+   "bogmire/bog_tree_bare.jpg",
+   "bogmire.png"
+  ],
+  "title": "Bare spreading fen tree",
+  "subject": "Subject: a gaunt fen tree seen from the side: a dark twisted trunk and long spreading bare branches with only a few clumps of dark leaves, in night colours with faint blue moonlit edges. The base is a flat line at the bottom.",
+  "use": "The bare trees at the edges of Bogmire.",
+  "shared": false
+ },
+ {
+  "id": "bog_bush",
+  "file": "bog_bush.png",
+  "shape": "Square",
+  "rules": "plant",
+  "refs": [
+   "bogmire/bog_bush.jpg",
+   "bogmire.png"
+  ],
+  "title": "Dark tussock bush",
+  "subject": "Subject: a low, round, dense bush growing on a tussock in a fen, seen from the side: small dark blue-green leaves with pale moonlit tips. The base is a flat line at the bottom.",
+  "use": "The bushes on tussocks in Bogmire's water.",
+  "shared": false
+ }
+]

@@ -1,0 +1,170 @@
+[
+  {
+    "id": "shared_dirt_track",
+    "file": "shared_dirt_track.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "thornwood/shared_dirt_track.jpg",
+      "thornwood.png"
+    ],
+    "title": "Earth road",
+    "subject": "Subject: a packed earth road seen from above, about 2.5 m across. Dusty pinkish-tan and warm brown earth with flat worn stones half sunk in it, a few small pebbles and the odd tuft of olive moss in the cracks, spread evenly. No ruts and no puddles. At night, under cool blue moonlight.",
+    "use": "The road through the Thornwood; earth tracks and worn edges of paths elsewhere.",
+    "shared": true
+  },
+  {
+    "id": "thorn_moss_ground",
+    "file": "thorn_moss_ground.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "thornwood/thorn_moss_ground.jpg",
+      "thornwood.png"
+    ],
+    "title": "Mossy clearing",
+    "subject": "Subject: the mossy ground of a woodland clearing seen from above, about 2 m across: low olive and dark green moss and short grass, small grey pebbles and specks of tiny white and pale blue flowers, all spread evenly. At night, under cool blue moonlight.",
+    "use": "The clearing round the moon stone and the road's mossy edges.",
+    "shared": false
+  },
+  {
+    "id": "thorn_bramble_ground",
+    "file": "thorn_bramble_ground.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "thornwood/thorn_bramble_ground.jpg",
+      "thornwood.png"
+    ],
+    "title": "Bramble undergrowth",
+    "subject": "Subject: dense thorny undergrowth seen from above, about 2 m across: a tangle of dark bramble stems with small hooked thorns, small dark teal leaves and clusters of little dark red berries, deep shadow between, spread evenly with no big branches. At night, cold and dark under the moon.",
+    "use": "The ground under the thorn trees, off the road, where no one walks.",
+    "shared": false
+  },
+  {
+    "id": "shared_water_river",
+    "file": "shared_water_river.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "thornwood/shared_water_river.jpg",
+      "thornwood.png"
+    ],
+    "title": "Stream water",
+    "subject": "Subject: a shallow, fast stream seen from straight above, about 2 m across. Dark navy water with small ripples and many small bright white-blue flecks of broken moonlight, flowing from top to bottom, spread evenly. No rocks, no foam patches, no lily pads.",
+    "use": "The Thornwood's stream, the river in the square and the cottage's stream; any flowing water.",
+    "shared": true
+  },
+  {
+    "id": "thorn_rock_mossy",
+    "file": "thorn_rock_mossy.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "thornwood/thorn_rock_mossy.jpg",
+      "thornwood.png"
+    ],
+    "title": "Mossy boulder",
+    "subject": "Subject: the surface of a big old boulder, seen straight on, about 1 m across: rough cool grey stone with violet and blue tints, small cracks and pits, patches of olive and mustard-yellow moss and lichen. No edges of the rock. At night, under cool blue moonlight.",
+    "use": "The boulders along the stream and in the clearing.",
+    "shared": false
+  },
+  {
+    "id": "thorn_bark_black",
+    "file": "thorn_bark_black.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "thornwood/thorn_bark_black.jpg",
+      "thornwood.png"
+    ],
+    "title": "Thorn tree bark",
+    "subject": "Subject: the bark of a dead thorn tree, seen straight on and flat, about 0.8 m across: dark charcoal-brown, twisting fibrous ridges running up and down with grey-violet highlights, deep black cracks and a few short sharp thorns. At night, under cool blue moonlight.",
+    "use": "The trunks and branches of the dead thorn trees.",
+    "shared": false
+  },
+  {
+    "id": "thorn_bridge_side",
+    "file": "thorn_bridge_side.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "thornwood/thorn_bridge_side.jpg",
+      "thornwood.png"
+    ],
+    "title": "Old bridge, side",
+    "subject": "Subject: an old stone bridge seen flat from the side, as from the stream. One round arch of wedge-shaped grey stones, a low stone parapet with square stone posts at both ends, and a black iron lantern on a post in the middle of the parapet; moss and small ferns in the joints. The whole bridge is in the picture; the opening under the arch is plain mid-grey.",
+    "use": "The sides of the old bridge where the road enters the Thornwood.",
+    "shared": false
+  },
+  {
+    "id": "thorn_moon_stone",
+    "file": "thorn_moon_stone.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "thornwood/thorn_moon_stone.jpg",
+      "thornwood.png"
+    ],
+    "title": "The moon stone",
+    "subject": "Subject: a tall standing stone, seen flat from the front: a rounded top, rough grey stone spotted with pale lichen and yellow-green moss, and a crescent moon cut deep into its upper face, the cut edges pale and smooth. The whole stone is in the picture, standing on its base.",
+    "use": "The face of the moon stone in the Thornwood's clearing.",
+    "shared": false
+  },
+  {
+    "id": "thorn_dead_tree",
+    "file": "thorn_dead_tree.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "thornwood/thorn_dead_tree.jpg",
+      "thornwood.png"
+    ],
+    "title": "Dead thorn tree",
+    "subject": "Subject: one dead thorn tree, seen from the side, whole: a thick, twisted black-brown trunk dividing into many crooked, leafless branches covered in long sharp thorns, spreading wide like grasping fingers. About 7 m tall. At night, under cool blue moonlight.",
+    "use": "The dead thorn trees all through the Thornwood.",
+    "shared": false
+  },
+  {
+    "id": "thorn_bramble_bush",
+    "file": "thorn_bramble_bush.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "thornwood/thorn_bramble_bush.jpg",
+      "thornwood.png"
+    ],
+    "title": "Bramble bush",
+    "subject": "Subject: one thorny bramble bush, seen from the side, whole: arching dark stems with hooked thorns, small dark teal leaves and clusters of little dark red berries. About 1.2 m tall. At night, under cool blue moonlight.",
+    "use": "The bramble clumps along the Thornwood's road.",
+    "shared": false
+  },
+  {
+    "id": "thorn_white_flowers",
+    "file": "thorn_white_flowers.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "thornwood/thorn_white_flowers.jpg",
+      "thornwood.png"
+    ],
+    "title": "Small white wild flowers",
+    "subject": "Subject: one clump of small wild white flowers, seen from the side, whole: tiny five-petalled white flowers on thin stems over low dark green leaves. About 0.4 m tall. At night, under cool blue moonlight.",
+    "use": "The white flowers round the moon stone and along the stream's banks.",
+    "shared": false
+  },
+  {
+    "id": "thorn_grass_tuft",
+    "file": "thorn_grass_tuft.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "thornwood/thorn_grass_tuft.jpg",
+      "thornwood.png"
+    ],
+    "title": "Wild grass tuft",
+    "subject": "Subject: one tuft of tall wild grass, seen from the side, whole: long thin blades in olive, ochre and dark green, arching outward. About 0.8 m tall. At night, under cool blue moonlight.",
+    "use": "Grass tufts on the stream banks and round the rocks.",
+    "shared": false
+  }
+]

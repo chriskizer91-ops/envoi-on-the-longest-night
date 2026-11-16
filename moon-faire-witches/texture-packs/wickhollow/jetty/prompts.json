@@ -1,0 +1,170 @@
+[
+  {
+    "id": "shared_boardwalk_planks",
+    "file": "shared_boardwalk_planks.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "jetty/shared_boardwalk_planks.jpg",
+      "jetty.png"
+    ],
+    "title": "Pier planks",
+    "subject": "Subject: the deck of a wooden pier seen from above, about 2.5 m across. Long weathered planks running straight across the picture from left to right, in staggered lengths with butt joints, warm mid-brown with grey-violet weathering, small dark nail holes and fine grain, thin dark gaps between the planks. At night, under cool blue moonlight.",
+    "use": "The deck of the jetty's pier, the little jetties in the square, the cottage's footbridge; any boardwalk or pier.",
+    "shared": true
+  },
+  {
+    "id": "shared_water_dark",
+    "file": "shared_water_dark.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "jetty/shared_water_dark.jpg",
+      "jetty.png"
+    ],
+    "title": "Dark lake water",
+    "subject": "Subject: the surface of a still, deep lake at night seen from straight above, about 4 m across. Very dark navy-black water with tiny soft ripples and small silver-blue glints of moonlight spread evenly. No reflections of anything, no lily pads, no bright streak.",
+    "use": "The lake at the jetty and in the square, the cottage's pond; any still dark water.",
+    "shared": true
+  },
+  {
+    "id": "shared_drystone",
+    "file": "shared_drystone.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "jetty/shared_drystone.jpg",
+      "jetty.png"
+    ],
+    "title": "Rounded stone wall",
+    "subject": "Subject: the face of a low wall of rounded field stones, about 2 m across and 1 m high. Rounded, pillowy grey-blue stones of mixed sizes stacked in rough courses, some with a warm sandy top, dark gaps between them and a little moss. The picture's top edge is the wall's top row of stones and its bottom edge is the wall's foot. At night, under cool blue moonlight.",
+    "use": "The quay wall and walls at the jetty, the garden walls in the square and round Io's garden; any low field or garden wall.",
+    "shared": true
+  },
+  {
+    "id": "shared_awning_stripes",
+    "file": "shared_awning_stripes.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "jetty/shared_awning_stripes.jpg",
+      "jetty.png"
+    ],
+    "title": "Striped awning cloth",
+    "subject": "Subject: striped canvas awning cloth, seen straight on and flat, about 1.5 m across: broad stripes of faded deep red and cream, equal in width, running straight from top to bottom, slightly worn and soft, with a fine weave and very soft folds. At night, under cool blue moonlight.",
+    "use": "The awnings of Quill's stall and Nettie's stall; any market stall awning.",
+    "shared": true
+  },
+  {
+    "id": "jetty_quill_stall",
+    "file": "jetty_quill_stall.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "jetty/jetty_quill_stall.jpg",
+      "jetty.png"
+    ],
+    "title": "Quill's stall",
+    "subject": "Subject: a waterside stall, seen flat from the front. A wooden stall under a sloping awning of red and cream stripes with a scalloped front edge; under it a small table with a glowing lantern, jars and a tin; around it wooden crates, a big sack, barrels and a tall clay jar; on the right a wooden rack hung with fishing nets and coils of rope. The whole stall is in the picture.",
+    "use": "Quill's shop stall on the quay.",
+    "shared": false
+  },
+  {
+    "id": "jetty_net_rack",
+    "file": "jetty_net_rack.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "jetty/jetty_net_rack.jpg",
+      "jetty.png"
+    ],
+    "title": "Net rack",
+    "subject": "Subject: a fisherman's net rack, seen flat from the front: two wooden posts and a cross-pole hung with brown fishing nets and looped ropes, a small wooden crate at the foot. The whole rack is in the picture.",
+    "use": "Quill's net rack beside his stall.",
+    "shared": false
+  },
+  {
+    "id": "jetty_quay_steps",
+    "file": "jetty_quay_steps.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "jetty/jetty_quay_steps.jpg",
+      "jetty.png"
+    ],
+    "title": "Quay steps",
+    "subject": "Subject: the head of a jetty seen flat from the lake: a low quay wall of rounded grey stones with a flight of wide stone steps in the middle, and a square stone pillar topped with a black iron lantern on each side of the steps. The whole width of the steps and both pillars are in the picture.",
+    "use": "The front of the quay where the steps go down to the pier.",
+    "shared": false
+  },
+  {
+    "id": "jetty_wooden_fence",
+    "file": "jetty_wooden_fence.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "jetty/jetty_wooden_fence.jpg",
+      "jetty.png"
+    ],
+    "title": "Rail fence",
+    "subject": "Subject: a short wooden fence section, seen flat from the front: three upright posts with a top rail and two lower rails of dark weathered wood, iron nail heads. About 2 m long. The gaps are plain mid-grey.",
+    "use": "The rail fence on the quay, behind Quill's stall.",
+    "shared": false
+  },
+  {
+    "id": "jetty_willow",
+    "file": "jetty_willow.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "jetty/jetty_willow.jpg",
+      "jetty.png"
+    ],
+    "title": "Weeping willow",
+    "subject": "Subject: one weeping willow tree, seen from the side, whole: a gnarled dark trunk and long hanging curtains of narrow leaves in olive, yellow-green and blue-green reaching almost to the ground. About 7 m tall. At night, under cool blue moonlight.",
+    "use": "The willows by the jetty.",
+    "shared": false
+  },
+  {
+    "id": "lake_reeds",
+    "file": "lake_reeds.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "jetty/lake_reeds.jpg",
+      "jetty.png"
+    ],
+    "title": "Reeds and cattails",
+    "subject": "Subject: one clump of reeds and cattails, seen from the side, whole: tall thin blades in dark green and ochre, and several brown cattail heads on straight stems. About 1.5 m tall. At night, under cool blue moonlight.",
+    "use": "The reeds at the jetty, round the cottage's pond and along the streams.",
+    "shared": false
+  },
+  {
+    "id": "lake_lily_pads",
+    "file": "lake_lily_pads.png",
+    "shape": "Square",
+    "rules": "roof",
+    "refs": [
+      "jetty/lake_lily_pads.jpg",
+      "jetty.png"
+    ],
+    "title": "Lily pads",
+    "subject": "Subject: one small cluster of five round lily pads floating flat, seen from exactly straight above: round leaves in mossy green, a notch cut into each, one with a small pale pink water-lily flower. About 1 m across. At night, under cool blue moonlight.",
+    "use": "The lily pads on the lake, the square's lake, the cottage's pond and the Thornwood's stream.",
+    "shared": false
+  },
+  {
+    "id": "jetty_flower_shrubs",
+    "file": "jetty_flower_shrubs.png",
+    "shape": "Wide (3:2)",
+    "rules": "plant",
+    "refs": [
+      "jetty/jetty_flower_shrubs.jpg",
+      "jetty.png"
+    ],
+    "title": "Verge shrubs",
+    "subject": "Subject: one low shrub, seen from the side, whole: dark green leaves dotted with small white and pale blue flowers. About 1 m wide and 0.6 m tall. At night, under cool blue moonlight.",
+    "use": "The low flowering shrubs on the jetty's verges and in the woods' edge.",
+    "shared": false
+  }
+]

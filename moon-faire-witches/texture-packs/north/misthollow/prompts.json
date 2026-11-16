@@ -1,0 +1,170 @@
+[
+  {
+    "id": "shared_setts_frosted",
+    "file": "shared_setts_frosted.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "misthollow/shared_setts_frosted.jpg",
+      "misthollow.png"
+    ],
+    "title": "Frosted stone setts",
+    "subject": "Subject: a town street paved with stone setts, about 2.5 m across. Small, squared, slightly domed grey-blue stones of even size laid in tight running rows, white frost in the narrow joints and a faint frosting on the stones. Cold moonlit colours.",
+    "use": "The streets and squares of Misthollow, the street up to the Moonwell, and other paved northern streets.",
+    "shared": true
+  },
+  {
+    "id": "misthollow_diamond_inlay",
+    "file": "misthollow_diamond_inlay.png",
+    "shape": "Square",
+    "rules": "roof",
+    "refs": [
+      "misthollow/misthollow_diamond_inlay.jpg",
+      "misthollow.png"
+    ],
+    "title": "Street star inlay",
+    "subject": "Subject: a decorative inlay set into a paved street, seen from straight above, about 1.5 m across: a diamond outlined in pale cut stone with a smaller diamond inside it and a small four-pointed star at the centre, the setts of the street round it. The whole inlay is in the picture.",
+    "use": "Set into Misthollow's main street and lower square.",
+    "shared": false
+  },
+  {
+    "id": "misthollow_roof_blue_slate",
+    "file": "misthollow_roof_blue_slate.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "misthollow/misthollow_roof_blue_slate.jpg",
+      "misthollow.png"
+    ],
+    "title": "Blue slate roof",
+    "subject": "Subject: a roof of small rectangular slates, seen straight on, about 2 m across. Deep blue to indigo slates in even overlapping rows, slightly varied in tone, a light frosting on them. Moonlit night colours.",
+    "use": "The roofs of Misthollow's houses and the cones of its towers.",
+    "shared": false
+  },
+  {
+    "id": "shared_halftimber_bay",
+    "file": "shared_halftimber_bay.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "misthollow/shared_halftimber_bay.jpg",
+      "misthollow.png"
+    ],
+    "title": "Timber-framed wall bay",
+    "subject": "Subject: one section of a timber-framed upper floor, seen flat from the front, about 4 m wide and 2.5 m tall: dark oak posts and a beam top and bottom, diagonal braces, small grey stone or pale plaster panels between them, and two small-paned windows glowing warm. The whole section is in the picture, beams at its edges.",
+    "use": "Repeated bay by bay on the north's timber-framed houses: the shipyard's houses and Misthollow's Lantern House.",
+    "shared": true
+  },
+  {
+    "id": "misthollow_sorrel_shop",
+    "file": "misthollow_sorrel_shop.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "misthollow/misthollow_sorrel_shop.jpg",
+      "misthollow.png"
+    ],
+    "title": "Sorrel's shop front",
+    "subject": "Subject: a witch's shop front, seen flat from the front: a pale grey stone wall with a wide window under a dark green scalloped awning, rows of glowing green and amber potion bottles and jars on shelves behind the glass, an arched wooden door beside it with an iron lantern over it, and snow on the sill. The whole shop front is in the picture.",
+    "use": "Sorrel's shop on Misthollow's upper square.",
+    "shared": false
+  },
+  {
+    "id": "misthollow_lantern_house",
+    "file": "misthollow_lantern_house.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "misthollow/misthollow_lantern_house.jpg",
+      "misthollow.png"
+    ],
+    "title": "The Lantern House",
+    "subject": "Subject: the Lantern House inn, seen flat from the front: a grey stone ground floor with an arched wooden door under a timber porch and a lantern, a timber-framed upper floor with warm small-paned windows, a blue slate roof with snow along it and two stone chimneys, and a round hanging inn sign on a bracket. The whole building is in the picture.",
+    "use": "The inn on Misthollow's upper square, the last with a fire lit.",
+    "shared": false
+  },
+  {
+    "id": "misthollow_banner",
+    "file": "misthollow_banner.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "misthollow/misthollow_banner.jpg",
+      "misthollow.png"
+    ],
+    "title": "Misthollow star banner",
+    "subject": "Subject: a hanging cloth banner, seen flat from the front, about 0.8 m wide and 2 m long: deep navy cloth with a white eight-pointed star in the middle, a thin pale border, and a pointed lower edge, hung from a black iron crossbar on a pole with a small finial. Soft folds only.",
+    "use": "Along Misthollow's street, the great stair and the lower square.",
+    "shared": false
+  },
+  {
+    "id": "misthollow_tower",
+    "file": "misthollow_tower.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "misthollow/misthollow_tower.jpg",
+      "misthollow.png"
+    ],
+    "title": "Misthollow tower",
+    "subject": "Subject: a tall many-sided tower of pale grey stone blocks, seen flat from the front: narrow arched windows, a stone band below the top, and a steep cone roof of blue slates with snow along its eaves and ridges. The whole tower is in the picture.",
+    "use": "The towers of Misthollow.",
+    "shared": false
+  },
+  {
+    "id": "misthollow_chapel_front",
+    "file": "misthollow_chapel_front.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "misthollow/misthollow_chapel_front.jpg",
+      "misthollow.png"
+    ],
+    "title": "The chapel front",
+    "subject": "Subject: a small chapel, seen flat from the front: a steep gable of pale grey stone blocks with a blue slate roof edged in snow, one tall arched window, an arched wooden door with three stone steps up to it. The whole chapel front is in the picture.",
+    "use": "The chapel north-west of Misthollow's street.",
+    "shared": false
+  },
+  {
+    "id": "misthollow_arch_bridge",
+    "file": "misthollow_arch_bridge.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "misthollow/misthollow_arch_bridge.jpg",
+      "misthollow.png"
+    ],
+    "title": "Arched stone bridge",
+    "subject": "Subject: a short stone bridge, seen flat from the side: one tall round arch of pale grey stone blocks on square piers, a balustrade of small stone posts along its top with snow on the rail, and a square pillar with a stone finial at each end. Through the arch is plain background. The whole bridge is in the picture.",
+    "use": "The bridges between Misthollow's terraces.",
+    "shared": false
+  },
+  {
+    "id": "misthollow_balustrade",
+    "file": "misthollow_balustrade.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "misthollow/misthollow_balustrade.jpg",
+      "misthollow.png"
+    ],
+    "title": "Snowy stone balustrade",
+    "subject": "Subject: a stretch of stone balustrade, seen flat from the front, about 3 m long and 1 m tall: a row of small turned stone posts between a base and a flat rail, a square pillar at each end, a line of snow along the rail. The whole stretch is in the picture.",
+    "use": "Along Misthollow's terraces, stairs and the edges of its squares.",
+    "shared": false
+  },
+  {
+    "id": "misthollow_bare_tree_frosted",
+    "file": "misthollow_bare_tree_frosted.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "misthollow/misthollow_bare_tree_frosted.jpg",
+      "misthollow.png"
+    ],
+    "title": "Frosted bare tree",
+    "subject": "Subject: one leafless tree, about 5 m tall, seen from the side, whole, with its base at the bottom. A dark trunk and spreading crooked branches, each branch and twig lined with white snow. Moonlit night colours.",
+    "use": "Beside Misthollow's street.",
+    "shared": false
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "eldergrove_wood_grass",
+    "file": "eldergrove_wood_grass.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "eldergrove/eldergrove_wood_grass.jpg",
+      "eldergrove.png"
+    ],
+    "title": "Eldergrove clearing grass and moss",
+    "subject": "Subject: the floor of a clearing in an ancient wood, about 3 m across, seen from above. Dark green grass and clover, soft patches of moss, a few bare earth gaps and a scatter of tiny white clover flowers spread evenly. Cooler and mossier than an open meadow. Night, under a bright full moon: cool silver-lavender moonlight, plum-indigo shadows, but the texture itself evenly lit.",
+    "use": "The ground of the Eldergrove clearing fight.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_clover_tuft",
+    "file": "eldergrove_clover_tuft.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "eldergrove/eldergrove_clover_tuft.jpg",
+      "eldergrove.png"
+    ],
+    "title": "Clover and tall grass tuft",
+    "subject": "Subject: one tuft of wild clover with small round white flower heads and a few tall thin grass blades, about 35 cm across and 30 cm high. Dark green leaves catching silver moonlight on top.",
+    "use": "Scattered round the edges of the Eldergrove clearing.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_ancient_tree",
+    "file": "eldergrove_ancient_tree.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "eldergrove/eldergrove_ancient_tree.jpg",
+      "eldergrove.png"
+    ],
+    "title": "Ancient first-age tree with glowing hollows",
+    "subject": "Subject: one enormous ancient tree from the first age of the world, whole, about 30 m high. A vast twisted trunk of grey-violet bark made of many fused roots, with arches between the roots at its foot and two or three hollows in the trunk where small warm ember lights glow; a huge spreading crown of dark green leaf clusters. Night, under a bright full moon: cool silver-lavender moonlight, plum-indigo shadows; only the hollows are warm.",
+    "use": "The great trees round the Eldergrove clearing fight, placed at the clearing's back and sides.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_ancient_bark",
+    "file": "eldergrove_ancient_bark.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "eldergrove/eldergrove_ancient_bark.jpg",
+      "eldergrove.png"
+    ],
+    "title": "Ancient tree bark",
+    "subject": "Subject: the bark of an enormous ancient tree, seen flat, about 1.5 m across. Thick twisted ridges of grey-violet bark running mostly up and down like fused roots, deep dark grooves between them, a little moss in the grooves. Night colours.",
+    "use": "The trunks and roots of Eldergrove's ancient trees.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_ruin_arch",
+    "file": "eldergrove_ruin_arch.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "eldergrove/eldergrove_ruin_arch.jpg",
+      "eldergrove.png"
+    ],
+    "title": "Ruined first-age stone arches",
+    "subject": "Subject: a ruined stone wall of the first age, seen flat from the front: two tall pointed arched openings side by side and a lower broken third arch, in old grey-lavender stone, thick moss and ivy hanging over the top and down the sides, ferns at the foot. About 6 m high. No roof.",
+    "use": "Ruins standing in the wood at the edge of the Eldergrove clearing.",
+    "shared": false
+  }
+]

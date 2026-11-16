@@ -1,0 +1,128 @@
+[
+  {
+    "id": "frozenpass_road_snowy",
+    "file": "frozenpass_road_snowy.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "frozen-pass/frozenpass_road_snowy.jpg",
+      "frozen-pass.png"
+    ],
+    "title": "Snowy mountain road",
+    "subject": "Subject: an old paved mountain road under light snow, about 2.5 m across. Rounded, roughly rectangular grey paving blocks in rows, snow packed into every joint and lying in small soft patches over some blocks, spread evenly. Cold blue moonlit colours.",
+    "use": "The road through the frozen pass.",
+    "shared": false
+  },
+  {
+    "id": "shared_snow",
+    "file": "shared_snow.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "frozen-pass/shared_snow.jpg",
+      "frozen-pass.png"
+    ],
+    "title": "Deep snow",
+    "subject": "Subject: deep, soft, undisturbed snow, about 3 m across. Gentle low drifts and hollows in pale blue-white with soft lilac-blue shading, a faint sparkle, nothing poking through. Moonlit night colours.",
+    "use": "The snow-covered ground of the north: the frozen pass, Misthollow's terraces and anywhere deep in snow.",
+    "shared": true
+  },
+  {
+    "id": "shared_ice",
+    "file": "shared_ice.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "frozen-pass/shared_ice.jpg",
+      "frozen-pass.png"
+    ],
+    "title": "Cracked river ice",
+    "subject": "Subject: a frozen river seen from above, about 3 m across. Flat plates of ice in deep blue and paler blue, separated by thin, branching white cracks and seams, a few small air bubbles and frosty patches inside the ice. No snow drifts, no rocks. Cold moonlit colours.",
+    "use": "The frozen river of the pass, the crossroads' frozen pond, and other frozen water in the north.",
+    "shared": true
+  },
+  {
+    "id": "shared_rock_cliff_snowy",
+    "file": "shared_rock_cliff_snowy.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "frozen-pass/shared_rock_cliff_snowy.jpg",
+      "frozen-pass.png"
+    ],
+    "title": "Snowy rock cliff",
+    "subject": "Subject: the face of a dark grey rock cliff in winter, about 4 m across. Rough vertical columns and blocks of rock with cracks between them, and soft caps of snow on the ledges, spread evenly over the face. Moonlit blue night colours.",
+    "use": "The rock outcrops and cliffs of the north: the pass, the crossroads' corners, the shipyard's rock and Misthollow's cliffs.",
+    "shared": true
+  },
+  {
+    "id": "frozenpass_frozen_waterfall",
+    "file": "frozenpass_frozen_waterfall.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "frozen-pass/frozenpass_frozen_waterfall.jpg",
+      "frozen-pass.png"
+    ],
+    "title": "Frozen waterfall",
+    "subject": "Subject: a frozen waterfall, seen flat from the front, about 10 m tall: the falls caught in ice in two steps over dark rock, thick pale-blue ice columns and long icicles hanging from each lip, snow heaped on the rocks either side, and a frozen pool at its foot. The whole waterfall is in the picture.",
+    "use": "The waterfall in the frozen pass's north-east corner.",
+    "shared": false
+  },
+  {
+    "id": "frozenpass_crossing_pillar",
+    "file": "frozenpass_crossing_pillar.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "frozen-pass/frozenpass_crossing_pillar.jpg",
+      "frozen-pass.png"
+    ],
+    "title": "Snowy crossing pillar",
+    "subject": "Subject: a tall square pillar of grey cut stone blocks, seen flat from the front, about 4 m tall, with a stepped base and a squared cap, thick snow on the cap and on each ledge, frost in the joints. The whole pillar is in the picture.",
+    "use": "The four pillars at the ends of the frozen pass's river crossing.",
+    "shared": false
+  },
+  {
+    "id": "shared_pine_snowy",
+    "file": "shared_pine_snowy.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "frozen-pass/shared_pine_snowy.jpg",
+      "frozen-pass.png"
+    ],
+    "title": "Snow-laden pine",
+    "subject": "Subject: one spruce-like pine, about 10 m tall, seen from the side, whole, with its trunk foot at the bottom. Dark blue-green drooping branches in tiers, every tier heavy with thick soft snow, a narrow pointed top. Moonlit night colours.",
+    "use": "The pines of the frozen pass and Misthollow, and any snowy forest in the north.",
+    "shared": true
+  },
+  {
+    "id": "frozenpass_bare_bush_snowy",
+    "file": "frozenpass_bare_bush_snowy.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "frozen-pass/frozenpass_bare_bush_snowy.jpg",
+      "frozen-pass.png"
+    ],
+    "title": "Snowy bare bush",
+    "subject": "Subject: one leafless bush, about 1.5 m tall, seen from the side, whole, with its base at the bottom. Thin dark brown branches and twigs, each with a line of snow on top, a little snow mound at its foot. Night colours.",
+    "use": "Scattered in the snow of the frozen pass.",
+    "shared": false
+  },
+  {
+    "id": "frozenpass_icicles",
+    "file": "frozenpass_icicles.png",
+    "shape": "Wide (3:2)",
+    "rules": "plant",
+    "refs": [
+      "frozen-pass/frozenpass_icicles.jpg",
+      "frozen-pass.png"
+    ],
+    "title": "Icicle fringe",
+    "subject": "Subject: a fringe of icicles hanging from a short ledge of snow-capped rock, seen from the front, about 1.5 m wide: pale blue, glassy icicles of mixed lengths, the longest about 1 m, hanging down. The ledge is at the top of the picture.",
+    "use": "Hung under rock ledges in the frozen pass and by the waterfall.",
+    "shared": false
+  }
+]

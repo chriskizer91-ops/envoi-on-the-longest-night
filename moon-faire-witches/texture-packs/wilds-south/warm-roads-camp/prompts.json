@@ -1,0 +1,156 @@
+[
+  {
+    "id": "shared_grass_meadow",
+    "file": "shared_grass_meadow.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "warm-roads-camp/shared_grass_meadow.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "Worn meadow grass",
+    "subject": "Subject: worn, short meadow grass on firm ground, about 3 m across, as on the camp's landing ground. Dry olive and straw-coloured grass, thin in places so warm brown earth shows through in soft irregular patches, a few small darker tufts and a scattering of tiny pale flowers, all spread evenly. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The grass ground of open meadows and clearings: the landing ground, the camp, any open grassy patch.",
+    "shared": true
+  },
+  {
+    "id": "shared_warm_road",
+    "file": "shared_warm_road.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "warm-roads-camp/shared_warm_road.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "The Warm Road",
+    "subject": "Subject: an old paved road of big flat flagstones, about 3 m across. Rounded, slightly irregular stones in lavender-grey and soft violet, worn smooth, with lighter moonlit tops and a little moss at the edges, laid close in rough rows. In the narrow seams between them glows a thin warm amber-orange light, like embers, spread evenly along every seam. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The Warm Road, everywhere it runs (the camp, the Ember Line road, the Warm Road fights).",
+    "shared": true
+  },
+  {
+    "id": "camp_tent_canvas",
+    "file": "camp_tent_canvas.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "warm-roads-camp/camp_tent_canvas.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "Tent canvas",
+    "subject": "Subject: plain heavy canvas cloth, as on the camp's two little A-frame tents, about 1 m across. Off-white and pale cream, a little weathered, with faint water stains, soft creases and a coarse woven grain. Only the cloth. Seen at night, lit softly by a campfire nearby.",
+    "use": "The cloth of the tents in the camp (and any other canvas: awnings, covers).",
+    "shared": false
+  },
+  {
+    "id": "shared_bark_birch",
+    "file": "shared_bark_birch.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "warm-roads-camp/shared_bark_birch.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "Birch bark",
+    "subject": "Subject: the bark of a silver birch trunk, seen flat, about 40 cm across. Chalky white bark with short black horizontal marks and thin dark rings, a few grey cracks and small darker patches, the grain running top to bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows, so the white is a soft cool grey-white.",
+    "use": "The trunks and branches of all the birch trees.",
+    "shared": true
+  },
+  {
+    "id": "camp_hut_roof",
+    "file": "camp_hut_roof.png",
+    "shape": "Square",
+    "rules": "roof",
+    "refs": [
+      "warm-roads-camp/camp_hut_roof.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "Turf hut roof",
+    "subject": "Subject: the round turf roof of a small stone hut, seen from straight above: a low dome of rough grass, olive and golden-green, with small clumps of purple heather and orange-flowered gorse growing in it, the edge of the dome resting on a ring of grey stones. The whole round roof is in the picture. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The roof of the round stone hut in the camp.",
+    "shared": false
+  },
+  {
+    "id": "camp_hut_door",
+    "file": "camp_hut_door.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "warm-roads-camp/camp_hut_door.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "Hut doorway",
+    "subject": "Subject: the doorway of a round dry-stone hut, seen flat from the front. Rough grey stones round a low opening, a flat lintel stone with a round sun symbol carved over it, a wooden plank door with iron straps standing open to the right, warm firelight inside, a flat stone step at the foot. Show the doorway and a little of the wall round it.",
+    "use": "The front door of the round hut in the camp.",
+    "shared": false
+  },
+  {
+    "id": "camp_tent",
+    "file": "camp_tent.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "warm-roads-camp/camp_tent.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "Camp tent",
+    "subject": "Subject: a small camp tent seen flat from the side: a sheet of off-white canvas thrown over a ridge pole, held up by crossed wooden poles at each end and pegged down with ropes, with rolled bedrolls and a dark blanket under it. The whole tent is in the picture.",
+    "use": "The two tents in the camp.",
+    "shared": false
+  },
+  {
+    "id": "camp_chest",
+    "file": "camp_chest.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "warm-roads-camp/camp_chest.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "Travel chest",
+    "subject": "Subject: a travel chest seen flat from the front: dark brown wooden planks, iron bands and iron corners, a flat lid, a small iron lock plate in the middle. The whole chest is in the picture.",
+    "use": "The chests round the camp fire.",
+    "shared": false
+  },
+  {
+    "id": "camp_crate",
+    "file": "camp_crate.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "warm-roads-camp/camp_crate.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "Wooden crate",
+    "subject": "Subject: a wooden supply crate seen flat from the front: pale brown planks with a dark frame round the edge and iron nails, slightly weathered. The whole crate is in the picture.",
+    "use": "The crates by the hut (and any crate in the wilds).",
+    "shared": false
+  },
+  {
+    "id": "wilds_gorse",
+    "file": "wilds_gorse.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "warm-roads-camp/wilds_gorse.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "Gorse bush",
+    "subject": "Subject: one low gorse bush, seen from the side, about 1 m tall: dense dark-green spiky stems covered in small orange and golden-yellow flowers. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "Gorse bushes all over the moor.",
+    "shared": true
+  },
+  {
+    "id": "wilds_white_flowers",
+    "file": "wilds_white_flowers.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "warm-roads-camp/wilds_white_flowers.jpg",
+      "warm-roads-camp.png"
+    ],
+    "title": "White starflowers",
+    "subject": "Subject: one low tuft of tiny white wildflowers seen from the side, about 20 cm tall: thin dark-green stems and small leaves topped with many little white five-petalled flowers. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The little white flowers dotted through the grass and heather.",
+    "shared": true
+  }
+]

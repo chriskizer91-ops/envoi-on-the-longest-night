@@ -1,0 +1,86 @@
+[
+  {
+    "id": "crossroads_frost_moor",
+    "file": "crossroads_frost_moor.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "crossroads/crossroads_frost_moor.jpg",
+      "crossroads.png"
+    ],
+    "title": "Frosted dead moor grass",
+    "subject": "Subject: the ground of a cold northern moor, about 3 m across, seen from above. Dead winter grass in pale straw and grey-brown, lying in soft swirls, dark moss between, and white frost rimed over all of it, heavier in some small patches, spread evenly. Cold silver-lavender colours, but the texture itself evenly lit.",
+    "use": "The ground of the northern crossroads fight.",
+    "shared": false
+  },
+  {
+    "id": "crossroads_road_stones",
+    "file": "crossroads_road_stones.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "crossroads/crossroads_road_stones.jpg",
+      "crossroads.png"
+    ],
+    "title": "Old crossroads paving",
+    "subject": "Subject: an old road of worn square and oblong grey paving stones, about 2.5 m across, seen from above. Stones of slightly different sizes laid in rough rows, some cracked or sunk, dead straw-coloured grass and frost in the joints and a few stones missing with earth showing. Spread evenly.",
+    "use": "The paved roads and the ring at the northern crossroads.",
+    "shared": false
+  },
+  {
+    "id": "crossroads_standing_stone",
+    "file": "crossroads_standing_stone.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "crossroads/crossroads_standing_stone.jpg",
+      "crossroads.png"
+    ],
+    "title": "Old standing stone",
+    "subject": "Subject: one old standing stone, seen flat from the front, about 2.5 m high: a rough tall pillar of dark grey stone, slightly leaning, its top broken and uneven, grey-green lichen and white frost on its face, a little dead grass at its foot.",
+    "use": "The standing stones round the ring at the northern crossroads.",
+    "shared": false
+  },
+  {
+    "id": "crossroads_well",
+    "file": "crossroads_well.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "crossroads/crossroads_well.jpg",
+      "crossroads.png"
+    ],
+    "title": "Crossroads well with lantern post",
+    "subject": "Subject: an old round well, seen flat from the front: a low wall of rough fitted grey stones about 1.5 m across, frost on its rim, and beside it a wooden gallows post about 3 m high with a short arm from which an iron lantern hangs, glowing warm.",
+    "use": "The well at the northern crossroads (where the letter is left).",
+    "shared": false
+  },
+  {
+    "id": "crossroads_bare_bush",
+    "file": "crossroads_bare_bush.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "crossroads/crossroads_bare_bush.jpg",
+      "crossroads.png"
+    ],
+    "title": "Bare frosted bush",
+    "subject": "Subject: one leafless winter bush, about 2 m across and 1.8 m high: many thin dark twigs spreading up and out from a few stems, white frost along the twigs, dead grass at the foot. Cold silver night colours.",
+    "use": "Round the edges of the northern crossroads fight.",
+    "shared": false
+  },
+  {
+    "id": "shared_rock_cliff",
+    "file": "shared_rock_cliff.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "crossroads/shared_rock_cliff.jpg",
+      "crossroads.png"
+    ],
+    "title": "Grey rock cliff face",
+    "subject": "Subject: the face of a grey rock cliff, seen flat, about 6 m across: blocky fractured grey-violet rock in tall rough columns and shelves, dark cracks between, a little moss and frost on the ledges. An even spread, no single big feature.",
+    "use": "Bare grey cliffs and rock outcrops seen side-on (the crossroads' sea cliffs); where snow lies thick, use shared_rock_cliff_snowy.",
+    "shared": true
+  }
+]

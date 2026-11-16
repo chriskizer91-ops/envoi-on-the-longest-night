@@ -1,0 +1,86 @@
+[
+  {
+    "id": "dawnroost_yard",
+    "file": "dawnroost_yard.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "dawnroost/dawnroost_yard.jpg",
+      "dawnroost.png"
+    ],
+    "title": "Old flagstones in packed earth",
+    "subject": "Subject: the ground of an old fort yard, about 3 m across, seen from above. Worn grey-violet flagstones of mixed sizes, some large and squarish, some small and broken, set loosely in dark packed earth, with tufts of grass and small weeds in the gaps. Spread evenly. Night colours, but the texture itself evenly lit (no glow from the node).",
+    "use": "The ground of the Dawnroost yard fight.",
+    "shared": false
+  },
+  {
+    "id": "dawnroost_node_crystal",
+    "file": "dawnroost_node_crystal.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "dawnroost/dawnroost_node_crystal.jpg",
+      "dawnroost.png"
+    ],
+    "title": "The living node crystal",
+    "subject": "Subject: the living node, seen flat from the front: one great tall golden crystal about 4 m high with a pointed top, many smaller jagged crystals clustered round its foot, all translucent warm amber and gold, glowing softly from inside. The glow stays inside the crystals.",
+    "use": "The living node on its dais at the back of the Dawnroost yard (the game pulses its light).",
+    "shared": false
+  },
+  {
+    "id": "dawnroost_sun_banner",
+    "file": "dawnroost_sun_banner.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "dawnroost/dawnroost_sun_banner.jpg",
+      "dawnroost.png"
+    ],
+    "title": "Sun banner on poles",
+    "subject": "Subject: one tall hanging banner, seen flat from the front: deep purple cloth with a pointed bottom edge, a golden-yellow rayed sun with a round face in the middle, hanging from a wooden crossbar between two thin wooden poles with spear tips. About 4 m high.",
+    "use": "The two banners beside the node in the Dawnroost yard.",
+    "shared": false
+  },
+  {
+    "id": "dawnroost_longhall",
+    "file": "dawnroost_longhall.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "dawnroost/dawnroost_longhall.jpg",
+      "dawnroost.png"
+    ],
+    "title": "Timber longhall gable",
+    "subject": "Subject: the gable end of an old timber longhall, seen flat from the front, about 10 m wide: a steep dark shingle roof with two long carved timbers crossing at the peak like horns, dark weathered plank walls with heavy corner posts and a few cross-braces, a low door. Night colours.",
+    "use": "The halls round the Dawnroost yard, behind the palisade.",
+    "shared": false
+  },
+  {
+    "id": "dawnroost_palisade",
+    "file": "dawnroost_palisade.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "dawnroost/dawnroost_palisade.jpg",
+      "dawnroost.png"
+    ],
+    "title": "Log palisade",
+    "subject": "Subject: a palisade wall of upright tree trunks set side by side, seen flat. Dark grey-brown weathered logs of slightly different widths, bark worn off in places, thin dark gaps between them, two lashed cross-rails. The picture's top edge is the logs' sharpened points and its bottom edge is their foot in the ground: about 3 m of wall, 3 m high.",
+    "use": "The palisade round the Dawnroost yard.",
+    "shared": false
+  },
+  {
+    "id": "dawnroost_watchtower",
+    "file": "dawnroost_watchtower.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "dawnroost/dawnroost_watchtower.jpg",
+      "dawnroost.png"
+    ],
+    "title": "Timber watchtower",
+    "subject": "Subject: one tall round timber watchtower, seen flat from the front, about 16 m high: a tapering wall of dark upright planks, a railed lookout gallery near the top on carved posts, and a steep pointed shingle roof with a spike at its tip.",
+    "use": "The watchtower at the corner of Dawnroost's palisade.",
+    "shared": false
+  }
+]

@@ -1,0 +1,156 @@
+[
+  {
+    "id": "moor_road_flags",
+    "file": "moor_road_flags.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "cold-moor/moor_road_flags.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Broken flagstone road",
+    "subject": "Subject: an old road of big worn flagstones crossing a moor, about 3 m across. Large flat grey stones, roughly square, many cracked or broken at the corners, with brown trodden earth, grit and white frost in the wide gaps between them, and a few small gaps where a stone is missing. Night, cold blue moonlight, painted with even light.",
+    "use": "The old road across the cold moor (and a good match for other broken paved roads in the northern wilds).",
+    "shared": false
+  },
+  {
+    "id": "frozen_earth_path",
+    "file": "frozen_earth_path.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "cold-moor/frozen_earth_path.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Frozen earth path",
+    "subject": "Subject: a trodden earth footpath on a cold moor, about 2 m across. Hard frozen brown earth scattered with many small grey and white angular stones and grit, a few faint frost patches. Night, cold blue moonlight, painted with even light.",
+    "use": "The footpaths on the cold moor and the earth floor of the ruined hut.",
+    "shared": false
+  },
+  {
+    "id": "moor_heather_frost",
+    "file": "moor_heather_frost.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "cold-moor/moor_heather_frost.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Frosted moor heather",
+    "subject": "Subject: open moorland ground seen from above, about 4 m across. A thick low carpet of purple heather mixed with dark blue-green low shrubs, their tips speckled white with frost, a few sprigs of rust-brown dead bracken, small gaps of dark earth. Night, cold blue moonlight, painted with even light.",
+    "use": "The moor ground between the paths, the rocks and the trees on the cold moor.",
+    "shared": false
+  },
+  {
+    "id": "moor_bracken_heather",
+    "file": "moor_bracken_heather.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "cold-moor/moor_bracken_heather.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Dead bracken and heather",
+    "subject": "Subject: moor ground thick with dead bracken, seen from above, about 3 m across. Curling rust-brown and copper bracken fronds over dark purple heather and dark low shrubs with a few frost-white tips. Night, cold blue moonlight, painted with even light.",
+    "use": "Patches of the cold moor between the heather, and round the hut and the rise.",
+    "shared": false
+  },
+  {
+    "id": "hut_ruin_front",
+    "file": "hut_ruin_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "cold-moor/hut_ruin_front.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Ruined hut wall, from the front",
+    "subject": "Subject: the front wall of a small ruined shepherd's hut on a moor, seen flat from the front. Roughly squared grey stone blocks with moss and lichen, the top edge broken and stepped where stones have fallen, a dark doorway gap and a small window gap, no roof. About 5 m long and 2 m high at its highest. The whole wall is in the picture.",
+    "use": "The walls of the ruined shepherd's hut on the cold moor.",
+    "shared": false
+  },
+  {
+    "id": "cairn_stones",
+    "file": "cairn_stones.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "cold-moor/cairn_stones.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Moor cairn",
+    "subject": "Subject: a cairn on a moor, seen flat from the side. Rounded and flat grey stones stacked without mortar into a rough cone about 1.2 m tall, the biggest at the bottom, mossy and frosted on top. The whole cairn is in the picture, foot at the bottom.",
+    "use": "The three cairns that mark the way on the cold moor.",
+    "shared": false
+  },
+  {
+    "id": "heather_tuft",
+    "file": "heather_tuft.png",
+    "shape": "Wide (3:2)",
+    "rules": "plant",
+    "refs": [
+      "cold-moor/heather_tuft.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Purple heather clump",
+    "subject": "Subject: one low clump of heather about 40 cm tall, seen from the side: wiry dark stems covered in tiny purple-violet flower spikes, frost on the tips. Whole and alone, with its base at the bottom.",
+    "use": "Heather clumps scattered on the cold moor and in the undergrowth of the northern camp.",
+    "shared": false
+  },
+  {
+    "id": "bracken_dead",
+    "file": "bracken_dead.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "cold-moor/bracken_dead.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Dead bracken clump",
+    "subject": "Subject: one clump of dead bracken about 80 cm tall, seen from the side: curling copper and rust-brown fronds on thin stems, some bent over, a little frost on the edges. Whole and alone, with its base at the bottom.",
+    "use": "The dead bracken all over the cold moor.",
+    "shared": false
+  },
+  {
+    "id": "grass_tussock_pale",
+    "file": "grass_tussock_pale.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "cold-moor/grass_tussock_pale.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Pale moor grass tussock",
+    "subject": "Subject: one tussock of dry moor grass about 50 cm tall, seen from the side: thin straw-pale and grey-green blades rising from a tight base and arching outwards, frosted at the tips. Whole and alone, with its base at the bottom.",
+    "use": "Grass tussocks on the cold moor and round the tarn.",
+    "shared": false
+  },
+  {
+    "id": "twig_shrub_bare",
+    "file": "twig_shrub_bare.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "cold-moor/twig_shrub_bare.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Bare frosted twig shrub",
+    "subject": "Subject: one small leafless shrub about 70 cm tall, seen from the side: thin pale grey twigs fanning up from the base, white with frost. Whole and alone, with its base at the bottom.",
+    "use": "Bare shrubs on the cold moor.",
+    "shared": false
+  },
+  {
+    "id": "reeds_tarn",
+    "file": "reeds_tarn.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "cold-moor/reeds_tarn.jpg",
+      "cold-moor.png"
+    ],
+    "title": "Reeds frozen in ice",
+    "subject": "Subject: one clump of reeds about 1 m tall, seen from the side, standing up out of ice: thin dark grey-green and straw-coloured blades, straight and bent, with frost along them. Whole and alone, with its base at the bottom.",
+    "use": "The reed clumps standing in the frozen tarn on the cold moor.",
+    "shared": false
+  }
+]

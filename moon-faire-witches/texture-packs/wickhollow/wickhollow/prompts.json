@@ -1,0 +1,352 @@
+[
+  {
+    "id": "shared_cobbles_town",
+    "file": "shared_cobbles_town.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "wickhollow/shared_cobbles_town.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Town cobbles (Wickhollow)",
+    "subject": "Subject: the worn cobblestones of Wickhollow's town square, about 3 m across. Rounded, roughly squarish stones of mixed sizes, mostly cool blue-grey with some warm sand-brown and faintly rust-tinted ones, laid closely in gently curving rows; thin dark joints with a little moss and a few tiny tufts of grass in them. The tops are worn smooth by feet. At night, under cool blue moonlight.",
+    "use": "The ground of Wickhollow's square, its lanes and garden paths, the lane down to the jetty and the lane to Io's cottage; any town street in the same style.",
+    "shared": true
+  },
+  {
+    "id": "shared_grass_meadow",
+    "file": "shared_grass_meadow.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "wickhollow/shared_grass_meadow.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Meadow grass",
+    "subject": "Subject: short, thick meadow grass, about 2 m across, as in the meadow of Wickhollow's river glade. Dense dark green blades with cool blue-green tips, soft darker hollows between low tufts, and a very few tiny white and pale violet flowers scattered evenly. No path, no bare earth. At night, under cool blue moonlight.",
+    "use": "Lawns, garden grass, the churchyard and grassy verges in Wickhollow, the cottage and the jetty; any green meadow in the warm south.",
+    "shared": true
+  },
+  {
+    "id": "wick_bridge_paving",
+    "file": "wick_bridge_paving.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "wickhollow/wick_bridge_paving.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Bridge paving",
+    "subject": "Subject: the paving on the deck of an old stone bridge, about 2.5 m across. Big flat paving stones, irregular rounded rectangles of different sizes, fitted closely with narrow dark joints; pale blue-grey and warm sandy-beige stones mixed evenly. Smooth, foot-worn tops. At night, under cool blue moonlight.",
+    "use": "The walking surface of Wickhollow's east bridge and of the old bridge in the Thornwood.",
+    "shared": false
+  },
+  {
+    "id": "shared_roof_tiles_red",
+    "file": "shared_roof_tiles_red.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "wickhollow/shared_roof_tiles_red.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Red tile roof",
+    "subject": "Subject: a roof of small old clay tiles seen straight on, about 2 m across. Rows of small rectangular tiles in deep brick-red, maroon and rust, each row overlapping the one below it, with a few darker tiles and a few weathered grey-blue ones scattered evenly. The rows run straight across the picture from left to right. At night, under cool blue moonlight.",
+    "use": "Every red roof in Wickhollow: the houses, the chapel, the forge and the garden shed; any town roof of red clay tiles.",
+    "shared": true
+  },
+  {
+    "id": "shared_stone_wall_rough",
+    "file": "shared_stone_wall_rough.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "wickhollow/shared_stone_wall_rough.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Rough stone wall",
+    "subject": "Subject: the face of a rough stone house wall, about 1.5 m across. Roughly squared grey stones of mixed sizes, some blue-grey and some warm beige, set in uneven courses with dark mortar joints; worn rounded edges and a little moss in a few joints. At night, under cool blue moonlight.",
+    "use": "The chapel walls, the stone ground floors of the houses, chimneys, the bridge sides and parapets, the walls of Io's cottage and the gate pillars.",
+    "shared": true
+  },
+  {
+    "id": "wick_wall_timber_plaster",
+    "file": "wick_wall_timber_plaster.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "wickhollow/wick_wall_timber_plaster.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Timber-framed wall",
+    "subject": "Subject: the upper wall of a timber-framed town house, about 2 m across and 2 m high. Dark brown oak beams (upright posts, a rail across the middle and diagonal braces) framing panels of pale warm plaster, slightly uneven and faintly stained. No windows and no doors. At night, under cool blue moonlight. The plaster looks dusky beige.",
+    "use": "The upper floors and gables of Nettie's house and the other timber-framed houses in Wickhollow.",
+    "shared": false
+  },
+  {
+    "id": "wick_chapel_front",
+    "file": "wick_chapel_front.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_chapel_front.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Chapel front",
+    "subject": "Subject: the front of Wickhollow's little chapel, seen flat from the front. A steep gable of rough grey stone under the edge of a red tile roof; a small pointed window near the top; a big round rose window of coloured glass (amber, rose and blue) in the middle; below it an arched double door of dark wood with iron fittings, in a stone arch. A small lantern on the wall each side of the door, ivy and climbing roses up the corners, three stone steps in front. The whole front is in the picture.",
+    "use": "The front wall of the chapel on the north side of the square.",
+    "shared": false
+  },
+  {
+    "id": "wick_house_nettie_front",
+    "file": "wick_house_nettie_front.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_house_nettie_front.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Nettie's house front",
+    "subject": "Subject: the front of Nettie's big town house, seen flat from the front. A tall timber-framed gable (dark beams, pale plaster) with a lit window of small panes, under a steep red tile roof; to its right a lower wing with two lit windows, a flower box of bright flowers along a little balcony and a plain wooden door. The ground floor is rough grey stone with a wide arched double door of dark wood, a lantern on the wall each side, and pots of flowers by the steps. A stone chimney rises behind. The whole house front is in the picture.",
+    "use": "The front of Nettie's house, the big house on the north-west of the square.",
+    "shared": false
+  },
+  {
+    "id": "wick_stall_nettie",
+    "file": "wick_stall_nettie.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_stall_nettie.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Nettie's stall",
+    "subject": "Subject: Nettie's market stall, seen flat from the front. A wooden stall with a sloping awning of red and cream stripes with a scalloped front edge, on thin wooden posts; under it a counter heaped with fruit, loaves, jars and baskets; wooden crates of produce stacked in front. The whole stall is in the picture.",
+    "use": "Nettie's shop stall beside her house.",
+    "shared": false
+  },
+  {
+    "id": "wick_forge_front",
+    "file": "wick_forge_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_forge_front.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Hilde's forge front",
+    "subject": "Subject: Hilde's forge, seen flat from the front. A wide timber building, open at the front, under a red tile roof. On the right, the big hearth under a round arch of grey stone, with a bed of glowing coals, and a stone chimney rising above the roof; on the left, an open workshop with tools hanging on the back wall, a small fire on the bench, a black anvil on a wooden block and barrels by the posts. A small lantern hangs on a post. The whole forge front is in the picture.",
+    "use": "The front of the forge on the north-east of the square.",
+    "shared": false
+  },
+  {
+    "id": "wick_house_east_front",
+    "file": "wick_house_east_front.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_house_east_front.jpg",
+      "wickhollow.png"
+    ],
+    "title": "House by the bridge",
+    "subject": "Subject: a narrow two-storey town house, seen flat from the front. Pale plaster and grey stone walls under a red tile roof with a pointed gable and a little timber framing in it; a deep red wooden door with a small window, in a stone frame; two lit windows with flower boxes of pink and yellow flowers, one above the other; climbing roses and ivy over the walls; flower pots by the step. The whole house front is in the picture.",
+    "use": "The front of the house on the east side of the square, by the bridge.",
+    "shared": false
+  },
+  {
+    "id": "wick_house_southwest_front",
+    "file": "wick_house_southwest_front.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_house_southwest_front.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Lower west house",
+    "subject": "Subject: a stone town house with timber-framed gables, seen flat from the front. A steep red tile roof with a small dormer window; an arched wooden door in a stone arch with a small lantern beside it; warm lit windows of small panes; climbing flowers on the walls and a white flowering bush by the door. The whole house front is in the picture.",
+    "use": "The front of the house in the walled garden on the west side of the square.",
+    "shared": false
+  },
+  {
+    "id": "wick_house_southeast_front",
+    "file": "wick_house_southeast_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_house_southeast_front.jpg",
+      "wickhollow.png"
+    ],
+    "title": "South-east cottage",
+    "subject": "Subject: a low stone cottage, seen flat from the front. A wide red tile roof with a small pointed dormer window; a dark green wooden door in a stone frame with a lantern on each side; a lit window with a flower box of yellow flowers; on the right a wooden lean-to with a small lit window and a barrel beside it. The whole cottage front is in the picture.",
+    "use": "The front of the cottage in the south-east garden of the square.",
+    "shared": false
+  },
+  {
+    "id": "wick_shed_front",
+    "file": "wick_shed_front.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_shed_front.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Garden shed",
+    "subject": "Subject: a small garden shed, seen flat from the front. Walls of upright dark wooden planks, a small four-pane window and a narrow plank door, under a steep red tile roof. The whole shed is in the picture.",
+    "use": "The little shed in the south-east garden.",
+    "shared": false
+  },
+  {
+    "id": "wick_bridge_side",
+    "file": "wick_bridge_side.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_bridge_side.jpg",
+      "wickhollow.png"
+    ],
+    "title": "East bridge, side",
+    "subject": "Subject: an old stone bridge seen flat from the side, as from the river. One round arch of big wedge-shaped grey stones over the water, a low stone parapet along the top, and at each end a square stone pillar with a black iron lantern on top. Rough grey stone with a little moss. The whole bridge, pillar to pillar, is in the picture; the opening under the arch is plain mid-grey.",
+    "use": "The sides of the stone bridge on the east of the square.",
+    "shared": false
+  },
+  {
+    "id": "wick_garden_fence",
+    "file": "wick_garden_fence.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_garden_fence.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Garden fence on a stone wall",
+    "subject": "Subject: a straight section of garden fence, seen flat from the front: a low wall of rounded grey stones about knee high, and on top of it a short fence of dark wooden pickets with pointed tips. About 2 m long. The gaps between the pickets are plain mid-grey. The whole section is in the picture.",
+    "use": "The fences round the gardens of the square.",
+    "shared": false
+  },
+  {
+    "id": "wick_iron_railing",
+    "file": "wick_iron_railing.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_iron_railing.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Churchyard railing",
+    "subject": "Subject: a straight section of a churchyard railing, seen flat from the front: black wrought-iron bars with spear-tip tops between two square grey stone posts with pointed caps, on a low stone base. About 2.5 m long. The gaps between the bars are plain mid-grey.",
+    "use": "The railing round the chapel's churchyard.",
+    "shared": false
+  },
+  {
+    "id": "wick_gravestones",
+    "file": "wick_gravestones.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_gravestones.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Churchyard stones",
+    "subject": "Subject: three old churchyard stones standing side by side with gaps between, seen flat from the front: a round-topped headstone, a stone cross and a narrow pointed headstone, weathered grey with moss at their feet. Plain faces with no writing. All three are in the picture.",
+    "use": "The headstones in the churchyard behind the chapel.",
+    "shared": false
+  },
+  {
+    "id": "wick_smith_sign",
+    "file": "wick_smith_sign.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "wickhollow/wick_smith_sign.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Smith's sign",
+    "subject": "Subject: a smith's hanging sign, seen flat from the front: a square wooden board in a dark iron frame hanging from an iron bracket, with a big iron horseshoe painted on it. The whole sign and bracket are in the picture.",
+    "use": "The sign hanging beside Hilde's forge.",
+    "shared": false
+  },
+  {
+    "id": "wick_tree_oak",
+    "file": "wick_tree_oak.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "wickhollow/wick_tree_oak.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Garden tree",
+    "subject": "Subject: one broad leafy tree, seen from the side, whole: a short dark trunk and a big rounded crown of dense dark green leaves with cool blue-green highlights. About 6 m tall. At night, under cool blue moonlight.",
+    "use": "The leafy trees in Wickhollow's gardens and round the edges.",
+    "shared": false
+  },
+  {
+    "id": "wick_tree_fir",
+    "file": "wick_tree_fir.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "wickhollow/wick_tree_fir.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Dark fir",
+    "subject": "Subject: one dark fir tree, seen from the side, whole: a tall narrow cone of layered dark blue-green branches with a little trunk showing at its foot. About 7 m tall. At night, under cool blue moonlight.",
+    "use": "The firs in Wickhollow's gardens and the dark fir by Io's woodshed.",
+    "shared": false
+  },
+  {
+    "id": "wick_bush_white_flowers",
+    "file": "wick_bush_white_flowers.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "wickhollow/wick_bush_white_flowers.jpg",
+      "wickhollow.png"
+    ],
+    "title": "White blossom bush",
+    "subject": "Subject: one round flowering bush, seen from the side, whole: dark green leaves thickly dotted with small white blossoms. About 1.5 m tall. At night, under cool blue moonlight.",
+    "use": "Flowering bushes in the churchyard, the gardens and by the cottage's footbridge.",
+    "shared": false
+  },
+  {
+    "id": "wick_flowerbed_mixed",
+    "file": "wick_flowerbed_mixed.png",
+    "shape": "Wide (3:2)",
+    "rules": "plant",
+    "refs": [
+      "wickhollow/wick_flowerbed_mixed.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Mixed flower clump",
+    "subject": "Subject: one low clump of mixed garden flowers, seen from the side, whole: small yellow, white, pale blue and pink flowers over dark green leaves. About 1 m wide and 0.5 m tall. At night, under cool blue moonlight.",
+    "use": "The flower beds round the Moonwell and the flowers by the house doors.",
+    "shared": false
+  },
+  {
+    "id": "wick_climbing_roses",
+    "file": "wick_climbing_roses.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "wickhollow/wick_climbing_roses.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Climbing roses",
+    "subject": "Subject: one climbing rose and ivy as it grows up a wall, cut out on its own: a tall narrow spread of dark leaves with small pale pink, white and yellow flowers, fuller at the bottom and thinning towards the top. About 3 m tall. At night, under cool blue moonlight.",
+    "use": "The climbing roses and ivy on the walls of the houses, the chapel and Io's cottage.",
+    "shared": false
+  },
+  {
+    "id": "wick_sunflowers",
+    "file": "wick_sunflowers.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "wickhollow/wick_sunflowers.jpg",
+      "wickhollow.png"
+    ],
+    "title": "Sunflowers",
+    "subject": "Subject: one clump of three sunflowers, seen from the side, whole: tall stalks with broad leaves and golden-yellow flower heads with dark centres. About 1.8 m tall. At night, under cool blue moonlight.",
+    "use": "The sunflowers in the south-east garden.",
+    "shared": false
+  }
+]

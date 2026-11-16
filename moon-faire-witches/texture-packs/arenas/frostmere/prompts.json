@@ -1,0 +1,72 @@
+[
+  {
+    "id": "frostmere_frost_meadow",
+    "file": "frostmere_frost_meadow.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "frostmere/frostmere_frost_meadow.jpg",
+      "frostmere.png"
+    ],
+    "title": "Frosted lakeside meadow grass",
+    "subject": "Subject: short meadow grass on a cold lakeshore, about 3 m across, seen from above. Dark green and blue-green blades, every tip touched with white frost, a fine even rime, low clover leaves and a few tiny pale flowers. No snow lying. Cold silver moonlight colours, but the texture itself evenly lit.",
+    "use": "The ground of the Frostmere shore fight.",
+    "shared": false
+  },
+  {
+    "id": "frostmere_lake_water",
+    "file": "frostmere_lake_water.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "frostmere/frostmere_lake_water.jpg",
+      "frostmere.png"
+    ],
+    "title": "Still moonlit lake water",
+    "subject": "Subject: the surface of a still mountain lake at night, seen from above, about 4 m across. Deep slate-blue and indigo water, very calm, with faint long ripples and soft pale lavender reflections spread evenly. No moon path, no ice, no shore.",
+    "use": "The lake beyond the Frostmere fight (and any still lake water in the north).",
+    "shared": false
+  },
+  {
+    "id": "frostmere_pine_island",
+    "file": "frostmere_pine_island.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "frostmere/frostmere_pine_island.jpg",
+      "frostmere.png"
+    ],
+    "title": "Pine island in the lake",
+    "subject": "Subject: a small low rocky island seen flat from the side, about 40 m long: a pale grey rock shore at the bottom, crowded with dark pines of different heights, the tallest in the middle. Cold misty night colours.",
+    "use": "Islands out on the lake beyond the Frostmere fight.",
+    "shared": false
+  },
+  {
+    "id": "shared_tree_pine",
+    "file": "shared_tree_pine.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "frostmere/shared_tree_pine.jpg",
+      "frostmere.png"
+    ],
+    "title": "Dark pine tree",
+    "subject": "Subject: one tall dark pine (fir), whole from roots to tip, about 18 m high: a narrow pointed shape of layered drooping branches, dark blue-green needles, a straight dark trunk showing low down. Silver moonlight catching the upper edges of the branches. No snow on it.",
+    "use": "The pines in almost every fight place (river glade, Eldergrove, Frostmere, the moor, Dawnroost, the crossroads), and the live framing pine (add snow for Frostmere).",
+    "shared": true
+  },
+  {
+    "id": "shared_mountain_snow_rock",
+    "file": "shared_mountain_snow_rock.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "frostmere/shared_mountain_snow_rock.jpg",
+      "frostmere.png"
+    ],
+    "title": "Snowy mountain rock face",
+    "subject": "Subject: the face of a high mountain, seen flat, about 40 m across: steep grey-violet rock ridges and buttresses with deep snow lying in the gullies and on the ledges, crisp white and pale lavender snow, the rock darker plum-grey. An even spread of ridges and snow, nothing bigger than the rest.",
+    "use": "The faces of the far snow mountains round every northern and woodland fight place.",
+    "shared": true
+  }
+]

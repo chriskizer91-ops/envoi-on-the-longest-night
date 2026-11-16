@@ -1,0 +1,128 @@
+[
+ {
+  "id": "heart_deck_mossy",
+  "file": "heart_deck_mossy.png",
+  "shape": "Square",
+  "rules": "ground",
+  "refs": [
+   "bogmire-heart/heart_deck_mossy.jpg",
+   "bogmire-heart.png"
+  ],
+  "title": "Old mossy deck planks",
+  "subject": "Subject: the old plank deck of an abandoned square on stilts over a fen, about 4 m across, seen from straight above. Many narrow weathered boards running left to right, their ends staggered, cold grey-blue wood with darker damp patches, little flecks and threads of green moss in the gaps, a few cracked boards; no holes. Night colours under moonlight only, painted with even light.",
+  "use": "The floor of the square at the fen's dark heart, where the great wraith is fought.",
+  "shared": false
+ },
+ {
+  "id": "heart_water_open",
+  "file": "heart_water_open.png",
+  "shape": "Square",
+  "rules": "ground",
+  "refs": [
+   "bogmire-heart/heart_water_open.jpg",
+   "bogmire-heart.png"
+  ],
+  "title": "Rippled open fen water",
+  "subject": "Subject: open fen water at night, about 4 m across, seen from straight above. Deep dark blue water stirred into many small even ripples, with scattered short pale glints of moonlight on the ripple crests and a faint dark green tinge below. No lily pads, no reeds, no mist, no reflections of objects.",
+  "use": "The open water round the fen's dark heart.",
+  "shared": false
+ },
+ {
+  "id": "heart_roof_red",
+  "file": "heart_roof_red.png",
+  "shape": "Square",
+  "rules": "material",
+  "refs": [
+   "bogmire-heart/heart_roof_red.jpg",
+   "bogmire-heart.png"
+  ],
+  "title": "Old red and blue tile roof",
+  "subject": "Subject: an old roof of small square tiles seen straight on and flat, about 2 m by 2 m. Rows of small rough tiles, mostly faded red-brown, with blue-grey and dark tiles mixed in at random, thin dark gaps, a little green moss in places, evenly spread. Night colours, painted with even light.",
+  "use": "The red-tiled roofs round the fen's dark heart.",
+  "shared": false
+ },
+ {
+  "id": "hall_front",
+  "file": "hall_front.png",
+  "shape": "Wide (3:2)",
+  "rules": "skin",
+  "refs": [
+   "bogmire-heart/hall_front.jpg",
+   "bogmire-heart.png"
+  ],
+  "title": "The dark hall at the heart",
+  "subject": "Subject: an abandoned meeting hall on stilts in a fen, seen flat from the front. Show the dark vertical-board front, the central gable with a small dark window in it over a tall plank door, black empty windows either side, fishing nets slung in sagging loops along the front, barrels by the door, and the two roofs either side of the gable (mossy blue-grey shingles on the left, faded red-brown tiles on the right). No light inside. The whole front is in the picture, down to its plank porch.",
+  "use": "The hall behind the square at the fen's dark heart.",
+  "shared": false
+ },
+ {
+  "id": "heart_house_front",
+  "file": "heart_house_front.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire-heart/heart_house_front.jpg",
+   "bogmire-heart.png"
+  ],
+  "title": "Abandoned fen house",
+  "subject": "Subject: an abandoned fen house on stilts, seen flat from the front. Show the dark weathered board front, a black empty window, a plank door, the roof of faded red-brown and blue-grey tiles, the stone chimney at the left, and a barrel and a coil of rope on the plank porch. No light. The whole house is in the picture, down to the porch floor.",
+  "use": "The abandoned houses round the fen's dark heart.",
+  "shared": false
+ },
+ {
+  "id": "heart_house_east",
+  "file": "heart_house_east.png",
+  "shape": "Square",
+  "rules": "skin",
+  "refs": [
+   "bogmire-heart/heart_house_east.jpg",
+   "bogmire-heart.png"
+  ],
+  "title": "Abandoned gabled fen house",
+  "subject": "Subject: an abandoned gabled fen house, seen flat from the front. Show the steep roof of mossy blue-grey shingles, the stone chimney, the dark board front with a black open doorway and a black window, a small barrel and a crate by the door. No light. The whole house is in the picture, down to its plank deck.",
+  "use": "The houses at the edges of the fen's dark heart.",
+  "shared": false
+ },
+ {
+  "id": "fishing_net",
+  "file": "fishing_net.png",
+  "shape": "Wide (3:2)",
+  "rules": "skin",
+  "refs": [
+   "bogmire-heart/fishing_net.jpg",
+   "bogmire-heart.png"
+  ],
+  "title": "Hanging fishing net",
+  "subject": "Subject: an old fishing net hung up to dry, seen flat from the front: a pale grey-brown mesh net slung between two pegs in a deep sagging loop, a rope along its top edge, a few small round corks. The whole net is in the picture.",
+  "use": "The nets hung along the hall and houses at the fen's dark heart.",
+  "shared": false
+ },
+ {
+  "id": "heart_lantern",
+  "file": "heart_lantern.png",
+  "shape": "Tall (2:3)",
+  "rules": "skin",
+  "refs": [
+   "bogmire-heart/heart_lantern.jpg",
+   "bogmire-heart.png"
+  ],
+  "title": "Last lantern on its post",
+  "subject": "Subject: a lantern on top of a thick wooden post, seen flat from the side: a dark iron lantern with a pointed cap and warm glowing glass, on a round post of dark wet wood with two bands of coiled rope and a little green weed. The whole lantern and post are in the picture.",
+  "use": "The two lanterns still burning at the near corners of the fen's dark heart.",
+  "shared": false
+ },
+ {
+  "id": "hanging_weed",
+  "file": "hanging_weed.png",
+  "shape": "Tall (2:3)",
+  "rules": "plant",
+  "refs": [
+   "bogmire-heart/hanging_weed.jpg",
+   "bogmire-heart.png"
+  ],
+  "title": "Weed hanging from a post",
+  "subject": "Subject: long strands of dark green fen weed and slime hanging down, seen from the side, as if draped from a beam: ragged, wet, a little yellow-green at the edges. Hung from a straight line at the top of the picture.",
+  "use": "The weed hanging from posts and deck edges at the fen's dark heart and in Bogmire.",
+  "shared": false
+ }
+]

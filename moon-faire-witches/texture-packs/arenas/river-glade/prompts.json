@@ -1,0 +1,100 @@
+[
+  {
+    "id": "riverglade_clover_grass",
+    "file": "riverglade_clover_grass.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "river-glade/riverglade_clover_grass.jpg",
+      "river-glade.png"
+    ],
+    "title": "River glade grass and clover",
+    "subject": "Subject: the short grass of a woodland glade by a river, about 3 m across, seen from above. Dusky moss-green and blue-green blades, low clover leaves mixed all through, bare dark earth showing in a few small gaps, and a scatter of very small white flowers spread evenly. Night, under a bright full moon: cool silver-lavender moonlight, plum-indigo shadows, but the texture itself evenly lit.",
+    "use": "The ground of the river glade fight, under and around the fighters.",
+    "shared": false
+  },
+  {
+    "id": "riverglade_moonpetal_tuft",
+    "file": "riverglade_moonpetal_tuft.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "river-glade/riverglade_moonpetal_tuft.jpg",
+      "river-glade.png"
+    ],
+    "title": "White moonpetal flower clump",
+    "subject": "Subject: one clump of small pale white wildflowers (moonpetals) on thin stems, with a few clover leaves and grass blades at the base, about 30 cm across and 25 cm high. The petals faintly silver in moonlight.",
+    "use": "Scattered round the edges of the river glade fight, never in the middle.",
+    "shared": false
+  },
+  {
+    "id": "riverglade_lavender_tuft",
+    "file": "riverglade_lavender_tuft.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "river-glade/riverglade_lavender_tuft.jpg",
+      "river-glade.png"
+    ],
+    "title": "Lavender wildflower clump",
+    "subject": "Subject: one clump of small lavender-purple wildflowers among dark grass blades and clover, about 35 cm across and 30 cm high. Soft purple petals, dark green leaves.",
+    "use": "Scattered round the edges of the river glade fight, mostly at the right side.",
+    "shared": false
+  },
+  {
+    "id": "shared_tree_oak",
+    "file": "shared_tree_oak.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "river-glade/shared_tree_oak.jpg",
+      "river-glade.png"
+    ],
+    "title": "Old oak tree",
+    "subject": "Subject: one big old oak tree, whole, from its roots to the top of its crown, about 14 m high. A broad rounded crown of dark green leaf clusters with blue moonlit highlights on top, a thick gnarled grey-brown trunk splitting into heavy branches, roots spreading at the foot. Night, under a bright full moon: cool silver-lavender moonlight, plum-indigo shadows.",
+    "use": "The old oaks round the woodland fights (river glade and Eldergrove), and the live tree that frames them.",
+    "shared": true
+  },
+  {
+    "id": "riverglade_chapel_village",
+    "file": "riverglade_chapel_village.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "river-glade/riverglade_chapel_village.jpg",
+      "river-glade.png"
+    ],
+    "title": "Far chapel and cottages on the knoll",
+    "subject": "Subject: a small village on a low wooded knoll above a river, seen flat from the front as a far backdrop piece. A small grey stone chapel with a tall pointed spire and lit arched windows, and four or five small half-timbered cottages with dark roofs and warm amber windows, among dark pines. Paint it whole, about 60 m across, with the knoll's rocky foot at the bottom.",
+    "use": "A far backdrop piece placed beyond the river glade, across the water.",
+    "shared": false
+  },
+  {
+    "id": "shared_sky_night",
+    "file": "shared_sky_night.png",
+    "shape": "Wide (3:2)",
+    "rules": "material",
+    "refs": [
+      "river-glade/shared_sky_night.jpg",
+      "river-glade.png"
+    ],
+    "title": "Night sky with thin clouds",
+    "subject": "Subject: a patch of starless night sky, deep plum-indigo, with thin wispy silver-lavender clouds drawn out in long soft streaks. No moon and no stars (the stars have not come back yet in the story). An even spread of wisps, nothing bigger or brighter than the rest.",
+    "use": "The sky dome over every fight place (and over the walking places when seen from the ground).",
+    "shared": true
+  },
+  {
+    "id": "shared_moon",
+    "file": "shared_moon.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "river-glade/shared_moon.jpg",
+      "river-glade.png"
+    ],
+    "title": "The full moon",
+    "subject": "Subject: the full moon, a bright pale silver-white disc with soft lavender-grey seas and craters, painted in detail, filling most of the picture with a small margin. Only a faint glow at its very edge.",
+    "use": "The moon in the sky of every fight place (the dead Moonwell's moon is different: see moonwell_waning_moon).",
+    "shared": true
+  }
+]

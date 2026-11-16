@@ -1,0 +1,142 @@
+[
+  {
+    "id": "moonwell_court_setts",
+    "file": "moonwell_court_setts.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "moonwell/moonwell_court_setts.jpg",
+      "moonwell.png"
+    ],
+    "title": "Arc-laid court setts",
+    "subject": "Subject: a court paved with small squared stone setts laid in overlapping sweeping arcs (a fan pattern), about 3 m across, the arcs small and even so the pattern repeats many times in the square. Grey-blue stones, frost in the joints and a faint frosting on top. Cold moonlit colours.",
+    "use": "The round court of the dead Moonwell.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_garden_frost",
+    "file": "moonwell_garden_frost.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "moonwell/moonwell_garden_frost.jpg",
+      "moonwell.png"
+    ],
+    "title": "Frosted garden earth",
+    "subject": "Subject: the bare earth of a winter garden bed, about 2 m across. Dark soil and a few dead leaves under a thin, broken crust of snow and frost, small even patches of white over blue-black earth, no plants. Cold moonlit colours.",
+    "use": "The walled garden beds in the corners of the Moonwell's court.",
+    "shared": false
+  },
+  {
+    "id": "shared_stone_wall_frosted",
+    "file": "shared_stone_wall_frosted.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "moonwell/shared_stone_wall_frosted.jpg",
+      "moonwell.png"
+    ],
+    "title": "Frosted castle stone",
+    "subject": "Subject: a castle wall of cut stone blocks, seen straight on, about 2.5 m across. Rectangular pale grey and grey-blue blocks of slightly varied sizes in even mortared courses, chipped edges, white frost in the joints. Moonlit night colours.",
+    "use": "The walls, towers and buildings of the north: the dead Moonwell, Misthollow, the shipyard and the crossroads' ruins.",
+    "shared": true
+  },
+  {
+    "id": "moonwell_dead_well",
+    "file": "moonwell_dead_well.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "moonwell/moonwell_dead_well.jpg",
+      "moonwell.png"
+    ],
+    "title": "The dead Moonwell",
+    "subject": "Subject: the dead Moonwell, seen flat from the side: a wide round well of pale grey fitted stones on a low round dais of two stone steps, a carved band round its side showing crescent moons and a moth with spread wings in the middle, its rim of big curved stones. Over it a dark iron frame: two posts with spiked finials joined by a twisted, branch-like iron arch, with an iron ring and two hanging chains. A little frost on the stones. The well is dead: no light. The whole well is in the picture.",
+    "use": "The centre of the dead Moonwell's court, where the final battle is.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_well_carving",
+    "file": "moonwell_well_carving.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "moonwell/moonwell_well_carving.jpg",
+      "moonwell.png"
+    ],
+    "title": "The Moonwell's carved band",
+    "subject": "Subject: a stretch of carved stone band, seen flat from the front, about 3 m long and 0.8 m tall: dark grey-blue stone with a moth with spread wings carved in the middle and crescent moons either side, between thin moulded edges, worn and frosted. The whole stretch is in the picture.",
+    "use": "Wrapped round the side of the dead Moonwell.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_north_door",
+    "file": "moonwell_north_door.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "moonwell/moonwell_north_door.jpg",
+      "moonwell.png"
+    ],
+    "title": "The Moonwell's north door",
+    "subject": "Subject: the front of a keep, seen flat from the front: pale grey stone wall with a tall pointed arched doorway with a carved stone surround and a dark double wooden door with iron rings, four stone steps up to it, a stone pillar with a spiked iron finial each side, and a navy banner with a pale crescent moon hanging on the wall either side. The whole front is in the picture.",
+    "use": "The north side of the dead Moonwell's court.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_round_tower",
+    "file": "moonwell_round_tower.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "moonwell/moonwell_round_tower.jpg",
+      "moonwell.png"
+    ],
+    "title": "Round court tower",
+    "subject": "Subject: a round tower of pale grey stone blocks, seen flat from the front: crenellated top with snow on the merlons, a moulded band below them and another lower down, narrow arched windows, and a navy banner with a pale crescent moon hung from an iron bar. The whole tower is in the picture.",
+    "use": "The two round towers by the dead Moonwell's entrance.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_banner",
+    "file": "moonwell_banner.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "moonwell/moonwell_banner.jpg",
+      "moonwell.png"
+    ],
+    "title": "Crescent moon banner",
+    "subject": "Subject: a hanging cloth banner, seen flat from the front, about 1 m wide and 2.5 m long: deep navy cloth with a pale silver crescent moon low in the middle, a small faint silver pattern near the top, and a swallow-tailed lower edge, hung from a black iron bar. Soft folds only.",
+    "use": "On the towers and walls of the dead Moonwell's court.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_tower_door",
+    "file": "moonwell_tower_door.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "moonwell/moonwell_tower_door.jpg",
+      "moonwell.png"
+    ],
+    "title": "Arched tower door",
+    "subject": "Subject: a doorway, seen flat from the front: a pointed arch of pale cut stone blocks round a dark wooden double door with iron bands and ring handles, a stone step at its foot, a little frost on the stones. The whole doorway is in the picture.",
+    "use": "The doors of the towers and buildings round the dead Moonwell's court.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_frosted_shrub",
+    "file": "moonwell_frosted_shrub.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "moonwell/moonwell_frosted_shrub.jpg",
+      "moonwell.png"
+    ],
+    "title": "Frost-white shrub",
+    "subject": "Subject: one leafless shrub, about 2 m tall, seen from the side, whole, with its base at the bottom. Many thin dark upright twigs, each furred with white frost and tiny snow flecks, a small snowy mound at its foot. Cold moonlit colours.",
+    "use": "In the gardens and planters round the dead Moonwell's court.",
+    "shared": false
+  }
+]

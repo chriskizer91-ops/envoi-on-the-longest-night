@@ -1,0 +1,198 @@
+[
+  {
+    "id": "dawnroost_mossy_road",
+    "file": "dawnroost_mossy_road.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "dawnroost-road/dawnroost_mossy_road.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Mossy forest road",
+    "subject": "Subject: an old forest road of small rounded flagstones, about 3 m across: irregular flat stones in pale grey, blue-grey and lavender, fitted close, with thin lines of green moss and dark earth in the gaps and a few fallen leaves. No glow in the seams. Night colours: moonlight in silver-blue and lavender, deep violet shadows, filtered through trees.",
+    "use": "The road to Dawnroost through the forest, and the paved lookout at the Warm Roads camp.",
+    "shared": false
+  },
+  {
+    "id": "shared_forest_floor",
+    "file": "shared_forest_floor.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "dawnroost-road/shared_forest_floor.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Forest floor",
+    "subject": "Subject: a forest floor seen from straight above, about 2 m across: dark earth mostly covered with soft green moss, fallen small leaves in brown and rust, little twigs, and a scatter of tiny white flowers, all evenly mixed. Night colours: moonlight in silver-blue and lavender, deep violet shadows, filtered through trees.",
+    "use": "The ground under the trees in the forests, and the mossy verges of roads.",
+    "shared": true
+  },
+  {
+    "id": "shared_bark_oak",
+    "file": "shared_bark_oak.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "dawnroost-road/shared_bark_oak.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Oak bark",
+    "subject": "Subject: the bark of an old oak trunk seen flat, about 60 cm across: deep vertical furrows and ridges in dark brown, umber and grey, with olive-green moss in the furrows and a little lichen, the grain running top to bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The trunks and big branches of the oak trees.",
+    "shared": true
+  },
+  {
+    "id": "wilds_oak_leaves",
+    "file": "wilds_oak_leaves.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "dawnroost-road/wilds_oak_leaves.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Oak leaves",
+    "subject": "Subject: the dense leafy crown of an oak seen up close from above, filling the picture: clusters of broad lobed leaves in dark teal, blue-green and slate, their upper edges pale silver-green in the moonlight, small dark gaps between clusters. About 2 m across. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The leaves of the oaks and other broad-leaved trees (for leaf cards and crowns).",
+    "shared": true
+  },
+  {
+    "id": "wilds_fir_boughs",
+    "file": "wilds_fir_boughs.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "dawnroost-road/wilds_fir_boughs.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Fir boughs",
+    "subject": "Subject: the layered boughs of a fir tree seen up close, filling the picture: overlapping sprays of short dense needles in deep blue-green and teal, the tips pale silver-blue in the moonlight, dark gaps between the layers. About 1.5 m across. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The needles of all the fir and pine trees (for bough cards).",
+    "shared": true
+  },
+  {
+    "id": "wilds_mossy_log",
+    "file": "wilds_mossy_log.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "dawnroost-road/wilds_mossy_log.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Mossy log bark",
+    "subject": "Subject: the bark of an old fallen log seen flat, about 60 cm across: grey-brown cracked bark in long plates, thick olive and yellow-green moss growing over much of it, pale lichen, the grain running left to right. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The fallen logs in the forests.",
+    "shared": true
+  },
+  {
+    "id": "dawnroost_leanto_roof",
+    "file": "dawnroost_leanto_roof.png",
+    "shape": "Wide (3:2)",
+    "rules": "roof",
+    "refs": [
+      "dawnroost-road/dawnroost_leanto_roof.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Log lean-to roof",
+    "subject": "Subject: the roof of a woodcutter's lean-to seen from straight above: split logs and rough planks laid side by side across two log beams, grey-brown weathered wood with moss along the joins and a few gaps. The whole roof is in the picture.",
+    "use": "The roof of the woodcutter's lean-to.",
+    "shared": false
+  },
+  {
+    "id": "dawnroost_milestone",
+    "file": "dawnroost_milestone.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "dawnroost-road/dawnroost_milestone.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Sun milestone",
+    "subject": "Subject: a roadside milestone seen flat from the front: a round-topped upright stone, pale grey and lavender with olive moss, a sun with pointed rays carved deep into its face, a smaller mossy rock at its foot. The whole stone is in the picture.",
+    "use": "The milestone on the road to Dawnroost.",
+    "shared": false
+  },
+  {
+    "id": "wilds_iron_lantern_post",
+    "file": "wilds_iron_lantern_post.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "dawnroost-road/wilds_iron_lantern_post.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Lantern post",
+    "subject": "Subject: a roadside lantern post seen flat from the front: a square wooden post with an arm and a diagonal brace at the top, a black iron lantern with a little roof hanging from the arm on a hook, its glass glowing warm amber. The whole post is in the picture.",
+    "use": "The lantern posts on the roads (Dawnroost road, the Warm Roads camp).",
+    "shared": true
+  },
+  {
+    "id": "dawnroost_firewood_stack",
+    "file": "dawnroost_firewood_stack.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "dawnroost-road/dawnroost_firewood_stack.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Firewood stack",
+    "subject": "Subject: a stack of split firewood seen flat from the end: round and half-round log ends in pale tan and honey with growth rings, grey-brown bark round them, stacked neatly. The whole stack is in the picture.",
+    "use": "The firewood stack at the woodcutter's lean-to (and log piles anywhere).",
+    "shared": false
+  },
+  {
+    "id": "wilds_fern",
+    "file": "wilds_fern.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "dawnroost-road/wilds_fern.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Fern",
+    "subject": "Subject: one woodland fern seen from the side, about 70 cm tall: long arching green fronds with fine leaflets fanning out from one root, a few fronds turning bronze. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "Ferns under the trees in the forests.",
+    "shared": true
+  },
+  {
+    "id": "wilds_fir_sapling",
+    "file": "wilds_fir_sapling.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "dawnroost-road/wilds_fir_sapling.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Young fir",
+    "subject": "Subject: one young fir tree seen from the side, about 1.5 m tall: a narrow cone of layered blue-green boughs with pale silver-blue tips, a short dark trunk at the bottom. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The small firs scattered through the forests.",
+    "shared": true
+  },
+  {
+    "id": "wilds_violet_shrub",
+    "file": "wilds_violet_shrub.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "dawnroost-road/wilds_violet_shrub.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Violet undergrowth",
+    "subject": "Subject: one low woodland shrub seen from the side, about 60 cm tall: thin dark stems and small dark leaves covered in tiny violet and purple flowers. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The flowering undergrowth under the forest trees.",
+    "shared": true
+  },
+  {
+    "id": "wilds_shelf_mushrooms",
+    "file": "wilds_shelf_mushrooms.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "dawnroost-road/wilds_shelf_mushrooms.jpg",
+      "dawnroost-road.png"
+    ],
+    "title": "Shelf mushrooms",
+    "subject": "Subject: a cluster of five or six shelf mushrooms growing one above another, seen from the side: flat round caps in pale cream and grey-white with darker undersides, on short stalks. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The mushrooms growing on fallen logs.",
+    "shared": true
+  }
+]

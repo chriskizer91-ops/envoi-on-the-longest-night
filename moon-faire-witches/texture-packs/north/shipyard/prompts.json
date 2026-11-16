@@ -1,0 +1,128 @@
+[
+  {
+    "id": "shipyard_icy_sea",
+    "file": "shipyard_icy_sea.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "shipyard/shipyard_icy_sea.jpg",
+      "shipyard.png"
+    ],
+    "title": "Dark northern sea",
+    "subject": "Subject: the surface of a cold dark sea at night seen from above, about 4 m across. Deep navy and blue-black water with small, even ripples and scattered tiny pale glints of moonlight. No ice, no foam, no reflections of lamps.",
+    "use": "The water all round the shipyard's rock.",
+    "shared": false
+  },
+  {
+    "id": "shared_roof_slate_snow",
+    "file": "shared_roof_slate_snow.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "shipyard/shared_roof_slate_snow.jpg",
+      "shipyard.png"
+    ],
+    "title": "Snowy slate roof",
+    "subject": "Subject: a slate roof in winter, seen straight on, about 2 m across. Rows of small, rounded dark blue-grey slates, each with a little cap of snow on its lower edge, so the roof reads as even stripes of slate and snow. Moonlit night colours.",
+    "use": "The roofs of the shipyard's buildings, and other snowy slate roofs in the north.",
+    "shared": true
+  },
+  {
+    "id": "shipyard_gatehouse",
+    "file": "shipyard_gatehouse.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "shipyard/shipyard_gatehouse.jpg",
+      "shipyard.png"
+    ],
+    "title": "The shipyard gatehouse",
+    "subject": "Subject: the shipyard's gatehouse, seen flat from the front. Two round towers of grey stone blocks with conical slate roofs under snow and one small lit window each, a crenellated wall between them with a round-arched gateway, two iron lanterns glowing beside the gate, and a navy banner with a gold sun and gold trim hanging on each tower. The whole gatehouse is in the picture.",
+    "use": "The shipyard's gate at the head of the long bridge.",
+    "shared": false
+  },
+  {
+    "id": "shipyard_banner",
+    "file": "shipyard_banner.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "shipyard/shipyard_banner.jpg",
+      "shipyard.png"
+    ],
+    "title": "Shipyard sun banner",
+    "subject": "Subject: a hanging cloth banner, seen flat from the front, about 1 m wide and 2 m long: deep navy cloth with a gold sun of straight and wavy rays in the middle, a thin gold border, and a swallow-tailed lower edge, hung from a short dark pole. Soft folds only.",
+    "use": "On the shipyard's gatehouse towers and north wall.",
+    "shared": false
+  },
+  {
+    "id": "shipyard_upper_house",
+    "file": "shipyard_upper_house.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "shipyard/shipyard_upper_house.jpg",
+      "shipyard.png"
+    ],
+    "title": "Tall timber-framed house",
+    "subject": "Subject: a tall three-storey house, seen flat from the front: a ground floor of grey stone with a wooden door and lit windows, two upper floors of dark timber framing with crossed braces and pale panels, rows of small-paned windows glowing warm, and a steep slate roof with snow on it. The whole house is in the picture.",
+    "use": "The big house on the shipyard's west side.",
+    "shared": false
+  },
+  {
+    "id": "shipyard_bunkhouse_front",
+    "file": "shipyard_bunkhouse_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "shipyard/shipyard_bunkhouse_front.jpg",
+      "shipyard.png"
+    ],
+    "title": "The bunkhouse",
+    "subject": "Subject: the shipyard's bunkhouse, seen flat from the front: a long, low timber-framed building on a stone footing, with arched wooden doors, small-paned windows glowing warm, a little dormer window in the snowy slate roof, and a lantern by the door. The whole building is in the picture.",
+    "use": "Old Gil's bunkhouse, the shipyard's inn and rest spot.",
+    "shared": false
+  },
+  {
+    "id": "shipyard_forge_front",
+    "file": "shipyard_forge_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "shipyard/shipyard_forge_front.jpg",
+      "shipyard.png"
+    ],
+    "title": "The forge",
+    "subject": "Subject: the shipyard forge, seen flat from the front: two open bays under a snowy slate roof held on dark timber posts and a timber-framed gable, a stone hearth in each bay with an orange fire, an anvil and hanging tools. The fire glows inside; no light spills out. The whole forge is in the picture.",
+    "use": "The forge on the shipyard's east side.",
+    "shared": false
+  },
+  {
+    "id": "shipyard_hall_front",
+    "file": "shipyard_hall_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "shipyard/shipyard_hall_front.jpg",
+      "shipyard.png"
+    ],
+    "title": "Pim's hall",
+    "subject": "Subject: a long one-storey hall, seen flat from the front: dark timber posts with green-painted panels and double doors, small warm-lit windows, two little lanterns, and a slate roof under snow with two gabled dormer windows. The whole building is in the picture.",
+    "use": "Pim's shop on the shipyard's east side.",
+    "shared": false
+  },
+  {
+    "id": "shipyard_ice_floe",
+    "file": "shipyard_ice_floe.png",
+    "shape": "Wide (3:2)",
+    "rules": "roof",
+    "refs": [
+      "shipyard/shipyard_ice_floe.jpg",
+      "shipyard.png"
+    ],
+    "title": "Ice floe",
+    "subject": "Subject: one flat floe of sea ice, seen from straight above, about 4 m across: a slab with an irregular, blocky outline and a thin dark edge where it sits in the water, its top covered in pale blue-white snow with a few soft cracks. Night colours.",
+    "use": "Floating in the sea round the shipyard, scaled and turned for variety.",
+    "shared": false
+  }
+]

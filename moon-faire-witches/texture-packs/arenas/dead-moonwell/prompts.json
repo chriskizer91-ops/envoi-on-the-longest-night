@@ -1,0 +1,72 @@
+[
+  {
+    "id": "moonwell_frost_flags",
+    "file": "moonwell_frost_flags.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "dead-moonwell/moonwell_frost_flags.jpg",
+      "dead-moonwell.png"
+    ],
+    "title": "Frosted plaza flagstones",
+    "subject": "Subject: the paving of an old city plaza in deep frost, about 3 m across, seen from above. Big squarish slate-blue and grey flagstones, some cracked, with white rime and crusted frost filling the joints and spreading in lacy patches over the stones, spread evenly. Cold blue-lavender colours, but the texture itself evenly lit.",
+    "use": "The ground of the final fight on the dead Moonwell's court.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_moth_panel",
+    "file": "moonwell_moth_panel.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "dead-moonwell/moonwell_moth_panel.jpg",
+      "dead-moonwell.png"
+    ],
+    "title": "Moonwell wall carving: moth and crescents",
+    "subject": "Subject: one stretch of the Moonwell's carved stone wall, seen flat from the front: a large moth with spread patterned wings carved in relief in the middle, a crescent moon carved on each side of it, on smooth old grey-blue stone with a moulded band along the top and the bottom. Frost in the carving's hollows. About 2.5 m long and 1.2 m high.",
+    "use": "Repeated round the wall of the dead Moonwell in the final fight.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_gothic_tower",
+    "file": "moonwell_gothic_tower.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "dead-moonwell/moonwell_gothic_tower.jpg",
+      "dead-moonwell.png"
+    ],
+    "title": "Ruined gothic tower",
+    "subject": "Subject: one tall ruined gothic stone tower, seen flat from the front, about 35 m high: dark grey-blue stone, tall pointed lancet windows (dark, no light), slender pinnacles at its corners and a broken spire at the top, snow on its ledges.",
+    "use": "The towers of Misthollow round the dead Moonwell, as far backdrop pieces or models.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_arcade_bridge",
+    "file": "moonwell_arcade_bridge.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "dead-moonwell/moonwell_arcade_bridge.jpg",
+      "dead-moonwell.png"
+    ],
+    "title": "Ruined arched bridge",
+    "subject": "Subject: a stretch of a ruined stone bridge on tall slender pointed arches, seen flat from the side, about 40 m long: five or six arches, dark grey-blue stone, a broken parapet along the top, snow on the top and the ledges.",
+    "use": "The arcades and bridges of Misthollow behind the dead Moonwell.",
+    "shared": false
+  },
+  {
+    "id": "moonwell_waning_moon",
+    "file": "moonwell_waning_moon.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "dead-moonwell/moonwell_waning_moon.jpg",
+      "dead-moonwell.png"
+    ],
+    "title": "The moon going out",
+    "subject": "Subject: the moon on the longest night, going out: a bright pale silver-white disc with soft lavender-grey seas and craters, but with a large round bite of dark night sky taken out of its upper right side, so it looks like a thick crescent. Painted in detail, filling most of the picture with a small margin, only a faint glow at its edge.",
+    "use": "The moon over the final fight at the dead Moonwell.",
+    "shared": false
+  }
+]

@@ -1,0 +1,240 @@
+[
+  {
+    "id": "shared_dirt_track",
+    "file": "shared_dirt_track.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "northern-camp/shared_dirt_track.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Packed earth road",
+    "subject": "Subject: a packed earth road through a northern pine wood, about 3 m across. Brown-ochre trodden earth with many small rounded pebbles and grey stones pressed into it, a few darker damp patches and specks of frost. At night under moonlight, but painted with even light.",
+    "use": "The roads and paths through the wilds, and the trodden floor of the camps.",
+    "shared": true
+  },
+  {
+    "id": "frosted_undergrowth",
+    "file": "frosted_undergrowth.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "northern-camp/frosted_undergrowth.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Frosted undergrowth",
+    "subject": "Subject: thick low undergrowth on a forest floor in the frozen north, about 3 m across, seen from above. Dark blue-green low shrubs dusted with white frost like tiny blossoms, small clumps of purple heather and scattered sprigs of little amber-orange flowers, dark gaps of earth between. Night, cold blue moonlight, painted with even light.",
+    "use": "The ground cover under and between the trees in the northern camp and the wilds round it.",
+    "shared": false
+  },
+  {
+    "id": "stream_ice_edge",
+    "file": "stream_ice_edge.png",
+    "shape": "Wide (3:2)",
+    "rules": "material",
+    "refs": [
+      "northern-camp/stream_ice_edge.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Thin ice at the stream bank",
+    "subject": "Subject: the edge of a half-frozen stream, seen from above: a band of thin pale ice and white frost foam, with little round air bubbles and lacy edges, over dark blue-black water. About 1.5 m of bank edge across. The picture's top edge is the white ice against the bank and its bottom edge is the dark open water, so it can run along a stream bank. Night, cold blue moonlight, painted with even light.",
+    "use": "A strip laid along the banks of the half-frozen stream and round the stones in it.",
+    "shared": false
+  },
+  {
+    "id": "boulder_mossy_frost",
+    "file": "boulder_mossy_frost.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "northern-camp/boulder_mossy_frost.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Mossy frosted boulder rock",
+    "subject": "Subject: the surface of a big granite boulder in a cold northern wood, about 2 m across. Rounded grey stone with soft lumps and cracks, patches of yellow-green moss and pale lichen, and a fine dusting of white frost on the top of every bump. Night, cold blue moonlight, painted with even light.",
+    "use": "The boulders and rock outcrops in the northern camp and on the cold moor.",
+    "shared": false
+  },
+  {
+    "id": "bridge_planks_frost",
+    "file": "bridge_planks_frost.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "northern-camp/bridge_planks_frost.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Frosted bridge planks",
+    "subject": "Subject: the deck of an old plank footbridge, seen from straight above. Grey weathered planks about 25 cm wide laid side by side across the picture, with dark gaps between them, worn grain, knots and a few nail heads, and white frost along the edges of the planks. About 2 m of deck across. Night, cold moonlight, painted with even light.",
+    "use": "The deck of the little bridge over the stream, and any other bare plank floor in the cold wilds.",
+    "shared": false
+  },
+  {
+    "id": "log_bark_mossy",
+    "file": "log_bark_mossy.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "northern-camp/log_bark_mossy.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Mossy log bark",
+    "subject": "Subject: the rough bark of an old fallen pine log, seen flat and straight on. Dark grey-brown ridged bark running left to right, with patches of yellow-green moss and pale lichen and a light frosting of white on the ridges. About 1 m of log across. Night, cold moonlight, painted with even light.",
+    "use": "Fallen logs, old stumps and the cut ends of trees in the wilds.",
+    "shared": false
+  },
+  {
+    "id": "fir_foliage_frosted",
+    "file": "fir_foliage_frosted.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "northern-camp/fir_foliage_frosted.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Frosted fir branches",
+    "subject": "Subject: a dense mat of fir branches seen from above, filling the picture: layered sprays of dark blue-green needles, each spray tipped and edged with white frost, deep shadow between the layers. About 1.5 m of branches across. Night, cold blue moonlight, painted with even light.",
+    "use": "The branches of the frosted fir trees (on tree cards or the tree crowns), in the northern camp and the cold moor.",
+    "shared": false
+  },
+  {
+    "id": "tent_canvas",
+    "file": "tent_canvas.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "northern-camp/tent_canvas.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Old tent canvas",
+    "subject": "Subject: old heavy tent canvas, seen flat and straight on. Pale cream-grey cloth with a faint weave, soft shallow folds, a few darker weather stains and a stitched seam or two. About 1 m of cloth across. Night, but painted with even light (the warm firelight is not in the texture).",
+    "use": "The two tents in the northern camp (their roofs and walls).",
+    "shared": false
+  },
+  {
+    "id": "tent_big_front",
+    "file": "tent_big_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "northern-camp/tent_big_front.jpg",
+      "northern-camp.png"
+    ],
+    "title": "The big tent, from the front",
+    "subject": "Subject: the bigger of the camp's two tents, seen flat from the front. A simple ridge tent of pale cream-grey canvas on two wooden poles, the front flaps tied back so the dark inside shows, with a faint warm lamp glow inside. Guy ropes run down to wooden pegs at each side and frost dusts the top of the canvas. The whole tent is in the picture.",
+    "use": "The front of the big tent at the northern camp, beside the fire.",
+    "shared": false
+  },
+  {
+    "id": "tent_small_front",
+    "file": "tent_small_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "northern-camp/tent_small_front.jpg",
+      "northern-camp.png"
+    ],
+    "title": "The small tent, from the front",
+    "subject": "Subject: the smaller of the camp's two tents, seen flat from the front. A low ridge tent of pale cream-grey canvas on short wooden poles, the front flaps closed and tied, guy ropes to wooden pegs on both sides, frost along the ridge. The whole tent is in the picture.",
+    "use": "The front of the small tent at the northern camp.",
+    "shared": false
+  },
+  {
+    "id": "lantern_post",
+    "file": "lantern_post.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "northern-camp/lantern_post.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Lantern on a wooden post",
+    "subject": "Subject: a camp lantern post, seen flat from the side. A rough round wooden post about 2.2 m tall with a short wooden arm at the top, and a small black iron lantern with a warm orange flame hanging from the arm on a short chain. The whole post is in the picture, foot at the bottom.",
+    "use": "The lantern post by the tents at the northern camp.",
+    "shared": false
+  },
+  {
+    "id": "supply_crate",
+    "file": "supply_crate.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "northern-camp/supply_crate.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Supply crate",
+    "subject": "Subject: an old wooden supply crate, seen flat from the front. Plank sides with corner battens and a few nails, the lid off, rolled cloth and sacks just showing over the top edge. About 70 cm wide. The whole crate is in the picture.",
+    "use": "The crate by the small tent at the northern camp.",
+    "shared": false
+  },
+  {
+    "id": "fir_sapling_frosted",
+    "file": "fir_sapling_frosted.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "northern-camp/fir_sapling_frosted.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Young frosted fir",
+    "subject": "Subject: one young fir tree about 1.5 m tall, seen from the side. A narrow cone of dark blue-green needled branches, each branch tipped with white frost, a short brown trunk at the bottom. Whole and alone.",
+    "use": "Young firs along the trails in the northern camp.",
+    "shared": false
+  },
+  {
+    "id": "reeds_cattails",
+    "file": "reeds_cattails.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "northern-camp/reeds_cattails.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Stream reeds and cattails",
+    "subject": "Subject: one clump of tall reeds at the edge of a stream, seen from the side: thin pale green-grey blades bent this way and that, three or four brown cattail heads on stiff stalks, frost on the tips. About 1.2 m tall. Whole and alone, with its base at the bottom.",
+    "use": "Reed clumps along the half-frozen stream in the northern camp.",
+    "shared": false
+  },
+  {
+    "id": "shrub_amber_flowers",
+    "file": "shrub_amber_flowers.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "northern-camp/shrub_amber_flowers.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Shrub with amber flowers",
+    "subject": "Subject: one low rounded shrub about 70 cm tall, seen from the side: dark blue-green twiggy leaves dotted all over with small clusters of amber-orange flowers, a little frost on the outer leaves. Whole and alone, with its base at the bottom.",
+    "use": "The amber-flowered bushes scattered through the undergrowth of the northern camp.",
+    "shared": false
+  },
+  {
+    "id": "shrub_frost_white",
+    "file": "shrub_frost_white.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "northern-camp/shrub_frost_white.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Frost-speckled shrub",
+    "subject": "Subject: one low rounded shrub about 60 cm tall, seen from the side: dark blue-green small-leaved twigs, every tip speckled with white frost so it looks covered in tiny white blossoms. Whole and alone, with its base at the bottom.",
+    "use": "The frosted bushes that fill the undergrowth round the northern camp and the moor.",
+    "shared": false
+  },
+  {
+    "id": "grass_tuft_frosted",
+    "file": "grass_tuft_frosted.png",
+    "shape": "Wide (3:2)",
+    "rules": "plant",
+    "refs": [
+      "northern-camp/grass_tuft_frosted.jpg",
+      "northern-camp.png"
+    ],
+    "title": "Frosted grass tuft",
+    "subject": "Subject: one small low tuft of grass about 30 cm tall, seen from the side: thin dark green and brown blades, each one stiff and white with hoarfrost at its tip. Whole and alone, with its base at the bottom.",
+    "use": "Tufts scattered over the frosted grass of the landing ground.",
+    "shared": false
+  }
+]

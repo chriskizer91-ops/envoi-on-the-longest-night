@@ -1,0 +1,332 @@
+[
+  {
+    "id": "pine_forest",
+    "file": "pine_forest.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/pine_forest.jpg",
+      "aethermoor/pine_forest-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Pine forest from above",
+    "subject": "Subject: a dense pine and fir forest seen from high above, as from a flying ship a few hundred metres up. The square shows about 300 m of forest. Many pointed, star-shaped crowns, each 6 to 10 m across, packed close together, with thin black shadow between them; a few crowns a little lighter than the rest, spread evenly. No clearings, no paths, no rocks, no houses. Midnight under a bright moon: deep blue-green crowns with cool silver on their tips.",
+    "use": "The forest that covers most of the west and north of the continent, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "broadleaf_forest",
+    "file": "broadleaf_forest.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/broadleaf_forest.jpg",
+      "aethermoor/broadleaf_forest-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Leafy woodland from above",
+    "subject": "Subject: a woodland of broad leafy trees, oak and beech kind, seen from high above. The square shows about 300 m of woodland. Rounded, billowing crowns 10 to 15 m across in deep green and olive, crowding each other, a few dark pointed pines among them, dark shadow in the gaps between crowns. No clearings, no paths, no houses. Midnight under a bright moon, cool light on the tops of the crowns.",
+    "use": "The leafy woods of the Verdant Wilds, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "willow_marsh",
+    "file": "willow_marsh.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/willow_marsh.jpg",
+      "aethermoor/willow_marsh-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Willow marsh from above",
+    "subject": "Subject: a willow marsh seen from high above. The square shows about 300 m of fen. Narrow winding channels and pools of still dark water between low islands of reeds and rushes, clumps of weeping willow with drooping fronds, a few small dark pines and bare dead trees, patches of lily pads on the water. No boardwalks, no huts, no paths. Midnight: dark navy water, olive and muted yellow-green reeds and willows under cool moonlight.",
+    "use": "The Gloomfen round Bogmire and Willowmurk, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "grassland",
+    "file": "grassland.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/grassland.jpg",
+      "aethermoor/grassland-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Open grassland from above",
+    "subject": "Subject: open rolling grassland seen from high above. The square shows about 400 m of meadow. Short grass in cool greens with gentle lighter and darker patches like the folds of the ground, small grey stones and a few low round bushes scattered evenly. No trees, no paths, no fields, no houses. Midnight under a bright moon: muted blue-green grass.",
+    "use": "The open meadows between the woods, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "farmland",
+    "file": "farmland.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/farmland.jpg",
+      "aethermoor/farmland-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Farm fields from above",
+    "subject": "Subject: a patchwork of farm fields seen from high above. The square shows about 400 m of farmland. Small rectangular fields 40 to 80 m long, set at slightly different angles: ripe grain in muted gold with fine furrow lines, rows of green crops, one or two blue-grey fields of flax. Thin dark hedgerows between them with a few single round trees along the hedges. No houses, no roads, no rivers. Midnight under a bright moon, so the gold is muted and cool.",
+    "use": "The farm country round the towns, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "beach_sand",
+    "file": "beach_sand.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/beach_sand.jpg",
+      "aethermoor/beach_sand-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Sand beach from above",
+    "subject": "Subject: a pale sand beach seen from high above, above the waterline. The square shows about 150 m of beach. Fine pale sand with faint wind ripples, small dark pebbles and a few tufts of beach grass scattered evenly. No water, no wave edge, no driftwood, no rocks bigger than pebbles. Midnight: the sand is pale grey-gold under the moon.",
+    "use": "Beaches along the coasts, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "desert_ground",
+    "file": "desert_ground.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/desert_ground.jpg",
+      "aethermoor/desert_ground-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Desert plain from above",
+    "subject": "Subject: a dry desert plain seen from high above. The square shows about 400 m of desert. Hard dusty earth (warm ochre by day, muted cool grey-brown under the moon), small dark scrub bushes and stones scattered evenly, faint wind streaks. No roads, no rock towers, no cliffs. Midnight under a bright moon.",
+    "use": "The eastern desert, seen from the airship from the edge of the mist.",
+    "shared": false
+  },
+  {
+    "id": "sandstone_mesa",
+    "file": "sandstone_mesa.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/sandstone_mesa.jpg",
+      "aethermoor/sandstone_mesa-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Sandstone plateau from above",
+    "subject": "Subject: the top of a broken sandstone plateau seen from high above. The square shows about 300 m of rock. Flat rocky ledges and short cliff steps in layered red-brown sandstone, cracks and small piles of scree, a few dry shrubs in the gaps. Midnight: the red is dusky grey-mauve under the moon. No paths, no ruins.",
+    "use": "The tops of the canyon plateaus in the east, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "bare_rock",
+    "file": "bare_rock.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/bare_rock.jpg",
+      "aethermoor/bare_rock-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Bare mountain rock from above",
+    "subject": "Subject: steep bare mountain rock seen from high above. The square shows about 300 m of mountainside. Grey stone in rough angular slabs and ribs, deep cracks, fans of scree, a few small patches of moss and dwarf pine in sheltered spots. No snow, no paths. Midnight under a bright moon: cool grey stone with silver on the edges.",
+    "use": "The rocky mountainsides below the snow, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "snowy_mountainside",
+    "file": "snowy_mountainside.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/snowy_mountainside.jpg",
+      "aethermoor/snowy_mountainside-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Snowy mountainside from above",
+    "subject": "Subject: a high mountain slope half under snow, seen from high above. The square shows about 300 m of mountainside. Dark grey rock ribs and boulders, with drifts and long streaks of snow lying between them. Midnight under a bright moon: snow pale silver-blue, rock dark blue-grey.",
+    "use": "The snowy peaks of the north, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "snowfield",
+    "file": "snowfield.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/snowfield.jpg",
+      "aethermoor/snowfield-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Snowfield from above",
+    "subject": "Subject: deep snow on a high snowfield, seen from high above. The square shows about 300 m of snow. Smooth wind-carved drifts with soft shading, faint long lines like hidden crevasses, a few small dark rocks poking through, spread evenly. Midnight under a bright moon: silver-blue snow.",
+    "use": "The snowfields and glaciers between the northern peaks, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "town_roofs",
+    "file": "town_roofs.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "aethermoor/town_roofs.jpg",
+      "aethermoor/town_roofs-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Town rooftops from above",
+    "subject": "Subject: the rooftops of a small old town seen from straight above. The square shows about 150 m of town. Crowded steep roofs of dark red clay tiles and grey slate, each house 8 to 12 m across, ridges at different angles, a few chimneys, narrow dark lanes between the houses. No square, no tower, no walls. Midnight: the roofs are muted red and blue-grey under the moon; no lit windows (the game adds the window lights).",
+    "use": "The ground under the town models, or far-off towns seen from high up.",
+    "shared": false
+  },
+  {
+    "id": "deep_sea",
+    "file": "deep_sea.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "aethermoor/deep_sea.jpg",
+      "aethermoor/deep_sea-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Deep sea from above",
+    "subject": "Subject: open deep sea seen from high above. The square shows about 600 m of ocean. Dark desaturated navy and slate water, long low swells, many small subdued silver ripples, a few thin white wave crests spread evenly. No foam lines along a shore, no rocks, no boats. Midnight under a bright moon.",
+    "use": "The open sea all round the continent, seen from the airship.",
+    "shared": false
+  },
+  {
+    "id": "shallow_sea",
+    "file": "shallow_sea.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "aethermoor/shallow_sea.jpg",
+      "aethermoor/shallow_sea-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Shallow coastal water from above",
+    "subject": "Subject: shallow coastal water over a rocky bottom, seen from high above. The square shows about 150 m of water. Dark blue-green water, rounded submerged stones and weed seen faintly through it, a few thin pale ripple lines. No foam, no shore, no rocks above the water. Midnight under a bright moon: not bright turquoise.",
+    "use": "The shallows round the coasts and islands, between the shore and the deep sea.",
+    "shared": false
+  },
+  {
+    "id": "river_water",
+    "file": "river_water.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "aethermoor/river_water.jpg",
+      "aethermoor/river_water-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "River water from above",
+    "subject": "Subject: the surface of a river seen from straight above, the water flowing from left to right. The square shows about 50 m of water. Dark blue water with long streaks of current running left to right, small silver ripples and a few pale flecks of foam. No banks, no rocks, no reeds. Midnight under a bright moon.",
+    "use": "The rivers, laid along their courses so the streaks follow the flow.",
+    "shared": false
+  },
+  {
+    "id": "mountain_lake",
+    "file": "mountain_lake.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "aethermoor/mountain_lake.jpg",
+      "aethermoor/mountain_lake-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Mountain lake from above",
+    "subject": "Subject: the still surface of a deep mountain lake seen from high above. The square shows about 150 m of water. Very dark clear blue water, faint silver ripples in soft bands, nothing else. Midnight under a bright moon.",
+    "use": "Frostmere Lake and the mountain pools, when they are open water.",
+    "shared": false
+  },
+  {
+    "id": "lake_ice",
+    "file": "lake_ice.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "aethermoor/lake_ice.jpg",
+      "aethermoor/lake_ice-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Frozen lake from above",
+    "subject": "Subject: a frozen mountain lake seen from high above. The square shows about 150 m of ice. Thick pale silver-blue ice, a thin dusting of snow in soft swirled patches, long hairline cracks and a few darker patches of clear black ice, all spread evenly. Midnight under a bright moon.",
+    "use": "Frostmere Lake frozen, for the game's frosty north.",
+    "shared": false
+  },
+  {
+    "id": "coastal_cliff",
+    "file": "coastal_cliff.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "aethermoor/coastal_cliff.jpg",
+      "aethermoor/coastal_cliff-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "Sea cliff face",
+    "subject": "Subject: the face of a tall grey sea cliff, seen straight on. Vertical sheets and columns of grey rock with deep cracks, a few narrow ledges with tufts of moss and grass. The picture's top edge is the cliff top and its bottom edge is the cliff's foot: about 60 m of cliff, 60 m high. Midnight: cool blue-grey stone under the moon.",
+    "use": "The steep sides of the land: sea cliffs and the steepest mountain faces.",
+    "shared": false
+  },
+  {
+    "id": "pine_tree",
+    "file": "pine_tree.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "aethermoor/pine_tree.jpg",
+      "aethermoor/pine_tree-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "One pine tree",
+    "subject": "Subject: one tall pine tree as the map paints them, seen from the side, whole. About 20 m tall, a narrow pointed shape of layered dark green branches, a short brown trunk at the bottom. Midnight colours: deep blue-green with cool silver on the branch tips.",
+    "use": "Scattered single pines, and pines standing up out of the forest near the ground.",
+    "shared": false
+  },
+  {
+    "id": "broadleaf_tree",
+    "file": "broadleaf_tree.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "aethermoor/broadleaf_tree.jpg",
+      "aethermoor/broadleaf_tree-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "One leafy tree",
+    "subject": "Subject: one broad leafy tree, oak kind, as the map paints them, seen from the side, whole. About 15 m tall with a big rounded crown of clumped leaves in deep green and olive, a short thick trunk. Midnight colours under the moon.",
+    "use": "Single trees in fields and meadows, and trees at the edges of woods.",
+    "shared": false
+  },
+  {
+    "id": "willow_tree",
+    "file": "willow_tree.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "aethermoor/willow_tree.jpg",
+      "aethermoor/willow_tree-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "One weeping willow",
+    "subject": "Subject: one weeping willow from the marsh, seen from the side, whole. About 12 m tall, a rounded crown of long drooping fronds in olive and yellow-green hanging nearly to the ground, a short gnarled trunk. Midnight colours under the moon.",
+    "use": "The willows of the Gloomfen.",
+    "shared": false
+  },
+  {
+    "id": "dead_tree",
+    "file": "dead_tree.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "aethermoor/dead_tree.jpg",
+      "aethermoor/dead_tree-day.jpg",
+      "aethermoor.png"
+    ],
+    "title": "One dead fen tree",
+    "subject": "Subject: one bare dead tree from the marsh, seen from the side, whole. About 12 m tall, a grey weathered trunk splitting into twisting leafless branches, a little hanging moss. Midnight colours under the moon.",
+    "use": "The dead trees standing in the Gloomfen's water.",
+    "shared": false
+  }
+]

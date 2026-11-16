@@ -1,0 +1,184 @@
+[
+  {
+    "id": "snow_trodden_trail",
+    "file": "snow_trodden_trail.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "frozen-camp/snow_trodden_trail.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Trodden snow trail",
+    "subject": "Subject: a well-trodden trail through deep snow, seen from above, about 2 m across. Packed white-lavender snow pitted all over with soft overlapping footprints and little ridges, faint blue shadows in each dip. Night, cold violet-blue moonlight, painted with even light.",
+    "use": "The trails and the trodden camp floor at the frozen camp, and other trodden snow paths in the frozen wilds.",
+    "shared": false
+  },
+  {
+    "id": "cliff_rock_frozen",
+    "file": "cliff_rock_frozen.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "frozen-camp/cliff_rock_frozen.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Frozen cliff rock",
+    "subject": "Subject: the face of a dark rock cliff in the frozen north, seen straight on. Tall blocky columns of dark grey-brown stone with vertical cracks between them, thin streaks of blue-white ice running down the cracks, small icicles under the ledges and frost on every edge. About 3 m of cliff across. Night, cold violet-blue moonlight, painted with even light.",
+    "use": "The cliff faces round the frozen camp's shelf and the lookout, and the sides of the big snow-capped rocks at Frostmere.",
+    "shared": false
+  },
+  {
+    "id": "frozen_waterfall_ice",
+    "file": "frozen_waterfall_ice.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "frozen-camp/frozen_waterfall_ice.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Frozen waterfall ice",
+    "subject": "Subject: the ice of a frozen waterfall, seen straight on. Long smooth hanging columns and ribs of pale blue and white ice running top to bottom, glassy and streaked, with darker blue gaps between them. About 2 m of ice across. Night, cold moonlight, painted with even light.",
+    "use": "The tall frozen waterfall north of the frozen camp, and the small frozen falls down the cliffs.",
+    "shared": false
+  },
+  {
+    "id": "fir_foliage_snowladen",
+    "file": "fir_foliage_snowladen.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "frozen-camp/fir_foliage_snowladen.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Snow-laden spruce branches",
+    "subject": "Subject: a dense mat of spruce branches seen from above, filling the picture: layered sprays of dark blue-green needles, each one carrying a thick soft layer of white snow on top, deep blue shadow between the layers. About 1.5 m of branches across. Night, cold violet-blue moonlight, painted with even light.",
+    "use": "The branches of the snow-laden spruces at the frozen camp and Frostmere's shore.",
+    "shared": false
+  },
+  {
+    "id": "tent_snow_big_front",
+    "file": "tent_snow_big_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "frozen-camp/tent_snow_big_front.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Snow-covered big tent, from the front",
+    "subject": "Subject: a big ridge tent in deep winter, seen flat from the front. Weathered grey-brown canvas walls, the roof covered in a thick rounded layer of snow with short icicles along its edges, the front flaps tied back on a dark inside, two wooden poles crossing at the top, guy ropes to pegs in the snow. The whole tent is in the picture.",
+    "use": "The big tent at the frozen camp.",
+    "shared": false
+  },
+  {
+    "id": "tent_snow_small_front",
+    "file": "tent_snow_small_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "frozen-camp/tent_snow_small_front.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Snow-covered small tent, from the front",
+    "subject": "Subject: a small low ridge tent in deep winter, seen flat from the front. Grey-brown canvas, the roof under a thick layer of snow with little icicles at the eaves, the front flap open on a dark inside, two wooden poles crossed at the top, ropes to pegs. The whole tent is in the picture.",
+    "use": "The small tent at the frozen camp.",
+    "shared": false
+  },
+  {
+    "id": "tent_roof_snow",
+    "file": "tent_roof_snow.png",
+    "shape": "Wide (3:2)",
+    "rules": "roof",
+    "refs": [
+      "frozen-camp/tent_roof_snow.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Snowy tent roof, from above",
+    "subject": "Subject: the roof of a ridge tent in deep winter, seen from straight above. A long rectangle of thick soft snow with the ridge line down the middle, a little brown canvas showing at the edges, short icicles hanging at the long edges. The whole roof is in the picture.",
+    "use": "The tops of both tents at the frozen camp, seen from the air.",
+    "shared": false
+  },
+  {
+    "id": "sled_side",
+    "file": "sled_side.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "frozen-camp/sled_side.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Loaded sled, from the side",
+    "subject": "Subject: a long wooden cargo sled, seen flat from the side. Two dark iron-shod runners that curl up at the front, a low wooden deck, and on it three wooden crates and a bundle tied down with rope, all with snow on top. About 2.5 m long. The whole sled is in the picture.",
+    "use": "The sled beside the landing ground at the frozen camp.",
+    "shared": false
+  },
+  {
+    "id": "frozen_waterfall",
+    "file": "frozen_waterfall.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "frozen-camp/frozen_waterfall.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "The frozen waterfall",
+    "subject": "Subject: a frozen waterfall, seen flat from the front. A dark rock cliff with two wide curtains of frozen water hanging down it: long pale blue and white columns of ice, icicles at their edges, a heap of ice and snow at the foot, snow on the cliff's ledges either side. About 12 m wide and 8 m high. The whole fall is in the picture.",
+    "use": "The great frozen waterfall at the end of the trail north of the frozen camp.",
+    "shared": false
+  },
+  {
+    "id": "icicle_fringe",
+    "file": "icicle_fringe.png",
+    "shape": "Wide (3:2)",
+    "rules": "plant",
+    "refs": [
+      "frozen-camp/icicle_fringe.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Icicle fringe",
+    "subject": "Subject: a row of icicles hanging from the edge of a ledge, seen from the side: a thin cap of snow along the top and below it many pale blue-white icicles of different lengths, the longest about 60 cm. The picture shows about 1.5 m of fringe. Whole, with the ledge's edge along the top.",
+    "use": "Hung under every cliff ledge and rock edge at the frozen camp and Frostmere.",
+    "shared": false
+  },
+  {
+    "id": "bush_bare_frosted",
+    "file": "bush_bare_frosted.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "frozen-camp/bush_bare_frosted.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Bare frosted bush",
+    "subject": "Subject: one leafless bush about 1.5 m tall, seen from the side: many thin branching twigs fanning out from a short base, every twig thick with white hoarfrost so the whole bush looks white and lacy. Whole and alone, with its base at the bottom.",
+    "use": "The bare white bushes round the frozen camp and on the cliff tops.",
+    "shared": false
+  },
+  {
+    "id": "bush_berry_snow",
+    "file": "bush_berry_snow.png",
+    "shape": "Wide (3:2)",
+    "rules": "plant",
+    "refs": [
+      "frozen-camp/bush_berry_snow.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Snowy berry bush",
+    "subject": "Subject: one low rounded bush about 80 cm tall, seen from the side: dark twiggy branches with small clusters of deep red berries, a soft cap of snow on the top. Whole and alone, with its base at the bottom.",
+    "use": "The berry bushes beside the trails at the frozen camp.",
+    "shared": false
+  },
+  {
+    "id": "spruce_young_snowy",
+    "file": "spruce_young_snowy.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "frozen-camp/spruce_young_snowy.jpg",
+      "frozen-camp.png"
+    ],
+    "title": "Young snowy spruce",
+    "subject": "Subject: one young spruce about 1.8 m tall, seen from the side: a narrow cone of dark blue-green branches, each one weighed down by a soft layer of snow, a short brown trunk at the bottom. Whole and alone.",
+    "use": "Young spruces round the frozen camp and Frostmere's shore.",
+    "shared": false
+  }
+]

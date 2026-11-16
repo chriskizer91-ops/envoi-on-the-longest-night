@@ -1,0 +1,156 @@
+[
+  {
+    "id": "crossroads_road_paving",
+    "file": "crossroads_road_paving.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "crossroads/crossroads_road_paving.jpg",
+      "crossroads.png"
+    ],
+    "title": "Old north road paving",
+    "subject": "Subject: the paving of an old road on a cold northern moor, about 2.5 m across. Worn, roughly squared grey paving blocks of a few sizes laid in loose rows, their edges chipped and rounded; thin tufts of dry golden grass and a little white frost in the gaps, a few small patches where the blocks are missing and earth shows. Cold blue-grey night colours with warm straw-coloured grass.",
+    "use": "The ground of the four roads at the northern crossroads.",
+    "shared": false
+  },
+  {
+    "id": "shared_grass_frosted",
+    "file": "shared_grass_frosted.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "crossroads/shared_grass_frosted.jpg",
+      "crossroads.png"
+    ],
+    "title": "Frosted moor grass",
+    "subject": "Subject: rough moor ground in late autumn, about 3 m across. Dark peaty earth almost hidden under clumps of dry golden-brown grass, the blade tips touched with white frost, a few tiny pale stones. The clumps are of even size and spread evenly. Night colours: muted straw and umber with cold blue-violet shadow.",
+    "use": "The open ground of the north: the crossroads moor, and any frosty grassland in the game.",
+    "shared": true
+  },
+  {
+    "id": "shared_snow_patchy",
+    "file": "shared_snow_patchy.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "crossroads/shared_snow_patchy.jpg",
+      "crossroads.png"
+    ],
+    "title": "Thin snow over moor grass",
+    "subject": "Subject: moor ground where the first snow has fallen thinly, about 3 m across. Uneven patches of pale blue-white snow lying over dark earth and flattened dry grass, with brown grass tufts poking through; the patches are of mixed small sizes, spread evenly, none large. Moonlit night colours.",
+    "use": "Where the snow begins: the crossroads' north edge, and the edges between grass and deep snow anywhere in the north.",
+    "shared": true
+  },
+  {
+    "id": "crossroads_ring_compass",
+    "file": "crossroads_ring_compass.png",
+    "shape": "Square",
+    "rules": "roof",
+    "refs": [
+      "crossroads/crossroads_ring_compass.jpg",
+      "crossroads.png"
+    ],
+    "title": "The crossroads' compass ring",
+    "subject": "Subject: the paved ring where four old roads meet, seen from straight above, about 14 m across. Curved grey paving stones laid in four or five rings, worn and uneven, with dry grass and frost in some joints, round a carved eight-pointed compass star in darker stone at the centre. The four roads' stubs leave the ring north, south, east and west, cut off at the picture's edges. Cold moonlit colours.",
+    "use": "Laid as one piece in the middle of the crossroads, where Halcyon's ambush happens.",
+    "shared": false
+  },
+  {
+    "id": "crossroads_gatepost",
+    "file": "crossroads_gatepost.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "crossroads/crossroads_gatepost.jpg",
+      "crossroads.png"
+    ],
+    "title": "Ruined road gatepost",
+    "subject": "Subject: an old square gatepost of grey cut stone, seen flat from the front, about 2.5 m tall: stacked blocks with a flat capstone, chipped corners, frost in the joints, and a few blocks of a broken low wall at its foot on one side. Moonlit night colours.",
+    "use": "The four gateposts on the north and south roads at the crossroads.",
+    "shared": false
+  },
+  {
+    "id": "crossroads_well",
+    "file": "crossroads_well.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "crossroads/crossroads_well.jpg",
+      "crossroads.png"
+    ],
+    "title": "The crossroads well",
+    "subject": "Subject: the crossroads well, seen flat from the side. A round well of grey fitted stones about 1 m high, with a weathered wooden frame and crossbar over it, a rope and wooden bucket, and a small iron lantern hanging from the post on the right with its glass glowing amber. A folded letter held down by a small stone on the rim. The whole well is in the picture.",
+    "use": "The well south-west of the ring, where the letter is.",
+    "shared": false
+  },
+  {
+    "id": "crossroads_waymarker",
+    "file": "crossroads_waymarker.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "crossroads/crossroads_waymarker.jpg",
+      "crossroads.png"
+    ],
+    "title": "The fallen waymarker",
+    "subject": "Subject: an old waymarker pillar of grey carved stone, about 3 m long, lying toppled on its side, seen flat from the side. Square in section with a squared cap, worn carved bands along it, and one diamond-shaped rune near the cap glowing warm amber. Its broken base and a few loose stone pieces lie beside it. The whole pillar is in the picture.",
+    "use": "North-east of the ring at the crossroads.",
+    "shared": false
+  },
+  {
+    "id": "crossroads_pine_dark",
+    "file": "crossroads_pine_dark.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "crossroads/crossroads_pine_dark.jpg",
+      "crossroads.png"
+    ],
+    "title": "Dark moor pine",
+    "subject": "Subject: one dark spruce-like pine, about 8 m tall, seen from the side, whole, with its trunk foot at the bottom. Deep blue-green needles in drooping tiers, a narrow pointed top, only a few flecks of frost. Moonlit night colours.",
+    "use": "The pines at the crossroads' corners.",
+    "shared": false
+  },
+  {
+    "id": "crossroads_dead_tree",
+    "file": "crossroads_dead_tree.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "crossroads/crossroads_dead_tree.jpg",
+      "crossroads.png"
+    ],
+    "title": "Bare dead tree",
+    "subject": "Subject: one leafless dead tree, about 5 m tall, seen from the side, whole, with its base at the bottom. A dark twisted trunk splitting into thin crooked branches and fine twigs, no leaves. Night colours, almost black against the grey.",
+    "use": "Among the rocks at the crossroads' south-east corner.",
+    "shared": false
+  },
+  {
+    "id": "crossroads_bare_shrub",
+    "file": "crossroads_bare_shrub.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "crossroads/crossroads_bare_shrub.jpg",
+      "crossroads.png"
+    ],
+    "title": "Leafless moor bush",
+    "subject": "Subject: one leafless bush, about 1.2 m tall, seen from the side, whole, with its base at the bottom. Many thin dark brown twigs fanning up from a short base, a few dry grass blades at its foot. Night colours.",
+    "use": "Scattered over the crossroads moor.",
+    "shared": false
+  },
+  {
+    "id": "crossroads_grass_tuft",
+    "file": "crossroads_grass_tuft.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "crossroads/crossroads_grass_tuft.jpg",
+      "crossroads.png"
+    ],
+    "title": "Frosted grass tuft",
+    "subject": "Subject: one tuft of dry moor grass, about 50 cm tall, seen from the side, whole, with its base at the bottom. Thin arching golden-brown blades, the tips white with frost. Night colours.",
+    "use": "Scattered thickly over the crossroads moor, to break up the flat ground.",
+    "shared": false
+  }
+]

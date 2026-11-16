@@ -1,0 +1,198 @@
+[
+  {
+    "id": "shared_dirt_track",
+    "file": "shared_dirt_track.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "eldergrove-edge/shared_dirt_track.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Dirt track",
+    "subject": "Subject: a packed earth track seen from straight above, about 3 m across: warm brown and ochre earth, trodden firm, with many small rounded pebbles in grey and lavender pressed into it, a few bigger flat stones, spread evenly. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "Every earth path and track in the wilds: the camp floor, side paths, forest trails, the Eldergrove track.",
+    "shared": true
+  },
+  {
+    "id": "eldergrove_elder_bark",
+    "file": "eldergrove_elder_bark.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "eldergrove-edge/eldergrove_elder_bark.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Ancient elder bark",
+    "subject": "Subject: the bark of an immense ancient tree seen flat, about 1 m across: deep twisting rope-like furrows and ridges in grey-brown and dark violet-brown, olive moss packed in the furrows, a thin dusting of pale blue-white frost on the ridges, the grain running top to bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The trunk and the great roots of the Eldergrove's giant tree (and the other huge old roots there).",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_dead_bark",
+    "file": "eldergrove_dead_bark.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "eldergrove-edge/eldergrove_dead_bark.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Bare tree bark",
+    "subject": "Subject: the bark of an old leafless tree seen flat, about 40 cm across: grey-brown and dark slate bark in long cracked strips, a little green-grey lichen, a fine dusting of blue-white frost on the raised edges, the grain running top to bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The bare, twisted trees at Eldergrove's edge.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_ruin_stone",
+    "file": "eldergrove_ruin_stone.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "eldergrove-edge/eldergrove_ruin_stone.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Ruin stonework",
+    "subject": "Subject: a face of old cut stone blocks laid in courses, about 1.2 m across: grey and lavender-grey squarish blocks with worn rounded edges, thick olive-green moss along the joints and on the tops, a little pale lichen. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The walls, pillars and arch of the ruin at Eldergrove's edge.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_hollow",
+    "file": "eldergrove_hollow.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "eldergrove-edge/eldergrove_hollow.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Elder tree hollow",
+    "subject": "Subject: the base of an immense ancient tree seen flat from the front: two huge twisting roots, grey-brown with moss and frost, parting to make a tall dark hollow in the trunk, an old cobbled path running into the darkness, a few pale mushrooms on the bark. Show the opening and the roots round it.",
+    "use": "The entrance into the giant tree at Eldergrove's edge.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_arch",
+    "file": "eldergrove_arch.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "eldergrove-edge/eldergrove_arch.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Ruined stone arch",
+    "subject": "Subject: a ruined stone archway seen flat from the front: a round arch of cut grey stones over a dark doorway, with broken stone walls and a stub of pillar each side, thick moss on the tops, a flagstone floor going through. The whole arch is in the picture.",
+    "use": "The ruined archway at Eldergrove's edge.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_sun_pillar",
+    "file": "eldergrove_sun_pillar.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "eldergrove-edge/eldergrove_sun_pillar.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Sun pillar",
+    "subject": "Subject: a square stone pillar seen flat from the front: pale grey stone, worn, with a round sun with pointed rays carved into its face and lines carved above and below, moss at its top and foot, standing on a plinth. The whole pillar is in the picture.",
+    "use": "The carved pillar in the ruin at Eldergrove's edge.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_moon_stone",
+    "file": "eldergrove_moon_stone.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "eldergrove-edge/eldergrove_moon_stone.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Moon standing stone",
+    "subject": "Subject: a tall standing stone seen flat from the front: rough lavender-grey stone, rounded at the top, olive moss and frost on it, a crescent moon carved near the top. The whole stone is in the picture.",
+    "use": "The moon stone in the ring at Eldergrove's edge.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_sun_stone",
+    "file": "eldergrove_sun_stone.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "eldergrove-edge/eldergrove_sun_stone.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Sun standing stone",
+    "subject": "Subject: a standing stone seen flat from the front: rough lavender-grey stone, rounded at the top, olive moss on it, a round sun with pointed rays carved in the middle of its face. The whole stone is in the picture.",
+    "use": "The sun stone in the ring at Eldergrove's edge.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_bracken",
+    "file": "eldergrove_bracken.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "eldergrove-edge/eldergrove_bracken.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Rust bracken",
+    "subject": "Subject: one clump of bracken fern seen from the side, about 70 cm tall: arching fronds with fine leaflets in rust, copper and dull orange, a few still olive green. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The autumn-coloured ferns at Eldergrove's edge.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_red_undergrowth",
+    "file": "eldergrove_red_undergrowth.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "eldergrove-edge/eldergrove_red_undergrowth.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Crimson undergrowth",
+    "subject": "Subject: one low woodland shrub seen from the side, about 60 cm tall: thin dark stems with small leaves in crimson, wine-red and dark plum. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The red undergrowth under the Eldergrove trees.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_frost_shrub",
+    "file": "eldergrove_frost_shrub.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "eldergrove-edge/eldergrove_frost_shrub.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Frosted shrub",
+    "subject": "Subject: one low shrub seen from the side, about 50 cm tall: small rounded leaves in dark blue-green, each edged with pale blue-white frost so the bush glitters. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The frosted bushes at Eldergrove's edge.",
+    "shared": false
+  },
+  {
+    "id": "eldergrove_moon_mushrooms",
+    "file": "eldergrove_moon_mushrooms.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "eldergrove-edge/eldergrove_moon_mushrooms.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Pale glowing mushrooms",
+    "subject": "Subject: a cluster of four or five mushrooms growing out of bark, seen from the side: flat round caps in pale silver-blue and white with darker gills underneath, on short stems, giving off a faint cold glow. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The glowing mushrooms on the roots and fallen logs at Eldergrove.",
+    "shared": false
+  },
+  {
+    "id": "wilds_grass_tuft",
+    "file": "wilds_grass_tuft.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "eldergrove-edge/wilds_grass_tuft.jpg",
+      "eldergrove-edge.png"
+    ],
+    "title": "Grass tuft",
+    "subject": "Subject: one tuft of wild grass seen from the side, about 40 cm tall: thin dark-green and olive blades springing from one root, a few blades bent over, two or three tall seed stalks. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "Grass tufts on the landing ground and all over the wilds.",
+    "shared": true
+  }
+]

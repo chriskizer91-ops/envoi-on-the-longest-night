@@ -1,0 +1,282 @@
+[
+  {
+    "id": "cottage_path",
+    "file": "cottage_path.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "cottage/cottage_path.jpg",
+      "cottage.png"
+    ],
+    "title": "Cottage path",
+    "subject": "Subject: a worn country path of small rounded cobbles sunk into packed earth, about 2.5 m across. Grey-violet and dusty rose-brown stones of mixed sizes set loosely, pinkish-brown earth between them, a little moss and a few grass tufts in the gaps, all spread evenly. At night, under cool blue moonlight.",
+    "use": "The paths round Io's cottage, the yard in front of it, and the forest path east.",
+    "shared": false
+  },
+  {
+    "id": "cottage_roof_moss",
+    "file": "cottage_roof_moss.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "cottage/cottage_roof_moss.jpg",
+      "cottage.png"
+    ],
+    "title": "Mossy cottage roof",
+    "subject": "Subject: an old roof seen straight on, about 2 m across: rows of small grey-blue stone slates almost hidden under thick, lumpy moss in olive, mustard-yellow and dark green, a few slates showing through. The rows run straight across the picture from left to right. At night, under cool blue moonlight.",
+    "use": "The roof of Io's cottage.",
+    "shared": false
+  },
+  {
+    "id": "shared_bark_oak",
+    "file": "shared_bark_oak.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "cottage/shared_bark_oak.jpg",
+      "cottage.png"
+    ],
+    "title": "Old oak bark",
+    "subject": "Subject: the bark of a huge ancient oak, seen straight on and flat, about 1 m across. Deep, twisting ridges of grey-brown and violet-grey bark running up and down, dark cracks between them, a few soft patches of green moss. No knots or holes that stand out. At night, under cool blue moonlight.",
+    "use": "The trunk and big branches of the great oak by Io's cottage; any old oak.",
+    "shared": true
+  },
+  {
+    "id": "wick_leaf_canopy",
+    "file": "wick_leaf_canopy.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "cottage/wick_leaf_canopy.jpg",
+      "cottage.png"
+    ],
+    "title": "Woodland leaves",
+    "subject": "Subject: the dense leafy crown of woodland trees seen from straight above, about 3 m across: overlapping clusters of small rounded leaves in dark teal, blue-green and a touch of olive, with deep shadow between the clusters, spread evenly. At night, under cool blue moonlight.",
+    "use": "Tree crowns and the thick woods round Wickhollow, Io's cottage and the jetty.",
+    "shared": false
+  },
+  {
+    "id": "cottage_front",
+    "file": "cottage_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "cottage/cottage_front.jpg",
+      "cottage.png"
+    ],
+    "title": "Io's cottage front",
+    "subject": "Subject: Io's cottage, seen flat from the front. A small stone cottage with a steep gable, its roof of grey slates covered in thick yellow-green moss; a round window with a cross-shaped frame glowing warm in the gable; below it a rounded wooden door with iron studs in a stone arch, a lantern on the wall beside it, and small lit windows. A tall stone chimney on the right with a wisp of smoke; beyond it a lower wooden lean-to with a lit window and a bench under it. Climbing white roses and ivy on the walls, flower tubs and a broom by the door. The whole cottage is in the picture.",
+    "use": "The front of Io's cottage, where the story starts.",
+    "shared": false
+  },
+  {
+    "id": "cottage_door",
+    "file": "cottage_door.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "cottage/cottage_door.jpg",
+      "cottage.png"
+    ],
+    "title": "Io's front door",
+    "subject": "Subject: a cottage front door, seen flat from the front: a rounded-top door of upright dark wooden planks with iron studs and a ring handle, in an arch of rough grey stones, with a flat stone doorstep. The whole door and its arch are in the picture.",
+    "use": "The front door of Io's cottage.",
+    "shared": false
+  },
+  {
+    "id": "cottage_garden_gate",
+    "file": "cottage_garden_gate.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "cottage/cottage_garden_gate.jpg",
+      "cottage.png"
+    ],
+    "title": "Garden gate",
+    "subject": "Subject: a garden gate, seen flat from the front: two square pillars of grey stone, each topped with a black iron lantern, joined by a rounded stone arch; between them a closed wooden gate of upright planks with rounded tops. The whole gate, arch and pillars are in the picture.",
+    "use": "The gate of Io's garden, on the south road.",
+    "shared": false
+  },
+  {
+    "id": "cottage_potting_bench",
+    "file": "cottage_potting_bench.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "cottage/cottage_potting_bench.jpg",
+      "cottage.png"
+    ],
+    "title": "Potting bench",
+    "subject": "Subject: a garden potting bench, seen flat from the front: a rough wooden work bench with a shelf above it, clay and wooden pots of herbs and small plants along both, and a little three-legged stool in front. The whole bench is in the picture.",
+    "use": "Io's potting bench in the garden (the bundle of letters is kept near it).",
+    "shared": false
+  },
+  {
+    "id": "cottage_woodshed",
+    "file": "cottage_woodshed.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "cottage/cottage_woodshed.jpg",
+      "cottage.png"
+    ],
+    "title": "Woodshed",
+    "subject": "Subject: a small woodshed lean-to, seen flat from the front: an open-fronted wooden shelter under a small sloping roof, filled with neatly stacked split logs showing their round pale ends, two wooden buckets in front. The whole woodshed is in the picture.",
+    "use": "The woodshed beside Io's cottage.",
+    "shared": false
+  },
+  {
+    "id": "cottage_drying_rack",
+    "file": "cottage_drying_rack.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "cottage/cottage_drying_rack.jpg",
+      "cottage.png"
+    ],
+    "title": "Herb drying rack",
+    "subject": "Subject: a herb drying rack, seen flat from the front: a simple wooden frame of two posts and a cross-pole, with bunches of herbs and lavender hanging upside down from it in purple, green and pale white. The whole rack is in the picture.",
+    "use": "Io's herb drying rack east of the cottage.",
+    "shared": false
+  },
+  {
+    "id": "cottage_rose_bower",
+    "file": "cottage_rose_bower.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "cottage/cottage_rose_bower.jpg",
+      "cottage.png"
+    ],
+    "title": "Rose bower",
+    "subject": "Subject: a garden rose bower, seen flat from the front: a rounded wooden arch covered in climbing roses with small white and pale yellow flowers and dark leaves, a little lantern hanging inside the arch. The whole bower is in the picture.",
+    "use": "The rose bower at the north-west corner of Io's garden.",
+    "shared": false
+  },
+  {
+    "id": "cottage_footbridge",
+    "file": "cottage_footbridge.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "cottage/cottage_footbridge.jpg",
+      "cottage.png"
+    ],
+    "title": "Footbridge",
+    "subject": "Subject: a little footbridge over a stream, seen flat from the side: a short bridge of dark weathered planks on a low stone base, a square stone pillar at each end topped with a black iron lantern. The whole bridge, pillar to pillar, is in the picture; the space under it is plain mid-grey.",
+    "use": "The footbridge west of Io's cottage.",
+    "shared": false
+  },
+  {
+    "id": "cottage_fence_picket",
+    "file": "cottage_fence_picket.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "cottage/cottage_fence_picket.jpg",
+      "cottage.png"
+    ],
+    "title": "Picket fence",
+    "subject": "Subject: a straight section of garden fence, seen flat from the front: upright dark wooden pickets with rounded tops nailed to two rails, about 1 m high and 2 m long. The gaps between the pickets are plain mid-grey.",
+    "use": "The fence round Io's garden beds and along its south side.",
+    "shared": false
+  },
+  {
+    "id": "cottage_lavender",
+    "file": "cottage_lavender.png",
+    "shape": "Wide (3:2)",
+    "rules": "plant",
+    "refs": [
+      "cottage/cottage_lavender.jpg",
+      "cottage.png"
+    ],
+    "title": "Lavender",
+    "subject": "Subject: one row of lavender bushes, seen from the side, whole: tight silvery-green bushes topped with many upright violet-blue flower spikes. About 1.5 m long and 0.6 m tall. At night, under cool blue moonlight.",
+    "use": "The lavender bed in Io's garden.",
+    "shared": false
+  },
+  {
+    "id": "cottage_white_flowers",
+    "file": "cottage_white_flowers.png",
+    "shape": "Wide (3:2)",
+    "rules": "plant",
+    "refs": [
+      "cottage/cottage_white_flowers.jpg",
+      "cottage.png"
+    ],
+    "title": "White globe flowers",
+    "subject": "Subject: one clump of tall white globe flowers, seen from the side, whole: round heads of tiny white florets on straight stalks above broad dark green leaves. About 1 m wide and 0.8 m tall. At night, under cool blue moonlight.",
+    "use": "The white flower bed in Io's garden.",
+    "shared": false
+  },
+  {
+    "id": "cottage_delphiniums",
+    "file": "cottage_delphiniums.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "cottage/cottage_delphiniums.jpg",
+      "cottage.png"
+    ],
+    "title": "Blue delphiniums",
+    "subject": "Subject: one clump of tall blue delphiniums, seen from the side, whole: spires of deep cobalt and violet-blue flowers above a mound of jagged dark green leaves. About 1.4 m tall. At night, under cool blue moonlight.",
+    "use": "The blue flower bed in Io's garden.",
+    "shared": false
+  },
+  {
+    "id": "cottage_vegetables",
+    "file": "cottage_vegetables.png",
+    "shape": "Wide (3:2)",
+    "rules": "plant",
+    "refs": [
+      "cottage/cottage_vegetables.jpg",
+      "cottage.png"
+    ],
+    "title": "Garden greens",
+    "subject": "Subject: one patch of leafy garden greens, seen from the side, whole: broad dark green leaves of cabbages and herbs in a low leafy mound. About 1 m wide and 0.5 m tall. At night, under cool blue moonlight.",
+    "use": "The vegetable and herb beds in Io's garden.",
+    "shared": false
+  },
+  {
+    "id": "cottage_hollyhocks",
+    "file": "cottage_hollyhocks.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "cottage/cottage_hollyhocks.jpg",
+      "cottage.png"
+    ],
+    "title": "Hollyhocks",
+    "subject": "Subject: one clump of hollyhocks, seen from the side, whole: tall stems lined with pink, mauve and pale purple cup-shaped flowers, round leaves at the base. About 2 m tall. At night, under cool blue moonlight.",
+    "use": "The tall flowers by Io's woodshed.",
+    "shared": false
+  },
+  {
+    "id": "cottage_hanging_moss",
+    "file": "cottage_hanging_moss.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "cottage/cottage_hanging_moss.jpg",
+      "cottage.png"
+    ],
+    "title": "Hanging moss",
+    "subject": "Subject: one cluster of hanging moss, cut out on its own: long wispy pale grey-green strands hanging straight down from a short piece of dark branch at the top of the picture. About 1.5 m long. At night, under cool blue moonlight.",
+    "use": "The moss hanging from the great oak by Io's cottage.",
+    "shared": false
+  },
+  {
+    "id": "cottage_pear_tree",
+    "file": "cottage_pear_tree.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "cottage/cottage_pear_tree.jpg",
+      "cottage.png"
+    ],
+    "title": "Small pear tree",
+    "subject": "Subject: one small fruit tree, seen from the side, whole: a slim crooked trunk and a light, open crown of dark green leaves with a few pale blossoms. About 3.5 m tall. At night, under cool blue moonlight.",
+    "use": "The pear tree behind Io's potting bench.",
+    "shared": false
+  }
+]

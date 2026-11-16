@@ -1,0 +1,170 @@
+[
+  {
+    "id": "wilds_heath_ground",
+    "file": "wilds_heath_ground.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "ember-line-road/wilds_heath_ground.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Heather moor",
+    "subject": "Subject: wild heather moorland seen from straight above, about 3 m across: a dense, low carpet of heather in purple, violet and magenta, with small dark-green gorse sprigs dotted with orange flowers, dark grass between, and a sprinkle of tiny white flowers, all evenly mixed. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The ground of the moor away from the paths, under the plant cut-outs.",
+    "shared": true
+  },
+  {
+    "id": "shared_water_river",
+    "file": "shared_water_river.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "ember-line-road/shared_water_river.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Moorland stream",
+    "subject": "Subject: the surface of a small moorland stream seen from straight above, about 2 m across: deep navy and indigo water, gently moving, with fine silver-blue glints of moonlight and faint ripple lines spread evenly across it. No stones, no leaves, no foam. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "Streams and small rivers in the wilds.",
+    "shared": true
+  },
+  {
+    "id": "shared_drystone",
+    "file": "shared_drystone.png",
+    "shape": "Wide (3:2)",
+    "rules": "material",
+    "refs": [
+      "ember-line-road/shared_drystone.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Dry-stone wall face",
+    "subject": "Subject: the face of a low dry-stone field wall. Squarish grey and lavender-grey stones of mixed sizes stacked without mortar, flat tops catching moonlight, small dark gaps between, a little green moss and lichen. The picture's top edge is the wall's top row of stones and its bottom edge is the wall's foot: about 1.8 m of wall, 1.2 m high. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The low stone walls across the moor and round the camp.",
+    "shared": true
+  },
+  {
+    "id": "ember_bridge_stone",
+    "file": "ember_bridge_stone.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "ember-line-road/ember_bridge_stone.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Bridge stonework",
+    "subject": "Subject: a face of neatly cut stone blocks laid in even courses, as on the side of an old humped bridge, about 1.5 m across. Grey and lavender-grey blocks with slightly rounded edges, thin dark mortar lines, a little moss low down, the faces worn smooth. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The sides and parapets of the humped stone bridge.",
+    "shared": false
+  },
+  {
+    "id": "wilds_boulder_stone",
+    "file": "wilds_boulder_stone.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "ember-line-road/wilds_boulder_stone.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Mossy boulder stone",
+    "subject": "Subject: the rough surface of an old granite boulder, about 1 m across: lavender-grey and blue-grey stone broken into blocky facets, with patches of olive-green moss and pale lichen spread evenly over it. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "All the boulders and big rocks in the wilds.",
+    "shared": true
+  },
+  {
+    "id": "ember_node_stone",
+    "file": "ember_node_stone.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "ember-line-road/ember_node_stone.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Ember Line node stone",
+    "subject": "Subject: an Ember Line node stone seen flat from the front: a tall rough standing stone, grey and lavender with olive moss and lichen, rounded at the top, with a round glassy eye like a polished moonstone set into it near the top in a ring of darker stone, a few small rocks at its foot. The whole stone is in the picture.",
+    "use": "The three node stones on the Ember Line road (and any other Ember Line node).",
+    "shared": false
+  },
+  {
+    "id": "wilds_standing_stone",
+    "file": "wilds_standing_stone.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "ember-line-road/wilds_standing_stone.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Standing stone",
+    "subject": "Subject: a plain standing stone seen flat from the front: a tall rough slab of grey and lavender stone, rounded at the top, with patches of olive moss and pale lichen and a few small rocks at its foot. The whole stone is in the picture.",
+    "use": "The standing stones in the rings (the Ember Line road and Eldergrove).",
+    "shared": true
+  },
+  {
+    "id": "ember_bridge_side",
+    "file": "ember_bridge_side.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "ember-line-road/ember_bridge_side.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Humped bridge",
+    "subject": "Subject: a small humped stone bridge seen flat from the side: one round arch over a stream, a gently curved deck with low parapets of cut grey stone, and a square stone pillar with a cap stone at each end. The whole bridge is in the picture.",
+    "use": "The bridge where the road crosses the stream.",
+    "shared": false
+  },
+  {
+    "id": "wilds_heather",
+    "file": "wilds_heather.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "ember-line-road/wilds_heather.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Heather clump",
+    "subject": "Subject: one clump of heather seen from the side, about 60 cm tall: a low rounded bush of fine dark-green stems crowded with tiny purple, violet and magenta flowers. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "Heather clumps all over the moor.",
+    "shared": true
+  },
+  {
+    "id": "wilds_reeds",
+    "file": "wilds_reeds.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "ember-line-road/wilds_reeds.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Stream reeds",
+    "subject": "Subject: one clump of reeds and rushes seen from the side, about 1 m tall: tall thin blades in olive, dark green and straw, some bent, springing from one root. Its base at the bottom. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The reeds at the edges of streams and pools.",
+    "shared": true
+  },
+  {
+    "id": "wilds_water_leaves",
+    "file": "wilds_water_leaves.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "ember-line-road/wilds_water_leaves.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Floating leaves",
+    "subject": "Subject: a small cluster of floating water leaves seen from straight above: four or five round, notched leaves like small lily pads, dull green with paler veins, each about 10 cm across. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The leaves floating on the streams and the pool.",
+    "shared": true
+  },
+  {
+    "id": "wilds_birch_leaves",
+    "file": "wilds_birch_leaves.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "ember-line-road/wilds_birch_leaves.jpg",
+      "ember-line-road.png"
+    ],
+    "title": "Birch leaves",
+    "subject": "Subject: the leafy crown of a birch tree seen up close, filling the picture: many small oval leaves in dark green and blue-green, with yellow-green specks where the moonlight catches leaf tips, small dark gaps between twigs. About 1.5 m across. Night colours: moonlight in silver-blue and lavender, deep violet shadows.",
+    "use": "The leaves of the birch trees (for leaf cards on the tree models).",
+    "shared": true
+  }
+]

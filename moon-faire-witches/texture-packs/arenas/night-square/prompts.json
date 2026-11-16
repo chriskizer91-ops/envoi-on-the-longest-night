@@ -1,0 +1,128 @@
+[
+  {
+    "id": "nightsq_well",
+    "file": "nightsq_well.png",
+    "shape": "Square",
+    "rules": "skin",
+    "refs": [
+      "night-square/nightsq_well.jpg",
+      "night-square.png"
+    ],
+    "title": "Wickhollow square well",
+    "subject": "Subject: the town well, seen flat from the front: a round wall of grey fitted stones about 2 m across on a low stepped round base, a curved iron arch over it with a small hanging iron lantern glowing warm and a chain going down, short black iron posts round it joined by hanging chains. Night colours apart from the lantern.",
+    "use": "The well in the middle of the night square fight.",
+    "shared": false
+  },
+  {
+    "id": "nightsq_lamp_post",
+    "file": "nightsq_lamp_post.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "night-square/nightsq_lamp_post.jpg",
+      "night-square.png"
+    ],
+    "title": "Iron lamp post",
+    "subject": "Subject: one black iron street lamp, seen flat from the front, about 3.5 m high: a stepped base, a slim post with a ring halfway up, a curled bracket at the top from which a four-sided iron lantern hangs, its glass glowing warm amber.",
+    "use": "The lamp posts round the night square.",
+    "shared": false
+  },
+  {
+    "id": "nightsq_stall",
+    "file": "nightsq_stall.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "night-square/nightsq_stall.jpg",
+      "night-square.png"
+    ],
+    "title": "Market stall with striped awning",
+    "subject": "Subject: the market stall, seen flat from the front: a wooden counter of dark planks with two closed crates on it, corner posts, and a sloping awning of plum and muted gold stripes with a scalloped front edge. About 3 m wide.",
+    "use": "The stall at the left of the night square.",
+    "shared": false
+  },
+  {
+    "id": "nightsq_forge_front",
+    "file": "nightsq_forge_front.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "night-square/nightsq_forge_front.jpg",
+      "night-square.png"
+    ],
+    "title": "The forge front",
+    "subject": "Subject: the town forge, seen flat from the front: a half-timbered building with dark posts and pale plaster, a plum-red tile roof and a brick chimney, a shield sign with crossed hammers, and an open front under a little roof where the hearth glows orange, an anvil before it and a ladder leaning on the wall. About 9 m wide.",
+    "use": "The forge at the back left of the night square.",
+    "shared": false
+  },
+  {
+    "id": "nightsq_chapel_front",
+    "file": "nightsq_chapel_front.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "night-square/nightsq_chapel_front.jpg",
+      "night-square.png"
+    ],
+    "title": "The chapel front",
+    "subject": "Subject: the small town chapel, seen flat from the front: grey stone walls, a square bell tower with a bronze bell and a cross on top, a round red rose window, an arched wooden door with iron hinges, a lantern glowing each side of the door, roses climbing the walls, wide stone steps at the foot. About 9 m wide.",
+    "use": "The chapel at the top of the night square.",
+    "shared": false
+  },
+  {
+    "id": "nightsq_house_front",
+    "file": "nightsq_house_front.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "night-square/nightsq_house_front.jpg",
+      "night-square.png"
+    ],
+    "title": "Half-timbered house front",
+    "subject": "Subject: one town house, seen flat from the front, two storeys: dark timber framing over pale plaster, warm lit leaded windows with flower boxes of magenta flowers, an arched wooden door, a steep plum-red tile roof, and a small round turret with a conical roof at one corner. About 8 m wide.",
+    "use": "The houses round the night square (left, right and front).",
+    "shared": false
+  },
+  {
+    "id": "nightsq_iron_railing",
+    "file": "nightsq_iron_railing.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "night-square/nightsq_iron_railing.jpg",
+      "night-square.png"
+    ],
+    "title": "Iron railing section",
+    "subject": "Subject: one section of black iron railing, seen flat from the front, about 3 m long and 1.2 m high: thin upright bars with spear-point tips, two cross bars, standing between two square grey stone posts with caps.",
+    "use": "Round the graveyard and on the garden walls of the night square.",
+    "shared": false
+  },
+  {
+    "id": "nightsq_magenta_flowers",
+    "file": "nightsq_magenta_flowers.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "night-square/nightsq_magenta_flowers.jpg",
+      "night-square.png"
+    ],
+    "title": "Magenta flower bush",
+    "subject": "Subject: one low flowering bush, about 80 cm across and 60 cm high: dark green leaves and many small bright magenta-pink flowers. Night colours.",
+    "use": "The flower beds round the night square.",
+    "shared": false
+  },
+  {
+    "id": "nightsq_gnarled_tree",
+    "file": "nightsq_gnarled_tree.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "night-square/nightsq_gnarled_tree.jpg",
+      "night-square.png"
+    ],
+    "title": "Twisted dark tree",
+    "subject": "Subject: one old twisted tree with no leaves, whole, about 10 m high: a thick knotted dark trunk and long writhing branches curling up and outwards, dark purple-brown bark with pale moonlit edges. Gloomy night colours.",
+    "use": "The dark wood beyond the river in the night square.",
+    "shared": false
+  }
+]

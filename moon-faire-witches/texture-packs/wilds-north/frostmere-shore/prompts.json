@@ -1,0 +1,142 @@
+[
+  {
+    "id": "road_cobbles_snow",
+    "file": "road_cobbles_snow.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "frostmere-shore/road_cobbles_snow.jpg",
+      "frostmere-shore.png"
+    ],
+    "title": "Snow-dusted cobbled road",
+    "subject": "Subject: an old cobbled road in the frozen north, seen from above, about 2.5 m across. Rounded cobblestones of mixed sizes, pale grey-blue under a thin dusting of snow, with soft white snow packed into every gap and a few faint footprints. Night, cold blue moonlight, painted with even light.",
+    "use": "The roads at Frostmere's shore, and other snowy cobbled roads in the frozen north (it may match group north's snowy roads: compare before using both).",
+    "shared": false
+  },
+  {
+    "id": "shared_lake_ice",
+    "file": "shared_lake_ice.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "frostmere-shore/shared_lake_ice.jpg",
+      "frostmere-shore.png"
+    ],
+    "title": "Black lake ice",
+    "subject": "Subject: the surface of a deep frozen lake, seen from above, about 5 m across. Clear dark blue-black ice with long thin white crack lines running across it and branching, a fine scatter of white frost specks and a few tiny trapped bubbles. Night, cold blue moonlight, painted with even light. No snow drifts, no reflections of anything.",
+    "use": "The open ice of Frostmere and of the frozen tarn on the cold moor.",
+    "shared": true
+  },
+  {
+    "id": "lake_ice_snowcrust",
+    "file": "lake_ice_snowcrust.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "frostmere-shore/lake_ice_snowcrust.jpg",
+      "frostmere-shore.png"
+    ],
+    "title": "Snow-crusted lake ice",
+    "subject": "Subject: a frozen lake surface under a thin crust of wind-blown snow, seen from above, about 4 m across. Rough pale blue-white snow crust with soft ripples, thinning in places so small patches of the dark blue ice show through, and a few faint crack lines. Night, cold blue moonlight, painted with even light.",
+    "use": "The snow drifts on Frostmere's ice and the frosted shallows along its shore (and round the cold moor's tarn), mixed with the black ice.",
+    "shared": false
+  },
+  {
+    "id": "jetty_planks_snow",
+    "file": "jetty_planks_snow.png",
+    "shape": "Square",
+    "rules": "material",
+    "refs": [
+      "frostmere-shore/jetty_planks_snow.jpg",
+      "frostmere-shore.png"
+    ],
+    "title": "Snowy jetty planks",
+    "subject": "Subject: the deck of an old lakeside jetty in winter, seen from straight above. Grey weathered planks about 25 cm wide laid side by side across the picture, with dark gaps between them, worn grain and a few nail heads, a thin layer of snow lying on them and packed into the gaps. About 2 m of deck across. Night, cold moonlight, painted with even light.",
+    "use": "The jetty's deck at Frostmere's shore.",
+    "shared": false
+  },
+  {
+    "id": "boathouse_roof_snow",
+    "file": "boathouse_roof_snow.png",
+    "shape": "Wide (3:2)",
+    "rules": "roof",
+    "refs": [
+      "frostmere-shore/boathouse_roof_snow.jpg",
+      "frostmere-shore.png"
+    ],
+    "title": "Snowy boathouse roof, from above",
+    "subject": "Subject: the roof of a small timber boathouse in deep winter, seen from straight above. A simple pitched roof under a thick soft layer of snow, the ridge line down the middle, the snow overhanging the edges a little with short icicles, a glimpse of dark wooden eaves boards. The whole roof is in the picture.",
+    "use": "The boathouse roof at Frostmere's shore.",
+    "shared": false
+  },
+  {
+    "id": "boathouse_door_end",
+    "file": "boathouse_door_end.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "frostmere-shore/boathouse_door_end.jpg",
+      "frostmere-shore.png"
+    ],
+    "title": "Boathouse end wall with door",
+    "subject": "Subject: the gable end of a small timber boathouse, seen flat from the front. Dark weathered vertical boards, a low plank door with iron hinges in the middle, a triangle of boards above it, the edge of a thick snow-covered roof with short icicles along the top. About 3 m wide. The whole wall is in the picture.",
+    "use": "The boathouse's end wall by the jetty at Frostmere's shore.",
+    "shared": false
+  },
+  {
+    "id": "boathouse_long_wall",
+    "file": "boathouse_long_wall.png",
+    "shape": "Wide (3:2)",
+    "rules": "skin",
+    "refs": [
+      "frostmere-shore/boathouse_long_wall.jpg",
+      "frostmere-shore.png"
+    ],
+    "title": "Boathouse long wall",
+    "subject": "Subject: the long side wall of a small timber boathouse, seen flat from the front. Dark weathered vertical boards on a low stone footing, one small window with closed wooden shutters, the edge of a snow-covered roof with short icicles along the top. About 4.5 m long and 2.2 m high. The whole wall is in the picture.",
+    "use": "The boathouse's side wall at Frostmere's shore.",
+    "shared": false
+  },
+  {
+    "id": "lantern_cold_post",
+    "file": "lantern_cold_post.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "frostmere-shore/lantern_cold_post.jpg",
+      "frostmere-shore.png"
+    ],
+    "title": "Cold lantern on a post",
+    "subject": "Subject: a lantern post at the end of a jetty, seen flat from the side. A thick wooden post about 2.4 m tall with a short arm at the top, snow on the post's top and the arm, and an iron lantern hanging from the arm that glows a cold blue-white. The whole post is in the picture, foot at the bottom.",
+    "use": "The cold lantern where the jetty turns at Frostmere's shore.",
+    "shared": false
+  },
+  {
+    "id": "reeds_dry_pale",
+    "file": "reeds_dry_pale.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "frostmere-shore/reeds_dry_pale.jpg",
+      "frostmere-shore.png"
+    ],
+    "title": "Pale dry reeds in ice",
+    "subject": "Subject: one clump of dry winter reeds about 1.2 m tall, seen from the side, standing up out of ice: thin straw-pale and tan stems and blades, some with feathery seed heads, frost along them, a little snow at the base. Whole and alone, with its base at the bottom.",
+    "use": "The reed clumps frozen into the ice all along Frostmere's shore.",
+    "shared": false
+  },
+  {
+    "id": "birch_sapling_bare",
+    "file": "birch_sapling_bare.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "frostmere-shore/birch_sapling_bare.jpg",
+      "frostmere-shore.png"
+    ],
+    "title": "Young bare birch",
+    "subject": "Subject: one young birch about 2.5 m tall, seen from the side, in winter: two or three thin white stems with dark marks, fine leafless twigs at the top, frost and a little snow on the twigs. Whole and alone, with its base at the bottom.",
+    "use": "The young birches along Frostmere's shore and in the cold moor and northern camp.",
+    "shared": false
+  }
+]

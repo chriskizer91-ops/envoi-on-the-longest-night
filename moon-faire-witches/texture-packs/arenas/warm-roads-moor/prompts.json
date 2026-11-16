@@ -1,0 +1,86 @@
+[
+  {
+    "id": "moor_heather_grass",
+    "file": "moor_heather_grass.png",
+    "shape": "Square",
+    "rules": "ground",
+    "refs": [
+      "warm-roads-moor/moor_heather_grass.jpg",
+      "warm-roads-moor.png"
+    ],
+    "title": "Moor grass and heather",
+    "subject": "Subject: the ground of an open moor, about 3 m across, seen from above. Short olive and dusky green moor grass with many small soft patches of purple heather in bloom spread evenly through it, and a few tiny white flowers. Night, under a bright full moon: cool silver-lavender moonlight, plum-indigo shadows, but the texture itself evenly lit.",
+    "use": "The ground of the Warm Roads moor fight.",
+    "shared": false
+  },
+  {
+    "id": "moor_heather_tuft",
+    "file": "moor_heather_tuft.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "warm-roads-moor/moor_heather_tuft.jpg",
+      "warm-roads-moor.png"
+    ],
+    "title": "Heather clump",
+    "subject": "Subject: one low rounded clump of moor heather in bloom, about 50 cm across and 30 cm high: wiry dark stems, tiny dark green needle leaves, many small purple-pink flower spikes. Night colours.",
+    "use": "Scattered round the Warm Roads moor fight.",
+    "shared": false
+  },
+  {
+    "id": "moor_gorse_bush",
+    "file": "moor_gorse_bush.png",
+    "shape": "Square",
+    "rules": "plant",
+    "refs": [
+      "warm-roads-moor/moor_gorse_bush.jpg",
+      "warm-roads-moor.png"
+    ],
+    "title": "Gorse bush",
+    "subject": "Subject: one gorse bush, about 1.2 m across and 1 m high: a dense rounded mass of dark spiny green shoots covered in small golden-yellow flowers. Night colours with the yellow muted by moonlight.",
+    "use": "Along the walls and round the edges of the Warm Roads moor fight.",
+    "shared": false
+  },
+  {
+    "id": "moor_birch",
+    "file": "moor_birch.png",
+    "shape": "Tall (2:3)",
+    "rules": "plant",
+    "refs": [
+      "warm-roads-moor/moor_birch.jpg",
+      "warm-roads-moor.png"
+    ],
+    "title": "Silver birch",
+    "subject": "Subject: one slim silver birch tree, whole, about 12 m high: a thin white trunk with black marks, thin upward branches and a light open crown of small dark olive leaves. Silver moonlight on the white bark.",
+    "use": "The birches round the Warm Roads moor fight, and its live framing tree.",
+    "shared": false
+  },
+  {
+    "id": "moor_waymarker",
+    "file": "moor_waymarker.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "warm-roads-moor/moor_waymarker.jpg",
+      "warm-roads-moor.png"
+    ],
+    "title": "Ember Line waymarker stone",
+    "subject": "Subject: one tall old standing stone, seen flat from the front, about 2.5 m high: rough grey-lavender stone tapering to a blunt top, with a round carved sigil near the top holding a small disc of warm amber light, lichen and moss on it, set on a low base of two or three fitted stones.",
+    "use": "The waymarker beside the Ember Line road at the Warm Roads moor fight.",
+    "shared": false
+  },
+  {
+    "id": "moor_watchtower",
+    "file": "moor_watchtower.png",
+    "shape": "Tall (2:3)",
+    "rules": "skin",
+    "refs": [
+      "warm-roads-moor/moor_watchtower.jpg",
+      "warm-roads-moor.png"
+    ],
+    "title": "Far round watchtower",
+    "subject": "Subject: an old round stone watchtower, seen flat from the front, about 15 m high: grey stone courses, a crenellated top, two small warm lit windows, a low broken wall at its foot. Cold night colours apart from the windows.",
+    "use": "A far backdrop piece on a crag beyond the Warm Roads moor.",
+    "shared": false
+  }
+]
