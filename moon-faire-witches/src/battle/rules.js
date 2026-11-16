@@ -68,7 +68,7 @@
     // 1400, so the Jester stands at 2400 (her share of the party's HP as in Moon Faire, less a little for a party of two), and her
     // blows are Io's attack's measure. She has no Guard: catching blows is how she defends.
     jester: {
-      name: 'Jester', hp: 2000, mp: 60, atb: 2.64,
+      name: 'Kore', hp: 2000, mp: 60, atb: 2.64,
       moves: {
         rebuke: { name: 'Gilded Rebuke', kind: 'attack', hits: [290], physical: true, target: 'foe', time: 3.0 },
         jab: { name: 'Attack Taunt', kind: 'taunt', hits: [330], physical: true, catches: 3, target: 'foe', time: 3.2 },

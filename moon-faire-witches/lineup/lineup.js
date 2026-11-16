@@ -16,8 +16,8 @@
   // ---------- the two heroes, always here ----------
   const ioM = makeMoonIo({ weight: 'lightest' }); ioM.walkRun = true; ioM.camera = K.camera;
   const jesM = makeMoonJester({ weight: 'lightest' }); jesM.camera = K.camera;
-  const io = K.actor('io', ioM, { home: [-2.6, -0.8], tall: 2.0, shadow: 0.55, yawBias: -0.95, witch: true });
-  const jes = K.actor('jester', jesM, { home: [-1.2, 0.2], tall: 1.9, shadow: 0.5, yawBias: -1.45, witch: true });
+  const io = K.actor('io', ioM, { home: [-2.6, -0.8], tall: 2.0, shadow: 0.55, yawBias: 0, witch: true });
+  const jes = K.actor('jester', jesM, { home: [-1.2, 0.2], tall: 1.9, shadow: 0.5, yawBias: 0, witch: true });
   const ioTr = makeTrance(K.scene, io, { color: 0x9fe8c0, colors: [0xbfffe0, 0x9fe8c0, 0xe8f0ff, 0xffe9a8, 0xffffff] });
   const jTr = makeTrance(K.scene, jes, { color: 0xa64dff, colors: [0xb05cff, 0x7a2cff, 0xe0a8ff, 0xff6ad5, 0xffffff] });
   K.onFrame((dt, t) => { ioTr.update(dt, t); jTr.update(dt, t); });
@@ -38,7 +38,7 @@
   const add = (o) => { L.push(o); return o; };
   // the heroes
   add({ id: 'io', group: 'heroes', name: 'Io', tag: IN, line: 'Moon Faire’s Io, the Herbal Witch, at her lightest. Her own spells are in her model; Envoi Io’s spells play on her six new moves, with the lights in the Spell Book.', hero: io });
-  add({ id: 'jester', group: 'heroes', name: 'The Jester', tag: IN, line: 'Moon Faire’s Jester at her lightest, playing Moon Faire’s Fate rules. The first moves are the ones in the battle; the rest are her other Moon Faire moves.', hero: jes });
+  add({ id: 'jester', group: 'heroes', name: 'Kore, the Jester', tag: IN, line: 'Moon Faire’s Jester, named Kore, at her lightest, playing Moon Faire’s Fate rules. The first moves are the ones in the battle; the rest are her other Moon Faire moves.', hero: jes });
   // the summons
   add({ id: 'lunara', group: 'summons', name: 'Lunara', tag: IN, line: 'Envoi’s Lunara, Io’s summon: she heals the party, or gathers the moon and brings it down on the foe.', make: () => makeLunara({}), at: [WELL.x, WELL.z - 0.9], tall: 4.3, shadow: 0.9, side: 'summon', order: ['appear', 'embrace', 'charge', 'release', 'leave'] });
   add({ id: 'envoi', group: 'summons', name: 'Envoi, the Letter Wyrm', tag: IN, line: 'Envoi’s summon, made of Io’s letters to the dead: it wakes, strikes and wards the party.', make: () => makeEnvoi({}), at: [WELL.x - 0.6, WELL.z - 2.2], tall: 6.4, shadow: 1.6, side: 'summon', order: ['appear', 'summon', 'envoi', 'leave'] });

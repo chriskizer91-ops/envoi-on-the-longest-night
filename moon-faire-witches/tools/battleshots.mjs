@@ -73,6 +73,8 @@ await page.evaluate(([turns]) => {
   const tick = () => {
     const F = B.F;
     for (const k of ['io', 'jester']) { const f = F && F[k]; if (!f) continue; const a = f.m.action; if (a !== last[k]) { last[k] = a; W.__seen.push(k + ':' + a + '@' + B.t.toFixed(1)); } }
+    // the bow at the end of a won fight
+    if (!W.__bowShot && !W.__shot && F && F.io && F.io.m.action === 'victory' && F.io.m.progress > 0.45) { W.__bowShot = true; B.turbo = 0; W.__shot = { name: 'bow', k: 0, p: F.io.m.progress, a: 'victory' }; }
     const c = W.__cur;
     if (c && !W.__shot && F && F[c.who]) {
       const m = F[c.who].m, at = c.at || [];
@@ -102,7 +104,7 @@ while (Date.now() < deadline) {
     await page.evaluate(() => { window.__shot = null; window.__battle.turbo = window.__turbo; });
     continue;
   }
-  if (st.over || st.done >= n) break;
+  if (st.over || (st.done >= n && !plan.toEnd)) break;
   await sleep(150);
 }
 const seen = await page.evaluate(() => window.__seen);

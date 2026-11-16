@@ -75,7 +75,7 @@ names = {}
 for c in P: names.setdefault(c['file'], []).append(c)
 for f2, cs in names.items():
     if len(cs) > 1:
-        for c in cs: c['file'] = c['place'].replace('-', '_') + '_' + c['file']
+        for c in cs: c['file'] = ('fight_' if c['group'] == 'arenas' else '') + c['place'].replace('-', '_') + '_' + c['file']
 for c in P:
     c['round'] = 1 if c['shared'] else 2 if c['rules'] in ('ground', 'material') else 3
 

@@ -143,16 +143,18 @@
       if (renderer) renderer.setSize(view.w, view.h);
       paintCv.width = Math.round(view.w * DPR); paintCv.height = Math.round(view.h * DPR); lastTf = '';
     }
-    function shot(cx, cy, s, k) { cam.follow = null; cam.tx = cx; cam.ty = cy; cam.ts = s; cam.k = k || 3; }
+    function shot(cx, cy, s, k) { DIR.followF = null; cam.follow = null; cam.tx = cx; cam.ty = cy; cam.ts = s; cam.k = k || 3; }
     // a giant foe (the great wraith) is framed by its whole height: close-ups on it aim higher and pull back
     const bigAt = (p) => foes.find((f) => f.pos === p && f.tall > 3);
     function shotAt(p, s, k, lift) {
+      if (DIR.free) return DIR.at(p, s, k, lift);
       const big = lift === undefined && bigAt(p);
       if (big) { lift = big.tall * 0.45; s /= 1.7; }
       const q = toPx(tmpV.set(p.x, lift === undefined ? 1.1 : lift, p.z)); shot(q[0], q[1], s / ZK, k);
     }
-    function followShot(getPos, s, k) { cam.follow = getPos; cam.fs = s / ZK; cam.k = k || 3; }
+    function followShot(getPos, s, k) { if (DIR.free) return DIR.follow(getPos, s, k); cam.follow = getPos; cam.fs = s / ZK; cam.k = k || 3; }
     function shotBoth(a, b, zoom, k) {
+      if (DIR.free) return DIR.both(a, b, zoom, k);
       if (bigAt(a) || bigAt(b)) { const pts = []; for (const p of [a, b]) { const f = bigAt(p); pts.push({ x: p.x, y: 0, z: p.z }, { x: p.x, y: f ? f.tall : 2.2, z: p.z }); } shotFit(pts, Math.min(1, zoom), k); return; }
       const pa = toPx(tmpV.set(a.x, 1.1, a.z)), pb = toPx(tmpV.set(b.x, 1.1, b.z));
       const needW = Math.abs(pa[0] - pb[0]) + 175 * ZK, needH = 250 * ZK;
@@ -162,6 +164,7 @@
     }
     // the wide shot: every point (with a height) in frame, for summons, big attacks and the whole field
     function shotFit(pts, zoom, k) {
+      if (DIR.free) return DIR.fit(pts, zoom, k);
       let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
       for (const p of pts) { const q = toPx(tmpV.set(p.x, p.y || 0, p.z)); x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); }
       const availH = Math.max(120, view.h - view.uiH - 40), s = Math.min((view.w - 16) / (x1 - x0 + 120 * ZK), availH / (y1 - y0 + 70 * ZK)) * (zoom || 1);
@@ -173,6 +176,7 @@
     }
     // everyone still standing, heads included
     function shotField(k) {
+      if (DIR.free) return DIR.wide(k);
       const pts = [];
       for (const f of standing()) {
         pts.push({ x: f.pos.x, y: 0, z: f.pos.z }, { x: f.pos.x, y: f.tall, z: f.pos.z });
@@ -181,8 +185,141 @@
       }
       if (pts.length) shotFit(pts, 1, k || 2);
     }
+    // ---------- Moon Faire's camera (Chris, November 16: "the hero party facing the foes and the foes facing the hero's
+    // party, and use the camera technique from Moon Faire") ----------
+    // As Moon Faire's fight does it (its game/fight/README.md, "The director camera"; read-only): the fight opens on the
+    // painting, sharp, from the painter's own camera while the foes rise; then the camera really moves. Its rest is wide and
+    // behind the party, round to the audience's side, the party with their backs to us and every foe beyond them; a
+    // witch's move is seen over her shoulder at whoever she aims at, or from the side, or close and low in front of her,
+    // never the same angle twice running; a move at everyone is seen from above; a won fight ends on the party's bow, seen
+    // from the foes' side. Every shot is fitted so that everyone it is about is whole above the menus (Moon Faire's framing
+    // guard, in short). Behind a moved camera the painting stands far off, out of focus, as Moon Faire's does: here it is a
+    // backdrop in the 3D, where the arena's own sheet over the painting stands, so it keeps its place as the camera moves;
+    // a second, mirrored copy stands behind the painter for the shots that look back. Every choreography below still asks
+    // for its shots by shotAt, shotBoth, shotFit and shotField: the director turns each into a camera place.
+    const DIR = (() => {
+      const V3 = THREE.Vector3, T = {
+        on: !!AF && cfg.director !== false, free: false, pos: new V3(), look: new V3(), fov: 32, to: { pos: new V3(), look: new V3(), fov: 32 }, k: 3, last: '', n: 0, followF: null, cutNext: false,
+      };
+      const tmp = new THREE.PerspectiveCamera(32, 1, 0.1, 400), q = new V3(), u = new V3(), w = new V3();
+      const rad = Math.PI / 180, flat = (v) => { v.y = 0; return v.lengthSq() > 1e-9 ? v.normalize() : v.set(1, 0, 0); };
+      const center = (list) => { const c = new V3(); let n = 0; for (const f of list) { c.x += f.pos.x; c.z += f.pos.z; n++; } return n ? c.multiplyScalar(1 / n) : c; };
+      const party = () => { const l = heroes.filter((h) => !h.out && h.m.root.visible); return l.length ? l : heroes; };
+      const enemies = () => { const l = foes.filter((f) => !f.out && f.m.root.visible); return l.length ? l : foes; };
+      const who = (p) => heroes.concat(foes).find((f) => f.pos === p) || null;
+      // the way from the party to the foes, and the side the audience (the painter's camera) is on
+      function axes() {
+        const P = center(party()), Fc = center(enemies()), ax = flat(new V3().subVectors(Fc, P));
+        const side = new V3(-ax.z, 0, ax.x); if (side.dot(new V3(fullCam.position.x - P.x, 0, fullCam.position.z - P.z)) < 0) side.negate();
+        return { P, F: Fc, ax, side };
+      }
+      // a fighter's whole body as points: feet and head, and a wide foe's reach to either side
+      function body(f, out) { const r = (f.look && f.look.halfW) || (f.tall > 3 ? f.tall * 0.35 : 0.45); for (const [dx, dz] of [[r, 0], [-r, 0], [0, r], [0, -r]]) out.push(new V3(f.pos.x + dx, 0, f.pos.z + dz)); out.push(new V3(f.pos.x, f.tall * 1.05, f.pos.z)); return out; }
+      const bodies = (list) => { const out = []; for (const f of list) body(f, out); return out; };
+      // the usable part of the screen: above the menus. The frame is made taller by the menus' height and its bottom shown,
+      // so the middle of what is left above them is the middle of the shot
+      const usable = () => { const ui = Math.max(0, Math.min(view.h * 0.6, view.uiH || 0)); return { H: view.h + ui, ui, yLim: (view.h - ui) / (view.h + ui) }; };
+      // the distance along a direction at which every point fits (a little in from the edges)
+      function fitDist(dir, look, pts, fov, min) {
+        const U = usable(); tmp.fov = fov; tmp.aspect = view.w / Math.max(1, U.H); tmp.updateProjectionMatrix();
+        const ok = (d) => { tmp.position.copy(look).addScaledVector(dir, d); tmp.lookAt(look); tmp.updateMatrixWorld(); for (const p of pts) { q.copy(p).project(tmp); if (q.z > 1 || Math.abs(q.x) > 0.9 || Math.abs(q.y) > U.yLim * 0.9) return false; } return true; };
+        let lo = min || 1.6, hi = 90; if (ok(lo)) return lo;
+        for (let i = 0; i < 22; i++) { const m = (lo + hi) / 2; if (ok(m)) hi = m; else lo = m; }
+        return hi;
+      }
+      // a direction: round from a way along the ground by an angle (toward the audience when positive), raised by another
+      function dirOf(base, side, turn, rise) { const d = new V3().copy(base).multiplyScalar(Math.cos(turn * rad)).addScaledVector(side, Math.sin(turn * rad)); flat(d); d.multiplyScalar(Math.cos(rise * rad)); d.y = Math.sin(rise * rad); return d.normalize(); }
+      function set(kind, dir, look, pts, fov, k, min) {
+        const d = fitDist(dir, look, pts, fov, min);
+        const pos = new V3().copy(look).addScaledVector(dir, d);
+        // a cut when the camera would swing far; a glide when it is near
+        const old = new V3().subVectors(T.to.pos, T.to.look).normalize(), turn = old.angleTo(dir) / rad;
+        T.to.pos.copy(pos); T.to.look.copy(look); T.to.fov = fov; T.k = k || 3;
+        if (T.cutNext || turn > 40 || !T.n) { T.pos.copy(pos); T.look.copy(look); T.fov = fov; T.cutNext = false; }
+        T.last = kind; T.n++; T.followF = null;
+      }
+      T.wide = (k) => { const A = axes(), all = party().concat(enemies()); const look = new V3().lerpVectors(A.P, A.F, 0.5); look.y = 1.4; set('wide', dirOf(A.ax.clone().negate(), A.side, 50, 7), look, bodies(all), 36, k); };
+      T.fit = (pts, zoom, k) => { const A = axes(), c = new V3(); for (const p of pts) c.add(new V3(p.x, 0, p.z)); c.multiplyScalar(1 / Math.max(1, pts.length)); c.y = 1.0;
+        set('fit', dirOf(A.ax.clone().negate(), A.side, 48, 9), c, pts.map((p) => new V3(p.x, p.y || 0, p.z)).concat(bodies(party())), 36, k); };
+      // two places: a witch at a foe (over her shoulder, or from the side), a foe at a witch, a witch at a friend
+      const angles = ['shoulder', 'side', 'low'];
+      T.both = (a, b, zoom, k) => {
+        const fa = who(a), fb = who(b), A = axes();
+        let hero = fa && fa.side === 'hero' ? fa : fb && fb.side === 'hero' ? fb : null, other = hero === fa ? fb : fa;
+        const pa = new V3(a.x, 0, a.z), pb = new V3(b.x, 0, b.z), line = flat(new V3().subVectors(pb, pa));
+        const side = new V3(-line.z, 0, line.x); if (side.dot(A.side) < 0) side.negate();
+        let kind = angles[T.n % angles.length]; if (kind === T.last) kind = angles[(T.n + 1) % angles.length];
+        const pts = []; for (const f of [fa, fb]) if (f) body(f, pts); if (!fa) pts.push(pa, pa.clone().setY(2)); if (!fb) pts.push(pb, pb.clone().setY(2));
+        const mid = new V3().lerpVectors(pa, pb, 0.5); mid.y = 1.1;
+        if (kind === 'shoulder' && hero && other) {
+          const away = flat(new V3().subVectors(hero.pos === a ? pa : pb, hero.pos === a ? pb : pa)), look = new V3().lerpVectors(new V3(hero.pos.x, 0, hero.pos.z), new V3(other.pos.x, 0, other.pos.z), 0.62); look.y = 1.15;
+          set('shoulder', dirOf(away, side, 24, 12), look, pts, 30, k, 2.2);
+        } else if (kind === 'low') set('low', dirOf(side, line, 18, 3), mid, pts, 30, k, 2.2);
+        else set('side', dirOf(side, line, -6, 9), mid, pts, 30, k, 2.2);
+      };
+      // one place, close: low in front of whoever stands there, on the audience's side
+      T.at = (p, s, k, lift) => {
+        const f = who(p), A = axes(), pts = f ? body(f, []) : [new V3(p.x, 0, p.z), new V3(p.x, 2, p.z)];
+        const look = new V3(p.x, lift === undefined ? Math.min(1.2, (f ? f.tall : 2) * 0.55) : lift, p.z);
+        const face = f && f.side === 'foe' ? A.ax.clone().negate() : A.ax.clone();
+        set('close', dirOf(face, A.side, (T.n % 2 ? 35 : 55), 6), look, pts, 28, k, 2.0);
+      };
+      T.follow = (getPos, s, k) => { const p = getPos(); T.at(p, s, k); T.followF = getPos; };
+      // the bow: from the foes' side, looking back at the party
+      T.bow = () => { const A = axes(), look = A.P.clone(); look.y = 1.0; set('bow', dirOf(A.ax, A.side, 20, 8), look, bodies(party()), 30, 1.6, 3); return T.to.pos; };
+      T.bowYaw = (h) => Math.atan2(T.to.pos.x - h.pos.x, T.to.pos.z - h.pos.z);
+      // ---- each frame: glide toward the shot, then stand the camera there ----
+      let back = null, mirror = null, FRAMERS = null;
+      // the tree that frames the painter's shot stands at the frame's edge, right where a moved camera looks: it steps out
+      function framers() {
+        if (FRAMERS) return FRAMERS; FRAMERS = [];
+        const TR = AF && AF.place && AF.place.tree; if (!TR) return FRAMERS;
+        const at = g(TR.u * IW, TR.v * IH);
+        for (const o of AF.root.children) { if (!o.isMesh || !o.material || o.material.type !== 'MeshLambertMaterial' || !o.geometry) continue; if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); const c = o.geometry.boundingSphere.center; if (Math.hypot(c.x - at.x, c.z - at.z) < 7) FRAMERS.push(o); }
+        return FRAMERS;
+      }
+      // the arena's sheet over the painting shows only what changes, through the 3D's see-through: it is set aside while the
+      // camera moves (the painting it changes is not drawn then)
+      let SHEET = null;
+      function backdrop() {
+        if (back || !AF || !paintImg.complete || !paintImg.naturalWidth) return;
+        SHEET = AF.root.children.find((o) => o.isMesh && o.renderOrder === -100); if (!SHEET) return;
+        // a small copy, softened (out of focus), its sides and top and bottom met again in a mirror, as Moon Faire's is
+        const c = document.createElement('canvas'); c.width = 1024; c.height = 512;
+        const x = c.getContext('2d'); x.filter = 'blur(3px)'; x.drawImage(paintImg, 0, 0, c.width, c.height);
+        const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.MirroredRepeatWrapping;       // its colours as they are, as the painting is drawn below the 3D
+        const sp = SHEET.geometry.parameters, W0 = sp.width, H0 = sp.height, geo = new THREE.PlaneGeometry(W0 * 3, H0 * 1.8);
+        const uv = geo.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 3 - 1, uv.getY(i) * 1.8 - 0.4); uv.needsUpdate = true;
+        const mk = () => { const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: t, color: new THREE.Color(0.86, 0.86, 0.9), depthWrite: false, fog: false, side: THREE.DoubleSide })); m.renderOrder = -200; m.frustumCulled = false; scene.add(m); return m; };
+        const fwd = new V3(0, 0, -1).applyQuaternion(SHEET.quaternion);
+        back = mk(); back.position.copy(SHEET.position).addScaledVector(fwd, 2); back.quaternion.copy(SHEET.quaternion);
+        // the same painting again behind the painter, for the shots that look back (the bow)
+        mirror = mk(); const d = SHEET.position.distanceTo(fullCam.position); mirror.position.copy(fullCam.position).addScaledVector(fwd, -d); mirror.quaternion.copy(SHEET.quaternion); mirror.rotateY(Math.PI);
+      }
+      T.frame = (rdt) => {
+        if (T.followF) { const p = T.followF(); T.to.look.x = p.x; T.to.look.z = p.z; }
+        const k = REDUCED ? 1 : 1 - Math.exp(-rdt * T.k);
+        T.pos.lerp(T.to.pos, k); T.look.lerp(T.to.look, k); T.fov += (T.to.fov - T.fov) * k;
+        backdrop();
+        const U = usable();
+        camera.fov = T.fov; camera.aspect = view.w / Math.max(1, U.H); camera.near = 0.1; camera.far = 2500;
+        camera.setViewOffset(view.w, U.H, 0, U.ui, view.w, view.h);
+        shake.amp *= Math.exp(-rdt * 7); const sx = (Math.random() - 0.5) * 2 * shake.amp * 0.004, sy = (Math.random() - 0.5) * 2 * shake.amp * 0.004;
+        camera.position.copy(T.pos); camera.lookAt(w.copy(T.look).add(u.set(sx, sy, 0))); camera.updateMatrixWorld(); camera.updateProjectionMatrix();
+        if (back) { back.visible = true; mirror.visible = true; } if (SHEET) SHEET.visible = false;
+        for (const m of framers()) m.visible = false;
+        view.s2 = view.h * Math.tan(FOV / 2 * rad) / (IH * Math.tan(T.fov / 2 * rad)) * (view.h / U.H);
+        if (lastTf !== 'free') { paintCtx.fillStyle = '#07050c'; paintCtx.fillRect(0, 0, paintCv.width, paintCv.height); lastTf = 'free'; }
+      };
+      // back to the painter's own camera (the opening; a fight that ends)
+      T.fixed = () => { T.free = false; T.followF = null; if (back) { back.visible = false; mirror.visible = false; } if (SHEET) SHEET.visible = true; for (const m of framers()) m.visible = true; camera.fov = fullCam.fov; camera.aspect = fullCam.aspect; camera.near = fullCam.near; camera.far = fullCam.far; camera.position.copy(fullCam.position); camera.quaternion.copy(fullCam.quaternion); camera.updateMatrixWorld(); camera.updateProjectionMatrix(); lastTf = ''; };
+      T.debug = () => ({ back: !!back, sheet: !!(AF && AF.root.children.find((o) => o.isMesh && o.renderOrder === -100)), img: paintImg.naturalWidth, kids: AF ? AF.root.children.length : 0, pos: T.pos.toArray().map((v) => +v.toFixed(2)), look: T.look.toArray().map((v) => +v.toFixed(2)), fov: T.fov, bpos: back ? back.position.toArray().map((v) => +v.toFixed(1)) : null, cam: fullCam.position.toArray().map((v) => +v.toFixed(2)) });
+      T.start = () => { if (!T.on) return; T.free = true; T.n = 0; T.cutNext = true; };
+      return T;
+    })();
     function addShake(px) { if (!REDUCED) shake.amp = Math.max(shake.amp, px); if (BF) BF.shake(px); }
     function applyCam(rdt) {
+      if (DIR.free) { DIR.frame(rdt); return; }
       if (cam.follow) { const p = cam.follow(); const q = toPx(tmpV.set(p.x, 1.1, p.z)); cam.tx = q[0]; cam.ty = q[1]; cam.ts = cam.fs; }
       const k = REDUCED ? 1 : 1 - Math.exp(-rdt * cam.k);
       cam.cx += (cam.tx - cam.cx) * k; cam.cy += (cam.ty - cam.cy) * k; cam.s += (cam.ts - cam.s) * k;
@@ -2027,6 +2164,7 @@
         await wait(1);
       }
       UI.showBattle(true); UI.buildWindows(); UI.status(); layoutView();
+      DIR.start();
       shotField(2);
       io().m.play('cast'); UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic();
       await wait(1.4); UI.hideMsg();
@@ -2075,8 +2213,8 @@
         // the story's set fights and the great foes end on the longer fanfare
         UI.cinematic(false); UI.hideEnemy(); if (cfg.fanfare) SND.sfx.fanfare(); else SND.sfx.victory();
         const up = living('hero');
-        shotField(2);
-        for (const h of up) { h.tyaw = 0.25; h.spin = TAU; h.m.play('victory', true); }
+        if (DIR.free) { DIR.followF = null; DIR.bow(); } else shotField(2);
+        for (const h of up) { h.tyaw = DIR.free ? DIR.bowYaw(h) : 0.25; h.spin = TAU; h.m.play('victory', true); }
         await until(() => up.every((h) => h.m.action !== 'victory' || h.m.progress >= 1));
         mark('victory'); await wait(0.9);
       } else if (r.outcome === 'retreat') await retreatEnding(mark);
@@ -2140,8 +2278,8 @@
       if (L[4]) { UI.msg(L[4], true); await wait(5.2); }
       mark('home');
       UI.hideMsg(); SND.sfx.victory();
-      const up = living('hero'); shotField(1.5);
-      for (const h of up) { h.tyaw = 0.25; h.m.play('victory', true); }
+      const up = living('hero'); if (DIR.free) DIR.bow(); else shotField(1.5);
+      for (const h of up) { h.tyaw = DIR.free ? DIR.bowYaw(h) : 0.25; h.m.play('victory', true); }
       if (L[5]) { UI.msg(L[5], true); await wait(3.4); UI.hideMsg(); }
       UI.cinematic(false);
     }
@@ -2593,7 +2731,7 @@
         setFight(level, pack) { PICK.level = level; if (pack !== undefined) PICK.pack = pack; },
         // Moon Faire witches' test hooks: the fighters on the field (their models), and a unit charged up: its trance
         // ready, its MP, a foe's Fate (shown and real)
-        get F() { return F; },
+        get F() { return F; }, get DIR() { return DIR; },
         charge(key, o) { const u = E.unit(key); o = o || {}; if (o.trance) { u.trance = 1; u.tranceReady = true; } if (o.mp != null) u.mp = o.mp; if (o.fate != null) u.fate = o.fate; if (o.hp != null) u.hp = o.hp; Object.assign(D[key], { mp: u.mp, fate: u.fate || 0, hp: u.hp, tr: u.trance }); },
         flipbook(on) { flipbook(on); },
         // a test shortcut: a unit down to n HP, shown and real (the first foe by default)

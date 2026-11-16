@@ -23,21 +23,21 @@
     'northern-crossroads': { io: [560, 690], sol: [645, 752], slots: [[870, 640], [955, 600], [945, 705]] },
     'frozen-road': { io: [560, 800], sol: [650, 860], slots: [[860, 690], [950, 650], [930, 770]] },
   };
-  // Moon Faire witches (November 15, 2026): Moon Faire's Io in Io's place and the Jester in Sol's, at their lightest. Each rests
-  // turned well round toward the viewer (the Jester casts out of her left side, so she faces the viewer)
+  // Moon Faire witches (November 15, 2026): Moon Faire's Io in Io's place and the Jester in Sol's, at their lightest. They rest
+  // facing the foes, and the foes face them (Chris, November 16), as in Moon Faire's fights
   const hero = (id, at) => (id === 'io'
-    ? { id: 'io', make: () => { const m = makeMoonIo({ weight: 'lightest' }); m.walkRun = true; return m; }, home: at, yawBias: -0.95, shadow: 0.55, tall: 2.0, kind: 'io' }
-    : { id: 'jester', make: () => makeMoonJester({ weight: 'lightest' }), home: at, yawBias: -1.45, shadow: 0.5, tall: 1.9, kind: 'jester', stop: 0.9 });
+    ? { id: 'io', make: () => { const m = makeMoonIo({ weight: 'lightest' }); m.walkRun = true; return m; }, home: at, yawBias: 0, shadow: 0.55, tall: 2.0, kind: 'io' }
+    : { id: 'jester', make: () => makeMoonJester({ weight: 'lightest' }), home: at, yawBias: 0, shadow: 0.5, tall: 1.9, kind: 'jester', stop: 0.9 });
   const VARIANT = { bramble: 'classic', brambleAmbush: 'ambush', brambleTowering: 'towering', brambleAncient: 'ancient' };
-  const bram = (tall, reach, shadow, halfW) => ({ kind: 'bramble', tall, reach, shadow, halfW, yawBias: 0.2, glow: [shadow * 1.1, 0xff3d8a], appearColor: [0.95, 0.35, 0.5] });
+  const bram = (tall, reach, shadow, halfW) => ({ kind: 'bramble', tall, reach, shadow, halfW, yawBias: 0, glow: [shadow * 1.1, 0xff3d8a], appearColor: [0.95, 0.35, 0.5] });
   const FOE_LOOK = {
-    wraith: { kind: 'wraith', shadow: 0.75, tall: 2.3, yawBias: 0.45, glow: [1.6, 0x2cff7a] },
-    wisp: { kind: 'wisp', shadow: 0.3, tall: 1.0, yawBias: 0.9, glow: [0.9, 0xb070ff], state: (u) => ({ level: u.level }) },
-    frostWisp: { kind: 'wisp', shadow: 0.3, tall: 1.0, yawBias: 0.9, glow: [0.9, 0x9fd8ff], state: (u) => ({ level: u.level }) },
+    wraith: { kind: 'wraith', shadow: 0.75, tall: 2.3, yawBias: 0, glow: [1.6, 0x2cff7a] },
+    wisp: { kind: 'wisp', shadow: 0.3, tall: 1.0, yawBias: 0, glow: [0.9, 0xb070ff], state: (u) => ({ level: u.level }) },
+    frostWisp: { kind: 'wisp', shadow: 0.3, tall: 1.0, yawBias: 0, glow: [0.9, 0x9fd8ff], state: (u) => ({ level: u.level }) },
     bramble: bram(1.9, 1.0, 1.6, 1.9), brambleAmbush: bram(1.6, 1.0, 1.7, 1.9), brambleTowering: bram(2.3, 1.1, 1.4, 2.2), brambleAncient: bram(2.7, 1.5, 2.1, 2.9),
-    greatWraith: { kind: 'wraith', shadow: 1.9, tall: 7.4, yawBias: 0.3, glow: [3.6, 0xffa24a], reach: 1.6, near: 3.6, fxScale: 2.8, lights: true },
-    halcyon: { kind: 'halcyon', shadow: 0.62, tall: 2.11, yawBias: 0.15, glow: [1.4, 0x6f9cff], appearColor: [0.45, 0.55, 0.95], stop: 0.95 },
-    noctara: { kind: 'noctara', shadow: 0.8, tall: 2.5, yawBias: 0.25, glow: [1.7, 0x8a5cff], appearColor: [0.65, 0.5, 1], downAct: 'none' },
+    greatWraith: { kind: 'wraith', shadow: 1.9, tall: 7.4, yawBias: 0, glow: [3.6, 0xffa24a], reach: 1.6, near: 3.6, fxScale: 2.8, lights: true },
+    halcyon: { kind: 'halcyon', shadow: 0.62, tall: 2.11, yawBias: 0, glow: [1.4, 0x6f9cff], appearColor: [0.45, 0.55, 0.95], stop: 0.95 },
+    noctara: { kind: 'noctara', shadow: 0.8, tall: 2.5, yawBias: 0, glow: [1.7, 0x8a5cff], appearColor: [0.65, 0.5, 1], downAct: 'none' },
     // the Bramble Colossus: about 8 m tall and 11 m across; the heroes stop well short of its mound, and the camera frames
     // it by its width
     colossus: { kind: 'colossus', tall: 7.8, reach: 3.2, shadow: 3.6, halfW: 5.4, yawBias: 0, glow: [3.8, 0xff3d8a], appearColor: [0.95, 0.35, 0.5], fxScale: 2.2 },
@@ -167,7 +167,7 @@
     }
     if (kind === 'first') {
       const c = base('night-square', P, true);
-      c.slots = [[860, 800]]; c.foeLook = { wraith: Object.assign({}, FOE_LOOK.wraith, { shadow: 0.8, yawBias: 0.38 }) };
+      c.slots = [[860, 800]]; c.foeLook = { wraith: Object.assign({}, FOE_LOOK.wraith, { shadow: 0.8, yawBias: 0 }) };
       return Object.assign(c, {
         bridge: true,
         // the first battle's tips, once each (handoff, section 5)
