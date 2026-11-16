@@ -1,4 +1,4 @@
-// check-places.mjs: every walking place and landing on the 3D map stands on land (art/land.png, read off the day atlas)
+// check-places.mjs: every walking place and landing on the 3D map stands on land (the terrain's kinds, read off the day atlas)
 // and in its own zone (World.BANDS); prints each place's height and its neighbours on foot with the way they lie.
 // Usage: node moon-faire-witches/world-map/tools/check-places.mjs
 import fs from 'fs';
@@ -14,10 +14,13 @@ vm.runInNewContext(fs.readFileSync(path.join(R, 'moon-faire-witches/world-map/ma
 const mctx = { window: win, console }; vm.runInNewContext(fs.readFileSync(path.join(R, 'src/game/maps.js'), 'utf8'), mctx);
 const { World, MapPlaces: M } = win, MAPS = mctx.MAPS || win.MAPS;
 const art = path.join(R, 'moon-faire-witches/world-map/art');
-const land = await sharp(path.join(art, 'land.png')).raw().toBuffer({ resolveWithObject: true });
-const hgt = await sharp(path.join(art, 'height.png')).raw().toBuffer({ resolveWithObject: true });
-const at = (img, x, y, ch) => { const W = img.info.width, c = img.info.channels; const i = (Math.round(y / 8) * W + Math.round(x / 8)) * c; return ch.map((k) => img.data[i + k]); };
-const onLand = (x, y) => at(land, x, y, [0])[0] > 127;
+const kinds = await sharp(path.join(art, 'aethermoor-terrain-kinds.png')).raw().toBuffer({ resolveWithObject: true });
+const hgt = await sharp(path.join(art, 'aethermoor-terrain-height.png')).raw().toBuffer({ resolveWithObject: true });
+const KINDS = ['sea', 'river', 'lake', 'pine forest', 'leafy forest', 'grass', 'farmland', 'fen', 'beach', 'desert', 'mesa', 'rock', 'snow'];
+const at = (img, x, y, ch) => { const W = img.info.width, c = img.info.channels; const i = (Math.min(img.info.height - 1, Math.floor(y / 4)) * W + Math.min(W - 1, Math.floor(x / 4))) * c; return ch.map((k) => img.data[i + k]); };
+const kindAt = (x, y) => at(kinds, x, y, [0])[0];
+// on land, or on a river or a town's water within a few steps of land (a jetty, a stilt town)
+const onLand = (x, y) => { for (const [dx, dy] of [[0, 0], [12, 0], [-12, 0], [0, 12], [0, -12]]) if (kindAt(x + dx, y + dy) > 2) return true; return false; };
 const heightAt = (x, y) => { const [r, g] = at(hgt, x, y, [0, 1]); return (r * 256 + g) / 10 - 100; };
 let bad = 0;
 const way = (dx, dy) => { const a = Math.atan2(-dy, dx) * 180 / Math.PI; return ['east', 'north-east', 'north', 'north-west', 'west', 'south-west', 'south', 'south-east'][((Math.round(a / 45) % 8) + 8) % 8]; };
@@ -29,7 +32,7 @@ for (const [id, p] of Object.entries(M.PLACES)) {
     const q = M.PLACES[e.to].at, onMap = way(q[0] - x, q[1] - y);
     return e.to + ' (' + painted + (painted === onMap ? '' : ', on the map ' + onMap) + ')';
   });
-  console.log((ok ? 'ok  ' : 'BAD ') + id.padEnd(16) + ' zone ' + p.zone + (band === p.zone ? '' : ' (the atlas says ' + band + ')') + (onLand(x, y) ? '' : ' IN WATER') + ' · ' + Math.round(heightAt(x, y) * 10) + ' m · exits: ' + exits.join(', '));
+  console.log((ok ? 'ok  ' : 'BAD ') + id.padEnd(16) + ' zone ' + p.zone + (band === p.zone ? '' : ' (the atlas says ' + band + ')') + (onLand(x, y) ? '' : ' IN WATER') + ' · ' + KINDS[kindAt(x, y)] + ', ' + Math.max(0, Math.round(heightAt(x, y) * 10)) + ' m · exits: ' + exits.join(', '));
 }
 for (const [id, l] of Object.entries(M.LANDINGS)) {
   const [x, y] = l.sky, band = World.bandAt(x, y);

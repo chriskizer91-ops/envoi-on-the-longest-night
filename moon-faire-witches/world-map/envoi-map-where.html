@@ -10,8 +10,9 @@
 <link rel="stylesheet" href="./map/map.css">
 </head>
 <body>
-<!-- Step 1 of the 3D map (the travel-and-3d-map note): the map of Aethermoor from the night atlas, with Io's pin where
-     she is. In the game the zone pages open it with her place and her spot; here "Move Io" puts her anywhere, to try. -->
+<!-- Step 1 of the 3D map (the travel-and-3d-map note): Aethermoor as a 3D model of the land, read off the atlas (no
+     painting on it), with Io's pin where she is. In the game the zone pages open it with her place and her spot; here
+     "Move Io" puts her anywhere, to try. -->
 <div id="map"></div>
 <div id="chip" class="chip" hidden><b id="chip-place"></b><span id="chip-zone"></span></div>
 <button id="find" class="round" type="button" aria-label="Find Io" hidden>
@@ -25,7 +26,7 @@
     <p id="sheet-nums" class="sheet-nums"></p>
   </div>
 </div>
-<div id="hint" class="hint">Drag to look round · pinch to zoom · twist to turn</div>
+<div id="hint" class="hint">Drag to turn the land · two fingers to zoom and slide</div>
 <div id="load" class="load"><p id="loadmsg">Unrolling the map of Aethermoor…</p></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="../../src/game/world.js"></script>
@@ -68,7 +69,7 @@
   }
   $('move').addEventListener('click', () => {
     for (const b of list.querySelectorAll('.place')) b.classList.toggle('on', b.dataset.id === place);
-    const n = map.numbers(); $('sheet-nums').textContent = (n.fps ? n.fps + ' frames a second' : 'frame rate: measuring…') + ' · ' + Math.round(n.triangles / 1000) + ',000 triangles · ' + n.calls + ' draw calls';
+    const n = map.numbers(); $('sheet-nums').textContent = (n.fps ? n.fps + ' frames a second' : 'frame rate: measuring…') + ' · ' + Math.round(n.triangles / 1000) + ',000 triangles drawn · ' + n.trees.toLocaleString('en-US') + ' trees on the map';
     $('sheet').hidden = false;
   });
   $('sheet-x').addEventListener('click', () => { $('sheet').hidden = true; });
