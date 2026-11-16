@@ -1,6 +1,7 @@
 [
  {"name": "top-3d", "top": true},
  {"name": "top-with-painting", "guide": true},
+ {"name": "walkable", "walkmap": true},
  {"name": "overview", "io": [645, 600, 3.14], "cam": [0, 0.95, 34]},
  {"name": "the-north-gate", "io": [619, 250, 3.14], "cam": [0, null]},
  {"name": "the-stables", "io": [895, 482, 3.14], "cam": [0, null]},
@@ -28,6 +29,6 @@
  {"name": "walk-12-up-the-stair", "to": [400, 183]},
  {"name": "walk-13-the-stair-top", "to": [305, 178]},
  {"name": "walk-14-onto-the-wall-walk", "to": [305, 152]},
- {"name": "walk-15-along-the-wall-walk", "to": [230, 152]},
- {"name": "walk-16-the-kettle-helm", "to": [140, 176]}
+ {"name": "walk-15-along-the-wall-walk", "to": [226, 150]},
+ {"name": "walk-16-the-kettle-helm", "to": [120, 178]}
 ]

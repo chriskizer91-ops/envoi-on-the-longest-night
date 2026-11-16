@@ -41,22 +41,28 @@
   const WALL_TOP = 4.6;                              // the curtain walls' top, where the wall-walk is
   const STAIR = { x0: 300, x1: 498, n: 23 };          // the treads climb west from x1 (foot) to x0 (top), against the wall
   const STAIR_RUN = (STAIR.x1 - STAIR.x0) / STAIR.n, STAIR_RISE = WALL_TOP / STAIR.n;
-  const WALLWALK = [[117, 172], [222, 140], [312, 140], [312, 194], [298, 194], [298, 166], [229, 166], [124, 188]];
+  // the two walls under the wall-walk, 2 m thick: the north-west one (from the corner pier at A to B) and the north one
+  // from B to WW_EAST (past it the north wall is built whole). Each is two solid faces 0.4 m thick with the walk between
+  // them (k from -0.6 to 0.6 m across the wall), so Io can't step onto it from the ground or off it into the air.
+  const CH_A = [86, 186], CH_B = [225, 150], WW_EAST = 318, NORTH_Y = 150;
+  const CH_D = (() => { const dx = (CH_B[0] - CH_A[0]) * SX, dz = (CH_B[1] - CH_A[1]) * SZ, L = Math.hypot(dx, dz); return { L, d: [dx / L, dz / L], n: [-dz / L, dx / L] }; })();
+  const chPt = (s, k) => [CH_A[0] + (CH_D.d[0] * s + CH_D.n[0] * k) / SX, CH_A[1] + (CH_D.d[1] * s + CH_D.n[1] * k) / SZ];
+  const WALLWALK = [chPt(0.95, -0.6), chPt(CH_D.L, -0.6), [WW_EAST, NORTH_Y - 12], [WW_EAST, 194], [298, 194], [298, NORTH_Y + 12], chPt(CH_D.L, 0.6), chPt(0.95, 0.6)];
   const STAIRBAND = [[298, 172], [498, 172], [498, 194], [298, 194]];
   const LANDING = [[496, 170], [518, 170], [518, 208], [496, 208]];
+  // the forge's floor, under its roof, inside its walls (the forge is open at the front: Io can walk in to the hearth)
+  const FORGE = { x0: 992, y0: 532, x1: 1196, y1: 664, E: 3.0, rise: 2.4, over: 0.5 };
+  const FORGE_FLOOR = [[1001, 540], [1187, 540], [1187, 664], [1001, 664]];
   // pocket two: the cottage's front garden, through a gap in the hedge beside the main gate's west tower
   const GARDEN_WAY = [[588, 676], [588, 700], [520, 700], [520, 676]];
   const GARDEN = [[524, 676], [524, 774], [366, 774], [366, 682], [400, 682], [400, 694], [506, 694], [506, 676]];
 
-  // the engine's ground as it builds it (with the gentle unevenness it adds away from the 2D walk): extra() hands it over,
-  // so Io's feet and the garden's things stand on the ground she sees
-  let TERRAIN = null;
-  // where Io's feet stand: the wall-walk, the stair's treads, the dock's deck, the garden's own ground, or the ground
+  // where Io's feet stand: the wall-walk, the stair's treads, the dock's deck, or the ground (the engine lays its own
+  // gentle unevenness on that, away from the walk)
   function walkH(x, y) {
     if (inPoly(WALLWALK, x, y)) return WALL_TOP;
-    if (TERRAIN && (inPoly(GARDEN, x, y) || inPoly(GARDEN_WAY, x, y))) return TERRAIN(x, y);
     if (x >= STAIR.x0 - 2 && x <= STAIR.x1 && y >= 168 && y <= 198) return Math.min(WALL_TOP, (Math.floor((STAIR.x1 - x) / STAIR_RUN) + 1) * STAIR_RISE);
-    if (x >= 1294 && x <= 1512 && y >= 190 && y <= 410) return DECK_Y;
+    if (inPoly(DECK, x, y)) return DECK_Y;
     return ground(x, y);
   }
 
@@ -75,8 +81,9 @@
     { id: 'north, east of the gate', pts: [[702, 150], [960, 150]], t: 2.0 },
   ];
   const WALKWALLS = [
-    { id: 'north-west', pts: [[86, 186], [225, 150]], t: 1.6 },
-    { id: 'north, west of the gate', pts: [[225, 150], [536, 150]], t: 2.0 },
+    { id: 'north-west', pts: [CH_A, CH_B], t: 2.0 },
+    { id: 'north, under the wall-walk', pts: [CH_B, [WW_EAST, NORTH_Y]], t: 2.0 },
+    { id: 'north, west of the gate', pts: [[WW_EAST, NORTH_Y], [536, NORTH_Y]], t: 2.0, whole: true },
   ];
 
   // things standing where the engine's ground is uneven (away from the 2D walk): extra() sets them on that ground
@@ -93,8 +100,8 @@
       ['the Warden hall’s door', 340, 452], ['the lane behind the hall (west end)', 190, 226], ['the weapon racks (west)', 160, 558],
       ['the forecourt by the round tower', 900, 200], ['the stables’ yard', 900, 472], ['the yard well', 788, 640],
       ['the forge’s open front', 1080, 708], ['the lane east of the stables', 1170, 420], ['the dock, the Magpie’s mooring', 1400, 320],
-      ['the dock’s east rail', 1484, 330],
-      ['the wall-walk’s west end (pocket)', 132, 176], ['the cottage garden (pocket)', 392, 756]] },
+      ['the dock’s east rail', 1484, 330], ['in the forge, by the hearth', 1078, 640],
+      ['the wall-walk’s west end (pocket)', 124, 178], ['the cottage garden (pocket)', 392, 756]] },
     // the trees from the painting (tools/make-trees.mjs): no tree on the walls, the towers, the paddock or the dock
     treeGen: { dark: 0.6, fir: 0.5, firSouth: 0.62,
       keepOut: [[60, 100, 1300, 200], [920, 80, 1095, 240], [40, 150, 130, 660], [60, 600, 150, 700], [120, 660, 210, 760], [180, 730, 280, 850],
@@ -155,8 +162,6 @@
         windows: [{ side: 's', x: 382, y: 1.0, w: 0.9, h: 1.0 }, { side: 'w', y: 600, z: 1.0, w: 0.7, h: 0.8 }] },
       { id: 'cottage-wing', name: 'the cottage’s front', fp: [400, 532, 506, 690], walls: [{ t: 'stone', h: 2.0 }, { t: 'timber', h: 1.0 }], roof: { ridge: 'ns', rise: 3.0, over: 0.4 },
         doors: [{ side: 's', x: 452, w: 1.1, h: 2.2, arch: true }], lanterns: [{ side: 's', x: 427, y: 1.9 }, { side: 's', x: 477, y: 1.9 }] },
-      { id: 'forge', name: 'the forge', fp: [992, 532, 1196, 664], walls: [{ t: 'stone', h: 3.0 }], roof: { ridge: 'ew', rise: 2.4, over: 0.5 }, open: 's',
-        posts: [998, 1042, 1088, 1190], lanterns: [{ side: 's', x: 1004, y: 2.3 }] },
       { id: 'forge-wing', name: 'the forge’s wood store', fp: [1196, 548, 1256, 712], walls: [{ t: 'stone', h: 2.6 }], roof: { ridge: 'ns', rise: 1.4, over: 0.4, lean: 'w' }, open: 's',
         posts: [1200, 1252] },
     ],
@@ -211,11 +216,11 @@
     // corner by the north gate's west tower), and the cottage's front garden (through a gap in the hedge by the main gate)
     walkAdd: [
       { poly: LANDING, ground: 'cob' }, { poly: STAIRBAND, ground: 'cob' }, { poly: WALLWALK, ground: 'cob' },
-      { poly: GARDEN_WAY, ground: 'dirt' }, { poly: GARDEN, ground: 'grass' },
+      { poly: GARDEN_WAY, ground: 'dirt' }, { poly: GARDEN, ground: 'grass' }, { poly: FORGE_FLOOR, ground: 'dirt' },
     ],
     // the keepsake that lies here: the kettle-helm, at the west end of the wall-walk above the Wardens' hall (in 3D up on
     // the wall itself; the 2D game keeps it in the lane below). The hall gauntlets are a gift, not in the world.
-    items: { 'kettle-helm': [140, 175] },
+    items: { 'kettle-helm': [118, 178] },
     // the painting's own trees that stand close to a path (make-trees.mjs keeps its trees 30 px off the walk): the two
     // over the cottage, the pines between the well and the forge, the tree by the forge's wood store
     extraTrees: [[392, 521, 0.62, 0, 21], [466, 521, 0.6, 0, 22], [905, 702, 0.95, 1, 23], [872, 716, 0.8, 1, 24], [808, 716, 0.85, 1, 25], [1222, 522, 0.75, 0, 26]],
@@ -225,7 +230,6 @@
     // chained posts, the paddock fence, the dock with its crane, the gold-lit cracks down the road, the hillside steps ----
     extra(K) {
       const { B, X, Z, gh } = K, TAU = Math.PI * 2;
-      TERRAIN = K.terrain;
       const V = (x, y, z) => new THREE.Vector3(x, y, z);
       const CENTRE = [X(768), Z(470)];
       const WARM = [1.0, 0.72, 0.42];
@@ -302,7 +306,20 @@
 
       // ---- the curtain walls: merlons on the engine's walls; the two under the wall-walk, whole ----
       for (const w of CURTAIN) merlons(wallFrame(w.pts, w.t), WALL_TOP);
-      for (const w of WALKWALLS) { const f = wallFrame(w.pts, w.t); wallBody(f, -2.9, WALL_TOP); merlons(f, WALL_TOP, w.id === 'north-west' ? 1.0 : 0, null); }
+      for (const w of WALKWALLS) {
+        const f = wallFrame(w.pts, w.t);
+        if (w.whole) { wallBody(f, -2.9, WALL_TOP); merlons(f, WALL_TOP); continue; }
+        // the core under the walk is not solid (she stands on it); the two faces are
+        B.solid = false; wallBody(Object.assign({}, f, { t: 1.2 }), -2.9, WALL_TOP); B.solid = true;
+        const inside = [-f.n[0], -f.n[1]];   // f.n points out of the town
+        const face = (k0, k1, s0, s1) => { const km = (k0 + k1) / 2, s = (s0 + s1) / 2; B.box('dry', f.ax + f.dx * s + inside[0] * km, -2.9, f.az + f.dz * s + inside[1] * km, s1 - s0, WALL_TOP + 2.9 + 0.01, k1 - k0, f.ry, [0.96, 0.96, 1.0]); };
+        face(-1.0, -0.6, 0, f.L);                                                         // the outer face (the merlons stand on it)
+        if (w.id === 'north-west') face(0.6, 1.0, 0, f.L - 0.4); else face(0.6, 1.0, -0.2, X(298) - f.ax);   // the inner face (open where the stair lands)
+        merlons(f, WALL_TOP, w.id === 'north-west' ? 1.0 : 0, null);
+      }
+      // the stair's open side toward the lane, and the top landing's west face: she climbs only by the treads
+      K.addBlock([[289, 195], [482, 195], [482, 201], [289, 201]]);
+      K.addBlock([[289, 169], [297.5, 169], [297.5, 201], [289, 201]]);
 
       // ---- towers and piers along the walls ----
       tower(64, 168, 108, 204, WALL_TOP + 1.2); topLantern(86, 186, WALL_TOP + 1.2, 110, 132, 204);        // the north-west corner
@@ -363,19 +380,20 @@
 
       // ---- the wall-walk's stair: treads of castle stone climbing west against the north wall, a solid mass under them ----
       {
-        const za = Z(170), zb = Z(197);
+        const za = Z(170), zb = Z(197); B.solid = false;
         for (let i = 0; i < STAIR.n; i++) {
           const xb = STAIR.x1 - i * STAIR_RUN, xa = xb - STAIR_RUN, top = (i + 1) * STAIR_RISE;
           B.box('dry', (X(xa) + X(xb)) / 2, -0.4, (za + zb) / 2, X(xb) - X(xa) + 0.01, top + 0.4, zb - za, 0, [1.0, 0.98, 1.02]);
           B.box('dry', (X(xa) + X(xb)) / 2, top - 0.06, zb + 0.03, X(xb) - X(xa) + 0.01, 0.06, 0.08, 0, [1.15, 1.12, 1.15]);   // the tread's lip
         }
         // the landing at the top, on the wall
-        B.box('dry', (X(296) + X(312)) / 2, -0.4, (za + zb) / 2, X(312) - X(296), WALL_TOP + 0.4, zb - za, 0);
+        B.box('dry', (X(296) + X(WW_EAST)) / 2, -0.4, (Z(NORTH_Y + 12) + zb) / 2, X(WW_EAST) - X(296), WALL_TOP + 0.4, zb - Z(NORTH_Y + 12), 0);
+        B.solid = true;
         K.shadeMarks.push(['rect', STAIR.x0, 170, STAIR.x1, 198, 0.7]);
       }
 
       // ---- banners: on the north wall, by the round tower, on the hall, on the west wall and outside the gates ----
-      banner(473, 170, [0, 1], 4.1, 1.25, 2.3); banner(757, 170, [0, 1], 4.1, 1.25, 2.3); banner(1175, 225, [0, 1], 4.1, 1.25, 2.3);
+      banner(488, 170, [0, 1], 4.3, 1.1, 1.6); banner(757, 170, [0, 1], 4.1, 1.25, 2.3); banner(1175, 225, [0, 1], 4.1, 1.25, 2.3);
       banner(265, 442, [0, 1], 3.2, 0.85, 1.9); banner(406, 442, [0, 1], 3.2, 0.85, 1.9);
       banner(106, 500, [1, 0], 3.9, 1.2, 2.2);
       banner(111, 658, [-0.7932, 0.6089], 4.0, 1.25, 2.3);
@@ -395,7 +413,10 @@
           for (let j = 0; j < N; j++) { const xj0 = xa + (xb - xa) * j / N, xj1 = xa + (xb - xa) * (j + 1) / N, dx = Math.min(Math.abs(xj0 - mid), Math.abs(xj1 - mid)), bot = spring + Math.sqrt(Math.max(0, r * r - dx * dx)); B.box('stone', (xj0 + xj1) / 2, bot, zf - D / 2, xj1 - xj0 + 0.005, E - bot, D, 0); }
           archRim('dry', mid, spring, zf + 0.04, r + 0.06, 0.1, [1.1, 1.05, 1.1]);
           B.quad('pave', [xa - 0.2, FL + 0.012, zf + 0.5], [xb + 0.2, FL + 0.012, zf + 0.5], [xb + 0.05, FL + 0.012, zf - 0.2], [xa - 0.05, FL + 0.012, zf - 0.2], [xa, zf, xb, zf + 0.7], STRAW);
-          B.box('planks', xa + 0.1, FL, zf + 0.35, 0.08, 1.2, 0.7, 0, [0.6, 0.48, 0.42]);
+          // the stall's gate, shut: planks bound with iron, across the arch
+          B.box('planks', mid, FL, zf - 0.22, xb - xa - 0.06, 1.3, 0.08, 0, [0.62, 0.5, 0.44]);
+          for (const y of [FL + 0.25, FL + 1.05]) B.box('iron', mid, y, zf - 0.17, xb - xa - 0.1, 0.07, 0.03, 0);
+          B.box('wood', mid, FL + 1.3, zf - 0.22, xb - xa - 0.02, 0.08, 0.12, 0, [0.55, 0.44, 0.4]);
         }
         // inside: the straw floor, the walls' inner faces (the engine's walls face outward), the stall walls between
         B.quad('pave', [x0 + 0.2, FL + 0.01, zf - 0.2], [x1 - 0.2, FL + 0.01, zf - 0.2], [x1 - 0.2, FL + 0.01, zb + 0.2], [x0 + 0.2, FL + 0.01, zb + 0.2], [x0, zb, x1, zf], STRAW);
@@ -414,18 +435,26 @@
           const a = line[k - 1], b = line[k], ax = X(a[0]), az = Z(a[1]), bx = X(b[0]), bz = Z(b[1]), L = Math.hypot(bx - ax, bz - az), n = Math.max(1, Math.round(L / 1.6)), ry = Math.atan2(-(bz - az), bx - ax);
           for (let i = 0; i <= n; i++) { const f = i / n; B.box('wood', ax + (bx - ax) * f, -0.2, az + (bz - az) * f, 0.18, 1.35, 0.18, ry, col); }
           for (const y of [0.45, 0.92]) B.box('wood', (ax + bx) / 2, y, (az + bz) / 2, L, 0.1, 0.07, ry, col);
+          const nx = -(bz - az) / L * 0.14, nz = (bx - ax) / L * 0.14;
+          K.addBlock([[ax + nx, az + nz], [bx + nx, bz + nz], [bx - nx, bz - nz], [ax - nx, az - nz]].map(([x, z]) => [K.M.px(x), K.M.py(z)]));
         }
       }
 
       // ---- the forge: the inner faces of its walls, the stone hearth with its fire, the tall chimney, the bench ----
       {
-        const x0 = X(992), x1 = X(1196), zb = Z(532), zf = Z(664), E = 3.0;
-        B.quad('stone', [x0, -0.3, zb + 0.02], [x1, -0.3, zb + 0.02], [x1, E, zb + 0.02], [x0, E, zb + 0.02], [x0, -0.3, x1, E], [0.55, 0.5, 0.5]);
-        B.quad('stone', [x0 + 0.02, -0.3, zf], [x0 + 0.02, -0.3, zb], [x0 + 0.02, E, zb], [x0 + 0.02, E, zf], [zf, -0.3, zb, E], [0.55, 0.5, 0.5]);
-        B.quad('stone', [x1 - 0.02, -0.3, zb], [x1 - 0.02, -0.3, zf], [x1 - 0.02, E, zf], [x1 - 0.02, E, zb], [zb, -0.3, zf, E], [0.55, 0.5, 0.5]);
-        // a stone floor a little above the yard (the ground under a roof is left uneven by the engine), and under the wood store
-        B.box('stone', (x0 + x1) / 2, -0.4, (zb + zf) / 2, x1 - x0 - 0.05, 0.72, zf - zb - 0.05, 0, [0.62, 0.58, 0.58]);
-        B.box('stone', (X(1196) + X(1256)) / 2, -0.4, (Z(548) + Z(712)) / 2, X(1256) - X(1196) - 0.05, 0.72, Z(712) - Z(548) - 0.05, 0, [0.62, 0.58, 0.58]);
+        const x0 = X(FORGE.x0), x1 = X(FORGE.x1), zb = Z(FORGE.y0), zf = Z(FORGE.y1), E = FORGE.E, T = 0.35, cx = (x0 + x1) / 2, cz = (zb + zf) / 2, w = x1 - x0, d = zf - zb;
+        B.box('stone', cx, -0.4, zb + T / 2, w, E + 0.4, T, 0);                                     // the back wall
+        B.box('stone', x0 + T / 2, -0.4, cz, T, E + 0.4, d, 0); B.box('stone', x1 - T / 2, -0.4, cz, T, E + 0.4, d, 0);   // the two ends
+        for (const px of [998, 1042, 1088, 1190]) B.box('wood', X(px), -0.2, zf - 0.15, 0.24, E + 0.2, 0.24, 0, [0.8, 0.7, 0.62]);
+        B.box('wood', cx, E - 0.3, zf - 0.15, w, 0.3, 0.26, 0, [0.7, 0.6, 0.55]);
+        // the roof, ridge east to west, and its gables
+        { const o = FORGE.over, rise = FORGE.rise, sl = rise / (d / 2), ye = E - o * sl, yr = E + rise, L = w + 2 * o, sln = Math.hypot(d / 2 + o, rise + o * sl);
+          B.quad('roof', [x1 + o, ye, zb - o], [x0 - o, ye, zb - o], [x0 - o, yr, cz], [x1 + o, yr, cz], [0, 0, L, sln]);
+          B.quad('roof', [x0 - o, ye, zf + o], [x1 + o, ye, zf + o], [x1 + o, yr, cz], [x0 - o, yr, cz], [0, 0, L, sln]);
+          B.box('roof', cx, yr - 0.08, cz, L, 0.2, 0.22, 0, [0.7, 0.66, 0.66]);
+          for (const [x, sx] of [[x0, -1], [x1, 1]]) { faceTri('stone', [x, E, zb], [x, E, zf], [x, yr, cz], [sx, 0, 0]); faceTri('stone', [x, E, zb], [x, E, zf], [x, yr, cz], [-sx, 0, 0]); } }
+        wallLantern(1004, FORGE.y1 - 3, [0, 1], 2.3, 90);
+        K.shadeMarks.push(['rect', FORGE.x0, FORGE.y0, FORGE.x1, FORGE.y1, 0.62]);
         const hx = X(1130), hz = Z(646);
         B.box('stone', hx, 0, hz, 2.7, 2.3, 1.1, 0, [0.9, 0.86, 0.86]);
         B.box('stone', hx, 0, hz - 0.25, 1.5, 9.0, 1.25, 0, [0.92, 0.9, 0.92]);                       // the chimney, up through the roof
@@ -435,8 +464,8 @@
         B.box('glass', hx - 0.15, 0.5, hz + 0.58, 0.5, 0.16, 0.06, 0.2, [2.0, 0.9, 0.3]); B.box('glass', hx + 0.25, 0.48, hz + 0.58, 0.35, 0.12, 0.06, -0.3, [1.8, 0.75, 0.25]);
         K.halo(hx, 0.9, hz + 0.9, 3.0, [1.0, 0.52, 0.22]); K.lamps3d.push({ x: hx, y: 1.0, z: hz + 1.2, c: 0xff7a30, k: 2.0 });
         K.light(1130, 676, 170, 1.5, 'forge');
-        B.box('wood', X(1030), 0.32, Z(645), 1.8, 0.85, 0.75, 0, [0.6, 0.48, 0.42]);                       // the workbench, and tools on the wall
-        for (let i = 0; i < 6; i++) B.box('iron', X(1012) + i * 0.32, 1.3 + (i % 2) * 0.15, zb + 0.06, 0.06, 0.7, 0.04, 0);
+        B.box('wood', X(1030), 0, Z(553), 1.8, 0.85, 0.75, 0, [0.6, 0.48, 0.42]);                       // the workbench, and tools on the wall
+        for (let i = 0; i < 6; i++) B.box('iron', X(1012) + i * 0.32, 1.3 + (i % 2) * 0.15, zb + T + 0.03, 0.06, 0.7, 0.04, 0);
         // the grindstone on its frame
         const gx = X(1183), gz = Z(694);
         for (const dx of [-0.32, 0.32]) B.box('wood', gx + dx, 0, gz, 0.1, 0.75, 0.5, 0, [0.6, 0.48, 0.42]);
@@ -447,7 +476,7 @@
         B.quad('stone', [wx0, -0.3, wzb + 0.02], [wx1, -0.3, wzb + 0.02], [wx1, 2.6, wzb + 0.02], [wx0, 2.6, wzb + 0.02], [wx0, -0.3, wx1, 2.6], [0.55, 0.5, 0.5]);
         B.quad('stone', [wx1 - 0.02, -0.3, wzb], [wx1 - 0.02, -0.3, wzf], [wx1 - 0.02, 2.6, wzf], [wx1 - 0.02, 2.6, wzb], [wzb, -0.3, wzf, 2.6], [0.55, 0.5, 0.5]);
         const log = new THREE.CylinderGeometry(0.13, 0.13, 1.4, 7); log.rotateX(Math.PI / 2);
-        for (let row = 0; row < 5; row++) for (let i = 0; i < 8 - (row % 2); i++) B.geom('wood', log, new THREE.Matrix4().makeTranslation(wx0 + 0.3 + i * 0.27 + (row % 2) * 0.13, 0.45 + row * 0.24, wzf - 1.0), [0.75, 0.55, 0.42], 1);
+        for (let row = 0; row < 5; row++) for (let i = 0; i < 8 - (row % 2); i++) B.geom('wood', log, new THREE.Matrix4().makeTranslation(wx0 + 0.3 + i * 0.27 + (row % 2) * 0.13, 0.13 + row * 0.24, wzf - 1.0), [0.75, 0.55, 0.42], 1);
         log.dispose();
       }
 
