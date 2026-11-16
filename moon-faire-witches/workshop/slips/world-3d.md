@@ -14,10 +14,10 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           work/world-3d here:
             1. the jetty, Io's cottage, the Thornwood (all done; the Thornwood is the first wide wild field)
             2. Bogmire, Bogmire's dark heart, Dawnroost (all done)
-            3. Dawnroost's node, Misthollow's Moonwell (done), Misthollow (working)
+            3. Dawnroost's node, Misthollow, Misthollow's Moonwell (all done)
             4. the shipyard (working); the crossroads and the frozen pass (working); the Warm Roads camp and the Ember
                Line road (working)
-            5. the Dawnroost forest road and Eldergrove's edge (working); the northern camp and the cold moor; the frozen camp and
+            5. the Dawnroost forest road and Eldergrove's edge (working); the northern camp and the cold moor (working); the frozen camp and
                Frostmere's shore
           Then the whole game, as Chris wants it (11:24 to 11:26): a big game kept as a folder in the repository, each zone
           a big section of its own (loaded when you go there, so the zones can be as large as he likes), the places of a
@@ -36,17 +36,19 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           The node's wishes (188109b): a place's own materials can be a plain colour, glow, or never thin away near Io;
           each ground texture takes a tint.
           The Moonwell's wish (026fa14): the camera never sits inside a wall, house or roof; it slides in toward Io.
-Branch:   work/world-3d   Commit: 026fa14
+          Misthollow's and the Moonwell's wishes (ac8f137): each stair tread stands as high as the ground under its high
+          edge and fills down to the ground, so a slope never pokes through; a place can tint any surface (pale stone).
+Branch:   work/world-3d   Commit: ac8f137
 Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
           engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
           tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/beside.mjs, tools/plan-wickhollow.json,
           HELPERS.md, and for each place built: places/<id>.js, places/<id>-trees.js, envoi-3d-<id>.html,
           tools/plan-<id>.json (cottage, jetty, thornwood, bogmire, bogmire-heart, dawnroost,
-          dawnroost-node, moonwell)
+          dawnroost-node, moonwell, misthollow)
           moon-faire-witches/workshop/slips/world-3d.md
           Nothing else changed.
 File for Chris: envoi-3d-<place>.html for Wickhollow, the cottage, the jetty, the Thornwood, Bogmire, Bogmire's
-          heart, Dawnroost, Dawnroost's node and the Moonwell (each 12 to 14 MB, works offline). In each: Drag on the left half of the screen to walk (push far
+          heart, Dawnroost, Dawnroost's node, Misthollow and the Moonwell (each 12 to 14 MB, works offline). In each: Drag on the left half of the screen to walk (push far
           and she jogs), drag on the right half to turn the camera. The map button (top right) shows your painting over
           the 3D from straight above, with the frame rate and the counts under it; tap it again to go back.
 Done:     Wickhollow's square in 3D at night, laid out on the painting in its own pixels: the cobbled square and the
