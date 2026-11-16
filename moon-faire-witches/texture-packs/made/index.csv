@@ -6,3 +6,10 @@ shared_drystone.png,Rounded stone wall,"Material, square",1,Envoi-Round1-Part-01
 shared_awning_stripes.png,Striped awning cloth,"Material, square",1,Envoi-Round1-Part-01,Striped awning cloth,jetty,1254,1254,836f9de6687262ff92df679aaf63a068b0778ff23dc6705e4a5bfa2fd02b6c66,
 shared_dirt_track.png,Earth road,"Ground, square",1,Envoi-Round1-Part-01,Earth road,thornwood,1254,1254,4cd3037ae1623dab1454af5e9e55a4f1822eaf72b659796965149c668001380f,
 shared_water_river.png,Stream water,"Material, square",1,Envoi-Round1-Part-01,Stream water,thornwood,1254,1254,6ec842328b5a08648a77b7beabe78266f689dab6f8a38a38a37d3eb677c6fe5b,
+shared_cobbles_town.png,Town cobbles (Wickhollow),"Ground, square",1,Envoi-Round1-Part-02,Town cobbles (Wickhollow),wickhollow,1254,1254,154e25bcfa9d06cae5ae966687bd902fa9f81ff8d1d0edca497b97019b82f696,
+shared_grass_meadow.png,Meadow grass,"Ground, square",1,Envoi-Round1-Part-02,Meadow grass,wickhollow,1254,1254,6ce58b965815d3f5ccb4a44df8f4370f35e5a90ed8f934580df7f556e59ecc61,
+shared_roof_tiles_red.png,Red tile roof,"Material, square",1,Envoi-Round1-Part-02,Red tile roof,wickhollow,1254,1254,520f6eac716a4ba9403ef7ccc628aaa82ad16c9d49248a51de36e9f5319e2cc2,
+shared_stone_wall_rough.png,Rough stone wall,"Material, square",1,Envoi-Round1-Part-02,Rough stone wall,wickhollow,1254,1254,d29c853bcf31b33b89ea7d450a2bc58b418fb23c8e2125403e57b52fd530c935,
+shared_planks_wall.png,Dark board house wall,"Material, square",1,Envoi-Round1-Part-02,Dark board house wall,bogmire,1254,1254,7a07be7b5c15451c82b39d34a0c9be8b1a70af10995f9b59adaa18d809946727,a visible line top to bottom where it repeats (all boards cut at one height)
+shared_roof_shingle.png,Mossy wooden shingle roof,"Material, square",1,Envoi-Round1-Part-02,Mossy wooden shingle roof,bogmire,1254,1254,a9fb7ef94e5b0c7b2e8f51ae670785e0322654fb9329125470354b568feca895,
+shared_roof_thatch.png,Damp mossy thatch,"Material, square",1,Envoi-Round1-Part-02,Damp mossy thatch,bogmire,1254,1254,745aca7cc36904e76147070f0920387d102c9e9f150180473b60c1fe46d7279b,
