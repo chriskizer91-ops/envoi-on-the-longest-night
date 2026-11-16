@@ -15,8 +15,7 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
             1. the jetty, Io's cottage, the Thornwood (all done; the Thornwood is the first wide wild field)
             2. Bogmire, Bogmire's dark heart, Dawnroost (all done)
             3. Dawnroost's node, Misthollow, Misthollow's Moonwell (all done)
-            4. the shipyard (working); the crossroads and the frozen pass (working); the Warm Roads camp and the Ember
-               Line road (working)
+            4. the shipyard; the crossroads and the frozen pass; the Warm Roads camp and the Ember Line road (all done)
             5. the Dawnroost forest road and Eldergrove's edge (working); the northern camp and the cold moor (working); the frozen camp and
                Frostmere's shore (working). That's every walking place started.
           Then the whole game, as Chris wants it (11:24 to 11:26): a big game kept as a folder in the repository, each zone
@@ -40,17 +39,29 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           edge and fills down to the ground, so a slope never pokes through; a place can tint any surface (pale stone).
           Walk pass 1's wish (920b6be): over water her feet stay at the place's own height (boards, stilts), never the bed
           (in Bogmire and the heart she had been standing 2.4 m and 4 m under the boards).
-Branch:   work/world-3d   Commit: 920b6be
+          The shipyard's wish (3f8bad7): steps can leave out one cheek. The crossroads' and Warm Roads' wish (26d82c5):
+          K.far(x, z), builders for a wide place's outlying things, left undrawn past the fog; a far pass is moving the
+          five wide places' outlying things there, and adding a check that every point of the 2D walk is walkable.
+          The whole game, started (zone shell, w3d/zones): zones are the game's four level bands, which already join on
+          foot ((1) Wickhollow, cottage, jetty, Thornwood, Bogmire, the heart; (2) Warm Roads camp, Ember Line road,
+          forest road, Dawnroost, the node; (3) northern camp, Eldergrove's edge, cold moor, crossroads, shipyard;
+          (4) frozen camp, Frostmere's shore, frozen pass, Misthollow, Moonwell); one page per zone, Io walking place to
+          place through their exits, each place loaded in turn; the airship hook left for Skies of Aethermoor, whose map
+          is the same continent at the same size as the game's night atlas (4608 x 3072). Questions for Chris on the
+          flying (fights on the way, shards, which ship, day or night map) are in the chat.
+Branch:   work/world-3d   Commit: 28eff7d
 Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
           engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
           tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/beside.mjs, tools/plan-wickhollow.json,
           HELPERS.md, and for each place built: places/<id>.js, places/<id>-trees.js, envoi-3d-<id>.html,
           tools/plan-<id>.json (cottage, jetty, thornwood, bogmire, bogmire-heart, dawnroost,
-          dawnroost-node, moonwell, misthollow)
+          dawnroost-node, moonwell, misthollow, shipyard, crossroads, frozen-pass, warm-roads-camp,
+          ember-line-road)
           moon-faire-witches/workshop/slips/world-3d.md
           Nothing else changed.
 File for Chris: envoi-3d-<place>.html for Wickhollow, the cottage, the jetty, the Thornwood, Bogmire, Bogmire's
-          heart, Dawnroost, Dawnroost's node, Misthollow and the Moonwell (each 12 to 14 MB, works offline). In each: Drag on the left half of the screen to walk (push far
+          heart, Dawnroost, Dawnroost's node, Misthollow, the Moonwell, the shipyard, the crossroads, the frozen pass,
+          the Warm Roads camp and the Ember Line road (each 12 to 14 MB, works offline). In each: Drag on the left half of the screen to walk (push far
           and she jogs), drag on the right half to turn the camera. The map button (top right) shows your painting over
           the 3D from straight above, with the frame rate and the counts under it; tap it again to go back.
 Done:     Wickhollow's square in 3D at night, laid out on the painting in its own pixels: the cobbled square and the
