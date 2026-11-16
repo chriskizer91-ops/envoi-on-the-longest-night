@@ -52,3 +52,9 @@ shared_mountain_snow_rock.png,Snowy mountain rock face,"Material, square",1,Envo
 shared_tree_oak.png,Old oak tree,"Plant, tall (2:3)",1,Envoi-Round1-Part-08,Old oak tree,river-glade,1024,1536,9f7e2c3f8b266728a23c1dd33438f264b6a424234a47d3d390c73b73c0dc41bf,
 shared_sky_night.png,Night sky with thin clouds,"Material, wide (3:2)",1,Envoi-Round1-Part-08,Night sky with thin clouds,river-glade,1536,1024,7bb857b700a220fef6a3ea9a5768809bfe27b68f5e4dd90379d07af0e8f27792,a visible line top to bottom where it repeats
 shared_moon.png,The full moon,"Flat view, square",1,Envoi-Round1-Part-08,The full moon,river-glade,1254,1254,beae12a8e962d92ae74be21ddfcb21cccbdb2e8fa9f35d88d7a507c39bd7b1d2,
+cottage_path.png,Cottage path,"Ground, square",2,Envoi-Round2-Part-01,Cottage path,cottage,1254,1254,9e75f7132fd36ddefe97d80934bbbab723825019b1a5d07fe14886aa05887590,
+cottage_roof_moss.png,Mossy cottage roof,"Material, square",2,Envoi-Round2-Part-01,Mossy cottage roof,cottage,1254,1254,1b792cba9a52436f34cb58bcd9d50b79c67f95ec0e31e520538288a17df5e104,
+wick_leaf_canopy.png,Woodland leaves,"Material, square",2,Envoi-Round2-Part-01,Woodland leaves,cottage,1254,1254,07137b1861ea6ae5c0506656246b89dd9d6540ff485898b6c8cdc721cd98407f,
+thorn_moss_ground.png,Mossy clearing,"Ground, square",2,Envoi-Round2-Part-01,Mossy clearing,thornwood,1254,1254,2d2662cc1d94322dda02732720b6348f5e443840213256aea8041e8f5fcb12fe,
+thorn_bramble_ground.png,Bramble undergrowth,"Ground, square",2,Envoi-Round2-Part-01,Bramble undergrowth,thornwood,1254,1254,ab1bb545051d12749d13f8b529e4e9032fbb6d8821579a5edb96abe64ba79732,
+thorn_rock_mossy.png,Mossy boulder,"Material, square",2,Envoi-Round2-Part-01,Mossy boulder,thornwood,1254,1254,f84d0a16c2ff2e92367445912881521ad1fbcca126f58173ffc70ccd5ffac7ed,
