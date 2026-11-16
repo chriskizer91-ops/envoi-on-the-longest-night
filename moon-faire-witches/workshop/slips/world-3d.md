@@ -13,9 +13,9 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           each following moon-faire-witches/world3d/HELPERS.md on its own branch w3d/<place>, checked and brought into
           work/world-3d here:
             1. the jetty (done), Io's cottage (done), the Thornwood (working: a wide wild field)
-            2. Bogmire (done), Bogmire's dark heart (done), Dawnroost (working)
+            2. Bogmire, Bogmire's dark heart, Dawnroost (all done)
             3. Dawnroost's node, Misthollow, Misthollow's Moonwell (all working)
-            4. the shipyard; the crossroads and the frozen pass; the Warm Roads camp and the Ember Line road
+            4. the shipyard (working); the crossroads and the frozen pass; the Warm Roads camp and the Ember Line road
             5. the Dawnroost forest road and Eldergrove's edge; the northern camp and the cold moor; the frozen camp and
                Frostmere's shore
           Then the whole game, as Chris wants it (11:24 to 11:26): a big game kept as a folder in the repository, each zone
@@ -28,7 +28,7 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           ground inside each place's bounds, less water, steep ground and anything solid, measured from what's built; a
           thicket along the edges; a where-she-can-walk view). Wickhollow passes; a helper is making Bogmire's porches,
           the fen's side decks and the jetty's plank arm walkable; every helper building now checks it.
-Branch:   work/world-3d   Commit: 9e41ad5
+Branch:   work/world-3d   Commit: e2a042d
 Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
           engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
           tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/plan-wickhollow.json
