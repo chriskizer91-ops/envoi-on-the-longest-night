@@ -13,3 +13,10 @@ shared_stone_wall_rough.png,Rough stone wall,"Material, square",1,Envoi-Round1-P
 shared_planks_wall.png,Dark board house wall,"Material, square",1,Envoi-Round1-Part-02,Dark board house wall,bogmire,1254,1254,7a07be7b5c15451c82b39d34a0c9be8b1a70af10995f9b59adaa18d809946727,a visible line top to bottom where it repeats (all boards cut at one height)
 shared_roof_shingle.png,Mossy wooden shingle roof,"Material, square",1,Envoi-Round1-Part-02,Mossy wooden shingle roof,bogmire,1254,1254,a9fb7ef94e5b0c7b2e8f51ae670785e0322654fb9329125470354b568feca895,
 shared_roof_thatch.png,Damp mossy thatch,"Material, square",1,Envoi-Round1-Part-02,Damp mossy thatch,bogmire,1254,1254,745aca7cc36904e76147070f0920387d102c9e9f150180473b60c1fe46d7279b,
+shared_wall_castle.png,Grey castle wall blocks,"Material, square",1,Envoi-Round1-Part-03,Grey castle wall blocks,dawnroost,1254,1254,1c7f570e388dc9371a3c36895ed1ab705a992e5295a61b4f4988d6c765a26d78,
+shared_forest_floor.png,Forest floor,"Ground, square",1,Envoi-Round1-Part-03,Forest floor,dawnroost-road,1254,1254,d3ec04d5a04e131dd6c201f479e156eecb24b5822bf6cfe14134129a1b3f2583,
+wilds_oak_leaves.png,Oak leaves,"Material, square",1,Envoi-Round1-Part-03,Oak leaves,dawnroost-road,1254,1254,9047cc4ed20d75bec65f0aee7e357acd4c35d506ab2b2d77a5667344379d04af,
+wilds_fir_boughs.png,Fir boughs,"Material, square",1,Envoi-Round1-Part-03,Fir boughs,dawnroost-road,1254,1254,744833d0dc38a0c1f67c2e48ae3b0d4bd98ff4b18938aece2fcc34db84e024e2,
+wilds_mossy_log.png,Mossy log bark,"Material, square",1,Envoi-Round1-Part-03,Mossy log bark,dawnroost-road,1254,1254,d1141d40f2a3b06271b3274bfcee7163651d0f01769fe20403e9efc9f0626e12,
+wilds_iron_lantern_post.png,Lantern post,"Flat view, tall (2:3)",1,Envoi-Round1-Part-03,Lantern post,dawnroost-road,1024,1536,d6d89aa66bf839c7f336fcd21e26fc630122ff45639827c7665a2d2febefa737,
+wilds_fern.png,Fern,"Plant, square",1,Envoi-Round1-Part-03,Fern,dawnroost-road,1254,1254,59b37a304666021956ac6111e7d5e8e109655f35ca38516f219f79689478ff1d,
