@@ -150,7 +150,7 @@
   // snow-capped boulders on the painting: [x, y, size]; the two on the lookout and the one in the snow dip stand in the
   // walking map's blocks
   const BOULDERS = [
-    [994 + 18, 889, 0.75], [893, 905, 0.55], [745, 575, 0.5], [350, 669, 0.45],
+    [994 + 18, 889, 0.75], [893, 905, 0.55], [745, 575, 0.44], [350, 669, 0.4],
     // round the waterfall trail and the nook
     [1330, 300, 2.2], [1345, 228, 1.1], [1470, 440, 1.9], [1500, 170, 1.6], [1190, 205, 0.7], [1210, 60, 1.0], [1030, 70, 1.3],
     // along the east trail's south side, and by the lookout path
@@ -656,8 +656,9 @@
       {
         const px = 2880, py = 540, x = X(px), z = Z(py), y = TH(px, py);
         B.box('wood', x, y - 0.3, z, 0.14, 2.1, 0.14, 0, [0.7, 0.56, 0.46]);
-        B.box('planks', x + 0.42, y + 1.45, z, 0.9, 0.26, 0.05, 0, [0.95, 0.8, 0.62]);
-        soft(() => { B.tri('planks', [x + 0.87, y + 1.45, z + 0.03], [x + 1.07, y + 1.58, z + 0.03], [x + 0.87, y + 1.71, z + 0.03], [[0, 0], [0.2, 0.13], [0, 0.26]], [0.95, 0.8, 0.62]); lump(x, y + 1.8, z, 0.1, 0.05, 0.1); lump(x + 0.42, y + 1.72, z, 0.45, 0.04, 0.05, 0); });
+        // the board faces whoever comes along the trail toward it
+        B.box('planks', x - 0.1, y + 1.3, z, 1.0, 0.4, 0.06, Math.PI / 2, [1.4, 1.2, 1.0]);
+        soft(() => { lump(x, y + 1.8, z, 0.1, 0.05, 0.1); lump(x - 0.1, y + 1.71, z, 0.05, 0.04, 0.5, 0); });
         K.addBlock(K.circlePx(px, py, 0.2, 8));
       }
 
