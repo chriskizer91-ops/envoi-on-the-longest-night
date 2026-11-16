@@ -95,7 +95,7 @@
     // the planks across, and the west and east houses (0.4): along their walkways, round their fronts and sides
     R4(356, 419, 433, 433), R4(1099, 419, 1188, 433),
     [[223, 338], [258, 338], [258, 409], [362, 409], [362, 443], [258, 443], [258, 449], [40, 449], [40, 437], [223, 437]],
-    [[1186, 411], [1284, 411], [1284, 304], [1321, 304], [1321, 433], [1500, 433], [1500, 443], [1186, 443]],
+    [[1186, 411], [1284, 411], [1284, 304], [1321, 304], [1321, 432], [1500, 432], [1500, 446], [1186, 446]],
   ];
 
   // the houses (the engine builds their walls, gables, roofs, windows and chimneys). Footprints in pixels: the south

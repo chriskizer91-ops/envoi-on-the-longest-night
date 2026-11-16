@@ -36,6 +36,8 @@ const res = await page.evaluate(async () => {
       for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]) {
         const ni = i + di, nj = j + dj, nk = key(ni, nj);
         if (done.has(nk) || !w.fits(ni * C, nj * C)) continue;
+        // no cutting a corner diagonally past a post or a wall's end
+        if (di && dj && (!w.fits(ni * C, j * C) || !w.fits(i * C, nj * C))) continue;
         const ng = g.get(k) + Math.hypot(di, dj);
         if (g.has(nk) && g.get(nk) <= ng) continue;
         g.set(nk, ng); came.set(nk, k); push(ng + Math.hypot(ni - t[0], nj - t[1]), nk);

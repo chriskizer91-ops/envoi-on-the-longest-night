@@ -861,10 +861,30 @@
     // ground and anything solid that stands in her way; the 2D walk, pockets, decks and jetties always walkable ----
     {
       const c = 2, w = Math.ceil((WX1 - WX0) / c), h = Math.ceil((WY1 - WY0) / c);
-      const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const g = cv.getContext('2d');
-      g.setTransform(1 / c, 0, 0, 1 / c, -WX0 / c, -WY0 / c);
-      const fillP = (poly) => { g.beginPath(); poly.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.closePath(); g.fill(); };
-      g.fillStyle = '#000'; g.fillRect(WX0, WY0, WX1 - WX0, WY1 - WY0);
+      // each cell is decided at its centre, exactly as the 2D game decides a point (no blurred edges)
+      const grid = new Uint8Array(w * h); let ink = 0;
+      const g = { set fillStyle(v) { ink = v === '#fff' ? 1 : 0; },
+        fillRect(x, y, rw, rh) {
+          const i0 = Math.max(0, Math.ceil((x - WX0) / c - 0.5)), i1 = Math.min(w - 1, Math.ceil((x + rw - WX0) / c - 0.5) - 1);
+          const j0 = Math.max(0, Math.ceil((y - WY0) / c - 0.5)), j1 = Math.min(h - 1, Math.ceil((y + rh - WY0) / c - 0.5) - 1);
+          for (let j = j0; j <= j1; j++) grid.fill(ink, j * w + i0, j * w + i1 + 1);
+        } };
+      const fillP = (poly) => {
+        let y0 = 1e9, y1 = -1e9; for (const q of poly) { if (q[1] < y0) y0 = q[1]; if (q[1] > y1) y1 = q[1]; }
+        const j0 = Math.max(0, Math.ceil((y0 - WY0) / c - 0.5)), j1 = Math.min(h - 1, Math.floor((y1 - WY0) / c - 0.5)), xs = [];
+        for (let j = j0; j <= j1; j++) {
+          const py = WY0 + (j + 0.5) * c; xs.length = 0;
+          for (let a = 0, b = poly.length - 1; a < poly.length; b = a++) {
+            const [xa, ya] = poly[a], [xb, yb] = poly[b];
+            if ((ya > py) !== (yb > py)) xs.push(xa + (py - ya) * (xb - xa) / (yb - ya));
+          }
+          xs.sort((p, q) => p - q);
+          for (let k = 0; k + 1 < xs.length; k += 2) {
+            const i0 = Math.max(0, Math.ceil((xs[k] - WX0) / c - 0.5)), i1 = Math.min(w - 1, Math.ceil((xs[k + 1] - WX0) / c - 0.5) - 1);
+            if (i1 >= i0) grid.fill(ink, j * w + i0, j * w + i1 + 1);
+          }
+        }
+      };
       g.fillStyle = '#fff';
       if (OPEN) {
         fillP(OPEN); g.fillStyle = '#000'; for (const wt of WATER) fillP(wt.poly);
@@ -889,11 +909,9 @@
         if (sd.y1 > f + 0.35 && sd.y0 < f + 1.6) { fillP(sd.poly.map(([x, z]) => [M.px(x), M.py(z)])); solidCount++; }
       }
       for (const q of BLOCK) fillP(q.p);
-      const d = g.getImageData(0, 0, w, h).data, grid = new Uint8Array(w * h);
-      for (let i = 0; i < w * h; i++) grid[i] = d[i * 4] > 127 ? 1 : 0;
       walkGrid = { x0: WX0, y0: WY0, c, w, h, d: grid };
       // the same grid as a picture, for the guide's "where can she walk" view: green where she can, clear where not
-      const pic = g.createImageData(w, h);
+      const pic = new ImageData(w, h);
       for (let i = 0; i < w * h; i++) { if (grid[i]) { pic.data[i * 4] = 60; pic.data[i * 4 + 1] = 230; pic.data[i * 4 + 2] = 110; pic.data[i * 4 + 3] = 150; } }
       const out = document.createElement('canvas'); out.width = w; out.height = h; out.getContext('2d').putImageData(pic, 0, 0); walkPic = out;
     }
