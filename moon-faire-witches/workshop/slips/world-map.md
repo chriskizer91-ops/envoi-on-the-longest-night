@@ -13,7 +13,7 @@ Chris said: (15:22, after the first build, which laid the night atlas over a hei
           it's drawn in 3D; infer the elevation from the picture; rotatable, to look round and look at it. It would be
           fantastic if the areas already 3D mapped were correctly represented, but that may be asking too much. It's a
           terrain map: you'd barely see any cities from this level; you might see the castle.
-Branch:   work/world-map (from work/world-3d at 0046851)
+Branch:   work/world-map (from work/world-3d at 0046851)   Commit: bafe30a
 Files:    moon-faire-witches/world-map/ (all new to the game): README.md, envoi-map-where.html, map/map3d.js,
           map/places.js, map/art.js, map/map.css, art/aethermoor-terrain-height.png, art/aethermoor-terrain-kinds.png,
           art/LABELS.md (what each art file holds), tools/make-terrain.mjs, tools/check-places.mjs, tools/shots.mjs,
