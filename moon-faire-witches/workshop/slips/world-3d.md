@@ -12,10 +12,11 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           usage runs fast; this machine's 2 cores are the real limit),
           each following moon-faire-witches/world3d/HELPERS.md on its own branch w3d/<place>, checked and brought into
           work/world-3d here:
-            1. the jetty (done), Io's cottage (done), the Thornwood (working: a wide wild field)
+            1. the jetty, Io's cottage, the Thornwood (all done; the Thornwood is the first wide wild field)
             2. Bogmire, Bogmire's dark heart, Dawnroost (all done)
             3. Dawnroost's node, Misthollow, Misthollow's Moonwell (all working)
-            4. the shipyard (working); the crossroads and the frozen pass; the Warm Roads camp and the Ember Line road
+            4. the shipyard (working); the crossroads and the frozen pass (working); the Warm Roads camp and the Ember
+               Line road
             5. the Dawnroost forest road and Eldergrove's edge; the northern camp and the cold moor; the frozen camp and
                Frostmere's shore
           Then the whole game, as Chris wants it (11:24 to 11:26): a big game kept as a folder in the repository, each zone
@@ -28,14 +29,20 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           ground inside each place's bounds, less water, steep ground and anything solid, measured from what's built; a
           thicket along the edges; a where-she-can-walk view). Wickhollow passes; a helper is making Bogmire's porches,
           the fen's side decks and the jetty's plank arm walkable; every helper building now checks it.
-Branch:   work/world-3d   Commit: e2a042d
+          The Thornwood's wishes, done in the engine (536b898): the shade under trees softened once instead of mark by
+          mark (most of a wide place's loading: the Thornwood now loads in about 20 s headless, Wickhollow 27 s); the
+          sky below the horizon is the fog's colour, so far ground has no seam; the edge thicket is built in the trees'
+          patches with lower bushes, so the ones past the fog aren't drawn.
+Branch:   work/world-3d   Commit: 536b898
 Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
           engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
-          tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/plan-wickhollow.json
+          tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/beside.mjs, tools/plan-wickhollow.json,
+          HELPERS.md, and for each place built: places/<id>.js, places/<id>-trees.js, envoi-3d-<id>.html,
+          tools/plan-<id>.json (cottage, jetty, thornwood, bogmire, bogmire-heart, dawnroost)
           moon-faire-witches/workshop/slips/world-3d.md
           Nothing else changed.
-File for Chris: envoi-3d-wickhollow.html, envoi-3d-bogmire.html, envoi-3d-cottage.html, envoi-3d-jetty.html (each 12 to 14 MB, works
-          offline). In each: Drag on the left half of the screen to walk (push far
+File for Chris: envoi-3d-<place>.html for Wickhollow, the cottage, the jetty, the Thornwood, Bogmire, Bogmire's
+          heart and Dawnroost (each 12 to 14 MB, works offline). In each: Drag on the left half of the screen to walk (push far
           and she jogs), drag on the right half to turn the camera. The map button (top right) shows your painting over
           the 3D from straight above, with the frame rate and the counts under it; tap it again to go back.
 Done:     Wickhollow's square in 3D at night, laid out on the painting in its own pixels: the cobbled square and the
