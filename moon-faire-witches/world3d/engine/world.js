@@ -39,7 +39,7 @@
       roof: 'shared_roof_tiles_red', wood: 'shared_boardwalk_planks', deck: 'shared_boardwalk_planks', pave: 'wick_bridge_paving', cloth: 'shared_awning_stripes',
       soil: 'shared_dirt_track', rock: 'thorn_rock_mossy', leaves: 'wick_leaf_canopy', bark: 'shared_bark_oak' }, place.surfaces || {});
     const ST = (k) => T(SURF[k]);
-    // place.tints: a colour to multiply any surface by (stone, dry, timber, planks, roof, wood, deck, pave, cloth, rock, leaves, firs, bush)
+    // place.tints: a colour to multiply any surface by (stone, dry, timber, planks, roof, wood, deck, pave, cloth, rock, leaves, firs, bush, bark)
     const TINT = Object.assign({ leaves: 0xd8ffee, firs: 0xa8c8c0, bush: 0xd8ffe8, wood: 0xc0a088 }, place.tints || {});
     const MAT = {
       stone: m({ tint: TINT.stone, map: ST('stone'), rep: 2.4, cut: true, shade: 0.35 }),
@@ -69,7 +69,7 @@
     const TREE_MAT = (cut) => ({
       leaves: m({ map: ST('leaves'), rep: 1, tint: TINT.leaves, cut, shade: 0.55 }),
       firs: m({ map: T(SURF.firs || SURF.leaves), rep: 1, tint: TINT.firs, cut, shade: 0.55 }),
-      bark: m({ map: ST('bark'), rep: 1, cut, shade: 0.6 }),
+      bark: m({ map: ST('bark'), rep: 1, tint: TINT.bark, cut, shade: 0.6 }),
     });
     const TM = { cut: TREE_MAT(true), whole: TREE_MAT(false) };
 
