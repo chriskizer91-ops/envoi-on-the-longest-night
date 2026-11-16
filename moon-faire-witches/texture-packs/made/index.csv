@@ -125,3 +125,7 @@ snowfield.png,Snowfield from above,"Ground, square",2,Envoi-Round2-Part-12,Snowf
 town_roofs.png,Town rooftops from above,"Ground, square",2,Envoi-Round2-Part-12,Town rooftops from above,aethermoor,1254,1254,264f8bcaf4f7deffde1a71ebfc16a420430be91c357a5b1c05900dead2d8cc99,
 deep_sea.png,Deep sea from above,"Material, square",2,Envoi-Round2-Part-12,Deep sea from above,aethermoor,1254,1254,50496f2cc196833332df800bc709025533049f2dbc8eff818813e18f1356d122,
 shallow_sea.png,Shallow coastal water from above,"Material, square",2,Envoi-Round2-Part-12,Shallow coastal water from above,aethermoor,1254,1254,6368afa418168a360b312f0c6615766daade531d4de946bee942ca4c46c139cb,
+river_water.png,River water from above,"Material, square",2,Envoi-Round2-Part-13,River water from above,aethermoor,1254,1254,e6615a3f30fe87bbedd641a11739d95074458a478d3084819bc0e7ca5435e4ab,
+mountain_lake.png,Mountain lake from above,"Material, square",2,Envoi-Round2-Part-13,Mountain lake from above,aethermoor,1254,1254,ec03ea9dd19247cf34bf5f1b0380bbd479b0abcf6aa1f7146d9bfb8e7645227c,
+lake_ice.png,Frozen lake from above,"Material, square",2,Envoi-Round2-Part-13,Frozen lake from above,aethermoor,1254,1254,2d5aeef7f85990a9416e61370a73cffd5f7588867d728841f1a25516e1a63cec,
+coastal_cliff.png,Sea cliff face,"Material, square",2,Envoi-Round2-Part-13,Sea cliff face,aethermoor,1254,1254,2be81e0f4e28a40569c072670b4ae097580ccc2582812146ffddac067bae635e,"repeats left to right only, as its card asks (cliff top at the top, foot at the bottom)"
