@@ -249,11 +249,13 @@
         const pa = new V3(a.x, 0, a.z), pb = new V3(b.x, 0, b.z), line = flat(new V3().subVectors(pb, pa));
         const side = new V3(-line.z, 0, line.x); if (side.dot(A.side) < 0) side.negate();
         let kind = angles[T.n % angles.length]; if (kind === T.last) kind = angles[(T.n + 1) % angles.length];
+        // a phone held upright has no room across: two who are apart are seen one behind the other, over a shoulder
+        if (view.w < view.h * 0.9 && hero && other) kind = 'shoulder';
         const pts = []; for (const f of [fa, fb]) if (f) body(f, pts); if (!fa) pts.push(pa, pa.clone().setY(2)); if (!fb) pts.push(pb, pb.clone().setY(2));
         const mid = new V3().lerpVectors(pa, pb, 0.5); mid.y = 1.1;
         if (kind === 'shoulder' && hero && other) {
           const away = flat(new V3().subVectors(hero.pos === a ? pa : pb, hero.pos === a ? pb : pa)), look = new V3().lerpVectors(new V3(hero.pos.x, 0, hero.pos.z), new V3(other.pos.x, 0, other.pos.z), 0.62); look.y = 1.15;
-          set('shoulder', dirOf(away, side, 24, 12), look, pts, 30, k, 2.2);
+          set('shoulder', dirOf(away, side, view.w < view.h * 0.9 ? (T.n % 2 ? 14 : -14) : 24, 12), look, pts, 30, k, 2.2);
         } else if (kind === 'low') set('low', dirOf(side, line, 18, 3), mid, pts, 30, k, 2.2);
         else set('side', dirOf(side, line, -6, 9), mid, pts, 30, k, 2.2);
       };
@@ -288,13 +290,21 @@
         const c = document.createElement('canvas'); c.width = 1024; c.height = 512;
         const x = c.getContext('2d'); x.filter = 'blur(3px)'; x.drawImage(paintImg, 0, 0, c.width, c.height);
         const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.MirroredRepeatWrapping;       // its colours as they are, as the painting is drawn below the 3D
-        const sp = SHEET.geometry.parameters, W0 = sp.width, H0 = sp.height, geo = new THREE.PlaneGeometry(W0 * 3, H0 * 1.8);
-        const uv = geo.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 3 - 1, uv.getY(i) * 1.8 - 0.4); uv.needsUpdate = true;
-        const mk = () => { const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: t, color: new THREE.Color(0.86, 0.86, 0.9), depthWrite: false, fog: false, side: THREE.DoubleSide })); m.renderOrder = -200; m.frustumCulled = false; scene.add(m); return m; };
-        const fwd = new V3(0, 0, -1).applyQuaternion(SHEET.quaternion);
-        back = mk(); back.position.copy(SHEET.position).addScaledVector(fwd, 2); back.quaternion.copy(SHEET.quaternion);
-        // the same painting again behind the painter, for the shots that look back (the bow)
-        mirror = mk(); const d = SHEET.position.distanceTo(fullCam.position); mirror.position.copy(fullCam.position).addScaledVector(fwd, -d); mirror.quaternion.copy(SHEET.quaternion); mirror.rotateY(Math.PI);
+        // the painting all the way round: a ring far off, the painting where the painter sees it, met again mirrored on
+        // either side and behind, so a camera turned any way sees the place out of focus behind the fight
+        const R = 700, vf = fullCam.fov * rad, hf = 2 * Math.atan(Math.tan(vf / 2) * fullCam.aspect), cp = fullCam.position;
+        const fwd = new V3(0, 0, -1).applyQuaternion(fullCam.quaternion), yawF = Math.atan2(fwd.x, -fwd.z), pitF = Math.asin(Math.max(-1, Math.min(1, fwd.y)));
+        const geo = new THREE.CylinderGeometry(R, R, 2 * R * Math.tan(vf / 2) * 2.2, 128, 1, true), P = geo.attributes.position, UV = geo.attributes.uv;
+        for (let i = 0; i < P.count; i++) { const x = P.getX(i), y = P.getY(i), z = P.getZ(i); let th = Math.atan2(x, -z) - yawF; th = Math.atan2(Math.sin(th), Math.cos(th));
+          UV.setXY(i, 0.5 + th / hf, 0.5 + (Math.atan2(y, R) - pitF) / vf); }
+        UV.needsUpdate = true;
+        back = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: t, color: new THREE.Color(0.86, 0.86, 0.9), depthWrite: false, fog: false, side: THREE.DoubleSide }));
+        back.position.set(cp.x, cp.y, cp.z); back.renderOrder = -200; back.frustumCulled = false; scene.add(back);
+        // and the ground beyond the live ground, in the painting's own ground colour, so its edge doesn't show
+        const gs = document.createElement('canvas'); gs.width = gs.height = 1; const gx = gs.getContext('2d'); gx.drawImage(paintImg, paintImg.naturalWidth * 0.2, paintImg.naturalHeight * 0.8, paintImg.naturalWidth * 0.6, paintImg.naturalHeight * 0.2, 0, 0, 1, 1);
+        let gc = [40, 36, 50]; try { gc = Array.from(gx.getImageData(0, 0, 1, 1).data).slice(0, 3); } catch (e) { /* a painting from elsewhere */ }
+        mirror = new THREE.Mesh(new THREE.CircleGeometry(600, 48), new THREE.MeshBasicMaterial({ color: new THREE.Color(gc[0] / 255 * 0.55, gc[1] / 255 * 0.55, gc[2] / 255 * 0.6), fog: true }));
+        mirror.rotation.x = -Math.PI / 2; mirror.position.set(cp.x, -0.04, cp.z); mirror.renderOrder = -150; scene.add(mirror);
       }
       T.frame = (rdt) => {
         if (T.followF) { const p = T.followF(); T.to.look.x = p.x; T.to.look.z = p.z; }

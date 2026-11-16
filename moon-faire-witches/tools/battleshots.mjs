@@ -74,7 +74,7 @@ await page.evaluate(([turns]) => {
     const F = B.F;
     for (const k of ['io', 'jester']) { const f = F && F[k]; if (!f) continue; const a = f.m.action; if (a !== last[k]) { last[k] = a; W.__seen.push(k + ':' + a + '@' + B.t.toFixed(1)); } }
     // the bow at the end of a won fight
-    if (!W.__bowShot && !W.__shot && F && F.io && F.io.m.action === 'victory' && F.io.m.progress > 0.45) { W.__bowShot = true; B.turbo = 0; W.__shot = { name: 'bow', k: 0, p: F.io.m.progress, a: 'victory' }; }
+    if (!W.__bowShot && !W.__shot && F && F.io && (F.io.m.action === 'victory' || F.io.m.action === 'win') && F.io.m.progress > 0.45) { W.__bowShot = true; B.turbo = 0; W.__shot = { name: 'bow', k: 0, p: F.io.m.progress, a: 'victory' }; }
     const c = W.__cur;
     if (c && !W.__shot && F && F[c.who]) {
       const m = F[c.who].m, at = c.at || [];
@@ -86,14 +86,14 @@ await page.evaluate(([turns]) => {
   requestAnimationFrame(tick);
 }, [plan.turns]);
 const n = plan.turns.length;
-let shots = 0;
+let shots = 0, overAt = 0, bowDone = false;
 const deadline = Date.now() + (plan.minutes || 25) * 60000;
 while (Date.now() < deadline) {
   const st = await page.evaluate(() => ({ shot: window.__shot, over: window.__battle.state === 'over', done: window.__turns.filter((t) => t.done).length }));
   if (st.shot) {
     const T = plan.turns.find((t) => (t.name || t.who + '-' + t.move) === st.shot.name) || plan.turns.map((t) => t.trance && Object.assign({ name: t.who + '-trance' }, t.trance)).find((t) => t && t.name === st.shot.name);
     await sleep(700);
-    const base = st.shot.name + '-' + (st.shot.k + 1);
+    const base = st.shot.name + '-' + (st.shot.k + 1); if (st.shot.name === 'bow') bowDone = true;
     await page.screenshot({ path: path.join(out, base + '.png') });
     log('shot ' + base + ' (' + st.shot.a + ' at ' + st.shot.p.toFixed(2) + ')'); shots++;
     if (T && T.flip) {
@@ -104,7 +104,8 @@ while (Date.now() < deadline) {
     await page.evaluate(() => { window.__shot = null; window.__battle.turbo = window.__turbo; });
     continue;
   }
-  if (st.over || (st.done >= n && !plan.toEnd)) break;
+  if (st.over && plan.toEnd && !overAt) overAt = Date.now();
+  if ((st.over && (!plan.toEnd || Date.now() - overAt > 90000 || bowDone)) || (st.done >= n && !plan.toEnd)) break;
   await sleep(150);
 }
 const seen = await page.evaluate(() => window.__seen);
