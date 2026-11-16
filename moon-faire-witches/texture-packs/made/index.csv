@@ -49,3 +49,6 @@ shared_roof_slate_snow.png,Snowy slate roof,"Material, square",1,Envoi-Round1-Pa
 shared_rock_cliff.png,Grey rock cliff face,"Material, square",1,Envoi-Round1-Part-07,Grey rock cliff face,crossroads,1254,1254,16cfb4c372b63f5d9a1e47f3dcbfc2d03e9ef9aa21a4110a4494cf1a68efdf21,
 shared_tree_pine.png,Dark pine tree,"Plant, tall (2:3)",1,Envoi-Round1-Part-07,Dark pine tree,frostmere,1024,1536,18c1c4c4f2759214cf1405d2cb4c214e424f0e8f43299e8ab22d935be19fb3c7,
 shared_mountain_snow_rock.png,Snowy mountain rock face,"Material, square",1,Envoi-Round1-Part-07,Snowy mountain rock face,frostmere,1254,1254,32cae4071b2cd20d98cda431e5a40b68ed47fa79d0779667ecc8447d74bf2000,
+shared_tree_oak.png,Old oak tree,"Plant, tall (2:3)",1,Envoi-Round1-Part-08,Old oak tree,river-glade,1024,1536,9f7e2c3f8b266728a23c1dd33438f264b6a424234a47d3d390c73b73c0dc41bf,
+shared_sky_night.png,Night sky with thin clouds,"Material, wide (3:2)",1,Envoi-Round1-Part-08,Night sky with thin clouds,river-glade,1536,1024,7bb857b700a220fef6a3ea9a5768809bfe27b68f5e4dd90379d07af0e8f27792,a visible line top to bottom where it repeats
+shared_moon.png,The full moon,"Flat view, square",1,Envoi-Round1-Part-08,The full moon,river-glade,1254,1254,beae12a8e962d92ae74be21ddfcb21cccbdb2e8fa9f35d88d7a507c39bd7b1d2,
