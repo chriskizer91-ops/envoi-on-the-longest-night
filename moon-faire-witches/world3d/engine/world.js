@@ -61,6 +61,7 @@
       leafBush: m({ map: ST('leaves'), rep: 1, tint: TINT.bush, cut: true, shade: 0.6 }),
     };
     for (const k of FLOWER_KINDS) MAT['fl_' + k] = m({ map: pics['fl_' + k], alphaTest: 0.5, side: DS, cut: true, shade: 0.5 });
+    for (const k in place.extraMats || {}) { const e = place.extraMats[k]; MAT[k] = m({ map: T(e.tex), rep: e.rep || 2, tint: e.tint, cut: true, side: e.side === 'double' ? DS : THREE.FrontSide, shade: e.shade == null ? 0.4 : e.shade }); }
     // the trees, with and without the thinning-away (it costs a little, so only the patches near Io's line of sight get it)
     const TREE_MAT = (cut) => ({
       leaves: m({ map: ST('leaves'), rep: 1, tint: TINT.leaves, cut, shade: 0.55 }),
@@ -253,16 +254,16 @@
         B.tri(top, [x1, E, z1], [x1, E, z0], [x1, E + rise, cz], [[0, E], [d, E], [d / 2, E + rise]]);
         B.tri(top, [x0, E, z0], [x0, E, z1], [x0, E + rise, cz], [[0, E], [d, E], [d / 2, E + rise]]);
       }
-      roof('roof', cx, cz, w, d, E, rise, b.roof.over, ridge, b.roof.lean);
+      roof(b.roof.mat || 'roof', cx, cz, w, d, E, rise, b.roof.over, ridge, b.roof.lean);
       // a dark band where the walls meet the ground, and the shade round the house on the ground
       shadeMarks.push(['rect', px0, py0, px1, py1, 0.62]);
       // doors
       for (const f of b.doors || []) {
         const F = S[f.side], a = along(S[f.side], f.side, f), c = add3(add3(F.o, mul(F.t, a)), mul(F.n, 0.04)); c[1] = base;
         const col = f.red ? [1.5, 0.55, 0.45] : f.green ? [0.55, 1.05, 0.8] : [1, 1, 1];
-        onWall('stone', add3(c, mul(F.n, -0.01)), F.t, f.w + 0.5, f.h + 0.3, [0.75, 0.72, 0.75], [0, base, f.w + 0.5, base + f.h + 0.3]);
+        onWall(f.plain ? 'wood' : 'stone', add3(c, mul(F.n, -0.01)), F.t, f.w + (f.plain ? 0.24 : 0.5), f.h + (f.plain ? 0.12 : 0.3), f.plain ? [0.45, 0.36, 0.32] : [0.75, 0.72, 0.75], [0, base, f.w + 0.5, base + f.h + 0.3]);
         onWall(f.arch ? (f.double ? 'doorArch2' : 'doorArch') : 'door', c, F.t, f.w, f.h, col);
-        B.box('stone', c[0] + F.n[0] * 0.35, base - 0.4, c[2] + F.n[2] * 0.35, Math.abs(F.n[2]) > 0.5 ? f.w + 0.6 : 0.7, 0.42, Math.abs(F.n[0]) > 0.5 ? f.w + 0.6 : 0.7, 0, [0.85, 0.85, 0.9]);
+        if (!f.plain) B.box('stone', c[0] + F.n[0] * 0.35, base - 0.4, c[2] + F.n[2] * 0.35, Math.abs(F.n[2]) > 0.5 ? f.w + 0.6 : 0.7, 0.42, Math.abs(F.n[0]) > 0.5 ? f.w + 0.6 : 0.7, 0, [0.85, 0.85, 0.9]);
         lights.push([M.px(c[0] + F.n[0]), M.py(c[2] + F.n[2]), 50, 0.25, 'warm']);
       }
       // windows
@@ -458,7 +459,12 @@
     // ---- lamps on posts and stone pillars ----
     for (const l of place.lamps || []) {
       const x = X(l.at[0]), z = Z(l.at[1]), y = l.y != null ? l.y : walkH(l.at[0], l.at[1]);
-      if (l.kind === 'pillar') {
+      if (l.kind === 'wood') {
+        const hh = l.short ? 1.8 : 2.6;
+        B.box('wood', x, y - 0.3, z, 0.2, hh + 0.3, 0.2, 0, [0.62, 0.5, 0.44]); B.box('wood', x + 0.25, y + hh - 0.08, z, 0.62, 0.1, 0.1, 0, [0.62, 0.5, 0.44]);
+        lantern(x + 0.48, y + hh - 0.55, z, null, 0.9, true);
+        lights.push([l.at[0] + 0.48 / M.SX, l.at[1] - 4, 120, 1.0, 'warm']);
+      } else if (l.kind === 'pillar') {
         B.box('stone', x, y - 0.3, z, 0.62, 1.75, 0.62, 0, [0.95, 0.93, 0.98]); B.box('stone', x, y + 1.45, z, 0.76, 0.14, 0.76, 0, [0.8, 0.78, 0.84]);
         lantern(x, y + 1.62, z, null, 1.05);
         lights.push([l.at[0], l.at[1] - 6, 140, 1.15, 'warm']);
@@ -470,6 +476,34 @@
         lights.push([l.at[0], l.at[1] - 4, 150, 1.25, 'warm']);
       }
       addBlock(circlePx(l.at[0], l.at[1], l.kind === 'pillar' ? 0.42 : 0.22, 8));
+    }
+
+    // ---- decks on stilts: boardwalks, landings, porches over water or bog ----
+    for (const dk of place.decks || []) {
+      const [px0, py0, px1, py1] = dk.r, x0 = X(px0), x1 = X(px1), z0 = Z(py0), z1 = Z(py1), y = dk.y, ew = dk.boards === 'ew';
+      B.box('deck', (x0 + x1) / 2, y - 0.16, (z0 + z1) / 2, x1 - x0, 0.16, z1 - z0, 0, null);
+      if (ew) B.quad('deck', [x0, y + 0.001, z1], [x1, y + 0.001, z1], [x1, y + 0.001, z0], [x0, y + 0.001, z0], [z1, x0, z0, x1]);
+      const bottom = dk.bottom != null ? dk.bottom : -3.4;
+      if (dk.stilts !== false) {
+        const sp = dk.spacing || 2.0;
+        for (let x = x0 + 0.12; x <= x1 - 0.08 + 1e-6; x += Math.max(0.5, (x1 - x0 - 0.24) / Math.max(1, Math.round((x1 - x0 - 0.24) / sp)))) for (const z of [z0 + 0.12, z1 - 0.12]) B.cyl('wood', x, bottom, z, 0.13, 0.12, y - bottom - 0.1, 6, [0.55, 0.45, 0.4]);
+      }
+      const rl = dk.rails;
+      if (rl) {
+        const sides = rl.sides || 'nsew', ph = rl.kind === 'wood' ? 0.95 : 0.85;
+        const run = (ax, az, bx, bz) => {
+          const L = Math.hypot(bx - ax, bz - az), n = Math.max(1, Math.round(L / 1.6));
+          for (let i = 0; i <= n; i++) { const t = i / n, x = ax + (bx - ax) * t, z = az + (bz - az) * t; B.cyl('wood', x, y, z, 0.07, 0.06, ph, 5, [0.6, 0.48, 0.42]); }
+          const ry = Math.atan2(-(bz - az), bx - ax);
+          if (rl.kind === 'wood') { B.box('wood', (ax + bx) / 2, y + ph - 0.08, (az + bz) / 2, L, 0.08, 0.08, ry, [0.65, 0.52, 0.45]); B.box('wood', (ax + bx) / 2, y + ph * 0.5, (az + bz) / 2, L, 0.06, 0.06, ry, [0.65, 0.52, 0.45]); }
+          else for (let i = 0; i < n; i++) { const t0 = i / n, t1 = (i + 1) / n, xa = ax + (bx - ax) * t0, za = az + (bz - az) * t0, xb = ax + (bx - ax) * t1, zb = az + (bz - az) * t1;
+            for (let k = 0; k < 4; k++) { const ua = k / 4, ub = (k + 1) / 4, sag = (u) => 0.14 * Math.sin(Math.PI * u); const pa = [xa + (xb - xa) * ua, y + ph - 0.12 - sag(ua), za + (zb - za) * ua], pb = [xa + (xb - xa) * ub, y + ph - 0.12 - sag(ub), za + (zb - za) * ub]; B.box('wood', (pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2 - 0.015, (pa[2] + pb[2]) / 2, Math.hypot(pb[0] - pa[0], pb[2] - pa[2]), 0.03, 0.03, ry, [0.75, 0.62, 0.5]); } }
+        };
+        const e = 0.1;
+        if (sides.includes('n')) run(x0 + e, z0 + e, x1 - e, z0 + e); if (sides.includes('s')) run(x0 + e, z1 - e, x1 - e, z1 - e);
+        if (sides.includes('w')) run(x0 + e, z0 + e, x0 + e, z1 - e); if (sides.includes('e')) run(x1 - e, z0 + e, x1 - e, z1 - e);
+      }
+      shadeMarks.push(['rect', px0, py0, px1, py1, 0.8]);
     }
 
     // ---- the jetties ----

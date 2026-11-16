@@ -33,6 +33,12 @@ Draw the walk and block areas over the painting before placing anything.
   (something solid Io can't walk through), `K.circlePx`, `K.rockG` and `K.ico` are there too. Materials are the
   builder's keys: 'stone', 'dry', 'timber', 'planks', 'roof', 'wood', 'deck', 'pave', 'iron', 'cloth', 'glass' (glows by
   itself: give it a colour), 'win', 'door', 'rock', 'soil', 'leafBush', 'fl_mix', 'fl_white', 'fl_violet', 'fl_sun'.
+- Ready-made parts (added November 16 from Bogmire's wishes): `decks: [{ r: [x0, y0, x1, y1], y, boards: 'ns' | 'ew',
+  stilts: true, bottom: -3.4, rails: { sides: 'nsew', kind: 'rope' | 'wood' } }]` (boardwalks, landings and porches on
+  stilts; feet still need `walk_h`), lamps of `kind: 'wood'` (a lantern hanging from a wooden post), doors with
+  `plain: true` (a wooden frame, no stone surround or step), a roof of its own texture with `roof: { mat: '<name>' }` and
+  `extraMats: { '<name>': { tex: '<texture id>', rep, tint, side: 'double' } }` (thatch, another bark), and `startYaw`
+  (which way the camera first looks: 0 is north, as the painting; turn by radians).
 - Each texture written out in full with double quotes, as in `places/wickhollow.js` (the offline build only packs
   pictures it finds as plain paths): `made: "./../texture-packs/made/<id>.png"` and `stand: "./../texture-packs/<group>/<place>/stand-in/<id>.png"`.
   A shared texture's stand-in is wherever it was made: `ls moon-faire-witches/texture-packs/*/*/stand-in/<id>.png`. If a
