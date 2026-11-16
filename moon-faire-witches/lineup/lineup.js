@@ -31,7 +31,7 @@
     counter: 'Counter', blackNoonCharge: 'Black Noon (gathering)', lure: 'Lure', cast: 'Soul Bolts', leave: 'Leaves', embrace: 'Embrace (heals)', charge: 'Gathers the moon', release: 'Silver Requiem',
     summon: 'Arrives', envoi: 'Its strike', breath: 'Frost Breath', wail: 'Wail', grasp: 'Shadow Grasp', blow: 'Blow', call: 'Call', change: 'Breaks open', ending: 'The end' };
   const fromRules = (rid) => (a) => (FOES[rid] && FOES[rid].moves[a === 'cast' ? 'bolts' : a] ? FOES[rid].moves[a === 'cast' ? 'bolts' : a].name : ACT_NAME[a] || a);
-  const triOf = (m) => { let n = 0; m.root.traverse((o) => { if (o.isMesh && o.geometry && o.visible !== false) n += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; }); return n; };
+  const triOf = (m) => { if (m.paladin) return m.triangles; let n = 0; m.root.traverse((o) => { if (o.isMesh && o.geometry && o.visible !== false) n += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; }); return n; };
   const thousand = (n) => (n >= 1000 ? Math.round(n / 1000) + ',000' : String(Math.round(n)));
 
   const L = [];
@@ -56,7 +56,7 @@
   const big = (o) => add(Object.assign({ group: 'big', side: 'foe' }, o));
   big({ id: 'greatWraith', name: 'The great wraith', tag: KEPT, line: 'Gate 5’s great wraith in Bogmire: seven metres of shadow that swallows lamplight.', make: () => makeWraith({ level: 5, great: true }), at: FAR, tall: 7.4, shadow: 1.9, names: fromRules('greatWraith') });
   big({ id: 'colossus', name: 'Bramble Colossus', tag: KEPT, line: 'The wilds’ rarest foe: about eight metres tall and eleven across. Its heart opens when it blooms.', make: () => makeBrambleColossus({ level: 18 }), at: FARTHEST, tall: 7.8, shadow: 3.6, names: fromRules('colossus') });
-  big({ id: 'halcyon', name: 'Halcyon (to be replaced)', tag: 'To be replaced', line: 'Envoi’s Halcyon, shown until the new one is made: Io’s body in Moon Faire’s paladin outfit, her face repainted, a glowing aura.', make: () => makeHalcyon({}), at: SMALL, tall: 2.11, shadow: 0.62, names: fromRules('halcyon') });
+  big({ id: 'halcyon', name: 'Halcyon, the paladin', tag: 'New', line: 'The new Halcyon: Moon Faire’s base doll (Io’s body) in its paladin outfit, at its light weight. A glow made in code is round her, and a light hides her face. Her moves are the doll’s own, under Halcyon’s names.', make: () => makeHalcyonPaladin({}), at: SMALL, tall: 1.75, shadow: 0.55, witch: true, names: fromRules('halcyon') });
   big({ id: 'fire1', name: 'The final boss', tag: 'In Noctara’s place', line: 'Moon Faire’s big bad, where the Queen of Darkness stood: a black sun in its corona. First form.', make: () => makeFinalFire({ detail: 0.5, form: 1 }), at: FARTHEST, tall: 8.4, shadow: 4.2, form: 1, order: ['blow', 'call', 'hurt', 'change'], names: (a) => ACT_NAME[a] || a });
   big({ id: 'fire2', name: 'The final boss, broken open', tag: 'In Noctara’s place', line: 'The same model in its second form, after the Curtain Call breaks it open and it fights on alone.', shares: 'fire1', at: FARTHEST, tall: 8.4, shadow: 4.2, form: 2, order: ['blow', 'call', 'hurt', 'ending'], names: (a) => ACT_NAME[a] || a });
 
@@ -162,7 +162,7 @@
     if (e.hero) return e.hero;
     if (e.heroMove) return io;
     const k = e.shares || e.id;
-    if (!made[k]) { const src = L.find((x) => x.id === k); made[k] = K.actor(k, src.make(), { home: src.at, tall: src.tall, shadow: src.shadow, side: src.side, shown: false }); made[k].tri = triOf(made[k].m); }
+    if (!made[k]) { const src = L.find((x) => x.id === k); made[k] = K.actor(k, src.make(), { home: src.at, tall: src.tall, shadow: src.shadow, side: src.side, shown: false, witch: !!src.witch }); made[k].tri = triOf(made[k].m); }
     return made[k];
   }
   function show(e) {
@@ -225,7 +225,7 @@
   const capOf = (e) => { const a = e.hero || e.heroMove ? null : actorOf(e); return e.line + (a ? '  About ' + thousand(a.tri) + ' triangles.' : ''); };
   function pick(id) {
     const e = L.find((x) => x.id === id); if (!e) return;
-    show(e); title.textContent = e.name; tag.textContent = e.tag; tag.className = 'tag ' + (e.tag === IN ? 'in' : e.tag === KEPT ? 'kept' : 'change');
+    show(e); title.textContent = e.name; tag.textContent = e.tag; tag.className = 'tag ' + (e.tag === IN || e.tag === 'New' ? 'in' : e.tag === KEPT ? 'kept' : 'change');
     drawWho(); drawMoves(e); ui.cap(capOf(e)); K.layout();
     if (e.side === 'summon') { const a = actorOf(e), act = a.m.ACTIONS.appear ? 'appear' : null; if (act) { busy = true; modelMove(e, a, act).then(() => { frame(e, a); busy = false; }); } }
   }
