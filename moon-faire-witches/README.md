@@ -130,6 +130,12 @@ zip of the pictures to attach: `dist/envoi-3d-texture-prompts.html` and `dist/En
 Shared textures two groups both made (the jetty's and Bogmire's planks and dark water, and a few more) are one prompt on the
 page, with both close-ups attached; both stand-ins are in the zip.
 
+## Working together
+
+Several conversations work on this game at once (Chris, November 16). The board is the project document
+`claude/envoi-board.md` in the claude.ai project: where the game stands, what's being worked on, what's left, and each job
+with the text Chris pastes to start it. How a job session works, the briefs and the slips: `workshop/`.
+
 ## Next
 
 1. Chris picks Io's spells from the spell book, and plays the new battle.
