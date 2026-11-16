@@ -40,7 +40,14 @@
 
   P.wickhollow = {
     id: 'wickhollow', name: 'Wickhollow', painting: "art/walk/walk-wickhollow-square.avif", size: [1536, 1024],
-    mapId: 'wickhollow',
+    mapId: 'wickhollow', paintingPng: 'reference/art/walk/walk-wickhollow-square.png',
+    // the wall check (tools/walls-test.mjs): from where, to each edge and door
+    checks: { from: [777, 590], goals: [
+      ['the chapel door (north)', 776, 216], ['the forge (north-east)', 1010, 338], ['the bridge to the Thornwood (east edge)', 1530, 375],
+      ['the nook behind the bridge house (east)', 1236, 696], ['the south road to Io’s cottage (south edge)', 780, 1018], ['the lower house’s door (south-west)', 464, 716],
+      ['the lower jetty (west edge)', 6, 732], ['the lane under the garden fence (south-west)', 300, 830], ['Nettie’s door (north-west)', 366, 392], ['the lane by Nettie’s house (north-west)', 280, 262]] },
+    // the trees from the painting (tools/make-trees.mjs): how dark a patch must be, and where no tree goes
+    treeGen: { dark: 0.62, keepOut: [[690, -100, 860, 230]], roads: [[740, 1024, 822, 1800], [1536, 330, 2200, 410], [-600, 700, 0, 770]] },
     // the ground's textures, and how many metres each repeats over
     ground: { cob: 'shared_cobbles_town', grass: 'shared_grass_meadow', dirt: 'shared_dirt_track', pave: 'wick_bridge_paving', rep: [3.2, 4.0, 4.0, 2.6] },
     // each texture: Chris's made one if the page carries it (texture-packs/made/), else the pack's stand-in. Written out in

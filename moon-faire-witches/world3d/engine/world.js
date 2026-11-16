@@ -34,32 +34,38 @@
 
     // ---- materials ----
     const DS = THREE.DoubleSide, m = (o) => W3D.mat(U, o);
+    // which texture each kind of surface uses: the place's own choice (place.surfaces), else Wickhollow's
+    const SURF = Object.assign({ stone: 'shared_stone_wall_rough', dry: 'shared_drystone', timber: 'wick_wall_timber_plaster', planks: 'shared_boardwalk_planks',
+      roof: 'shared_roof_tiles_red', wood: 'shared_boardwalk_planks', deck: 'shared_boardwalk_planks', pave: 'wick_bridge_paving', cloth: 'shared_awning_stripes',
+      soil: 'shared_dirt_track', rock: 'thorn_rock_mossy', leaves: 'wick_leaf_canopy', bark: 'shared_bark_oak' }, place.surfaces || {});
+    const ST = (k) => T(SURF[k]);
+    const TINT = Object.assign({ leaves: 0xd8ffee, firs: 0xa8c8c0, bush: 0xd8ffe8, wood: 0xc0a088 }, place.tints || {});
     const MAT = {
-      stone: m({ map: T('shared_stone_wall_rough'), rep: 2.4, cut: true, shade: 0.35 }),
-      dry: m({ map: T('shared_drystone'), rep: 1.5, cut: true, shade: 0.5 }),
-      timber: m({ map: T('wick_wall_timber_plaster'), rep: 3.0, cut: true, shade: 0.3 }),
-      planks: m({ map: T('shared_boardwalk_planks'), rep: 2.0, repV: 2.0, cut: true, shade: 0.4 }),
-      roof: m({ map: T('shared_roof_tiles_red'), rep: 2.0, cut: true, side: DS, shade: 0.15 }),
-      wood: m({ map: T('shared_boardwalk_planks'), rep: 1.1, tint: 0xc0a088, cut: true, shade: 0.5 }),
-      deck: m({ map: T('shared_boardwalk_planks'), rep: 2.2, cut: true, shade: 0.6 }),
-      pave: m({ map: T('wick_bridge_paving'), rep: 2.6, cut: true, shade: 0.6 }),
+      stone: m({ map: ST('stone'), rep: 2.4, cut: true, shade: 0.35 }),
+      dry: m({ map: ST('dry'), rep: 1.5, cut: true, shade: 0.5 }),
+      timber: m({ map: ST('timber'), rep: 3.0, cut: true, shade: 0.3 }),
+      planks: m({ map: ST('planks'), rep: 2.0, repV: 2.0, cut: true, shade: 0.4 }),
+      roof: m({ map: ST('roof'), rep: 2.0, cut: true, side: DS, shade: 0.15 }),
+      wood: m({ map: ST('wood'), rep: 1.1, tint: TINT.wood, cut: true, shade: 0.5 }),
+      deck: m({ map: ST('deck'), rep: 2.2, cut: true, shade: 0.6 }),
+      pave: m({ map: ST('pave'), rep: 2.6, cut: true, shade: 0.6 }),
       iron: m({ tint: 0x2a2632, spec: 0.6, cut: true, shade: 0.5 }),
-      cloth: m({ map: T('shared_awning_stripes'), rep: 1, cut: true, side: DS, shade: 0.3 }),
+      cloth: m({ map: ST('cloth'), rep: 1, cut: true, side: DS, shade: 0.3 }),
       glass: m({ lit: 0, cut: true }),
       win: m({ map: pics.win, lit: 0 }), winDark: m({ map: pics.winDark, shade: 0.3 }), winColour: m({ map: pics.winColour, lit: 0 }), rose: m({ map: pics.rose, lit: 0 }),
       door: m({ map: pics.door, shade: 0.4 }), doorArch: m({ map: pics.doorArch, alphaTest: 0.5, shade: 0.4 }), doorArch2: m({ map: pics.doorArch2, alphaTest: 0.5, shade: 0.4 }),
       produce: m({ map: pics.produce, shade: 0.3 }), moonwater: m({ map: pics.moonwater, lit: 0 }),
-      soil: m({ map: T('shared_dirt_track'), rep: 1.5, tint: 0x6a5a50, shade: 0.7 }),
-      rock: m({ map: T('thorn_rock_mossy'), rep: 1.8, shade: 0.7, cut: true }),
+      soil: m({ map: ST('soil'), rep: 1.5, tint: 0x6a5a50, shade: 0.7 }),
+      rock: m({ map: ST('rock'), rep: 1.8, shade: 0.7, cut: true }),
       hills: m({ lit: 0, nofog: true, side: DS, glow: 0 }),
-      leafBush: m({ map: T('wick_leaf_canopy'), rep: 1, tint: 0xd8ffe8, cut: true, shade: 0.6 }),
+      leafBush: m({ map: ST('leaves'), rep: 1, tint: TINT.bush, cut: true, shade: 0.6 }),
     };
     for (const k of FLOWER_KINDS) MAT['fl_' + k] = m({ map: pics['fl_' + k], alphaTest: 0.5, side: DS, cut: true, shade: 0.5 });
     // the trees, with and without the thinning-away (it costs a little, so only the patches near Io's line of sight get it)
     const TREE_MAT = (cut) => ({
-      leaves: m({ map: T('wick_leaf_canopy'), rep: 1, tint: 0xd8ffee, cut, shade: 0.55 }),
-      firs: m({ map: T('wick_leaf_canopy'), rep: 1, tint: 0xa8c8c0, cut, shade: 0.55 }),
-      bark: m({ map: T('shared_bark_oak'), rep: 1, cut, shade: 0.6 }),
+      leaves: m({ map: ST('leaves'), rep: 1, tint: TINT.leaves, cut, shade: 0.55 }),
+      firs: m({ map: T(SURF.firs || SURF.leaves), rep: 1, tint: TINT.firs, cut, shade: 0.55 }),
+      bark: m({ map: ST('bark'), rep: 1, cut, shade: 0.6 }),
     });
     const TM = { cut: TREE_MAT(true), whole: TREE_MAT(false) };
 
@@ -135,7 +141,7 @@
         const ya = w.level(py), yb = w.level(py + sy), xa = X(px), xb = X(px + sx), za = Z(py), zb = Z(py + sy);
         WB2.quad('w', [xa, yb, zb], [xb, yb, zb], [xb, ya, za], [xa, ya, za], [xa, zb, xb, za]);
       }
-      const mesh = WB2.build({ w: W3D.waterMat(U, { water: T(w.tex), rep: w.rep, flow: w.flow }) }).w;
+      const mesh = WB2.build({ w: W3D.waterMat(U, { water: T(w.tex), rep: w.rep, flow: w.flow, tint: w.tint }) }).w;
       if (mesh) { mesh.name = 'water'; waterMeshes.push(mesh); scene.add(mesh); }
     }
 
@@ -483,6 +489,13 @@
       shadeMarks.push(['rect', br.x0 + 40, br.y1 - 6, br.x1, br.y1 + 30, 0.7]);
     }
 
+    // lumpy balls for the leaves, shaded smooth (each corner's normal points out from the middle, so the same corner of
+    // two faces lights the same)
+    const lumpy = (detail, seed, k0, k1, sy) => { const g = new THREE.IcosahedronGeometry(1, detail), p = g.attributes.position, n = g.attributes.normal, r = rand(seed), seen = {};
+      for (let i = 0; i < p.count; i++) { const key = p.getX(i).toFixed(3) + p.getY(i).toFixed(3) + p.getZ(i).toFixed(3), k = seen[key] || (seen[key] = k0 + r() * k1); const x = p.getX(i), y = p.getY(i), z = p.getZ(i), L = Math.hypot(x, y, z); n.setXYZ(i, x / L, y / L, z / L); p.setXYZ(i, x * k, y * k * (sy || 1), z * k); }
+      return g; };
+    const ico = [0, 1, 2].map((v) => lumpy(1, 31 + v, 0.84, 0.28)), rockShapes = [0, 1, 2].map((v) => lumpy(1, 71 + v, 0.75, 0.4, 0.68));
+
     // ---- small things ----
     for (const pr of place.props || []) {
       const x = X(pr.at[0]), z = Z(pr.at[1]), y = pr.y != null ? pr.y : gh(pr.at[0], pr.at[1]);
@@ -498,16 +511,22 @@
         else { B.box('stone', x, y - 0.2, z, 0.55, 0.95, 0.14, (R() - 0.5) * 0.15, [0.8, 0.8, 0.88]); const top = new THREE.CylinderGeometry(0.275, 0.275, 0.14, 10, 1, false, 0, Math.PI); top.rotateZ(Math.PI / 2); top.rotateY(Math.PI / 2); B.geom('stone', top, new THREE.Matrix4().makeTranslation(x, y + 0.75, z), [0.8, 0.8, 0.88], 1); top.dispose(); }
       }
       else if (pr.k === 'post') { B.box('stone', x, y - 0.3, z, 0.55, (pr.h || 1.6) + 0.3, 0.55, 0, [0.95, 0.93, 0.98]); B.box('stone', x, y + (pr.h || 1.6), z, 0.68, 0.14, 0.68, 0, [0.8, 0.78, 0.84]); }
+      else if (pr.k === 'rock') { const sz = pr.size || 1; B.geom('rock', rockShapes[Math.floor(R() * 3)], new THREE.Matrix4().compose(new THREE.Vector3(x, y - sz * 0.2, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, R() * TAU, 0)), new THREE.Vector3(sz, sz, sz)), null, 1.2); if (pr.solid !== false) solid(sz * 0.8); }
       else if (pr.k === 'sunflowers') { for (let i = 0; i < 5; i++) { const sx = x + (R() - 0.5) * 1.4, sz = z + (R() - 0.5) * 0.8, hh = 1.4 + R() * 0.6; B.box('leafBush', sx, y, sz, 0.05, hh, 0.05, 0, [0.6, 0.8, 0.5]); B.quad('fl_sun', [sx - 0.35, y + hh - 0.3, sz + 0.02], [sx + 0.35, y + hh - 0.3, sz + 0.02], [sx + 0.35, y + hh + 0.4, sz + 0.02], [sx - 0.35, y + hh + 0.4, sz + 0.02], [0, 0, 1, 1]); } }
     }
 
+    // ---- the place's own things (tents, boats, campfires...): its data's extra(K) builds them with the same parts ----
+    function extras() {
+      if (typeof place.extra !== 'function') return;
+      const K = { B, M, X, Z, gh, walkH, terrain, R, TAU, lantern, bench, addBlock, circlePx, lights, halos, shadeMarks, lamps3d, ico, rockG: rockShapes,
+        light: (px, py, r, s, kind) => lights.push([px, py, r, s, kind || 'warm']),
+        halo: (x, y, z, size, rgb) => halos.push([x, y, z, size, rgb[0], rgb[1], rgb[2]]),
+        fire(px, py, size) { const x = X(px), z = Z(py), y = gh(px, py), s = size || 1; B.box('stone', x, y - 0.1, z, 0.9 * s, 0.25, 0.9 * s, 0.785, [0.6, 0.58, 0.6]); B.box('glass', x, y + 0.1, z, 0.45 * s, 0.35 * s, 0.45 * s, 0.3, [2.0, 0.85, 0.3]); B.box('glass', x, y + 0.3 * s, z, 0.25 * s, 0.35 * s, 0.25 * s, 1.1, [2.2, 1.2, 0.4]); halos.push([x, y + 0.5 * s, z, 2.6 * s, 1.0, 0.5, 0.2]); lights.push([px, py, 170 * s, 1.4, 'forge']); lamps3d.push({ x, y: y + 0.6, z, c: 0xff8a40, k: 1.8 }); addBlock(circlePx(px, py, 0.6 * s, 8)); },
+      };
+      place.extra(K);
+    }
+
     // ---- flower beds and flowering bushes ----
-    // lumpy balls for the leaves, shaded smooth (each corner's normal points out from the middle, so the same corner of
-    // two faces lights the same)
-    const lumpy = (detail, seed, k0, k1, sy) => { const g = new THREE.IcosahedronGeometry(1, detail), p = g.attributes.position, n = g.attributes.normal, r = rand(seed), seen = {};
-      for (let i = 0; i < p.count; i++) { const key = p.getX(i).toFixed(3) + p.getY(i).toFixed(3) + p.getZ(i).toFixed(3), k = seen[key] || (seen[key] = k0 + r() * k1); const x = p.getX(i), y = p.getY(i), z = p.getZ(i), L = Math.hypot(x, y, z); n.setXYZ(i, x / L, y / L, z / L); p.setXYZ(i, x * k, y * k * (sy || 1), z * k); }
-      return g; };
-    const ico = [0, 1, 2].map((v) => lumpy(1, 31 + v, 0.84, 0.28));
     const blobCol = (cy, r) => (v) => { const t = clamp((v.y - cy) / r * 0.5 + 0.5, 0, 1); const k = 0.42 + 0.68 * t; return [k * 0.95, k, k * 1.02]; };
     for (const [fx, fy, rr, kind] of place.flowers || []) {
       const x = X(fx), z = Z(fy), y = gh(fx, fy), h = rr * 0.75;
@@ -522,7 +541,7 @@
 
     // ---- rocks along the river's banks and the lake's ----
     {
-      const rockG = [0, 1, 2].map((v) => lumpy(1, 71 + v, 0.75, 0.4, 0.68));
+      const rockG = rockShapes;
       for (const w of WATER) {
         const poly = w.poly;
         for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
@@ -538,6 +557,8 @@
         }
       }
     }
+
+    extras();
 
     // ---- the trees, in patches ----
     const trees = ((window.W3D_TREES || {})[place.trees] || []).concat(place.extraTrees || []);
@@ -659,7 +680,7 @@
     }
     const T_ = (c) => { const t = new THREE.CanvasTexture(c); t.flipY = false; t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; t.minFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; };
     U.uGlow.value = T_(glow); U.uShade.value = T_(shade);
-    const groundTex = { cob: T(place.ground.cob), grass: T(place.ground.grass), dirt: T(place.ground.dirt), pave: T(place.ground.pave), splat: T_(splat), rep: place.ground.rep };
+    const groundTex = { cob: T(place.ground.cob), grass: T(place.ground.grass), dirt: T(place.ground.dirt), pave: T(place.ground.pave), splat: T_(splat), rep: place.ground.rep, grassTint: place.ground.grassTint };
     ground.material = W3D.groundMat(U, groundTex);
 
     // ---- each frame ----

@@ -15,13 +15,9 @@ const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 await page.goto('file://' + page_ + '?test');
 await page.waitForFunction(() => window.__ready, null, { timeout: 240000 });
-const GOALS = [
-  ['the chapel door (north)', 776, 216], ['the forge (north-east)', 1010, 338], ['the bridge to the Thornwood (east edge)', 1530, 375],
-  ['the nook behind the bridge house (east)', 1236, 696], ['the south road to Io’s cottage (south edge)', 780, 1018], ['the lower house’s door (south-west)', 464, 716],
-  ['the lower jetty (west edge)', 6, 732], ['the lane under the garden fence (south-west)', 300, 830], ['Nettie’s door (north-west)', 366, 392], ['the lane by Nettie’s house (north-west)', 280, 262],
-];
-const res = await page.evaluate(async (GOALS) => {
-  const w = window.__w3d, P = w.P, M = P.M, out = [];
+const GOALS = null;   // the place's own: place.checks.goals
+const res = await page.evaluate(async () => {
+  const w = window.__w3d, P = w.P, M = P.M, out = [], GOALS = P.place.checks.goals;
   const box = P.place.buildings.map((b) => b.fp);
   const inHouse = (x, y) => box.some((f) => x > f[0] && x < f[2] && y > f[1] && y < f[3]);
   // a path over the walkable ground: A* on a 5 px grid, then thinned to the corners
@@ -63,7 +59,7 @@ const res = await page.evaluate(async (GOALS) => {
     const [gx, gy] = path[path.length - 1]; far = Math.hypot(M.x(gx) - M.x(w.io.px), M.z(gy) - M.z(w.io.py));
     return { frames, bad, house, far, at: [Math.round(w.io.px), Math.round(w.io.py)], wp: path[Math.min(k, path.length - 1)] };
   }
-  const MW = [777, 590];
+  const MW = P.place.checks.from;
   for (const [name, x, y] of GOALS) {
     w.setIo(MW[0], MW[1], Math.PI); w.setCam(0); w.C.auto = 0; w.io.speed = 0;
     const p = find(MW[0], MW[1], x, y);
@@ -84,9 +80,9 @@ const res = await page.evaluate(async (GOALS) => {
     push.push({ id: b.id, frames: 180, inside, stoppedAt: Math.round(w.io.py), wall: f[3] });
   }
   return { out, push };
-}, GOALS);
+});
 let fails = 0;
-console.log('From the Moonwell to each edge (Io steered by thumb input, 30 frames a second):');
+console.log('From the start to each edge and door (Io steered by thumb input, 30 frames a second):');
 for (const r of res.out) { if (!r.ok) fails++; console.log((r.ok ? '  ok   ' : '  FAIL ') + r.name + (r.why ? ': ' + r.why : ': ' + r.metres + ' m in ' + r.seconds + ' s, frames off the walk ' + r.offWalk + ', inside a house ' + r.inHouse + ', ends ' + r.endsFrom + ' m from the goal' + (r.ok ? '' : ' (stopped at ' + r.at + ', heading for ' + r.wp + ')'))); }
 console.log('Pushed straight at each building for 6 seconds:');
 for (const r of res.push) { if (r.inside) fails++; console.log('  ' + (r.skipped ? 'skip ' : r.inside ? 'FAIL ' : 'ok   ') + r.id + (r.skipped ? ' (' + r.skipped + ')' : ': frames inside ' + r.inside + ', stopped at y ' + r.stoppedAt + ' (its wall at ' + r.wall + ')')); }

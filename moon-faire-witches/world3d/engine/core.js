@@ -171,9 +171,9 @@
       uMapK: { value: new THREE.Vector4(1 / (M.SX * M.W), 1 / (M.SZ * M.H), M.CX / M.W, M.CY / M.H) },
       // the textures are already painted at night, so the light that falls on them is nearly white: a sky from above, a
       // dark ground below, and the moon (high in the north-west) for the shape of things
-      uSky: { value: new THREE.Color().setRGB(0.62, 0.6, 0.7) }, uGround: { value: new THREE.Color().setRGB(0.1, 0.09, 0.13) },
-      uMoonDir: { value: new THREE.Vector3(-0.35, 0.8, -0.48).normalize() }, uMoon: { value: new THREE.Color().setRGB(0.42, 0.43, 0.56) },
-      uFog: { value: new THREE.Color().setRGB(0.075, 0.08, 0.16) }, uFogNear: { value: opt.fogNear || 30 }, uFogFar: { value: opt.fogFar || 115 },
+      uSky: { value: new THREE.Color().setRGB(...(opt.sky || [0.62, 0.6, 0.7])) }, uGround: { value: new THREE.Color().setRGB(...(opt.ground || [0.1, 0.09, 0.13])) },
+      uMoonDir: { value: new THREE.Vector3(-0.35, 0.8, -0.48).normalize() }, uMoon: { value: new THREE.Color().setRGB(...(opt.moon || [0.42, 0.43, 0.56])) },
+      uFog: { value: new THREE.Color().setRGB(...(opt.fog || [0.075, 0.08, 0.16])) }, uFogNear: { value: opt.fogNear || 30 }, uFogFar: { value: opt.fogFar || 115 },
       uGlowK: { value: opt.glowK || 1.7 }, uTime: { value: 0 },
       uCam: { value: new THREE.Vector3() }, uIo: { value: new THREE.Vector3(0, -99, 0) }, uCut: { value: 0 },
     };
@@ -285,11 +285,11 @@
   W3D.groundMat = function (U, t) {
     const uni = Object.assign({}, U, {
       tCob: { value: t.cob }, tGrass: { value: t.grass }, tDirt: { value: t.dirt }, tPave: { value: t.pave }, uSplat: { value: t.splat },
-      uRep4: { value: new THREE.Vector4(1 / t.rep[0], 1 / t.rep[1], 1 / t.rep[2], 1 / t.rep[3]) },
+      uRep4: { value: new THREE.Vector4(1 / t.rep[0], 1 / t.rep[1], 1 / t.rep[2], 1 / t.rep[3]) }, uGrassTint: { value: new THREE.Vector3(...(t.grassTint || [0.5, 0.58, 0.55])) },
       uRep: { value: new THREE.Vector2(1, 1) }, uTint: { value: new THREE.Color(0xffffff) }, uEmis: { value: new THREE.Color(0) }, uLit: { value: 1 }, uGlowUse: { value: 1 }, uSpec: { value: 0 }, uShadeK: { value: 1 },
     });
     const frag = CHUNK_F_HEAD + `
-      uniform sampler2D tCob, tGrass, tDirt, tPave, uSplat; uniform vec4 uRep4;
+      uniform sampler2D tCob, tGrass, tDirt, tPave, uSplat; uniform vec4 uRep4; uniform vec3 uGrassTint;
       vec3 two(sampler2D t, vec2 w, float rep) {
         vec3 a = texture2D(t, w * rep).rgb, b = texture2D(t, w * rep * 0.29 + vec2(0.37, 0.71)).rgb;
         float la = dot(b, vec3(0.333));
@@ -298,7 +298,7 @@
       void main() {
         vec2 w = vW.xz;
         vec3 s = texture2D(uSplat, paintUv(vW)).rgb;
-        vec3 g = two(tGrass, w, uRep4.y) * vec3(0.5, 0.58, 0.55);
+        vec3 g = two(tGrass, w, uRep4.y) * uGrassTint;
         vec3 c = mix(g, two(tDirt, w, uRep4.z), s.g);
         c = mix(c, two(tCob, w, uRep4.x), s.r);
         c = mix(c, two(tPave, w, uRep4.w), s.b);

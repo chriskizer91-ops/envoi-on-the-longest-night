@@ -11,10 +11,11 @@ const R = path.resolve(new URL('../../..', import.meta.url).pathname);
 const sharp = require(path.join(R, 'tools/node_modules/sharp'));
 globalThis.window = globalThis;
 require(path.join(R, 'src/game/maps.js'));
-require(path.join(R, 'moon-faire-witches/world3d/places/wickhollow.js'));
 const id = process.argv[2] || 'wickhollow';
+require(path.join(R, 'moon-faire-witches/world3d/places', id + '.js'));
 const P = window.W3D_PLACES[id], M = window.MAPS[P.mapId];
-const png = path.join(R, P.painting.replace('art/walk/', 'reference/art/walk/').replace('.avif', '.png'));
+const png = path.join(R, P.paintingPng);
+const TG = Object.assign({ dark: 0.62, step: 46, fir: 0.2, firSouth: 0.34, keepOut: [], roads: [] }, P.treeGen || {});
 const { data, info } = await sharp(png).raw().toBuffer({ resolveWithObject: true });
 const W = info.width, H = info.height, C = info.channels;
 // woods (or water): dark, green or blue over red
@@ -36,18 +37,18 @@ const inLawn = (x, y) => P.lawns.some((l) => inPoly(l, x, y));
 let s = 7;
 const rnd = () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 1e6) / 1e6; };
 const trees = [];
-const STEP = 46;
-// the roads that go on past the painting's edges (they stay open)
-const roads = [[740, 1024, 822, 1800], [1536, 330, 2200, 410], [-600, 700, 0, 770]];
+const STEP = TG.step;
+// the roads that go on past the painting's edges (they stay open), and anywhere else no tree goes
+const roads = TG.roads;
 for (let gy = -420; gy < H + 420; gy += STEP) for (let gx = -460; gx < W + 460; gx += STEP) {
   const x = gx + (rnd() - 0.5) * STEP * 0.9, y = gy + (rnd() - 0.5) * STEP * 0.9;
   const inside = x >= 0 && x < W && y >= 0 && y < H;
-  if (inside) { if (darkShare(x, y, 26) < 0.62) continue; }
+  if (inside) { if (darkShare(x, y, 26) < TG.dark) continue; }
   else if (rnd() < 0.18) continue;
   if (nearWalk(x, y, 30) || inBuilding(x, y, 16) || inWater(x, y, -6) || inLawn(x, y)) continue;
   if (roads.some((r) => x > r[0] - 30 && x < r[2] + 30 && y > r[1] - 30 && y < r[3] + 30)) continue;
-  if (x > 690 && x < 860 && y < 230) continue;           // in front of the chapel
-  const fir = rnd() < (y > 640 ? 0.34 : 0.2);
+  if (TG.keepOut.some((r) => x > r[0] && x < r[2] && y > r[1] && y < r[3])) continue;
+  const fir = rnd() < (y > H * 0.62 ? TG.firSouth : TG.fir);
   const size = 0.8 + rnd() * 0.45 + (inside ? 0 : 0.15);
   trees.push([Math.round(x), Math.round(y), +(size.toFixed(2)), fir ? 1 : 0, Math.round(rnd() * 1000)]);
 }
