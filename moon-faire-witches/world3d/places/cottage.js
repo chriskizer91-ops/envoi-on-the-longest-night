@@ -56,11 +56,6 @@
     { poly: [[703, 292], [703, 170], [1096, 166], [1104, 250], [1096, 330], [1010, 330], [1010, 194], [726, 194], [726, 292]], ground: 'grass' },
     { poly: [[616, 960], [636, 912], [650, 874], [668, 846], [700, 838], [724, 852], [724, 892], [706, 902], [686, 894], [670, 904], [664, 960]], ground: 'dirt' },
   ];
-  // the 3D ground has a little roll wherever it is more than 40 px from the 2D walk (engine/world.js, terrain); her feet
-  // follow the same roll in the pockets, so she stands on the grass there, not in it
-  const WALK2D = () => ((G.MAPS || {}).cottage || { walk: [] }).walk;
-  const nearWalk = (x, y, r) => WALK2D().some((p) => inPoly(p, x, y) || edgeDist(p, x, y) < r);
-  const roll = (x, y) => (G.W3D.vnoise(x / 60, y / 60) - 0.5) * 0.5 + (G.W3D.vnoise(x / 17, y / 17) - 0.5) * 0.12;
 
   P.cottage = {
     id: 'cottage', name: 'Io’s cottage', painting: "art/walk/walk-wickhollow-cottage.avif", size: [1536, 1024],
@@ -99,12 +94,11 @@
       { id: 'shared_forest_floor', made: "./../texture-packs/made/shared_forest_floor.png", stand: "./../texture-packs/wilds-south/dawnroost-road/stand-in/shared_forest_floor.png" },
     ],
     ground_h: ground,
-    // where Io's feet stand: the ground, the footbridge's deck, and the pockets' little roll
+    // where Io's feet stand: the ground, and the footbridge's deck (the engine keeps the pockets' ground smooth, as it
+    // keeps the walk's)
     walk_h(x, y) {
       if (x >= DECK.x0 - 4 && x <= DECK.x1 + 4 && y >= DECK.y0 && y <= DECK.y1) return 0;
-      let h = ground(x, y);
-      if (POCKETS.some((p) => inPoly(p.poly, x, y)) && !nearWalk(x, y, 40)) h += roll(x, y);
-      return h;
+      return ground(x, y);
     },
     water: [
       { poly: POND, level: pondLevel, tex: 'shared_water_dark', rep: 5, flow: [0.003, 0.002], bed: -1.7, tint: 0x8890b8 },
