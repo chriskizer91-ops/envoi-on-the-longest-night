@@ -18,7 +18,7 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
             4. the shipyard (working); the crossroads and the frozen pass (working); the Warm Roads camp and the Ember
                Line road (working)
             5. the Dawnroost forest road and Eldergrove's edge (working); the northern camp and the cold moor (working); the frozen camp and
-               Frostmere's shore
+               Frostmere's shore (working). That's every walking place started.
           Then the whole game, as Chris wants it (11:24 to 11:26): a big game kept as a folder in the repository, each zone
           a big section of its own (loaded when you go there, so the zones can be as large as he likes), the places of a
           zone joined on foot, and air travel between zones by Skies of Aethermoor, his airship game (its own, quite
@@ -27,8 +27,8 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           in this job unless Chris says so.)
           Chris (11:22): anywhere that looks walkable is walkable, or players stop exploring. Done in the engine (open
           ground inside each place's bounds, less water, steep ground and anything solid, measured from what's built; a
-          thicket along the edges; a where-she-can-walk view). Wickhollow passes; a helper is making Bogmire's porches,
-          the fen's side decks and the jetty's plank arm walkable; every helper building now checks it.
+          thicket along the edges; a where-she-can-walk view). Wickhollow passes; walk pass 1 made Bogmire's porches,
+          the fen's side decks and the jetty's plank arm walkable (3658f69); every helper building now checks it.
           The Thornwood's wishes, done in the engine (536b898): the shade under trees softened once instead of mark by
           mark (most of a wide place's loading: the Thornwood now loads in about 20 s headless, Wickhollow 27 s); the
           sky below the horizon is the fog's colour, so far ground has no seam; the edge thicket is built in the trees'
@@ -38,7 +38,9 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           The Moonwell's wish (026fa14): the camera never sits inside a wall, house or roof; it slides in toward Io.
           Misthollow's and the Moonwell's wishes (ac8f137): each stair tread stands as high as the ground under its high
           edge and fills down to the ground, so a slope never pokes through; a place can tint any surface (pale stone).
-Branch:   work/world-3d   Commit: ac8f137
+          Walk pass 1's wish (920b6be): over water her feet stay at the place's own height (boards, stilts), never the bed
+          (in Bogmire and the heart she had been standing 2.4 m and 4 m under the boards).
+Branch:   work/world-3d   Commit: 920b6be
 Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
           engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
           tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/beside.mjs, tools/plan-wickhollow.json,
