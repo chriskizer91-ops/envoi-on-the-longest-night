@@ -7,8 +7,8 @@
 // standing stones and the stepping stones over the stream in the north, a wayside shrine in the north-east, a fallen thorn
 // tree in the east, ruined walls in the south, a still pool in the south-west. The two keepsakes lie in hidden hollows.
 // Where Io can walk: the walking map's own walk and block areas, unchanged, plus all the open ground inside open.bounds,
-// less the stream, the pools and everything solid (every trunk, boulder and wall; the bridge's parapets; the stream's
-// rocky banks).
+// less the stream, the pools and everything solid (every trunk, boulder, bramble clump and wall; the bridge's parapets;
+// the stream's rocky banks; the thorn hedge just inside the open ground's edge).
 // The texture ids are the texture pack's (texture-packs/wickhollow/thornwood/inventory.md).
 // Heights are metres: the road and the painting's woods are 0; the stream runs in a little ravine, falling on its way
 // south (-1.75 in the north, -4 past the painting's foot); the bridge's deck rises 0.7 over it; the moon stone's clearing
@@ -47,6 +47,7 @@
     { id: 'shrine', w: 0.7, pts: [[2050, 472], [2010, 330], [1985, 240], [2020, 40], [2100, -120], [2150, -300], [2180, -405]] },
     { id: 'ruins', w: 0.7, pts: [[1880, 522], [1860, 760], [1750, 1050], [1560, 1300], [1380, 1460], [1310, 1505]] },
     { id: 'pool', w: 0.6, pts: [[-420, 422], [-470, 680], [-400, 950], [-420, 1195]] },
+    { id: 'pool-east', w: 0.6, pts: [[120, 482], [60, 620], [-40, 770], [-170, 910], [-300, 1050], [-412, 1192]] },
   ];
   // a band either side of a centre line, `hw` metres from it
   const ribbon = (pts, hw) => {
@@ -176,7 +177,7 @@
       ['the way on to Wickhollow (the west exit)', -1134, 366], ['the way on to Bogmire (the east exit)', 2704, 548],
       ['the ring of standing stones (north)', 760, -515], ['over the stepping stones (north-west)', 380, -560], ['the wayside shrine (north-east)', 2180, -435],
       ['the fallen thorn tree (east)', 2040, 250], ['inside the ruined walls (south)', 1310, 1590], ['the still pool (south-west)', -420, 1200],
-      ['in the frog-ring’s hollow (north-east)', 1500, 90], ['in the brooch’s hollow (south-east)', 1392, 905]] },
+      ['in the frog-ring’s hollow (north-east)', 1508, 96], ['in the brooch’s hollow (south-east)', 1392, 905]] },
     // the trees: on the painting from the painting itself (most of them bare and thorny); past it in clumps with clearings
     // between, nearly all bare and thorny, a few with crowns of bramble. None in the hollows and the places to find; the
     // woods close in past the ways out (the trails end at their edge).
@@ -224,6 +225,11 @@
       { poly: FROGP, level: () => frogLevel(), tex: 'shared_water_dark', rep: 3, flow: [0.002, 0.001], bed: -6.0 },
     ],
     lawns: [],
+    // no shore boulders round the frog pool (its hollow is small: its own ring of boulders is enough)
+    noRocks: [[1430, 25, 1530, 100], [200, -1150, 720, -840], [200, 1790, 720, 2150]],   // (and none where the stream runs outside the open ground)
+    // the open ground's edge is closed by a thorn hedge built in extra() (fewer, bigger, lower-poly clumps than the engine's
+    // thicket, which would draw some 50,000 triangles all the time round an edge this long)
+    thicket: false,
     start: [60, 456], startFace: Math.PI / 2, startYaw: -Math.PI / 2,
     // the ways on, where the trails reach the open ground's edge
     exits: [
@@ -272,8 +278,15 @@
       const inStream = (x, y) => x > bank(LB, y) - 6 && x < bank(RB, y) + 6;
       const inBounds = (x, y) => W.inPoly(P.thornwood.open.bounds, x, y);
       const TH = K.terrain;
-      // something solid: a ring (a C, open at `gap`) round (cx, cy), from r0 to r1 metres
-      const ringBlock = (c, r0, r1, gap, gw) => { const pts = [], n = 28; for (let i = 0; i <= n; i++) { const a = gap + gw + (TAU - 2 * gw) * i / n; pts.push([c[0] + Math.cos(a) * r1 / SX, c[1] + Math.sin(a) * r1 / SZ]); } for (let i = n; i >= 0; i--) { const a = gap + gw + (TAU - 2 * gw) * i / n; pts.push([c[0] + Math.cos(a) * r0 / SX, c[1] + Math.sin(a) * r0 / SZ]); } K.addBlock(pts); };
+      // something solid: a ring (a C, open at `gap`, the way in `gw` either side of it at the band's middle) round (cx, cy),
+      // from r0 to r1 metres, its two ends rounded so Io slides round them
+      const ringBlock = (c, r0, r1, gap, gw) => {
+        const rm = (r0 + r1) / 2, hw = (r1 - r0) / 2, ga = gw + hw / rm, pts = [], n = 28, at = (a, r) => [c[0] + Math.cos(a) * r / SX, c[1] + Math.sin(a) * r / SZ];
+        for (let i = 0; i <= n; i++) pts.push(at(gap + ga + (TAU - 2 * ga) * i / n, r1));
+        for (let i = n; i >= 0; i--) pts.push(at(gap + ga + (TAU - 2 * ga) * i / n, r0));
+        K.addBlock(pts);
+        for (const e of [gap + ga, gap - ga]) { const q = at(e, rm); K.addBlock(K.circlePx(q[0], q[1], hw, 12)); }
+      };
       const rock = (px, py, sz, solid, col) => { B.geom('rock', K.rockG[Math.floor(Math.abs(Math.sin(px * 12.9 + py * 7.3)) * 3) % 3], new THREE.Matrix4().compose(new THREE.Vector3(X(px), TH(px, py) - sz * 0.2, Z(py)), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, (px * 0.37 + py * 0.11) % TAU, 0)), new THREE.Vector3(sz, sz, sz)), col || null, 1.2); if (solid) K.addBlock(K.circlePx(px, py, sz * 0.8, 8)); };
 
       // a tapered branch from A to Bp (an open tube of n sides), its bark's uv in metres
@@ -437,7 +450,7 @@
           }
         }
         if (opt.big) K.shadeMarks.push(['dot', px, py, 18 * s, 0.72]);   // (only under the great ones: each soft shade costs load time)
-        K.addBlock(K.circlePx(px, py, 0.32 * s, 8));
+        K.addBlock(K.circlePx(px, py, 0.32 * s, 12));
       }
       for (const [px, py, s, seed, lx, lz] of GIANTS) deadTree(px, py, s, seed, [lx, lz], { big: s >= 2 });
       // more of them on the painting, on a jittered grid: off the walk, the stream, the stone and the giants; and along
@@ -449,14 +462,14 @@
         for (let gy = 0; gy < 1024; gy += STEP) for (let gx = 0; gx < 1536; gx += STEP) {
           const px = gx + r() * STEP, py = gy + r() * STEP, s = 0.85 + r() * 0.6, seed = Math.floor(r() * 1e5), keep = r();
           if (keep > 0.8) continue;
-          if (walkDist(px, py) < 24 + 10 * s || inStream(px, py) || Math.hypot(px - STONE.at[0], py - STONE.at[1]) < 80 || nearSolid(px, py) || nearPlace(px, py)) continue;
+          if (pathDist(px, py) < 24 + 10 * s || inStream(px, py) || Math.hypot(px - STONE.at[0], py - STONE.at[1]) < 80 || nearSolid(px, py) || nearPlace(px, py)) continue;
           deadTree(px, py, s, seed, [(r() - 0.5) * 0.3, (r() - 0.5) * 0.3]);
         }
         for (const t of TRAILS) {
           let side = 1;
           for (let i = 1; i < t.pts.length; i++) {
             const [ax, ay] = t.pts[i - 1], [bx, by] = t.pts[i], L = Math.hypot((bx - ax) * SX, (by - ay) * SZ);
-            for (let s = 4 + r() * 6; s < L; s += 8 + r() * 9) {
+            for (let s = 4 + r() * 6; s < L; s += 18 + r() * 14) {
               const f = s / L, cx = ax + (bx - ax) * f, cy = ay + (by - ay) * f, nx = -(by - ay) * SZ / L, nz = (bx - ax) * SX / L, off = (t.w + 1.6 + r() * 2.5) * side;
               const px = cx + nx * off / SX, py = cy + nz * off / SZ; side = -side;
               if ((px >= -40 && px <= 1576 && py >= -40 && py <= 1064) || pathDist(px, py) < 26 || inStream(px, py) || !inBounds(px, py) || nearSolid(px, py) || nearPlace(px, py)) continue;
@@ -472,7 +485,7 @@
         seg([x, y, z], [x, y + h, z], rad, rad * 0.85, 7, [0.8, 0.76, 0.8]);
         for (let i = 0; i < 7; i++) { const a = i / 7 * TAU, b = (i + 1) / 7 * TAU, tip = h + 0.15 + r() * 0.35 * s; B.tri('wood', [x + Math.cos(a) * rad * 0.85, y + h, z + Math.sin(a) * rad * 0.85], [x + Math.cos(b) * rad * 0.85, y + h, z + Math.sin(b) * rad * 0.85], [x + Math.cos((a + b) / 2) * rad * 0.5, y + tip, z + Math.sin((a + b) / 2) * rad * 0.5], [[0, 0], [0.3, 0], [0.15, 0.4]], [0.7, 0.62, 0.62]); }
         B.quad('wood', [x - rad * 0.8, y + h - 0.02, z + rad * 0.3], [x + rad * 0.8, y + h - 0.02, z + rad * 0.3], [x + rad * 0.8, y + h - 0.02, z - rad * 0.5], [x - rad * 0.8, y + h - 0.02, z - rad * 0.5], [0, 0, 0.5, 0.5], [1.1, 0.9, 0.8]);
-        K.addBlock(K.circlePx(px, py, rad + 0.05, 8));
+        K.addBlock(K.circlePx(px, py, rad + 0.05, 12));
       }
 
       // ---- bramble: low thorny mounds with dark red berries, along the paths' edges ----
@@ -487,18 +500,18 @@
         if (solid) K.addBlock(K.circlePx(px, py, rr * 0.7, 8));
       };
       {
-        const r = W.rand(777), STEP = 36;
+        const r = W.rand(777), STEP = 42;
         for (let gy = -60; gy < 1024 + 60; gy += STEP) for (let gx = -60; gx < 1536 + 60; gx += STEP) {
           const px = gx + (r() - 0.5) * STEP, py = gy + (r() - 0.5) * STEP, rr = 0.7 + r() * 0.6, keep = r();
-          const wd = walkDist(px, py);
+          const wd = pathDist(px, py);
           if (wd < rr / SX + 3 || wd > 110 || inStream(px, py) || Math.hypot(px - STONE.at[0], py - STONE.at[1]) < 60 || nearSolid(px, py) || nearPlace(px, py)) continue;
-          if (keep > 0.6) continue;
+          if (keep > 0.55) continue;
           mound(px, py, rr, r, rr > 1.05);
         }
         // and along the trails past the painting
         for (const t of TRAILS) for (let i = 1; i < t.pts.length; i++) {
           const [ax, ay] = t.pts[i - 1], [bx, by] = t.pts[i], L = Math.hypot((bx - ax) * SX, (by - ay) * SZ);
-          for (let s = r() * 4; s < L; s += 3.5 + r() * 4) {
+          for (let s = r() * 4; s < L; s += 5 + r() * 5) {
             const f = s / L, cx = ax + (bx - ax) * f, cy = ay + (by - ay) * f, nx = -(by - ay) * SZ / L, nz = (bx - ax) * SX / L, rr = 0.7 + r() * 0.6, off = (t.w + 0.6 + rr + r() * 1.2) * (r() < 0.5 ? -1 : 1);
             const px = cx + nx * off / SX, py = cy + nz * off / SZ;
             if ((px >= -40 && px <= 1576 && py >= -40 && py <= 1064) || pathDist(px, py) < rr / SX + 3 || inStream(px, py) || !inBounds(px, py) || nearPlace(px, py) || r() > 0.7) continue;
@@ -529,13 +542,14 @@
 
       // ---- small loose stones half sunk along the road's edges ----
       {
-        const r = W.rand(99);
-        for (let i = 0; i < 400; i++) {
+        const r = W.rand(99), peb = new THREE.IcosahedronGeometry(1, 0); peb.scale(1, 0.6, 1);
+        for (let i = 0; i < 360; i++) {
           const px = r() * 1536, py = 120 + r() * 760, wd = walkDist(px, py);
           if (wd < 3 || wd > 16 || inStream(px, py)) continue;
-          const sz = 0.18 + r() * 0.22;
-          B.geom('rock', K.rockG[Math.floor(r() * 3)], new THREE.Matrix4().compose(new THREE.Vector3(X(px), TH(px, py) - sz * 0.25, Z(py)), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, r() * TAU, 0)), new THREE.Vector3(sz, sz, sz)), [0.95, 0.95, 1.0], 0.6);
+          const sz = 0.16 + r() * 0.2;
+          B.geom('rock', peb, new THREE.Matrix4().compose(new THREE.Vector3(X(px), TH(px, py) - sz * 0.2, Z(py)), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, r() * TAU, 0)), new THREE.Vector3(sz, sz, sz)), [0.95, 0.95, 1.0], 0.6);
         }
+        peb.dispose();
       }
 
       // ---- the ring of standing stones in the north: nine, two of them fallen, round a low flat stone ----
@@ -647,6 +661,29 @@
         }
         ringBlock(BROOCH.c, BROOCH.r - 0.6, BROOCH.r + 1.0, BROOCH.gap, 0.3);
         deadTree(cx - 70, cy + 40, 1.3, 711, [0.2, -0.2]); deadTree(cx + 20, cy - 66, 1.2, 712, [0, 0.3]);
+      }
+
+      // ---- a thorn hedge along the open ground's edge: bramble clumps in one or two rows just inside it, solid, broken only
+      // by the water and the ways out ----
+      {
+        const OB = P.thornwood.open.bounds, r = W.rand(313), lump = new THREE.IcosahedronGeometry(1, 0);
+        { const pp = lump.attributes.position, seen = {}; for (let i = 0; i < pp.count; i++) { const key = pp.getX(i).toFixed(3) + ',' + pp.getY(i).toFixed(3) + ',' + pp.getZ(i).toFixed(3), k = seen[key] || (seen[key] = 0.8 + r() * 0.35); pp.setXYZ(i, pp.getX(i) * k, pp.getY(i) * k, pp.getZ(i) * k); } lump.computeVertexNormals(); }
+        const atExit = (x, y) => P.thornwood.exits.some((e) => x > e.rect[0] - 70 && x < e.rect[2] + 70 && y > e.rect[1] - 70 && y < e.rect[3] + 70);
+        for (let i = 0, j = OB.length - 1; i < OB.length; j = i++) {
+          const [ax, ay] = OB[j], [bx, by] = OB[i], L = Math.hypot((bx - ax) * SX, (by - ay) * SZ), tx = (bx - ax) * SX / L, tz = (by - ay) * SZ / L;
+          let nx = -tz, nz = tx; if (!W.inPoly(OB, (ax + bx) / 2 + nx * 2 / SX, (ay + by) / 2 + nz * 2 / SZ)) { nx = -nx; nz = -nz; }
+          for (let d = 0.4; d < L; d += 1.6 + r() * 0.5) for (const row of [0.8, 2.3]) {
+            if (row > 1 && r() < 0.45) continue;
+            const px = ax + (tx * d + nx * row + (r() - 0.5) * 0.6) / SX, py = ay + (tz * d + nz * row + (r() - 0.5) * 0.6) / SZ;
+            if (inStream(px, py) || W.inPoly(POOLP, px, py) || atExit(px, py) || pathDist(px, py) < 24) continue;
+            const rr = 1.05 + r() * 0.6, h = rr * (0.8 + r() * 0.5), y = TH(px, py), x = X(px), z = Z(py);
+            B.geom('leafBush', lump, new THREE.Matrix4().compose(new THREE.Vector3(x, y + h * 0.35, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, r() * TAU, 0)), new THREE.Vector3(rr, h, rr)), [0.78, 0.7, 0.76], 2.0);
+            const t = r() * Math.PI, sz = 0.45, cy = y + h * 1.0;
+            B.quad('fl_fruit', [x - Math.cos(t) * sz, cy - sz * 0.6, z - Math.sin(t) * sz], [x + Math.cos(t) * sz, cy - sz * 0.6, z + Math.sin(t) * sz], [x + Math.cos(t) * sz, cy + sz, z + Math.sin(t) * sz], [x - Math.cos(t) * sz, cy + sz, z - Math.sin(t) * sz], [0, 0, 1, 1], [0.72, 0.3, 0.36]);
+            K.addBlock(K.circlePx(px, py, rr * 0.8, 8));
+          }
+        }
+        lump.dispose();
       }
 
       // ---- the mist: low banks of cold blue lying between the trees (soft glows, drawn last) ----
