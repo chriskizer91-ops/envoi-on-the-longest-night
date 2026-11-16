@@ -97,18 +97,9 @@
   const poolLevel = () => { if (poolRim == null) ground(POOL.c[0], POOL.c[1]); return poolRim - 0.45; };
   const frogLevel = () => ground(FROG.c[0], FROG.c[1]) - 0.3;
 
-  // where the engine draws the ground (its terrain: the ground, with a little roughness away from the walking map's own
-  // areas and out of the water), so Io's feet stand on it wherever she roams
+  // the walking map's own walk areas (for keeping things off them), with their boxes
   let WB = null;
   const mapWalk = () => WB || (WB = (((G.MAPS || {}).thornwood || { walk: [] }).walk).map((p) => { let a = 1e9, b = 1e9, c = -1e9, e = -1e9; for (const [x, y] of p) { a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x); e = Math.max(e, y); } return { p, b: [a, b, c, e] }; }));
-  const inWater = (x, y) => (x > bank(LB, y) && x < bank(RB, y)) || W3D().inPoly(POOLP, x, y) || W3D().inPoly(FROGP, x, y);
-  function terrainAt(x, y) {
-    let h = ground(x, y);
-    if (inWater(x, y)) return h;
-    const near = mapWalk().some((q) => x >= q.b[0] - 40 && x <= q.b[2] + 40 && y >= q.b[1] - 40 && y <= q.b[3] + 40 && (W3D().inPoly(q.p, x, y) || W3D().edgeDist(q.p, x, y) < 40));
-    if (!near) h += (W3D().vnoise(x / 60, y / 60) - 0.5) * 0.5 + (W3D().vnoise(x / 17, y / 17) - 0.5) * 0.12;
-    return h;
-  }
 
   // ---- the old bridge: one stone arch over the stream, its deck rising 0.7 m between low parapets. In the painting its
   // deck bows north in the middle (the slant shows its rise that way) and the walking map follows it, so it does here too.
@@ -189,8 +180,10 @@
     // the trees: on the painting from the painting itself (most of them bare and thorny); past it in clumps with clearings
     // between, nearly all bare and thorny, a few with crowns of bramble. None in the hollows and the places to find; the
     // woods close in past the ways out (the trails end at their edge).
-    treeGen: { dark: 0.45, step: 62, fir: 0, firSouth: 0, thorn: 0.85,
-      out: { density: 0.8, clump: 520, clear: 0.36, kinds: [0.1, 0, 0.9], size: [0.9, 1.7] },
+    // (fewer, bigger trees than a town's: the engine draws a soft shade under every one, and each costs time while the
+    // page loads)
+    treeGen: { dark: 0.45, step: 74, fir: 0, firSouth: 0, thorn: 0.85,
+      out: { density: 0.86, clump: 520, clear: 0.36, kinds: [0.1, 0, 0.9], size: [1.15, 2.0] },
       roads: [],
       keepOut: [[990, 262, 1070, 322], [460, 80, 600, 400], [470, 560, 650, 1060], [190, 560, 300, 1060], [186, -40, 300, 432], [20, 300, 200, 400],
         [1380, -40, 1640, 170], [1300, 830, 1490, 990], [590, -700, 930, -420], [2060, -580, 2300, -380], [2030, 90, 2350, 270], [1140, 1480, 1480, 1730],
@@ -218,11 +211,12 @@
       { id: 'shared_water_dark', made: "./../texture-packs/made/shared_water_dark.png", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_water_dark.png" },
     ],
     ground_h: ground,
-    // where Io's feet stand: the ground as drawn, the bridge's deck, or the stepping stones' tops
+    // where Io's feet stand: the ground (the engine stands her on it as it shapes it), the bridge's deck, or the stepping
+    // stones' tops
     walk_h(x, y) {
-      if (x >= 226 && x <= 544 && y >= 400 && y <= 505) return Math.max(terrainAt(x, y), deck(x));
+      if (x >= 226 && x <= 544 && y >= 400 && y <= 505) { const g = ground(x, y), d = deck(x); return d > g ? d : g; }
       if (y >= FORD.y - 18 && y <= FORD.y + 18 && x > bank(LB, y) - 4 && x < bank(RB, y) + 4) return level(y) + 0.25;
-      return terrainAt(x, y);
+      return ground(x, y);
     },
     water: [
       { poly: STREAM, level, tex: 'shared_water_river', rep: 4, flow: [0.0, 0.05], bed: -6.0 },
@@ -230,7 +224,7 @@
       { poly: FROGP, level: () => frogLevel(), tex: 'shared_water_dark', rep: 3, flow: [0.002, 0.001], bed: -6.0 },
     ],
     lawns: [],
-    start: [60, 456], startFace: Math.PI / 2,
+    start: [60, 456], startFace: Math.PI / 2, startYaw: -Math.PI / 2,
     // the ways on, where the trails reach the open ground's edge
     exits: [
       { rect: [-1144, 330, -1124, 402], label: 'Wickhollow' },
@@ -442,7 +436,7 @@
             d = norm(add(d, [(r() - 0.5) * 1.0, (r() - 0.62) * 0.55, (r() - 0.5) * 1.0]));
           }
         }
-        K.shadeMarks.push(['dot', px, py, 18 * s, 0.72]);
+        if (opt.big) K.shadeMarks.push(['dot', px, py, 18 * s, 0.72]);   // (only under the great ones: each soft shade costs load time)
         K.addBlock(K.circlePx(px, py, 0.32 * s, 8));
       }
       for (const [px, py, s, seed, lx, lz] of GIANTS) deadTree(px, py, s, seed, [lx, lz], { big: s >= 2 });
@@ -490,7 +484,6 @@
           const a = r() * TAU, d = r() * rr * 0.6, cx = x + Math.cos(a) * d, cz = z + Math.sin(a) * d, cy = y + h * (0.6 + r() * 0.5), sz = 0.35 + r() * 0.2, t = r() * Math.PI;
           B.quad('fl_fruit', [cx - Math.cos(t) * sz, cy - sz * 0.6, cz - Math.sin(t) * sz], [cx + Math.cos(t) * sz, cy - sz * 0.6, cz + Math.sin(t) * sz], [cx + Math.cos(t) * sz, cy + sz, cz + Math.sin(t) * sz], [cx - Math.cos(t) * sz, cy + sz, cz - Math.sin(t) * sz], [0, 0, 1, 1], [0.72, 0.3, 0.36]);
         }
-        K.shadeMarks.push(['dot', px, py, rr / SX, 0.78]);
         if (solid) K.addBlock(K.circlePx(px, py, rr * 0.7, 8));
       };
       {
