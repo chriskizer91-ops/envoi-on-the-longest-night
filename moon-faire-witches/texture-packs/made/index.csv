@@ -99,3 +99,8 @@ misthollow_roof_blue_slate.png,Blue slate roof,"Material, square",2,Envoi-Round2
 moonwell_court_setts.png,Arc-laid court setts,"Ground, square",2,Envoi-Round2-Part-08,Arc-laid court setts,moonwell,1254,1254,b73ef7342093e3139da3b4e0f91c9b84d9bfd34694c9a7a3f5b8772924632a11,
 moonwell_garden_frost.png,Frosted garden earth,"Ground, square",2,Envoi-Round2-Part-08,Frosted garden earth,moonwell,1254,1254,a159328df7c3fe269487d78dd246facb22791ef5d235b68728215f32654fbc13,
 shipyard_icy_sea.png,Dark northern sea,"Material, square",2,Envoi-Round2-Part-08,Dark northern sea,shipyard,1254,1254,6fbf5267c72a84c84aaf9295fc35ffbeecbfab91b1ea53e60486c0b8f0f82119,
+bogmire_bank_grass.png,Fen bank grass,"Ground, square",2,Envoi-Round2-Part-09,Fen bank grass,bogmire,1254,1254,059705d7a7c9c03e7d569095f7d32f08250f91f083c616cd9709ef88d6948207,
+crossroads_frost_moor.png,Frosted dead moor grass,"Ground, square",2,Envoi-Round2-Part-09,Frosted dead moor grass,crossroads,1254,1254,6d5ba78b3241bf006106be0c14ec94291ccec2161fe8bdc55cd9b481a0c2475c,
+crossroads_road_stones.png,Old crossroads paving,"Ground, square",2,Envoi-Round2-Part-09,Old crossroads paving,crossroads,1254,1254,0993dd1bb598a61ef283ce9b2aa66fddb17efe805268621b8a2a44d6061c91eb,
+dawnroost_yard.png,Old flagstones in packed earth,"Ground, square",2,Envoi-Round2-Part-09,Old flagstones in packed earth,dawnroost,1254,1254,66fa52b99614c390e5b16804dd920b958a575d81bad1c3c7ee2c8fd3473cd32d,
+dawnroost_palisade.png,Log palisade,"Material, square",2,Envoi-Round2-Part-09,Log palisade,dawnroost,1254,1254,e5b57f7873092a95686e8f9d15dd17e87dbb0e5855bb790bea77791dab7a13ba,"repeats left to right only, as its card asks (points at the top, foot at the bottom)"
