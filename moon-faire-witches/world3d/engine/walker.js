@@ -1,5 +1,6 @@
 // walker.js: Moon Faire's Io walking a 3D place of Envoi, on a phone.
 //   W3D.walk({ place, canvas, root })   builds the place (world.js), puts Io in it and runs it
+//   api.switchTo(place, px, py, yaw)    on to another place on the same page (the zone pages, world3d/game/)
 // On the phone: drag anywhere on the left half of the screen to walk (a small ring shows where the thumb went; push far
 // and she jogs), drag on the right half to turn the camera. Nothing else is on screen but one button, which shows the
 // painting from above over the 3D, as a guide (with the frame rate and the counts under it).
@@ -14,15 +15,16 @@
   const TEST = /[?&]test\b/.test(location.search);
 
   W3D.walk = async function (opt) {
-    const root = opt.root, cv = opt.canvas, place = opt.place;
+    const root = opt.root, cv = opt.canvas;
+    let place = opt.place;   // let: a zone page walks on to other places (switchTo)
     const DPR0 = Math.min(window.devicePixelRatio || 1, TEST ? 1 : 1.75);
     let dpr = Math.min(DPR0, 1.5);
     const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: TEST });
     renderer.setPixelRatio(dpr); renderer.outputEncoding = THREE.sRGBEncoding; renderer.setClearColor(0x0a0b18, 1);
     const say = opt.say || (() => {});
     say('Building ' + place.name + '…');
-    const P = await W3D.buildPlace(place, renderer);
-    const scene = P.scene, M = P.M;
+    let P = await W3D.buildPlace(place, renderer);
+    let scene = P.scene, M = P.M, placeKids = new Set(scene.children);   // the place's own; what's added after is the walker's
 
     // ---- Io ----
     say('Bringing Io…');
@@ -37,7 +39,7 @@
     // her triangles as drawn (her spells' props stay hidden while she walks)
     const ioDrawn = () => { const shown = (o) => { for (let q = o; q; q = q.parent) if (!q.visible) return false; return true; }; let n = 0; A.root.traverse((o) => { if (o.isMesh && o.geometry && shown(o)) n += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; }); return Math.round(n); };
     // her light: the moon from above, a cool sky, a violet rim, a soft fill from the camera, and the three lamps nearest her
-    const md = P.U.uMoonDir.value;
+    let md = P.U.uMoonDir.value;
     scene.add(new THREE.HemisphereLight(0x8a92c8, 0x261c2a, 0.55));
     const key = new THREE.DirectionalLight(0xc0c8ff, 0.6); key.position.copy(md).multiplyScalar(20); scene.add(key); scene.add(key.target);
     const rim = new THREE.DirectionalLight(0xc8a8ff, 0.35); scene.add(rim); scene.add(rim.target);
@@ -82,7 +84,7 @@
       cam.fov = view.fov; cam.updateProjectionMatrix(); C.dist = view.dist; if (!C.pitchSet) C.pitch = view.pitch;
       if (guide.on) fitTop();
     }
-    const camPos = new THREE.Vector3(), camAim = new THREE.Vector3(), CS = P.camSolids || [];
+    const camPos = new THREE.Vector3(), camAim = new THREE.Vector3(); let CS = P.camSolids || [];
     function insideSolid(v) {
       for (const s of CS) {
         if (v.y < s.y0 - 0.25 || v.y > s.y1 + 0.25 || v.x < s.b[0] - 0.3 || v.x > s.b[2] + 0.3 || v.z < s.b[1] - 0.3 || v.z > s.b[3] + 0.3) continue;
@@ -104,8 +106,8 @@
     // ---- the guide: the painting from straight above, laid over the 3D ----
     const top = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
     const guide = { on: false };
-    const pW = M.W * M.SX, pH = M.H * M.SZ;
-    const paintTex = new THREE.TextureLoader().load(place.paintingSrc);
+    let pW = M.W * M.SX, pH = M.H * M.SZ;
+    let paintTex = new THREE.TextureLoader().load(place.paintingSrc);
     const paintPlane = new THREE.Mesh(new THREE.PlaneGeometry(pW, pH), new THREE.MeshBasicMaterial({ map: paintTex, transparent: true, opacity: 0.55, depthTest: false, depthWrite: false }));
     paintPlane.rotation.x = -Math.PI / 2; paintPlane.position.set(0, 30, 0); paintPlane.renderOrder = 20; paintPlane.visible = false; scene.add(paintPlane);
     // the "where can she walk" view: the walking grid laid over the 3D from above, green where she can stand
@@ -125,7 +127,7 @@
       let hw = pW / 2 * 1.03, hh = hw / asp; if (hh < pH / 2 * 1.03) { hh = pH / 2 * 1.03; hw = hh * asp; }
       top.left = -hw; top.right = hw; top.top = hh; top.bottom = -hh; top.position.set(0, 120, 0); top.up.set(0, 0, -1); top.lookAt(0, 0, 0); top.updateProjectionMatrix();
     }
-    const fog0 = [P.U.uFogNear.value, P.U.uFogFar.value];
+    let fog0 = [P.U.uFogNear.value, P.U.uFogFar.value];
     function setGuide(on, paint) { guide.on = on; paintPlane.visible = on && paint !== false && paint !== 'walk'; marker.visible = on && paint !== false; walkView(on && paint === 'walk'); P.U.uFogNear.value = on ? 1e4 : fog0[0]; P.U.uFogFar.value = on ? 2e4 : fog0[1]; if (opt.onGuide) opt.onGuide(on); if (on) fitTop(); }
 
     // ---- the thumb and the keys ----
@@ -166,13 +168,14 @@
     // ---- each frame ----
     const NATURAL = { walk: 0.62 * 1.7, jog: 1.25 * 1.7 };   // her own steps' speeds, in metres a second (moon-io-walker.js)
     const SPEED = { walk: 1.3, jog: 3.0 };
-    let exitShown = null, scripted = null;
+    let exitShown = null, scripted = null, busy = false;   // busy: between two places (switchTo)
     // the keepsakes found so far (kept on the phone between visits; not in a test run)
     const FOUND_KEY = 'envoi3d-found';
     let found = {}; if (!TEST) try { found = JSON.parse(localStorage.getItem(FOUND_KEY) || '{}') || {}; } catch (e) { found = {}; }
     for (const it of P.items) if (found[it.id]) { it.got = true; P.takeItem(it); }
     const keep = () => { if (!TEST) try { localStorage.setItem(FOUND_KEY, JSON.stringify(found)); } catch (e) { /* the phone won't keep it: fine */ } };
     function tick(dt, t) {
+      if (busy) return;
       // where she wants to go, from the thumb (or the keys), turned by the camera
       let ix = input.x, iy = input.y, mag = input.mag; const km = keyMove(); if (km && !input.move) { ix = km.x; iy = km.y; mag = km.mag; }
       if (scripted) { ix = scripted.x; iy = scripted.y; mag = scripted.mag; }
@@ -208,9 +211,11 @@
       rim.target.position.copy(p); rim.position.set(p.x - Math.sin(C.yaw) * 10, p.y + 6, p.z - Math.cos(C.yaw) * 10);
       placeCamera(dt, false);
       fill.target.position.copy(p); fill.position.copy(cam.position);
-      // a road out: say where it goes (the next place is its own page)
+      // a road out: say where it goes (the next place is its own page); on a zone page, the page's own check (opt.onFrame)
+      // takes the roads out instead, each frame
       const ex = P.exits.find((e) => io.px >= e.rect[0] - 6 && io.px <= e.rect[2] + 6 && io.py >= e.rect[1] - 6 && io.py <= e.rect[3] + 6);
-      if (ex && ex !== exitShown && opt.toast) opt.toast(ex.label + ': coming next, a place of its own'); exitShown = ex || null;
+      if (opt.onFrame) opt.onFrame(dt, ex || null);
+      else { if (ex && ex !== exitShown && opt.toast) opt.toast(ex.label + ': coming next, a place of its own'); exitShown = ex || null; }
       // walking into a keepsake's shimmer finds it
       for (const it of P.items) if (!it.got && Math.hypot(it.x - p.x, it.z - p.z) < 1.1 && Math.abs(it.y - io.y) < 1.5) { it.got = true; found[it.id] = 1; keep(); P.takeItem(it); if (opt.onItem) opt.onItem(it); }
       marker.position.set(p.x, 31, p.z);
@@ -235,7 +240,7 @@
     let last = null, clock = 0;
     function frame(now) {
       const dt = last == null ? 0 : Math.min(0.05, (now - last) / 1000); last = now; clock += dt;
-      tick(dt, clock); renderer.render(scene, guide.on ? top : cam); measure(now);
+      if (!busy) { tick(dt, clock); renderer.render(scene, guide.on ? top : cam); measure(now); }
       requestAnimationFrame(frame);
     }
     window.addEventListener('resize', layout);
@@ -243,11 +248,50 @@
     P.precompile(renderer, cam);
     if (!TEST) requestAnimationFrame(frame);
 
+    // ---- on to another place, on the same page (the zone pages, world3d/game/): the old place is taken down whole
+    // (P.dispose) and the next built in its stead. The renderer, Io and her lights, the camera, the thumb, the keepsakes
+    // found and the page all stay. Io stands at (px, py), or the nearest spot she fits, facing yaw, the camera behind her ----
+    function nearestFit(px, py) {
+      if (fits(px, py)) return [px, py];
+      for (let r = 4; r <= 160; r += 4) for (let i = 0, n = Math.ceil(r * 1.5); i < n; i++) { const a = i / n * Math.PI * 2, x = px + Math.cos(a) * r, y = py + Math.sin(a) * r; if (fits(x, y)) return [x, y]; }
+      return place.start.slice();
+    }
+    // everything the place has, sent to the screen's memory at once (under the zone page's fade), so nothing stutters in
+    // as she turns: drawn once into a single pixel, every mesh shown and none culled
+    function warm() {
+      const was = [];
+      for (const k of placeKids) k.traverse((o) => { if (o.isMesh) { was.push([o, o.visible, o.frustumCulled]); o.visible = true; o.frustumCulled = false; } });
+      renderer.setScissorTest(true); renderer.setScissor(0, 0, 1, 1); renderer.render(scene, cam); renderer.setScissorTest(false);
+      for (const [o, v, f] of was) { o.visible = v; o.frustumCulled = f; }
+    }
+    async function switchTo(next, px, py, yaw) {
+      busy = true; setGuide(false);
+      const env = scene.environment, mine = scene.children.filter((o) => !placeKids.has(o) && o !== walkPlane);
+      for (const o of mine) scene.remove(o);
+      if (walkPlane) { walkPlane.geometry.dispose(); walkPlane.material.map.dispose(); walkPlane.material.dispose(); walkPlane = null; }
+      paintTex.dispose(); scene.environment = null; P.dispose();
+      api.teardown = Object.assign({}, renderer.info.memory);   // what's left with no place at all (the checks read it)
+      place = next; P = await W3D.buildPlace(place, renderer);
+      scene = P.scene; M = P.M; placeKids = new Set(scene.children);
+      scene.environment = env; for (const o of mine) scene.add(o);
+      md = P.U.uMoonDir.value; CS = P.camSolids || []; fog0 = [P.U.uFogNear.value, P.U.uFogFar.value];
+      cam.far = (place.night && place.night.far) || 800; cam.updateProjectionMatrix();
+      pW = M.W * M.SX; pH = M.H * M.SZ; paintTex = new THREE.TextureLoader().load(place.paintingSrc);
+      paintPlane.material.map = paintTex; paintPlane.geometry.dispose(); paintPlane.geometry = new THREE.PlaneGeometry(pW, pH);
+      for (const it of P.items) if (found[it.id]) { it.got = true; P.takeItem(it); }
+      exitShown = null;
+      const at = nearestFit(px, py); io.px = at[0]; io.py = at[1]; io.y = P.walkH(io.px, io.py); if (yaw != null) io.yaw = yaw;
+      C.yaw = io.yaw + Math.PI; C.auto = 0; placeCamera(0, true);
+      P.precompile(renderer, cam); warm();
+      api.P = P; api.items = P.items; perf.frames = 0; perf.t0 = performance.now(); busy = false;
+      return P;
+    }
+
     // the page's hooks, for headless stills and the checks (?test: the clock only moves when told)
     const api = {
-      P, A, io, C, cam, renderer, guide: setGuide, numbers,
-      step(sec, fps, draw) { const n = Math.max(1, Math.round(sec * (fps || 30))); for (let i = 0; i < n; i++) { clock += 1 / (fps || 30); tick(1 / (fps || 30), clock); } if (draw !== false) renderer.render(scene, guide.on ? top : cam); return numbers(); },
-      render() { renderer.render(scene, guide.on ? top : cam); },
+      P, A, io, C, cam, renderer, guide: setGuide, numbers, switchTo, warm, nearestFit, isBusy: () => busy,
+      step(sec, fps, draw) { const n = Math.max(1, Math.round(sec * (fps || 30))); for (let i = 0; i < n; i++) { clock += 1 / (fps || 30); tick(1 / (fps || 30), clock); } if (draw !== false && !busy) renderer.render(scene, guide.on ? top : cam); return numbers(); },
+      render() { if (!busy) renderer.render(scene, guide.on ? top : cam); },
       setIo(px, py, yaw) { io.px = px; io.py = py; io.y = P.walkH(px, py); if (yaw != null) io.yaw = yaw; placeCamera(0, true); },
       setCam(yaw, pitch, dist) { if (yaw != null) C.yaw = yaw; C.pitch = pitch != null ? pitch : view.pitch; C.pitchSet = pitch != null; C.dist = dist != null ? dist : view.dist; C.auto = 99; placeCamera(0, true); },
       push(x, y, mag) { scripted = x == null ? null : { x, y, mag: mag == null ? 0.7 : mag }; },
