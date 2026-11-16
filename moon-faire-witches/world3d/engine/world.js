@@ -101,7 +101,7 @@
         if (ew) { const xa = x0 + (x1 - x0) * i / n, xb = x0 + (x1 - x0) * (i + 1) / n; treads.push({ xa, xb, ya: y0, yb: y1, top: s.tops ? s.tops[i] : highest(xa, y0, xb, y1) }); }
         else { const ya = y0 + (y1 - y0) * i / n, yb = y0 + (y1 - y0) * (i + 1) / n; treads.push({ xa: x0, xb: x1, ya, yb, top: s.tops ? s.tops[i] : highest(x0, ya, x1, yb) }); }
       }
-      return { x0, x1, y0, y1, treads, mat: s.mat, ew };
+      return { x0, x1, y0, y1, treads, mat: s.mat, ew, cheeks: s.cheeks };
     });
     const PLAT = (place.decks || []).map((d) => ({ r: d.r, y: d.y })).concat((place.jetties || []).map((j) => ({ r: j.r, y: j.y })));
     const walkH = (x, y) => {
@@ -424,8 +424,10 @@
         const deep = Math.max(0.5, t.top - highest(t.xa, t.ya, t.xb, t.yb, true) + 0.15);   // down to the lowest ground under it
         B.box(sm, (xa + xb) / 2, t.top - deep, (za + zb) / 2, xb - xa + (s.ew ? 0.02 : 0), deep, zb - za + (s.ew ? 0 : 0.02), 0, [0.95, 0.93, 0.98]);
         // the cheeks either side
-        if (s.ew) { B.box(sm, (xa + xb) / 2, t.top - 0.5, za - 0.18, xb - xa + 0.02, 0.8, 0.36, 0, [0.8, 0.78, 0.82]); B.box(sm, (xa + xb) / 2, t.top - 0.5, zb + 0.18, xb - xa + 0.02, 0.8, 0.36, 0, [0.8, 0.78, 0.82]); }
-        else { B.box(sm, xa - 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]); B.box(sm, xb + 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]); }
+        // (cheeks: [north or west one, south or east one], false to leave that one out)
+        const ch = s.cheeks || [true, true];
+        if (s.ew) { if (ch[0]) B.box(sm, (xa + xb) / 2, t.top - 0.5, za - 0.18, xb - xa + 0.02, 0.8, 0.36, 0, [0.8, 0.78, 0.82]); if (ch[1]) B.box(sm, (xa + xb) / 2, t.top - 0.5, zb + 0.18, xb - xa + 0.02, 0.8, 0.36, 0, [0.8, 0.78, 0.82]); }
+        else { if (ch[0]) B.box(sm, xa - 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]); if (ch[1]) B.box(sm, xb + 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]); }
       }
     }
 

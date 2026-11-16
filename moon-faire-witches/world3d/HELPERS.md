@@ -41,7 +41,7 @@ Draw the walk and block areas over the painting before placing anything.
   or paving over part of the ground, under the walk too), `noRocks: [[x0, y0, x1, y1]]` (no shore boulders there), jetties
   with `posts: false`, a roof of its own texture with `roof: { mat: '<name>' }` and
   `extraMats: { '<name>': { tex: '<texture id>', rep, tint, side: 'double' } }` (thatch, another bark; leave out `tex` for a plain colour, and `emis`, `lit`, `glow`, `spec`, `cut: false` for things that glow or shouldn't thin away near Io), steps that run any
-  way (`down: 's' | 'n' | 'e' | 'w'`, `mat`, `tops: [...]` for each tread's height; otherwise each tread stands as high as the ground under its high edge and fills down to the ground, so a steep slope never pokes through), dormers with `dark: true`, and `startYaw`
+  way (`down: 's' | 'n' | 'e' | 'w'`, `mat`, `tops: [...]` for each tread's height; otherwise each tread stands as high as the ground under its high edge and fills down to the ground, so a steep slope never pokes through; `cheeks: [true, false]` leaves out the south or east cheek, `[false, true]` the north or west), dormers with `dark: true`, and `startYaw`
   (which way the camera first looks: 0 is north, as the painting; turn by radians).
 - Each texture written out in full with double quotes, as in `places/wickhollow.js` (the offline build only packs
   pictures it finds as plain paths): `made: "./../texture-packs/made/<id>.png"` and `stand: "./../texture-packs/<group>/<place>/stand-in/<id>.png"`.
