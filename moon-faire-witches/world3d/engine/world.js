@@ -59,8 +59,10 @@
       rock: m({ map: ST('rock'), rep: 1.8, shade: 0.7, cut: true }),
       hills: m({ lit: 0, nofog: true, side: DS, glow: 0 }),
       leafBush: m({ map: ST('leaves'), rep: 1, tint: TINT.bush, cut: true, shade: 0.6 }),
+      bark: m({ map: ST('bark'), rep: 1.2, cut: true, shade: 0.6 }),
     };
     for (const k of FLOWER_KINDS) MAT['fl_' + k] = m({ map: pics['fl_' + k], alphaTest: 0.5, side: DS, cut: true, shade: 0.5 });
+    for (const k in place.extraMats || {}) { const e = place.extraMats[k]; MAT[k] = m({ map: T(e.tex), rep: e.rep || 2, tint: e.tint, cut: true, side: e.side === 'double' ? DS : THREE.FrontSide, shade: e.shade == null ? 0.4 : e.shade }); }
     // the trees, with and without the thinning-away (it costs a little, so only the patches near Io's line of sight get it)
     const TREE_MAT = (cut) => ({
       leaves: m({ map: ST('leaves'), rep: 1, tint: TINT.leaves, cut, shade: 0.55 }),
@@ -75,23 +77,31 @@
     const WALK = withBox(map2d.walk), BLOCK = withBox(map2d.block.slice());
     // pockets and ground beyond the 2D walk (place.walkAdd), and a wild place's open ground (place.open.bounds): Io can
     // go anywhere inside it but the water and anything solid
-    const ADD = withBox((place.walkAdd || []).map((a) => a.poly || a)), OPEN = place.open ? place.open.bounds : null;
+    const ADD = withBox((place.walkAdd || []).map((a) => a.poly || a));
+    // Chris (November 16): anywhere that looks walkable is walkable. So every place is open ground inside its bounds
+    // (a wild place's open.bounds, a town's bounds, else the painting), less water, steep ground and anything solid;
+    // the 2D walk, pockets, decks and jetties are always walkable (stairs, bridges). place.pathsOnly keeps the old way.
+    const PW = place.size[0], PH = place.size[1];
+    const OPEN = place.pathsOnly ? null : place.open ? place.open.bounds : (place.bounds || [[3, 3], [PW - 3, 3], [PW - 3, PH - 3], [3, PH - 3]]);
     const inAny = (L, x, y) => L.some((q) => x >= q.b[0] && x <= q.b[2] && y >= q.b[1] && y <= q.b[3] && inPoly(q.p, x, y));
     const addBlock = (poly) => BLOCK.push({ p: poly, b: bbox(poly) });
     const circlePx = (px, py, rm, n) => Array.from({ length: n || 10 }, (_, i) => { const a = i / (n || 10) * TAU; return [px + Math.cos(a) * rm / M.SX, py + Math.sin(a) * rm / M.SZ]; });
     for (const b of place.buildings) addBlock(W3D.rectPoly(b.fp));
-    let walkGrid = null;  // made at the end, once everything solid is known: 1 where her feet can stand, a cell every 2 px
+    let walkGrid = null, walkPic = null, solidCount = 0;  // made at the end, once everything solid is known: 1 where her feet can stand, a cell every 2 px
     const walkable = (x, y) => { if (!walkGrid) return inAny(WALK, x, y) && !inAny(BLOCK, x, y); const G = walkGrid, i = Math.floor((x - G.x0) / G.c), j = Math.floor((y - G.y0) / G.c); return i >= 0 && j >= 0 && i < G.w && j < G.h && G.d[j * G.w + i] === 1; };
 
     // the steps: each tread's top, so Io's feet stand on them
     const STEPS = (place.steps || []).map((s) => {
       const [x0, y0, x1, y1] = s.r, n = s.n, treads = [];
       for (let i = 0; i < n; i++) { const ya = y0 + (y1 - y0) * i / n, yb = y0 + (y1 - y0) * (i + 1) / n; treads.push({ ya, yb, top: gh((x0 + x1) / 2, (ya + yb) / 2) }); }
-      return { x0, x1, y0, y1, treads };
+      return { x0, x1, y0, y1, treads, mat: s.mat };
     });
+    const PLAT = (place.decks || []).map((d) => ({ r: d.r, y: d.y })).concat((place.jetties || []).map((j) => ({ r: j.r, y: j.y })));
     const walkH = (x, y) => {
+      for (const d of PLAT) if (x >= d.r[0] && x <= d.r[2] && y >= d.r[1] && y <= d.r[3]) return d.y;
       for (const s of STEPS) if (x >= s.x0 && x <= s.x1 && y >= s.y0 && y <= s.y1) { const t = s.treads[Math.min(s.treads.length - 1, Math.floor((y - s.y0) / (s.y1 - s.y0) * s.treads.length))]; return t.top; }
-      return place.walk_h(x, y);
+      const w = place.walk_h(x, y);
+      return Math.abs(w - gh(x, y)) < 1e-6 ? terrain(x, y) : w;
     };
 
     const B = W3D.Builder();
@@ -111,7 +121,7 @@
     const vnoise = W3D.vnoise;
     const WATER = (place.water || []).map((w) => Object.assign({}, w, { b: bbox(w.poly) }));
     const inWater = (x, y) => WATER.find((w) => x >= w.b[0] && x <= w.b[2] && y >= w.b[1] && y <= w.b[3] && inPoly(w.poly, x, y));
-    const nearWalkPx = (x, y, r) => WALK.some((q) => x >= q.b[0] - r && x <= q.b[2] + r && y >= q.b[1] - r && y <= q.b[3] + r && (inPoly(q.p, x, y) || edgeDist(q.p, x, y) < r));
+    const nearWalkPx = (x, y, r) => WALK.concat(ADD).some((q) => x >= q.b[0] - r && x <= q.b[2] + r && y >= q.b[1] - r && y <= q.b[3] + r && (inPoly(q.p, x, y) || edgeDist(q.p, x, y) < r));
     function terrain(x, y) {
       let h = gh(x, y);
       const w = inWater(x, y);
@@ -119,12 +129,16 @@
       else if (!nearWalkPx(x, y, 40)) h += (vnoise(x / 60, y / 60) - 0.5) * 0.5 + (vnoise(x / 17, y / 17) - 0.5) * 0.12;
       return h;
     }
-    const groundGeos = [];
+    const groundGeos = []; let groundGrid = null;
     {
       const big = (X(WX1) - X(WX0)) * (Z(WY1) - Z(WY0)) > 12000, cell = big ? 0.9 : 0.7, x0 = X(WX0), x1 = X(WX1), z0 = Z(WY0), z1 = Z(WY1);
       const nx = Math.ceil((x1 - x0) / cell), nz = Math.ceil((z1 - z0) / cell), dx = (x1 - x0) / nx, dz = (z1 - z0) / nz;
-      const H = new Float32Array((nx + 1) * (nz + 1));
-      for (let j = 0; j <= nz; j++) for (let i = 0; i <= nx; i++) H[j * (nx + 1) + i] = terrain(M.px(x0 + dx * i), M.py(z0 + dz * j));
+      const H = new Float32Array((nx + 1) * (nz + 1)), UNDER = new Uint8Array((nx + 1) * (nz + 1));
+      for (let j = 0; j <= nz; j++) for (let i = 0; i <= nx; i++) {
+        const px = M.px(x0 + dx * i), py = M.py(z0 + dz * j), k = j * (nx + 1) + i; H[k] = terrain(px, py);
+        const wt = inWater(px, py); if (wt && H[k] < wt.level(py) - 0.4) UNDER[k] = 1;
+      }
+      groundGrid = { H, nx, nz, x0, z0, dx, dz };
       const h = (i, j) => H[Math.min(nz, Math.max(0, j)) * (nx + 1) + Math.min(nx, Math.max(0, i))];
       // one patch every 32 cells each way; normals from the heights round each corner, so patches meet without a seam
       const PC = 32;
@@ -137,7 +151,10 @@
           nor.push(nx_ / L, 1 / L, nz_ / L);
           const c = 0.9 + vnoise(px / 25, py / 25) * 0.2; col.push(c, c, c); uv.push(x, z);
         }
-        for (let j = 0; j < nj; j++) for (let i = 0; i < ni; i++) { const a = j * (ni + 1) + i, b = a + 1, c = a + ni + 1, d = c + 1; idx.push(a, c, b, b, c, d); }
+        for (let j = 0; j < nj; j++) for (let i = 0; i < ni; i++) {
+          const g0 = (pj + j) * (nx + 1) + pi + i; if (UNDER[g0] && UNDER[g0 + 1] && UNDER[g0 + nx + 1] && UNDER[g0 + nx + 2]) continue;   // deep under water: nobody sees it
+          const a = j * (ni + 1) + i, b = a + 1, c = a + ni + 1, d = c + 1; idx.push(a, c, b, b, c, d);
+        }
         const geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
         geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
@@ -253,17 +270,17 @@
         B.tri(top, [x1, E, z1], [x1, E, z0], [x1, E + rise, cz], [[0, E], [d, E], [d / 2, E + rise]]);
         B.tri(top, [x0, E, z0], [x0, E, z1], [x0, E + rise, cz], [[0, E], [d, E], [d / 2, E + rise]]);
       }
-      roof('roof', cx, cz, w, d, E, rise, b.roof.over, ridge, b.roof.lean);
+      roof(b.roof.mat || 'roof', cx, cz, w, d, E, rise, b.roof.over, ridge, b.roof.lean);
       // a dark band where the walls meet the ground, and the shade round the house on the ground
       shadeMarks.push(['rect', px0, py0, px1, py1, 0.62]);
       // doors
       for (const f of b.doors || []) {
         const F = S[f.side], a = along(S[f.side], f.side, f), c = add3(add3(F.o, mul(F.t, a)), mul(F.n, 0.04)); c[1] = base;
         const col = f.red ? [1.5, 0.55, 0.45] : f.green ? [0.55, 1.05, 0.8] : [1, 1, 1];
-        onWall('stone', add3(c, mul(F.n, -0.01)), F.t, f.w + 0.5, f.h + 0.3, [0.75, 0.72, 0.75], [0, base, f.w + 0.5, base + f.h + 0.3]);
+        onWall(f.plain ? 'wood' : 'stone', add3(c, mul(F.n, -0.01)), F.t, f.w + (f.plain ? 0.24 : 0.5), f.h + (f.plain ? 0.12 : 0.3), f.plain ? [0.45, 0.36, 0.32] : [0.75, 0.72, 0.75], [0, base, f.w + 0.5, base + f.h + 0.3]);
         onWall(f.arch ? (f.double ? 'doorArch2' : 'doorArch') : 'door', c, F.t, f.w, f.h, col);
-        B.box('stone', c[0] + F.n[0] * 0.35, base - 0.4, c[2] + F.n[2] * 0.35, Math.abs(F.n[2]) > 0.5 ? f.w + 0.6 : 0.7, 0.42, Math.abs(F.n[0]) > 0.5 ? f.w + 0.6 : 0.7, 0, [0.85, 0.85, 0.9]);
-        lights.push([M.px(c[0] + F.n[0]), M.py(c[2] + F.n[2]), 50, 0.25, 'warm']);
+        if (!f.plain) B.box('stone', c[0] + F.n[0] * 0.35, base - 0.4, c[2] + F.n[2] * 0.35, Math.abs(F.n[2]) > 0.5 ? f.w + 0.6 : 0.7, 0.42, Math.abs(F.n[0]) > 0.5 ? f.w + 0.6 : 0.7, 0, [0.85, 0.85, 0.9]);
+        if (f.light !== false) lights.push([M.px(c[0] + F.n[0]), M.py(c[2] + F.n[2]), 50, 0.25, 'warm']);
       }
       // windows
       for (const f of b.windows || []) {
@@ -397,9 +414,10 @@
       const xa = X(s.x0), xb = X(s.x1);
       for (const t of s.treads) {
         const za = Z(t.ya), zb = Z(t.yb);
-        B.box('stone', (xa + xb) / 2, t.top - 0.5, (za + zb) / 2, xb - xa, 0.5, zb - za + 0.02, 0, [0.95, 0.93, 0.98]);
-        B.box('stone', xa - 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]);
-        B.box('stone', xb + 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]);
+        const sm = s.mat || 'stone';
+        B.box(sm, (xa + xb) / 2, t.top - 0.5, (za + zb) / 2, xb - xa, 0.5, zb - za + 0.02, 0, [0.95, 0.93, 0.98]);
+        B.box(sm, xa - 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]);
+        B.box(sm, xb + 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]);
       }
     }
 
@@ -458,12 +476,18 @@
     // ---- lamps on posts and stone pillars ----
     for (const l of place.lamps || []) {
       const x = X(l.at[0]), z = Z(l.at[1]), y = l.y != null ? l.y : walkH(l.at[0], l.at[1]);
-      if (l.kind === 'pillar') {
-        B.box('stone', x, y - 0.3, z, 0.62, 1.75, 0.62, 0, [0.95, 0.93, 0.98]); B.box('stone', x, y + 1.45, z, 0.76, 0.14, 0.76, 0, [0.8, 0.78, 0.84]);
-        lantern(x, y + 1.62, z, null, 1.05);
+      if (l.kind === 'wood') {
+        const hh = l.h || (l.short ? 1.8 : 2.6);
+        B.box('wood', x, y - 0.3, z, 0.2, hh + 0.3, 0.2, 0, [0.62, 0.5, 0.44]); B.box('wood', x + 0.25, y + hh - 0.08, z, 0.62, 0.1, 0.1, 0, [0.62, 0.5, 0.44]);
+        lantern(x + 0.48, y + hh - 0.55, z, null, 0.9, true);
+        lights.push([l.at[0] + 0.48 / M.SX, l.at[1] - 4, 120, 1.0, 'warm']);
+      } else if (l.kind === 'pillar') {
+        const ph = l.h || 1.45;
+        B.box('stone', x, y - 0.3, z, 0.62, ph + 0.3, 0.62, 0, [0.95, 0.93, 0.98]); B.box('stone', x, y + ph, z, 0.76, 0.14, 0.76, 0, [0.8, 0.78, 0.84]);
+        lantern(x, y + ph + 0.17, z, null, 1.05);
         lights.push([l.at[0], l.at[1] - 6, 140, 1.15, 'warm']);
       } else {
-        const hh = l.short ? 1.9 : 3.0;
+        const hh = l.h || (l.short ? 1.9 : 3.0);
         B.box('iron', x, y, z, 0.26, 0.3, 0.26, 0); B.cyl('iron', x, y + 0.3, z, 0.06, 0.045, hh - 0.3, 6);
         B.box('iron', x, y + hh - 0.06, z, 0.3, 0.06, 0.06, 0);
         lantern(x, y + hh + 0.02, z, null, 1.1);
@@ -472,12 +496,40 @@
       addBlock(circlePx(l.at[0], l.at[1], l.kind === 'pillar' ? 0.42 : 0.22, 8));
     }
 
+    // ---- decks on stilts: boardwalks, landings, porches over water or bog ----
+    for (const dk of place.decks || []) {
+      const [px0, py0, px1, py1] = dk.r, x0 = X(px0), x1 = X(px1), z0 = Z(py0), z1 = Z(py1), y = dk.y, ew = dk.boards === 'ew';
+      B.box('deck', (x0 + x1) / 2, y - 0.16, (z0 + z1) / 2, x1 - x0, 0.16, z1 - z0, 0, null);
+      if (ew) B.quad('deck', [x0, y + 0.001, z1], [x1, y + 0.001, z1], [x1, y + 0.001, z0], [x0, y + 0.001, z0], [z1, x0, z0, x1]);
+      const bottom = dk.bottom != null ? dk.bottom : -3.4;
+      if (dk.stilts !== false) {
+        const sp = dk.spacing || 2.0;
+        for (let x = x0 + 0.12; x <= x1 - 0.08 + 1e-6; x += Math.max(0.5, (x1 - x0 - 0.24) / Math.max(1, Math.round((x1 - x0 - 0.24) / sp)))) for (const z of [z0 + 0.12, z1 - 0.12]) B.cyl('wood', x, bottom, z, 0.13, 0.12, y - bottom - 0.1, 6, [0.55, 0.45, 0.4]);
+      }
+      const rl = dk.rails;
+      if (rl) {
+        const sides = rl.sides || 'nsew', ph = rl.kind === 'wood' ? 0.95 : 0.85;
+        const run = (ax, az, bx, bz) => {
+          const L = Math.hypot(bx - ax, bz - az), n = Math.max(1, Math.round(L / 1.6));
+          for (let i = 0; i <= n; i++) { const t = i / n, x = ax + (bx - ax) * t, z = az + (bz - az) * t; B.cyl('wood', x, y, z, 0.07, 0.06, ph, 5, [0.6, 0.48, 0.42]); }
+          const ry = Math.atan2(-(bz - az), bx - ax);
+          if (rl.kind === 'wood') { B.box('wood', (ax + bx) / 2, y + ph - 0.08, (az + bz) / 2, L, 0.08, 0.08, ry, [0.65, 0.52, 0.45]); B.box('wood', (ax + bx) / 2, y + ph * 0.5, (az + bz) / 2, L, 0.06, 0.06, ry, [0.65, 0.52, 0.45]); }
+          else for (let i = 0; i < n; i++) { const t0 = i / n, t1 = (i + 1) / n, xa = ax + (bx - ax) * t0, za = az + (bz - az) * t0, xb = ax + (bx - ax) * t1, zb = az + (bz - az) * t1;
+            for (let k = 0; k < 4; k++) { const ua = k / 4, ub = (k + 1) / 4, sag = (u) => 0.14 * Math.sin(Math.PI * u); const pa = [xa + (xb - xa) * ua, y + ph - 0.12 - sag(ua), za + (zb - za) * ua], pb = [xa + (xb - xa) * ub, y + ph - 0.12 - sag(ub), za + (zb - za) * ub]; B.box('wood', (pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2 - 0.015, (pa[2] + pb[2]) / 2, Math.hypot(pb[0] - pa[0], pb[2] - pa[2]), 0.03, 0.03, ry, [0.75, 0.62, 0.5]); } }
+        };
+        const e = 0.1;
+        if (sides.includes('n')) run(x0 + e, z0 + e, x1 - e, z0 + e); if (sides.includes('s')) run(x0 + e, z1 - e, x1 - e, z1 - e);
+        if (sides.includes('w')) run(x0 + e, z0 + e, x0 + e, z1 - e); if (sides.includes('e')) run(x1 - e, z0 + e, x1 - e, z1 - e);
+      }
+      shadeMarks.push(['rect', px0, py0, px1, py1, 0.8]);
+    }
+
     // ---- the jetties ----
     for (const j of place.jetties || []) {
       const [px0, py0, px1, py1] = j.r, x0 = X(px0), x1 = X(px1), z0 = Z(py0), z1 = Z(py1);
       B.box('deck', (x0 + x1) / 2, j.y - 0.18, (z0 + z1) / 2, x1 - x0, 0.18, z1 - z0, 0, null, { u0: 0 });
       const posts = []; for (let x = x0 + 0.2; x <= x1 - 0.1; x += 2.2) posts.push([x, z0 + 0.15], [x, z1 - 0.15]); posts.push([x1 - 0.15, z0 + 0.15], [x1 - 0.15, z1 - 0.15]);
-      for (const [x, z] of posts) B.cyl('wood', x, -3.4, z, 0.15, 0.15, j.y + 3.4 + 0.45 * (R() > 0.4 ? 1 : 0.2), 7, [0.6, 0.48, 0.42]);
+      if (j.posts !== false) for (const [x, z] of posts) B.cyl('wood', x, -3.4, z, 0.15, 0.15, j.y + 3.4 + 0.45 * (R() > 0.4 ? 1 : 0.2), 7, [0.6, 0.48, 0.42]);
       shadeMarks.push(['rect', px0, py0, px1, py1, 0.82]);
     }
 
@@ -568,6 +620,7 @@
             if (px < WX0 || px > WX1 || py < WY0 || py > WY1 || nearWalkPx(px, py, 10)) continue;
             if (place.bridge && px > place.bridge.x0 && py > place.bridge.y0 - 10 && py < place.bridge.y1 + 10) continue;
             if (place.jetties && place.jetties.some((jt) => px > jt.r[0] - 8 && px < jt.r[2] + 8 && py > jt.r[1] - 8 && py < jt.r[3] + 8)) continue;
+            if ((place.noRocks || []).some((r) => px > r[0] && px < r[2] && py > r[1] && py < r[3])) continue;
             const sz = 0.55 + R() * 0.9, y = Math.max(w.level(py) - 0.3, terrain(px, py) - sz * 0.3);
             B.geom('rock', rockG[Math.floor(R() * 3)], new THREE.Matrix4().compose(new THREE.Vector3(X(px) + (R() - 0.5) * 0.6, y, Z(py) + (R() - 0.5) * 0.6), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, R() * TAU, 0)), new THREE.Vector3(sz, sz, sz)), null, 1.2);
           }
@@ -648,6 +701,27 @@
       ring(140, 6, 24, 0.31, [0.045, 0.06, 0.09], null, false);
     }
 
+    // ---- a thicket of bushes along the bounds' edge (not across water, exits or paths), so the edge looks closed ----
+    if (OPEN && place.thicket !== false) {
+      const near = (x, y, r) => WALK.concat(ADD).some((q) => x >= q.b[0] - r && x <= q.b[2] + r && y >= q.b[1] - r && y <= q.b[3] + r && (inPoly(q.p, x, y) || edgeDist(q.p, x, y) < r));
+      const atExit = (x, y) => (place.exits || []).some((e) => x > e.rect[0] - 70 && x < e.rect[2] + 70 && y > e.rect[1] - 70 && y < e.rect[3] + 70);
+      const TR = rand(97);
+      for (let i = 0, j = OPEN.length - 1; i < OPEN.length; j = i++) {
+        const [ax, ay] = OPEN[j], [bx, by] = OPEN[i], L = Math.hypot(X(bx) - X(ax), Z(by) - Z(ay)), nxp = -(Z(by) - Z(ay)) / L, nzp = (X(bx) - X(ax)) / L;
+        // the inward side of this edge
+        const mx = (ax + bx) / 2, my = (ay + by) / 2, inward = inPoly(OPEN, M.px(X(mx) + nxp * 2), M.py(Z(my) + nzp * 2)) ? 1 : -1;
+        for (let s = 0.5; s < L; s += 1.05 + TR() * 0.3) for (const row of [0.55, 1.7]) {
+          if (row > 1 && TR() < 0.45) continue;
+          const x = X(ax) + (X(bx) - X(ax)) * s / L + nxp * inward * row + (TR() - 0.5) * 0.4, z = Z(ay) + (Z(by) - Z(ay)) * s / L + nzp * inward * row + (TR() - 0.5) * 0.4;
+          const px = M.px(x), py = M.py(z);
+          if (px < WX0 || px > WX1 || py < WY0 || py > WY1 || inWater(px, py) || atExit(px, py) || near(px, py, 24)) continue;
+          const r = 0.8 + TR() * 0.55, h = r * (0.9 + TR() * 0.5), gy = terrain(px, py);
+          B.geom('leafBush', ico[Math.floor(TR() * 3)], new THREE.Matrix4().compose(new THREE.Vector3(x, gy + h * 0.5, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, TR() * TAU, 0)), new THREE.Vector3(r, h, r)), blobCol(gy + h * 0.5, h), 2.2);
+          addBlock(circlePx(px, py, r * 0.85, 8));
+        }
+      }
+    }
+
     // ---- the keepsakes that lie in this place (envoi-final-draft/items/items.js, read only): a shimmer, nothing else,
     // until Io walks into it. place.items moves one ({ id: [x, y] }, a pocket for it) or leaves it out ({ id: false }) ----
     const LOOT = (window.LOOT && window.LOOT.ITEMS) || [], moveTo = place.items || {};
@@ -725,6 +799,7 @@
       // under the cobbles, nothing green
       const im = g.getImageData(0, 0, CW, CH), d = im.data; for (let i = 0; i < d.length; i += 4) { d[i + 1] = Math.round(d[i + 1] * (1 - d[i] / 255)); } g.putImageData(im, 0, 0);
       for (const a of place.walkAdd || []) if (a.ground === 'grass') { g.fillStyle = '#000'; path(g, a.poly); g.fill(); }
+      for (const gp of place.groundPatches || []) { g.fillStyle = { dirt: '#00ff00', cob: '#ff0000', grass: '#000000', pave: '#0000ff' }[gp.kind || 'dirt']; g.filter = 'blur(3px)'; path(g, gp.poly); g.fill(); g.filter = 'none'; }
       if (place.bridge) { g.fillStyle = 'rgba(0,0,255,1)'; g.fillRect(place.bridge.x0 * kx, place.bridge.y0 * ky, (place.bridge.x1 - place.bridge.x0) * kx, (place.bridge.y1 - place.bridge.y0) * ky); }
       for (const l of place.lawns || []) { g.fillStyle = '#000'; path(g, l); g.globalAlpha = 0.85; g.fill(); g.globalAlpha = 1; }
     }
@@ -760,8 +835,8 @@
     const groundTex = { cob: T(place.ground.cob), grass: T(place.ground.grass), dirt: T(place.ground.dirt), pave: T(place.ground.pave), splat: T_(splat), rep: place.ground.rep, grassTint: place.ground.grassTint };
     const groundMat = W3D.groundMat(U, groundTex); for (const g of grounds) g.material = groundMat;
 
-    // ---- where her feet can stand, as a grid (a cell every 2 px): the walk areas and pockets (or a wild place's open
-    // ground less its water), less everything solid ----
+    // ---- where her feet can stand, as a grid (a cell every 2 px): open ground inside the bounds, less water, steep
+    // ground and anything solid that stands in her way; the 2D walk, pockets, decks and jetties always walkable ----
     {
       const c = 2, w = Math.ceil((WX1 - WX0) / c), h = Math.ceil((WY1 - WY0) / c);
       const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const g = cv.getContext('2d');
@@ -769,12 +844,36 @@
       const fillP = (poly) => { g.beginPath(); poly.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.closePath(); g.fill(); };
       g.fillStyle = '#000'; g.fillRect(WX0, WY0, WX1 - WX0, WY1 - WY0);
       g.fillStyle = '#fff';
-      if (OPEN) { fillP(OPEN); g.fillStyle = '#000'; for (const wt of WATER) fillP(wt.poly); g.fillStyle = '#fff'; }
+      if (OPEN) {
+        fillP(OPEN); g.fillStyle = '#000'; for (const wt of WATER) fillP(wt.poly);
+        // ground too steep to climb (steeper than about 40 degrees)
+        const GG = groundGrid, hh = (i, j) => GG.H[Math.min(GG.nz, Math.max(0, j)) * (GG.nx + 1) + Math.min(GG.nx, Math.max(0, i))];
+        for (let j = 0; j < GG.nz; j++) for (let i = 0; i < GG.nx; i++) {
+          const sx = (hh(i + 1, j) - hh(i, j)) / GG.dx, sz = (hh(i, j + 1) - hh(i, j)) / GG.dz;
+          if (Math.hypot(sx, sz) > 0.85) { const px0 = M.px(GG.x0 + GG.dx * i), py0 = M.py(GG.z0 + GG.dz * j); g.fillRect(px0, py0, GG.dx / M.SX, GG.dz / M.SZ); }
+        }
+      }
+      g.fillStyle = '#fff';
       for (const q of WALK) fillP(q.p); for (const q of ADD) fillP(q.p);
-      g.fillStyle = '#000'; for (const q of BLOCK) fillP(q.p);
+      for (const d of PLAT) fillP(W3D.rectPoly(d.r));
+      // everything built that stands in her way: from about a hand above her feet to above her head (decks, roofs,
+      // windows, cloth and flowers never count)
+      const NEVER = /^(deck|pave|roof|glass|win|winDark|winColour|rose|door|doorArch|doorArch2|moonwater|soil|hills|produce|cloth|leaves|firs)$|^fl_/;
+      g.fillStyle = '#000'; solidCount = 0;
+      for (const sd of B.solids) {
+        if (NEVER.test(sd.k)) continue;
+        let cx = 0, cz = 0; for (const [x, z] of sd.poly) { cx += x; cz += z; } cx /= sd.poly.length; cz /= sd.poly.length;
+        const f = walkH(M.px(cx), M.py(cz));
+        if (sd.y1 > f + 0.35 && sd.y0 < f + 1.6) { fillP(sd.poly.map(([x, z]) => [M.px(x), M.py(z)])); solidCount++; }
+      }
+      for (const q of BLOCK) fillP(q.p);
       const d = g.getImageData(0, 0, w, h).data, grid = new Uint8Array(w * h);
       for (let i = 0; i < w * h; i++) grid[i] = d[i * 4] > 127 ? 1 : 0;
       walkGrid = { x0: WX0, y0: WY0, c, w, h, d: grid };
+      // the same grid as a picture, for the guide's "where can she walk" view: green where she can, clear where not
+      const pic = g.createImageData(w, h);
+      for (let i = 0; i < w * h; i++) { if (grid[i]) { pic.data[i * 4] = 60; pic.data[i * 4 + 1] = 230; pic.data[i * 4 + 2] = 110; pic.data[i * 4 + 3] = 150; } }
+      const out = document.createElement('canvas'); out.width = w; out.height = h; out.getContext('2d').putImageData(pic, 0, 0); walkPic = out;
     }
 
     // ---- each frame ----
@@ -803,6 +902,8 @@
     scene.traverse((o) => { if (o.isMesh) stats.meshes++; });
     // the see-through trees' shaders, made ready at the start so the first time they're needed doesn't stutter
     function precompile(renderer, cam) { for (const mesh of treeMeshes) mesh.material = TM.cut[mesh.userData.tree]; renderer.compile(scene, cam); for (const mesh of treeMeshes) mesh.material = TM.whole[mesh.userData.tree]; renderer.compile(scene, cam); }
-    return { scene, U, M, walkable, walkH, terrain, update, precompile, stats, used, place, lamps: lamps3d, items, takeItem, maps: { splat, glow, shade }, exits: place.exits || [] };
+    stats.solids = solidCount;
+    return { scene, U, M, walkable, walkH, terrain, update, precompile, stats, used, place, lamps: lamps3d, items, takeItem, maps: { splat, glow, shade }, exits: place.exits || [],
+      walkPic: () => walkPic, walkRect: [WX0, WY0, WX1, WY1] };
   };
 })(window);

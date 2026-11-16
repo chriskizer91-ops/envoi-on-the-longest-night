@@ -33,6 +33,15 @@ Draw the walk and block areas over the painting before placing anything.
   (something solid Io can't walk through), `K.circlePx`, `K.rockG` and `K.ico` are there too. Materials are the
   builder's keys: 'stone', 'dry', 'timber', 'planks', 'roof', 'wood', 'deck', 'pave', 'iron', 'cloth', 'glass' (glows by
   itself: give it a colour), 'win', 'door', 'rock', 'soil', 'leafBush', 'fl_mix', 'fl_white', 'fl_violet', 'fl_sun'.
+- Ready-made parts (added November 16 from Bogmire's wishes): `decks: [{ r: [x0, y0, x1, y1], y, boards: 'ns' | 'ew',
+  stilts: true, bottom: -3.4, rails: { sides: 'nsew', kind: 'rope' | 'wood' } }]` (boardwalks, landings and porches on
+  stilts; feet still need `walk_h`), lamps of `kind: 'wood'` (a lantern hanging from a wooden post), doors with
+  `plain: true` (a wooden frame, no stone surround or step), `h` on any lamp (metres to its lantern), a 'bark' material for
+  things built in `extra(K)`, `groundPatches: [{ poly, kind: 'dirt' | 'cob' | 'grass' | 'pave' }]` (lay earth, cobbles, grass
+  or paving over part of the ground, under the walk too), `noRocks: [[x0, y0, x1, y1]]` (no shore boulders there), jetties
+  with `posts: false`, a roof of its own texture with `roof: { mat: '<name>' }` and
+  `extraMats: { '<name>': { tex: '<texture id>', rep, tint, side: 'double' } }` (thatch, another bark), and `startYaw`
+  (which way the camera first looks: 0 is north, as the painting; turn by radians).
 - Each texture written out in full with double quotes, as in `places/wickhollow.js` (the offline build only packs
   pictures it finds as plain paths): `made: "./../texture-packs/made/<id>.png"` and `stand: "./../texture-packs/<group>/<place>/stand-in/<id>.png"`.
   A shared texture's stand-in is wherever it was made: `ls moon-faire-witches/texture-packs/*/*/stand-in/<id>.png`. If a
@@ -75,6 +84,23 @@ should do something it doesn't, build it in `extra(K)` for now and put the wish 
     trails end (`exits`, each `{ rect, label }`).
   - The checks' goals: every exit, every keepsake and every landmark. The whole place can be larger than 300,000
     triangles; what's in view past the fog should stay under about 200,000.
+
+## Chris's rule (November 16, 11:22): anywhere that looks walkable is walkable
+
+"If there's a lot of things that look walkable and are not walkable then people stop trying to walk places." So the engine
+now makes every place open ground inside its bounds (the painting unless you set `bounds`, or a wild place's
+`open.bounds`), less water, ground steeper than about 40 degrees, and anything solid that stands in Io's way. Everything
+you build with `K.B` counts as solid when it stands from about a hand above her feet to above her head (decks, roofs,
+cloth, windows and flowers never count); pass `{ solid: false }` as a box's last option, or set `K.B.solid = false` while
+building, for something she should walk through. The 2D walk, pockets (`walkAdd`), `decks` and `jetties` are always
+walkable (decks and jetties at their own height). A thicket of bushes runs along the bounds' edge, except across water,
+exits and paths (`thicket: false` turns it off).
+
+What you check: the stills plan's `{ "name": "walkable", "walkmap": true }` shows green wherever she can stand, over the
+3D from above. Look at it beside the painting: everything that looks like ground she could walk on should be green, and
+everything that isn't green should look closed (a wall, a fence, a building, water, a hedge, a cliff). If a walkable
+surface you built in extra(K) shows dark (a porch, a walkway, a ramp not in the 2D walk), make it a `deck` or a pocket
+with the right `walk_h`; if something looks open but leads nowhere, close it visibly or open it properly.
 
 ## The rules of Envoi's world
 

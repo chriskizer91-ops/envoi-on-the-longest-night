@@ -58,6 +58,9 @@
   // and colours (a tint per piece). build() gives one mesh per key.
   W3D.Builder = function () {
     const B = {};
+    // every piece that stands up, as { k: material, poly: its footprint in metres, y0, y1 }: world.js makes the ones that
+    // stand in Io's way solid. api.solid = false while building something she should walk on (or through)
+    const SOLIDS = [];
     const get = (k) => B[k] || (B[k] = { p: [], n: [], u: [], c: [] });
     const v3 = new THREE.Vector3(), n3 = new THREE.Vector3(), nm = new THREE.Matrix3();
     const api = {
@@ -84,6 +87,7 @@
         const c = Math.cos(ry || 0), s = Math.sin(ry || 0);
         const P = (lx, ly, lz) => [x + lx * c + lz * s, y + ly, z - lx * s + lz * c];
         const hw = w / 2, hd = d / 2;
+        if (api.solid !== false && opt.solid !== false) SOLIDS.push({ k, y0: y, y1: y + h, poly: [P(-hw, 0, -hd), P(hw, 0, -hd), P(hw, 0, hd), P(-hw, 0, hd)].map((q) => [q[0], q[2]]) });
         const A = P(-hw, 0, hd), Bq = P(hw, 0, hd), C = P(hw, h, hd), D = P(-hw, h, hd);
         const E = P(hw, 0, -hd), F = P(-hw, 0, -hd), Gq = P(-hw, h, -hd), H = P(hw, h, -hd);
         const u = opt.u0 || 0, vb = opt.v0 != null ? opt.v0 : y;
@@ -98,14 +102,17 @@
         const g = get(k), gi = geo.index ? geo.toNonIndexed() : geo;
         const pa = gi.attributes.position, na = gi.attributes.normal, ua = gi.attributes.uv;
         nm.getNormalMatrix(m4); col = col || [1, 1, 1];
+        let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9, z0 = 1e9, z1 = -1e9;
         const us = uvScale == null ? 1 : uvScale, usx = Array.isArray(us) ? us[0] : us, usy = Array.isArray(us) ? us[1] : us;
         for (let i = 0; i < pa.count; i++) {
           v3.fromBufferAttribute(pa, i).applyMatrix4(m4); g.p.push(v3.x, v3.y, v3.z);
+          if (v3.x < x0) x0 = v3.x; if (v3.x > x1) x1 = v3.x; if (v3.y < y0) y0 = v3.y; if (v3.y > y1) y1 = v3.y; if (v3.z < z0) z0 = v3.z; if (v3.z > z1) z1 = v3.z;
           if (na) { n3.fromBufferAttribute(na, i).applyMatrix3(nm).normalize(); g.n.push(n3.x, n3.y, n3.z); } else g.n.push(0, 1, 0);
           if (ua) g.u.push(ua.getX(i) * usx, ua.getY(i) * usy); else g.u.push(0, 0);
           if (typeof col === 'function') { const cc = col(v3, i); g.c.push(cc[0], cc[1], cc[2]); } else g.c.push(col[0], col[1], col[2]);
         }
         if (gi !== geo) gi.dispose();
+        if (api.solid !== false && pa.count) { const ix = (x1 - x0) * 0.12, iz = (z1 - z0) * 0.12; SOLIDS.push({ k, y0, y1, poly: [[x0 + ix, z0 + iz], [x1 - ix, z0 + iz], [x1 - ix, z1 - iz], [x0 + ix, z1 - iz]] }); }
       },
       // a cylinder (or cone, r1 at the top) standing on (x, y, z)
       cyl(k, x, y, z, r0, r1, h, seg, col, uvs, open) {
@@ -114,6 +121,7 @@
         api.geom(k, geo, m, col, uvs || [Math.PI * 2 * Math.max(r0, r1), h]); geo.dispose();
       },
       keys: () => Object.keys(B),
+      solids: SOLIDS,
       count: (k) => (B[k] ? B[k].p.length / 9 : 0),
       // one mesh per material key that has anything in it
       build(mats) {
@@ -332,12 +340,14 @@
         float fres = pow(1.0 - max(v.y, 0.0), 3.0);
         vec3 sky = vec3(0.16, 0.14, 0.32) * (0.06 + fres * 1.3);
         // the lamps on the water: their light map read a little toward the camera, wobbling
-        vec2 wob = vec2(sin(vW.z * 3.1 + uTime * 1.7), cos(vW.x * 2.3 + uTime * 1.3)) * 0.35;
+        // ripples from three directions at once, so the moon's glints scatter instead of lining up
+        float r1 = sin(dot(vW.xz, vec2(1.7, 2.3)) + uTime * 1.6), r2 = sin(dot(vW.xz, vec2(-2.9, 1.1)) + uTime * 1.1), r3 = sin(dot(vW.xz, vec2(0.6, -3.7)) + uTime * 2.1);
+        vec2 wob = vec2(r1 + r2 * 0.6 + (b.r - 0.02) * 20.0, r2 - r3 * 0.7 + (b.g - 0.02) * 20.0) * 0.2;
         vec3 lw = vW + vec3(wob.x, 0.0, wob.y) - vec3(v.x, 0.0, v.z) * 1.5;
         vec3 g = toLin(texture2D(uGlow, paintUv(lw)).rgb) * uGlowK * 0.9;
         vec3 h = normalize(v + uMoonDir);
-        float glint = pow(max(dot(normalize(vec3(wob.x * 0.25, 1.0, wob.y * 0.25)), h), 0.0), 220.0);
-        vec3 col = c * 1.4 + sky * 0.6 + g * (0.16 + fres * 0.45) + uMoon * glint * 0.8;
+        float glint = pow(max(dot(normalize(vec3(wob.x * 0.25, 1.0, wob.y * 0.25)), h), 0.0), 220.0) * (1.0 - smoothstep(0.55, 0.85, v.y));
+        vec3 col = (c * 1.4 + sky * 0.6 + g * (0.16 + fres * 0.45) + uMoon * glint * 0.8) * mix(1.0, texture2D(uShade, paintUv(vW)).r, 0.85);
         col = mix(col, vec3(0.55, 0.6, 0.75) * (0.6 + 0.4 * a.b * 3.0), fall * 0.85);
         gl_FragColor = outC(fogged(col, vW));
       }`;
