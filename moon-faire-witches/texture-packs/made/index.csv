@@ -71,3 +71,8 @@ dawn_grass_flowers.png,Night grass with tiny wildflowers,"Ground, square",2,Envo
 stable_straw.png,Straw on a stable floor,"Ground, square",2,Envoi-Round2-Part-03,Straw on a stable floor,dawnroost,1254,1254,dee9e23b3d12536985487020409b18c020180eccbacffa0a222c98c7cb8185ac,
 dawnroost_mossy_road.png,Mossy forest road,"Ground, square",2,Envoi-Round2-Part-03,Mossy forest road,dawnroost-road,1254,1254,707ef5a312a3c653edcca1c9f46b4a833311a3aa17d4f6805bd5bed28fd439a3,
 eldergrove_elder_bark.png,Ancient elder bark,"Material, square",2,Envoi-Round2-Part-03,Ancient elder bark,eldergrove-edge,1254,1254,bad5ff3cbafd4b40ac17deb6dbc7c3d14e649931c4f13d40b1bf3d86383d4d4c,
+eldergrove_dead_bark.png,Bare tree bark,"Material, square",2,Envoi-Round2-Part-04,Bare tree bark,eldergrove-edge,1254,1254,34e341d291d9e148f894471da523b236eaaadd4b78ec3b18268e8669ee51a264,
+eldergrove_ruin_stone.png,Ruin stonework,"Material, square",2,Envoi-Round2-Part-04,Ruin stonework,eldergrove-edge,1254,1254,82339e4b22dc6d774c0e9eb758f366632ec4224e341a964324f75d1dfbc38197,
+ember_bridge_stone.png,Bridge stonework,"Material, square",2,Envoi-Round2-Part-04,Bridge stonework,ember-line-road,1254,1254,4fb0844768e5d991d2b6b6b87cd1438469a41783b4464b62c04787e50648f53d,
+camp_tent_canvas.png,Tent canvas,"Material, square",2,Envoi-Round2-Part-04,Tent canvas,warm-roads-camp,1254,1254,98db3a2769bcca13e47caa26a72dd96b0e5341d9283346b6f76e78b13bbf51ae,
+moor_road_flags.png,Broken flagstone road,"Ground, square",2,Envoi-Round2-Part-04,Broken flagstone road,cold-moor,1254,1254,65abc318abbc743090e271f4e79f2e28f0f66278793f48f1f8ecd8247a4874c0,
