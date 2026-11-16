@@ -39,9 +39,10 @@ function makeTrance(scene, actor, o) {
       g.attributes.position.needsUpdate = true; g.attributes.color.needsUpdate = true;
     }
     for (const m of mist) { m.a += dt * 0.35 * m.k; m.s.visible = k > 0.01; m.s.position.set(px + Math.cos(m.a) * m.r, m.y + 0.06 * Math.sin(t * 1.3 + m.a), pz + Math.sin(m.a) * m.r * 0.8); m.s.scale.setScalar(1.3 * m.k); m.s.material.opacity = 0.22 * k * (0.7 + 0.3 * Math.sin(t * 2 + m.a)); }
-    light.intensity = 2.6 * k * (0.85 + 0.15 * Math.sin(t * 6)); light.position.set(px, 1.25, pz + 0.3);
-    const glow = 0.55 * k * (0.8 + 0.2 * Math.sin(t * 5));
-    for (const q of mats) { tmp.copy(q.e).lerp(COL, Math.min(1, k)); q.m.emissive.copy(tmp); q.m.emissiveIntensity = q.i + glow; }
+    light.intensity = 1.5 * k * (0.85 + 0.15 * Math.sin(t * 6)); light.position.set(px, 1.25, pz + 0.3);
+    // a tint from within, not a wash: her own colours still read through it (the first strength turned her pink-white)
+    const glow = 0.12 * k * (0.8 + 0.2 * Math.sin(t * 5));
+    for (const q of mats) { tmp.copy(q.e).lerp(COL, Math.min(1, 0.3 * k)); q.m.emissive.copy(tmp); q.m.emissiveIntensity = q.i + glow; }
   }
   return { set(v) { want = Math.max(0, Math.min(1, v)); }, update, get level() { return level; } };
 }

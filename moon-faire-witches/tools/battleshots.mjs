@@ -46,7 +46,7 @@ log('battle on');
 await page.evaluate(([turns]) => {
   const B = window.__battle, W = window;
   W.__turns = turns.map((t, i) => Object.assign({ i, done: false }, t)); W.__cur = null; W.__shot = null; W.__seen = []; W.__k = 0;
-  W.__turbo = 3; B.turbo = 3;
+  W.__turbo = 4; B.turbo = 4;
   B.auto = (E, s, rand) => {
     const id = s.unit.id, nx = W.__turns.find((t) => !t.done && !t.started);
     if (nx && nx.who === id) {
