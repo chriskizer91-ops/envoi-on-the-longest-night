@@ -176,7 +176,7 @@
       [960, 178, 1.0, 'violet'], [905, 172, 0.9, 'mix'], [1000, 300, 0.6, 'white'],                                        // round the east corner
       [470, 393, 0.45, 'mix'], [520, 395, 0.45, 'white'], [565, 396, 0.4, 'violet'],                                         // along the quay wall's top
       [428, 332, 0.9, 'white'], [412, 388, 0.8, 'violet'],                                                                  // at the track's end, hiding the way on
-      [1290, 300, 1.0, 'violet'], [1330, 368, 0.9, 'white'], [1150, 450, 0.8, 'mix'], [1200, 455, 0.7, 'white'],            // by the stall and on the east bank
+      [1340, 300, 1.0, 'violet'], [1350, 368, 0.9, 'white'], [1150, 450, 0.8, 'mix'], [1200, 455, 0.7, 'white'],            // by the stall and on the east bank
       [350, 340, 0.8, 'mix'], [470, 304, 0.7, 'white'],
     ],
     // the lights for the light map (the lamps' own are added from `lamps`, the pillars' and the stall's in extra): a little

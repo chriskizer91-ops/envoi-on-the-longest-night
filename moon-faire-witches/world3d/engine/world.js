@@ -108,7 +108,8 @@
       for (const d of PLAT) if (x >= d.r[0] && x <= d.r[2] && y >= d.r[1] && y <= d.r[3]) return d.y;
       for (const s of STEPS) if (x >= s.x0 && x <= s.x1 && y >= s.y0 && y <= s.y1) { const f = s.ew ? (x - s.x0) / (s.x1 - s.x0) : (y - s.y0) / (s.y1 - s.y0); return s.treads[Math.min(s.treads.length - 1, Math.floor(f * s.treads.length))].top; }
       const w = place.walk_h(x, y);
-      return Math.abs(w - gh(x, y)) < 1e-6 ? terrain(x, y) : w;
+      // on open ground her feet follow its roll; over water (boards, stilts) they stay at the place's own height, never the bed
+      return Math.abs(w - gh(x, y)) < 1e-6 && !inWater(x, y) ? terrain(x, y) : w;
     };
 
     const B = W3D.Builder();
