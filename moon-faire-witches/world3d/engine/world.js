@@ -39,7 +39,7 @@
       roof: 'shared_roof_tiles_red', wood: 'shared_boardwalk_planks', deck: 'shared_boardwalk_planks', pave: 'wick_bridge_paving', cloth: 'shared_awning_stripes',
       soil: 'shared_dirt_track', rock: 'thorn_rock_mossy', leaves: 'wick_leaf_canopy', bark: 'shared_bark_oak' }, place.surfaces || {});
     const ST = (k) => T(SURF[k]);
-    // place.tints: a colour to multiply any surface by (stone, dry, timber, planks, roof, wood, deck, pave, cloth, rock, leaves, firs, bush)
+    // place.tints: a colour to multiply any surface by (stone, dry, timber, planks, roof, wood, deck, pave, cloth, rock, leaves, firs, bush, bark)
     const TINT = Object.assign({ leaves: 0xd8ffee, firs: 0xa8c8c0, bush: 0xd8ffe8, wood: 0xc0a088 }, place.tints || {});
     const MAT = {
       stone: m({ tint: TINT.stone, map: ST('stone'), rep: 2.4, cut: true, shade: 0.35 }),
@@ -69,7 +69,7 @@
     const TREE_MAT = (cut) => ({
       leaves: m({ map: ST('leaves'), rep: 1, tint: TINT.leaves, cut, shade: 0.55 }),
       firs: m({ map: T(SURF.firs || SURF.leaves), rep: 1, tint: TINT.firs, cut, shade: 0.55 }),
-      bark: m({ map: ST('bark'), rep: 1, cut, shade: 0.6 }),
+      bark: m({ map: ST('bark'), rep: 1, tint: TINT.bark, cut, shade: 0.6 }),
     });
     const TM = { cut: TREE_MAT(true), whole: TREE_MAT(false) };
 
@@ -614,7 +614,7 @@
     const blobCol = (cy, r) => (v) => { const t = clamp((v.y - cy) / r * 0.5 + 0.5, 0, 1); const k = 0.42 + 0.68 * t; return [k * 0.95, k, k * 1.02]; };
     for (const [fx, fy, rr, kind] of place.flowers || []) {
       const x = X(fx), z = Z(fy), y = gh(fx, fy), h = rr * 0.75;
-      B.geom('leafBush', ico[(fx + fy) % 3], new THREE.Matrix4().compose(new THREE.Vector3(x, y + h * 0.55, z), new THREE.Quaternion(), new THREE.Vector3(rr, h, rr)), blobCol(y + h * 0.55, h), 2.2);
+      B.geom('leafBush', ico[(((fx + fy) % 3) + 3) % 3], new THREE.Matrix4().compose(new THREE.Vector3(x, y + h * 0.55, z), new THREE.Quaternion(), new THREE.Vector3(rr, h, rr)), blobCol(y + h * 0.55, h), 2.2);
       const n = Math.max(2, Math.round(rr * 4));
       for (let i = 0; i < n; i++) {
         const a = R() * TAU, d = R() * rr * 0.75, cx_ = x + Math.cos(a) * d, cz_ = z + Math.sin(a) * d, hh = y + h * (0.6 + R() * 0.6), s = 0.45 + R() * 0.25, r2 = R() * Math.PI;
@@ -684,7 +684,7 @@
         const nb = far ? 2 : 3;
         for (let i = 0; i < nb; i++) {
           const a = r() * TAU, d = i === 0 ? 0 : cr * 0.55, bx = x + Math.cos(a) * d, bz = z + Math.sin(a) * d, by = y + H + cr * (i === 0 ? 0.6 : 0.2 + r() * 0.35), br = cr * (i === 0 ? 1 : 0.68 + r() * 0.15);
-          TB.geom('leaves', ico[(seed + i) % 3], new THREE.Matrix4().compose(new THREE.Vector3(bx, by, bz), new THREE.Quaternion().setFromEuler(new THREE.Euler(r(), r() * TAU, 0)), new THREE.Vector3(br, br * 0.82, br)), blobCol(by, br * 0.82), 2.6);
+          TB.geom('leaves', ico[(((seed + i) % 3) + 3) % 3], new THREE.Matrix4().compose(new THREE.Vector3(bx, by, bz), new THREE.Quaternion().setFromEuler(new THREE.Euler(r(), r() * TAU, 0)), new THREE.Vector3(br, br * 0.82, br)), blobCol(by, br * 0.82), 2.6);
         }
         shadeMarks.push(['dot', tx, ty, cr / M.SX * 0.95, 0.5]);
       }
@@ -907,7 +907,13 @@
         U.uCam.value.copy(cam.position); U.uIo.value.set(ioPos.x, ioPos.y + 1.0, ioPos.z); U.uCut.value = 1;
         // nothing past the fog is drawn (the trees' patches and the ground's)
         const far = U.uFogFar.value + 6;
-        for (const mesh of cullables) { const s = mesh.geometry.boundingSphere; mesh.visible = s.center.distanceTo(cam.position) - s.radius < far; }
+        // by ground distance to the patch's nearest corner, so a tall patch of trees goes when its ground does (no pale
+        // crowns standing past the fog's end)
+        for (const mesh of cullables) {
+          const bb = mesh.geometry.boundingBox || (mesh.geometry.computeBoundingBox(), mesh.geometry.boundingBox);
+          const dx = Math.max(bb.min.x - cam.position.x, 0, cam.position.x - bb.max.x), dz = Math.max(bb.min.z - cam.position.z, 0, cam.position.z - bb.max.z);
+          mesh.visible = Math.hypot(dx, dz) < far;
+        }
         // the tree patches near the line from the camera to Io get the thinning-away
         seg.subVectors(U.uIo.value, cam.position); const L2 = seg.lengthSq();
         for (const mesh of treeMeshes) {
