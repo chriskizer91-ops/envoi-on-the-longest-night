@@ -24,6 +24,19 @@
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const ss = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
   const SX = 0.04, SZ = 0.05, TAU = Math.PI * 2;
+  // a builder with K.B's parts that sends each piece to the far patch where it stands (K.far: patches past the fog aren't
+  // drawn): a box or a cylinder by its foot, a quad or a triangle by its middle, a geometry by the middle of where it ends
+  // up. Same materials, same solids; its `solid` works as K.B's does (false while building what Io walks through)
+  const farBuilder = (K) => {
+    const F = { solid: true }, box3 = new THREE.Box3(), mid = new THREE.Vector3();
+    const via = (x, z, f) => { const b = K.far(x, z), s = b.solid; b.solid = F.solid; f(b); b.solid = s; };
+    F.box = (k, x, y, z, ...a) => via(x, z, (b) => b.box(k, x, y, z, ...a));
+    F.cyl = (k, x, y, z, ...a) => via(x, z, (b) => b.cyl(k, x, y, z, ...a));
+    F.quad = (k, p, q, r, s, ...a) => via((p[0] + r[0]) / 2, (p[2] + r[2]) / 2, (b) => b.quad(k, p, q, r, s, ...a));
+    F.tri = (k, p, q, r, ...a) => via((p[0] + q[0] + r[0]) / 3, (p[2] + q[2] + r[2]) / 3, (b) => b.tri(k, p, q, r, ...a));
+    F.geom = (k, geo, m4, ...a) => { geo.computeBoundingBox(); box3.copy(geo.boundingBox).applyMatrix4(m4).getCenter(mid); via(mid.x, mid.z, (b) => b.geom(k, geo, m4, ...a)); };
+    return F;
+  };
   // the engine's own noise and seeded random, copied so this file also loads in the tools (no W3D there)
   const hash = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
   const vnoise = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf); return (hash(xi, yi) * (1 - u) + hash(xi + 1, yi) * u) * (1 - v) + (hash(xi, yi + 1) * (1 - u) + hash(xi + 1, yi + 1) * u) * v; };
@@ -253,7 +266,12 @@
     // outcrops, the bare shrubs and dead trees, the grass, the tarn's ice, the waymarks and field walls along the roads,
     // the places to find, the two pockets and the mist ----
     extra(K) {
-      const { B, X, Z } = K, W = G.W3D, TH = K.terrain;
+      const { X, Z } = K, W = G.W3D, TH = K.terrain;
+      // what each part below is built into: K.B for the ring and its gateposts, the well and its lantern and the fallen
+      // waymarker's rune (big things at the painting's middle, and the ones that glow); FAR for everything else, each piece
+      // into the far patch where it stands, so it isn't drawn once it's past the fog
+      const FAR = farBuilder(K);
+      let B = K.B;
       const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]], sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
       const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2], cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
       const norm = (a) => { const L = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / L, a[1] / L, a[2] / L]; };
@@ -352,6 +370,7 @@
       }
 
       // ---- the ruined walls and pillar stumps along the west and east roads (the painting's) ----
+      B = FAR;
       {
         const off = (x, y) => inFight(x, y, 4) || (x > 0 && x < 1536 && y > 430 && y < 540);
         wallRun([318, 424], [458, 422], 1.15, 11, { keepOff: off }); post(474, 418, 1.55, [0.9, 0.9, 0.96]); wallRun([490, 420], [540, 418], 0.75, 12, { rubble: 1, keepOff: off });
@@ -362,6 +381,7 @@
         post(610, 312, 1.05, [0.88, 0.88, 0.94]); post(925, 334, 0.8, [0.86, 0.86, 0.92]); post(394, 690, 1.0, [0.86, 0.86, 0.92]);
       }
 
+      B = K.B;   // (the well's lantern and the waymarker's rune glow)
       // ---- the well: a round stone well, its wooden frame and windlass, the bucket, and the lantern hung off the frame's
       // east end; a letter weighted under a stone on its rim ----
       {
@@ -416,6 +436,7 @@
         B.solid = true;
       }
 
+      B = FAR;   // (from here on)
       // ---- the signpost where the south and east roads part: four arms, to the shipyard, the cold moor and the world ----
       {
         const [sx, sy] = SIGN, x = X(sx), z = Z(sy), g = TH(sx, sy), col = [0.85, 0.74, 0.64];

@@ -19,6 +19,19 @@
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const ss = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
   const SX = 0.04, SZ = 0.05;
+  // a builder with K.B's parts that sends each piece to the far patch where it stands (K.far: patches past the fog aren't
+  // drawn): a box or a cylinder by its foot, a quad or a triangle by its middle, a geometry by the middle of where it ends
+  // up. Same materials, same solids; its `solid` works as K.B's does (false while building what Io walks through)
+  const farBuilder = (K) => {
+    const F = { solid: true }, box3 = new THREE.Box3(), mid = new THREE.Vector3();
+    const via = (x, z, f) => { const b = K.far(x, z), s = b.solid; b.solid = F.solid; f(b); b.solid = s; };
+    F.box = (k, x, y, z, ...a) => via(x, z, (b) => b.box(k, x, y, z, ...a));
+    F.cyl = (k, x, y, z, ...a) => via(x, z, (b) => b.cyl(k, x, y, z, ...a));
+    F.quad = (k, p, q, r, s, ...a) => via((p[0] + r[0]) / 2, (p[2] + r[2]) / 2, (b) => b.quad(k, p, q, r, s, ...a));
+    F.tri = (k, p, q, r, ...a) => via((p[0] + q[0] + r[0]) / 3, (p[2] + q[2] + r[2]) / 3, (b) => b.tri(k, p, q, r, ...a));
+    F.geom = (k, geo, m4, ...a) => { geo.computeBoundingBox(); box3.copy(geo.boundingBox).applyMatrix4(m4).getCenter(mid); via(mid.x, mid.z, (b) => b.geom(k, geo, m4, ...a)); };
+    return F;
+  };
 
   // ---- the stream: its west and east banks, [y, x] down the painting (on the painting traced from it; past it, it
   // winds on north and south out of the open ground) ----
@@ -266,7 +279,12 @@
     // stumps, the bramble, the grass tufts, the lily pads, the stones along the road, the mist, the places to find, the two
     // hollows, and everything solid that keeps Io off the bridge's sides and the stream's rocky banks ----
     extra(K) {
-      const { B, X, Z } = K, W = G.W3D, TAU = Math.PI * 2;
+      const { X, Z } = K, W = G.W3D, TAU = Math.PI * 2;
+      // what each part below is built into: K.B for the bridge and its lantern, the moon stone and the shrine (big things
+      // near the painting's middle, and the ones that glow); FAR for everything else, each piece into the far patch where
+      // it stands, so it isn't drawn once it's past the fog
+      const FAR = farBuilder(K);
+      let B = K.B;
       const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]], sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
       const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2], cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
       const norm = (a) => { const L = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / L, a[1] / L, a[2] / L]; };
@@ -404,6 +422,7 @@
 
       // ---- the moss of the clearing west of the moon stone, round the rocks there (the painting's; the walking map's
       // ground under it is all earth) ----
+      B = FAR;   // (from here on, into the far patches, but for the shrine)
       {
         const M1 = [[856, 262], [872, 252], [886, 240], [900, 226], [930, 208], [960, 196], [986, 196], [990, 232], [984, 252], [966, 268], [952, 290], [946, 306],
           [900, 304], [870, 298], [850, 290], [848, 276]];
@@ -580,6 +599,7 @@
       }
 
       // ---- the wayside shrine in the north-east: a stone niche facing south, a crescent cut in its back ----
+      B = K.B;   // (its crescent glows)
       {
         const [px, py] = SHRINE.at, x = X(px), z = Z(py), y = TH(px, py);
         B.box('stone', x, y - 0.3, z, 1.8, 0.7, 1.1, 0, [0.85, 0.86, 0.92]);
@@ -599,6 +619,7 @@
       }
 
       // ---- the fallen thorn tree in the east: a great trunk lying along the ground, its roots torn up ----
+      B = FAR;
       {
         const [rx_, ry_] = FALLEN.root, [tx, ty] = FALLEN.top, r = W.rand(55), col = [0.8, 0.75, 0.8];
         const A = [X(rx_), TH(rx_, ry_) + 0.55, Z(ry_)], Bt = [X(tx), TH(tx, ty) + 0.3, Z(ty)];

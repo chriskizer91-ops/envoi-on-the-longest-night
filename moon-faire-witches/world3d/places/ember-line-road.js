@@ -25,6 +25,19 @@
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const ss = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
   const SX = 0.04, SZ = 0.05;
+  // a builder with K.B's parts that sends each piece to the far patch where it stands (K.far: patches past the fog aren't
+  // drawn): a box or a cylinder by its foot, a quad or a triangle by its middle, a geometry by the middle of where it ends
+  // up. Same materials, same solids; its `solid` works as K.B's does (false while building what Io walks through)
+  const farBuilder = (K) => {
+    const F = { solid: true }, box3 = new THREE.Box3(), mid = new THREE.Vector3();
+    const via = (x, z, f) => { const b = K.far(x, z), s = b.solid; b.solid = F.solid; f(b); b.solid = s; };
+    F.box = (k, x, y, z, ...a) => via(x, z, (b) => b.box(k, x, y, z, ...a));
+    F.cyl = (k, x, y, z, ...a) => via(x, z, (b) => b.cyl(k, x, y, z, ...a));
+    F.quad = (k, p, q, r, s, ...a) => via((p[0] + r[0]) / 2, (p[2] + r[2]) / 2, (b) => b.quad(k, p, q, r, s, ...a));
+    F.tri = (k, p, q, r, ...a) => via((p[0] + q[0] + r[0]) / 3, (p[2] + q[2] + r[2]) / 3, (b) => b.tri(k, p, q, r, ...a));
+    F.geom = (k, geo, m4, ...a) => { geo.computeBoundingBox(); box3.copy(geo.boundingBox).applyMatrix4(m4).getCenter(mid); via(mid.x, mid.z, (b) => b.geom(k, geo, m4, ...a)); };
+    return F;
+  };
   const W3D = () => G.W3D;
   const mDist = (ax, ay, bx, by) => Math.hypot((ax - bx) * SX, (ay - by) * SZ);
   const segDist = (x, y, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], t = clamp(((x - a[0]) * dx + (y - a[1]) * dy) / (dx * dx + dy * dy || 1), 0, 1); return Math.hypot(x - a[0] - t * dx, y - a[1] - t * dy); };
@@ -264,7 +277,12 @@
     // ---- what the engine has no field for: the bridge, the nodes and the ring's standing stones, the walls, boulders,
     // birches, gorse and heather, the falls, the places to find and the pockets ----
     extra(K) {
-      const { B, X, Z } = K, W = G.W3D, TAU = Math.PI * 2, TH = K.terrain, PL = P[ID];
+      const { X, Z } = K, W = G.W3D, TAU = Math.PI * 2, TH = K.terrain, PL = P[ID];
+      // what each part below is built into: K.B for the bridge, the three Ember Line nodes, the little falls and the
+      // milestone (big things at the painting's middle, and the ones that glow); FAR for everything else, each piece into
+      // the far patch where it stands, so it isn't drawn once it's past the fog
+      const FAR = farBuilder(K);
+      let B = K.B;
       const V3 = (x, y, z) => new THREE.Vector3(x, y, z), QY = (a) => new THREE.Quaternion().setFromEuler(new THREE.Euler(0, a, 0));
       const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]], sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
       const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2], cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
@@ -407,6 +425,7 @@
 
       // ================= the three Ember Line nodes, and the ring's plain standing stones =================
       for (const nd of NODES) standingStone(nd.at[0], nd.at[1], nd.w, nd.d, nd.h, (nd.seed - 2) * 0.06, nd.seed * 7.7, [1.02, 1.0, 1.08], nd.eye);
+      B = FAR;   // (from here on, but for the little falls and the milestone)
       for (const [i, [px, py, w, h]] of RING.entries()) { standingStone(px, py, w, w * 0.62, h, (i * 1.7) % 1 - 0.5, i * 3.1 + 11, [0.95, 0.97, 1.02]); }
       // rubble at the nodes' feet
       { const r = W.rand(777); for (const [px, py, n] of [[240, 238, 7], [585, 466, 4], [1354, 182, 6]]) for (let i = 0; i < n; i++) { const a = r() * Math.PI + (r() < 0.3 ? Math.PI : 0), d = 0.9 + r() * 0.5; const qx = px + Math.cos(a) * d / SX, qy = py + Math.sin(a) * d * 0.6 / SZ; if (walkDist(qx, qy) < 4) continue; rock(qx, qy, 0.22 + r() * 0.12, { shade: false }); } }
@@ -445,9 +464,11 @@
           const px = cx + nx * (hw + 0.15 + r() * 0.3) / SX, py = cy + nz * (hw + 0.15 + r() * 0.3) / SZ; if (inPoly(DECK, px, py) || walkDist(px, py) < 6) continue; tuft(px, py, 8, 1.0, [0.7, 0.82, 0.55]); }
         for (let i = 0; i < 26; i++) { const k = 4 + Math.floor(r() * 18), a = SL[k], b = SL[k + 1], f = r(), px = a[0] + (b[0] - a[0]) * f + (r() - 0.5) * 30, py = a[1] + (b[1] - a[1]) * f; if (inPoly(DECK, px, py) || streamD(px, py) > -0.3) continue; leaves(px, py, level(py) + 0.02, 1, 0.1, i * 31 + 7); }
         // the little falls: white water and a glint
+        B = K.B;
         for (const [px, py] of [[552, 122], [600, 228], [1040, 737], [1112, 767], [1420, 962]]) { const y = level(py); K.halo(X(px), y + 0.2, Z(py), 1.6, [0.25, 0.3, 0.45]); for (let j = 0; j < 4; j++) { const x = X(px) + (j - 1.5) * 0.3, z = Z(py); B.quad('glass', [x - 0.12, y - 0.15, z + 0.2], [x + 0.12, y - 0.15, z + 0.2], [x + 0.12, y + 0.2, z - 0.15], [x - 0.12, y + 0.2, z - 0.15], [0, 0, 1, 1], [0.5, 0.55, 0.7]); } }
       }
 
+      B = FAR;
       // ================= the roads' amber seams: a faint warm light along them =================
       for (const pts of [[[0, 593], [150, 562], [300, 535], [450, 515], [600, 500]], [[860, 405], [900, 330], [940, 230], [960, 120], [990, 20]], ROAD_W.pts.slice(1), ROAD_N.pts.slice(1)])
         for (const [px, py] of pts) K.light(px, py, 60, 0.18, 'warm');
@@ -512,6 +533,7 @@
         const r = W.rand(1601); for (let i = 0; i < 8; i++) { const a = r() * TAU, d = 2.5 + r() * 3; bush(kx + Math.cos(a) * d / SX, ky + Math.sin(a) * d / SZ, 0.35 + r() * 0.2, 'green', r); }
       }
       // ================= the falls and the pool in the south-east =================
+      B = K.B;   // (the white water glints)
       {
         const [fx, fy] = FALLS.at, r = W.rand(1818);
         // the lip of rock the water falls over, and the white water below it
@@ -519,6 +541,7 @@
         for (let i = 0; i < 6; i++) { const f = (i - 2.5) / 2.5, px = fx + 10 + f * 34, py = fy + 12 - f * 26, x = X(px), z = Z(py), top = level(fy - 30), botY = level(fy + 40); B.quad('glass', [x - 0.3, botY, z + 0.5], [x + 0.3, botY, z + 0.5], [x + 0.3, top + 0.05, z - 0.1], [x - 0.3, top + 0.05, z - 0.1], [0, 0, 1, 1], [0.55, 0.6, 0.78]); }
         K.halo(X(fx + 20), level(fy + 30) + 0.4, Z(fy + 30), 4, [0.25, 0.3, 0.48]);
         // rocks round the pool, reeds, leaves on it, a birch leaning over
+        B = FAR;
         const [pxp, pyp] = FALLS.pool;
         for (let i = 0; i < 22; i++) { const a = r() * TAU, rr = 4.2 + r() * 1.2, px = pxp + Math.cos(a) * rr / SX, py = pyp + Math.sin(a) * rr / SZ; if (streamD(px, py) < 0.2 || pathDist(px, py) < 26) continue; rock(px, py, 0.55 + r() * 0.7); }
         for (let i = 0; i < 10; i++) { const a = r() * TAU, rr = 3.4 + r() * 0.6, px = pxp + Math.cos(a) * rr / SX, py = pyp + Math.sin(a) * rr / SZ; if (streamD(px, py) < 0 || pathDist(px, py) < 20) continue; tuft(px, py, 9, 1.1, [0.7, 0.82, 0.55]); }
@@ -547,6 +570,7 @@
         K.halo(X(cx_), TH(cx_, cy_) + 1.5, Z(cy_), 8, [0.1, 0.12, 0.2]);
       }
       // ================= the milestone on the west road =================
+      B = K.B;   // (its sun glints)
       {
         const [mx, my] = MILE.at, x = X(mx), z = Z(my), y = TH(mx, my);
         B.box('stone', x, y - 0.3, z, 0.55, 1.35, 0.4, 0.05, [1.0, 0.98, 1.02]);
@@ -556,6 +580,7 @@
         K.halo(x, cy, cz + 0.1, 0.5, [0.25, 0.18, 0.08]);
         rock(mx - 24, my - 6, 0.35); bush(mx + 32, my - 12, 0.55, 'gorse', W.rand(3));
       }
+      B = FAR;
       // ================= the hollow behind the big boulder, north of the road: a ledge of grass between the boulder,
       // the wall and the stream's bank, white flowers, a flat stone; its way in from the west, past the wall's end ====
       {

@@ -24,6 +24,19 @@
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const ss = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
   const SX = 0.04, SZ = 0.05;
+  // a builder with K.B's parts that sends each piece to the far patch where it stands (K.far: patches past the fog aren't
+  // drawn): a box or a cylinder by its foot, a quad or a triangle by its middle, a geometry by the middle of where it ends
+  // up. Same materials, same solids; its `solid` works as K.B's does (false while building what Io walks through)
+  const farBuilder = (K) => {
+    const F = { solid: true }, box3 = new THREE.Box3(), mid = new THREE.Vector3();
+    const via = (x, z, f) => { const b = K.far(x, z), s = b.solid; b.solid = F.solid; f(b); b.solid = s; };
+    F.box = (k, x, y, z, ...a) => via(x, z, (b) => b.box(k, x, y, z, ...a));
+    F.cyl = (k, x, y, z, ...a) => via(x, z, (b) => b.cyl(k, x, y, z, ...a));
+    F.quad = (k, p, q, r, s, ...a) => via((p[0] + r[0]) / 2, (p[2] + r[2]) / 2, (b) => b.quad(k, p, q, r, s, ...a));
+    F.tri = (k, p, q, r, ...a) => via((p[0] + q[0] + r[0]) / 3, (p[2] + q[2] + r[2]) / 3, (b) => b.tri(k, p, q, r, ...a));
+    F.geom = (k, geo, m4, ...a) => { geo.computeBoundingBox(); box3.copy(geo.boundingBox).applyMatrix4(m4).getCenter(mid); via(mid.x, mid.z, (b) => b.geom(k, geo, m4, ...a)); };
+    return F;
+  };
   const W3D = () => G.W3D;
   const inPoly = (poly, x, y) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
   const mDist = (ax, ay, bx, by) => Math.hypot((ax - bx) * SX, (ay - by) * SZ);
@@ -257,7 +270,12 @@
     // stakes and ropes, the lookout, the slab bridge, the walls' capstones and pillars, the boulders, birches, gorse and
     // heather, the places to find and the pockets ----
     extra(K) {
-      const { B, X, Z } = K, W = G.W3D, TAU = Math.PI * 2, TH = K.terrain, PL = P[ID];
+      const { X, Z } = K, W = G.W3D, TAU = Math.PI * 2, TH = K.terrain, PL = P[ID];
+      // what each part below is built into: K.B for the hut, the fire, the tents and the camp's things round them, the
+      // stream's little falls and the milestone (big things at the painting's middle, and the ones that glow or are lit);
+      // FAR for everything else, each piece into the far patch where it stands, so it isn't drawn once it's past the fog
+      const FAR = farBuilder(K);
+      let B = K.B;
       const V3 = (x, y, z) => new THREE.Vector3(x, y, z), QY = (a) => new THREE.Quaternion().setFromEuler(new THREE.Euler(0, a, 0));
       const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]], sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
       const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2], cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
@@ -483,6 +501,7 @@
       { const x = X(852), z = Z(318), y = TH(852, 318);                                     // the firewood pile
         for (let row = 0; row < 3; row++) for (let i = 0; i < 4 - row; i++) { const lg = new THREE.CylinderGeometry(0.13, 0.13, 1.1, 7); lg.rotateX(Math.PI / 2); B.geom('wood', lg, new THREE.Matrix4().makeTranslation(x - 0.4 + i * 0.27 + row * 0.13, y + 0.13 + row * 0.23, z), [0.82, 0.66, 0.55], [1, 1]); lg.dispose(); } }
 
+      B = FAR;   // (from here on, but for the little falls and the milestone)
       // ================= the landing ground: four stakes with stones at their feet, thick ropes slung between ============
       {
         const r = W.rand(313), top = 1.25;
@@ -565,7 +584,9 @@
         for (let i = 0; i < 30; i++) { const px = 220 + r() * 1300, [c, hw] = streamAt(px), py = c + (r() - 0.5) * hw * 1.2, x = X(px), z = Z(py), rr = 0.18 + r() * 0.14; if (px > 880 && px < 970) continue;
           for (let j = 0; j < 7; j++) { const a0 = j / 7 * TAU, a1 = (j + 1) / 7 * TAU; B.tri('cloth', [x, LEVEL + 0.02, z], [x + Math.cos(a1) * rr, LEVEL + 0.02, z + Math.sin(a1) * rr], [x + Math.cos(a0) * rr, LEVEL + 0.02, z + Math.sin(a0) * rr], [[0, 0], [1, 0], [0, 1]], [0.55, 0.85, 0.6]); } }
         // the stream's little falls: white water and a glint
+        B = K.B;
         for (const [px, py] of [[600, 848], [1140, 902], [1320, 935]]) { K.halo(X(px), LEVEL + 0.3, Z(py), 1.4, [0.25, 0.3, 0.45]); for (let j = 0; j < 4; j++) { const x = X(px) + (j - 1.5) * 0.25, z = Z(py); B.quad('glass', [x - 0.1, LEVEL - 0.05, z + 0.15], [x + 0.1, LEVEL - 0.05, z + 0.15], [x + 0.1, LEVEL + 0.25, z - 0.1], [x - 0.1, LEVEL + 0.25, z - 0.1], [0, 0, 1, 1], [0.5, 0.55, 0.7]); } }
+        B = FAR;
       }
 
       // ================= the road's amber seams: a faint warm light along it =================
@@ -656,6 +677,7 @@
       }
 
       // ================= along the road east: the milestone, and the broken cart =================
+      B = K.B;   // (its sun glints)
       {
         const [mx, my] = MILE.at, x = X(mx), z = Z(my), y = TH(mx, my);
         B.box('stone', x, y - 0.3, z, 0.55, 1.35, 0.4, 0.05, [1.0, 0.98, 1.02]);
@@ -665,6 +687,7 @@
         K.halo(x, cy, cz + 0.1, 0.5, [0.25, 0.18, 0.08]);
         rock(mx - 22, my + 6, 0.35); bush(mx + 30, my - 10, 0.55, 'gorse', W.rand(3));
       }
+      B = FAR;
       {
         // a two-wheeled cart, tipped forward on its shafts, one wheel broken off and lying in the heather, two crates and
         // a sack spilled from it
