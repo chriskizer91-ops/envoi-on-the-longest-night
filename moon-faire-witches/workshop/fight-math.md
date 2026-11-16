@@ -18,9 +18,9 @@ lasts). With Moon Faire's Fate numbers as they came, 21 were met. The hub's firs
 | The finale, level 20 | expert | wins 15% | 60% to 85% |
 | The finale, level 19 | expert | its losses leave 52% of the foes' Life | closer fights |
 
-Halcyon's ambush and the finale were built round Sol: Halcyon is weak to Sol's sun, and nothing in the new party is sun.
-Those two wait on Chris's lore answers (`docs/questions/moon-faire-witches.md`, questions 1 and 2). Until he answers, make
-them fair with the party's numbers only, and say in the slip what you assumed.
+Halcyon's ambush and the finale are **left out of this job**: Chris has changed both (November 16). Halcyon becomes a
+paladin on Io's body, and Moon Faire's big bad takes Noctara's place. The hub rebuilds those two fights and balances them
+itself, so leave their numbers as they are.
 
 ## What to do
 
