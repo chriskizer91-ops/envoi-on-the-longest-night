@@ -45,7 +45,7 @@
       pave: m({ map: T('wick_bridge_paving'), rep: 2.6, cut: true, shade: 0.6 }),
       iron: m({ tint: 0x2a2632, spec: 0.6, cut: true, shade: 0.5 }),
       cloth: m({ map: T('shared_awning_stripes'), rep: 1, cut: true, side: DS, shade: 0.3 }),
-      glass: m({ lit: 0 }),
+      glass: m({ lit: 0, cut: true }),
       win: m({ map: pics.win, lit: 0 }), winDark: m({ map: pics.winDark, shade: 0.3 }), winColour: m({ map: pics.winColour, lit: 0 }), rose: m({ map: pics.rose, lit: 0 }),
       door: m({ map: pics.door, shade: 0.4 }), doorArch: m({ map: pics.doorArch, alphaTest: 0.5, shade: 0.4 }), doorArch2: m({ map: pics.doorArch2, alphaTest: 0.5, shade: 0.4 }),
       produce: m({ map: pics.produce, shade: 0.3 }), moonwater: m({ map: pics.moonwater, lit: 0 }),
@@ -502,7 +502,12 @@
     }
 
     // ---- flower beds and flowering bushes ----
-    const ico = [0, 1, 2].map((v) => { const g = new THREE.IcosahedronGeometry(1, 1), p = g.attributes.position, r = rand(31 + v); for (let i = 0; i < p.count; i++) { const k = 0.82 + r() * 0.3; p.setXYZ(i, p.getX(i) * k, p.getY(i) * k, p.getZ(i) * k); } g.computeVertexNormals(); return g; });
+    // lumpy balls for the leaves, shaded smooth (each corner's normal points out from the middle, so the same corner of
+    // two faces lights the same)
+    const lumpy = (detail, seed, k0, k1, sy) => { const g = new THREE.IcosahedronGeometry(1, detail), p = g.attributes.position, n = g.attributes.normal, r = rand(seed), seen = {};
+      for (let i = 0; i < p.count; i++) { const key = p.getX(i).toFixed(3) + p.getY(i).toFixed(3) + p.getZ(i).toFixed(3), k = seen[key] || (seen[key] = k0 + r() * k1); const x = p.getX(i), y = p.getY(i), z = p.getZ(i), L = Math.hypot(x, y, z); n.setXYZ(i, x / L, y / L, z / L); p.setXYZ(i, x * k, y * k * (sy || 1), z * k); }
+      return g; };
+    const ico = [0, 1, 2].map((v) => lumpy(1, 31 + v, 0.84, 0.28));
     const blobCol = (cy, r) => (v) => { const t = clamp((v.y - cy) / r * 0.5 + 0.5, 0, 1); const k = 0.42 + 0.68 * t; return [k * 0.95, k, k * 1.02]; };
     for (const [fx, fy, rr, kind] of place.flowers || []) {
       const x = X(fx), z = Z(fy), y = gh(fx, fy), h = rr * 0.75;
@@ -517,7 +522,7 @@
 
     // ---- rocks along the river's banks and the lake's ----
     {
-      const rockG = [0, 1, 2].map((v) => { const g = new THREE.IcosahedronGeometry(1, 0), p = g.attributes.position, r = rand(71 + v); for (let i = 0; i < p.count; i++) { const k = 0.7 + r() * 0.5; p.setXYZ(i, p.getX(i) * k, p.getY(i) * k * 0.7, p.getZ(i) * k); } g.computeVertexNormals(); return g; });
+      const rockG = [0, 1, 2].map((v) => lumpy(1, 71 + v, 0.75, 0.4, 0.68));
       for (const w of WATER) {
         const poly = w.poly;
         for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
@@ -677,6 +682,8 @@
     let tris = 0; scene.traverse((o) => { if (o.isMesh && o.geometry) { const g = o.geometry; tris += (g.index ? g.index.count : g.attributes.position.count) / 3; } });
     const stats = { triangles: Math.round(tris), meshes: 0, trees: trees.length, lamps: (place.lamps || []).length, halos: halos.length };
     scene.traverse((o) => { if (o.isMesh) stats.meshes++; });
-    return { scene, U, M, walkable, walkH, terrain, update, stats, used, place, lamps: lamps3d, maps: { splat, glow, shade }, exits: place.exits || [] };
+    // the see-through trees' shaders, made ready at the start so the first time they're needed doesn't stutter
+    function precompile(renderer, cam) { for (const mesh of treeMeshes) mesh.material = TM.cut[mesh.userData.tree]; renderer.compile(scene, cam); for (const mesh of treeMeshes) mesh.material = TM.whole[mesh.userData.tree]; renderer.compile(scene, cam); }
+    return { scene, U, M, walkable, walkH, terrain, update, precompile, stats, used, place, lamps: lamps3d, maps: { splat, glow, shade }, exits: place.exits || [] };
   };
 })(window);

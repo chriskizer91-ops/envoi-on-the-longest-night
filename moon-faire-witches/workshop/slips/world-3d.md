@@ -1,0 +1,48 @@
+SLIP: world-3d
+State:    Ready for Chris to try: Wickhollow's square. Next, once he's happy: the jetty, Io's cottage, the Thornwood.
+Branch:   work/world-3d   Commit: (the commit that adds this slip)
+Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
+          engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
+          tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/plan-wickhollow.json
+          moon-faire-witches/workshop/slips/world-3d.md
+          Nothing else changed.
+File for Chris: envoi-3d-wickhollow.html (13 MB, works offline). Drag on the left half of the screen to walk (push far
+          and she jogs), drag on the right half to turn the camera. The map button (top right) shows your painting over
+          the 3D from straight above, with the frame rate and the counts under it; tap it again to go back.
+Done:     Wickhollow's square in 3D at night, laid out on the painting in its own pixels: the cobbled square and the
+          Moonwell (ring of low wall and flower beds, glowing water, iron arch and lantern, two benches), the chapel (rose
+          window, arched door, steps, bell-cote), the churchyard behind its iron railing, Nettie's house and striped stall,
+          Hilde's forge (open side with the anvil, glowing hearth, sign), the house by the bridge, the lower house, the
+          cottage and shed in the south-east garden, the east bridge (paved deck rising over a stone arch, parapets, four
+          lamp pillars) over the river and its falls, the lake and its two jetties, the west stairs, the lane under the
+          garden fence, the south road, 18 lamps, flower beds, barrels, crates, gravestones and 1,044 trees placed from the
+          painting. Moonlight, the lamps' and windows' warm light, halos, the moon in a starless sky, far hills.
+          Io (Moon Faire's, lightest, unchanged) walks it with the walking map's own walk and block areas; the camera
+          follows from behind and above and swings slowly round behind her. The three nearest lamps light her.
+          A reusable engine (world3d/engine/), so each next place is a data file like places/wickhollow.js.
+Checked:  Stills at 412 x 915 and 915 x 412: from straight above beside the painting, and following Io through the square
+          (the well, Nettie's stall, the chapel steps, the forge, the bridge lane, the bridge). 0 page errors.
+          Io from the Moonwell to all 10 edges and doors (chapel, forge, bridge, the nook, the south road, the lower house,
+          the lower jetty, the lane, Nettie's door, the lane by her house), steered by thumb input at 30 frames a second:
+          all reached, 0 frames off the walk, 0 inside a house. Pushed straight at each of the 8 buildings with ground in
+          front for 6 s: 0 frames inside. Nothing solid stands on walkable ground (but see Open 1).
+          Counts: the whole square 248,000 triangles, 139 meshes. In view behind Io: 150,000 to 185,000 triangles and 60
+          to 80 draw calls upright, about 220,000 and 105 on its side; Io herself is 45,000 triangles, 26 calls. Frame time
+          on the Pixel 7a: not measurable headless (software rendering); the page shows it on the painting view. It starts
+          at 1.5 x sharpness and drops a step if it falls under 27 frames a second.
+Chris said: (not yet)
+For the hub: Take moon-faire-witches/world3d/ and this slip; nothing else changed. Build: node moon-faire-witches/tools/
+          patch-io.mjs, then node tools/build.mjs --offline moon-faire-witches/world3d/envoi-3d-wickhollow.html. It reads
+          src/game/maps.js (MAPS.wickhollow) and the texture packs' stand-ins, read only. When Chris's textures land in
+          texture-packs/made/, rebuilding picks them up (the page uses a made texture wherever one is there). Please add
+          the page to moon-faire-witches/README.md's table and to the board.
+Open:     1. The lower house's roof: the walking map lets Io climb the tree and walk the red roof's ridge to the Crescent
+             Locket (Chris's secret way, October 4). The 3D house blocks that strip; it needs a roof walk if the
+             keepsake's path is to stay.
+          2. The townsfolk (Nettie, Hilde, Mayor Gretch) aren't standing in the 3D square yet: src/moon-folk.js could put
+             them there, if Chris wants them next.
+          3. All 15 textures are stand-ins; the timber-and-plaster walls and the bark are the roughest. shared_planks_wall
+             isn't made in any pack yet, so the shed and the lean-to use the boardwalk planks.
+          4. For Chris: the frame rate on his phone (the painting view shows it).
+          5. Headless stills show a faint fixed rectangle on the ground near the bottom left of the upright screen: the
+             software renderer's, not the page's (it stays put with Io hidden and the camera moved).

@@ -1,6 +1,14 @@
 [
  {
-  "name": "start",
+  "name": "top-3d",
+  "top": true
+ },
+ {
+  "name": "top-with-painting",
+  "guide": true
+ },
+ {
+  "name": "walk-1-start",
   "io": [
    777,
    600,
@@ -12,8 +20,53 @@
   ]
  },
  {
-  "name": "guide",
-  "guide": true
+  "name": "walk-2-past-the-well",
+  "to": [
+   690,
+   520
+  ]
+ },
+ {
+  "name": "walk-3-to-nettie",
+  "to": [
+   566,
+   440
+  ]
+ },
+ {
+  "name": "walk-4-the-chapel-steps",
+  "to": [
+   700,
+   330
+  ]
+ },
+ {
+  "name": "walk-5-up-the-steps",
+  "to": [
+   776,
+   250
+  ]
+ },
+ {
+  "name": "walk-6-to-the-forge",
+  "to": [
+   960,
+   360
+  ]
+ },
+ {
+  "name": "walk-7-the-bridge-lane",
+  "to": [
+   1250,
+   395
+  ]
+ },
+ {
+  "name": "walk-8-on-the-bridge",
+  "to": [
+   1440,
+   372
+  ]
  },
  {
   "name": "overview",
@@ -29,62 +82,14 @@
   ]
  },
  {
-  "name": "by-the-forge",
-  "io": [
-   1010,
-   400,
-   2.4
-  ],
-  "cam": [
-   -0.7,
-   null
-  ]
- },
- {
-  "name": "chapel-steps",
-  "io": [
-   776,
-   300,
-   3.14
-  ],
-  "cam": [
-   0,
-   null
-  ]
- },
- {
-  "name": "nettie",
-  "io": [
-   520,
-   440,
-   -2.2
-  ],
-  "cam": [
-   0.9,
-   null
-  ]
- },
- {
-  "name": "bridge",
-  "io": [
-   1300,
-   380,
-   1.57
-  ],
-  "cam": [
-   -1.57,
-   null
-  ]
- },
- {
   "name": "west-stairs",
   "io": [
-   230,
-   520,
+   236,
+   560,
    3.14
   ],
   "cam": [
-   3.14,
+   0.4,
    null
   ]
  },
@@ -92,7 +97,7 @@
   "name": "south-road",
   "io": [
    780,
-   820,
+   840,
    0
   ],
   "cam": [
@@ -101,10 +106,10 @@
   ]
  },
  {
-  "name": "lane",
+  "name": "lower-jetty",
   "io": [
-   500,
-   845,
+   80,
+   732,
    -1.57
   ],
   "cam": [

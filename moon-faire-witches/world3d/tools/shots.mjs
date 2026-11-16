@@ -23,17 +23,29 @@ await page.goto('file://' + page_ + '?test', { waitUntil: 'load', timeout: 24000
 await page.waitForFunction(() => window.__ready || /wrong/.test(document.getElementById('loadmsg').textContent), null, { timeout: 240000 });
 console.log('loaded in', ((Date.now() - t0) / 1000).toFixed(1), 's', await page.evaluate(() => document.getElementById('loadmsg').textContent));
 await page.evaluate(() => { document.getElementById('load').style.display = 'none'; document.getElementById('toast').style.display = 'none'; });
-const info = await page.evaluate(() => ({ stats: window.__w3d.P.stats, used: window.__w3d.P.used }));
-console.log('world:', JSON.stringify(info.stats));
+const info = await page.evaluate(() => ({ stats: window.__w3d.P.stats, used: window.__w3d.P.used, io: window.__w3d.numbers().io }));
+console.log('world:', JSON.stringify(info.stats), '· Io:', info.io, 'triangles');
 console.log('textures:', Object.entries(info.used).map(([k, v]) => k + ' ' + v).join(', '));
 let n = 0;
 for (const p of plan) {
   const r = await page.evaluate(async (p) => {
     const w = window.__w3d;
-    w.guide(!!p.guide);
+    w.guide(!!(p.guide || p.top), !p.top);
     if (p.io) w.setIo(p.io[0], p.io[1], p.io[2]);
     if (p.cam) w.setCam(p.cam[0], p.cam[1], p.cam[2]); else w.C.auto = 0;
+    w.P.scene.updateMatrixWorld();
     if (p.walk) { w.push(p.walk[0], p.walk[1], p.walk[2]); w.step(p.walk[3], 30); w.push(null); }
+    // { "to": [x, y] }: steered there by the thumb's input, turned by the camera, as a phone's would be
+    if (p.to) {
+      const M = w.P.M;
+      for (let f = 0; f < 30 * 40; f++) {
+        const dx = M.x(p.to[0]) - M.x(w.io.px), dz = M.z(p.to[1]) - M.z(w.io.py), L = Math.hypot(dx, dz);
+        if (L < 0.4) break;
+        const fx = -Math.sin(w.C.yaw), fz = -Math.cos(w.C.yaw), rx = Math.cos(w.C.yaw), rz = -Math.sin(w.C.yaw);
+        w.push((dx * rx + dz * rz) / L, -(dx * fx + dz * fz) / L, p.mag || 0.75); w.step(1 / 30, 30, false);
+      }
+      w.push(null);
+    }
     const t0 = performance.now(); const num = w.step(p.settle || 0.5, 30); const ms = (performance.now() - t0);
     const t1 = performance.now(); w.render(); const one = performance.now() - t1;
     return { num, at: [Math.round(w.io.px), Math.round(w.io.py)], one: +one.toFixed(1) };

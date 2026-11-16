@@ -16,7 +16,7 @@
   W3D.walk = async function (opt) {
     const root = opt.root, cv = opt.canvas, place = opt.place;
     const DPR0 = Math.min(window.devicePixelRatio || 1, TEST ? 1 : 1.75);
-    let dpr = DPR0;
+    let dpr = Math.min(DPR0, 1.5);
     const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: TEST });
     renderer.setPixelRatio(dpr); renderer.outputEncoding = THREE.sRGBEncoding; renderer.setClearColor(0x0a0b18, 1);
     const say = opt.say || (() => {});
@@ -34,7 +34,8 @@
       panel(4, 6, 5, 4, 3, 4.2, 3.9, 3.8); panel(-6, 3, 2, 2, 4, 0.8, 0.9, 1.6); panel(-2, 5, -7, 5, 2.5, 2.2, 1.2, 3.6);
       const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(es, 0.03).texture; pm.dispose(); }
     const A = makeMoonIo({ weight: 'lightest' }); A.walkRun = false; scene.add(A.root);
-    let ioTris = 0; A.root.traverse((o) => { if (o.isMesh && o.geometry) ioTris += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; });
+    // her triangles as drawn (her spells' props stay hidden while she walks)
+    const ioDrawn = () => { const shown = (o) => { for (let q = o; q; q = q.parent) if (!q.visible) return false; return true; }; let n = 0; A.root.traverse((o) => { if (o.isMesh && o.geometry && shown(o)) n += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3; }); return Math.round(n); };
     // her light: the moon from above, a cool sky, a violet rim, a soft fill from the camera, and the three lamps nearest her
     const md = P.U.uMoonDir.value;
     scene.add(new THREE.HemisphereLight(0x8a92c8, 0x261c2a, 0.55));
@@ -105,7 +106,7 @@
       top.left = -hw; top.right = hw; top.top = hh; top.bottom = -hh; top.position.set(0, 120, 0); top.up.set(0, 0, -1); top.lookAt(0, 0, 0); top.updateProjectionMatrix();
     }
     const fog0 = [P.U.uFogNear.value, P.U.uFogFar.value];
-    function setGuide(on) { guide.on = on; paintPlane.visible = on; marker.visible = on; P.U.uFogNear.value = on ? 1e4 : fog0[0]; P.U.uFogFar.value = on ? 2e4 : fog0[1]; if (opt.onGuide) opt.onGuide(on); if (on) fitTop(); }
+    function setGuide(on, paint) { guide.on = on; paintPlane.visible = on && paint !== false; marker.visible = on && paint !== false; P.U.uFogNear.value = on ? 1e4 : fog0[0]; P.U.uFogFar.value = on ? 2e4 : fog0[1]; if (opt.onGuide) opt.onGuide(on); if (on) fitTop(); }
 
     // ---- the thumb and the keys ----
     const ring = opt.ring, dot = opt.dot;
@@ -125,7 +126,7 @@
         input.x = dx / RAD; input.y = dy / RAD; input.mag = Math.min(1, L / RAD);
         if (dot) dot.style.transform = 'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px))';
       } else if (input.look && e.pointerId === input.look.id) {
-        C.yaw -= (x - input.look.x) * 0.0065; C.pitch = clamp(C.pitch + (y - input.look.y) * 0.004, 0.2, 1.25); C.pitchSet = true; C.auto = 1.2;
+        C.yaw -= (x - input.look.x) * 0.0065; C.pitch = clamp(C.pitch + (y - input.look.y) * 0.004, 0.06, 1.25); C.pitchSet = true; C.auto = 1.2;
         input.look.x = x; input.look.y = y;
       }
     });
@@ -163,7 +164,7 @@
         const n = Math.max(1, Math.ceil(step / 0.08));
         for (let i = 0; i < n; i++) moved += stepBy(sx * step / n, sz * step / n) * step / n;
         // the camera swings slowly round behind her as she turns (not when she walks toward it)
-        if (go && C.auto <= 0) { const side = Math.sin(io.yaw - (C.yaw + Math.PI)); const facing = Math.cos(io.yaw - (C.yaw + Math.PI)); if (facing > -0.3) C.yaw += Math.atan2(Math.sin(io.yaw + Math.PI - C.yaw), Math.cos(io.yaw + Math.PI - C.yaw)) * Math.min(1, dt * 0.9) * Math.abs(side) * (io.speed / SPEED.jog + 0.4); }
+        if (go && C.auto <= 0) { const side = Math.sin(io.yaw - (C.yaw + Math.PI)); const facing = Math.cos(io.yaw - (C.yaw + Math.PI)); if (facing > -0.3) C.yaw += Math.atan2(Math.sin(io.yaw + Math.PI - C.yaw), Math.cos(io.yaw + Math.PI - C.yaw)) * Math.min(1, dt * 0.45) * Math.abs(side) * (io.speed / SPEED.jog * 0.6 + 0.3); }
       }
       if (C.auto > 0) C.auto -= dt;
       io.moving = io.speed > 0.08 && moved > 0.0005; io.jog = io.speed > (SPEED.walk + SPEED.jog) / 2;
@@ -202,7 +203,7 @@
         if (opt.onStats) opt.onStats(numbers());
       }
     }
-    function numbers() { const i = renderer.info.render; return { fps: Math.round(perf.fps), ms: +perf.ms.toFixed(1), triangles: i.triangles, calls: i.calls, dpr, world: P.stats.triangles, io: Math.round(ioTris) }; }
+    function numbers() { const i = renderer.info.render; return { fps: Math.round(perf.fps), ms: +perf.ms.toFixed(1), triangles: i.triangles, calls: i.calls, dpr, world: P.stats.triangles, io: ioDrawn() }; }
 
     let last = null, clock = 0;
     function frame(now) {
@@ -212,7 +213,7 @@
     }
     window.addEventListener('resize', layout);
     layout(); placeCamera(0, true);
-    renderer.compile(scene, cam);
+    P.precompile(renderer, cam);
     if (!TEST) requestAnimationFrame(frame);
 
     // the page's hooks, for headless stills and the checks (?test: the clock only moves when told)
