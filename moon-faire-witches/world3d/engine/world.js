@@ -39,24 +39,25 @@
       roof: 'shared_roof_tiles_red', wood: 'shared_boardwalk_planks', deck: 'shared_boardwalk_planks', pave: 'wick_bridge_paving', cloth: 'shared_awning_stripes',
       soil: 'shared_dirt_track', rock: 'thorn_rock_mossy', leaves: 'wick_leaf_canopy', bark: 'shared_bark_oak' }, place.surfaces || {});
     const ST = (k) => T(SURF[k]);
+    // place.tints: a colour to multiply any surface by (stone, dry, timber, planks, roof, wood, deck, pave, cloth, rock, leaves, firs, bush)
     const TINT = Object.assign({ leaves: 0xd8ffee, firs: 0xa8c8c0, bush: 0xd8ffe8, wood: 0xc0a088 }, place.tints || {});
     const MAT = {
-      stone: m({ map: ST('stone'), rep: 2.4, cut: true, shade: 0.35 }),
-      dry: m({ map: ST('dry'), rep: 1.5, cut: true, shade: 0.5 }),
-      timber: m({ map: ST('timber'), rep: 3.0, cut: true, shade: 0.3 }),
-      planks: m({ map: ST('planks'), rep: 2.0, repV: 2.0, cut: true, shade: 0.4 }),
-      roof: m({ map: ST('roof'), rep: 2.0, cut: true, side: DS, shade: 0.15 }),
+      stone: m({ tint: TINT.stone, map: ST('stone'), rep: 2.4, cut: true, shade: 0.35 }),
+      dry: m({ tint: TINT.dry, map: ST('dry'), rep: 1.5, cut: true, shade: 0.5 }),
+      timber: m({ tint: TINT.timber, map: ST('timber'), rep: 3.0, cut: true, shade: 0.3 }),
+      planks: m({ tint: TINT.planks, map: ST('planks'), rep: 2.0, repV: 2.0, cut: true, shade: 0.4 }),
+      roof: m({ tint: TINT.roof, map: ST('roof'), rep: 2.0, cut: true, side: DS, shade: 0.15 }),
       wood: m({ map: ST('wood'), rep: 1.1, tint: TINT.wood, cut: true, shade: 0.5 }),
-      deck: m({ map: ST('deck'), rep: 2.2, cut: true, shade: 0.6 }),
-      pave: m({ map: ST('pave'), rep: 2.6, cut: true, shade: 0.6 }),
+      deck: m({ tint: TINT.deck, map: ST('deck'), rep: 2.2, cut: true, shade: 0.6 }),
+      pave: m({ tint: TINT.pave, map: ST('pave'), rep: 2.6, cut: true, shade: 0.6 }),
       iron: m({ tint: 0x2a2632, spec: 0.6, cut: true, shade: 0.5 }),
-      cloth: m({ map: ST('cloth'), rep: 1, cut: true, side: DS, shade: 0.3 }),
+      cloth: m({ tint: TINT.cloth, map: ST('cloth'), rep: 1, cut: true, side: DS, shade: 0.3 }),
       glass: m({ lit: 0, cut: true }),
       win: m({ map: pics.win, lit: 0 }), winDark: m({ map: pics.winDark, shade: 0.3 }), winColour: m({ map: pics.winColour, lit: 0 }), rose: m({ map: pics.rose, lit: 0 }),
       door: m({ map: pics.door, shade: 0.4 }), doorArch: m({ map: pics.doorArch, alphaTest: 0.5, shade: 0.4 }), doorArch2: m({ map: pics.doorArch2, alphaTest: 0.5, shade: 0.4 }),
       produce: m({ map: pics.produce, shade: 0.3 }), moonwater: m({ map: pics.moonwater, lit: 0 }),
       soil: m({ map: ST('soil'), rep: 1.5, tint: 0x6a5a50, shade: 0.7 }),
-      rock: m({ map: ST('rock'), rep: 1.8, shade: 0.7, cut: true }),
+      rock: m({ tint: TINT.rock, map: ST('rock'), rep: 1.8, shade: 0.7, cut: true }),
       hills: m({ lit: 0, nofog: true, side: DS, glow: 0 }),
       leafBush: m({ map: ST('leaves'), rep: 1, tint: TINT.bush, cut: true, shade: 0.6 }),
       bark: m({ map: ST('bark'), rep: 1.2, cut: true, shade: 0.6 }),
@@ -91,12 +92,14 @@
     let walkGrid = null, walkPic = null, solidCount = 0;  // made at the end, once everything solid is known: 1 where her feet can stand, a cell every 2 px
     const walkable = (x, y) => { if (!walkGrid) return inAny(WALK, x, y) && !inAny(BLOCK, x, y); const G = walkGrid, i = Math.floor((x - G.x0) / G.c), j = Math.floor((y - G.y0) / G.c); return i >= 0 && j >= 0 && i < G.w && j < G.h && G.d[j * G.w + i] === 1; };
 
-    // the steps: each tread's top, so Io's feet stand on them
+    // the steps: each tread's top, so Io's feet stand on them. A tread is as high as the ground under its highest edge,
+    // so the slope never pokes up through it
+    const highest = (xa, ya, xb, yb, low) => { let h = low ? 1e9 : -1e9; for (let u = 0; u <= 2; u++) for (let v = 0; v <= 2; v++) { const g = gh(xa + (xb - xa) * u / 2, ya + (yb - ya) * v / 2); h = low ? Math.min(h, g) : Math.max(h, g); } return h; };
     const STEPS = (place.steps || []).map((s) => {
       const [x0, y0, x1, y1] = s.r, n = s.n, treads = [], ew = s.down === 'e' || s.down === 'w';
       for (let i = 0; i < n; i++) {
-        if (ew) { const xa = x0 + (x1 - x0) * i / n, xb = x0 + (x1 - x0) * (i + 1) / n; treads.push({ xa, xb, ya: y0, yb: y1, top: s.tops ? s.tops[i] : gh((xa + xb) / 2, (y0 + y1) / 2) }); }
-        else { const ya = y0 + (y1 - y0) * i / n, yb = y0 + (y1 - y0) * (i + 1) / n; treads.push({ xa: x0, xb: x1, ya, yb, top: s.tops ? s.tops[i] : gh((x0 + x1) / 2, (ya + yb) / 2) }); }
+        if (ew) { const xa = x0 + (x1 - x0) * i / n, xb = x0 + (x1 - x0) * (i + 1) / n; treads.push({ xa, xb, ya: y0, yb: y1, top: s.tops ? s.tops[i] : highest(xa, y0, xb, y1) }); }
+        else { const ya = y0 + (y1 - y0) * i / n, yb = y0 + (y1 - y0) * (i + 1) / n; treads.push({ xa: x0, xb: x1, ya, yb, top: s.tops ? s.tops[i] : highest(x0, ya, x1, yb) }); }
       }
       return { x0, x1, y0, y1, treads, mat: s.mat, ew };
     });
@@ -417,7 +420,8 @@
     for (const s of STEPS) {
       for (const t of s.treads) {
         const xa = X(t.xa), xb = X(t.xb), za = Z(t.ya), zb = Z(t.yb), sm = s.mat || 'stone';
-        B.box(sm, (xa + xb) / 2, t.top - 0.5, (za + zb) / 2, xb - xa + (s.ew ? 0.02 : 0), 0.5, zb - za + (s.ew ? 0 : 0.02), 0, [0.95, 0.93, 0.98]);
+        const deep = Math.max(0.5, t.top - highest(t.xa, t.ya, t.xb, t.yb, true) + 0.15);   // down to the lowest ground under it
+        B.box(sm, (xa + xb) / 2, t.top - deep, (za + zb) / 2, xb - xa + (s.ew ? 0.02 : 0), deep, zb - za + (s.ew ? 0 : 0.02), 0, [0.95, 0.93, 0.98]);
         // the cheeks either side
         if (s.ew) { B.box(sm, (xa + xb) / 2, t.top - 0.5, za - 0.18, xb - xa + 0.02, 0.8, 0.36, 0, [0.8, 0.78, 0.82]); B.box(sm, (xa + xb) / 2, t.top - 0.5, zb + 0.18, xb - xa + 0.02, 0.8, 0.36, 0, [0.8, 0.78, 0.82]); }
         else { B.box(sm, xa - 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]); B.box(sm, xb + 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]); }

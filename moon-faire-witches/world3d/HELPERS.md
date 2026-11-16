@@ -25,7 +25,7 @@ Draw the walk and block areas over the painting before placing anything.
   from the painting, lawns, buildings (footprints just off the walk area, fronts facing the way the painting shows),
   walls, steps, lamps, jetties, props, flowers, lights, `checks` (from the start to every exit and door), `treeGen`.
   `surfaces` picks the texture for each kind of surface (stone, dry, timber, planks, roof, wood, deck, pave, cloth, soil,
-  rock, leaves, firs, bark) and `ground` the four ground textures; `tints` and `night` and `ground.grassTint` (also `cobTint`, `dirtTint`, `paveTint`) tune colours
+  rock, leaves, firs, bark) and `ground` the four ground textures; `tints` (any surface: `stone`, `rock`, `roof`… as a colour to multiply by) and `night` and `ground.grassTint` (also `cobTint`, `dirtTint`, `paveTint`) tune colours
   (a snowy place wants `grassTint: [1, 1, 1]` and its snow as the ground's grass).
   Anything the engine has no field for (tents, a campfire, boats, a cart, a standing stone, a ruined arch), make in
   `extra(K)`: `K.B` is the geometry builder (`box`, `quad`, `tri`, `cyl`, `geom`), `K.X`/`K.Z` turn pixels into metres,
@@ -41,7 +41,7 @@ Draw the walk and block areas over the painting before placing anything.
   or paving over part of the ground, under the walk too), `noRocks: [[x0, y0, x1, y1]]` (no shore boulders there), jetties
   with `posts: false`, a roof of its own texture with `roof: { mat: '<name>' }` and
   `extraMats: { '<name>': { tex: '<texture id>', rep, tint, side: 'double' } }` (thatch, another bark; leave out `tex` for a plain colour, and `emis`, `lit`, `glow`, `spec`, `cut: false` for things that glow or shouldn't thin away near Io), steps that run any
-  way (`down: 's' | 'n' | 'e' | 'w'`, `mat`, `tops: [...]` for each tread's height), dormers with `dark: true`, and `startYaw`
+  way (`down: 's' | 'n' | 'e' | 'w'`, `mat`, `tops: [...]` for each tread's height; otherwise each tread stands as high as the ground under its high edge and fills down to the ground, so a steep slope never pokes through), dormers with `dark: true`, and `startYaw`
   (which way the camera first looks: 0 is north, as the painting; turn by radians).
 - Each texture written out in full with double quotes, as in `places/wickhollow.js` (the offline build only packs
   pictures it finds as plain paths): `made: "./../texture-packs/made/<id>.png"` and `stand: "./../texture-packs/<group>/<place>/stand-in/<id>.png"`.
