@@ -481,7 +481,8 @@
     function strike(h, f, d, hits, burn) {
       if (!alive(f)) f = firstFoe();
       if (!f) return;
-      if (f.evade && d.target === 'foe') { f.evade = 0; emit({ t: 'miss', from: h.key, to: f.key }); return; }
+      // Kore never misses (Chris, November 16): a foe's dodge (a wisp's Gutter) is used up on her blow, and her blow lands
+      if (f.evade && d.target === 'foe') { f.evade = 0; if (h.id !== 'jester') { emit({ t: 'miss', from: h.key, to: f.key }); return; } }
       const moon = h.moonNext && !d.element, el = d.element || (moon ? 'moon' : null);
       if (burn === undefined) burn = sunburnOn(h);
       let cut = false;
