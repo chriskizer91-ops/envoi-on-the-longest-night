@@ -186,7 +186,7 @@
     ],
     flowers: [],
     // the only warm light: the two lanterns at the square's near corners (their posts are built in extra())
-    lights: [[540, 682, 150, 1.25, 'warm'], [995, 684, 150, 1.25, 'warm']],
+    lights: [[540, 682, 140, 1.15, 'warm'], [995, 684, 140, 1.15, 'warm']],
     trees: 'bogmire-heart',
     extraTrees: [],
 
@@ -263,6 +263,9 @@
         const k = 0.64 + R() * 0.08, jitter = (R() - 0.5) * 0.012;
         for (const [a, b] of segs) slab('deck', X(a), Z(ya), X(b), Z(yb), jitter, 0.22, DK, false, [k, k, k * 1.03]);
       }
+      // dark under each gap: the deck's shadow, so the lanterns' light doesn't show on the water through the broken boards
+      for (const [a, b, c, d] of HOLES) { const x0 = X(Math.max(SQUARE[0] + 2, a - 8)), x1 = X(Math.min(SQUARE[2] - 2, c + 8)), z0 = Z(b - 8), z1 = Z(d + 8);
+        B.quad('iron', [x0, -0.34, z1], [x1, -0.34, z1], [x1, -0.34, z0], [x0, -0.34, z0], [0, 0, 1, 1], [0.45, 0.45, 0.5]); }
       // the square's stilts: round its edge, and a few under the middle
       stilts(SQUARE, 0, { middle: true });
       // loose boards in the broken places: half sunk, tipped, or lying across a gap
@@ -337,7 +340,7 @@
       for (const b of BUILDINGS) {
         if (!b.red) continue;
         const [px0, py0, px1, py1] = b.fp, x0 = X(px0), x1 = X(px1), z0 = Z(py0), z1 = Z(py1), cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, w = x1 - x0, d = z1 - z0;
-        const E = b.floor + b.walls.reduce((a, s) => a + s.h, 0), rise = b.roof.rise, o = b.roof.over + 0.04, up = 0.07, T = 1 / 3.4;
+        const E = b.floor + b.walls.reduce((a, s) => a + s.h, 0), rise = b.roof.rise, o = b.roof.over + 0.04, up = 0.07, T = 1 / 2.6;
         if (b.roof.ridge === 'ns') {
           const s = rise / (w / 2), ye = E - o * s + up, yr = E + rise + up, L = d + 2 * o, sl = Math.hypot(w / 2 + o, rise + o * s);
           B.quad('cloth', [x0 - o, ye, z0 - o], [x0 - o, ye, z1 + o], [cx, yr, z1 + o], [cx, yr, z0 - o], [0, 0, L * T, sl * T]);
@@ -413,7 +416,7 @@
         for (let i = 0; i < 6; i++) K.halo(x + i * 0.32 + (R() - 0.5) * 0.3, top + i * 0.62, z - i * 0.12, 0.7 + i * 0.42, [0.14 - i * 0.012, 0.15 - i * 0.012, 0.19 - i * 0.014]);
       }
       // ---- drifts of green mist over the water ----
-      for (const [px, py, s] of MIST) K.halo(X(px), WATER_Y + s * 0.22, Z(py), s, [0.1, 0.26, 0.19]);
+      for (const [px, py, s] of MIST) K.halo(X(px), WATER_Y + s * 0.2, Z(py), s * 1.5, [0.09, 0.24, 0.18]);
       BOX.dispose();
     },
   };
