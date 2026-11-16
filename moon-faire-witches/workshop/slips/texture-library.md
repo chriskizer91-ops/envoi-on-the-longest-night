@@ -1,6 +1,6 @@
 SLIP: texture-library
 State:    Ready for the hub (Chris to approve the 16 ready textures)
-Branch:   work/texture-library   Commit: (see the branch's newest commit)
+Branch:   work/texture-library   Commit: 6e107d8 (and the slip's own commit after it)
 Files:    moon-faire-witches/texture-library/ (new: README.md, library.json, matches.json, tools/)
           moon-faire-witches/workshop/slips/texture-library.md
           Nothing else changed. No pictures were added to the repository.
