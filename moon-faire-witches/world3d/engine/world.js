@@ -926,7 +926,26 @@
       if ((b[2] - b[0]) * (b[3] - b[1]) < 1) continue;
       camSolids.push({ p: sd.poly, b, y0: sd.y0, y1: sd.y1 });
     }
+    // ---- taking the place down again (a zone page walks on to the next place without a reload: world3d/game/): every
+    // geometry, material and texture the place made is let go, and its painted canvases emptied. The walker takes its own
+    // things (Io, her lights, the guide) out of the scene first ----
+    function dispose() {
+      const geos = new Set(), mats = new Set(), texs = new Set();
+      const addT = (t) => { if (t && t.isTexture) texs.add(t); };
+      const addM = (mt) => { if (!mt || mats.has(mt)) return; mats.add(mt); for (const k in mt) addT(mt[k]); for (const k in mt.uniforms || {}) addT(mt.uniforms[k] && mt.uniforms[k].value); };
+      scene.traverse((o) => { if (o.geometry) geos.add(o.geometry); [].concat(o.material || []).forEach(addM); });
+      for (const set of [MAT, TM.cut, TM.whole]) for (const k in set) addM(set[k]);
+      addM(groundMat);
+      for (const set of [tex, pics, groundTex]) for (const k in set) addT(set[k]);
+      addT(U.uGlow.value); addT(U.uShade.value);
+      const cvs = [splat, glow, shade, walkPic];
+      texs.forEach((t) => { if (t.image && t.image.getContext) cvs.push(t.image); t.dispose(); });
+      geos.forEach((g) => g.dispose()); mats.forEach((mt) => mt.dispose());
+      for (const c of cvs) if (c) c.width = c.height = 0;
+      while (scene.children.length) scene.remove(scene.children[0]);
+      U.uGlow.value = U.uShade.value = null; walkGrid = null; walkPic = null;
+    }
     return { scene, U, M, walkable, walkH, terrain, update, precompile, stats, used, place, lamps: lamps3d, items, takeItem, maps: { splat, glow, shade }, exits: place.exits || [], camSolids,
-      walkPic: () => walkPic, walkRect: [WX0, WY0, WX1, WY1] };
+      walkPic: () => walkPic, walkRect: [WX0, WY0, WX1, WY1], dispose };
   };
 })(window);
