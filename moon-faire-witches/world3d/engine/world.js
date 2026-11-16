@@ -907,7 +907,13 @@
         U.uCam.value.copy(cam.position); U.uIo.value.set(ioPos.x, ioPos.y + 1.0, ioPos.z); U.uCut.value = 1;
         // nothing past the fog is drawn (the trees' patches and the ground's)
         const far = U.uFogFar.value + 6;
-        for (const mesh of cullables) { const s = mesh.geometry.boundingSphere; mesh.visible = s.center.distanceTo(cam.position) - s.radius < far; }
+        // by ground distance to the patch's nearest corner, so a tall patch of trees goes when its ground does (no pale
+        // crowns standing past the fog's end)
+        for (const mesh of cullables) {
+          const bb = mesh.geometry.boundingBox || (mesh.geometry.computeBoundingBox(), mesh.geometry.boundingBox);
+          const dx = Math.max(bb.min.x - cam.position.x, 0, cam.position.x - bb.max.x), dz = Math.max(bb.min.z - cam.position.z, 0, cam.position.z - bb.max.z);
+          mesh.visible = Math.hypot(dx, dz) < far;
+        }
         // the tree patches near the line from the camera to Io get the thinning-away
         seg.subVectors(U.uIo.value, cam.position); const L2 = seg.lengthSq();
         for (const mesh of treeMeshes) {
