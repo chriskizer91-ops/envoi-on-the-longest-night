@@ -23,21 +23,29 @@ function makeMoonIo(opts) {
   const ACTIONS = {};
   for (const n in SEC) { const d = S[n] || 1, q = SEC[n]; ACTIONS[n] = Object.freeze({ dur: d, hits: (q.hits || []).map((x) => x / d), cues: (q.cues || []).map((x) => x / d), hold: !!q.hold, interrupt: n === 'hit', near: q.near || 0 }); }
   ACTIONS.e_guard = Object.freeze({ dur: 0.6, hits: [], cues: [], hold: true, interrupt: false, near: 0 });
+  // Envoi's battle screen asks every hero for its own move names: each is played by the nearest move of hers
+  const ALIAS = { transform: 'e_sky', hurt: 'hit', block: 'hit', victory: 'win', kneel: 'down', summon: 'e_sky', cast: 'e_bless', throw: 'e_throw', mend: 'e_bless', moon: 'e_moon', combo: 'crescent', briar: 'e_grasp', lunge: 'crescent', guardStep: 'e_guard' };
+  for (const k in ALIAS) if (!ACTIONS[k]) ACTIONS[k] = ACTIONS[ALIAS[k]];
+  ACTIONS.rise = Object.freeze({ dur: 1.4, hits: [], cues: [], hold: false, interrupt: false, near: 0 });
   Object.freeze(ACTIONS);
   const A = {
-    root: m.root, fx: null, model: m, ACTIONS, state: {}, trance: 0, moon: 0, dash: 0, flameLight: { intensity: 0 },
+    root: m.root, fx: null, model: m, witch: true, ACTIONS, state: {}, trance: 0, moon: 0, dash: 0, flameLight: { intensity: 0 },
     action: null, stance: null, weight: opts.weight || 'lightest', triangles: m.triangles, practice: !!opts.practice, frozen: false,
   };
   let cur = null, guarding = false, downHeld = false;
   A.play = (name, force) => {
+    if (name === 'rise') { if (cur === 'down') A.down(false); else m.play('idle'); return true; }       // she gets up: her fall's own move finishes
+    if (ALIAS[name] && !SEC[name]) name = ALIAS[name];
+    if (name === 'down' && cur === 'down') return true;
     if (!ACTIONS[name]) return false;
     if (cur && !force && cur !== 'e_guard' && cur !== 'down') return false;
     downHeld = false; A.frozen = false;
-    m.play(name); cur = name; A.action = name; if (name !== 'e_guard') guarding = false;
+    m.play(name); cur = name; A.action = name === 'down' ? 'kneel' : name; if (name !== 'e_guard') guarding = false;
     return true;
   };
   Object.defineProperty(A, 'progress', { get() { if (!cur) return -1; const a = ACTIONS[cur]; return Math.min(1, m.moveT / a.dur); } });
   Object.defineProperty(A, 'busy', { get() { return !!cur && cur !== 'e_guard' && !(cur === 'down' && downHeld); } });
+  Object.defineProperty(A, 'actionName', { get() { return cur; } });
   Object.defineProperty(A, 'time', { get() { return cur ? m.moveT : 0; } });
   A.guard = (on) => { guarding = !!on; if (on) A.play('e_guard', true); else if (cur === 'e_guard') { cur = null; A.action = null; m.play('idle'); } };
   A.down = (on) => { if (on) { A.play('down', true); } else if (cur === 'down') { downHeld = false; A.frozen = false; } };       // getting up: her own move finishes

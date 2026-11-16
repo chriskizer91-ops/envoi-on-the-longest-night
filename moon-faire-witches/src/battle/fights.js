@@ -1,0 +1,296 @@
+// fights.js: every fight in the game as a battle screen config (src/battle/screen.js, in its game mode). The story's set
+// fights carry the words and settings of their demo pages (first-fight, great-wraith, dawnroost, halcyon-ambush,
+// finale); wild fights roll a pack from the band (BattleSim.wildPack: the band's packs, the Bramble Horror among them,
+// and in the last band, now and then, the Bramble Colossus) at levels in the band's range and play on the band's painting. The party comes in as it stands: its level, HP, MP and the story's
+// flags, with one of each herb it carries to use (the menu shows how many it carries). GameFights.config(kind, party,
+// opts) -> the cfg for BattleScreen.start, without `game` (the game adds it).
+//   kind: 'first' | 'wild' | 'greatWraith' | 'dawnroost' | 'halcyon' | 'finale'
+//   party: { level, xp, hp: { io, sol }, mp, herbs, flags, items } (hp and mp null mean full; items: the keepsakes found
+//            and who wears each, keepsakes.js)
+//   opts: { band, scene, seen, pack } for a wild fight (seen: the band's wild fights so far; pack: a set pack, for tests)
+// Needs rules.js, sim.js, the models and the stage scenes. Defines window.GameFights.
+// The new battles (ARENA below): opts also takes, for any fight, arena (true or false: fought in its arena or on its flat
+// painting, whatever ARENA says) and weather (in an arena: 'clear', 'rain' or 'storm'; by default the wilds roll it).
+(function () {
+  'use strict';
+  const RL = () => window.BattleRules, SIM = () => window.BattleSim;
+  // where the party and the foes stand on each painting (painting pixels)
+  const PLACES = {
+    'night-square': { io: [560, 812], sol: [650, 868], slots: [[860, 805], [950, 765], [925, 885]] },
+    'thornwood-bridge': { io: [600, 760], sol: [690, 815], slots: [[880, 690], [970, 650], [950, 770]] },
+    'gloamwood-road': { io: [560, 800], sol: [650, 860], slots: [[860, 690], [950, 650], [930, 770]] },
+    'warm-road': { io: [560, 800], sol: [650, 860], slots: [[860, 690], [950, 650], [930, 770]] },
+    'northern-crossroads': { io: [560, 690], sol: [645, 752], slots: [[870, 640], [955, 600], [945, 705]] },
+    'frozen-road': { io: [560, 800], sol: [650, 860], slots: [[860, 690], [950, 650], [930, 770]] },
+  };
+  // Moon Faire witches (November 15, 2026): Moon Faire's Io in Io's place and the Jester in Sol's, at their lightest. Each rests
+  // turned well round toward the viewer (the Jester casts out of her left side, so she faces the viewer)
+  const hero = (id, at) => (id === 'io'
+    ? { id: 'io', make: () => { const m = makeMoonIo({ weight: 'lightest' }); m.walkRun = true; return m; }, home: at, yawBias: -0.95, shadow: 0.55, tall: 2.0, kind: 'io' }
+    : { id: 'jester', make: () => makeMoonJester({ weight: 'lightest' }), home: at, yawBias: -1.45, shadow: 0.5, tall: 1.9, kind: 'jester', stop: 0.9 });
+  const VARIANT = { bramble: 'classic', brambleAmbush: 'ambush', brambleTowering: 'towering', brambleAncient: 'ancient' };
+  const bram = (tall, reach, shadow, halfW) => ({ kind: 'bramble', tall, reach, shadow, halfW, yawBias: 0.2, glow: [shadow * 1.1, 0xff3d8a], appearColor: [0.95, 0.35, 0.5] });
+  const FOE_LOOK = {
+    wraith: { kind: 'wraith', shadow: 0.75, tall: 2.3, yawBias: 0.45, glow: [1.6, 0x2cff7a] },
+    wisp: { kind: 'wisp', shadow: 0.3, tall: 1.0, yawBias: 0.9, glow: [0.9, 0xb070ff], state: (u) => ({ level: u.level }) },
+    frostWisp: { kind: 'wisp', shadow: 0.3, tall: 1.0, yawBias: 0.9, glow: [0.9, 0x9fd8ff], state: (u) => ({ level: u.level }) },
+    bramble: bram(1.9, 1.0, 1.6, 1.9), brambleAmbush: bram(1.6, 1.0, 1.7, 1.9), brambleTowering: bram(2.3, 1.1, 1.4, 2.2), brambleAncient: bram(2.7, 1.5, 2.1, 2.9),
+    greatWraith: { kind: 'wraith', shadow: 1.9, tall: 7.4, yawBias: 0.3, glow: [3.6, 0xffa24a], reach: 1.6, near: 3.6, fxScale: 2.8, lights: true },
+    halcyon: { kind: 'halcyon', shadow: 0.62, tall: 2.11, yawBias: 0.15, glow: [1.4, 0x6f9cff], appearColor: [0.45, 0.55, 0.95], stop: 0.95 },
+    noctara: { kind: 'noctara', shadow: 0.8, tall: 2.5, yawBias: 0.25, glow: [1.7, 0x8a5cff], appearColor: [0.65, 0.5, 1], downAct: 'none' },
+    // the Bramble Colossus: about 8 m tall and 11 m across; the heroes stop well short of its mound, and the camera frames
+    // it by its width
+    colossus: { kind: 'colossus', tall: 7.8, reach: 3.2, shadow: 3.6, halfW: 5.4, yawBias: 0, glow: [3.8, 0xff3d8a], appearColor: [0.95, 0.35, 0.5], fxScale: 2.2 },
+  };
+  // where the party stands against the Colossus on each painting: about 8.5 m from it, as on its bench (its arms reach 9 m)
+  const COLOSSUS_AT = { 'frozen-road': { io: [638, 704], sol: [712, 738], slot: [974, 557] } };
+
+  // ---------- the new battles: every fight in an arena (src/fx/arena.js, src/stage/arena-*.js) ----------
+  // ARENA is the switch for the game. false: its fights are fought on the flat paintings, as they always have been. true:
+  // each is fought in its place's arena, Chris's painting far off behind live 3D ground, as in Colossus in the Meadow.
+  // On since October 5, at Chris's yes ("Yes, switch them on"; docs/design-decisions.md); false and the nine script lines
+  // out of game.html bring the flat paintings back. To switch, set it here, and keep the arena's scripts in
+  // putting-it-all-together/game.html after
+  // battlefield.js (src/fx/arena.js, then the eight src/stage/arena-*.js); envoi-final-draft/arena/README.md has the
+  // lines. Without them the switch does nothing. The arena demo (demos/arena.html) asks for arenas itself (opts.arena),
+  // whatever ARENA says. The first fight keeps the Night square's painting either way (October 3, question 23): its
+  // camera looks down on the square from high above, and no ground of ours could stand in front of it.
+  const ARENA = true;
+  // which arena each fight is fought in: each band's wilds and each gate's place (art request 11)
+  const ARENA_OF = { wild: { 1: 'river-glade', 2: 'warm-roads-moor', 3: 'eldergrove', 4: 'frostmere' }, colossus: 'frostmere', greatWraith: 'bogmire', dawnroost: 'dawnroost', halcyon: 'crossroads', finale: 'dead-moonwell' };
+  // where the party and the foes stand in an arena, in metres (x across; z toward the camera, which stands at z 18, so
+  // a negative z is farther away): the heroes lower left and the foes upper right, as on the paintings
+  const ARENA_AT = {
+    pack: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[2.0, -4.6], [4.2, -7.2], [4.4, -3.0]] },
+    // the Bramble Horror alone: the party a little nearer, as on the paintings
+    lone: { io: [-2.2, -1.4], sol: [-0.8, -0.2], slots: [[2.6, -5.6]] },
+    great: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[3.0, -8.0]] },
+    // the Bramble Colossus: about 9 m from the party, as on its bench
+    colossus: { io: [-2.2, -2.2], sol: [-0.8, -1.0], slots: [[3.2, -10.6]] },
+    knight: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[2.6, -4.4]] },
+    finale: { io: [-2.6, -0.6], sol: [-1.2, 0.6], slots: [[1.6, -3.6], [3.6, -5.6]] },
+  };
+  // a fight's config moved into its arena: the place, the party and the foes where they stand there, and the weather
+  // (opts.weather, or in the wilds now and then rain or a storm, as the place says)
+  function inArena(c, place, at, opts) {
+    const A = window.ARENAS && window.ARENAS[place]; if (!A || !window.makeArenaField) return c;
+    c.arena = place; c.heroes[0].home = at.io; if (c.heroes[1]) c.heroes[1].home = at.sol; c.slots = at.slots;
+    c.weather = opts.weather || (opts.wilds && A.wild && Math.random() < A.wild ? (Math.random() < 0.5 ? 'rain' : 'storm') : 'clear');
+    return c;
+  }
+  function makeFoe(id, level, i) {
+    if (id === 'wraith') return makeWraith({ level });
+    if (id === 'greatWraith') return makeWraith({ level, great: true });
+    if (id === 'wisp' || id === 'frostWisp') return makeWisp({ seed: i + 1, frost: id === 'frostWisp' });
+    if (VARIANT[id]) return makeBramble({ variant: VARIANT[id], level });
+    if (id === 'colossus') return makeBrambleColossus({ level });
+    if (id === 'halcyon') return makeHalcyon({});
+    if (id === 'noctara') return makeNoctara({});
+    throw new Error('no foe ' + id);
+  }
+  // the party as the engine takes it: each hero's level, HP and MP as they stand, and what the keepsakes she wears add
+  // (keepsakes.js; the balance never counts on them)
+  const K = () => window.Keepsakes;
+  function partyOf(P, solo) {
+    const p = [{ id: 'io', level: P.level }];
+    if (P.hp && P.hp.io != null) p[0].hp = P.hp.io;
+    if (P.mp != null) p[0].mp = P.mp;
+    if (K()) wearing(p[0], K().gear(P, 'io'));
+    if (!solo && P.flags && P.flags.party) {
+      const s = { id: 'jester', level: P.level }; if (P.hp && P.hp.jester != null) s.hp = P.hp.jester;
+      if (K()) wearing(s, K().gear(P, 'sol'));
+      p.push(s);
+    }
+    return p;
+  }
+  // a hero's keepsakes in the engine's terms (engine.js, its heroes): items.js gives them in percent
+  function wearing(h, g) {
+    const pc = (x) => 1 + x / 100;
+    if (g.heal) h.healMul = pc(g.heal);
+    if (g.hp) h.hpMul = pc(g.hp);
+    if (g.might) h.dmgMul = pc(g.might);
+    if (g.mp) h.mpMul = pc(g.mp);
+    if (g.trance) h.tranceMul = pc(g.trance);
+    if (g.heat) h.heat = Math.min(100, g.heat);
+    if (g.herbHeal) h.herbMul = pc(g.herbHeal);
+    if (g.regen) h.regen = g.regen / 100;
+    if (g.sunder) h.sunderPlus = g.sunder;
+    if (g.stoop) h.stoopMul = pc(g.stoop);
+    if (g.bigBlows) h.warnedMul = 1 - g.bigBlows / 100;
+    if (g.frost) h.frostCut = g.frost / 100;
+    return h;
+  }
+  // running from a pack: how often it works with the party's keepsakes (the Bogstriders), else the engine's one in two
+  const fleeOf = (P) => (K() && K().party(P).flee) || undefined;
+  const base = (scene, P, solo) => {
+    const at = PLACES[scene] || PLACES['gloamwood-road'];
+    const heroes = [hero('io', at.io)]; if (!solo && P.flags.party) heroes.push(hero('jester', at.sol));
+    return {
+      scene, level: P.level, xp: P.xp || 0, heroes, slots: at.slots, foeLook: FOE_LOOK, makeFoe,
+      makeLunara: () => makeLunara({}), makeEnvoi: P.flags.envoi ? () => makeEnvoi({}) : undefined,
+    };
+  };
+  const flagsOf = (P, extra) => Object.assign({}, P.flags, extra || {});
+  // a fight may use each herb once (rules.js BATTLE_USE), whatever the party carries; the menu shows what it carries
+  const bagOf = (P) => {
+    const herbs = {}, have = P.herbs || {};
+    for (const id in have) if (have[id] > 0) herbs[id] = Math.min(have[id], window.BattleRules.BATTLE_USE);
+    return { herbs, carried: Object.assign({}, have) };
+  };
+
+  function config(kind, P, opts) {
+    opts = opts || {};
+    const S = SIM();
+    // in an arena (the switch above, or opts.arena from the arena demo)
+    const arena = opts.arena != null ? !!opts.arena : ARENA, wilds = Object.assign({ wilds: true }, opts);
+    if (kind === 'wild') {
+      // opts.seen: how many of the band's wild fights the party has had (the Colossus never comes in the first few)
+      const band = opts.band || 1, rand = Math.random;
+      const pack = opts.pack || S.wildPack(band, rand, opts.seen);
+      const foes = pack.map((id) => ({ id: S.formOf(id, band, rand), level: S.wildLevel(band, rand) }));
+      if (foes[0].id === 'colossus') return colossus(P, foes, opts);
+      const scene = opts.scene || 'gloamwood-road';
+      const c = base(scene, P);
+      const lone = foes[0].id.startsWith('bramble');
+      if (lone) { const at = PLACES[scene]; c.heroes[0].home = [at.io[0] + 40, at.io[1] - 50]; if (c.heroes[1]) c.heroes[1].home = [at.sol[0] + 40, at.sol[1] - 50]; c.slots = [at.slots[0]]; }
+      if (arena) inArena(c, ARENA_OF.wild[band], lone ? ARENA_AT.lone : ARENA_AT.pack, wilds);
+      return Object.assign(c, {
+        fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), ...bagOf(P), ends: { canFlee: true }, flee: fleeOf(P), reward: window.BattleRules.WILD_REWARD }),
+        introMsg: lone ? (fs) => (fs[0].id === 'brambleAmbush' ? 'A low blackberry thicket grows over the road, heavy with fruit.' : 'A blackberry thicket stands by the road, lusher than it should be, and heavy with fruit.') : undefined,
+        introAfter: lone ? (fs) => (fs[0].id === 'brambleAmbush' ? 'It was never a thicket. It strikes before anyone can move.' : fs[0].id === 'brambleAncient' ? 'The ground heaves. Old woody horns rise out of its crown: an Ancient Crown.' : 'The ground heaves, its roots flare, and its canes rise toward the party.') : undefined,
+        quickIntro: !lone,
+        attackText: (fs) => (lone ? 'The ' + fs[0].def.form + ' attacks!' : fs.length > 1 ? 'The foes close in!' : 'The ' + fs[0].name + ' attacks!'),
+        winMoth: lone ? 'It thrashes once more, then collapses flat, drops its fruit, withers brown and crumbles away.' : undefined,
+        winText: lone ? 'The thicket is only dead canes and fallen fruit now.' : 'The souls go home as pale moths, and the road is quiet again.',
+        loseText: 'The party falls. They wake at the last rest with everything they had.',
+      });
+    }
+    if (kind === 'first') {
+      const c = base('night-square', P, true);
+      c.slots = [[860, 800]]; c.foeLook = { wraith: Object.assign({}, FOE_LOOK.wraith, { shadow: 0.8, yawBias: 0.38 }) };
+      return Object.assign(c, {
+        bridge: true,
+        // the first battle's tips, once each (handoff, section 5)
+        tips: {
+          menu: 'Io’s Turn gauge is full: pick a command, then its target. While anyone acts or chooses, every gauge waits.',
+          trance: 'On her next turn her power wakes: Moonlore costs half, and Moonlight strikes with all of it.',
+        },
+        fight: () => ({ party: [Object.assign(partyOf(P, true)[0], { atb: 0.6 })], foes: [{ id: 'wraith', level: 1, atb: 0.15 }], flags: {}, ...bagOf(P) }),
+        attackText: () => 'The Shadow Wraith attacks!',
+        winMoth: 'A pale moth rises from the empty robe and drifts down into the Moonwell.',
+        winText: 'The wraith’s robe falls empty, and its soul goes home at last as a pale moth. The Moonwell shines again.',
+        loseText: 'The wraith’s shadow swallows the square. Io wakes by the Moonwell; the wraith still waits on the bridge.',
+      });
+    }
+    if (kind === 'greatWraith') {
+      const c = base('bogmire-boardwalk', P);
+      c.heroes[0].home = [590, 790]; if (c.heroes[1]) c.heroes[1].home = [680, 852]; c.slots = [[920, 645]];
+      if (arena) inArena(c, ARENA_OF.greatWraith, ARENA_AT.great, opts);
+      return Object.assign(c, {
+        fight: () => ({ party: partyOf(P), foes: [{ id: 'greatWraith', level: 5 }], flags: flagsOf(P), ...bagOf(P) }),
+        introMsg: 'Every lamp and window in Bogmire has gone dark…',
+        introAfter: 'The great wraith rises out of the fen, the town’s stolen lamplight burning in its ribs.',
+        attackText: () => 'The great wraith attacks!',
+        winMoth: 'The great wraith comes apart, and a great pale moth rises out of the empty robe.',
+        winLights: true, winLightsText: 'The stolen lamplight flies home, and Bogmire’s windows glow again.', fanfare: true,
+        winText: 'Bogmire has its lights back.',
+        loseText: 'The party falls on the boardwalk. They wake at the last rest with everything they had, and the great wraith waits.',
+      });
+    }
+    if (kind === 'dawnroost') {
+      const c = base('dawnroost-node', P);
+      c.heroes[0].home = [530, 700]; c.heroes[1].home = [615, 760]; c.slots = [[805, 645], [880, 600], [875, 722]];
+      if (arena) inArena(c, ARENA_OF.dawnroost, ARENA_AT.pack, opts);
+      c.makeEnvoi = () => makeEnvoi({});
+      return Object.assign(c, {
+        fight: () => ({ party: partyOf(P), foes: [{ id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }, { id: 'wraith', level: 12 }], flags: flagsOf(P), ...bagOf(P) }),
+        introMsg: 'Dawnroost’s living node still burns, and its light has drawn the wraiths.',
+        introAfter: 'Three wraiths, stronger than any the party has met, rise around the node.',
+        attackText: () => 'The wraiths close in!',
+        winMoth: 'Three pale moths rise from the empty robes and drift into the light of the node.',
+        winEnvoi: true, fanfare: true,
+        envoiLines: [
+          'Io takes out the letters she was meant to burn, her letters to the dead, and admits she never could.',
+          'She folds them into a wyrm, and Sol lights its heart from the living node.',
+          'Envoi is made. It folds away until Io calls it.',
+        ],
+        winText: 'Envoi is made. From now on Io can call it once a battle, while Sol stands with 70 Heat or more.',
+        loseText: 'The party falls in the courtyard. They wake at the last rest with everything they had, and the wraiths still circle the node.',
+      });
+    }
+    if (kind === 'halcyon') {
+      const c = base('northern-crossroads', P);
+      c.heroes[0].home = [560, 690]; c.heroes[1].home = [645, 752]; c.slots = [[895, 622]];
+      if (arena) inArena(c, ARENA_OF.halcyon, ARENA_AT.knight, opts);
+      return Object.assign(c, {
+        alias: { halcyon: 'The Gloam Knight' },
+        fight: () => ({ party: partyOf(P), foes: [{ id: 'halcyon' }], flags: flagsOf(P, { kestrel: true }), ...bagOf(P), ends: { retreat: { foe: 'halcyon', below: 0.2 } } }),
+        introMsg: 'The road north to the shipyard crosses an old ruined crossroads. Someone is waiting there.',
+        introAfter: 'A knight in dark armor steps out of the dark, her blade already drawn.',
+        attackText: () => 'The knight attacks!',
+        knowLines: Object.assign([
+          'Sol knows the way this knight fights. It is the way she was taught to fight, in the waystation yard, by one Warden only.',
+          '“Halcyon?” Her teacher, who went north eight years ago and never came back.',
+        ], { vow: 'Warden’s Vow. Sol knows that stance. “She taught me that.”' }),
+        kestrelLine: 'Sol calls out the name Halcyon gave her: “It’s me. Kestrel!”',
+        retreatLines: ['Halcyon steps back from them, her blade lowered.', 'The dark rises round her like smoke, and she is gone.'],
+        sparedLines: ['Io is down. The knight walks toward her, blade low.', 'Sol drags herself up and stands over Io, her sword raised.', 'Halcyon’s blade stops. For a long moment she only looks at her old squire.', 'Then she steps back into the dark, and is gone.'],
+        stoopLines: ['The fight has stirred an old memory: Halcyon in the waystation yard, teaching her squire to hover before she strikes.', 'Sol springs up and hangs in the air like a kestrel.'],
+        spared: true,
+        endTitles: { retreat: 'Halcyon retreats', lose: 'Spared' },
+        endTexts: {
+          retreat: 'Halcyon is gone into the dark, and the road to the shipyard is open. Sol has learned Kestrel Stoop.',
+          lose: 'Halcyon spared them for her old squire’s sake. The road to the shipyard is open, and Sol has learned Kestrel Stoop.',
+        },
+      });
+    }
+    if (kind === 'finale') {
+      const c = base('dead-moonwell', P);
+      c.heroes[0].home = [560, 762]; c.heroes[1].home = [630, 812]; c.slots = [[750, 690], [828, 642]];
+      if (arena) inArena(c, ARENA_OF.finale, ARENA_AT.finale, opts);
+      c.foeLook = Object.assign({}, FOE_LOOK, { halcyon: Object.assign({}, FOE_LOOK.halcyon, { downAct: 'kneel', downNote: 'Halcyon falls to one knee on her planted blade, and stays there.' }) });
+      return Object.assign(c, {
+        fight: () => { const f = S.FIGHTS.finale.setup(P.level); return Object.assign(f, { party: partyOf(P), flags: flagsOf(P, f.flags), ...bagOf(P) }); },
+        finale: true,
+        introMsg: 'The dead Moonwell gives no light at all, and the moon is going out.',
+        introAfter: 'Noctara the Starless waits at the well, and Halcyon stands at her side.',
+        attackText: () => 'The longest night begins!',
+        endingLines: [
+          'Noctara staggers. Io takes out the last of her letters.',
+          'Envoi’s last strike is the real sending: the letters burn for good, and their light rises.',
+          'The stars come back.',
+          'Noctara is not killed. She becomes night, and there are stars in it.',
+          'Halcyon’s blade warms. She goes home, a pale moth rising.',
+          'The longest night is over.',
+        ],
+        endTitles: { win: 'The longest night ends' },
+        endTexts: {
+          win: 'The stars are back. Io’s letters are sent at last, Noctara is night with stars in it, and Halcyon has gone home.',
+          lose: 'The party falls before the dead Moonwell. They wake at the last rest with everything they had, and the night waits. The cold deepens every turn: strike hard and early, and keep Envoi’s ward and Lunara for Void Sphere.',
+        },
+      });
+    }
+    throw new Error('no fight ' + kind);
+  }
+  // the Bramble Colossus, the last band's great wild foe: always alone, rooted (the party can always flee), and worth three
+  // times a wild fight. Its lines are placeholders for the lore conversation
+  function colossus(P, foes, opts) {
+    const scene = COLOSSUS_AT[opts.scene] ? opts.scene : 'frozen-road', at = COLOSSUS_AT[scene], c = base(scene, P);
+    c.heroes[0].home = at.io; if (c.heroes[1]) c.heroes[1].home = at.sol; c.slots = [at.slot];
+    if (opts.arena != null ? opts.arena : ARENA) inArena(c, ARENA_OF.colossus, ARENA_AT.colossus, Object.assign({ wilds: true }, opts));
+    return Object.assign(c, {
+      fight: () => ({ party: partyOf(P), foes, flags: flagsOf(P), ...bagOf(P), ends: { canFlee: true }, flee: fleeOf(P), reward: window.BattleRules.WILD_REWARD }),
+      introMsg: 'Beside the frozen road stands a thicket as big as a house, green where nothing else is. The snow round it has melted.',
+      introAfter: 'The ground splits. It heaves itself up out of the earth, and a great thorned bud opens on a glowing heart: a Bramble Colossus.',
+      attackText: () => 'The Bramble Colossus attacks!',
+      winMoth: 'Its spire cracks at the foot and topples like a tree. Its heart beats once more, and goes dark.',
+      winText: 'The Bramble Colossus is felled. Where it stood, its fallen fruit is melting the snow.',
+      loseText: 'The party falls among its thorns. They wake at the last rest with everything they had.',
+      endTexts: { fled: 'The party backs away down the road. It can’t follow: it is rooted.' },
+      fanfare: true,
+    });
+  }
+  // the painting each band's wild fights play on: the Thornwood's own map has its bridge
+  const WILD_SCENE = { 1: 'gloamwood-road', 2: 'warm-road', 3: 'northern-crossroads', 4: 'frozen-road' };
+  window.GameFights = { config, WILD_SCENE, PLACES, ARENA, ARENA_OF, ARENA_AT };
+})();
