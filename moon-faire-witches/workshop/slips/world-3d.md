@@ -13,14 +13,22 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           each following moon-faire-witches/world3d/HELPERS.md on its own branch w3d/<place>, checked and brought into
           work/world-3d here:
             1. the jetty (done), Io's cottage (done), the Thornwood (working: a wide wild field)
-            2. Bogmire (done: brought in, envoi-3d-bogmire.html), Bogmire's dark heart, Dawnroost (working)
+            2. Bogmire (done), Bogmire's dark heart (done), Dawnroost (working)
             3. Dawnroost's node, Misthollow, Misthollow's Moonwell (all working)
             4. the shipyard; the crossroads and the frozen pass; the Warm Roads camp and the Ember Line road
             5. the Dawnroost forest road and Eldergrove's edge; the northern camp and the cold moor; the frozen camp and
                Frostmere's shore
-          Then the whole world in one page: walk off an edge into the next place. (The nine fight places and the world
-          map aren't walking places: not in this job unless Chris says so.)
-Branch:   work/world-3d   Commit: 5e259ab
+          Then the whole game, as Chris wants it (11:24 to 11:26): a big game kept as a folder in the repository, each zone
+          a big section of its own (loaded when you go there, so the zones can be as large as he likes), the places of a
+          zone joined on foot, and air travel between zones by Skies of Aethermoor, his airship game (its own, quite
+          advanced game: repository chriskizer91-ops/airship-game-in-aethermoor-). Played from the folder (GitHub Pages
+          would give it a link to open on the phone). (The nine fight places and the world map aren't walking places: not
+          in this job unless Chris says so.)
+          Chris (11:22): anywhere that looks walkable is walkable, or players stop exploring. Done in the engine (open
+          ground inside each place's bounds, less water, steep ground and anything solid, measured from what's built; a
+          thicket along the edges; a where-she-can-walk view). Wickhollow passes; a helper is making Bogmire's porches,
+          the fen's side decks and the jetty's plank arm walkable; every helper building now checks it.
+Branch:   work/world-3d   Commit: 9e41ad5
 Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
           engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
           tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/plan-wickhollow.json
