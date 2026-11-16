@@ -24,6 +24,19 @@
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const ss = (a, b, v) => { const t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
   const SX = 0.04, SZ = 0.05, TAU = Math.PI * 2;
+  // a builder with K.B's parts that sends each piece to the far patch where it stands (K.far: patches past the fog aren't
+  // drawn): a box or a cylinder by its foot, a quad or a triangle by its middle, a geometry by the middle of where it ends
+  // up. Same materials, same solids; its `solid` works as K.B's does (false while building what Io walks through)
+  const farBuilder = (K) => {
+    const F = { solid: true }, box3 = new THREE.Box3(), mid = new THREE.Vector3();
+    const via = (x, z, f) => { const b = K.far(x, z), s = b.solid; b.solid = F.solid; f(b); b.solid = s; };
+    F.box = (k, x, y, z, ...a) => via(x, z, (b) => b.box(k, x, y, z, ...a));
+    F.cyl = (k, x, y, z, ...a) => via(x, z, (b) => b.cyl(k, x, y, z, ...a));
+    F.quad = (k, p, q, r, s, ...a) => via((p[0] + r[0]) / 2, (p[2] + r[2]) / 2, (b) => b.quad(k, p, q, r, s, ...a));
+    F.tri = (k, p, q, r, ...a) => via((p[0] + q[0] + r[0]) / 3, (p[2] + q[2] + r[2]) / 3, (b) => b.tri(k, p, q, r, ...a));
+    F.geom = (k, geo, m4, ...a) => { geo.computeBoundingBox(); box3.copy(geo.boundingBox).applyMatrix4(m4).getCenter(mid); via(mid.x, mid.z, (b) => b.geom(k, geo, m4, ...a)); };
+    return F;
+  };
   // the engine's own noise and seeded random, copied so this file also loads in the tools (no W3D there)
   const hash = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
   const vnoise = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf); return (hash(xi, yi) * (1 - u) + hash(xi + 1, yi) * u) * (1 - v) + (hash(xi, yi + 1) * (1 - u) + hash(xi + 1, yi + 1) * u) * v; };
@@ -300,7 +313,12 @@
     // the rock columns, the frozen falls and the grotto, the snow poles, the bare bushes, the places to find, the bell's
     // hollow and the mist ----
     extra(K) {
-      const { B, X, Z } = K, W = G.W3D, TH = K.terrain;
+      const { X, Z } = K, W = G.W3D, TH = K.terrain;
+      // what each part below is built into: K.B for the causeway, the lamp and the frozen falls (big things at the
+      // painting's middle, and the ones that glow); FAR for everything else, each piece into the far patch where it
+      // stands, so it isn't drawn once it's past the fog
+      const FAR = farBuilder(K);
+      let B = K.B;
       const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]], sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]], mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
       const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
       const norm = (a) => { const L = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / L, a[1] / L, a[2] / L]; };
@@ -393,6 +411,7 @@
         K.addBlock(K.circlePx(lx0, ly0, 0.22, 8));
       }
 
+      B = FAR;
       // ---- the sled: its bed of planks on curled iron runners, a chain trailing, the crate beside it ----
       {
         const [sx, sy] = SLED.c, g = TH(sx, sy), ry = 0.42, c = Math.cos(ry), s = Math.sin(ry), P_ = (lx, lz) => [X(sx) + lx * c + lz * s, Z(sy) - lx * s + lz * c], col = [0.85, 0.7, 0.58];
@@ -453,6 +472,7 @@
         for (let i = 0; i < 9; i++) { const qx = 1200 + i * 18 + r() * 10, qy = -350 - r() * 40; column(qx, qy, 1.5 + r() * 0.8, 4.0 + r() * 2.5, r() * TAU, Math.floor(r() * 1e4), { base: 4.6 }); }
       }
 
+      B = K.B;   // (the falls and the grotto glow)
       // ---- the frozen falls: curtains of ice columns down the two steps from the still river, the ledge between, the
       // pool at their foot; the grotto behind the lower curtain, its way in at the east end ----
       {
@@ -491,6 +511,7 @@
         K.halo(X(1300), 2.5, Z(260), 5.0, [0.14, 0.2, 0.34]); K.halo(X(1300), 4.6, Z(150), 4.0, [0.12, 0.18, 0.3]);
       }
 
+      B = FAR;   // (from here on)
       // ---- snow poles: tall marker poles beside the road past the painting, so the way shows under snow ----
       {
         let side = 1;
