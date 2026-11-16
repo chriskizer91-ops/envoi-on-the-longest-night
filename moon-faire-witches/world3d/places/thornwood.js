@@ -142,7 +142,7 @@
   // the clumps of small white flowers among the rocks: [x, y, radius (m), 'white']
   const FLOWERS = [
     [80, 362, 1.1, 'white'], [140, 380, 1.0, 'white'], [36, 330, 0.9, 'white'], [604, 384, 0.9, 'white'], [976, 302, 0.55, 'white'],
-    [246, 656, 0.8, 'white'], [176, 526, 0.85, 'white'], [1236, 300, 0.7, 'white'], [570, 380, 0.6, 'white'], [1104, 320, 0.5, 'white'],
+    [246, 656, 0.8, 'white'], [176, 526, 0.85, 'white'], [1280, 300, 0.7, 'white'], [570, 380, 0.6, 'white'], [1104, 320, 0.5, 'white'],
     // by the shrine and round the ring of stones
     [2140, -440, 0.6, 'white'], [2222, -440, 0.55, 'white'], [700, -620, 0.7, 'white'], [830, -500, 0.6, 'white'],
   ];

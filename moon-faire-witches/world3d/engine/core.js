@@ -367,7 +367,7 @@
           vec3 d = normalize(vD); float y = max(d.y, 0.0);
           vec3 top = vec3(0.075, 0.06, 0.17), mid = vec3(0.16, 0.13, 0.32), low = vec3(0.24, 0.24, 0.44);
           vec3 c = mix(low, mid, smoothstep(0.0, 0.22, y)); c = mix(c, top, smoothstep(0.2, 0.85, y));
-          c = mix(uFog * 1.3, c, smoothstep(-0.05, 0.06, d.y));
+          c = mix(sqrt(uFog) * 1.08, c, smoothstep(-0.05, 0.06, d.y));   // below the horizon: the fog, as the fogged ground shows it
           float m = dot(d, uMoonDir);
           float disc = smoothstep(0.99935, 0.99955, m);
           vec2 mp = d.xz * 60.0; float mare = n2(mp) * 0.5 + n2(mp * 2.3) * 0.3;

@@ -679,6 +679,29 @@
     cone.dispose(); trunk.dispose(); limbG.dispose();
     // every trunk is solid: Io walks round it
     for (const [tx, ty, size] of trees) if (tx >= WX0 && tx <= WX1 && ty >= WY0 && ty <= WY1) addBlock(circlePx(tx, ty, 0.3 * size, 6));
+    // ---- a thicket of bushes along the bounds' edge (not across water, exits or paths), so the edge looks closed ----
+    const icoLow = [0, 1, 2].map((v) => lumpy(0, 131 + v, 0.85, 0.3));
+    if (OPEN && place.thicket !== false) {
+      const near = (x, y, r) => WALK.concat(ADD).some((q) => x >= q.b[0] - r && x <= q.b[2] + r && y >= q.b[1] - r && y <= q.b[3] + r && (inPoly(q.p, x, y) || edgeDist(q.p, x, y) < r));
+      const atExit = (x, y) => (place.exits || []).some((e) => x > e.rect[0] - 70 && x < e.rect[2] + 70 && y > e.rect[1] - 70 && y < e.rect[3] + 70);
+      const TR = rand(97);
+      for (let i = 0, j = OPEN.length - 1; i < OPEN.length; j = i++) {
+        const [ax, ay] = OPEN[j], [bx, by] = OPEN[i], L = Math.hypot(X(bx) - X(ax), Z(by) - Z(ay)), nxp = -(Z(by) - Z(ay)) / L, nzp = (X(bx) - X(ax)) / L;
+        // the inward side of this edge
+        const mx = (ax + bx) / 2, my = (ay + by) / 2, inward = inPoly(OPEN, M.px(X(mx) + nxp * 2), M.py(Z(my) + nzp * 2)) ? 1 : -1;
+        for (let s = 0.5; s < L; s += 1.05 + TR() * 0.3) for (const row of [0.55, 1.7]) {
+          if (row > 1 && TR() < 0.45) continue;
+          const x = X(ax) + (X(bx) - X(ax)) * s / L + nxp * inward * row + (TR() - 0.5) * 0.4, z = Z(ay) + (Z(by) - Z(ay)) * s / L + nzp * inward * row + (TR() - 0.5) * 0.4;
+          const px = M.px(x), py = M.py(z);
+          if (px < WX0 || px > WX1 || py < WY0 || py > WY1 || inWater(px, py) || atExit(px, py) || near(px, py, 24)) continue;
+          const r = 0.8 + TR() * 0.55, h = r * (0.9 + TR() * 0.5), gy = terrain(px, py);
+          const key = Math.floor(x / PATCH) + ',' + Math.floor(z / PATCH), TB = patches[key] || (patches[key] = W3D.Builder());
+          TB.geom('leaves', icoLow[Math.floor(TR() * 3)], new THREE.Matrix4().compose(new THREE.Vector3(x, gy + h * 0.5, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, TR() * TAU, 0)), new THREE.Vector3(r, h, r)), blobCol(gy + h * 0.5, h), 1.6);
+          addBlock(circlePx(px, py, r * 0.85, 8));
+        }
+      }
+    }
+
     const treeMeshes = [];
     for (const key in patches) {
       const meshes = patches[key].build(TM.whole);
@@ -701,27 +724,6 @@
       };
       ring(260, 25, 85, 0.13, [0.13, 0.13, 0.24], [0.36, 0.37, 0.52], true);
       ring(140, 6, 24, 0.31, [0.045, 0.06, 0.09], null, false);
-    }
-
-    // ---- a thicket of bushes along the bounds' edge (not across water, exits or paths), so the edge looks closed ----
-    if (OPEN && place.thicket !== false) {
-      const near = (x, y, r) => WALK.concat(ADD).some((q) => x >= q.b[0] - r && x <= q.b[2] + r && y >= q.b[1] - r && y <= q.b[3] + r && (inPoly(q.p, x, y) || edgeDist(q.p, x, y) < r));
-      const atExit = (x, y) => (place.exits || []).some((e) => x > e.rect[0] - 70 && x < e.rect[2] + 70 && y > e.rect[1] - 70 && y < e.rect[3] + 70);
-      const TR = rand(97);
-      for (let i = 0, j = OPEN.length - 1; i < OPEN.length; j = i++) {
-        const [ax, ay] = OPEN[j], [bx, by] = OPEN[i], L = Math.hypot(X(bx) - X(ax), Z(by) - Z(ay)), nxp = -(Z(by) - Z(ay)) / L, nzp = (X(bx) - X(ax)) / L;
-        // the inward side of this edge
-        const mx = (ax + bx) / 2, my = (ay + by) / 2, inward = inPoly(OPEN, M.px(X(mx) + nxp * 2), M.py(Z(my) + nzp * 2)) ? 1 : -1;
-        for (let s = 0.5; s < L; s += 1.05 + TR() * 0.3) for (const row of [0.55, 1.7]) {
-          if (row > 1 && TR() < 0.45) continue;
-          const x = X(ax) + (X(bx) - X(ax)) * s / L + nxp * inward * row + (TR() - 0.5) * 0.4, z = Z(ay) + (Z(by) - Z(ay)) * s / L + nzp * inward * row + (TR() - 0.5) * 0.4;
-          const px = M.px(x), py = M.py(z);
-          if (px < WX0 || px > WX1 || py < WY0 || py > WY1 || inWater(px, py) || atExit(px, py) || near(px, py, 24)) continue;
-          const r = 0.8 + TR() * 0.55, h = r * (0.9 + TR() * 0.5), gy = terrain(px, py);
-          B.geom('leafBush', ico[Math.floor(TR() * 3)], new THREE.Matrix4().compose(new THREE.Vector3(x, gy + h * 0.5, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, TR() * TAU, 0)), new THREE.Vector3(r, h, r)), blobCol(gy + h * 0.5, h), 2.2);
-          addBlock(circlePx(px, py, r * 0.85, 8));
-        }
-      }
     }
 
     // ---- the keepsakes that lie in this place (envoi-final-draft/items/items.js, read only): a shimmer, nothing else,
@@ -821,7 +823,6 @@
     // the shade: dark under the trees, round the houses' feet and under the Moonwell's walls; the woods past the painting darker
     const shade = mk(); {
       const g = shade.getContext('2d'); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#fff'; g.fillRect(0, 0, CW, CH); g.restore();
-      g.filter = 'blur(5px)';
       for (const s of shadeMarks) {
         const dark = s[s.length - 1], v = Math.round(255 * dark);
         g.fillStyle = 'rgb(' + v + ',' + v + ',' + v + ')'; g.strokeStyle = g.fillStyle;
@@ -830,6 +831,9 @@
         else if (s[0] === 'poly') { path(g, s[1]); g.fill(); }
         else if (s[0] === 'ring') { g.lineWidth = 6 * kx; g.beginPath(); g.ellipse(s[1] * kx, s[2] * ky, s[3] * kx, s[3] * kx * M.SX / M.SZ, 0, 0, TAU); g.stroke(); g.beginPath(); g.ellipse(s[1] * kx, s[2] * ky, s[4] * kx, s[4] * kx * M.SX / M.SZ, 0, 0, TAU); g.stroke(); }
       }
+      // soften it all at once (a blur on every mark took most of a wide place's loading time)
+      const tmp = document.createElement('canvas'); tmp.width = CW; tmp.height = CH; const t2 = tmp.getContext('2d'); t2.drawImage(shade, 0, 0);
+      g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.filter = 'blur(5px)'; g.drawImage(tmp, 0, 0); g.restore();
       g.filter = 'none';
     }
     { const g = glow.getContext('2d'); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.strokeStyle = '#000'; g.lineWidth = 4; g.strokeRect(0, 0, CW, CH); g.restore(); }
