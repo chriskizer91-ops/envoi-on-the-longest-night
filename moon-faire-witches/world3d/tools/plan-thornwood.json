@@ -1,0 +1,21 @@
+[
+ { "name": "top-3d", "top": true },
+ { "name": "top-with-painting", "guide": true },
+ { "name": "walk-1-start", "io": [60, 456, 1.57], "cam": [-1.57, null] },
+ { "name": "walk-2-onto-the-bridge", "to": [300, 452] },
+ { "name": "walk-3-by-the-lantern", "to": [383, 446] },
+ { "name": "walk-4-off-the-bridge", "to": [600, 470] },
+ { "name": "walk-5-the-fork", "to": [870, 500] },
+ { "name": "walk-6-up-to-the-clearing", "to": [905, 370] },
+ { "name": "walk-7-the-moon-stone", "to": [1005, 362] },
+ { "name": "walk-8-round-the-west-side", "to": [940, 240] },
+ { "name": "walk-9-behind-the-stone", "to": [1110, 245] },
+ { "name": "walk-10-down-the-east-arm", "to": [1135, 410] },
+ { "name": "walk-11-the-road-east", "to": [1350, 545] },
+ { "name": "walk-12-to-bogmire", "to": [1505, 533] },
+ { "name": "overview", "io": [520, 460, 1.57], "cam": [0, 0.95, 34] },
+ { "name": "the-bridge-from-downstream", "io": [385, 468, 0], "cam": [0, 0.25, 14] },
+ { "name": "the-moon-stone-from-the-south", "io": [1010, 372, 3.14], "cam": [0, 0.3, 8] },
+ { "name": "the-trail-into-the-dark-woods", "io": [990, 690, 0.67], "cam": [-2.47, null] },
+ { "name": "the-trail-s-end", "io": [1240, 826, 1.57], "cam": [-1.57, null] }
+]
