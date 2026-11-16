@@ -73,11 +73,15 @@
     const bbox = (poly) => { let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const [x, y] of poly) { a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x); d = Math.max(d, y); } return [a, b, c, d]; };
     const withBox = (polys) => polys.map((p) => ({ p, b: bbox(p) }));
     const WALK = withBox(map2d.walk), BLOCK = withBox(map2d.block.slice());
+    // pockets and ground beyond the 2D walk (place.walkAdd), and a wild place's open ground (place.open.bounds): Io can
+    // go anywhere inside it but the water and anything solid
+    const ADD = withBox((place.walkAdd || []).map((a) => a.poly || a)), OPEN = place.open ? place.open.bounds : null;
     const inAny = (L, x, y) => L.some((q) => x >= q.b[0] && x <= q.b[2] && y >= q.b[1] && y <= q.b[3] && inPoly(q.p, x, y));
     const addBlock = (poly) => BLOCK.push({ p: poly, b: bbox(poly) });
     const circlePx = (px, py, rm, n) => Array.from({ length: n || 10 }, (_, i) => { const a = i / (n || 10) * TAU; return [px + Math.cos(a) * rm / M.SX, py + Math.sin(a) * rm / M.SZ]; });
     for (const b of place.buildings) addBlock(W3D.rectPoly(b.fp));
-    const walkable = (x, y) => inAny(WALK, x, y) && !inAny(BLOCK, x, y);
+    let walkGrid = null;  // made at the end, once everything solid is known: 1 where her feet can stand, a cell every 2 px
+    const walkable = (x, y) => { if (!walkGrid) return inAny(WALK, x, y) && !inAny(BLOCK, x, y); const G = walkGrid, i = Math.floor((x - G.x0) / G.c), j = Math.floor((y - G.y0) / G.c); return i >= 0 && j >= 0 && i < G.w && j < G.h && G.d[j * G.w + i] === 1; };
 
     // the steps: each tread's top, so Io's feet stand on them
     const STEPS = (place.steps || []).map((s) => {
@@ -98,9 +102,13 @@
     const lamps3d = [];      // every lantern and fire in the world, for the lights that move with Io
 
     // ---- the ground ----
-    const WX0 = -460, WX1 = place.size[0] + 460, WY0 = -420, WY1 = place.size[1] + 420;
-    const hash = (x, y) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
-    const vnoise = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi, u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf); return (hash(xi, yi) * (1 - u) + hash(xi + 1, yi) * u) * (1 - v) + (hash(xi, yi + 1) * (1 - u) + hash(xi + 1, yi + 1) * u) * v; };
+    // the ground goes past the painting: by a margin of woods, or as far as a wild place's open ground (place.extent, px)
+    const EXT = place.extent || [-460, -420, place.size[0] + 460, place.size[1] + 420];
+    const WX0 = EXT[0], WY0 = EXT[1], WX1 = EXT[2], WY1 = EXT[3];
+    // the painted maps (cobbles, lamplight, shade) cover the painting, or the whole extent when the place has one
+    const MR = place.extent ? EXT : [0, 0, place.size[0], place.size[1]];
+    U.uMapK.value.set(1 / (M.SX * (MR[2] - MR[0])), 1 / (M.SZ * (MR[3] - MR[1])), (M.CX - MR[0]) / (MR[2] - MR[0]), (M.CY - MR[1]) / (MR[3] - MR[1]));
+    const vnoise = W3D.vnoise;
     const WATER = (place.water || []).map((w) => Object.assign({}, w, { b: bbox(w.poly) }));
     const inWater = (x, y) => WATER.find((w) => x >= w.b[0] && x <= w.b[2] && y >= w.b[1] && y <= w.b[3] && inPoly(w.poly, x, y));
     const nearWalkPx = (x, y, r) => WALK.some((q) => x >= q.b[0] - r && x <= q.b[2] + r && y >= q.b[1] - r && y <= q.b[3] + r && (inPoly(q.p, x, y) || edgeDist(q.p, x, y) < r));
@@ -111,21 +119,30 @@
       else if (!nearWalkPx(x, y, 40)) h += (vnoise(x / 60, y / 60) - 0.5) * 0.5 + (vnoise(x / 17, y / 17) - 0.5) * 0.12;
       return h;
     }
+    const groundGeos = [];
     {
-      const cell = 0.7, x0 = X(WX0), x1 = X(WX1), z0 = Z(WY0), z1 = Z(WY1);
-      const nx = Math.ceil((x1 - x0) / cell), nz = Math.ceil((z1 - z0) / cell);
-      const pos = new Float32Array((nx + 1) * (nz + 1) * 3), col = new Float32Array((nx + 1) * (nz + 1) * 3), uv = new Float32Array((nx + 1) * (nz + 1) * 2), idx = [];
-      for (let j = 0; j <= nz; j++) for (let i = 0; i <= nx; i++) {
-        const x = x0 + (x1 - x0) * i / nx, z = z0 + (z1 - z0) * j / nz, px = M.px(x), py = M.py(z), k = j * (nx + 1) + i;
-        pos[k * 3] = x; pos[k * 3 + 1] = terrain(px, py); pos[k * 3 + 2] = z;
-        const c = 0.9 + vnoise(px / 25, py / 25) * 0.2; col[k * 3] = col[k * 3 + 1] = col[k * 3 + 2] = c;
-        uv[k * 2] = x; uv[k * 2 + 1] = z;
+      const big = (X(WX1) - X(WX0)) * (Z(WY1) - Z(WY0)) > 12000, cell = big ? 0.9 : 0.7, x0 = X(WX0), x1 = X(WX1), z0 = Z(WY0), z1 = Z(WY1);
+      const nx = Math.ceil((x1 - x0) / cell), nz = Math.ceil((z1 - z0) / cell), dx = (x1 - x0) / nx, dz = (z1 - z0) / nz;
+      const H = new Float32Array((nx + 1) * (nz + 1));
+      for (let j = 0; j <= nz; j++) for (let i = 0; i <= nx; i++) H[j * (nx + 1) + i] = terrain(M.px(x0 + dx * i), M.py(z0 + dz * j));
+      const h = (i, j) => H[Math.min(nz, Math.max(0, j)) * (nx + 1) + Math.min(nx, Math.max(0, i))];
+      // one patch every 32 cells each way; normals from the heights round each corner, so patches meet without a seam
+      const PC = 32;
+      for (let pj = 0; pj < nz; pj += PC) for (let pi = 0; pi < nx; pi += PC) {
+        const ni = Math.min(PC, nx - pi), nj = Math.min(PC, nz - pj), pos = [], nor = [], col = [], uv = [], idx = [];
+        for (let j = 0; j <= nj; j++) for (let i = 0; i <= ni; i++) {
+          const gi = pi + i, gj = pj + j, x = x0 + dx * gi, z = z0 + dz * gj, px = M.px(x), py = M.py(z);
+          pos.push(x, h(gi, gj), z);
+          const nx_ = -(h(gi + 1, gj) - h(gi - 1, gj)) / (2 * dx), nz_ = -(h(gi, gj + 1) - h(gi, gj - 1)) / (2 * dz), L = Math.hypot(nx_, 1, nz_);
+          nor.push(nx_ / L, 1 / L, nz_ / L);
+          const c = 0.9 + vnoise(px / 25, py / 25) * 0.2; col.push(c, c, c); uv.push(x, z);
+        }
+        for (let j = 0; j < nj; j++) for (let i = 0; i < ni; i++) { const a = j * (ni + 1) + i, b = a + 1, c = a + ni + 1, d = c + 1; idx.push(a, c, b, b, c, d); }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+        geo.setIndex(idx); geo.computeBoundingSphere(); groundGeos.push(geo);
       }
-      for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++) { const a = j * (nx + 1) + i, b = a + 1, c = a + nx + 1, d = c + 1; idx.push(a, c, b, b, c, d); }
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.BufferAttribute(col, 3)); geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
-      geo.setIndex(idx); geo.computeVertexNormals(); geo.computeBoundingSphere();
-      var groundGeo = geo;
     }
 
     // ---- the water: a grid over each lake or river, at its level (a river's falls are where its level drops) ----
@@ -564,7 +581,12 @@
     const trees = ((window.W3D_TREES || {})[place.trees] || []).concat(place.extraTrees || []);
     const patches = {}, PATCH = 22;
     const cone = new THREE.ConeGeometry(1, 1, 9, 1, true), trunk = new THREE.CylinderGeometry(0.6, 1, 1, 6, 1, true);
-    for (const [tx, ty, size, fir, seed] of trees) {
+    const limbG = new THREE.CylinderGeometry(0.22, 1, 1, 5, 1, true); limbG.translate(0, 0.5, 0);
+    const UPV = new THREE.Vector3(0, 1, 0), _d = new THREE.Vector3(), _q = new THREE.Quaternion();
+    // a limb from `base` along `dir` (a bare tree's trunk and branches): thick at the bottom, thin at the tip
+    const limb = (TB, base, dir, len, r, col) => { _d.copy(dir).normalize(); _q.setFromUnitVectors(UPV, _d); TB.geom('bark', limbG, new THREE.Matrix4().compose(base, _q, new THREE.Vector3(r, len, r)), col, [1, len / 2]); };
+    for (const [tx, ty, size, kind, seed] of trees) {
+      const fir = kind === 1;
       const x = X(tx), z = Z(ty), y = terrain(tx, ty), key = Math.floor(x / PATCH) + ',' + Math.floor(z / PATCH);
       const TB = patches[key] || (patches[key] = W3D.Builder()), r = rand(seed + 1), far = tx < 0 || tx > place.size[0] || ty < 0 || ty > place.size[1];
       if (fir) {
@@ -575,6 +597,19 @@
           TB.geom('firs', cone, new THREE.Matrix4().compose(new THREE.Vector3(x, cy, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, r() * TAU, 0)), new THREE.Vector3(cr, ch, cr)), blobCol(cy, ch * 0.6), [3, 2]);
         }
         shadeMarks.push(['dot', tx, ty, rb / M.SX * 0.9, 0.55]);
+      } else if (kind === 2) {
+        // bare and thorny: a leaning trunk, crooked branches, and twigs off them
+        const H = (2.4 + r() * 1.4) * size, lean = new THREE.Vector3((r() - 0.5) * 0.35, 1, (r() - 0.5) * 0.35), col = [0.62, 0.55, 0.58];
+        const base = new THREE.Vector3(x, y - 0.2, z); limb(TB, base, lean, H + 0.2, 0.2 * size, col);
+        const top = base.clone().addScaledVector(lean.clone().normalize(), H);
+        const nb = 4 + Math.floor(r() * 3);
+        for (let i = 0; i < nb; i++) {
+          const a = r() * TAU, at = base.clone().lerp(top, 0.45 + r() * 0.55), d = new THREE.Vector3(Math.cos(a), 0.5 + r() * 0.9, Math.sin(a)), L = (1.2 + r() * 1.5) * size;
+          limb(TB, at, d, L, 0.075 * size, col);
+          const tip = at.clone().addScaledVector(d.clone().normalize(), L * (0.55 + r() * 0.3));
+          for (let k = 0; k < 2; k++) limb(TB, tip, new THREE.Vector3(Math.cos(a + (r() - 0.5) * 2), 0.3 + r(), Math.sin(a + (r() - 0.5) * 2)), (0.5 + r() * 0.7) * size, 0.03 * size, col);
+        }
+        shadeMarks.push(['dot', tx, ty, 1.2 * size / M.SX, 0.7]);
       } else {
         const H = (2.6 + r() * 1.2) * size, cr = (1.45 + r() * 0.5) * size;
         TB.geom('bark', trunk, new THREE.Matrix4().compose(new THREE.Vector3(x, y + H / 2 - 0.2, z), new THREE.Quaternion(), new THREE.Vector3(0.24 * size, H + 0.4, 0.24 * size)), [0.75, 0.62, 0.58], [1.5, 3]);
@@ -586,7 +621,9 @@
         shadeMarks.push(['dot', tx, ty, cr / M.SX * 0.95, 0.5]);
       }
     }
-    cone.dispose(); trunk.dispose();
+    cone.dispose(); trunk.dispose(); limbG.dispose();
+    // every trunk is solid: Io walks round it
+    for (const [tx, ty, size] of trees) if (tx >= WX0 && tx <= WX1 && ty >= WY0 && ty <= WY1) addBlock(circlePx(tx, ty, 0.3 * size, 6));
     const treeMeshes = [];
     for (const key in patches) {
       const meshes = patches[key].build(TM.whole);
@@ -594,7 +631,7 @@
     }
 
     // ---- far hills and snowy mountains round the world (they don't fog: they are the far edge) ----
-    {
+    if (!(place.night && place.night.hills === false)) {
       const HB = B;
       const ring = (Rr, hmin, hmax, f, lowC, topC, snow) => {
         const N = 120, H = (i) => hmin + (hmax - hmin) * (0.55 * vnoise(i * f, 3.7) + 0.3 * vnoise(i * f * 2.7, 9.1) + 0.15 * vnoise(i * f * 7, 1.3));
@@ -611,10 +648,47 @@
       ring(140, 6, 24, 0.31, [0.045, 0.06, 0.09], null, false);
     }
 
+    // ---- the keepsakes that lie in this place (envoi-final-draft/items/items.js, read only): a shimmer, nothing else,
+    // until Io walks into it. place.items moves one ({ id: [x, y] }, a pocket for it) or leaves it out ({ id: false }) ----
+    const LOOT = (window.LOOT && window.LOOT.ITEMS) || [], moveTo = place.items || {};
+    const items = LOOT.filter((it) => it.home === place.mapId && (moveTo[it.id] || it.at) && moveTo[it.id] !== false)
+      .map((it) => ({ id: it.id, name: it.name, look: it.look, pic: it.pic, at: moveTo[it.id] || it.at }))
+      .concat(place.extraItems || []);
+    let shimmer = null;
+    if (items.length) {
+      const N = 14, pos = [], cor = [], seed = [], idx = [];
+      items.forEach((it, k) => {
+        it.x = X(it.at[0]); it.z = Z(it.at[1]); it.y = walkH(it.at[0], it.at[1]); it.k = k;
+        for (let i = 0; i < N; i++) { const b = (k * N + i) * 4; for (let c = 0; c < 4; c++) { pos.push(it.x, it.y, it.z); seed.push(Math.random(), Math.random(), i === 0 ? 1 : 0); } cor.push(-1, -1, 1, -1, 1, 1, -1, 1); idx.push(b, b + 1, b + 2, b, b + 2, b + 3); }
+      });
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('corner', new THREE.Float32BufferAttribute(cor, 2));
+      g.setAttribute('seed', new THREE.Float32BufferAttribute(seed, 3)); g.setAttribute('live', new THREE.Float32BufferAttribute(new Array(pos.length / 3).fill(1), 1)); g.setIndex(idx);
+      const mat = new THREE.ShaderMaterial({
+        uniforms: { map: { value: pics.halo }, uTime: U.uTime },
+        vertexShader: `attribute vec2 corner; attribute vec3 seed; attribute float live; uniform float uTime; varying vec2 vUv; varying float vA;
+          void main(){
+            vec3 p = position; float t = uTime * (0.35 + seed.y * 0.3) + seed.x * 10.0, f = fract(t);
+            float a = seed.x * 6.283 + uTime * 0.6;
+            if (seed.z < 0.5) p += vec3(cos(a) * (0.2 + 0.35 * seed.y), 0.08 + f * 1.5, sin(a) * (0.2 + 0.35 * seed.y)); else p.y += 0.05;
+            vec4 mv = viewMatrix * vec4(p, 1.0);
+            float tw = seed.z > 0.5 ? 1.3 + 0.2 * sin(uTime * 2.0) : (0.06 + 0.07 * seed.y) * sin(f * 3.1416) * (0.7 + 0.3 * sin(uTime * 9.0 + seed.x * 40.0));
+            mv.xy += corner * tw * live;
+            float d = length(mv.xyz);
+            vA = live * (1.0 - smoothstep(7.0, 13.0, d)) * (seed.z > 0.5 ? 0.35 : 1.0);
+            vUv = corner * 0.5 + 0.5; gl_Position = projectionMatrix * mv;
+          }`,
+        fragmentShader: 'uniform sampler2D map; varying vec2 vUv; varying float vA; void main(){ float a = texture2D(map, vUv).a; gl_FragColor = vec4(vec3(1.0, 0.92, 0.7) * a * a * vA, 1.0); }',
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      });
+      shimmer = new THREE.Mesh(g, mat); shimmer.frustumCulled = false; shimmer.renderOrder = 6; shimmer.name = 'shimmer'; scene.add(shimmer);
+    }
+    // a keepsake found: its shimmer goes out
+    function takeItem(it) { if (!shimmer) return; const a = shimmer.geometry.attributes.live, n = 14 * 4; for (let i = 0; i < n; i++) a.setX(it.k * n + i, 0); a.needsUpdate = true; }
+
     // ---- the meshes ----
     const meshes = B.build(MAT);
     for (const k in meshes) scene.add(meshes[k]);
-    const ground = new THREE.Mesh(groundGeo, null); ground.name = 'ground'; scene.add(ground);
+    const grounds = groundGeos.map((g) => { const mesh = new THREE.Mesh(g, null); mesh.name = 'ground'; mesh.matrixAutoUpdate = false; scene.add(mesh); return mesh; });
     const sky = new THREE.Mesh(new THREE.SphereGeometry(500, 32, 16), W3D.skyMat(U)); sky.frustumCulled = false; sky.renderOrder = -10; sky.name = 'sky'; scene.add(sky);
 
     // the halos: soft additive glows that always face the camera
@@ -632,32 +706,35 @@
     }
 
     // ---- the painted maps: where the cobbles are, the lamps' warm light, the shade ----
-    const CW = 768, CH = 512, kx = CW / place.size[0], ky = CH / place.size[1];
-    const mk = () => { const c = document.createElement('canvas'); c.width = CW; c.height = CH; return c; };
+    const CW = Math.min(1280, Math.round((MR[2] - MR[0]) / 2)), CH = Math.round(CW * (MR[3] - MR[1]) / (MR[2] - MR[0])), kx = CW / (MR[2] - MR[0]), ky = CH / (MR[3] - MR[1]);
+    const mk = () => { const c = document.createElement('canvas'); c.width = CW; c.height = CH; const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, -MR[0] * kx, -MR[1] * ky); return c; };
     const path = (g, poly) => { g.beginPath(); poly.forEach(([x, y], i) => (i ? g.lineTo(x * kx, y * ky) : g.moveTo(x * kx, y * ky))); g.closePath(); };
     // the splat: red cobbles (the walk and a little round it, the yards in front of the houses), green earth, blue paving
     const splat = mk(); {
-      const g = splat.getContext('2d'); g.fillStyle = '#000'; g.fillRect(0, 0, CW, CH);
+      const g = splat.getContext('2d'); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#000'; g.fillRect(0, 0, CW, CH); g.restore();
       g.lineJoin = 'round';
       g.filter = 'blur(6px)'; g.strokeStyle = '#00ff00'; g.fillStyle = '#00ff00'; g.lineWidth = 34 * kx;
       for (const q of WALK) { path(g, q.p); g.fill(); g.stroke(); }
+      g.lineWidth = 12 * kx; for (const a of place.walkAdd || []) { if ((a.ground || 'dirt') === 'dirt') { path(g, a.poly || a); g.fill(); g.stroke(); } }
       g.filter = 'blur(1.5px)'; g.globalCompositeOperation = 'lighter';
       g.strokeStyle = '#ff0000'; g.fillStyle = '#ff0000'; g.lineWidth = 16 * kx;
       for (const q of WALK) { path(g, q.p); g.fill(); g.stroke(); }
+      g.lineWidth = 10 * kx; for (const a of place.walkAdd || []) { if (a.ground === 'cob') { path(g, a.poly); g.fill(); g.stroke(); } }
       for (const b of place.buildings) { g.fillRect((b.fp[0] - 10) * kx, (b.fp[1] - 10) * ky, (b.fp[2] - b.fp[0] + 20) * kx, (b.fp[3] - b.fp[1] + 20) * ky); }
       g.globalCompositeOperation = 'source-over'; g.filter = 'none';
       // under the cobbles, nothing green
       const im = g.getImageData(0, 0, CW, CH), d = im.data; for (let i = 0; i < d.length; i += 4) { d[i + 1] = Math.round(d[i + 1] * (1 - d[i] / 255)); } g.putImageData(im, 0, 0);
+      for (const a of place.walkAdd || []) if (a.ground === 'grass') { g.fillStyle = '#000'; path(g, a.poly); g.fill(); }
       if (place.bridge) { g.fillStyle = 'rgba(0,0,255,1)'; g.fillRect(place.bridge.x0 * kx, place.bridge.y0 * ky, (place.bridge.x1 - place.bridge.x0) * kx, (place.bridge.y1 - place.bridge.y0) * ky); }
       for (const l of place.lawns || []) { g.fillStyle = '#000'; path(g, l); g.globalAlpha = 0.85; g.fill(); g.globalAlpha = 1; }
     }
     // the light map: warm pools round every lamp and lit door, orange round the forge, pale blue round the Moonwell
     const glow = mk(); {
-      const g = glow.getContext('2d'); g.fillStyle = '#000'; g.fillRect(0, 0, CW, CH); g.globalCompositeOperation = 'lighter';
+      const g = glow.getContext('2d'); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#000'; g.fillRect(0, 0, CW, CH); g.restore(); g.globalCompositeOperation = 'lighter';
       const C = { warm: [255, 168, 92], forge: [255, 120, 48], moon: [120, 170, 255] };
       for (const [x, y, r, s, k] of lights.concat(place.lights || [])) {
         const c = C[k === 'moonwell' ? 'moon' : k] || C.warm;
-        g.save(); g.translate(x * kx, y * ky); g.scale(1, M.SX / M.SZ);
+        g.save(); g.translate(x * kx, y * ky); g.scale(1, (M.SX / M.SZ) * (kx / ky) * (ky / kx));
         const gr = g.createRadialGradient(0, 0, 0, 0, 0, r * kx);
         const st = (f) => 'rgba(' + c.map((v) => Math.min(255, Math.round(v * s * f))).join(',') + ',1)';
         gr.addColorStop(0, st(1)); gr.addColorStop(0.3, st(0.72)); gr.addColorStop(0.62, st(0.36)); gr.addColorStop(1, 'rgba(0,0,0,1)');
@@ -666,7 +743,7 @@
     }
     // the shade: dark under the trees, round the houses' feet and under the Moonwell's walls; the woods past the painting darker
     const shade = mk(); {
-      const g = shade.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, CW, CH);
+      const g = shade.getContext('2d'); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#fff'; g.fillRect(0, 0, CW, CH); g.restore();
       g.filter = 'blur(5px)';
       for (const s of shadeMarks) {
         const dark = s[s.length - 1], v = Math.round(255 * dark);
@@ -681,7 +758,24 @@
     const T_ = (c) => { const t = new THREE.CanvasTexture(c); t.flipY = false; t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; t.minFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; };
     U.uGlow.value = T_(glow); U.uShade.value = T_(shade);
     const groundTex = { cob: T(place.ground.cob), grass: T(place.ground.grass), dirt: T(place.ground.dirt), pave: T(place.ground.pave), splat: T_(splat), rep: place.ground.rep, grassTint: place.ground.grassTint };
-    ground.material = W3D.groundMat(U, groundTex);
+    const groundMat = W3D.groundMat(U, groundTex); for (const g of grounds) g.material = groundMat;
+
+    // ---- where her feet can stand, as a grid (a cell every 2 px): the walk areas and pockets (or a wild place's open
+    // ground less its water), less everything solid ----
+    {
+      const c = 2, w = Math.ceil((WX1 - WX0) / c), h = Math.ceil((WY1 - WY0) / c);
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const g = cv.getContext('2d');
+      g.setTransform(1 / c, 0, 0, 1 / c, -WX0 / c, -WY0 / c);
+      const fillP = (poly) => { g.beginPath(); poly.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.closePath(); g.fill(); };
+      g.fillStyle = '#000'; g.fillRect(WX0, WY0, WX1 - WX0, WY1 - WY0);
+      g.fillStyle = '#fff';
+      if (OPEN) { fillP(OPEN); g.fillStyle = '#000'; for (const wt of WATER) fillP(wt.poly); g.fillStyle = '#fff'; }
+      for (const q of WALK) fillP(q.p); for (const q of ADD) fillP(q.p);
+      g.fillStyle = '#000'; for (const q of BLOCK) fillP(q.p);
+      const d = g.getImageData(0, 0, w, h).data, grid = new Uint8Array(w * h);
+      for (let i = 0; i < w * h; i++) grid[i] = d[i * 4] > 127 ? 1 : 0;
+      walkGrid = { x0: WX0, y0: WY0, c, w, h, d: grid };
+    }
 
     // ---- each frame ----
     const _v = new THREE.Vector3(), seg = new THREE.Vector3(), glowK0 = U.uGlowK.value;
@@ -690,6 +784,9 @@
       U.uGlowK.value = glowK0 * (1.0 + 0.025 * Math.sin(t * 6.3) + 0.015 * Math.sin(t * 11.7));
       if (cam && ioPos) {
         U.uCam.value.copy(cam.position); U.uIo.value.set(ioPos.x, ioPos.y + 1.0, ioPos.z); U.uCut.value = 1;
+        // nothing past the fog is drawn (the trees' patches and the ground's)
+        const far = U.uFogFar.value + 6;
+        for (const mesh of cullables) { const s = mesh.geometry.boundingSphere; mesh.visible = s.center.distanceTo(cam.position) - s.radius < far; }
         // the tree patches near the line from the camera to Io get the thinning-away
         seg.subVectors(U.uIo.value, cam.position); const L2 = seg.lengthSq();
         for (const mesh of treeMeshes) {
@@ -699,12 +796,13 @@
         }
       }
     }
+    const cullables = treeMeshes.concat(grounds);
     // the counts, for the page's numbers
     let tris = 0; scene.traverse((o) => { if (o.isMesh && o.geometry) { const g = o.geometry; tris += (g.index ? g.index.count : g.attributes.position.count) / 3; } });
     const stats = { triangles: Math.round(tris), meshes: 0, trees: trees.length, lamps: (place.lamps || []).length, halos: halos.length };
     scene.traverse((o) => { if (o.isMesh) stats.meshes++; });
     // the see-through trees' shaders, made ready at the start so the first time they're needed doesn't stutter
     function precompile(renderer, cam) { for (const mesh of treeMeshes) mesh.material = TM.cut[mesh.userData.tree]; renderer.compile(scene, cam); for (const mesh of treeMeshes) mesh.material = TM.whole[mesh.userData.tree]; renderer.compile(scene, cam); }
-    return { scene, U, M, walkable, walkH, terrain, update, precompile, stats, used, place, lamps: lamps3d, maps: { splat, glow, shade }, exits: place.exits || [] };
+    return { scene, U, M, walkable, walkH, terrain, update, precompile, stats, used, place, lamps: lamps3d, items, takeItem, maps: { splat, glow, shade }, exits: place.exits || [] };
   };
 })(window);

@@ -212,6 +212,11 @@
       [1198, 662, 50, 0.35, 'warm'], [1042, 852, 50, 0.35, 'warm'], [386, 722, 40, 0.3, 'warm'], [530, 722, 40, 0.3, 'warm'], [560, 404, 70, 0.4, 'warm'],
     ],
     trees: 'wickhollow',
+    // pockets to find, past the 2D walk: a strip of garden down the lower house's west side, behind the white bush
+    walkAdd: [{ poly: [[350, 498], [377, 498], [377, 690], [342, 692], [336, 650], [346, 600]], ground: 'grass' }],
+    // where the 3D hides the keepsakes: the Crescent Locket's spot in the 2D game is on the lower house's roof (Chris's
+    // secret way, October 4); in 3D it lies at the end of that hidden strip. The Forge Horseshoe keeps its nook.
+    items: { 'crescent-locket': [358, 676] },
     // the painting's own garden trees that stand close to a path (make-trees.mjs keeps its trees 30 px off the walk):
     // the pine by the bench, the dark fir by the west stairs, the tree by the lower jetty, the lower house's garden
     extraTrees: [[1002, 640, 1.05, 1, 11], [332, 522, 0.78, 1, 12], [118, 690, 0.72, 0, 13], [640, 700, 1.05, 0, 14], [690, 690, 0.85, 1, 15],

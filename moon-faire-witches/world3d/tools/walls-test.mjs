@@ -22,11 +22,11 @@ const res = await page.evaluate(async () => {
   const inHouse = (x, y) => box.some((f) => x > f[0] && x < f[2] && y > f[1] && y < f[3]);
   // a path over the walkable ground: A* on a 5 px grid, then thinned to the corners
   function find(sx, sy, tx, ty) {
-    const C = 5, gi = (x) => Math.round(x / C), W = 1000, key = (i, j) => (j + 100) * W + (i + 100);
+    const C = 5, gi = (x) => Math.round(x / C), W = 4000, OFF = 1000, key = (i, j) => (j + OFF) * W + (i + OFF);
     const s = [gi(sx), gi(sy)], t = [gi(tx), gi(ty)], g = new Map(), came = new Map(), heap = [];
     const push = (f, k) => { heap.push([f, k]); let i = heap.length - 1; while (i > 0) { const p = (i - 1) >> 1; if (heap[p][0] <= heap[i][0]) break; [heap[p], heap[i]] = [heap[i], heap[p]]; i = p; } };
     const pop = () => { const top = heap[0], last = heap.pop(); if (heap.length) { heap[0] = last; let i = 0; for (;;) { const l = 2 * i + 1, r = l + 1; let m = i; if (l < heap.length && heap[l][0] < heap[m][0]) m = l; if (r < heap.length && heap[r][0] < heap[m][0]) m = r; if (m === i) break; [heap[m], heap[i]] = [heap[i], heap[m]]; i = m; } } return top; };
-    const ij = (k) => [k % W - 100, Math.floor(k / W) - 100];
+    const ij = (k) => [k % W - OFF, Math.floor(k / W) - OFF];
     const k0 = key(...s); g.set(k0, 0); push(0, k0);
     const done = new Set();
     while (heap.length) {
@@ -67,6 +67,16 @@ const res = await page.evaluate(async () => {
     const r = follow(p, 90);
     out.push({ name, ok: r.bad === 0 && r.house === 0 && r.far < 0.8, seconds: +(r.frames / 30).toFixed(1), metres: +(p.reduce((a, q, i) => i ? a + Math.hypot(M.x(q[0]) - M.x(p[i - 1][0]), M.z(q[1]) - M.z(p[i - 1][1])) : 0, 0)).toFixed(1), offWalk: r.bad, inHouse: r.house, endsFrom: +r.far.toFixed(2), at: r.at, wp: r.wp });
   }
+  // every keepsake: walked to from the start, and found (its card comes up)
+  const items = [];
+  for (const it of w.items || []) {
+    w.setIo(MW[0], MW[1], Math.PI); w.setCam(0); w.C.auto = 0; w.io.speed = 0; it.got = false;
+    let shown = null; const prev = w.onItemTest; window.__lastItem = null;
+    const p = find(MW[0], MW[1], it.at[0], it.at[1]);
+    if (!p) { items.push({ id: it.id, ok: false, why: 'no way there' }); continue; }
+    const r = follow(p, 120);
+    items.push({ id: it.id, ok: !!it.got && r.bad === 0 && r.house === 0, seconds: +(r.frames / 30).toFixed(1), found: !!it.got, offWalk: r.bad });
+  }
   // straight at every building, from in front of it, for six seconds
   const push = [];
   for (const b of P.place.buildings) {
@@ -79,12 +89,14 @@ const res = await page.evaluate(async () => {
     w.push(null);
     push.push({ id: b.id, frames: 180, inside, stoppedAt: Math.round(w.io.py), wall: f[3] });
   }
-  return { out, push };
+  return { out, push, items };
 });
 let fails = 0;
 console.log('From the start to each edge and door (Io steered by thumb input, 30 frames a second):');
 for (const r of res.out) { if (!r.ok) fails++; console.log((r.ok ? '  ok   ' : '  FAIL ') + r.name + (r.why ? ': ' + r.why : ': ' + r.metres + ' m in ' + r.seconds + ' s, frames off the walk ' + r.offWalk + ', inside a house ' + r.inHouse + ', ends ' + r.endsFrom + ' m from the goal' + (r.ok ? '' : ' (stopped at ' + r.at + ', heading for ' + r.wp + ')'))); }
 console.log('Pushed straight at each building for 6 seconds:');
 for (const r of res.push) { if (r.inside) fails++; console.log('  ' + (r.skipped ? 'skip ' : r.inside ? 'FAIL ' : 'ok   ') + r.id + (r.skipped ? ' (' + r.skipped + ')' : ': frames inside ' + r.inside + ', stopped at y ' + r.stoppedAt + ' (its wall at ' + r.wall + ')')); }
+if (res.items.length) console.log('Each keepsake, walked to from the start:');
+for (const r of res.items) { if (!r.ok) fails++; console.log('  ' + (r.ok ? 'ok   ' : 'FAIL ') + r.id + (r.why ? ': ' + r.why : ': found after ' + r.seconds + ' s, frames off the walk ' + r.offWalk)); }
 console.log(fails ? fails + ' failed' : 'all passed', errors.length ? '· page errors: ' + errors.join('; ') : '· no page errors');
 await browser.close();

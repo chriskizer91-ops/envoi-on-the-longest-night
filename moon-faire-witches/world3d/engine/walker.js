@@ -70,7 +70,7 @@
     }
 
     // ---- the camera ----
-    const cam = new THREE.PerspectiveCamera(60, 1, 0.1, 800);
+    const cam = new THREE.PerspectiveCamera(60, 1, 0.1, (place.night && place.night.far) || 800);
     const C = { yaw: 0, pitch: 0.62, dist: 7.0, aim: 1.15, auto: 0, top: false };
     let view = { fov: 60, dist: 7, pitch: 0.62 };
     function layout() {
@@ -147,6 +147,11 @@
     const NATURAL = { walk: 0.62 * 1.7, jog: 1.25 * 1.7 };   // her own steps' speeds, in metres a second (moon-io-walker.js)
     const SPEED = { walk: 1.3, jog: 3.0 };
     let exitShown = null, scripted = null;
+    // the keepsakes found so far (kept on the phone between visits; not in a test run)
+    const FOUND_KEY = 'envoi3d-found';
+    let found = {}; if (!TEST) try { found = JSON.parse(localStorage.getItem(FOUND_KEY) || '{}') || {}; } catch (e) { found = {}; }
+    for (const it of P.items) if (found[it.id]) { it.got = true; P.takeItem(it); }
+    const keep = () => { if (!TEST) try { localStorage.setItem(FOUND_KEY, JSON.stringify(found)); } catch (e) { /* the phone won't keep it: fine */ } };
     function tick(dt, t) {
       // where she wants to go, from the thumb (or the keys), turned by the camera
       let ix = input.x, iy = input.y, mag = input.mag; const km = keyMove(); if (km && !input.move) { ix = km.x; iy = km.y; mag = km.mag; }
@@ -186,6 +191,8 @@
       // a road out: say where it goes (the next place is its own page)
       const ex = P.exits.find((e) => io.px >= e.rect[0] - 6 && io.px <= e.rect[2] + 6 && io.py >= e.rect[1] - 6 && io.py <= e.rect[3] + 6);
       if (ex && ex !== exitShown && opt.toast) opt.toast(ex.label + ': coming next, a place of its own'); exitShown = ex || null;
+      // walking into a keepsake's shimmer finds it
+      for (const it of P.items) if (!it.got && Math.hypot(it.x - p.x, it.z - p.z) < 1.1 && Math.abs(it.y - io.y) < 1.5) { it.got = true; found[it.id] = 1; keep(); P.takeItem(it); if (opt.onItem) opt.onItem(it); }
       marker.position.set(p.x, 31, p.z);
       P.update(t, cam, p);
     }
@@ -224,7 +231,7 @@
       setIo(px, py, yaw) { io.px = px; io.py = py; io.y = P.walkH(px, py); if (yaw != null) io.yaw = yaw; placeCamera(0, true); },
       setCam(yaw, pitch, dist) { if (yaw != null) C.yaw = yaw; C.pitch = pitch != null ? pitch : view.pitch; C.pitchSet = pitch != null; C.dist = dist != null ? dist : view.dist; C.auto = 99; placeCamera(0, true); },
       push(x, y, mag) { scripted = x == null ? null : { x, y, mag: mag == null ? 0.7 : mag }; },
-      fits,
+      fits, items: P.items,
     };
     window.__w3d = api;
     return api;

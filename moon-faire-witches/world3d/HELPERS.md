@@ -47,6 +47,35 @@ Draw the walk and block areas over the painting before placing anything.
 Never change the engine, the tools, the other places, or anything outside `moon-faire-witches/world3d/`. If the engine
 should do something it doesn't, build it in `extra(K)` for now and put the wish in your report.
 
+## Chris's direction (November 16, 10:34): pockets, hidden keepsakes, and wide wild places
+
+- **Keepsakes are only a shimmer** in the 3D, until Io walks into one and its card pops up (the engine does this from
+  `envoi-final-draft/items/items.js`: every keepsake whose `home` is your map shows at its `at`). Chris likes them hidden
+  in **little pockets you find by exploring**: move each one into a pocket with `items: { '<id>': [x, y] }`, and say in
+  your report where it is. (A keepsake given by someone, with no `at`, isn't in the world: leave it.)
+- **Pockets** (towns and wild places alike): one to three small places past the 2D walk that you only find by looking: a
+  strip of garden behind a house, a gap between two walls, a ledge behind a tree, a path round the back of a rock.
+  `walkAdd: [{ poly: [[x, y], ...], ground: 'grass' | 'dirt' | 'cob' }]` adds walkable ground; hide the way in behind a
+  bush, a tree or a corner. Wickhollow's square has one: the strip down the lower house's west side (its Crescent Locket
+  is at the end of it).
+- **Wild places are wide open fields**, not just the painting. The painting is the middle of the place: its paths become
+  trails, its landmarks stay where they are, and the place goes on round it, about three paintings each way:
+  - `extent: [x0, y0, x1, y1]` in pixels, for example `[-1536, -1024, 3072, 2048]` (the painting is 0 to 1536 by 0 to 1024).
+  - `open: { bounds: [[x, y], ...] }`: where Io may roam (an uneven edge well inside the extent, so the woods close it in);
+    she can go anywhere in it except water and anything solid (every tree trunk, rock, building and lamp is solid).
+  - Heavy fog, so only so much is drawn at once: `night: { fogNear: 10, fogFar: 42, far: 90, hills: false, fog: [r, g, b] }`.
+    Anything past the fog isn't drawn at all.
+  - Rolling ground past the painting: in `ground_h`, add `W3D.vnoise(x / 400, y / 400)` and finer noise (metres up and down),
+    kept flat along the trails.
+  - Trees past the painting in clumps with clearings between: `treeGen.out: { density, clump, clear, kinds: [leafy, fir,
+    bare-thorny], size: [smallest, largest] }`; tree kind 2 is the creepy bare thorny tree. Inside the painting the trees
+    still come from the painting itself.
+  - Trails out to the edges (`walkAdd`, ground 'dirt'), more places to find along the way (a ruined wall, a ring of
+    stones, a fallen tree, a pool, a shrine, built in `extra(K)`), and the exits moved out to the bounds' edge where the
+    trails end (`exits`, each `{ rect, label }`).
+  - The checks' goals: every exit, every keepsake and every landmark. The whole place can be larger than 300,000
+    triangles; what's in view past the fog should stay under about 200,000.
+
 ## The rules of Envoi's world
 
 - Night, as everywhere in Envoi (the story is one long night): moonlight and warm light from lamps, windows and fires. The

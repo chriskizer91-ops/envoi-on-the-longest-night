@@ -12,7 +12,7 @@ const id = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2
 require(path.join(R, 'moon-faire-witches/world3d/places', id + '.js'));
 const P = window.W3D_PLACES[id], M = window.MAPS[P.mapId];
 const inPoly = (poly, x, y) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
-const walkable = (x, y) => M.walk.some((p) => inPoly(p, x, y)) && !M.block.some((p) => inPoly(p, x, y));
+const walkable = (x, y) => M.walk.concat((P.walkAdd || []).map((a) => a.poly || a)).some((p) => inPoly(p, x, y)) && !M.block.some((p) => inPoly(p, x, y));
 const report = [];
 const share = (name, pts) => { const n = pts.filter(([x, y]) => walkable(x, y)).length; report.push([name, n, pts.length]); };
 for (const b of P.buildings) { const [x0, y0, x1, y1] = b.fp, pts = []; for (let x = x0 + 1; x < x1; x += 3) for (let y = y0 + 1; y < y1; y += 3) pts.push([x, y]); share('building ' + b.id, pts); }
