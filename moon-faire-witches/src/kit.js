@@ -203,6 +203,7 @@ function makeKit(cfg) {
 
   // ---------- the frame ----------
   let fxKids = -1, last = 0, running = false;
+  const hooks = [];       // a page's own per-frame work (its effects): fn(dt, t)
   const _sl = V();
   function frame(rdt, quiet) {
     let dt = Math.min(rdt, 0.05);
@@ -223,6 +224,7 @@ function makeKit(cfg) {
     spellLight.intensity = bright; if (bright > 0) spellLight.position.copy(_sl); else spellLight.position.set(0, -50, 0);
     const pointScale = IH * (view.s2 || 1) / (Math.max(1, view.h) * Math.tan(FOV / 2 * Math.PI / 180));
     FX.update(dt, clock.t, pointScale);
+    for (const h of hooks) h(dt, clock.t, pointScale);
     AF.update(clock.t, dt);
     const L = AF.light;
     hemi.color.copy(L.hemiSky); hemi.groundColor.copy(L.hemiGround); hemi.intensity = L.hemiI;
@@ -245,6 +247,7 @@ function makeKit(cfg) {
 
   const K = { WITCH, THREE, AF, ARENA, scene, camera, renderer, FX, IOS, SND, clock, view, actors, wait, until, untilP, untilT, hitStop, shake, shotAt, shotBoth, shotFit, rest, actor, settle,
     moveTo, faceTo, walkNear, goHome, restYaw, chest, head, hurt, num, ui, setLook, get look() { return look; }, layout, toScreen, step, ptsOf, toward, faceYaw,
+    onFrame: (fn) => hooks.push(fn),
     ready: () => paintImg.complete && paintImg.naturalWidth > 0,
     compile() { for (const a of actors) a.m.root.visible = true; renderer.compile(scene, camera); for (const a of actors) a.m.root.visible = a.shown; },
     start() { if (cfg.test) return; running = true; last = 0; requestAnimationFrame(loop); } };

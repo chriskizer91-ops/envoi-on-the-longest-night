@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Fair Folk in Envoi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="../../src/bench/bench.css">
+<link rel="stylesheet" href="../../src/game/game.css">
+<style>
+body{padding:0}
+.wrap.onfoot{position:fixed;inset:0;display:block}
+.onfoot #stage{position:absolute;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);left:env(safe-area-inset-left,0px);right:env(safe-area-inset-right,0px);border-radius:0;margin:0;min-height:0}
+.onfoot #panel{position:absolute;top:calc(8px + env(safe-area-inset-top,0px));right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px));width:min(380px,calc(100% - 32px));max-height:none;margin:0;z-index:7;overflow:auto;padding-top:10px}
+.onfoot #panel h1{font-size:21px;margin:0 30px 4px 0;color:var(--wt)}
+.onfoot .shut{position:sticky;top:0;float:right;appearance:none;width:36px;height:36px;margin:-4px -6px 0 0;border-radius:18px;border:1px solid rgba(214,222,255,.45);background:rgba(10,12,34,.6);color:var(--wt);font-size:16px}
+.onfoot .try{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;appearance:none;min-height:36px;padding:0 14px;border-radius:18px;border:1px solid rgba(214,222,255,.5);background:rgba(18,16,40,.7);color:#f4f6ff;font-weight:700;font-size:14px}
+#stage .toast{position:absolute;left:50%;top:52px;transform:translateX(-50%);max-width:calc(100% - 24px);padding:7px 12px;font-size:14px;z-index:5;pointer-events:none;text-align:center}
+</style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../witches/meshopt_simplifier.js"></script>
+<script src="../witches/palette.js"></script>
+<script src="../witches/jester_tex.js"></script>
+<script src="../witches/folk/jester_kit.js"></script>
+<script src="../witches/lod.js"></script>
+<script src="../witches/io_tex.js"></script>
+<script src="../build/io_plus.js"></script>
+<script src="../witches/witch_levels.js"></script>
+<script src="../witches/folk/face_plain.js"></script>
+<script src="../witches/folk/person-kit.js"></script>
+<script src="../witches/folk/emotes.js"></script>
+<script src="../witches/folk/npcs.js"></script>
+<script src="../witches/folk/npc_tex.js"></script>
+<script src="../witches/folk/npc.js"></script>
+<script src="../src/moon-io.js"></script>
+<script src="../src/moon-io-walker.js"></script>
+<script src="../src/moon-folk.js"></script>
+<script src="../../src/walk/pixel-io.js"></script>
+<script src="../../src/walk/painted-io.js"></script>
+<script src="../../src/game/sprites.js"></script>
+<script src="../../src/game/maps.js"></script>
+<script src="../../src/game/field.js"></script>
+<script src="../../src/game/talk.js"></script>
+<script src="../../src/game/script.js"></script>
+<script src="../../src/walk/on-foot.js"></script>
+<script>
+// The Fair Folk in Envoi: Moon Faire's Io walking Envoi's maps, and Moon Faire's fair folk standing in for Envoi's seventeen
+// townsfolk (src/moon-folk.js says who plays whom). Talking to one: they turn to Io, say hello their own way, and speak
+// their first lines from Envoi's script (src/game/script.js) in the game's own talking box, with a picture of their face
+// taken from their 3D model. Envoi's names, places and words are unchanged.
+(function () {
+  'use strict';
+  window.makePaintedIo = () => { const w = makeMoonIoWalker(); window.__walker = w; return w; };
+  const FOLK = makeMoonFolk(), PORTRAITS = {};
+  let TALK = null, field = null;
+  const create = Field.create;
+  Field.create = (host, opts) => {
+    opts.paintedFolk = FOLK;
+    field = create(host, opts);
+    // the game's talking box, styled as in the game (its rules sit under .game)
+    const wrap = document.createElement('div'); wrap.className = 'game'; wrap.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:30;background:transparent'; host.appendChild(wrap);
+    TALK = Talk.create(wrap, { portraits: PORTRAITS, people: (id) => { const c = SCRIPT.cast[id]; return c ? { name: FOLK.nameOf(id, c.name), look: c.look } : null; }, src: (p) => p });
+    const box = wrap.querySelector('.talk'); if (box) box.style.pointerEvents = 'auto';
+    opts.onTalk = (p) => converse(p);
+    return field;
+  };
+  // only their own lines: Sol's replies belong to the old party (the new party's words are still to be written)
+  async function converse(p) {
+    if (!TALK || TALK.busy) return;
+    const id = p.id, said = (SCRIPT.people[id] ? SCRIPT.people[id]({ flags: {}, level: 1 }) : []).map((l) => (Array.isArray(l) && l[0] === 'shipmaster' ? ['ysmera', l[1]] : l)).filter((l) => Array.isArray(l) && l[0] === id);
+    const lines = said.length ? said : [[id, '…']];
+    const face = FOLK.portrait(id); if (face) PORTRAITS[id] = { name: FOLK.nameOf(id, p.name), src: face };
+    field.pause(); FOLK.greet(id);
+    await new Promise((r) => setTimeout(r, 450));
+    FOLK.talk(id, true);
+    try { await TALK.say(lines); } finally { FOLK.talk(id, false); field.resume(); }
+  }
+  OnFoot.start({
+    title: 'The Fair Folk in Envoi',
+    blurb: 'Moon Faire’s Io walking Envoi’s maps, and Moon Faire’s fair folk as Envoi’s townsfolk in Wickhollow, at the jetty, in Bogmire, at the Warden waystation, at the shipyard and in Misthollow. Walk up to someone and tap to talk.',
+    src: (p) => (p.startsWith('data:') ? p : '../../' + p),
+    note: 'Every person is a Moon Faire fair folk model at a quarter of its triangles, the weight Moon Faire’s game uses; the two gnomes of the shipyard are two of them made small. They turn to Io, say hello their own way and talk with their hands. Their names and words are Envoi’s.',
+  });
+  for (const r of document.querySelectorAll('input[type=range]')) if (+r.min === 0.1 && +r.max === 0.26) { r.value = 0.24; r.dispatchEvent(new Event('input', { bubbles: true })); }
+  if (window.__onfoot && window.__onfoot.S) window.__onfoot.S.ioScreen = 0.24;
+  window.__town = { FOLK, converse, get field() { return field; }, get talk() { return TALK; } };
+})();
+</script>
+</body>
+</html>
