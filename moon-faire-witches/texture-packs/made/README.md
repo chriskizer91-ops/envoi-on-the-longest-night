@@ -31,8 +31,9 @@ and roofs from these textures, and a few plants may be asked for once the 3D pla
 Every picture matched its card by name, the card's shape, and (for the 17 cut-outs) a plain mid-grey background. Each
 surface was looked at repeated 2 x 2. Notes on the ones that need one are in `index.csv`:
 
-- A visible line where it repeats, to look at in the 3D (Chris decides whether to make them again):
-  `frozen_waterfall_ice`, `road_cobbles_snow`, `jetty_planks_snow`, `shared_planks_wall` and `shared_sky_night` (top to
-  bottom or left to right), and a faint one in `desert_ground`.
+- A visible line where it repeats, to look at in the 3D (Chris decides whether to make them again): a line across the
+  picture where its top edge meets its bottom edge in `frozen_waterfall_ice`, `jetty_planks_snow`, `shared_planks_wall`
+  and `shared_sky_night`; a line down it where its left edge meets its right edge in `road_cobbles_snow`, and a faint one
+  in `desert_ground`.
 - Repeats left to right only, as its card asks: `dawnroost_palisade`, `coastal_cliff`, `stream_ice_edge`,
   `shared_drystone`.
