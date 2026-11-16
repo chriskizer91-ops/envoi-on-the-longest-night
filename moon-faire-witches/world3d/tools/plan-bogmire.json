@@ -1,0 +1,22 @@
+[
+ { "name": "top-3d", "top": true },
+ { "name": "top-with-painting", "guide": true },
+ { "name": "walk-1-start", "io": [70, 368, 2.4], "cam": [0, null] },
+ { "name": "walk-2-the-west-boardwalk", "to": [300, 420] },
+ { "name": "walk-3-into-the-square", "to": [560, 470] },
+ { "name": "walk-4-by-the-lamp", "to": [745, 500] },
+ { "name": "walk-5-the-long-walk", "to": [790, 300] },
+ { "name": "walk-6-north-to-the-heart", "to": [790, 40] },
+ { "name": "overview", "io": [780, 520, 3.14], "cam": [0, 0.95, 34] },
+ { "name": "nw-stair", "io": [350, 420, 3.14], "cam": [0, null] },
+ { "name": "nw-porch-the-pocket-mouth", "io": [430, 232, 1.57], "cam": [-1.3, null] },
+ { "name": "hag-stone-back-deck", "io": [484, 110, 3.14], "cam": [0, null] },
+ { "name": "the-hag-stone", "io": [446, 79, -1.57], "cam": [1.57, null] },
+ { "name": "inn-stair", "io": [1214, 440, 3.14], "cam": [0, null] },
+ { "name": "east-side", "io": [1282, 520, 0], "cam": [3.14, null] },
+ { "name": "se-dock-and-punt-landing", "io": [1440, 742, 1.57], "cam": [-1.57, null] },
+ { "name": "the-bogstriders-at-the-punt", "io": [1517, 790, 0], "cam": [3.14, null] },
+ { "name": "south-houses", "io": [1000, 792, 4.2], "cam": [1.0, null] },
+ { "name": "water-stair", "io": [785, 760, 0], "cam": [3.14, null] },
+ { "name": "sw-house", "io": [560, 792, 3.14], "cam": [0, null] }
+]
