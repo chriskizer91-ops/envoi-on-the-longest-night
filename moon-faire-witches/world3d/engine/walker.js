@@ -99,6 +99,16 @@
     const paintTex = new THREE.TextureLoader().load(place.paintingSrc);
     const paintPlane = new THREE.Mesh(new THREE.PlaneGeometry(pW, pH), new THREE.MeshBasicMaterial({ map: paintTex, transparent: true, opacity: 0.55, depthTest: false, depthWrite: false }));
     paintPlane.rotation.x = -Math.PI / 2; paintPlane.position.set(0, 30, 0); paintPlane.renderOrder = 20; paintPlane.visible = false; scene.add(paintPlane);
+    // the "where can she walk" view: the walking grid laid over the 3D from above, green where she can stand
+    let walkPlane = null;
+    function walkView(on) {
+      if (on && !walkPlane) {
+        const [a, b, c, d] = P.walkRect, t = new THREE.CanvasTexture(P.walkPic()); t.magFilter = THREE.NearestFilter; t.minFilter = THREE.LinearFilter; t.generateMipmaps = false;
+        walkPlane = new THREE.Mesh(new THREE.PlaneGeometry(M.x(c) - M.x(a), M.z(d) - M.z(b)), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthTest: false, depthWrite: false }));
+        walkPlane.rotation.x = -Math.PI / 2; walkPlane.position.set((M.x(a) + M.x(c)) / 2, 30.5, (M.z(b) + M.z(d)) / 2); walkPlane.renderOrder = 20; scene.add(walkPlane);
+      }
+      if (walkPlane) walkPlane.visible = !!on;
+    }
     const marker = new THREE.Mesh(new THREE.RingGeometry(0.7, 1.05, 24), new THREE.MeshBasicMaterial({ color: 0xffe6a0, depthTest: false, transparent: true }));
     marker.rotation.x = -Math.PI / 2; marker.renderOrder = 21; marker.visible = false; scene.add(marker);
     function fitTop() {
@@ -107,7 +117,7 @@
       top.left = -hw; top.right = hw; top.top = hh; top.bottom = -hh; top.position.set(0, 120, 0); top.up.set(0, 0, -1); top.lookAt(0, 0, 0); top.updateProjectionMatrix();
     }
     const fog0 = [P.U.uFogNear.value, P.U.uFogFar.value];
-    function setGuide(on, paint) { guide.on = on; paintPlane.visible = on && paint !== false; marker.visible = on && paint !== false; P.U.uFogNear.value = on ? 1e4 : fog0[0]; P.U.uFogFar.value = on ? 2e4 : fog0[1]; if (opt.onGuide) opt.onGuide(on); if (on) fitTop(); }
+    function setGuide(on, paint) { guide.on = on; paintPlane.visible = on && paint !== false && paint !== 'walk'; marker.visible = on && paint !== false; walkView(on && paint === 'walk'); P.U.uFogNear.value = on ? 1e4 : fog0[0]; P.U.uFogFar.value = on ? 2e4 : fog0[1]; if (opt.onGuide) opt.onGuide(on); if (on) fitTop(); }
 
     // ---- the thumb and the keys ----
     const ring = opt.ring, dot = opt.dot;

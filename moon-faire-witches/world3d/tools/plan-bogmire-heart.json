@@ -1,0 +1,22 @@
+[
+ { "name": "top-3d", "top": true },
+ { "name": "top-with-painting", "guide": true },
+ { "name": "walk-1-start", "io": [768, 980, 3.14], "cam": [0, null] },
+ { "name": "walk-2-up-the-long-walk", "to": [768, 760] },
+ { "name": "walk-3-into-the-square", "to": [768, 560] },
+ { "name": "walk-4-the-south-west-lantern", "to": [580, 640] },
+ { "name": "walk-5-past-the-broken-boards", "to": [560, 470] },
+ { "name": "walk-6-the-west-side-deck", "to": [452, 470] },
+ { "name": "walk-7-to-the-hall-steps", "to": [768, 330] },
+ { "name": "walk-8-up-the-steps", "to": [768, 196] },
+ { "name": "walk-9-past-the-barrels", "to": [806, 212] },
+ { "name": "walk-10-the-east-pocket", "to": [904, 204] },
+ { "name": "walk-11-back-past-the-door", "to": [720, 212] },
+ { "name": "walk-12-the-west-pocket", "to": [474, 210] },
+ { "name": "overview", "io": [768, 600, 3.14], "cam": [0, 0.95, 34] },
+ { "name": "the-south-west-lantern", "io": [700, 600, -0.97], "cam": [2.17, null] },
+ { "name": "the-south-east-lantern", "io": [840, 600, 0.97], "cam": [-2.17, null] },
+ { "name": "the-east-houses", "io": [1080, 470, 1.57], "cam": [-1.57, null] },
+ { "name": "the-south-west-house", "io": [600, 640, -1.4], "cam": [1.74, null] },
+ { "name": "the-square-from-the-porch", "io": [768, 200, 0], "cam": [3.14, 0.95, 10] }
+]
