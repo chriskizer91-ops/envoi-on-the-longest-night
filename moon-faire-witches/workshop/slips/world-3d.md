@@ -1,6 +1,6 @@
 SLIP: world-3d
 State:    Working: every walking place is built in 3D (21 of 21) and the four zone pages walk them place to place
-          (November 16, afternoon); walk pass 2 is closing the gaps where the 3D blocks the 2D walk.
+          (November 16, afternoon); every place passes walls-test, and nearly all of each 2D walk is walkable in 3D.
 Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, while his textures (rounds one and two are
           all made) come in slowly through their own conversation: the project document claude/textures-in.md has the
           way and the starter text. Every 3D place swaps a made texture in by its file name on the next rebuild.
@@ -44,9 +44,12 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           K.far(x, z), builders for a wide place's outlying things, left undrawn past the fog. The far pass (7d6085d) moved
           the five wide places' outlying things there: a third to a half fewer triangles in view (e.g. the Warm Roads camp
           156,000 to 103,000 at the start, 157,000 to 88,000 out in the wide ground), up to 10 to 30 more draw calls at the
-          busiest spots (at most 85); and check-layout now counts the 2D walk's points Io can't stand on in 3D (none in six
-          places; 2 to 21 in eight; 90 to 168 in five; the cottage 495; Wickhollow 1,735, mostly the lower house's roof
-          way). Walk pass 2 (w3d/walk-pass-2) is on the larger ones, and Wickhollow's roof way.
+          busiest spots (at most 85); and check-layout now counts the 2D walk's points Io can't stand on in 3D. Walk pass 2
+          (1cbd778) closed the larger gaps and built Wickhollow's secret roof way (Chris, October 4): an old oak by the
+          lower house, a limb up to its fork, a branch and a ladder onto the roof, a plank walk along the ridge. The walk
+          grid now decides each cell at its centre (25a58fb). Points of the 2D walk not walkable in 3D: none in 13 places;
+          1 to 15 in seven (edge cells, step corners, posts); Wickhollow 187 (the oak's foot and the roof's edges, so she
+          can't step from the cobbles onto the fork or from the limb onto the ridge; the chapel steps' corners).
           The whole game, the zone pages (bf99268, from w3d/zones): zones are the game's four level bands, which already join on
           foot ((1) Wickhollow, cottage, jetty, Thornwood, Bogmire, the heart; (2) Warm Roads camp, Ember Line road,
           forest road, Dawnroost, the node; (3) northern camp, Eldergrove's edge, cold moor, crossroads, shipyard;
@@ -70,7 +73,7 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           For Chris to confirm (helpers' calls under his 11:22 rule): the frozen ice of the frozen pass's river and of the
           cold moor's tarn and Frostmere's near ice is walkable (its far open water isn't); the camp's stream is open water.
           The frozen camp's wish (ff429d4): bark takes a place's tint (white birches).
-Branch:   work/world-3d   Commit: 7d6085d
+Branch:   work/world-3d   Commit: 25a58fb
 Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
           engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
           tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/beside.mjs, tools/plan-wickhollow.json,
@@ -115,9 +118,7 @@ For the hub: Take moon-faire-witches/world3d/ and this slip; nothing else change
           texture-packs/made/, rebuilding picks them up (the page uses a made texture wherever one is there). Please add
           the page to moon-faire-witches/README.md's table and to the board, and a textures-made job to the board
           (claude/textures-in.md has its starter text).
-Open:     1. The lower house's roof: the walking map lets Io climb the tree and walk the red roof's ridge to the Crescent
-             Locket (Chris's secret way, October 4). The 3D house blocks that strip; it needs a roof walk if the
-             keepsake's path is to stay.
+Open:     1. (Done in walk pass 2: the lower house's roof walk. The Crescent Locket stays in its pocket at [358, 676].)
           2. The townsfolk (Nettie, Hilde, Mayor Gretch) aren't standing in the 3D square yet: src/moon-folk.js could put
              them there, if Chris wants them next.
           3. All 15 textures are stand-ins; the timber-and-plaster walls and the bark are the roughest. shared_planks_wall
