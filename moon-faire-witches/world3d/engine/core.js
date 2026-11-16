@@ -297,10 +297,11 @@
     const uni = Object.assign({}, U, {
       tCob: { value: t.cob }, tGrass: { value: t.grass }, tDirt: { value: t.dirt }, tPave: { value: t.pave }, uSplat: { value: t.splat },
       uRep4: { value: new THREE.Vector4(1 / t.rep[0], 1 / t.rep[1], 1 / t.rep[2], 1 / t.rep[3]) }, uGrassTint: { value: new THREE.Vector3(...(t.grassTint || [0.5, 0.58, 0.55])) },
+      uCobTint: { value: new THREE.Vector3(...(t.cobTint || [1, 1, 1])) }, uDirtTint: { value: new THREE.Vector3(...(t.dirtTint || [1, 1, 1])) }, uPaveTint: { value: new THREE.Vector3(...(t.paveTint || [1, 1, 1])) },
       uRep: { value: new THREE.Vector2(1, 1) }, uTint: { value: new THREE.Color(0xffffff) }, uEmis: { value: new THREE.Color(0) }, uLit: { value: 1 }, uGlowUse: { value: 1 }, uSpec: { value: 0 }, uShadeK: { value: 1 },
     });
     const frag = CHUNK_F_HEAD + `
-      uniform sampler2D tCob, tGrass, tDirt, tPave, uSplat; uniform vec4 uRep4; uniform vec3 uGrassTint;
+      uniform sampler2D tCob, tGrass, tDirt, tPave, uSplat; uniform vec4 uRep4; uniform vec3 uGrassTint, uCobTint, uDirtTint, uPaveTint;
       vec3 two(sampler2D t, vec2 w, float rep) {
         vec3 a = texture2D(t, w * rep).rgb, b = texture2D(t, w * rep * 0.29 + vec2(0.37, 0.71)).rgb;
         float la = dot(b, vec3(0.333));
@@ -310,9 +311,9 @@
         vec2 w = vW.xz;
         vec3 s = texture2D(uSplat, paintUv(vW)).rgb;
         vec3 g = two(tGrass, w, uRep4.y) * uGrassTint;
-        vec3 c = mix(g, two(tDirt, w, uRep4.z), s.g);
-        c = mix(c, two(tCob, w, uRep4.x), s.r);
-        c = mix(c, two(tPave, w, uRep4.w), s.b);
+        vec3 c = mix(g, two(tDirt, w, uRep4.z) * uDirtTint, s.g);
+        c = mix(c, two(tCob, w, uRep4.x) * uCobTint, s.r);
+        c = mix(c, two(tPave, w, uRep4.w) * uPaveTint, s.b);
         vec3 n = normalize(vN);
         float sh = shade(vW);
         vec3 col = c * (nightLight(vW, n, sh) + lampLight(vW, n));

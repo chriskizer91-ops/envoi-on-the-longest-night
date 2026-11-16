@@ -62,7 +62,8 @@
       bark: m({ map: ST('bark'), rep: 1.2, cut: true, shade: 0.6 }),
     };
     for (const k of FLOWER_KINDS) MAT['fl_' + k] = m({ map: pics['fl_' + k], alphaTest: 0.5, side: DS, cut: true, shade: 0.5 });
-    for (const k in place.extraMats || {}) { const e = place.extraMats[k]; MAT[k] = m({ map: T(e.tex), rep: e.rep || 2, tint: e.tint, cut: true, side: e.side === 'double' ? DS : THREE.FrontSide, shade: e.shade == null ? 0.4 : e.shade }); }
+    // a place's own materials: { tex (none: a plain colour), rep, tint, emis, lit, glow, spec, cut (false: never thins away near Io), side, shade }
+    for (const k in place.extraMats || {}) { const e = place.extraMats[k]; MAT[k] = m({ map: e.tex ? T(e.tex) : null, rep: e.rep || 2, tint: e.tint, emis: e.emis, lit: e.lit, glow: e.glow, spec: e.spec, cut: e.cut !== false, side: e.side === 'double' ? DS : THREE.FrontSide, shade: e.shade == null ? 0.4 : e.shade }); }
     // the trees, with and without the thinning-away (it costs a little, so only the patches near Io's line of sight get it)
     const TREE_MAT = (cut) => ({
       leaves: m({ map: ST('leaves'), rep: 1, tint: TINT.leaves, cut, shade: 0.55 }),
@@ -839,7 +840,7 @@
     { const g = glow.getContext('2d'); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.strokeStyle = '#000'; g.lineWidth = 4; g.strokeRect(0, 0, CW, CH); g.restore(); }
     const T_ = (c) => { const t = new THREE.CanvasTexture(c); t.flipY = false; t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; t.minFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; };
     U.uGlow.value = T_(glow); U.uShade.value = T_(shade);
-    const groundTex = { cob: T(place.ground.cob), grass: T(place.ground.grass), dirt: T(place.ground.dirt), pave: T(place.ground.pave), splat: T_(splat), rep: place.ground.rep, grassTint: place.ground.grassTint };
+    const groundTex = { cob: T(place.ground.cob), grass: T(place.ground.grass), dirt: T(place.ground.dirt), pave: T(place.ground.pave), splat: T_(splat), rep: place.ground.rep, grassTint: place.ground.grassTint, cobTint: place.ground.cobTint, dirtTint: place.ground.dirtTint, paveTint: place.ground.paveTint };
     const groundMat = W3D.groundMat(U, groundTex); for (const g of grounds) g.material = groundMat;
 
     // ---- where her feet can stand, as a grid (a cell every 2 px): open ground inside the bounds, less water, steep
