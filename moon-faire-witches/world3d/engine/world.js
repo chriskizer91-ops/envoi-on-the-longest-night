@@ -594,10 +594,15 @@
       else if (pr.k === 'sunflowers') { for (let i = 0; i < 5; i++) { const sx = x + (R() - 0.5) * 1.4, sz = z + (R() - 0.5) * 0.8, hh = 1.4 + R() * 0.6; B.box('leafBush', sx, y, sz, 0.05, hh, 0.05, 0, [0.6, 0.8, 0.5]); B.quad('fl_sun', [sx - 0.35, y + hh - 0.3, sz + 0.02], [sx + 0.35, y + hh - 0.3, sz + 0.02], [sx + 0.35, y + hh + 0.4, sz + 0.02], [sx - 0.35, y + hh + 0.4, sz + 0.02], [0, 0, 1, 1]); } }
     }
 
+    // things a place builds out in its wide ground (rocks, walls, landmarks) can go into a builder for their 22 m patch,
+    // K.far(x, z) (metres), instead of K.B: they are left undrawn past the fog, like the trees. Same materials, same solids
+    const FARB = {};
+    const farB = (x, z) => { const key = Math.floor(x / 22) + ',' + Math.floor(z / 22); return FARB[key] || (FARB[key] = W3D.Builder()); };
+    const allSolids = () => Object.values(FARB).reduce((a, fb) => a.concat(fb.solids), B.solids.slice());
     // ---- the place's own things (tents, boats, campfires...): its data's extra(K) builds them with the same parts ----
     function extras() {
       if (typeof place.extra !== 'function') return;
-      const K = { B, M, X, Z, gh, walkH, terrain, R, TAU, lantern, bench, addBlock, circlePx, lights, halos, shadeMarks, lamps3d, ico, rockG: rockShapes,
+      const K = { B, M, X, Z, gh, walkH, terrain, R, TAU, lantern, bench, addBlock, circlePx, lights, halos, shadeMarks, lamps3d, ico, rockG: rockShapes, far: farB,
         light: (px, py, r, s, kind) => lights.push([px, py, r, s, kind || 'warm']),
         halo: (x, y, z, size, rgb) => halos.push([x, y, z, size, rgb[0], rgb[1], rgb[2]]),
         fire(px, py, size) { const x = X(px), z = Z(py), y = gh(px, py), s = size || 1; B.box('stone', x, y - 0.1, z, 0.9 * s, 0.25, 0.9 * s, 0.785, [0.6, 0.58, 0.6]); B.box('glass', x, y + 0.1, z, 0.45 * s, 0.35 * s, 0.45 * s, 0.3, [2.0, 0.85, 0.3]); B.box('glass', x, y + 0.3 * s, z, 0.25 * s, 0.35 * s, 0.25 * s, 1.1, [2.2, 1.2, 0.4]); halos.push([x, y + 0.5 * s, z, 2.6 * s, 1.0, 0.5, 0.2]); lights.push([px, py, 170 * s, 1.4, 'forge']); lamps3d.push({ x, y: y + 0.6, z, c: 0xff8a40, k: 1.8 }); addBlock(circlePx(px, py, 0.6 * s, 8)); },
@@ -774,6 +779,8 @@
     // ---- the meshes ----
     const meshes = B.build(MAT);
     for (const k in meshes) scene.add(meshes[k]);
+    const farMeshes = [];
+    for (const key in FARB) { const fm = FARB[key].build(MAT); for (const k in fm) { scene.add(fm[k]); farMeshes.push(fm[k]); } }
     const grounds = groundGeos.map((g) => { const mesh = new THREE.Mesh(g, null); mesh.name = 'ground'; mesh.matrixAutoUpdate = false; scene.add(mesh); return mesh; });
     const sky = new THREE.Mesh(new THREE.SphereGeometry(500, 32, 16), W3D.skyMat(U)); sky.frustumCulled = false; sky.renderOrder = -10; sky.name = 'sky'; scene.add(sky);
 
@@ -875,7 +882,7 @@
       // windows, cloth and flowers never count)
       const NEVER = /^(deck|pave|roof|glass|win|winDark|winColour|rose|door|doorArch|doorArch2|moonwater|soil|hills|produce|cloth|leaves|firs)$|^fl_/;
       g.fillStyle = '#000'; solidCount = 0;
-      for (const sd of B.solids) {
+      for (const sd of allSolids()) {
         if (NEVER.test(sd.k)) continue;
         let cx = 0, cz = 0; for (const [x, z] of sd.poly) { cx += x; cz += z; } cx /= sd.poly.length; cz /= sd.poly.length;
         const f = walkH(M.px(cx), M.py(cz));
@@ -910,7 +917,7 @@
         }
       }
     }
-    const cullables = treeMeshes.concat(grounds);
+    const cullables = treeMeshes.concat(grounds, farMeshes);
     // the counts, for the page's numbers
     let tris = 0; scene.traverse((o) => { if (o.isMesh && o.geometry) { const g = o.geometry; tris += (g.index ? g.index.count : g.attributes.position.count) / 3; } });
     const stats = { triangles: Math.round(tris), meshes: 0, trees: trees.length, lamps: (place.lamps || []).length, halos: halos.length };
@@ -920,7 +927,7 @@
     stats.solids = solidCount;
     // the big solid things the camera mustn't sit inside (walls, houses, towers, roofs): footprints over a square metre
     const camSolids = [];
-    for (const sd of B.solids) {
+    for (const sd of allSolids()) {
       if (/^(glass|win|winDark|winColour|rose|door|doorArch|doorArch2|moonwater|soil|hills|produce|cloth|leaves|firs)$|^fl_/.test(sd.k) || sd.y1 - sd.y0 < 1.2) continue;
       const b = [1e9, 1e9, -1e9, -1e9]; for (const [x, z] of sd.poly) { b[0] = Math.min(b[0], x); b[1] = Math.min(b[1], z); b[2] = Math.max(b[2], x); b[3] = Math.max(b[3], z); }
       if ((b[2] - b[0]) * (b[3] - b[1]) < 1) continue;
