@@ -71,7 +71,8 @@
 
     // ---- the camera ----
     const cam = new THREE.PerspectiveCamera(60, 1, 0.1, (place.night && place.night.far) || 800);
-    const C = { yaw: 0, pitch: 0.62, dist: 7.0, aim: 1.15, auto: 0, top: false };
+    // the camera starts south of her looking north, as the painting does, unless the place says otherwise (startYaw)
+    const C = { yaw: place.startYaw || 0, pitch: 0.62, dist: 7.0, aim: 1.15, auto: 0, top: false };
     let view = { fov: 60, dist: 7, pitch: 0.62 };
     function layout() {
       const W = root.clientWidth, H = root.clientHeight; renderer.setSize(W, H, false);

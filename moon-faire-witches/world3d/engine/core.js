@@ -332,11 +332,13 @@
         float fres = pow(1.0 - max(v.y, 0.0), 3.0);
         vec3 sky = vec3(0.16, 0.14, 0.32) * (0.06 + fres * 1.3);
         // the lamps on the water: their light map read a little toward the camera, wobbling
-        vec2 wob = vec2(sin(vW.z * 3.1 + uTime * 1.7), cos(vW.x * 2.3 + uTime * 1.3)) * 0.35;
+        // ripples from three directions at once, so the moon's glints scatter instead of lining up
+        float r1 = sin(dot(vW.xz, vec2(1.7, 2.3)) + uTime * 1.6), r2 = sin(dot(vW.xz, vec2(-2.9, 1.1)) + uTime * 1.1), r3 = sin(dot(vW.xz, vec2(0.6, -3.7)) + uTime * 2.1);
+        vec2 wob = vec2(r1 + r2 * 0.6 + (b.r - 0.02) * 20.0, r2 - r3 * 0.7 + (b.g - 0.02) * 20.0) * 0.2;
         vec3 lw = vW + vec3(wob.x, 0.0, wob.y) - vec3(v.x, 0.0, v.z) * 1.5;
         vec3 g = toLin(texture2D(uGlow, paintUv(lw)).rgb) * uGlowK * 0.9;
         vec3 h = normalize(v + uMoonDir);
-        float glint = pow(max(dot(normalize(vec3(wob.x * 0.25, 1.0, wob.y * 0.25)), h), 0.0), 220.0);
+        float glint = pow(max(dot(normalize(vec3(wob.x * 0.25, 1.0, wob.y * 0.25)), h), 0.0), 220.0) * (1.0 - smoothstep(0.55, 0.85, v.y));
         vec3 col = c * 1.4 + sky * 0.6 + g * (0.16 + fres * 0.45) + uMoon * glint * 0.8;
         col = mix(col, vec3(0.55, 0.6, 0.75) * (0.6 + 0.4 * a.b * 3.0), fall * 0.85);
         gl_FragColor = outC(fogged(col, vW));

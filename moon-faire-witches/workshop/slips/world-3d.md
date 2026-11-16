@@ -1,6 +1,26 @@
 SLIP: world-3d
-State:    Ready for Chris to try: Wickhollow's square. Next, once he's happy: the jetty, Io's cottage, the Thornwood.
-Branch:   work/world-3d   Commit: (the commit that adds this slip)
+State:    Working: the whole 3D world, with helpers (Chris, November 16, 10:18). Wickhollow's square is ready for him to try.
+Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, while his textures (rounds one and two are
+          all made) come in slowly through their own conversation: the project document claude/textures-in.md has the
+          way and the starter text. Every 3D place swaps a made texture in by its file name on the next rebuild.
+          Round three (fronts, roofs, plants): not for now; perhaps a short list of plants later (claude/textures-in.md).
+          Chris (10:34): keepsakes exist in 3D only as a shimmer, and a card pops up when Io walks into one; little pockets
+          to find by exploring; wild places as wide open fields round their painting (about three paintings each way), in
+          heavy fog so only so much is drawn. Done in the engine (commit 71dbb3f); Wickhollow has its first pocket, with
+          the Crescent Locket (its 2D spot was on the lower house's roof). Every helper is building its place that way.
+          The 20 walking places left, by helpers: six at a time (Chris, 10:32: his Ultra account has room, and he'll say if
+          usage runs fast; this machine's 2 cores are the real limit),
+          each following moon-faire-witches/world3d/HELPERS.md on its own branch w3d/<place>, checked and brought into
+          work/world-3d here:
+            1. the jetty, Io's cottage, the Thornwood (working)
+            2. Bogmire (done: brought in, envoi-3d-bogmire.html), Bogmire's dark heart, Dawnroost (working)
+            3. Dawnroost's node (working), Misthollow, Misthollow's Moonwell
+            4. the shipyard; the crossroads and the frozen pass; the Warm Roads camp and the Ember Line road
+            5. the Dawnroost forest road and Eldergrove's edge; the northern camp and the cold moor; the frozen camp and
+               Frostmere's shore
+          Then the whole world in one page: walk off an edge into the next place. (The nine fight places and the world
+          map aren't walking places: not in this job unless Chris says so.)
+Branch:   work/world-3d   Commit: 1325e4a
 Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
           engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
           tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/plan-wickhollow.json
@@ -35,7 +55,8 @@ For the hub: Take moon-faire-witches/world3d/ and this slip; nothing else change
           patch-io.mjs, then node tools/build.mjs --offline moon-faire-witches/world3d/envoi-3d-wickhollow.html. It reads
           src/game/maps.js (MAPS.wickhollow) and the texture packs' stand-ins, read only. When Chris's textures land in
           texture-packs/made/, rebuilding picks them up (the page uses a made texture wherever one is there). Please add
-          the page to moon-faire-witches/README.md's table and to the board.
+          the page to moon-faire-witches/README.md's table and to the board, and a textures-made job to the board
+          (claude/textures-in.md has its starter text).
 Open:     1. The lower house's roof: the walking map lets Io climb the tree and walk the red roof's ridge to the Crescent
              Locket (Chris's secret way, October 4). The 3D house blocks that strip; it needs a roof walk if the
              keepsake's path is to stay.
