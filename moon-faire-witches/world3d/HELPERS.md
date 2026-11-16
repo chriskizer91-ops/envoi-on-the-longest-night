@@ -37,7 +37,9 @@ Draw the walk and block areas over the painting before placing anything.
   stilts: true, bottom: -3.4, rails: { sides: 'nsew', kind: 'rope' | 'wood' } }]` (boardwalks, landings and porches on
   stilts; feet still need `walk_h`), lamps of `kind: 'wood'` (a lantern hanging from a wooden post), doors with
   `plain: true` (a wooden frame, no stone surround or step), `h` on any lamp (metres to its lantern), a 'bark' material for
-  things built in `extra(K)`, a roof of its own texture with `roof: { mat: '<name>' }` and
+  things built in `extra(K)`, `groundPatches: [{ poly, kind: 'dirt' | 'cob' | 'grass' | 'pave' }]` (lay earth, cobbles, grass
+  or paving over part of the ground, under the walk too), `noRocks: [[x0, y0, x1, y1]]` (no shore boulders there), jetties
+  with `posts: false`, a roof of its own texture with `roof: { mat: '<name>' }` and
   `extraMats: { '<name>': { tex: '<texture id>', rep, tint, side: 'double' } }` (thatch, another bark), and `startYaw`
   (which way the camera first looks: 0 is north, as the painting; turn by radians).
 - Each texture written out in full with double quotes, as in `places/wickhollow.js` (the offline build only packs

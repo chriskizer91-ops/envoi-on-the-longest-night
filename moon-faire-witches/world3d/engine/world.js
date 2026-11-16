@@ -514,7 +514,7 @@
       const [px0, py0, px1, py1] = j.r, x0 = X(px0), x1 = X(px1), z0 = Z(py0), z1 = Z(py1);
       B.box('deck', (x0 + x1) / 2, j.y - 0.18, (z0 + z1) / 2, x1 - x0, 0.18, z1 - z0, 0, null, { u0: 0 });
       const posts = []; for (let x = x0 + 0.2; x <= x1 - 0.1; x += 2.2) posts.push([x, z0 + 0.15], [x, z1 - 0.15]); posts.push([x1 - 0.15, z0 + 0.15], [x1 - 0.15, z1 - 0.15]);
-      for (const [x, z] of posts) B.cyl('wood', x, -3.4, z, 0.15, 0.15, j.y + 3.4 + 0.45 * (R() > 0.4 ? 1 : 0.2), 7, [0.6, 0.48, 0.42]);
+      if (j.posts !== false) for (const [x, z] of posts) B.cyl('wood', x, -3.4, z, 0.15, 0.15, j.y + 3.4 + 0.45 * (R() > 0.4 ? 1 : 0.2), 7, [0.6, 0.48, 0.42]);
       shadeMarks.push(['rect', px0, py0, px1, py1, 0.82]);
     }
 
@@ -605,6 +605,7 @@
             if (px < WX0 || px > WX1 || py < WY0 || py > WY1 || nearWalkPx(px, py, 10)) continue;
             if (place.bridge && px > place.bridge.x0 && py > place.bridge.y0 - 10 && py < place.bridge.y1 + 10) continue;
             if (place.jetties && place.jetties.some((jt) => px > jt.r[0] - 8 && px < jt.r[2] + 8 && py > jt.r[1] - 8 && py < jt.r[3] + 8)) continue;
+            if ((place.noRocks || []).some((r) => px > r[0] && px < r[2] && py > r[1] && py < r[3])) continue;
             const sz = 0.55 + R() * 0.9, y = Math.max(w.level(py) - 0.3, terrain(px, py) - sz * 0.3);
             B.geom('rock', rockG[Math.floor(R() * 3)], new THREE.Matrix4().compose(new THREE.Vector3(X(px) + (R() - 0.5) * 0.6, y, Z(py) + (R() - 0.5) * 0.6), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, R() * TAU, 0)), new THREE.Vector3(sz, sz, sz)), null, 1.2);
           }
@@ -762,6 +763,7 @@
       // under the cobbles, nothing green
       const im = g.getImageData(0, 0, CW, CH), d = im.data; for (let i = 0; i < d.length; i += 4) { d[i + 1] = Math.round(d[i + 1] * (1 - d[i] / 255)); } g.putImageData(im, 0, 0);
       for (const a of place.walkAdd || []) if (a.ground === 'grass') { g.fillStyle = '#000'; path(g, a.poly); g.fill(); }
+      for (const gp of place.groundPatches || []) { g.fillStyle = { dirt: '#00ff00', cob: '#ff0000', grass: '#000000', pave: '#0000ff' }[gp.kind || 'dirt']; g.filter = 'blur(3px)'; path(g, gp.poly); g.fill(); g.filter = 'none'; }
       if (place.bridge) { g.fillStyle = 'rgba(0,0,255,1)'; g.fillRect(place.bridge.x0 * kx, place.bridge.y0 * ky, (place.bridge.x1 - place.bridge.x0) * kx, (place.bridge.y1 - place.bridge.y0) * ky); }
       for (const l of place.lawns || []) { g.fillStyle = '#000'; path(g, l); g.globalAlpha = 0.85; g.fill(); g.globalAlpha = 1; }
     }

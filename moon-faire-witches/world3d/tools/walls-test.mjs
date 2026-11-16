@@ -13,7 +13,7 @@ const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--ena
 const page = await (await browser.newContext({ viewport: { width: 412, height: 915 } })).newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
-await page.goto('file://' + page_ + '?test');
+await page.goto('file://' + page_ + '?test', { waitUntil: 'load', timeout: 240000 });
 await page.waitForFunction(() => window.__ready, null, { timeout: 240000 });
 const GOALS = null;   // the place's own: place.checks.goals
 const res = await page.evaluate(async () => {
