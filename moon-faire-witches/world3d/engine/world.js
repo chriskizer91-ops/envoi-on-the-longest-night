@@ -92,14 +92,17 @@
 
     // the steps: each tread's top, so Io's feet stand on them
     const STEPS = (place.steps || []).map((s) => {
-      const [x0, y0, x1, y1] = s.r, n = s.n, treads = [];
-      for (let i = 0; i < n; i++) { const ya = y0 + (y1 - y0) * i / n, yb = y0 + (y1 - y0) * (i + 1) / n; treads.push({ ya, yb, top: gh((x0 + x1) / 2, (ya + yb) / 2) }); }
-      return { x0, x1, y0, y1, treads, mat: s.mat };
+      const [x0, y0, x1, y1] = s.r, n = s.n, treads = [], ew = s.down === 'e' || s.down === 'w';
+      for (let i = 0; i < n; i++) {
+        if (ew) { const xa = x0 + (x1 - x0) * i / n, xb = x0 + (x1 - x0) * (i + 1) / n; treads.push({ xa, xb, ya: y0, yb: y1, top: s.tops ? s.tops[i] : gh((xa + xb) / 2, (y0 + y1) / 2) }); }
+        else { const ya = y0 + (y1 - y0) * i / n, yb = y0 + (y1 - y0) * (i + 1) / n; treads.push({ xa: x0, xb: x1, ya, yb, top: s.tops ? s.tops[i] : gh((x0 + x1) / 2, (ya + yb) / 2) }); }
+      }
+      return { x0, x1, y0, y1, treads, mat: s.mat, ew };
     });
     const PLAT = (place.decks || []).map((d) => ({ r: d.r, y: d.y })).concat((place.jetties || []).map((j) => ({ r: j.r, y: j.y })));
     const walkH = (x, y) => {
       for (const d of PLAT) if (x >= d.r[0] && x <= d.r[2] && y >= d.r[1] && y <= d.r[3]) return d.y;
-      for (const s of STEPS) if (x >= s.x0 && x <= s.x1 && y >= s.y0 && y <= s.y1) { const t = s.treads[Math.min(s.treads.length - 1, Math.floor((y - s.y0) / (s.y1 - s.y0) * s.treads.length))]; return t.top; }
+      for (const s of STEPS) if (x >= s.x0 && x <= s.x1 && y >= s.y0 && y <= s.y1) { const f = s.ew ? (x - s.x0) / (s.x1 - s.x0) : (y - s.y0) / (s.y1 - s.y0); return s.treads[Math.min(s.treads.length - 1, Math.floor(f * s.treads.length))].top; }
       const w = place.walk_h(x, y);
       return Math.abs(w - gh(x, y)) < 1e-6 ? terrain(x, y) : w;
     };
@@ -324,8 +327,8 @@
         roof('roof', ctr[0], ctr[2], dr === 'ns' ? dw : dd, dr === 'ns' ? dd : dw, E + dh - 0.05, 0.6, 0.15, dr);
         const wc = add3(front, mul(F.n, 0.04)); wc[1] = E + 0.15;
         onWall('wood', add3(wc, mul(F.n, -0.01)), F.t, 0.78, 0.92, [0.45, 0.36, 0.32]);
-        onWall('win', add3(wc, [0, 0.07, 0]), F.t, 0.62, 0.78);
-        halos.push([wc[0] + F.n[0] * 0.2, wc[1] + 0.45, wc[2] + F.n[2] * 0.2, 0.9, 1.0, 0.68, 0.36]);
+        onWall(f.dark ? 'winDark' : 'win', add3(wc, [0, 0.07, 0]), F.t, 0.62, 0.78);
+        if (!f.dark) halos.push([wc[0] + F.n[0] * 0.2, wc[1] + 0.45, wc[2] + F.n[2] * 0.2, 0.9, 1.0, 0.68, 0.36]);
       }
       // a flower box under the upper windows
       if (b.flowerbox) {
@@ -411,13 +414,12 @@
 
     // ---- stone steps ----
     for (const s of STEPS) {
-      const xa = X(s.x0), xb = X(s.x1);
       for (const t of s.treads) {
-        const za = Z(t.ya), zb = Z(t.yb);
-        const sm = s.mat || 'stone';
-        B.box(sm, (xa + xb) / 2, t.top - 0.5, (za + zb) / 2, xb - xa, 0.5, zb - za + 0.02, 0, [0.95, 0.93, 0.98]);
-        B.box(sm, xa - 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]);
-        B.box(sm, xb + 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]);
+        const xa = X(t.xa), xb = X(t.xb), za = Z(t.ya), zb = Z(t.yb), sm = s.mat || 'stone';
+        B.box(sm, (xa + xb) / 2, t.top - 0.5, (za + zb) / 2, xb - xa + (s.ew ? 0.02 : 0), 0.5, zb - za + (s.ew ? 0 : 0.02), 0, [0.95, 0.93, 0.98]);
+        // the cheeks either side
+        if (s.ew) { B.box(sm, (xa + xb) / 2, t.top - 0.5, za - 0.18, xb - xa + 0.02, 0.8, 0.36, 0, [0.8, 0.78, 0.82]); B.box(sm, (xa + xb) / 2, t.top - 0.5, zb + 0.18, xb - xa + 0.02, 0.8, 0.36, 0, [0.8, 0.78, 0.82]); }
+        else { B.box(sm, xa - 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]); B.box(sm, xb + 0.18, t.top - 0.5, (za + zb) / 2, 0.36, 0.8, zb - za + 0.02, 0, [0.8, 0.78, 0.82]); }
       }
     }
 
@@ -830,6 +832,7 @@
       }
       g.filter = 'none';
     }
+    { const g = glow.getContext('2d'); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.strokeStyle = '#000'; g.lineWidth = 4; g.strokeRect(0, 0, CW, CH); g.restore(); }
     const T_ = (c) => { const t = new THREE.CanvasTexture(c); t.flipY = false; t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; t.minFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; };
     U.uGlow.value = T_(glow); U.uShade.value = T_(shade);
     const groundTex = { cob: T(place.ground.cob), grass: T(place.ground.grass), dirt: T(place.ground.dirt), pave: T(place.ground.pave), splat: T_(splat), rep: place.ground.rep, grassTint: place.ground.grassTint };

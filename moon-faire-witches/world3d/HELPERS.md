@@ -40,7 +40,8 @@ Draw the walk and block areas over the painting before placing anything.
   things built in `extra(K)`, `groundPatches: [{ poly, kind: 'dirt' | 'cob' | 'grass' | 'pave' }]` (lay earth, cobbles, grass
   or paving over part of the ground, under the walk too), `noRocks: [[x0, y0, x1, y1]]` (no shore boulders there), jetties
   with `posts: false`, a roof of its own texture with `roof: { mat: '<name>' }` and
-  `extraMats: { '<name>': { tex: '<texture id>', rep, tint, side: 'double' } }` (thatch, another bark), and `startYaw`
+  `extraMats: { '<name>': { tex: '<texture id>', rep, tint, side: 'double' } }` (thatch, another bark), steps that run any
+  way (`down: 's' | 'n' | 'e' | 'w'`, `mat`, `tops: [...]` for each tread's height), dormers with `dark: true`, and `startYaw`
   (which way the camera first looks: 0 is north, as the painting; turn by radians).
 - Each texture written out in full with double quotes, as in `places/wickhollow.js` (the offline build only packs
   pictures it finds as plain paths): `made: "./../texture-packs/made/<id>.png"` and `stand: "./../texture-packs/<group>/<place>/stand-in/<id>.png"`.
