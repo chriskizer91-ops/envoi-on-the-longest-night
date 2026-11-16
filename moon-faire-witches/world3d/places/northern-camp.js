@@ -62,6 +62,8 @@
     { id: 'south', w: 0.9, pts: [[770, 1010], [758, 1120], [700, 1260], [728, 1420], [790, 1560]] },
     { id: 'west', w: 0.8, pts: [[70, 440], [-80, 452], [-260, 430], [-440, 470], [-640, 462]] },
   ];
+  // the road as it runs on past the way out into the fog (seen, not walked: the way out is at the open ground's edge)
+  const ROAD_ON = { w: 1.3, pts: [[2712, 516], [2860, 522], [3060, 510]] };
   // a band either side of a centre line, `hw` metres from it
   const ribbon = (pts, hw) => {
     const L = [], R = [];
@@ -73,7 +75,7 @@
     }
     return L.concat(R.reverse());
   };
-  const trailDist = (x, y) => { let d = 1e9; for (const t of TRAILS) for (let i = 1; i < t.pts.length; i++) d = Math.min(d, segDist(x, y, t.pts[i - 1], t.pts[i])); return d; };
+  const trailDist = (x, y) => { let d = 1e9; for (const t of TRAILS.concat([ROAD_ON])) for (let i = 1; i < t.pts.length; i++) d = Math.min(d, segDist(x, y, t.pts[i - 1], t.pts[i])); return d; };
 
   // ---- the places to find, and the two pockets ----
   const LEANTO = { at: [1000, -690] };                          // the hunters' lean-to, open to the south
@@ -172,7 +174,7 @@
     // None in the places to find; the trails keep their own way through.
     treeGen: { dark: 2, step: 60,
       out: { density: 0.74, clump: 380, clear: 0.33, kinds: [0, 0.9, 0.1], size: [1.0, 1.75] },
-      roads: [],
+      roads: [[2712, 490, 3072, 545]],
       keepOut: [[POND.c[0] - 260, POND.c[1] - 190, POND.c[0] + 230, POND.c[1] + 190], [LEANTO.at[0] - 140, LEANTO.at[1] - 120, LEANTO.at[0] + 140, LEANTO.at[1] + 140],
         [BIRCHES.c[0] - 230, BIRCHES.c[1] - 170, BIRCHES.c[0] + 230, BIRCHES.c[1] + 170], [WOODCUT.c[0] - 230, WOODCUT.c[1] - 170, WOODCUT.c[0] + 230, WOODCUT.c[1] + 170],
         [WAYMARK.at[0] - 70, WAYMARK.at[1] - 60, WAYMARK.at[0] + 70, WAYMARK.at[1] + 40]] },
@@ -236,6 +238,7 @@
       { poly: [[58, 300], [100, 280], [200, 256], [320, 246], [440, 250], [560, 268], [590, 320], [598, 420], [590, 560], [560, 630], [300, 640], [110, 632], [60, 596], [56, 420]], kind: 'dirt' },
       { poly: ellipse(WOODCUT.c, 150, 110, 16, 0.15), kind: 'dirt' },
       { poly: ellipse([LEANTO.at[0], LEANTO.at[1] + 20], 80, 50, 12, 0.1), kind: 'cob' },
+      { poly: ribbon(ROAD_ON.pts, ROAD_ON.w + 0.55), kind: 'dirt' }, { poly: ribbon(ROAD_ON.pts, ROAD_ON.w), kind: 'cob' },
     ],
     items: {},
     buildings: [],
@@ -243,7 +246,7 @@
     steps: [],
     lamps: [],
     // the pond's little jetty, off its east shore
-    get jetties() { return [{ r: [-352, -452, -238, -424], y: pondLevel() + 0.5, posts: true }]; },
+    get jetties() { return [{ r: [-352, -452, -214, -424], y: pondLevel() + 0.5, posts: true }]; },
     props: [],
     flowers: [],
     // the lights for the light map: [x, y, radius px, strength, colour]. The fire, the lanterns and the hollow's glow are
@@ -315,13 +318,13 @@
         const sag = (A, Bq, t) => add(add(A, mul(sub(Bq, A), t)), [0, -0.06 * Math.sin(Math.PI * t), 0]);
         for (const [E1, E2] of [[FL, BL], [FR, BR]]) {
           const out = norm(sub(E1, fm)); out[1] = 0.6;
-          for (let i = 0; i < 3; i++) { const t0 = i / 3, t1 = (i + 1) / 3; Q('cloth', sag(E1, RF, t0), sag(E2, RB, t0), sag(E2, RB, t1), sag(E1, RF, t1), out, [0, t0 * sl, T.d, t1 * sl], col); }
+          for (let i = 0; i < 3; i++) { const t0 = i / 3, t1 = (i + 1) / 3; Q('cloth', sag(E1, RF, t0), sag(E2, RB, t0), sag(E2, RB, t1), sag(E1, RF, t1), out, [0, t0 * sl / 2.5, T.d / 2.5, t1 * sl / 2.5], col); }
         }
-        B.tri('cloth', BL, BR, RB, [[0, 0], [T.w, 0], [T.w / 2, T.h]], dark);
+        B.tri('cloth', BL, BR, RB, [[0, 0], [T.w / 2.5, 0], [T.w / 5, T.h / 2.5]], dark);
         if (T.open) {
           // the flaps tied back: the front's two outer thirds, and a dark doorway between them with the lantern's glow
           const ML = add(fm, mul(rr, -T.w * 0.2)), MR = add(fm, mul(rr, T.w * 0.2)), RM = add(fm, [0, T.h * 0.92, 0]);
-          B.tri('cloth', FL, ML, RF, [[0, 0], [T.w * 0.3, 0], [T.w / 2, T.h]], col); B.tri('cloth', MR, FR, RF, [[0, 0], [T.w * 0.3, 0], [0, T.h]], col);
+          B.tri('cloth', FL, ML, RF, [[0, 0], [T.w * 0.12, 0], [T.w / 5, T.h / 2.5]], col); B.tri('cloth', MR, FR, RF, [[0, 0], [T.w * 0.12, 0], [0, T.h / 2.5]], col);
           // the rolled flaps, and the ties
           for (const s of [-1, 1]) { const p = add(fm, mul(rr, s * T.w * 0.22)); seg('cloth', add(p, mul(f, 0.08)), add(add(p, mul(f, 0.08)), [s * rr[0] * 0.25, T.h * 0.62, s * rr[2] * 0.25]), 0.09, 0.07, 5, [1.9, 1.8, 1.7]); }
           // inside: the groundsheet, the back lit warm, a lantern hanging from the ridge pole
@@ -333,7 +336,7 @@
           K.lantern(lp[0], lp[1], lp[2], null, 0.6, true);
           K.light(PX(lp[0] + f[0] * 2.4), PY(lp[2] + f[2] * 2.4), 70, 0.5, 'warm');
         } else {
-          B.tri('cloth', FL, FR, RF, [[0, 0], [T.w, 0], [T.w / 2, T.h]], col);
+          B.tri('cloth', FL, FR, RF, [[0, 0], [T.w / 2.5, 0], [T.w / 5, T.h / 2.5]], col);
           // the laced seam down the middle of the shut front
           soft(() => B.box('rope', fm[0], y0, fm[2], 0.03, T.h * 0.95, 0.03, a, null));
         }
@@ -688,7 +691,7 @@
           const N = 4;
           for (let i = 0; i < N; i++) {
             const t0 = i / N, t1 = (i + 1) / N, P_ = (xx, t) => [xx, y + hf + 0.1 + (yb - y - hf - 0.1) * t - 0.08 * Math.sin(Math.PI * t), zf + 0.2 + (zb - 0.15 - zf - 0.2) * t];
-            Q('cloth', P_(x - W2 - 0.25, t0), P_(x + W2 + 0.25, t0), P_(x + W2 + 0.25, t1), P_(x - W2 - 0.25, t1), [0, 1, 0.5], [0, t0 * 3.4, 4.1, t1 * 3.4], CANVAS);
+            Q('cloth', P_(x - W2 - 0.25, t0), P_(x + W2 + 0.25, t0), P_(x + W2 + 0.25, t1), P_(x - W2 - 0.25, t1), [0, 1, 0.5], [0, t0 * 1.4, 1.6, t1 * 1.4], CANVAS);
           }
           // its sides: canvas triangles from the ridge pole down to the ground at the back, fir boughs heaped at their feet
           for (const s2 of [-1, 1]) {
@@ -696,7 +699,6 @@
             Q('cloth', [xx, y - 0.05, zf + 0.15], [xx, y + hf + 0.08, zf + 0.15], [xx, yb - 0.05, zb - 0.1], [xx, y - 0.05, zf + 0.1], [s2, 0, 0], [0, 0, 2.6, 2.3], CANVAS.map((v) => v * 0.8));
             for (let i = 0; i < 3; i++) B.geom('boughs', K.ico[i % 3], new THREE.Matrix4().compose(new THREE.Vector3(xx + s2 * 0.25, y + 0.1, zf - 0.4 - i * 0.8), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, r() * 3, 0)), new THREE.Vector3(0.5, 0.45, 0.55)), [0.8, 0.85, 0.9], 1.2);
           }
-          for (let i = 0; i < 3; i++) { const t = 0.25 + i * 0.25, xx = x + (r() - 0.5) * 2.4; B.geom('boughs', K.ico[(i + 1) % 3], new THREE.Matrix4().compose(new THREE.Vector3(xx, y + hf + (yb - y - hf) * t + 0.15, zf + (zb - zf) * t), new THREE.Quaternion().setFromEuler(new THREE.Euler(0.8, r() * 3, 0)), new THREE.Vector3(0.7, 0.2, 0.5)), [0.8, 0.85, 0.9], 1.2); }
           // inside, under the low back of the roof: a bed of boughs and a rolled hide
           B.geom('boughs', K.ico[1], new THREE.Matrix4().compose(new THREE.Vector3(x + 0.3, y + 0.05, zb + 0.9), new THREE.Quaternion(), new THREE.Vector3(1.2, 0.16, 0.6)), [0.7, 0.75, 0.8], 1.5);
           const g = new THREE.CylinderGeometry(0.18, 0.18, 0.8, 8, 1); B.geom('cloth', g, new THREE.Matrix4().compose(new THREE.Vector3(x - 0.9, y + 0.18, zb + 1.0), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, Math.PI / 2)), new THREE.Vector3(1, 1, 1)), [1.2, 0.95, 0.8], 1); g.dispose();
@@ -714,7 +716,7 @@
         seg('logbark', [fx + 1.6, fy + 0.25, fz - 0.9], [fx + 1.8, fy + 0.25, fz + 1.0], 0.25, 0.24, 7);
         disc('cut', [fx + 1.6, fy + 0.25, fz - 0.9], [-0.1, 0, -1], 0.25, 7); disc('cut', [fx + 1.8, fy + 0.25, fz + 1.0], [0.1, 0, 1], 0.24, 7);
         K.addBlock(ribbon([[PX(fx + 1.6), PY(fz - 0.9)], [PX(fx + 1.8), PY(fz + 1.0)]], 0.3));
-        K.shadeMarks.push(['rect', cx - 45, PY(zb), cx + 45, PY(zf), 0.65]);
+        K.shadeMarks.push(['dot', cx, PY(zb + 0.6), 30, 0.72]);
       }
 
       // ---- the half-frozen pond in the north-west: the engine lays its water and the jetty; birches lean over it, and an
