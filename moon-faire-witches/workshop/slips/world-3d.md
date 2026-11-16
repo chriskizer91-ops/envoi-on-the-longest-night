@@ -1,6 +1,6 @@
 SLIP: world-3d
-State:    Working: every walking place is built in 3D (21 of 21, November 16, afternoon); now the zone pages and a speed
-          pass, with helpers.
+State:    Working: every walking place is built in 3D (21 of 21) and the four zone pages walk them place to place
+          (November 16, afternoon); a speed pass is running.
 Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, while his textures (rounds one and two are
           all made) come in slowly through their own conversation: the project document claude/textures-in.md has the
           way and the starter text. Every 3D place swaps a made texture in by its file name on the next rebuild.
@@ -43,12 +43,17 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           The shipyard's wish (3f8bad7): steps can leave out one cheek. The crossroads' and Warm Roads' wish (26d82c5):
           K.far(x, z), builders for a wide place's outlying things, left undrawn past the fog; a far pass is moving the
           five wide places' outlying things there, and adding a check that every point of the 2D walk is walkable.
-          The whole game, started (zone shell, w3d/zones): zones are the game's four level bands, which already join on
+          The whole game, the zone pages (bf99268, from w3d/zones): zones are the game's four level bands, which already join on
           foot ((1) Wickhollow, cottage, jetty, Thornwood, Bogmire, the heart; (2) Warm Roads camp, Ember Line road,
           forest road, Dawnroost, the node; (3) northern camp, Eldergrove's edge, cold moor, crossroads, shipyard;
           (4) frozen camp, Frostmere's shore, frozen pass, Misthollow, Moonwell); one page per zone, Io walking place to
           place through their exits, each place loaded in turn; the airship hook left for Skies of Aethermoor, whose map
-          is the same continent at the same size as the game's night atlas (4608 x 3072).
+          is the same continent at the same size as the game's night atlas (4608 x 3072). Built: game/zone-1..4.html (21.7,
+          22.5, 24.0, 20.7 MB offline), one place in memory at a time (zone-test: the same geometry and texture counts on
+          every visit, she lands exactly where the road puts her, no page errors). The hook W3D.zoneFly, the hand-back
+          (?landing= or ?place=&at=) and the shared save (envoi3d-save) are in game/README.md and the project document.
+          For Chris: at a camp she steps down facing south (out past the rope, the fire behind her), as in the 2D game;
+          Start again (two taps, guide view only) also puts the zone's keepsakes back.
           Chris (13:39): the four zones are right; every flight has raiders as in Skies, as many as the flight is long,
           harder later in the game; Skies' Crystal Shards are Envoi's shards (Magpie upgrades, opening zones); a zone opens
           on the party's level and the shards for passage or the upgrades the flight needs; flights use the night map. A
@@ -61,7 +66,7 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           For Chris to confirm (helpers' calls under his 11:22 rule): the frozen ice of the frozen pass's river and of the
           cold moor's tarn and Frostmere's near ice is walkable (its far open water isn't); the camp's stream is open water.
           The frozen camp's wish (ff429d4): bark takes a place's tint (white birches).
-Branch:   work/world-3d   Commit: ff429d4
+Branch:   work/world-3d   Commit: bf99268
 Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
           engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
           tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/beside.mjs, tools/plan-wickhollow.json,
@@ -69,10 +74,11 @@ Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.
           tools/plan-<id>.json (cottage, jetty, thornwood, bogmire, bogmire-heart, dawnroost,
           dawnroost-node, moonwell, misthollow, shipyard, crossroads, frozen-pass, warm-roads-camp,
           ember-line-road, dawnroost-road, eldergrove-edge, northern-camp, cold-moor, frozen-camp,
-          frostmere-shore)
+          frostmere-shore); game/ (README.md, zones.js, zone.js, zone-1..4.html and their art lists),
+          tools/make-zones.mjs, tools/zone-test.mjs
           moon-faire-witches/workshop/slips/world-3d.md
           Nothing else changed.
-File for Chris: envoi-3d-<place>.html for Wickhollow, the cottage, the jetty, the Thornwood, Bogmire, Bogmire's
+File for Chris: zone-1.html to zone-4.html (the whole of each zone, walked place to place), and envoi-3d-<place>.html for Wickhollow, the cottage, the jetty, the Thornwood, Bogmire, Bogmire's
           heart, Dawnroost, Dawnroost's node, Misthollow, the Moonwell, the shipyard, the crossroads, the frozen pass,
           the Warm Roads camp, the Ember Line road, the forest road to Dawnroost, Eldergrove's edge, the northern camp, the cold moor, the frozen camp and Frostmere's shore (each 12 to 14 MB, works offline). In each: Drag on the left half of the screen to walk (push far
           and she jogs), drag on the right half to turn the camera. The map button (top right) shows your painting over
