@@ -1,5 +1,9 @@
 [
  {
+  "name": "walkable",
+  "walkmap": true
+ },
+ {
   "name": "top-3d",
   "top": true
  },
@@ -264,6 +268,65 @@
   "cam": [
    1.57,
    null
+  ]
+ },
+ {
+  "name": "onto-the-plank-arm",
+  "io": [
+   840,
+   494,
+   1.57
+  ],
+  "cam": [
+   -1.57,
+   null
+  ]
+ },
+ {
+  "name": "along-the-arms-north-side",
+  "to": [
+   1076,
+   494
+  ]
+ },
+ {
+  "name": "down-the-arms-east-side",
+  "to": [
+   1076,
+   760
+  ]
+ },
+ {
+  "name": "back-along-its-south-side",
+  "to": [
+   900,
+   782
+  ]
+ },
+ {
+  "name": "the-mooring-square-from-above",
+  "io": [
+   1076,
+   640,
+   3.14
+  ],
+  "cam": [
+   0,
+   1.15,
+   22
+  ]
+ },
+ {
+  "name": "the-arm-from-the-pier",
+  "io": [
+   850,
+   640,
+   1.57
+  ],
+  "cam": [
+   -1.57,
+   0.5,
+   9
   ]
  }
 ]

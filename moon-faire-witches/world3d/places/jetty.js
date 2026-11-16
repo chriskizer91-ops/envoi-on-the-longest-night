@@ -1,6 +1,8 @@
 // jetty.js: the jetty in 3D, Wickhollow's waterfront on the lake west of the square, laid out on its painting
 // (reference/art/walk/walk-wickhollow-jetty.png, 1536 x 1024) in the painting's own pixels, as src/game/maps.js keeps the
-// walking map. Where Io can walk is that map's own walk and block areas, unchanged (MAPS.jetty), and two pockets past them.
+// walking map. Where Io can walk is that map's own walk and block areas, unchanged (MAPS.jetty), and two pockets past them;
+// since Chris's rule (November 16, 11:22: anywhere that looks walkable is walkable), the whole pier to its edges and the
+// plank arm round the mooring square too (the arm's east side a little wider, inside the square, to pass its posts).
 // The texture ids are the texture pack's (texture-packs/wickhollow/jetty/inventory.md).
 // Heights are metres: the waterfront and the quay are 0. The lane comes down from the square (1.5 at the painting's top
 // edge); the two lamplit corners beside it stand 0.6 up, held by low walls with a lamp pillar at each inner end. Five steps
@@ -39,6 +41,10 @@
   const LAKE_BOX = [-370, 286, 1890, 1330];
   const inLake = (x, y) => x > LAKE_BOX[0] && x < LAKE_BOX[2] && y > LAKE_BOX[1] && y < LAKE_BOX[3] && inPoly(LAKE, x, y);
   const WATER = -1.6, DECK = -1.0;
+  // the pier, and the plank arm round the mooring square east of it (its north side, its east side, its south side), all at
+  // the pier's height: [x0, y0, x1, y1] in pixels
+  const PIER = [[650, 446, 884, 802], [882, 480, 1108, 508], [1064, 506, 1108, 772], [882, 768, 1108, 796]];
+  const onPier = (x, y) => PIER.some((r) => x >= r[0] && x <= r[2] && y >= r[1] && y <= r[3]);
 
   // ---- the ground's height under any point of the painting (metres) ----
   const top = (y) => 0.6 + 0.0035 * Math.max(0, 250 - y);              // the lane above the walls, and the corners beside it
@@ -79,7 +85,11 @@
       ['the lane up to Wickhollow (north edge)', 768, 4], ['the lamplit corner west of the lane', 590, 200], ['the corner east of the lane', 924, 222],
       ['the worn track under the willow (west end of the waterfront)', 432, 362], ['Quill’s stall (east end of the waterfront)', 1250, 388],
       ['the foot of the steps', 768, 470], ['the pier’s end, where the Magpie moors', 768, 760], ['the pier’s south-west corner', 664, 790],
-      ['the pier’s south-east corner', 868, 790], ['the hollow under the west willow (a pocket)', 258, 448], ['the yard behind Quill’s stall (a pocket)', 1080, 252]] },
+      ['the pier’s south-east corner', 868, 790], ['the hollow under the west willow (a pocket)', 258, 448], ['the yard behind Quill’s stall (a pocket)', 1080, 252],
+      // the boards opened on November 16 (anywhere that looks walkable is walkable): the pier's east edge, and the plank
+      // arm round the mooring square to each of its corners
+      ['the pier’s east edge', 876, 640], ['the plank arm’s north-east corner', 1078, 494], ['halfway down the arm’s east side', 1076, 640],
+      ['the plank arm’s south-east corner', 1078, 782], ['along the arm’s south side', 940, 782]] },
     // the trees from the painting (tools/make-trees.mjs): not where the willows are (they're built here), not on the reedy
     // banks, not on the lane up to the square
     treeGen: { dark: 0.6, keepOut: [[30, 180, 440, 560], [1090, 380, 1640, 720], [1320, 170, 1640, 470]], roads: [[706, -800, 830, 0]] },
@@ -106,14 +116,18 @@
       { id: 'shared_bark_oak', made: "./../texture-packs/made/shared_bark_oak.png", stand: "./../texture-packs/wickhollow/cottage/stand-in/shared_bark_oak.png" },
     ],
     ground_h: ground,
-    // where Io's feet stand: the ground, or the pier's deck
-    walk_h(x, y) { return (x >= 650 && x <= 884 && y >= 446 && y <= 802) ? DECK : ground(x, y); },
+    // where Io's feet stand: the ground, or the pier's deck (the arm round the mooring square too)
+    walk_h(x, y) { return onPier(x, y) ? DECK : ground(x, y); },
     water: [{ poly: LAKE, level: () => WATER, tex: 'shared_water_dark', rep: 6, flow: [0.004, 0.002], bed: -2.8 }],
     lawns: [],
     start: [782, 60], startFace: 0,
     // the way out (the walking map's exit), and what is past it
     exits: [{ rect: [706, 0, 830, 20], label: 'Wickhollow' }],
-    walkAdd: [{ poly: WILLOW_PATH, ground: 'dirt' }, { poly: WILLOW_HOLLOW, ground: 'dirt' }, { poly: STALL_PATH, ground: 'dirt' }, { poly: STALL_YARD, ground: 'dirt' }],
+    // the pockets; and the pier to its edges, the plank arm round the mooring square (over the lake: 'grass' leaves the
+    // ground's own map as it is)
+    walkAdd: [{ poly: WILLOW_PATH, ground: 'dirt' }, { poly: WILLOW_HOLLOW, ground: 'dirt' }, { poly: STALL_PATH, ground: 'dirt' }, { poly: STALL_YARD, ground: 'dirt' },
+      { poly: [[658, 449], [879, 449], [879, 797], [658, 797]], ground: 'grass' },
+      { poly: [[879, 485], [1103, 485], [1103, 791], [879, 791], [879, 773], [1068, 773], [1068, 503], [879, 503]], ground: 'grass' }],
     // where the 3D hides the keepsakes: the Jetty Coin ("at the far end of the lakeshore walk, under the willows") lies in
     // the hollow under the west willow, at the end of the hidden path round its trunk
     items: { 'jetty-coin': [258, 448] },
@@ -204,10 +218,10 @@
         K.shadeMarks.push(['rect', x0, y0, x1, y1, 0.8]);
       };
 
-      // ---- the pier, and the narrow plank arm round the mooring square east of it ----
+      // ---- the pier, and the narrow plank arm round the mooring square east of it (walkable since November 16: its east
+      // side 0.4 m wider inside the square, so there's room to walk past its posts) ----
       deck(655, 446, 882, 800, false);
-      deck(882, 482, 1106, 506, true); deck(1076, 506, 1106, 770, false); deck(882, 770, 1106, 794, true);
-      K.addBlock([[1076, 482], [1106, 482], [1106, 794], [882, 794], [882, 770], [1076, 770], [1076, 506], [882, 506], [882, 482]]);
+      deck(882, 482, 1106, 506, true); deck(1066, 506, 1106, 770, false); deck(882, 770, 1106, 794, true);
       // the posts: at the pier's corners and along its west edge, the two bollards at its end either side of where the
       // Magpie moors, the three standing alone in the water west of it, and the mooring square's
       for (const [px, py, t, rr, c] of [

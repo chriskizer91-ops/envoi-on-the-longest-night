@@ -1,6 +1,11 @@
 // bogmire-heart.js: the fen's dark heart in 3D, laid out on its painting (reference/art/walk/walk-bogmire-heart.png,
 // 1536 x 1024) in the painting's own pixels, as src/game/maps.js keeps the walking map. Where Io can walk is that map's
 // own walk and block areas, unchanged (MAPS['bogmire-heart']), and two pockets past them on the drowned hall's porch.
+// Since Chris's rule (November 16, 11:22: anywhere that looks walkable is walkable) the whole north row of porches is
+// walkable too, along the walkways behind the houses (narrow side strips join them to the porch fronts), the square to
+// its rails, its side decks, the long walk's landing, and the west and east houses, over planks laid across from the
+// side decks. The south-west and south-east houses stand alone in open water (closed by it), and the square's broken
+// boards stay holes.
 // The texture ids are the texture pack's (texture-packs/bogmire-dawnroost/bogmire-heart/inventory.md).
 // Everything stands on stilts over the water. Heights are metres: the square, its side decks and the long walk in from
 // Bogmire are 0; the drowned hall's porch and the row of houses along the north are 0.9 (six steps up from the square);
@@ -42,7 +47,17 @@
   // the hall's steps: six treads down from its porch (0.9) to the square
   const STEPS = { x0: 729, x1: 807, y0: 222, y1: 300, n: 6 };
   const stepH = (y) => { const k = Math.min(STEPS.n - 1, Math.floor((y - STEPS.y0) / ((STEPS.y1 - STEPS.y0) / STEPS.n))); return NORTH * (STEPS.n - k) / (STEPS.n + 1); };
-  const deckAt = (x, y) => { let best = null; for (const d of DECKS) { const [a, b, c, e] = d.r; if (x >= a && x <= c && y >= b && y <= e && (!best || d.y > best.y)) best = d; } return best; };
+  // the side strips (November 16): narrow decks along a house's side, so the walkways behind the north row meet the porch
+  // fronts (house-n1's west side, house-n2's east side, house-n3's west side)
+  const STRIPS = [{ r: [412, 182, 424, 222], y: NORTH }, { r: [1110, 182, 1122, 230], y: NORTH }, { r: [1160, 182, 1174, 246], y: NORTH }];
+  // the planks laid across (November 16), from the square's side decks to the walkways of the west and east houses: from
+  // x0 to x1, the plank's top going from ya to yb (metres)
+  const PLANKS = [{ x0: 360, x1: 432, y0: 418, y1: 434, ya: SIDE, yb: 0 }, { x0: 1100, x1: 1186, y0: 418, y1: 434, ya: 0, yb: SIDE }];
+  const plankH = (p, x) => p.ya + (p.yb - p.ya) * Math.max(0, Math.min(1, (x - p.x0) / (p.x1 - p.x0)));
+  const deckAt = (x, y) => { let best = null; for (const d of DECKS.concat(STRIPS)) { const [a, b, c, e] = d.r; if (x >= a && x <= c && y >= b && y <= e && (!best || d.y > best.y)) best = d; } return best; };
+  // Io's feet stand a hair (2 mm) over the boards: the engine takes feet at exactly the ground's own height to mean she
+  // is on the ground itself, and under the water that is the fen's bed, 4 m down
+  const FEET = 0.002;
   const inSquare = (x, y) => x >= SQUARE[0] && x <= SQUARE[2] && y >= SQUARE[1] && y <= SQUARE[3];
 
   // the ground's height (metres): a deck's top where one stands (the houses' floors and anything set on a deck), else
@@ -53,12 +68,33 @@
     const s = inPoly(FEN, x, y) ? -edge(FEN, x, y) : edge(FEN, x, y);
     return BED + 2.6 * ss(-80, 10, s) + 0.7 * ss(10, 220, s);
   }
-  // where Io's feet stand: the square and the long walk (0), the hall's steps, its porch (0.9)
+  // where Io's feet stand: the hall's steps, a plank laid across, else the deck she is on (the porches 0.9, the west and
+  // east houses 0.4, the side decks and the long walk 0), else the square (0); a hair over each (FEET)
   function walkH(x, y) {
-    if (y < STEPS.y0) return NORTH;
-    if (y < STEPS.y1 && x >= STEPS.x0 - 8 && x <= STEPS.x1 + 8) return stepH(y);
-    return 0;
+    if (y > STEPS.y0 && y < STEPS.y1 && x >= STEPS.x0 - 8 && x <= STEPS.x1 + 8) return stepH(y) + FEET;
+    for (const p of PLANKS) if (x >= p.x0 && x <= p.x1 && y >= p.y0 - 3 && y <= p.y1 + 3) return plankH(p, x) + FEET;
+    const d = deckAt(x, y);
+    return (d ? d.y : 0) + FEET;
   }
+  // the walkable boards past the 2D walk (Chris's rule, November 16), each a few pixels inside its rails and off the houses
+  const R4 = (x0, y0, x1, y1) => [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+  const MORE = [
+    // the north row (0.9): the north-west house's deck round its west side and front, the walkway behind to house-n1, down
+    // its side strip to the porch fronts, along past the hall and house-n2, up its side strip to the walkway behind, along
+    // to house-n3's side strip, down it to the fronts of house-n3 and the north-east house, and round the north-east house's
+    // east side
+    R4(90, 100, 155, 204), R4(90, 195, 302, 204), R4(271, 100, 302, 204), R4(302, 132, 428, 178), R4(416, 132, 429, 218),
+    R4(416, 198, 940, 218), R4(596, 179, 940, 218), R4(940, 198, 1118, 225), R4(1106, 132, 1118, 225), R4(1106, 132, 1178, 178),
+    R4(1164, 132, 1178, 241), R4(1164, 231, 1486, 241), R4(1440, 148, 1486, 241),
+    // the square to its rails (the broken corners and boards left out: the corners here, the boards as the 2D map's blocks)
+    [[557, 302], [960, 302], [1041, 338], [1041, 696], [499, 696], [499, 346]],
+    R4(431, 417, 499, 534), R4(1041, 412, 1101, 544),                                   // the square's side decks
+    R4(666, 989, 874, 1022),                                                            // the long walk's landing
+    // the planks across, and the west and east houses (0.4): along their walkways, round their fronts and sides
+    R4(356, 419, 433, 433), R4(1099, 419, 1188, 433),
+    [[223, 338], [258, 338], [258, 409], [362, 409], [362, 443], [258, 443], [258, 449], [40, 449], [40, 437], [223, 437]],
+    [[1186, 411], [1284, 411], [1284, 304], [1321, 304], [1321, 433], [1500, 433], [1500, 443], [1186, 443]],
+  ];
 
   // the houses (the engine builds their walls, gables, roofs, windows and chimneys). Footprints in pixels: the south
   // side is the front, where the painting shows it. Every window is dark (no light in any of them); the doors are made
@@ -130,7 +166,15 @@
     checks: { from: [768, 980], goals: [
       ['the drowned hall’s door (north)', 768, 186], ['the porch west, to the dark door (pocket)', 466, 211], ['the porch east, under the nets (pocket)', 924, 206],
       ['the west side deck', 448, 470], ['the east side deck', 1088, 466], ['the square’s north-west corner', 560, 330], ['the square’s north-east corner', 944, 330],
-      ['the south-west lantern', 562, 654], ['the south-east lantern', 984, 654], ['Bogmire (the long walk, south edge)', 768, 1018]] },
+      ['the south-west lantern', 562, 654], ['the south-east lantern', 984, 654], ['Bogmire (the long walk, south edge)', 768, 1018],
+      // the boards opened on November 16 (anywhere that looks walkable is walkable): each one's far end
+      ['the north-west house’s door (along the walkway behind)', 212, 200], ['the north-west house’s deck, west end', 100, 110],
+      ['the walkway behind the north row (west)', 360, 155], ['the walkway behind the north row (east)', 1140, 155],
+      ['the north-east house’s porch', 1360, 236], ['round the north-east house’s east side', 1464, 160],
+      ['the west house’s door (over the plank)', 149, 443], ['the west house’s deck, north end', 232, 352],
+      ['the east house’s door (over the plank)', 1386, 438], ['the east house’s deck, north end', 1310, 312], ['the east house’s front, east end', 1468, 438],
+      ['the west side deck’s south end', 465, 528], ['the east side deck’s south end', 1072, 538], ['the square by its south rail', 768, 692],
+      ['the long walk’s landing, west', 676, 1005], ['the long walk’s landing, east', 864, 1005]] },
     // trees only past the painting, on the banks round the open water: dead and thorny, a few firs (no tree on the painting)
     treeGen: { dark: 2, step: 44, out: { density: 0.7, kinds: [0.1, 0.5, 0.4], size: [0.95, 1.45] }, roads: [[700, 1100, 835, 1500]] },
     // the ground's textures (only the banks past the water show), and how many metres each repeats over
@@ -173,16 +217,17 @@
     walkAdd: [
       { poly: [[741, 206], [741, 218], [456, 218], [456, 200], [596, 200], [600, 181], [688, 181], [688, 206]], ground: 'cob' },
       { poly: [[795, 206], [813, 206], [826, 196], [836, 181], [932, 181], [932, 218], [795, 218]], ground: 'cob' },
-    ],
+    ].concat(MORE.map((poly) => ({ poly, ground: 'cob' }))),
     // the Fen-Heart Lamp: in the 2D game at the top of the hall's steps, where the great wraith sat; in 3D a few steps
     // on, still at the top of the square, at the end of the east pocket under the nets
     items: { 'fen-heart-lamp': [918, 204] },
-    // barrels and crates on the porches (the hall door's barrels are the walking map's own blocks)
+    // barrels and crates on the porches (the hall door's barrels are the walking map's own blocks). Those on the porches
+    // Io can walk now stand in the decks' corners, out of the way along them (November 16)
     props: [
       { k: 'barrel', at: [700, 192] }, { k: 'barrel', at: [732, 194] }, { k: 'barrel', at: [804, 193] },
-      { k: 'barrel', at: [262, 200] }, { k: 'barrel', at: [193, 442] }, { k: 'barrel', at: [222, 444] }, { k: 'barrel', at: [1342, 440] },
+      { k: 'barrel', at: [296, 201] }, { k: 'barrel', at: [52, 443] }, { k: 'barrel', at: [250, 347] }, { k: 'barrel', at: [1290, 316] },
       { k: 'barrel', at: [1230, 758] }, { k: 'barrel', at: [1462, 758] }, { k: 'barrel', at: [1218, 640] },
-      { k: 'crates', at: [285, 762] }, { k: 'crates', at: [1345, 234] }, { k: 'crates', at: [1424, 440] },
+      { k: 'crates', at: [285, 762] }, { k: 'crates', at: [1478, 234] }, { k: 'crates', at: [1488, 439] },
     ],
     flowers: [],
     // the only warm light: the two lanterns at the square's near corners (their posts are built in extra())
@@ -276,33 +321,39 @@
       loose(1025, 415, 1.6, 0.0, 0.0, 0.4, -0.5); loose(1020, 505, 1.3, 0.2, 0.0, -0.3, -0.45); loose(628, 660, 1.1, 0.1, 0.0, 0.5, -0.4); loose(900, 660, 1.6, -0.1, 0.0, -0.3, -0.35);
       loose(470, 650, 3.2, 0.95, 0.0, 0.5, -1.0); loose(1128, 456, 2.4, -0.55, 0.0, 0.45, -0.6);    // the leaning broken rail planks off the west and east decks
 
-      // ---- the rails: short posts with two ropes between them; a few leaning or snapped ----
+      // ---- the rails: short posts with two ropes between them; a few leaning or snapped. opt.dry: build nothing, only draw
+      // the same random numbers (a rail changed on November 16 is built anew at the end, with its own: so every random
+      // thing after it, here and in the engine, comes out as it did); opt.rand: the random numbers to use ----
       const rail = (pts, top, opt) => {
         opt = opt || {};
+        const rr = opt.rand || R, dry = !!opt.dry;
         let prev = null;
         for (let k = 1; k < pts.length; k++) {
           const [ax, ay] = pts[k - 1], [bx, by] = pts[k], A = [X(ax), Z(ay)], Bp = [X(bx), Z(by)], L = Math.hypot(Bp[0] - A[0], Bp[1] - A[1]), n = Math.max(1, Math.round(L / 2.3));
           for (let i = k > 1 ? 1 : 0; i <= n; i++) {
-            const x = A[0] + (Bp[0] - A[0]) * i / n, z = A[1] + (Bp[1] - A[1]) * i / n, snapped = R() < (opt.broken || 0.08), hh = snapped ? 0.35 + R() * 0.25 : 0.95 + R() * 0.12;
-            B.cyl('wood', x, top - 0.25, z, 0.09, 0.08, hh + 0.25, 6, POST); B.cyl('wood', x, top + hh - 0.02, z, 0.08, 0.05, 0.05, 6, POST);
-            if (R() < 0.6) B.cyl('wood', x, top + hh * 0.55, z, 0.105, 0.1, 0.1, 6, ROPE, [0.4, 0.1], true);
+            const x = A[0] + (Bp[0] - A[0]) * i / n, z = A[1] + (Bp[1] - A[1]) * i / n, snapped = rr() < (opt.broken || 0.08), hh = snapped ? 0.35 + rr() * 0.25 : 0.95 + rr() * 0.12;
+            if (!dry) { B.cyl('wood', x, top - 0.25, z, 0.09, 0.08, hh + 0.25, 6, POST); B.cyl('wood', x, top + hh - 0.02, z, 0.08, 0.05, 0.05, 6, POST); }
+            if (rr() < 0.6 && !dry) B.cyl('wood', x, top + hh * 0.55, z, 0.105, 0.1, 0.1, 6, ROPE, [0.4, 0.1], true);
             const here = { x, z, ok: !snapped };
-            if (prev && prev.ok && here.ok && !(opt.gap && opt.gap(prev, here))) { rope([prev.x, top + 0.85, prev.z], [x, top + 0.85, z], 0.12 + R() * 0.08); rope([prev.x, top + 0.45, prev.z], [x, top + 0.45, z], 0.08 + R() * 0.05); }
-            else if (prev && (prev.ok || here.ok) && R() < 0.7) { const p0 = prev.ok ? prev : here, p1 = prev.ok ? here : prev; rope([p0.x, top + 0.85, p0.z], [p0.x + (p1.x - p0.x) * 0.5, top + 0.1, p0.z + (p1.z - p0.z) * 0.5], 0.05); }
+            if (prev && prev.ok && here.ok && !(opt.gap && opt.gap(prev, here))) { const s1 = 0.12 + rr() * 0.08, s2 = 0.08 + rr() * 0.05; if (!dry) { rope([prev.x, top + 0.85, prev.z], [x, top + 0.85, z], s1); rope([prev.x, top + 0.45, prev.z], [x, top + 0.45, z], s2); } }
+            else if (prev && (prev.ok || here.ok) && rr() < 0.7 && !dry) { const p0 = prev.ok ? prev : here, p1 = prev.ok ? here : prev; rope([p0.x, top + 0.85, p0.z], [p0.x + (p1.x - p0.x) * 0.5, top + 0.1, p0.z + (p1.z - p0.z) * 0.5], 0.05); }
             prev = here;
           }
         }
       };
+      const DRY = { dry: true };
       rail([[496, 299], [496, 413]], 0); rail([[496, 538], [496, 699]], 0); rail([[1044, 352], [1044, 408]], 0); rail([[1044, 548], [1044, 699]], 0);
       rail([[540, 299], [727, 299]], 0); rail([[809, 299], [962, 299]], 0, { broken: 0.2 });
       rail([[540, 699], [720, 699]], 0); rail([[815, 699], [995, 699]], 0);
-      rail([[496, 413], [428, 413], [428, 538], [496, 538]], 0); rail([[1044, 408], [1104, 408], [1104, 548], [1044, 548]], 0, { broken: 0.15 });
+      // (the side decks' rails, opened since for the planks across: built anew at the end)
+      rail([[496, 413], [428, 413], [428, 538], [496, 538]], 0, DRY); rail([[1044, 408], [1104, 408], [1104, 548], [1044, 548]], 0, { broken: 0.15, dry: true });
       rail([[722, 712], [722, 985]], 0); rail([[813, 712], [813, 985]], 0); rail([[722, 1030], [722, 1250]], 0); rail([[813, 1030], [813, 1250]], 0);
       rail([[662, 987], [662, 1028]], 0); rail([[878, 987], [878, 1028]], 0);
-      // the porches' front rails (with gaps where the pockets meet the hall's steps)
-      rail([[300, 182], [432, 182]], NORTH); rail([[300, 128], [432, 128]], NORTH, { broken: 0.25 }); rail([[1104, 182], [1182, 182]], NORTH); rail([[1104, 128], [1182, 128]], NORTH);
-      rail([[426, 221], [594, 221]], NORTH); rail([[596, 221], [722, 221]], NORTH); rail([[814, 221], [940, 221]], NORTH); rail([[940, 229], [1108, 229]], NORTH);
-      rail([[88, 208], [304, 208]], NORTH); rail([[1176, 245], [1488, 245]], NORTH, { broken: 0.2 });
+      // the porches' front rails (with gaps where the pockets meet the hall's steps). The walkways' south rails, and the front
+      // rails where the side strips come down to them, changed on November 16, are built anew at the end
+      rail([[300, 182], [432, 182]], NORTH, DRY); rail([[300, 128], [432, 128]], NORTH, { broken: 0.25 }); rail([[1104, 182], [1182, 182]], NORTH, DRY); rail([[1104, 128], [1182, 128]], NORTH);
+      rail([[426, 221], [594, 221]], NORTH, DRY); rail([[596, 221], [722, 221]], NORTH); rail([[814, 221], [940, 221]], NORTH); rail([[940, 229], [1108, 229]], NORTH, DRY);
+      rail([[88, 208], [304, 208]], NORTH); rail([[1176, 245], [1488, 245]], NORTH, { broken: 0.2, dry: true });
       rail([[38, 453], [260, 453]], SIDE); rail([[258, 447], [360, 447]], SIDE); rail([[258, 405], [360, 405]], SIDE); rail([[1282, 447], [1504, 447]], SIDE); rail([[1184, 447], [1284, 447]], SIDE); rail([[1184, 407], [1284, 407]], SIDE);
       rail([[44, 794], [178, 794]], SIDE); rail([[212, 794], [340, 794]], SIDE); rail([[1187, 774], [1322, 774]], SIDE); rail([[1360, 774], [1478, 774]], SIDE);
       rail([[44, 642], [44, 794]], SIDE); rail([[1478, 598], [1478, 774]], SIDE); rail([[1187, 598], [1187, 774]], SIDE, { broken: 0.2 });
@@ -417,6 +468,33 @@
       }
       // ---- drifts of green mist over the water ----
       for (const [px, py, s] of MIST) K.halo(X(px), WATER_Y + s * 0.2, Z(py), s * 1.5, [0.09, 0.24, 0.18]);
+
+      // ---- November 16 (anywhere that looks walkable is walkable): the side strips, the planks across, the rails changed
+      // for them (with random numbers of their own, so nothing else in the place changes), the broken boards kept holes ----
+      {
+        const LR = W3D.rand(1116);
+        // the side strips: a deck along the house's side, posts under it
+        for (const s of STRIPS) {
+          const [px0, py0, px1, py1] = s.r, x0 = X(px0), x1 = X(px1), z0 = Z(py0), z1 = Z(py1);
+          slab('planks', x0, z0, x1, z1, s.y, 0.24, PL, false, [0.5, 0.5, 0.56]);
+          for (const [x, z] of [[x0 + 0.15, z1 - 0.15], [x1 - 0.15, z1 - 0.15], [x0 + 0.15, (z0 + z1) / 2]]) post(x, z, s.y - 0.22, 0.14, null, null, null, true);
+        }
+        // the walkways' south rails stop where the strips come down; the strips' outer sides; the porch fronts below them
+        rail([[300, 182], [413, 182], [413, 221], [594, 221]], NORTH, { rand: LR });
+        rail([[940, 229], [1121, 229], [1121, 182], [1161, 182], [1161, 245], [1488, 245]], NORTH, { broken: 0.15, rand: LR });
+        // the side decks' rails, open where the planks come across
+        rail([[496, 413], [428, 413]], 0, { rand: LR }); rail([[428, 438], [428, 538], [496, 538]], 0, { rand: LR });
+        rail([[1044, 408], [1104, 408]], 0, { broken: 0.15, rand: LR }); rail([[1104, 438], [1104, 548], [1044, 548]], 0, { broken: 0.15, rand: LR });
+        // the planks: two boards side by side from the house's walkway to the side deck, a batten under each end
+        B.solid = false;
+        for (const p of PLANKS) {
+          for (const py of [p.y0 + 4, p.y1 - 4]) beam('planks', [X(p.x0), p.ya - 0.035, Z(py)], [X(p.x1), p.yb - 0.035, Z(py)], 0.07, [0.55, 0.55, 0.6], 0.36);
+          for (const [px, h] of [[p.x0 + 3, p.ya], [p.x1 - 3, p.yb]]) beam('wood', [X(px), h - 0.1, Z(p.y0 - 1)], [X(px), h - 0.1, Z(p.y1 + 1)], 0.06, POST, 0.12);
+        }
+        B.solid = true;
+        // the square's broken boards are holes, exactly as built (the walking map's blocks are a pixel or three short of some)
+        for (const h of HOLES) K.addBlock(W3D.rectPoly(h));
+      }
       BOX.dispose();
     },
   };
