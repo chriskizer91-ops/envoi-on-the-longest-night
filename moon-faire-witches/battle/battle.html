@@ -118,8 +118,14 @@
 <script src="../src/battle/engine.js"></script>
 <script src="../src/battle/sim.js"></script>
 <script src="../src/battle/sound.js"></script>
+<script src="../music/herbal-decay.js"></script>
+<script src="../src/song-bed.js"></script>
 <script src="../src/battle/screen.js"></script>
 <script src="../src/battle/fights.js"></script>
+<script>
+// Chris's song under everything, with its knob in the menu row beside Sound (November 17)
+SongBed.place('battle'); document.getElementById('snd').after(SongBed.button('hbtn')); SongBed.follow(() => !!(window.__battleSND && window.__battleSND.muted));
+</script>
 <script>
 // The new battles (pass three, "Next: the new battles"): every fight of the game in its place's arena, as Colossus in
 // the Meadow is fought: Chris's painting of the place far off, live 3D ground in front (src/fx/arena.js, the places in
@@ -231,7 +237,7 @@
     }
     const w = o.weather || $('pweather').value; if (F.arena && w !== 'roll') opts.weather = w;
     const cfg = GameFights.config(F.kind, F.party(L), opts);
-    SND = SND || window.makeBattleSound(); cfg.sound = SND; cfg.sharp = sharp; cfg.flipbook = flip;
+    SND = SND || window.makeBattleSound(); window.__battleSND = SND; cfg.sound = SND; cfg.sharp = sharp; cfg.flipbook = flip;
     if (watch) cfg.auto = typeof watch === 'string' ? watch : 'expert';
     cfg.game = { onEnd: (r) => end(r), onError: () => end({ outcome: 'error' }) };
     freshButton('fps'); const snd = freshButton('snd');

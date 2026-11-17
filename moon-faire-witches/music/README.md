@@ -16,3 +16,13 @@ Listen to them all on `songs.html` (built: `node tools/build.mjs --offline moon-
 
 How they were made (one song): measure, then level and compress in a second pass:
 `ffmpeg -i original/X.mp3 -af "areverse,silenceremove=start_periods=1:start_threshold=-55dB:detection=peak,areverse,loudnorm=I=-20:TP=-2:LRA=14:<measured>:linear=true" -c:a libopus -b:a 32k X.webm`
+
+## Herbal Decay: under everything (November 17)
+
+`herbal-decay-battle-aac-96k.m4a` is Chris's file exactly as he gave it (AAC 96 kbps, 3:20, md5
+5d8dfc3afd99b09a03cb90c20e959a8b), never re-compressed: the build copies its bytes into each page. `herbal-decay.js` says
+where it is; `../src/song-bed.js` plays it on a gapless loop under everything, very quietly walking about (about -36 LUFS)
+and a little louder in fights (about -32, some 11 dB under the battle music made in code), with a knob 0-10 (5 as set)
+kept on the phone (`mfw.songBed`). The knob is in the battle's menu row ("Song") and in the walking pages' Menu. The
+battle's Sound on/off silences it too. Any new page of the game loads `../music/herbal-decay.js` and `../src/song-bed.js`
+and calls `SongBed.place('world' or 'battle')`.

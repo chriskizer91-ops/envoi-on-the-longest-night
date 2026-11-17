@@ -282,7 +282,7 @@ function makeBattleSound(opts) {
     tone(d, 'sine', 220, t, 1.2, 0.14, { to: 880, swell: true, att: 1.0, rel: 0.15 });
     [659.3, 987.8, 1318.5].forEach((f, i) => bell(chan({ pan: (i - 1) * 0.5, wet: 0.5 }), f, t + 1.18, 0.34, { len: 2.2 }));
     thump(d, t + 1.18, 160, 55, 0.4, 0.5);
-    lift(26);
+    lift(26, PLAN.curtain);
   });
   def('curtainBow', 'The fainted friends get up for the bow: her bells run up a bright scale, with a breath of air under them.', 'screen.js sealedFate, at a Curtain Call (the fallen rise)', (t) => {
     H('e5 g#5 b5 e6 g#6 b6').forEach((f, i) => bell(chan({ pan: -0.5 + i * 0.2, wet: 0.4 }), f, t + i * 0.085, 0.24, { len: 1.3, strike: 0.6 }));
@@ -421,7 +421,7 @@ function makeBattleSound(opts) {
     thump(d, t, 110, 70, 0.16, 0.4); thump(d, t + 0.42, 120, 75, 0.16, 0.45);
   }
   def('tranceBegin', 'A witch steps into her trance: two heartbeats, and air and a note climbing. The music lifts with it, and comes back down when her trance ends.',
-    'screen.js transform (as she begins). Arguments: who, and a function that says whether her trance is still on (the music asks it at each bar)', (t, who, still) => { tranceSwell(t); lift(still || 14); }, ['io']);
+    'screen.js transform (as she begins). Arguments: who, and a function that says whether her trance is still on (the music asks it at each bar)', (t, who, still) => { tranceSwell(t); lift(still || 14, PLAN.trance); }, ['io']);
   def('tranceBurst', 'The change itself: a bright flash of sound, a thud, and light falling away.', 'screen.js transform (the flash as she changes)', (t, p) => {
     p = p || 1; const d = chan({ wet: 0.45 }); noise(d, t, 0.4, 0.7 * p, { type: 'highpass', f: 2000, att: 0.001 }); thump(d, t, 200, 60, 0.35, 0.8 * p); tone(d, 'sine', 3000, t, 0.7, 0.1 * p, { to: 500 });
   }, [0.7]);
@@ -1550,9 +1550,16 @@ function makeBattleSound(opts) {
   }
   // ---- the scheduler ----
   let musOn = false, musicOff = false, musVol = 1, vols = null, timer = 0, fadeTO = 0, base = 'battle', cur = null, bar = 0, step = 0, nextT = 0, liftState = null;
+  // THE MUSIC PLAN (Chris, November 17: "the six dark pieces are chef's kiss perfect"; he approved where each plays).
+  // The battle asks for a moment by its role (SND.plan.battle ...), so a part can be moved to another moment here alone.
+  //   battle: an ordinary fight; boss: the great foes and set fights; trance: a witch's trance; curtain: Kore's Curtain
+  //   Call; peril: a fight going badly (a witch beaten, or one under a third of her Life); fallen: the party has lost;
+  //   finaleLast: the final boss's last stand (for when the finale is back in the battle)
+  const PLAN = { battle: 'ashenReel', boss: 'ominous', trance: 'ethereal', curtain: 'reckoning', peril: 'frenzy', fallen: 'dirge', finale: 'ominous', finaleLast: 'reckoning' };
   // the lift: asked for by a trance or a Curtain Call. x is how many seconds it lasts, or a function the music asks
   // "is she still in her trance?" (it waits up to 8 seconds for the first yes, then leaves at the first no)
-  function lift(x) { if (ctx) liftState = { t0: ctx.currentTime, fn: typeof x === 'function' ? x : null, sec: typeof x === 'number' ? x : 14, seen: false }; }
+  // part: which music the lift plays (Chris's plan, November 17: Ethereal for a trance, Reckoning for Curtain Call)
+  function lift(x, part) { if (ctx) liftState = { t0: ctx.currentTime, fn: typeof x === 'function' ? x : null, sec: typeof x === 'number' ? x : 14, seen: false, part: SONGS[part] ? part : 'lift' }; }
   function lifted() {
     const L = liftState; if (!L) return false; const age = ctx.currentTime - L.t0; let on = age < L.sec;
     if (L.fn) { let v = false; try { v = !!L.fn(); } catch (e) { v = false; } if (v) L.seen = true; on = age < 240 && (L.seen ? v : age < 8); }
@@ -1562,8 +1569,8 @@ function makeBattleSound(opts) {
     const t = ctx.currentTime; if (nextT < t - 0.05) nextT = t + 0.05;      // the page was asleep: pick the beat up again from now
     while (nextT < t + 0.28) {
       if (step % cur.beat === 0) {                                          // the lift cuts in on any beat; everything else changes at a bar line
-        const want = lifted() ? 'lift' : base;
-        if (want !== cur.name && (want === 'lift' || step === 0)) { cur = SONGS[want]; bar = 0; step = 0; crash(M, nextT, 0.26); }
+        const lp = liftState && liftState.part, want = lifted() ? lp : base;
+        if (want !== cur.name && (want === lp || step === 0)) { cur = SONGS[want]; bar = 0; step = 0; crash(M, nextT, 0.26); }
       }
       playStep(M, cur, bar, step, nextT);
       nextT += cur.sd; if (++step >= cur.spb) { step = 0; bar = (bar + 1) % cur.bars; }
@@ -1640,7 +1647,7 @@ function makeBattleSound(opts) {
     init() { init(); if (ctx && vols) setVolumes(vols[0], vols[1]); }, sfx, startMusic, stopMusic, setMuted, setMusicOff, setVolumes,
     get muted() { return muted; }, get musicOn() { return musOn; },
     // beyond Envoi's face
-    setMood, lift, score, catalog, families, parts, missing, errors, names: Object.keys(RAW), get mood() { return cur ? cur.name : null; },
+    setMood, lift, plan: PLAN, score, catalog, families, parts, missing, errors, names: Object.keys(RAW), get mood() { return cur ? cur.name : null; },
     choices,   // the ten sounds heard most, each with its versions to choose from: [{ name: 'strike', options: ['strike', 'strike_b', 'strike_c', 'strike_d'] }, ...]
   };
 }

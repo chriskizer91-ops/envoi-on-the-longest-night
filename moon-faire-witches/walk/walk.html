@@ -53,5 +53,11 @@ OnFoot.start({
 for (const r of document.querySelectorAll('input[type=range]')) if (+r.min === 0.1 && +r.max === 0.26) { r.value = 0.24; r.dispatchEvent(new Event('input', { bubbles: true })); }
 if (window.__onfoot && window.__onfoot.S) window.__onfoot.S.ioScreen = 0.24;
 </script>
+<script src="../music/herbal-decay.js"></script>
+<script src="../src/song-bed.js"></script>
+<script>
+// Chris's song under everything, very quiet walking about, with its knob in the Menu (November 17)
+SongBed.place('world');
+</script>
 </body>
 </html>

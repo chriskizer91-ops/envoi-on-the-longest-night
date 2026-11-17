@@ -15,15 +15,18 @@ import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
 const R = path.resolve(new URL('..', import.meta.url).pathname);
-const MIME = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', avif: 'image/avif', webm: 'audio/webm' };
+const MIME = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', avif: 'image/avif', webm: 'audio/webm', m4a: 'audio/mp4' };
 const SPLIT = process.argv.includes('--split'), used = new Set(), beside = new Set();
 // a file from a folder the page keeps beside it stays a marked path until the two copies are written: inside the page,
 // or beside the published copy
-const MARK = '@@beside@@', MARK_RE = /@@beside@@(art\/[^"'`]+\.(webp|png|jpe?g|avif|webm))/g;
+const MARK = '@@beside@@', MARK_RE = /@@beside@@(art\/[^"'`]+\.(webp|png|jpe?g|avif|webm|m4a))/g;
 let besideDirs = [];
-function inlineArt(code, dir) {
-  return code.replace(/"((?:art\/|\.\/)[^"]+\.(webp|png|jpe?g|avif|webm))"/g, (m, p, ext) => {
-    const own = p.startsWith('./'), f = own ? path.resolve(dir, p) : path.join(R, p);
+// a "./" path is read from the page's folder, or, if it isn't there, from the folder of the script that names it
+function inlineArt(code, dir, scriptDir) {
+  return code.replace(/"((?:art\/|\.\/)[^"]+\.(webp|png|jpe?g|avif|webm|m4a))"/g, (m, p, ext) => {
+    const own = p.startsWith('./');
+    let f = own ? path.resolve(dir, p) : path.join(R, p);
+    if (own && scriptDir && !fs.existsSync(f)) f = path.resolve(scriptDir, p);
     if (!fs.existsSync(f)) return m;
     if (SPLIT && !own) { used.add(p); return m; }
     if (!own && besideDirs.some((d) => p.startsWith(d + '/'))) { beside.add(p); return '"' + MARK + p + '"'; }
@@ -62,7 +65,7 @@ for (const rel of files) {
   besideDirs = ((html.match(/<meta name="beside" content="([^"]*)">/) || [])[1] || '').split(/\s+/).filter(Boolean);
   html = html.replace(/<meta name="beside" content="[^"]*">\n?/, '');
   html = html.replace(/<script src="(\.\.?\/[^"]+\.js)"><\/script>/g, (m, p) => {
-    let code = inlineArt(fs.readFileSync(path.resolve(dir, p), 'utf8'), dir);
+    let code = inlineArt(fs.readFileSync(path.resolve(dir, p), 'utf8'), dir, path.dirname(path.resolve(dir, p)));
     if (esbuild) code = esbuild.transformSync(code, { minify: true, target: 'es2019', legalComments: 'none' }).code;
     return '<script>\n/* ' + path.relative(R, path.resolve(dir, p)) + ' */\n' + code.replace(/<\/script/gi, '<\\/script') + '\n</script>';
   });

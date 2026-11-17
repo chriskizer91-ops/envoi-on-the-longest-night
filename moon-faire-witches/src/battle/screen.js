@@ -688,8 +688,18 @@
       };
     }
     const word = (f, text, cls) => UI.number(head(f), text, cls || 'word', 18);
+    // the music follows the fight (Chris's plan, November 17): a fight going badly (a witch beaten, or one under a third
+    // of her Life) turns to the plan's peril piece (Frenzy) at the next bar, and back to the fight's own piece when it
+    // recovers. The sound file keeps the plan (SND.plan), so a piece can be moved without touching the battle
+    const MP = SND.plan || { battle: 'battle', boss: 'boss' };
+    function musicMood() {
+      if (!MP.peril || !SND.setMood || !SND.musicOn || S.result || !S.musicBase) return;
+      const bad = heroes.some((h) => { const d = D[h.key], u = E.unit(h.key); return d && u && (d.hp <= 0 || d.hp < u.maxHp / 3); });
+      SND.setMood(bad ? MP.peril : S.musicBase);
+    }
     function apply(e, o) {
       o = o || {};
+      if (e.t === 'hit' || e.t === 'heal' || e.t === 'revive') queueMicrotask(musicMood);
       const to = e.to ? F[e.to] : null, who = e.who ? F[e.who] : null;
       if (e.t === 'hit') {
         const from = E.unit(e.from), d = D[e.to], u = E.unit(e.to);
@@ -2176,7 +2186,7 @@
       UI.showBattle(true); UI.buildWindows(); UI.status(); layoutView();
       DIR.start();
       shotField(2);
-      io().m.play('cast'); UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic(cfg.fanfare || cfg.finale || foes.some((f) => f.kind === 'halcyon' || f.kind === 'noctara' || f.kind === 'colossus') ? 'boss' : 'battle');
+      io().m.play('cast'); UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); S.musicBase = cfg.finale ? (MP.finale || MP.boss) : cfg.fanfare || foes.some((f) => f.kind === 'halcyon' || f.kind === 'noctara' || f.kind === 'colossus') ? MP.boss : MP.battle; SND.startMusic(S.musicBase);
       await wait(1.4); UI.hideMsg();
       S.state = 'battle'; S.t0 = clock.t;
     }
@@ -2232,6 +2242,8 @@
       else if (cfg.spared) await sparedEnding(mark);
       else {
         SND.stopMusic(1.0); SND.sfx.defeat();
+        // after the defeat piece, the plan's lament (Dirge) plays on under the end card
+        if (MP.fallen) setTimeout(() => { if (!S.dead) SND.startMusic(MP.fallen); }, 6800);
         for (const h of heroes) { h.m.guard(false); if (h.m.action !== 'kneel') h.m.play('kneel', true); }
         FX.shield(false); shotField(2); UI.vignette(0.6);
         await wait(2.0);
@@ -2734,7 +2746,7 @@
 
       // test hooks for headless checks
       window.__battle = {
-        get state() { return S.state; }, get engine() { return E; }, get shown() { return D; }, get menuOpen() { return UI.menuOpen; },
+        get state() { return S.state; }, get engine() { return E; }, get shown() { return D; }, mood() { musicMood(); }, get menuOpen() { return UI.menuOpen; },
         get result() { return S.result; }, get acting() { return S.acting; }, get trace() { return S.trace; }, get pickState() { return PICK; },
         begin() { $('begin').click(); }, skip() { $('skipBtn').click(); }, pick(id) { return UI.pickId(id); }, again() { $('again').click(); },
         set turbo(v) { clock.turbo = v; }, get t() { return clock.t; }, set auto(p) { S.auto = p; }, get pace() { return { cap: PACE.cap, hz: PACE.hz, fps: PACE.fps }; },

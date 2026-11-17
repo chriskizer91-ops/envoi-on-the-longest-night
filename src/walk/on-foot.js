@@ -75,7 +75,7 @@
         if (ex.to === 'world') { note(ex.label + ': a road out of the picture; in the game she turns back here.'); return; }
         go(ex.to, ex.at);
       },
-      onEvent: () => {}, onEncounter: () => {}, onMenu: () => note('The game opens its menu here.'),
+      onEvent: () => {}, onEncounter: () => {}, onMenu: () => (window.SongBed ? window.SongBed.open() : note('The game opens its menu here.')),   // the Moon Faire witches' pages: the menu holds the song knob
       onTalk: (p) => note(p.name + ' would talk here. The townsfolk are still pixels until their paper dolls are painted.'),
       onSpot: (s) => {
         if (s.kind === 'well') { field.pose('kneel', 1.8); note(s.label + ': she kneels for what was left there.'); }
