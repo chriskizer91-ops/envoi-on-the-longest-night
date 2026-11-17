@@ -1245,9 +1245,9 @@ function makeBattleSound(opts) {
     ],
     lead(K, f, t, dur, bar) {
       const sec = bar >> 4;
-      if (sec === 1) { iChoir(K, f, t, dur + 0.25, 0.2, { att: 0.12, rel: 0.3 }); iBox(K, f, t, 0.18, 1); }                 // B: a wailing voice, the box striking each of her notes
-      else if (sec === 2) { iLead(K, f / 2, t, dur * 0.85, 0.22, 'brass'); iStr(K, f / 2, t, dur, 0.14, { att: 0.02 }); }   // C: low brass and strings, in short hard calls
-      else { iBox(K, f, t, 0.3, 0.9); if (sec === 3) iStr(K, f / 2, t, dur, 0.13, { att: 0.03, hold: 0.8 }); }               // A and D: the box; in D the strings shadow it
+      if (sec === 1) { iChoir(K, f, t, dur + 0.25, 0.17, { att: 0.12, rel: 0.3 }); iBox(K, f, t, 0.16, 1); }                 // B: a wailing voice, the box striking each of her notes
+      else if (sec === 2) { iLead(K, f / 2, t, dur * 0.85, 0.19, 'brass'); iStr(K, f / 2, t, dur, 0.12, { att: 0.02 }); }   // C: low brass and strings, in short hard calls
+      else { iBox(K, f, t, 0.27, 0.9); if (sec === 3) iStr(K, f / 2, t, dur, 0.11, { att: 0.03, hold: 0.8 }); }               // A and D: the box; in D the strings shadow it
     },
     play(K, bar, s, t, ch) {
       const sec = bar >> 4, q = bar & 15, sd = this.sd, n = heldFor(this, bar), N = ch.notes;
@@ -1256,15 +1256,15 @@ function makeBattleSound(opts) {
       if (s === 0 && n) iDrone(K, [ch.bass, ch.bass * 1.5, ch.bass * 2], t, n * 6 * sd + 0.4, 0.08, { att: 0.3, rel: 0.4, cut: 460 });
       const a = [1, 0.5, 0.62, 0.85, 0.5, 0.7][s];
       if (sec === 2) {                                                                 // C: the gallop drops to a tremor; the strings stab on the two beats
-        iStr(K, ch.bass * 2, t, sd * 0.6, 0.1 * a);
-        if (s === 0 || s === 3) { iStr(K, ch.bass, t, sd * 1.6, 0.34 * a); N.forEach((x) => iStr(K, x / 2, t, sd * 1.2, 0.1)); }
+        iStr(K, ch.bass * 2, t, sd * 0.6, 0.085 * a);
+        if (s === 0 || s === 3) { iStr(K, ch.bass, t, sd * 1.6, 0.27 * a); N.forEach((x) => iStr(K, x / 2, t, sd * 1.2, 0.078)); }
         if ((bar & 1) && s >= 3 && !this.mel.has(bar * 6 + 3)) timp(K, t, ch.bass * [1.5, 1.26, 1][s - 3], 0.3 + (s - 3) * 0.06);     // the kettle drums answer where the call rests
         if ((q === 0 || q === 8) && s === 0) { const r = N[0]; iDrone(K, [r, r * 1.0595, r * 1.4142], t, 48 * sd, 0.05, { att: 48 * sd, rel: 0.3, cut: 450, cut1: 1600 }); }   // a sour swell, rising over each eight bars
       } else {                                                                         // the gallop: the bass note on every step, and the chord running over it an octave higher
-        iStr(K, ch.bass * (s === 5 ? 1.5 : 1), t, sd * 0.85, 0.3 * a);
-        iStr(K, N[[0, 1, 2, 0, 2, 1][s]] / 2, t, sd * 0.8, (sec === 0 && q < 8 ? 0.14 : 0.19) * a);
+        iStr(K, ch.bass * (s === 5 ? 1.5 : 1), t, sd * 0.85, 0.225 * a);
+        iStr(K, N[[0, 1, 2, 0, 2, 1][s]] / 2, t, sd * 0.8, (sec === 0 && q < 8 ? 0.11 : 0.145) * a);
       }
-      if (s === 0 || s === 3) lowDrum(K, t, 110, 52, 0.2, s ? 0.4 : 0.52);             // the deep drum on the two beats of every bar
+      if (s === 0 || s === 3) lowDrum(K, t, 110, 52, 0.2, s ? 0.32 : 0.41);             // the deep drum on the two beats of every bar
       if (sec === 3 && s === 5) lowDrum(K, t, 96, 50, 0.16, 0.26);
       noise(K.perc, t, 0.05, [0.075, 0.03, 0.045, 0.06, 0.03, 0.045][s], { f: 2300, q: 1.5, att: 0.003 });      // a dry rattle on every step
       if ((sec || q >= 8) && (s === 2 || s === 5)) knock(K.perc, t, 440, 0.1, 0.09);   // and a knock of wood, like bones, off the beat
@@ -1282,29 +1282,29 @@ function makeBattleSound(opts) {
       'c6 - - - a5 - - -', 'f5 - - - - - g5 -', 'e5 - - - b4 - - -', 'd#5 - - - - - f#5 -',
     ],
     lead(K, f, t, dur) {                                                               // the box, each note left to ring; under the long ones a single low voice, slow to come and slow to go
-      iBox(K, f, t, 0.3, 3.2);
-      if (dur > this.sd * 5) iChoir(K, f / 2, t + 0.3, dur + 1, 0.1, { form: OO, att: 1.4, rel: 1.6 });
+      iBox(K, f, t, 0.36, 3.2);
+      if (dur > this.sd * 5) iChoir(K, f / 2, t + 0.3, dur + 1, 0.125, { form: OO, att: 1.4, rel: 1.6 });
     },
     play(K, bar, s, t, ch) {
       const sd = this.sd, n = heldFor(this, bar), N = ch.notes;
       if (bar === 0 && s === 0) K.echo.delayTime.setValueAtTime(sd * 2, t);
       if (s === 0 && n) {                                                              // the drone, each chord fading into the next, and a thin cold air above it
         const len = n * 8 * sd;
-        iDrone(K, [ch.bass, ch.bass * 1.5, ch.bass * 2, N[1]], t, len + 2.4, 0.085, { att: 2.4, rel: 2.4, cut: 480 });
-        iDrone(K, [N[0] * 2, N[2] * 2], t, len + 2.4, 0.022, { att: 2.4, rel: 2.4, cut: 1800, type: 'sine', to: K.far });
+        iDrone(K, [ch.bass, ch.bass * 1.5, ch.bass * 2, N[1]], t, len + 2.4, 0.105, { att: 2.4, rel: 2.4, cut: 480 });
+        iDrone(K, [N[0] * 2, N[2] * 2], t, len + 2.4, 0.027, { att: 2.4, rel: 2.4, cut: 1800, type: 'sine', to: K.far });
       }
       if (s % 2 === 0) {                                                               // the faint pulse: a soft low note on each beat, with a muted pluck so a phone carries it
         const a = [1, 0.4, 0.65, 0.4][s / 2];
-        tone(K.bass, 'triangle', ch.bass * 2, t, sd * 1.8, 0.2 * a, { att: 0.03 }); tone(K.bass, 'sine', ch.bass, t, sd * 1.8, 0.16 * a, { att: 0.03 }); iHarp(K, ch.bass * 4, t, 0.15 * a, 0.5);
+        tone(K.bass, 'triangle', ch.bass * 2, t, sd * 1.8, 0.25 * a, { att: 0.03 }); tone(K.bass, 'sine', ch.bass, t, sd * 1.8, 0.2 * a, { att: 0.03 }); iHarp(K, ch.bass * 4, t, 0.19 * a, 0.5);
       }
-      if (s === 0 || s === 4) lowDrum(K, t, 92, 50, 0.32, s ? 0.22 : 0.38);            // the funeral drum: the first and third beats, and a soft stroke before every other bar
-      if ((bar & 1) && s === 7) lowDrum(K, t, 84, 48, 0.22, 0.14);
-      if (s === 0 && !(bar & 1)) whoosh(K.far, t, 16 * sd, 0.4, 320, 620, { buf: 'pink', q: 1.2 });        // a breath of cold wind, rising and falling over two bars
-      if (s === 0 && (bar === 0 || bar === 6)) bell(K.toll, bar ? 164.81 : 246.94, t, bar ? 0.26 : 0.34, { set: 'toll', len: 7, strike: 0 });   // the far bell, twice a round
-      if (bar >= 8 && s === 0) iStr(K, ch.bass, t, sd * 7, 0.12, { att: 0.8, hold: 0.7 });                   // the last four bars: one low string, bowed slowly
+      if (s === 0 || s === 4) lowDrum(K, t, 92, 50, 0.32, s ? 0.27 : 0.46);            // the funeral drum: the first and third beats, and a soft stroke before every other bar
+      if ((bar & 1) && s === 7) lowDrum(K, t, 84, 48, 0.22, 0.17);
+      if (s === 0 && !(bar & 1)) whoosh(K.far, t, 16 * sd, 0.5, 320, 620, { buf: 'pink', q: 1.2 });        // a breath of cold wind, rising and falling over two bars
+      if (s === 0 && (bar === 0 || bar === 6)) bell(K.toll, bar ? 164.81 : 246.94, t, bar ? 0.32 : 0.42, { set: 'toll', len: 7, strike: 0 });   // the far bell, twice a round
+      if (bar >= 8 && s === 0) iStr(K, ch.bass, t, sd * 7, 0.15, { att: 0.8, hold: 0.7 });                   // the last four bars: one low string, bowed slowly
       // a glass bell or two, a long way off, where the box rests
       const g = (bar === 2 ? [[6, 2, 2]] : bar === 7 ? [[4, 0, 4], [6, 2, 2]] : bar === 10 ? [[7, 1, 2]] : []).find((x) => x[0] === s);
-      if (g) iGlass(K, N[g[1]] * g[2], t, 0.22);
+      if (g) iGlass(K, N[g[1]] * g[2], t, 0.27);
     },
   });
   song('reckoning', {
@@ -1319,7 +1319,7 @@ function makeBattleSound(opts) {
       'e6 - - - - - c6 - - e6 - -', 'f#6 - - - - - d6 - - f#6 - -', 'g6 - - - - - - - - - - -', 'b4 - - - - - - - - . . .',                 // 6: three steps up to the arrival, then it draws back
     ],
     // how hard the band plays at each bar: the climb, and the last bar that draws back
-    power(bar) { return bar === 23 ? 0.62 : [0.5, 0.64, 0.78, 0.92, 1.04, 1.12][bar >> 2]; },
+    power(bar) { return bar === 23 ? 0.62 : [0.5, 0.64, 0.78, 0.9, 1, 1.06][bar >> 2]; },
     lead(K, f, t, dur, bar) {                                                          // the tune: brass, strings under it; from step 4 a voice on its long notes, from step 5 the box on top
       const p = this.power(bar), sec = bar >> 2, ebb = bar === 23;
       iLead(K, f / 2, t, dur, 0.22 * p, 'brass'); iStr(K, sec >= 4 ? f / 4 : f / 2, t, dur, 0.12 * p, { att: 0.08, hold: 0.85 });
