@@ -16,19 +16,23 @@ const fights = opt('--fights', 'band1').split(','), level = +opt('--level', 12),
 const browser = await pw.chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required'] });
 const page = await browser.newPage({ viewport: { width: 915, height: 412 } });
 const errs = []; page.on('pageerror', (e) => errs.push('pageerror: ' + e.message)); page.on('console', (m) => { if (m.type() === 'error') errs.push('console: ' + m.text()); });
-await page.addInitScript(() => {
-  let real = null; window.__snd = { made: [], calls: {}, moods: [], starts: [] };
-  Object.defineProperty(window, 'makeBattleSound', { configurable: true, get() { return real && ((o) => {
+// the sound is wrapped once the page has loaded (a wrapper set before load is replaced by the page's own
+// `function makeBattleSound`, which is why the first version of this tool counted nothing); the battle makes its sound
+// only when a fight starts, so it is always made through the wrapper
+const wrapSound = () => {
+  const real = window.makeBattleSound; window.__snd = { made: [], calls: {}, moods: [], starts: [] };
+  window.makeBattleSound = (o) => {
     const S = real(o), T = window.__snd; T.made.push(S);
     const sfx = new Proxy({}, { get: (_, k) => (...a) => { T.calls[k] = (T.calls[k] || 0) + 1; return S.sfx[k](...a); } });
     const startMusic = (m) => { T.starts.push(m || 'battle'); return S.startMusic(m); };
     return new Proxy(S, { get: (o2, k) => (k === 'sfx' ? sfx : k === 'startMusic' ? startMusic : o2[k]) });
-  }); }, set(v) { real = v; } });
+  };
   setInterval(() => { const T = window.__snd, S = T.made[T.made.length - 1]; if (S && S.musicOn && T.moods[T.moods.length - 1] !== S.mood) T.moods.push(S.mood); }, 100);
-});
+};
 const t0 = Date.now(), log = (s) => console.log(((Date.now() - t0) / 1000).toFixed(0).padStart(5) + 's  ' + s);
 await page.goto('file://' + file, { waitUntil: 'load', timeout: 180000 });
 await page.waitForFunction(() => !!window.__arena, null, { timeout: 180000 });
+await page.evaluate(wrapSound);
 let bad = 0;
 for (const id of fights) {
   await page.evaluate(() => { const T = window.__snd; T.calls = {}; T.moods = []; T.starts = []; });

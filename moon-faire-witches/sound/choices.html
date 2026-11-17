@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sound Choices</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Sound Choices (November 17, 2026): the ten sounds heard most in a fight, each with the version in the battle now (A)
+   and three new directions (B, C, D) to choose from; then the next ten, to hear and say whether they need choices too.
+   Chris's picks are listed at the bottom, ready to copy into the conversation. */
+:root { --ink: #efe8f6; --muted: #b6a9c8; --night: #120d1a; --gold: #e2bd6a; --leaf: #9fe0a8; --line: rgba(255, 255, 255, 0.14); color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--night); color: var(--ink); font-family: "Atkinson Hyperlegible", system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { min-height: 100vh; background: radial-gradient(ellipse at 50% -10%, #2a1d3d 0%, var(--night) 60%) fixed; }
+header { position: sticky; top: 0; z-index: 2; padding: 12px 12px 8px; background: linear-gradient(to bottom, rgba(18, 13, 26, 0.97) 85%, rgba(18, 13, 26, 0)); }
+h1 { margin: 0; font-family: "IM Fell English", Georgia, serif; font-weight: 400; font-size: 25px; color: var(--gold); }
+#tabs { display: flex; gap: 6px; margin-top: 10px; }
+.tab { flex: 1; font: inherit; font-size: 14px; font-weight: 700; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 8px 4px; cursor: pointer; }
+.tab.on { color: #1a1122; background: var(--gold); border-color: var(--gold); }
+#about { margin: 10px 2px 0; font-size: 13px; line-height: 1.4; color: var(--muted); }
+main { padding: 4px 12px 12px; display: grid; gap: 9px; max-width: 680px; margin: 0 auto; }
+.card { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; }
+.nm { font-weight: 700; font-size: 16px; }
+.wh { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+.opts { display: flex; gap: 7px; margin-top: 10px; }
+.opt { flex: 1; font: inherit; font-size: 16px; font-weight: 700; color: var(--ink); background: rgba(255, 255, 255, 0.07); border: 1px solid var(--line); border-radius: 10px; padding: 10px 0; cursor: pointer; }
+.opt.on { color: #1a1122; background: var(--leaf); border-color: var(--leaf); }
+.opt.ring { outline: 2px solid var(--gold); outline-offset: 1px; }
+.dir { margin-top: 8px; font-size: 13px; line-height: 1.4; color: var(--ink); min-height: 1.4em; }
+.verdict { display: flex; gap: 7px; margin-top: 10px; }
+.verdict button { flex: 1; font: inherit; font-size: 13px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 7px 0; cursor: pointer; }
+.verdict button.on { color: #1a1122; background: var(--gold); border-color: var(--gold); font-weight: 700; }
+.play { font: inherit; font-size: 15px; font-weight: 700; color: var(--ink); background: rgba(255, 255, 255, 0.07); border: 1px solid var(--line); border-radius: 10px; padding: 9px 16px; cursor: pointer; margin-top: 10px; }
+#picks { max-width: 680px; margin: 0 auto; padding: 4px 12px calc(28px + env(safe-area-inset-bottom)); }
+#picks .box { background: rgba(0, 0, 0, 0.3); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+#copy { font: inherit; font-size: 14px; font-weight: 700; color: #1a1122; background: var(--gold); border: 0; border-radius: 999px; padding: 9px 18px; margin-top: 9px; cursor: pointer; }
+#gate { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(12, 8, 18, 0.95); text-align: center; padding: 24px; cursor: pointer; }
+#gate .big { font-family: "IM Fell English", Georgia, serif; font-size: 30px; color: var(--gold); }
+#gate .small { font-size: 14px; color: var(--muted); max-width: 310px; line-height: 1.45; }
+#gate.gone { display: none; }
+</style>
+</head>
+<body>
+<div id="gate"><div class="big">Sound Choices</div><div class="small">Tap anywhere to start. Tap A, B, C or D to hear each version; the last one you tap is your pick. A is the one in the battle now.</div></div>
+<header>
+  <h1>Sound Choices</h1>
+  <div id="tabs"><button class="tab on">The ten most common</button><button class="tab">The next ten</button></div>
+  <p id="about"></p>
+</header>
+<main id="list"></main>
+<div id="picks"><div class="box" id="sum"></div><button id="copy">Copy my picks</button></div>
+<script src="../src/battle/sound.js"></script>
+<script src="./choices.js"></script>
+</body>
+</html>
