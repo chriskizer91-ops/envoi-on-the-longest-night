@@ -145,9 +145,15 @@ const earthNear = near(earth, 14), wetNear = blur(wet, 14);
 const EASTBOX = box(2750, 1050, 4608, 3072, 260), FENBOX = box(1700, 2150, 3050, 2760, 160);
 const desertZ = new Float32Array(N), fenZ = new Float32Array(N);
 for (let i = 0; i < N; i++) { const ax = AX(i), ay = AY(i); desertZ[i] = sstep(0.36, 0.5, earthNear[i]) * sstep(0.2, 0.7, EASTBOX(ax, ay)); fenZ[i] = sstep(0.025, 0.06, wetNear[i]) * sstep(0.2, 0.7, FENBOX(ax, ay)) * (1 - desertZ[i]); east[i] = desertZ[i]; }
+// Chris (November 17): Bogmire and the fen's dark heart stand in the marsh itself, near sea level, not on the high
+// ground beside it; that whole stretch is bog down to the sea, with water all through it, and cliffs only at the shore.
+// The painting has grass and woods where those two places are, so the bog is carried round them and on to the coast.
+const BOGS = [[1752, 2512, 190], [1800, 2385, 190], [1886, 2462, 150], [1700, 2620, 150], [1830, 2630, 150]], bog = new Float32Array(N);
+for (let i = 0; i < N; i++) { const ax = AX(i), ay = AY(i); let b = 0; for (const [x, y, r] of BOGS) b = Math.max(b, 1 - sstep(r * 0.62, r, Math.hypot(ax - x, ay - y) + (fbm(ax / 70, ay / 70, 3) - 0.5) * 60)); bog[i] = b; fenZ[i] = Math.max(fenZ[i], b); }
 for (let i = 0; i < N; i++) {
   if (!land[i]) continue;
   const h = hue[i], s = sat[i], v = val[i], e = desertZ[i], f = fenZ[i], hi = high[i];
+  if (bog[i] > 0.5) { vote.fen[i] = 3; continue; }
   if (town[i] > 0.5 && !green[i] && hi < 0.5) { vote.grass[i] = 0.6; continue; } // roofs, walls and streets
   if (mnv[i] > 0.7 && s < 0.2) { if (hi > 0.3) vote.snow[i] = 1; else if (dWater[i] < 10) vote.sand[i] = 0.7; else vote.rock[i] = 0.6; continue; }
   if (green[i]) {
@@ -184,6 +190,7 @@ const rockM = is('rock'), snowM = is('snow'), mesaM = is('mesa'), fenM = is('fen
 const stone = new Float32Array(N); for (let i = 0; i < N; i++) stone[i] = Math.min(1, rockM[i] + snowM[i]);
 const massif = blur(stone, 11), peaks = blur(stone, 3), snowB = blur(snowM, 5), crag = blur(rockM, 3), cragWide = blur(rockM, 9);
 const mesaNear = blur(mesaM, 2), mesaWide = blur(mesaM, 6), fenB = blur(fenM, 5);
+const dSeaOnly = distance(Uint8Array.from(kind, (v) => (v === KIND.sea ? 1 : 0)));
 const dSeaLake = distance(Uint8Array.from(kind, (v) => (v === KIND.sea || v === KIND.lake ? 1 : 0)));
 const hgt = new Float32Array(N);
 for (let i = 0; i < N; i++) {
@@ -204,7 +211,9 @@ for (let i = 0; i < N; i++) {
   // the east: flat-topped mesas, in two cliff steps, on a rolling desert floor
   const e = east[i];
   v += e * (sstep(0.42, 0.56, mesaNear[i]) * 30 + sstep(0.5, 0.62, mesaWide[i]) * sstep(0.8, 0.95, mesaNear[i]) * 22 + mesaWide[i] * 10);
-  hgt[i] = Math.max(0.8, v);
+  // the fen lies near sea level (6 to 20 m, in low hummocks), and ends at the sea in a rim of cliffs (90 to 150 m)
+  if (fenB[i] > 0.02) { const dS = dSeaOnly[i] * S, rim = sstep(2, 9, dS) * (1 - sstep(24, 42, dS)) * (7 + 8 * fbm(ax / 80 + 5.1, ay / 80 + 9.4, 3)); v += (0.6 + fbm(ax / 34, ay / 34, 3) * 1.5 + rim - v) * sstep(0.1, 0.75, fenB[i]); }
+  hgt[i] = Math.max(0.6, v);
 }
 // one soft pass over the land so no single pixel spikes (the mesas' steps stay steep enough)
 { const hb = blur(hgt, 1), lb = blur(Float32Array.from(land), 1); for (let i = 0; i < N; i++) if (land[i]) hgt[i] = Math.max(0.8, hb[i] / Math.max(lb[i], 0.35)); }
@@ -279,6 +288,13 @@ patches(Uint8Array.from(kind, (v) => (v === KIND.lake ? 1 : 0)), (m) => {
     kind[i] = KIND[best];
   }
 }
+// water all through the bog: pools and winding channels at sea level, more than the painting shows
+for (let i = 0; i < N; i++) if (land[i] && kind[i] === KIND.fen && hgt[i] < 2.6) {
+  const ax = AX(i), ay = AY(i), pool = fbm(ax / 46 + 3.3, ay / 46 + 1.1, 3), chan = Math.abs(pnoise(ax / 90 + 7.7, ay / 90 + 2.2));
+  if (pool > 0.63 || chan < 0.035) kind[i] = KIND.river;
+}
+// and all the bog's water lies still and dark just above the sea (not the sea's own pale shallows)
+for (let i = 0; i < N; i++) if (fenB[i] > 0.5 && (kind[i] === KIND.river || kind[i] === KIND.lake) && hgt[i] < 3) hgt[i] = 0.35;
 // in the mountains, the highest ground is under snow whether or not the painting shows it at that very spot
 for (let i = 0; i < N; i++) if (land[i] && high[i] > 0.5 && (kind[i] === KIND.rock || kind[i] === KIND.pine) && hgt[i] > 205 + (fbm(AX(i) / 40, AY(i) / 40, 3) - 0.5) * 60) kind[i] = KIND.snow;
 

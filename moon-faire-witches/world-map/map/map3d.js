@@ -110,8 +110,10 @@
         float meet = max(max(max(z.r * z.g, z.g * z.b), max(z.b * z.a, z.r * z.a)), max(z.r * z.b, z.g * z.a));
         float line = smoothstep(0.215, 0.245, meet) + smoothstep(0.22, 0.248, sum * (1.0 - sum)) * step(0.02, sum);
         c += vec3(0.62, 0.66, 0.85) * clamp(line, 0.0, 1.0) * 0.16 * inMap;
-        float m = dot(z, uHere), ring = smoothstep(0.215, 0.245, m * (1.0 - m));
-        c = mix(c, vec3(1.0, 0.84, 0.5), ring * (0.42 + 0.2 * uGlow) * inMap);
+        // the edge of the zone Io is in: a thin line of pale violet light in dashes (Chris, November 17: the gold band
+        // it was looked like a strip of sand lying on the land)
+        float m = dot(z, uHere), ring = smoothstep(0.236, 0.249, m * (1.0 - m)), dash = step(0.24, fract(wp.x / 17.0)) * step(0.24, fract(wp.z / 17.0));
+        c = mix(c, vec3(0.72, 0.62, 1.0), ring * dash * (0.62 + 0.25 * uGlow) * inMap);
       }
       return mix(c, uFog, smoothstep(uFogNear, uFogFar, depth));
     }`;
