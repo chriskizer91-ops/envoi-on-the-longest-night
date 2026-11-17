@@ -845,15 +845,15 @@ function makeBattleSound(opts) {
 
   // ---- 1. select: choosing a command ----
   def('select_b', 'B, softer and further away: two small notes of glass, the second higher, ringing for a moment in the room.', choiceOf('select'), like('select', (t) => {
-    const d = chan({ wet: 0.2 }); partials(d, 987.8, t, RING.glass, 0.1, 0.16); partials(d, 1318.5, t + 0.07, RING.glass, 0.1, 0.24);
+    const d = chan({ wet: 0.14 }); partials(d, 987.8, t, RING.glass, 0.1, 0.16); partials(d, 1318.5, t + 0.07, RING.glass, 0.1, 0.2);
   }));
   def('select_c', 'C, darker and lower: two low notes of a music box, the second higher, round and close.', choiceOf('select'), like('select', (t) => {
     const d = chan({ wet: 0.1 });
-    [329.6, 493.9].forEach((f, i) => { tone(d, 'sine', f, t + i * 0.07, 0.16 + i * 0.1, 0.15); tone(d, 'triangle', f * 2, t + i * 0.07, 0.07, 0.04); });
+    [329.6, 493.9].forEach((f, i) => { tone(d, 'sine', f, t + i * 0.07, 0.16 + i * 0.1, 0.1); tone(d, 'triangle', f * 2, t + i * 0.07, 0.07, 0.027); });
     noise(d, t, 0.012, 0.04, { f: 1200, q: 1.5, att: 0.001 });
   }));
   def('select_d', 'D, crisper and more physical: a small latch closing: a wooden click, then one bright plucked note.', choiceOf('select'), like('select', (t) => {
-    const d = chan({ wet: 0.06 }); knock(d, t, 1318.5, 0.1, 0.04); partials(d, 1975.5, t + 0.045, [[1, 1, 0.14], [2, 0.3, 0.06], [3.01, 0.12, 0.03]], 0.09);
+    const d = chan({ wet: 0.06 }); knock(d, t, 1318.5, 0.135, 0.04); partials(d, 1975.5, t + 0.045, [[1, 1, 0.14], [2, 0.3, 0.06], [3.01, 0.12, 0.03]], 0.12);
   }));
 
   // ---- 2. menu: moving through a menu ----
@@ -861,27 +861,27 @@ function makeBattleSound(opts) {
     const d = chan({ wet: 0.2 }); tone(d, 'sine', 1046.5 * rnd(0.98, 1.02), t, 0.08, 0.09, { att: 0.012 }); noise(d, t, 0.03, 0.03, { buf: 'pink', f: 1500, q: 1, att: 0.01 });
   }));
   def('menu_c', 'C, darker and lower: one low wooden tock.', choiceOf('menu'), like('menu', (t) => {
-    const d = chan(), f = 440 * rnd(0.98, 1.02); knock(d, t, f, 0.13, 0.07); tone(d, 'sine', f, t, 0.05, 0.05, { to: f * 0.75 });
+    const d = chan(), f = 440 * rnd(0.98, 1.02); knock(d, t, f, 0.08, 0.07); tone(d, 'sine', f, t, 0.05, 0.03, { to: f * 0.75 });
   }));
   def('menu_d', 'D, crisper and more physical: a tiny dry tick, like a fingernail on glass.', choiceOf('menu'), like('menu', (t) => {
-    const d = chan(); partials(d, 1760 * rnd(0.98, 1.02), t, RING.glass, 0.08, 0.035); noise(d, t, 0.008, 0.06, { f: 3200, q: 2, att: 0.001 });
+    const d = chan(); partials(d, 1760 * rnd(0.98, 1.02), t, RING.glass, 0.1, 0.035); noise(d, t, 0.008, 0.075, { f: 3200, q: 2, att: 0.001 });
   }));
 
   // ---- 3. swing: a hero's blow on its way (Io's sickle, or anyone else's plain swing) ----
   def('swing_b', 'B, softer and further away: a breath of air passing, with room round it. Io’s has a faint high note of moonlight rising in it.', choiceOf('swing'), like('swing', (t, who) => {
-    const io = who === 'io', d = chan({ wet: 0.35, pan: -0.25, panTo: 0.3, panT: 0.2 });
+    const io = who === 'io', d = chan({ wet: 0.25, pan: -0.25, panTo: 0.3, panT: 0.2 });
     whoosh(d, t, io ? 0.18 : 0.24, io ? 0.5 : 0.6, io ? 1800 : 800, io ? 4200 : 2400, { buf: 'pink', q: 0.9 });
     if (io) tone(d, 'sine', 1975.5, t + 0.02, 0.16, 0.03, { swell: true, to: 2349.3 });
   }), ['io'], { 'Io': ['io'], 'Anyone else': ['jester'] });
   def('swing_c', 'C, darker and lower: a heavy, low rush of air, like a cloak swung round. Io’s keeps a dull ring of her sickle in it.', choiceOf('swing'), like('swing', (t, who) => {
     const io = who === 'io', len = io ? 0.17 : 0.22, d = chan({ wet: 0.12, pan: -0.2, panTo: 0.3, panT: 0.2 });
-    whoosh(d, t, len, io ? 0.4 : 0.5, io ? 900 : 420, io ? 2200 : 1300, { q: 1.3 }); noise(d, t, len, 0.5, { buf: 'brown', type: 'lowpass', f: 500, swell: true });
+    whoosh(d, t, len, io ? 0.36 : 0.6, io ? 900 : 420, io ? 2200 : 1300, { q: 1.3 }); noise(d, t, len, 0.4, { buf: 'brown', type: 'lowpass', f: 500, swell: true });
     if (io) fm(d, 1200, 2.76, 0.6, t, 0.18, 0.05, { idx1: 0.1 });
   }), ['io'], { 'Io': ['io'], 'Anyone else': ['jester'] });
   def('swing_d', 'D, crisper and more physical: a quick tight whip of air that ends in a snap. Io’s sickle sings a bright "shing" in it.', choiceOf('swing'), like('swing', (t, who) => {
     const io = who === 'io', len = io ? 0.09 : 0.12, d = chan({ wet: 0.06, pan: -0.3, panTo: 0.4, panT: 0.1 });
-    whoosh(d, t, len, io ? 0.4 : 0.5, io ? 3000 : 1400, io ? 7000 : 4600, { q: 2.5, att: len * 0.7, rel: 0.02 });
-    noise(d, t + len * 0.85, 0.014, 0.25, { type: 'highpass', f: 5000, att: 0.001 });           // the snap at the end of the whip
+    whoosh(d, t, len, io ? 0.45 : 0.65, io ? 3000 : 1400, io ? 7000 : 4600, { q: 2.5, att: len * 0.7, rel: 0.02 });
+    noise(d, t + len * 0.85, 0.014, 0.3, { type: 'highpass', f: 5000, att: 0.001 });           // the snap at the end of the whip
     if (io) fm(d, 3100, 2.76, 0.8, t, 0.12, 0.07, { idx1: 0.1 });
   }), ['io'], { 'Io': ['io'], 'Anyone else': ['jester'] });
 
@@ -894,8 +894,8 @@ function makeBattleSound(opts) {
       for (let i = 0; i < n; i++) bell(chan({ pan: (i - (n - 1) / 2) * 0.5, wet: 0.6 }), KORE[i] * rnd(0.995, 1.005), t + i * 0.022, 0.3 * p, { len: 1.3 + 0.2 * i, strike: 0.25 });
       const d = chan({ wet: 0.3 }); thump(d, t, 170, 80, 0.12, 0.28 * p); noise(d, t, 0.08, 0.2 * p, { buf: 'pink', type: 'lowpass', f: 1600, to: 500, att: 0.004 });
     } else if (color == null) {
-      const d = chan({ wet: 0.45 }); noise(d, t, 0.14, 0.4 * p, { buf: 'pink', type: 'highpass', f: 2500, to: 5000, att: 0.01 });
-      fm(d, 1568 * rnd(0.97, 1.03), 2.76, 0.5, t, 0.4, 0.12 * p, { idx1: 0.05 }); thump(d, t, 160, 85, 0.1, 0.25 * p); rustle(d, t + 0.02, 0.2, 0.22 * p, { f0: 2500, f1: 5500 });
+      const d = chan({ wet: 0.45 }); noise(d, t, 0.14, 0.6 * p, { buf: 'pink', type: 'highpass', f: 2500, to: 5000, att: 0.01 });
+      fm(d, 1568 * rnd(0.97, 1.03), 2.76, 0.5, t, 0.4, 0.18 * p, { idx1: 0.05 }); thump(d, t, 160, 85, 0.1, 0.36 * p); rustle(d, t + 0.02, 0.2, 0.32 * p, { f0: 2500, f1: 5500 });
     } else RAW.hit(t, p);
   }), [1.2, GOLD], STRIKES);
   def('strike_c', 'C, darker and lower: the Jester’s bells an octave down, bronze more than gold, with a heavy blow under them; Io’s sickle bites deep: a low slice, a woody chop and a dull ring.', choiceOf('strike'), like('strike', (t, p, color) => {
@@ -906,15 +906,15 @@ function makeBattleSound(opts) {
       const d = chan({ wet: 0.15 }); thump(d, t, 150, 48, 0.24, 0.7 * p); noise(d, t, 0.09, 0.45 * p, { type: 'lowpass', f: 1500, to: 300, att: 0.001 });
     } else if (color == null) {
       const d = chan({ wet: 0.15 }); noise(d, t, 0.1, 0.6 * p, { f: 1400, to: 600, q: 1.1, att: 0.002 }); fm(d, 1050 * rnd(0.96, 1.04), 2.76, 1.2, t, 0.3, 0.15 * p, { idx1: 0.1 });
-      knock(d, t, 260, 0.4 * p, 0.1); thump(d, t, 140, 55, 0.18, 0.6 * p); rustle(d, t + 0.02, 0.12, 0.2 * p, { f0: 1800, f1: 4000 });
+      knock(d, t, 260, 0.4 * p, 0.1); thump(d, t, 140, 55, 0.18, 0.52 * p); rustle(d, t + 0.02, 0.12, 0.2 * p, { f0: 1800, f1: 4000 });
     } else RAW.hit(t, p);
   }), [1.2, GOLD], STRIKES);
   def('strike_d', 'D, crisper and more physical: the Jester’s bells hit hard and stopped short, with a clack and a tight punch; Io’s sickle is one quick "tchk": the edge, a short ring of steel and a knock of wood.', choiceOf('strike'), like('strike', (t, p, color) => {
     p = p || 1;
     if (color === GOLD) {
       const n = p > 1 ? 4 : 3;
-      for (let i = 0; i < n; i++) bell(chan({ pan: (i - (n - 1) / 2) * 0.3, wet: 0.1 }), KORE[i] * rnd(0.995, 1.005), t + i * 0.003, 0.34 * p, { len: 0.4, strike: 1.6 });
-      const d = chan({ wet: 0.06 }); thump(d, t, 230, 95, 0.08, 0.6 * p); knock(d, t, 700, 0.3 * p, 0.05); noise(d, t, 0.02, 0.35 * p, { type: 'highpass', f: 3000, att: 0.001 });
+      for (let i = 0; i < n; i++) bell(chan({ pan: (i - (n - 1) / 2) * 0.3, wet: 0.1 }), KORE[i] * rnd(0.995, 1.005), t + i * 0.003, 0.38 * p, { len: 0.7, strike: 1.3 });
+      const d = chan({ wet: 0.06 }); thump(d, t, 230, 95, 0.08, 0.66 * p); knock(d, t, 700, 0.36 * p, 0.05); noise(d, t, 0.02, 0.35 * p, { type: 'highpass', f: 3000, att: 0.001 });
     } else if (color == null) {
       const d = chan({ wet: 0.06 }); noise(d, t, 0.045, 0.55 * p, { type: 'highpass', f: 4000, to: 8000, att: 0.001 }); partials(d, 1900 * rnd(0.96, 1.04), t, RING.steel, 0.2 * p, 0.16);
       knock(d, t, 480, 0.45 * p, 0.07); thump(d, t, 210, 95, 0.07, 0.5 * p); rustle(d, t + 0.01, 0.06, 0.2 * p, { f0: 3500, f1: 7000 });
@@ -923,8 +923,8 @@ function makeBattleSound(opts) {
 
   // ---- 5. moonBladeFly: one of Io's blades of moonlight leaving ----
   def('moonBladeFly_b', 'B, softer and further away: a soft sigh of glass that rises as it drifts across, a little different each time.', choiceOf('moonBladeFly'), like('moonBladeFly', (t) => {
-    const k = rnd(0.85, 1.2), pan = rnd(0.15, 0.4) * (Math.random() < 0.5 ? -1 : 1), d = chan({ pan, panTo: -pan, panT: 0.2, wet: 0.45 });
-    whoosh(d, t, 0.18, 0.3, 2600 * k, 3800 * k, { buf: 'pink', q: 1.5 }); tone(d, 'sine', 1568 * k, t, 0.18, 0.06, { to: 2093 * k, swell: true }); tone(d, 'sine', 3136 * k, t, 0.18, 0.015, { to: 4186 * k, swell: true });
+    const k = rnd(0.85, 1.2), pan = rnd(0.15, 0.4) * (Math.random() < 0.5 ? -1 : 1), d = chan({ pan, panTo: -pan, panT: 0.2, wet: 0.3 });
+    whoosh(d, t, 0.18, 0.24, 2600 * k, 3800 * k, { buf: 'pink', q: 1.5 }); tone(d, 'sine', 1568 * k, t, 0.18, 0.048, { to: 2093 * k, swell: true }); tone(d, 'sine', 3136 * k, t, 0.18, 0.012, { to: 4186 * k, swell: true });
   }));
   def('moonBladeFly_c', 'C, darker and lower: a low cold "vwoom", a heavier blade falling in pitch as it goes, a little different each time.', choiceOf('moonBladeFly'), like('moonBladeFly', (t) => {
     const k = rnd(0.85, 1.2), d = chan({ pan: rnd(-0.4, 0.4), wet: 0.2 });
@@ -932,7 +932,7 @@ function makeBattleSound(opts) {
   }));
   def('moonBladeFly_d', 'D, crisper and more physical: a quick flick: a tick of glass and a short tight zip, a little different each time.', choiceOf('moonBladeFly'), like('moonBladeFly', (t) => {
     const k = rnd(0.85, 1.2), d = chan({ pan: rnd(-0.4, 0.4), wet: 0.08 });
-    partials(d, 2637 * k, t, RING.glass, 0.07, 0.06); whoosh(d, t, 0.08, 0.3, 3200 * k, 6000 * k, { q: 4, att: 0.02, rel: 0.05 }); fm(d, 4200 * k, 1.5, 1, t, 0.07, 0.03, { to: 2400 * k });
+    partials(d, 2637 * k, t, RING.glass, 0.085, 0.06); whoosh(d, t, 0.08, 0.36, 3200 * k, 6000 * k, { q: 4, att: 0.02, rel: 0.05 }); fm(d, 4200 * k, 1.5, 1, t, 0.07, 0.03, { to: 2400 * k });
   }));
 
   // ---- 6. moonBladeHit: a blade of moonlight landing ----
@@ -944,35 +944,35 @@ function makeBattleSound(opts) {
     p = p || 1; const d = chan({ pan: rnd(-0.3, 0.3), wet: 0.25 }); partials(d, rnd(950, 1300), t, RING.glass, 0.26 * p, 0.35); thump(d, t, 170, 70, 0.14, 0.6 * p); noise(d, t, 0.06, 0.4 * p, { type: 'lowpass', f: 2200, to: 500, att: 0.001 });
   }), [0.7]);
   def('moonBladeHit_d', 'D, crisper and more physical: glass cracking on its mark: a sharp tick, a short bright ring, a tight knock and two tiny splinters.', choiceOf('moonBladeHit'), like('moonBladeHit', (t, p) => {
-    p = p || 1; const d = chan({ pan: rnd(-0.3, 0.3), wet: 0.12 }); noise(d, t, 0.014, 0.5 * p, { type: 'highpass', f: 4500, att: 0.001 }); fm(d, rnd(2600, 3300), 1.41, 1.5, t, 0.09, 0.14 * p, { idx1: 0.1 }); thump(d, t, 260, 130, 0.05, 0.5 * p);
-    for (let i = 0; i < 2; i++) partials(d, rnd(3400, 4800), t + 0.02 + i * rnd(0.015, 0.035), RING.glass, 0.07 * p, 0.06);
+    p = p || 1; const d = chan({ pan: rnd(-0.3, 0.3), wet: 0.18 }); noise(d, t, 0.014, 0.65 * p, { type: 'highpass', f: 4500, att: 0.001 }); fm(d, rnd(2600, 3300), 1.41, 1.5, t, 0.16, 0.22 * p, { idx1: 0.1 }); thump(d, t, 260, 130, 0.05, 0.6 * p);
+    for (let i = 0; i < 2; i++) partials(d, rnd(3400, 4800), t + 0.02 + i * rnd(0.015, 0.035), RING.glass, 0.11 * p, 0.09);
   }), [0.7]);
 
   // ---- 7. wispSip: a wisp drinking its prey's light ----
   def('wispSip_b', 'B, softer and further away: a thin, high sip, more air than throat, with room round it.', choiceOf('wispSip'), like('wispSip', (t, p) => {
-    p = p || 1; const d = chan({ wet: 0.5 }); whoosh(d, t, 0.15, 0.5 * p, 1200, 2800, { buf: 'pink', q: 2, att: 0.11, rel: 0.03 }); hollow(d, 880, t, 0.16, 0.26 * p, { to: 1175, att: 0.04, rel: 0.1, vib: 0 });
+    p = p || 1; const d = chan({ wet: 0.5 }); whoosh(d, t, 0.15, 0.6 * p, 1200, 2800, { buf: 'pink', q: 2, att: 0.11, rel: 0.03 }); hollow(d, 880, t, 0.16, 0.31 * p, { to: 1175, att: 0.04, rel: 0.1, vib: 0 });
   }), [0.6]);
   def('wispSip_c', 'C, darker and lower: a deep hollow draw and a gulp at the end of it.', choiceOf('wispSip'), like('wispSip', (t, p) => {
-    p = p || 1; const d = chan({ wet: 0.2 }); whoosh(d, t, 0.14, 0.6 * p, 260, 900, { q: 3, att: 0.1, rel: 0.03 }); hollow(d, 330, t, 0.16, 0.4 * p, { to: 415, att: 0.02, rel: 0.09, vib: 0 }); thump(d, t + 0.11, 210, 120, 0.08, 0.3 * p);
+    p = p || 1; const d = chan({ wet: 0.2 }); whoosh(d, t, 0.14, 0.5 * p, 260, 900, { q: 3, att: 0.1, rel: 0.03 }); hollow(d, 330, t, 0.16, 0.32 * p, { to: 415, att: 0.02, rel: 0.09, vib: 0 }); thump(d, t + 0.11, 210, 120, 0.08, 0.25 * p);
   }), [0.6]);
   def('wispSip_d', 'D, crisper and more physical: a quick wet slurp that ends in a small pop.', choiceOf('wispSip'), like('wispSip', (t, p) => {
-    p = p || 1; const d = chan({ wet: 0.12 }); whoosh(d, t, 0.09, 0.55 * p, 700, 2600, { q: 5, att: 0.075, rel: 0.012 }); hollow(d, 700, t, 0.1, 0.22 * p, { to: 1000, att: 0.01, rel: 0.05, vib: 0 });
-    bloop(d, t + 0.085, 620, 0.22 * p, 1.9); noise(d, t + 0.088, 0.008, 0.2 * p, { f: 2800, q: 2, att: 0.001 });
+    p = p || 1; const d = chan({ wet: 0.12 }); whoosh(d, t, 0.09, 0.65 * p, 700, 2600, { q: 5, att: 0.075, rel: 0.012 }); hollow(d, 700, t, 0.1, 0.26 * p, { to: 1000, att: 0.01, rel: 0.05, vib: 0 });
+    bloop(d, t + 0.085, 620, 0.26 * p, 1.9); noise(d, t + 0.088, 0.008, 0.2 * p, { f: 2800, q: 2, att: 0.001 });
   }), [0.6]);
 
   // ---- 8. wraithClaw: a wraith's blow landing on a hero ----
   def('wraithClaw_b', 'B, softer and further away: a cold wash more than a blow: a soft thud, and two sour hollow notes sinking away into a big room, one in each ear.', choiceOf('wraithClaw'), like('wraithClaw', (t, p) => {
-    p = p || 1; const d = chan({ wet: 0.6 }); thump(d, t, 140, 65, 0.18, 0.4 * p); noise(d, t, 0.25, 0.4 * p, { buf: 'pink', f: 1100, to: 500, q: 0.9, att: 0.02 });
-    [784, 830.6].forEach((f, i) => hollow(chan({ pan: i ? 0.35 : -0.35, wet: 0.6 }), f, t, 0.45, 0.2 * p, { to: f * 0.94, att: 0.03, rel: 0.38, vib: 0 }));
+    p = p || 1; const d = chan({ wet: 0.6 }); thump(d, t, 140, 65, 0.18, 0.5 * p); noise(d, t, 0.25, 0.55 * p, { buf: 'pink', f: 1100, to: 500, q: 0.9, att: 0.02 });
+    [784, 830.6].forEach((f, i) => hollow(chan({ pan: i ? 0.35 : -0.35, wet: 0.6 }), f, t, 0.45, 0.3 * p, { to: f * 0.94, att: 0.03, rel: 0.38, vib: 0 }));
   }), [1.1]);
   def('wraithClaw_c', 'C, darker and lower: a deep slam with a short growl in it, and the two sour notes an octave down.', choiceOf('wraithClaw'), like('wraithClaw', (t, p) => {
-    p = p || 1; const d = chan({ wet: 0.35 }); thump(d, t, 115, 36, 0.4, 0.9 * p); noise(d, t, 0.2, 0.7 * p, { type: 'lowpass', f: 1100, to: 180, att: 0.002 }); noise(d, t, 0.35, 0.5 * p, { buf: 'brown', type: 'lowpass', f: 300, att: 0.005 });
-    hollow(d, 196, t, 0.35, 0.3 * p, { att: 0.01, rel: 0.3, vib: 0 }); hollow(d, 207.7, t, 0.35, 0.3 * p, { att: 0.01, rel: 0.3, vib: 0 }); voice(d, 98, t, 0.3, 0.14 * p, { form: OH, to: 70, att: 0.01 });
+    p = p || 1; const d = chan({ wet: 0.35 }); thump(d, t, 115, 36, 0.4, 0.85 * p); noise(d, t, 0.2, 0.75 * p, { type: 'lowpass', f: 1500, to: 220, att: 0.002 }); noise(d, t, 0.35, 0.4 * p, { buf: 'brown', type: 'lowpass', f: 300, att: 0.005 });
+    hollow(d, 196, t, 0.35, 0.4 * p, { att: 0.01, rel: 0.3, vib: 0 }); hollow(d, 207.7, t, 0.35, 0.4 * p, { att: 0.01, rel: 0.3, vib: 0 }); voice(d, 98, t, 0.3, 0.2 * p, { form: OH, to: 70, att: 0.01 });
   }), [1.1]);
   def('wraithClaw_d', 'D, crisper and more physical: a rake of claws: three quick scratches from one side to the other, a tight thud and one short sour ring.', choiceOf('wraithClaw'), like('wraithClaw', (t, p) => {
     p = p || 1; const d = chan({ wet: 0.18 });
-    for (let i = 0; i < 3; i++) noise(chan({ pan: -0.3 + i * 0.3, wet: 0.15 }), t + i * 0.028, 0.045, 0.5 * p, { f: 2400 + i * 500, to: 1300 + i * 300, q: 2.5, att: 0.002 });
-    thump(d, t + 0.03, 180, 70, 0.12, 0.75 * p); noise(d, t + 0.03, 0.05, 0.5 * p, { type: 'lowpass', f: 2600, to: 500, att: 0.001 }); fm(d, 392, 1.06, 2, t + 0.03, 0.16, 0.14 * p, { idx1: 0.3 });
+    for (let i = 0; i < 3; i++) noise(chan({ pan: -0.3 + i * 0.3, wet: 0.15 }), t + i * 0.035, 0.06, 1.0 * p, { f: 2400 + i * 500, to: 1300 + i * 300, q: 2.5, att: 0.002 });
+    thump(d, t + 0.03, 180, 70, 0.12, 0.85 * p); noise(d, t + 0.03, 0.08, 0.7 * p, { type: 'lowpass', f: 2600, to: 500, att: 0.001 }); fm(d, 392, 1.06, 2, t + 0.03, 0.22, 0.3 * p, { idx1: 0.3 });
   }), [1.1]);
 
   // ---- 9. release: a beaten foe released, a moth rising ----
@@ -991,10 +991,10 @@ function makeBattleSound(opts) {
   }), ['wraith'], RELEASES);
   def('release_c', 'C, darker and lower: a low sigh, heavy slow wings, and three low notes that still climb, but in the night’s own minor key, over a deep hum. A bramble’s creak and a wisp’s last puff are lower too.', choiceOf('release'), like('release', (t, kind) => {
     const d = chan({ wet: 0.45 }), m = chan({ pan: -0.2, panTo: 0.5, panT: 1.9, wet: 0.55 });
-    settle(d, t, kind, 0.75, 1); hollow(d, 247, t, 0.8, 0.2, { to: 185, att: 0.25, rel: 0.5, vib: 0 }); whoosh(d, t, 0.8, 0.22, 400, 1300, { buf: 'pink', q: 0.9, att: 0.3, rel: 0.5 });
+    settle(d, t, kind, 0.75, 1); hollow(d, 247, t, 0.8, 0.15, { to: 185, att: 0.25, rel: 0.5, vib: 0 }); whoosh(d, t, 0.8, 0.22, 400, 1300, { buf: 'pink', q: 0.9, att: 0.3, rel: 0.5 });
     noise(trem(m, 13, 0.95, t + 0.35, 1.9), t + 0.35, 1.9, 0.2, { buf: 'pink', f: 1400, to: 2600, q: 0.8, swell: true, att: 0.5, rel: 1.1 });
-    (kind === 'wisp' ? H('b4 e5 g5') : H('e4 g4 b4')).forEach((f, i) => { tone(m, 'sine', f, t + 0.5 + i * 0.28, 1.3, 0.13, { att: 0.05 }); tone(m, 'triangle', f * 2, t + 0.5 + i * 0.28, 0.8, 0.03, { att: 0.06 }); });
-    tone(m, 'sine', 164.81, t + 0.4, 1.8, 0.08, { swell: true, att: 0.6, rel: 1 }); tone(m, 'triangle', 329.63, t + 0.4, 1.8, 0.02, { swell: true, att: 0.6, rel: 1 });
+    (kind === 'wisp' ? H('b4 e5 g5') : H('e4 g4 b4')).forEach((f, i) => { tone(m, 'sine', f, t + 0.5 + i * 0.28, 1.3, 0.1, { att: 0.05 }); tone(m, 'triangle', f * 2, t + 0.5 + i * 0.28, 0.8, 0.03, { att: 0.06 }); });
+    tone(m, 'sine', 164.81, t + 0.4, 1.8, 0.04, { swell: true, att: 0.6, rel: 1 }); tone(m, 'triangle', 329.63, t + 0.4, 1.8, 0.02, { swell: true, att: 0.6, rel: 1 });
   }), ['wraith'], RELEASES);
   def('release_d', 'D, crisper and more physical: a short breath out, then the moth close by: each beat of its wings heard, quickening as it climbs, and three plucked notes of wood and glass going up. A bramble creaks first; a wisp’s flame puffs out.', choiceOf('release'), like('release', (t, kind) => {
     const d = chan({ wet: 0.3 }), m = chan({ pan: -0.2, panTo: 0.5, panT: 1.9, wet: 0.3 });
@@ -1011,8 +1011,8 @@ function makeBattleSound(opts) {
   }));
   def('sealToll_c', 'C, darker and lower: a bigger, heavier bell, a fourth lower, struck with a great weight: a deep thud under it and a long low tail.', choiceOf('sealToll'), like('sealToll', (t) => {
     const d = chan({ wet: 0.55 }), f = 123.47;
-    bell(d, f, t, 1.0, { set: 'toll', len: 7, strike: 0 }); thump(d, t, 120, 40, 0.5, 0.7); noise(d, t, 0.12, 0.5, { type: 'lowpass', f: 900, to: 200, att: 0.002 });
-    partials(d, f, t, [[2, 1, 4.5], [3, 0.6, 3.2], [4.07, 0.4, 2.2]], 0.1);                        // what a phone speaker can carry of so low a bell
+    bell(d, f, t, 1.0, { set: 'toll', len: 7, strike: 0 }); thump(d, t, 120, 40, 0.5, 0.5); noise(d, t, 0.12, 0.5, { type: 'lowpass', f: 900, to: 200, att: 0.002 });
+    partials(d, f, t, [[2, 1, 4.5], [3, 0.6, 3.2], [4.07, 0.4, 2.2]], 0.13);                        // what a phone speaker can carry of so low a bell
     tone(d, 'sine', f / 2, t, 4.5, 0.3, { att: 0.01 });
   }));
   def('sealToll_d', 'D, crisper and more physical: the same deep bell struck hard and close: the clapper’s knock, a brighter ring, and her small gold bells shivering after it.', choiceOf('sealToll'), like('sealToll', (t) => {
