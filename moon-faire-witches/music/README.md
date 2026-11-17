@@ -19,6 +19,11 @@ How they were made (one song): measure, then level and compress in a second pass
 
 ## Herbal Decay: under everything (November 17)
 
+**Off for now** (Chris, that afternoon: "I want the song in there but your six dark songs work better ... we will come
+back to you for the songs when we are ready"). The song and its knob stay in every page; the knob starts at 0 and nothing
+is loaded until it is turned up. Chris's songs (these five and Herbal Decay) are to be come back to when he is ready.
+
+
 `herbal-decay-battle-aac-96k.m4a` is Chris's file exactly as he gave it (AAC 96 kbps, 3:20, md5
 5d8dfc3afd99b09a03cb90c20e959a8b), never re-compressed: the build copies its bytes into each page. `herbal-decay.js` says
 where it is; `../src/song-bed.js` plays it on a gapless loop under everything, very quietly walking about (about -36 LUFS)

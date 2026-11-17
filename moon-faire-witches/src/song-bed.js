@@ -12,8 +12,10 @@
   // how loud it sits at knob 5: the song is about -15 LUFS as made; walking about it plays near -36, in a fight near
   // -32, about 11 dB under the battle music made in code, so it is always beneath everything
   const LEVEL = { world: 0.085, battle: 0.135 };
-  const KEY = 'mfw.songBed';
-  let ctx = null, gain = null, src = null, where = 'world', knob = 5, started = false, el = null, failed = false;
+  // Off unless the knob is turned up (Chris, November 17, afternoon: "I want the song in there but your six dark songs
+  // work better"; his songs are to be come back to when he's ready). A new key, so an earlier setting doesn't carry over
+  const KEY = 'mfw.songBed.v2';
+  let ctx = null, gain = null, src = null, where = 'world', knob = 0, started = false, el = null, failed = false;
   try { const v = parseFloat(localStorage.getItem(KEY)); if (v >= 0 && v <= 10) knob = v; } catch (e) {}
   let mutedBy = null;      // a page's own Sound on/off (the battle's): when it says muted, the song is silent too
   const level = () => (mutedBy && mutedBy() ? 0 : LEVEL[where] * knob / 5);
@@ -22,7 +24,7 @@
     return fetch(file).then((r) => r.arrayBuffer());
   }
   function start() {
-    if (started || !window.SONG_BED_FILE) return; started = true;
+    if (started || !window.SONG_BED_FILE || knob <= 0) return; started = true;     // at 0 nothing is even loaded
     const AC = window.AudioContext || window.webkitAudioContext;
     try { ctx = new AC(); } catch (e) { ctx = null; }
     if (ctx) {
@@ -41,7 +43,7 @@
     if (gain && ctx) gain.gain.setTargetAtTime(level(), ctx.currentTime, fade || 0.4);
     if (el) el.volume = Math.min(1, level());
   }
-  function setKnob(v) { knob = Math.max(0, Math.min(10, v)); try { localStorage.setItem(KEY, String(knob)); } catch (e) {} apply(0.08); }
+  function setKnob(v) { knob = Math.max(0, Math.min(10, v)); try { localStorage.setItem(KEY, String(knob)); } catch (e) {} if (!started) start(); apply(0.08); }
   const first = () => { start(); if (ctx && ctx.state === 'suspended') ctx.resume(); };
   ['pointerdown', 'keydown', 'touchstart'].forEach((t) => window.addEventListener(t, first, { capture: true, passive: true }));
   document.addEventListener('visibilitychange', () => { if (!ctx) { if (el) document.hidden ? el.pause() : el.play().catch(() => {}); return; } if (document.hidden) ctx.suspend(); else if (started) ctx.resume(); });
@@ -59,7 +61,7 @@
     panel = document.createElement('div'); panel.className = 'sbed-panel'; panel.hidden = true;
     panel.innerHTML = '<div class="sbed-top"><b>Herbal Decay</b><button class="sbed-x" aria-label="Close">&times;</button></div>' +
       '<div class="sbed-row"><span>Off</span><input type="range" min="0" max="10" step="1" aria-label="Song volume"><output></output></div>' +
-      '<div class="sbed-note">Your song, quietly under everything: softer walking about, a little louder in fights. 5 is as set.</div>';
+      '<div class="sbed-note">Off for now: the six dark pieces carry the fights. Turn it up to hear your song quietly under everything (5 is the level it was set at).</div>';
     const r = panel.querySelector('input'), o = panel.querySelector('output');
     r.value = knob; o.textContent = knob;
     r.oninput = () => { setKnob(+r.value); o.textContent = r.value; first(); };
