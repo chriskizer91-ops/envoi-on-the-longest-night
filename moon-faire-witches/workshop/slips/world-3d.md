@@ -67,8 +67,8 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           harder later in the game; Skies' Crystal Shards are Envoi's shards (Magpie upgrades, opening zones); a zone opens
           on the party's level and the shards for passage or the upgrades the flight needs; flights use the night map. A
           3D map of Aethermoor (where you are when you travel, a dotted line for a flight, then Skies) is its own
-          conversation: the project document claude/travel-and-3d-map.md has the decisions and its starter text. Which
-          ship (the Magpie or Skies' own) is still to ask.
+          conversation: the project document claude/travel-and-3d-map.md has the decisions and its starter text. The ship
+          (Chris to the map conversation, 20:18): Skies' own four ships, the next ship part of each gate between zones.
           The forest road's wishes (283bfea): a flower bush west or north of the painting no longer crashes the page;
           anything right against the camera (a crown, a trunk) thins away.
           The northern camp's wish: patches past the fog go by their ground distance, so tall trees go with their ground.
@@ -131,11 +131,11 @@ Open:     1. (Done in walk pass 2: the lower house's roof walk. The Crescent Loc
           3. All 15 textures are stand-ins; the timber-and-plaster walls and the bark are the roughest. shared_planks_wall
              isn't made in any pack yet, so the shed and the lean-to use the boardwalk planks.
           4. For Chris: the frame rate on his phone (the painting view shows it).
+          5. Headless stills show a faint fixed rectangle on the ground near the bottom left of the upright screen: the
+             software renderer's, not the page's (it stays put with Io hidden and the camera moved).
           6. Chris's made textures: all 130 of rounds one and two are on work/textures-made. Bringing them in means
              merging that branch, making phone-size copies (a made texture can be a few MB; each page inlines its
              textures), rebuilding every place and zone, and showing Chris each place before and after, with any of the
              six textures that show a line where they repeat (claude/slips/textures-made.md). Waiting for his word.
           7. For Chris: the frozen ice that's walkable (the frozen pass's river, the cold moor's tarn, Frostmere's near
              ice), and whether Io steps off at a camp facing the fire instead of south.
-          5. Headless stills show a faint fixed rectangle on the ground near the bottom left of the upright screen: the
-             software renderer's, not the page's (it stays put with Io hidden and the camera moved).
