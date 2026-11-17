@@ -660,7 +660,7 @@
     const shapeMatrix = (t, hide) => TM.compose(TT.set(t.ax - AW / 2, t.y - 0.3, t.ay - AH / 2), TQ.setFromAxisAngle(TUP, t.ry), hide ? TS.set(0, 0, 0) : TS.set(t.size, t.size * (t.pine ? 1.15 : 1), t.size));
     function buildTrees() {
       const R = rng(1911), SP = LV.treeGap, [CX, CY] = LV.patches || [6, 4], cw = AW / CX, chh = AH / CY;
-      const lists = { pine: [], leafy: [] }; for (const k in lists) for (let i = 0; i < CX * CY; i++) lists[k].push([]);
+      const lists = { pine: [], leafy: [], bare: [] }; for (const k in lists) for (let i = 0; i < CX * CY; i++) lists[k].push([]);
       // how likely a tree stands on each kind of ground, and how likely that tree is a pine
       const ODDS = { [KIND.pine]: [0.95, 0.9], [KIND.leafy]: [0.9, 0.12], [KIND.fen]: [0.34, 0.2], [KIND.grass]: [0.05, 0.4], [KIND.farm]: [0.02, 0.2], [KIND.rock]: [0.1, 0.9], [KIND.sand]: [0.02, 0.3], [KIND.desert]: [0.012, 0.2], [KIND.mesa]: [0.02, 0.5], [KIND.snow]: [0.02, 1] };
       for (let gy = 0; gy < AH / SP; gy++) for (let gx = 0; gx < AW / SP; gx++) {
@@ -704,7 +704,7 @@
           else if (zone === 4) c = pine ? [0.56 + r4 * 0.16, 0.66 + r4 * 0.14, 0.86] : [0.5 + r4 * 0.1, 0.6 + r4 * 0.1, 0.6];
           if (bare) c = zone === 4 ? [0.5, 0.52, 0.56] : [0.24 + r4 * 0.06, 0.22, 0.2];
           const sp = bare ? 'tree_snag' : pine ? (zone < 3 && r5 < 0.3 ? 'tree_ponderosa' : 'tree_spruce') : fen ? (r5 < 0.7 ? 'tree_willow' : 'tree_cottonwood') : zone >= 3 ? (r5 < 0.7 ? 'tree_aspen' : 'tree_oak') : (r5 < 0.55 ? 'tree_oak' : r5 < 0.8 ? 'tree_aspen' : 'tree_cottonwood');
-          lists[pine ? 'pine' : 'leafy'][clamp(Math.floor(ay / chh), 0, CY - 1) * CX + clamp(Math.floor(ax / cw), 0, CX - 1)].push({ ax, ay, size: clamp(T[i + 2] / 100, 0.6, 1.5) * 0.5, ry: r4 * 6.28, c, pine, sp, zone });
+          lists[bare ? 'bare' : pine ? 'pine' : 'leafy'][clamp(Math.floor(ay / chh), 0, CY - 1) * CX + clamp(Math.floor(ax / cw), 0, CX - 1)].push({ ax, ay, size: clamp(T[i + 2] / 100, 0.6, 1.5) * 0.5, ry: r4 * 6.28, c, pine, sp, zone });
         }
       }
       // a pine: two cones, one on the other; a leafy tree: a round crown, a ring of faces under a low cap (both stand on
@@ -716,11 +716,16 @@
       // (the plain shapes: 2 tiers of 5 faces, 10 triangles, and a crown of 18. A laptop's near trees: 3 tiers of 7, 21,
       // and a fuller crown of 49; its far trees are the plain shapes)
       const plain = { pine: shape(cone(3.3, 6.5, 0.6, 5), cone(2.2, 5.5, 4.6, 5)), leafy: shape(band(2.5, 1.0, 3.4, 3.4, 6), cone(3.4, 2.6, 3.4, 6)) };
+      // a bare tree (the Thornwood's thorns, a dead tree): a thin trunk and five bare boughs, each two thin blades
+      // crossed so it shows from the side and from above (Chris, November 17: from far off they were round purple
+      // blobs, the leafy shape in a dead tree's colour)
+      const bough = (a, y, len, rise) => { const cx = Math.cos(a), cz = Math.sin(a), tip = [cx * len, y + rise, cz * len], w = 0.42; return [0, y - 0.5, 0, 0, y + 0.6, 0, ...tip, -cz * w, y, cx * w, cz * w, y, -cx * w, ...tip]; };
+      plain.bare = shape(cone(0.5, 9.4, 0, 3), bough(0.4, 3.2, 3.6, 2.6), bough(2.5, 4.3, 3.2, 2.9), bough(4.6, 5.3, 2.8, 2.6), bough(1.5, 6.3, 2.2, 2.4), bough(3.6, 7.2, 1.7, 2.0));
       const [ps, pt] = LV.pine, [ls, lb] = LV.leaf;
       const pineGeo = pt === 2 ? plain.pine : shape(cone(3.4, 5.2, 0.5, ps), cone(2.7, 4.6, 3.3, ps), cone(1.8, 4.4, 6.0, ps));
       const leafGeo = lb === 1 ? plain.leafy : shape(band(2.2, 0.8, 3.5, 2.6, ls), band(3.5, 2.6, 3.0, 4.6, ls), band(3.0, 4.6, 1.6, 5.9, ls), cone(1.6, 0.5, 5.9, ls));
       const mat = material(THING_V, THING_F, null, { side: THREE.DoubleSide }), C = new THREE.Color();
-      for (const [kind, geo] of [['pine', pineGeo], ['leafy', leafGeo]]) for (let ci = 0; ci < CX * CY; ci++) {
+      for (const [kind, geo] of [['pine', pineGeo], ['leafy', leafGeo], ['bare', plain.bare]]) for (let ci = 0; ci < CX * CY; ci++) {
         const list = lists[kind][ci]; if (!list.length) continue;
         const mesh = new THREE.InstancedMesh(geo, mat, list.length); let top = 0;
         list.forEach((t, i) => {

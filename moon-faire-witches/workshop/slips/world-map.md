@@ -54,6 +54,7 @@ Chris said: (15:22, after the first build, which laid the night atlas over a hei
           (11:30) He trusts the artistic choice. The fine detail on a place's ground needn't be the game's plants: the
           generic grass texture the map uses, purple-tinted. And the map leans toward the game: a gentle violet night
           tint over the land and trees of zones 1 and 2, so it reads green and purple at once. Done (below).
+          (12:30) In the Thornwood, zoomed out, the dead trees are purple blobs: shouldn't they be twigs? Yes: done.
 Branch:   work/world-map (from work/world-3d at 0046851)
 Files:    moon-faire-witches/world-map/ (all new to the game): README.md, envoi-map-where.html, map/map3d.js,
           map/places.js, map/art.js, map/moods.js, map/map.css, art/aethermoor-terrain-height.png,
@@ -147,8 +148,12 @@ Checked:  (08:42's fixes) Phone, all views, and laptop, 6 views: 0 page errors; 
           bog, the zone's open grass elsewhere) with tufts and flower specks, a fifth of the game's own ground colour
           kept in its middle; its paths, cobbles and paving are still the game's, a little greyer. Zones 3 and 4 are
           as they were. Every view at the phone's level and 14 at the laptop's: 0 page errors; touch test 10 of 10;
-          places check passes. Held beside the build before it: the purple patches at the forest road, the Thornwood
-          and the cottage are gone.
+          places check passes. Held beside the build before it: the purple patches at the Thornwood and the cottage
+          are gone; the forest road to Dawnroost is still a faint paler patch from high up.
+          (12:30, bare trees) A place's bare trees (3,467 of them in 12 places; the Thornwood 804, the crossroads
+          1,044) were drawn from far off as the leafy tree's round crown in a dead tree's colour. They have their own
+          far shape now: a thin trunk and five bare boughs, 13 triangles. Close to they are the dead snag model, as
+          before. Every phone view and 6 laptop views: 0 page errors; touch test 10 of 10; places check passes.
 For the hub: Not ready to bring in yet (steps 2 to 4 to come). When it is: take moon-faire-witches/world-map/ and this
           slip. Build: node tools/build.mjs --offline moon-faire-witches/world-map/envoi-map-where.html.
 Open:     0. For the hub: the page's textures are packed from texture-packs/made/ as it stands on work/textures-made;

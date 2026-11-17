@@ -52,6 +52,8 @@ const VIEWS = [
   { name: 'place-cottage', io: 'wickhollow', open: [1, 2], mist: 0, view: { x: 1352, y: 1948, dist: 60, yaw: 0.3, tilt: 0.6 } },
   { name: 'place-jetty', io: 'wickhollow', open: [1, 2], mist: 0, view: { x: 1446, y: 1806, dist: 60, yaw: 0.3, tilt: 0.6 } },
   { name: 'place-thornwood', io: 'bogmire', open: [1, 2], mist: 0, view: { x: 1530, y: 2160, dist: 90, yaw: 0.3, tilt: 0.6 } },
+  { name: 'thornwood-far', io: 'bogmire', open: [1, 2], mist: 0, view: { x: 1530, y: 2160, dist: 300, yaw: 0.3, tilt: 0.65 } },
+  { name: 'thornwood-out', io: 'bogmire', open: [1, 2], mist: 0, view: { x: 1530, y: 2160, dist: 520, yaw: 0.3, tilt: 0.7 } },
   { name: 'place-dawnroost', io: 'dawnroost-road', open: [1, 2], mist: 0, view: { x: 1325, y: 1098, dist: 62, yaw: 0.3, tilt: 0.6 } },
   { name: 'place-misthollow', io: 'frozen-pass', open: [1, 2, 3, 4], mist: 0, view: { x: 3500, y: 735, dist: 62, yaw: 0.4, tilt: 0.6 } },
   { name: 'place-moonwell', io: 'misthollow', open: [1, 2, 3, 4], mist: 0, view: { x: 3522, y: 645, dist: 62, yaw: 0.4, tilt: 0.6 } },
