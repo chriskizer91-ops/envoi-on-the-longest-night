@@ -10,7 +10,7 @@ Aethermoor, from the 3D map) comes later.
 
 | File | Zone | Size | Its places (the wild ones in bold) |
 |---|---|---|---|
-| `envoi-3d-zone-1-wickhollow-and-the-fen.html` | 1, Wickhollow and the fen | 21.7 MB | Wickhollow, Io's cottage, the jetty, **the Thornwood**, Bogmire, the fen's dark heart |
+| `envoi-3d-zone-1-wickhollow-and-the-fen.html` | 1, Wickhollow and the fen | 33.6 MB (reskinned November 17) | Wickhollow, Io's cottage, the jetty, **the Thornwood**, Bogmire, the fen's dark heart |
 | `envoi-3d-zone-2-the-warm-roads.html` | 2, The Warm Roads | 22.5 MB | the Warm Roads camp, **the Ember Line road**, **the forest road to Dawnroost**, Dawnroost, Dawnroost's living node |
 | `envoi-3d-zone-3-the-northern-wilds.html` | 3, The northern wilds | 24.0 MB | the northern camp, **Eldergrove's edge**, **the cold moor**, **the northern crossroads**, the shipyard |
 | `envoi-3d-zone-4-the-northeast-peaks.html` | 4, The northeast peaks | 20.7 MB | the frozen camp, **Frostmere's shore**, **the frozen pass**, Misthollow, the dead Moonwell |
@@ -30,8 +30,12 @@ Each zone starts at its landing: zone 1 on the jetty, zones 2 to 4 at their camp
 
 ## What's in them
 
-- **Textures:** stand-ins. Chris's own made textures (rounds one and two, on `work/textures-made`) aren't in these
-  builds yet. When they go in, these files are built again.
+- **Textures:** zone 1 is reskinned (November 17, the reskin job, branch `work/reskin`): Chris's own made textures at
+  their full size, each wall's picture fitted to its wall, real timbers on the timber-framed houses, and nothing built
+  is seen through any more (the camera keeps a clear line to Io instead). Zones 2 to 4 here are still the stand-in
+  builds; they are built again the same way when Chris has looked at zone 1.
+- **Made for the laptop first:** full sharpness, grain close up and relief on surfaces. A phone gets the lighter
+  settings by itself. Add `?quality=phone` or `?quality=high` to the address to force either.
 - **People:** the townsfolk aren't standing in the places yet.
 
 The sources are `../places/<id>.js` (one file per place), `../engine/`, and `../game/zones.js` (which places make each

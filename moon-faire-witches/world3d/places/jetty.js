@@ -103,17 +103,17 @@
     // each texture: Chris's made one if the page carries it (texture-packs/made/), else the pack's stand-in. Written out in
     // full, so the offline build finds the pictures and puts them inside the file.
     textures: [
-      { id: 'shared_boardwalk_planks', made: "./../texture-packs/made/shared_boardwalk_planks.png", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_boardwalk_planks.png" },
-      { id: 'shared_water_dark', made: "./../texture-packs/made/shared_water_dark.png", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_water_dark.png" },
-      { id: 'shared_drystone', made: "./../texture-packs/made/shared_drystone.png", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_drystone.png" },
-      { id: 'shared_awning_stripes', made: "./../texture-packs/made/shared_awning_stripes.png", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_awning_stripes.png" },
-      { id: 'shared_cobbles_town', made: "./../texture-packs/made/shared_cobbles_town.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_cobbles_town.png" },
-      { id: 'shared_grass_meadow', made: "./../texture-packs/made/shared_grass_meadow.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_grass_meadow.png" },
-      { id: 'shared_stone_wall_rough', made: "./../texture-packs/made/shared_stone_wall_rough.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_stone_wall_rough.png" },
-      { id: 'shared_dirt_track', made: "./../texture-packs/made/shared_dirt_track.png", stand: "./../texture-packs/wickhollow/thornwood/stand-in/shared_dirt_track.png" },
-      { id: 'thorn_rock_mossy', made: "./../texture-packs/made/thorn_rock_mossy.png", stand: "./../texture-packs/wickhollow/thornwood/stand-in/thorn_rock_mossy.png" },
-      { id: 'wick_leaf_canopy', made: "./../texture-packs/made/wick_leaf_canopy.png", stand: "./../texture-packs/wickhollow/cottage/stand-in/wick_leaf_canopy.png" },
-      { id: 'shared_bark_oak', made: "./../texture-packs/made/shared_bark_oak.png", stand: "./../texture-packs/wickhollow/cottage/stand-in/shared_bark_oak.png" },
+      { id: 'shared_boardwalk_planks', made: "./../texture-packs/made-web/shared_boardwalk_planks.webp", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_boardwalk_planks.png" },
+      { id: 'shared_water_dark', made: "./../texture-packs/made-web/shared_water_dark.webp", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_water_dark.png" },
+      { id: 'shared_drystone', made: "./../texture-packs/made-web/shared_drystone.webp", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_drystone.png" },
+      { id: 'shared_awning_stripes', made: "./../texture-packs/made-web/shared_awning_stripes.webp", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_awning_stripes.png" },
+      { id: 'shared_cobbles_town', made: "./../texture-packs/made-web/shared_cobbles_town.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_cobbles_town.png" },
+      { id: 'shared_grass_meadow', made: "./../texture-packs/made-web/shared_grass_meadow.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_grass_meadow.png" },
+      { id: 'shared_stone_wall_rough', made: "./../texture-packs/made-web/shared_stone_wall_rough.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_stone_wall_rough.png" },
+      { id: 'shared_dirt_track', made: "./../texture-packs/made-web/shared_dirt_track.webp", stand: "./../texture-packs/wickhollow/thornwood/stand-in/shared_dirt_track.png" },
+      { id: 'thorn_rock_mossy', made: "./../texture-packs/made-web/thorn_rock_mossy.webp", stand: "./../texture-packs/wickhollow/thornwood/stand-in/thorn_rock_mossy.png" },
+      { id: 'wick_leaf_canopy', made: "./../texture-packs/made-web/wick_leaf_canopy.webp", stand: "./../texture-packs/wickhollow/cottage/stand-in/wick_leaf_canopy.png" },
+      { id: 'shared_bark_oak', made: "./../texture-packs/made-web/shared_bark_oak.webp", stand: "./../texture-packs/wickhollow/cottage/stand-in/shared_bark_oak.png" },
     ],
     ground_h: ground,
     // where Io's feet stand: the ground, or the pier's deck (the arm round the mooring square too)

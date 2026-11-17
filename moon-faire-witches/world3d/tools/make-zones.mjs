@@ -68,6 +68,9 @@ for (const n of Object.keys(ZONES)) {
     for (const m of src.matchAll(/"\.\/\.\.\/(texture-packs\/[^"]+\.(?:png|jpe?g|webp|avif))"/g)) {
       const p = m[1], f = path.join(MF, p);
       if (key[p] != null || !fs.existsSync(f)) continue;
+      // a stand-in whose made texture is here isn't carried: the page would never use it (the reskin job, November 17)
+      const sid = p.match(/\/stand-in\/([A-Za-z0-9_]+)\.png$/);
+      if (sid && fs.existsSync(path.join(MF, 'texture-packs/made-web', sid[1] + '.webp'))) continue;
       const h = crypto.createHash('sha1').update(fs.readFileSync(f)).digest('hex');
       if (byHash[h] == null) { byHash[h] = files.length; files.push(p); }
       key[p] = byHash[h];

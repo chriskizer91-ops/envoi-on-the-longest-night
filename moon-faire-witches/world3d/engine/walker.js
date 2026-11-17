@@ -17,8 +17,14 @@
   W3D.walk = async function (opt) {
     const root = opt.root, cv = opt.canvas;
     let place = opt.place;   // let: a zone page walks on to other places (switchTo)
-    const DPR0 = Math.min(window.devicePixelRatio || 1, TEST ? 1 : 1.75);
-    let dpr = Math.min(DPR0, 1.5);
+    // (the reskin job, November 17) The laptop is the main screen: there the picture is drawn at the screen's full sharpness
+    // (up to twice over), textures keep their detail at a slant (16x), and surfaces get grain and relief (core.js). A phone
+    // (a touch screen with no mouse) keeps the lighter settings. ?quality=high or ?quality=phone forces either.
+    const QP = (location.search.match(/[?&]quality=(high|phone)/) || [])[1];
+    const PHONE = QP ? QP === 'phone' : (window.matchMedia && matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches);
+    W3D.quality = PHONE ? 'phone' : 'high';
+    const DPR0 = TEST ? 1 : PHONE ? Math.min(window.devicePixelRatio || 1, 1.75) : Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
+    let dpr = PHONE ? Math.min(DPR0, 1.5) : DPR0;
     const renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: TEST });
     renderer.setPixelRatio(dpr); renderer.outputEncoding = THREE.sRGBEncoding; renderer.setClearColor(0x0a0b18, 1);
     const say = opt.say || (() => {});
@@ -84,23 +90,64 @@
       cam.fov = view.fov; cam.updateProjectionMatrix(); C.dist = view.dist; if (!C.pitchSet) C.pitch = view.pitch;
       if (guide.on) fitTop();
     }
-    const camPos = new THREE.Vector3(), camAim = new THREE.Vector3(); let CS = P.camSolids || [];
-    function insideSolid(v) {
-      for (const s of CS) {
-        if (v.y < s.y0 - 0.25 || v.y > s.y1 + 0.25 || v.x < s.b[0] - 0.3 || v.x > s.b[2] + 0.3 || v.z < s.b[1] - 0.3 || v.z > s.b[3] + 0.3) continue;
-        if (W3D.inPoly(s.p, v.x, v.z) || W3D.edgeDist(s.p, v.x, v.z) < 0.3) return true;
+    const camPos = new THREE.Vector3(), camAim = new THREE.Vector3(); 
+    // ---- nothing built is ever seen through (the reskin job, November 17) ----
+    // Before, a wall between the camera and Io thinned away, so houses went see-through. Now the camera keeps a clear line
+    // to her instead: it looks along the line from her head to where it wants to be, and if a house, a roof, a wall or a deck
+    // is in the way it comes in to just this side of it, or rises to look over. So the walls stay whole.
+    const _head = new THREE.Vector3(), _q = new THREE.Vector3(), _d = new THREE.Vector3(), _r = new THREE.Vector3(), _u = new THREE.Vector3();
+    // how far along the line from her head to `to` the camera can go before something built is in the way (0 to 1): the
+    // line itself and four more a hand's width round it (so the camera never grazes a wall either), against the real walls
+    // and roofs (world.js: sight), stopping a little short of the first
+    function clearTo(head, to) {
+      _d.copy(to).sub(head); const L = _d.length(); if (L < 0.01 || !P.sight) return 1;
+      _r.set(_d.z, 0, -_d.x); if (_r.lengthSq() < 1e-6) _r.set(1, 0, 0); _r.normalize().multiplyScalar(0.3); _u.crossVectors(_d, _r).normalize().multiplyScalar(0.3);
+      const ex = _d.x / L * 0.35, ey = _d.y / L * 0.35, ez = _d.z / L * 0.35;   // look a little past it, too
+      let t = 1;
+      for (const [a, b] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const tx = to.x + ex + _r.x * a + _u.x * b, ty = to.y + ey + _r.y * a + _u.y * b, tz = to.z + ez + _r.z * a + _u.z * b;
+        const h = P.sight.hit(head.x, head.y, head.z, tx, ty, tz); if (h < t) t = h;
       }
-      return false;
+      if (t >= 1) return 1;
+      return clamp((t * (L + 0.35) - 0.4) / L, 0, 1);
     }
+    function wantAt(aim, yaw, pitch, dist, out) {
+      const cp = Math.cos(pitch); out.set(aim.x + Math.sin(yaw) * cp * dist, aim.y + Math.sin(pitch) * dist, aim.z + Math.cos(yaw) * cp * dist);
+      const gy = P.terrain(M.px(out.x), M.py(out.z)) + 1.2; if (out.y < gy) out.y = gy;
+      return out;
+    }
+    const _w = new THREE.Vector3(), _best = new THREE.Vector3();
     function placeCamera(dt, snap) {
-      const p = pos(), ah = view.ahead || 0, aim = new THREE.Vector3(p.x - Math.sin(C.yaw) * ah, p.y + C.aim, p.z - Math.cos(C.yaw) * ah);
-      const cp = Math.cos(C.pitch), want = new THREE.Vector3(aim.x + Math.sin(C.yaw) * cp * C.dist, aim.y + Math.sin(C.pitch) * C.dist, aim.z + Math.cos(C.yaw) * cp * C.dist);
-      const gpx = M.px(want.x), gpy = M.py(want.z), gy = P.terrain(gpx, gpy) + 1.2; if (want.y < gy) want.y = gy;
-      // never inside a wall, a house or a roof: slide in toward her until clear
-      if (insideSolid(want)) { const d = want.clone().sub(aim); for (let t = 0.92; t > 0.12; t -= 0.06) { const v = aim.clone().addScaledVector(d, t); if (!insideSolid(v)) { want.copy(v); break; } } }
+      const p = pos(), ah = view.ahead || 0;
+      const aimAt = (yaw) => new THREE.Vector3(p.x - Math.sin(yaw) * ah, p.y + C.aim, p.z - Math.cos(yaw) * ah);
+      let aim = aimAt(C.yaw);
+      const want = new THREE.Vector3();
+      _head.set(p.x, p.y + 1.45, p.z);
+      // where it wants to be. If the line to her isn't clear: first look from higher (over the wall); if she is right up
+      // against something tall, swing round to the nearest side that is clear (and the view turns with it, so the thumb
+      // still walks her the way it looks); failing all, come in to this side of whatever is in the way
+      let bestD = -1, bestYaw = C.yaw;
+      const tryAt = (yaw, pitch, handicap) => {
+        wantAt(aimAt(yaw), yaw, pitch, C.dist, _w);
+        const t = clearTo(_head, _w), dClear = t * _w.distanceTo(_head);
+        if (dClear - handicap > bestD) { bestD = dClear - handicap; bestYaw = yaw; _best.copy(_head).addScaledVector(_d, t); }   // (_d: clearTo's line)
+        return t >= 0.999;
+      };
+      let ok = tryAt(C.yaw, C.pitch, 0);
+      if (!ok && !guide.on) {
+        for (const up of [0.2, 0.4]) { if (C.pitch + up > 1.25) break; if (tryAt(C.yaw, C.pitch + up, up * 3)) { ok = true; break; } }
+        if (!ok && bestD < C.dist * 0.5) for (const dy of [0.5, -0.5, 1.0, -1.0, 1.6, -1.6, 2.3, -2.3, Math.PI]) { if (tryAt(C.yaw + dy, C.pitch, 1.2 + Math.abs(dy) * 0.4) || tryAt(C.yaw + dy, Math.min(1.25, C.pitch + 0.3), 2.0 + Math.abs(dy) * 0.4)) { ok = true; break; } }
+        if (!ok && bestD < C.dist * 0.3) for (const up of [0.6, 0.8]) { if (C.pitch + up > 1.3) break; if (tryAt(C.yaw, C.pitch + up, up * 3)) break; }
+      }
+      want.copy(_best);
+      if (bestYaw !== C.yaw) { const dy = bestYaw - C.yaw; C.yaw += dy * (snap ? 1 : Math.min(1, dt * 2.5)); C.auto = Math.max(C.auto || 0, 1.2); aim = aimAt(C.yaw); }
       const k = snap ? 1 : 1 - Math.exp(-dt * 7);
       camPos.lerp(want, k); camAim.lerp(aim, snap ? 1 : 1 - Math.exp(-dt * 10));
-      cam.position.copy(camPos); cam.lookAt(camAim);
+      // on its way there it never cuts a corner through anything either
+      const t2 = clearTo(_head, camPos); if (t2 < 0.999) camPos.copy(_head).addScaledVector(_d, t2);
+      // close in, it looks at her rather than past her
+      const near = 1 - clamp((camPos.distanceTo(_head) - 1.5) / 3, 0, 1);
+      cam.position.copy(camPos); cam.lookAt(_q.copy(camAim).lerp(_head, near * 0.85));
     }
 
     // ---- the guide: the painting from straight above, laid over the 3D ----
@@ -274,7 +321,7 @@
       place = next; P = await W3D.buildPlace(place, renderer);
       scene = P.scene; M = P.M; placeKids = new Set(scene.children);
       scene.environment = env; for (const o of mine) scene.add(o);
-      md = P.U.uMoonDir.value; CS = P.camSolids || []; fog0 = [P.U.uFogNear.value, P.U.uFogFar.value];
+      md = P.U.uMoonDir.value; fog0 = [P.U.uFogNear.value, P.U.uFogFar.value];
       cam.far = (place.night && place.night.far) || 800; cam.updateProjectionMatrix();
       pW = M.W * M.SX; pH = M.H * M.SZ; paintTex = new THREE.TextureLoader().load(place.paintingSrc);
       paintPlane.material.map = paintTex; paintPlane.geometry.dispose(); paintPlane.geometry = new THREE.PlaneGeometry(pW, pH);

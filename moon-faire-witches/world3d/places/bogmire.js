@@ -207,16 +207,16 @@
     // each texture: Chris's made one if the page carries it (texture-packs/made/), else the stand-in. Written out in full, so
     // the offline build finds the pictures and puts them inside the file.
     textures: [
-      { id: 'shared_boardwalk_planks', made: "./../texture-packs/made/shared_boardwalk_planks.png", stand: "./../texture-packs/bogmire-dawnroost/bogmire/stand-in/shared_boardwalk_planks.png" },
-      { id: 'shared_planks_wall', made: "./../texture-packs/made/shared_planks_wall.png", stand: "./../texture-packs/bogmire-dawnroost/bogmire/stand-in/shared_planks_wall.png" },
-      { id: 'shared_roof_shingle', made: "./../texture-packs/made/shared_roof_shingle.png", stand: "./../texture-packs/bogmire-dawnroost/bogmire/stand-in/shared_roof_shingle.png" },
-      { id: 'shared_roof_thatch', made: "./../texture-packs/made/shared_roof_thatch.png", stand: "./../texture-packs/bogmire-dawnroost/bogmire/stand-in/shared_roof_thatch.png" },
-      { id: 'shared_water_dark', made: "./../texture-packs/made/shared_water_dark.png", stand: "./../texture-packs/bogmire-dawnroost/bogmire/stand-in/shared_water_dark.png" },
-      { id: 'bogmire_bank_grass', made: "./../texture-packs/made/bogmire_bank_grass.png", stand: "./../texture-packs/arenas/bogmire/stand-in/bogmire_bank_grass.png" },
-      { id: 'shared_stone_wall_rough', made: "./../texture-packs/made/shared_stone_wall_rough.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_stone_wall_rough.png" },
-      { id: 'camp_tent_canvas', made: "./../texture-packs/made/camp_tent_canvas.png", stand: "./../texture-packs/wilds-south/warm-roads-camp/stand-in/camp_tent_canvas.png" },
-      { id: 'eldergrove_dead_bark', made: "./../texture-packs/made/eldergrove_dead_bark.png", stand: "./../texture-packs/wilds-south/eldergrove-edge/stand-in/eldergrove_dead_bark.png" },
-      { id: 'wick_leaf_canopy', made: "./../texture-packs/made/wick_leaf_canopy.png", stand: "./../texture-packs/wickhollow/cottage/stand-in/wick_leaf_canopy.png" },
+      { id: 'shared_boardwalk_planks', made: "./../texture-packs/made-web/shared_boardwalk_planks.webp", stand: "./../texture-packs/bogmire-dawnroost/bogmire/stand-in/shared_boardwalk_planks.png" },
+      { id: 'shared_planks_wall', made: "./../texture-packs/made-web/shared_planks_wall.webp", stand: "./../texture-packs/bogmire-dawnroost/bogmire/stand-in/shared_planks_wall.png" },
+      { id: 'shared_roof_shingle', made: "./../texture-packs/made-web/shared_roof_shingle.webp", stand: "./../texture-packs/bogmire-dawnroost/bogmire/stand-in/shared_roof_shingle.png" },
+      { id: 'shared_roof_thatch', made: "./../texture-packs/made-web/shared_roof_thatch.webp", stand: "./../texture-packs/bogmire-dawnroost/bogmire/stand-in/shared_roof_thatch.png" },
+      { id: 'shared_water_dark', made: "./../texture-packs/made-web/shared_water_dark.webp", stand: "./../texture-packs/bogmire-dawnroost/bogmire/stand-in/shared_water_dark.png" },
+      { id: 'bogmire_bank_grass', made: "./../texture-packs/made-web/bogmire_bank_grass.webp", stand: "./../texture-packs/arenas/bogmire/stand-in/bogmire_bank_grass.png" },
+      { id: 'shared_stone_wall_rough', made: "./../texture-packs/made-web/shared_stone_wall_rough.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_stone_wall_rough.png" },
+      { id: 'camp_tent_canvas', made: "./../texture-packs/made-web/camp_tent_canvas.webp", stand: "./../texture-packs/wilds-south/warm-roads-camp/stand-in/camp_tent_canvas.png" },
+      { id: 'eldergrove_dead_bark', made: "./../texture-packs/made-web/eldergrove_dead_bark.webp", stand: "./../texture-packs/wilds-south/eldergrove-edge/stand-in/eldergrove_dead_bark.png" },
+      { id: 'wick_leaf_canopy', made: "./../texture-packs/made-web/wick_leaf_canopy.webp", stand: "./../texture-packs/wickhollow/cottage/stand-in/wick_leaf_canopy.png" },
     ],
     ground_h: ground,
     // where Io's feet stand: the deck she is on, a stair's tread, or a finger of the west dock (a hair over each: FEET)

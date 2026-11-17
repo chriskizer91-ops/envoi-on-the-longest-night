@@ -3,7 +3,7 @@
 //   W3D.Builder         static geometry merged by material, so a whole place draws in a handful of calls
 //   W3D.mat(...)        the night look: one small shader for every surface (moonlight, a sky glow, the lamps' warm light
 //                       painted into a light map in the painting's own pixels, soft shade under trees and by walls, fog)
-//   W3D.textures(ids)   Chris's made texture where there is one (texture-packs/made/<id>.png), the stand-in where not
+//   W3D.textures(ids)   Chris's made texture where there is one (texture-packs/made-web/<id>.webp, its full-size web copy), the stand-in where not
 // Everything is three.js r128. Nothing here knows about any one place.
 (function (G) {
   'use strict';
@@ -148,7 +148,7 @@
   // ids -> { id: THREE.Texture }. Each is Chris's made one when the page carries it, otherwise the stand-in. The page
   // names both paths as "./..." strings, so the offline build puts whichever pictures exist inside the file.
   W3D.loadTextures = function (list, renderer) {
-    const aniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    const aniso = Math.min(W3D.quality === 'high' ? 16 : 8, renderer.capabilities.getMaxAnisotropy());
     const out = {}, used = {};
     const jobs = list.map((t) => new Promise((res) => {
       const tex = new THREE.Texture(); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.anisotropy = aniso;
@@ -199,6 +199,9 @@
       #endif
       vec4 w = modelMatrix * p; vW = w.xyz; vN = normalize(mat3(modelMatrix) * n);
       vUv = uv * uRep;
+      #ifdef SWAPUV
+        vUv = uv.yx * uRep;   // the picture turned a quarter (a post's grain runs up it)
+      #endif
       vCol = vec3(1.0);
       #ifdef USE_COLOR
         vCol = color;
@@ -250,6 +253,10 @@
     }
     vec3 fogged(vec3 c, vec3 w) { float d = distance(w, cameraPosition); return mix(c, uFog, smoothstep(uFogNear, uFogFar, d) * 0.92); }
     vec4 outC(vec3 c) { return vec4(sqrt(max(c, 0.0)), 1.0); }
+    // soft noise, for telling one stretch of wall from the next and for grain close up (the reskin job)
+    float hash2(vec2 p) { p = fract(p * vec2(0.1031, 0.1030)); p += dot(p, p.yx + 33.33); return fract((p.x + p.y) * p.x); }
+    float vnoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+      return mix(mix(hash2(i), hash2(i + vec2(1.0, 0.0)), f.x), mix(hash2(i + vec2(0.0, 1.0)), hash2(i + vec2(1.0, 1.0)), f.x), f.y); }
   `;
   // a surface: textured (map), tinted, lit by the night (uLit 1) or glowing by itself (uLit 0)
   W3D.mat = function (U, o) {
@@ -260,27 +267,60 @@
     if (o.cut) defs.CUT = '';
     if (o.water) defs.WATER = '';
     if (o.nofog) defs.NOFOG = '';
+    // the reskin job (November 17): vary: no two stretches of a surface quite the same tone, so a repeated picture doesn't
+    // read as a pattern; and on the laptop (W3D.quality 'high'), grain: fine grain close up, where a picture would go soft;
+    // bump: relief from the picture's own light and dark (mortar lines sink, stones and beams stand out) under the moon
+    const HI = W3D.quality === 'high';
+    if (o.swap) defs.SWAPUV = '';
+    if (o.map && o.vary) defs.VARY = '';
+    if (o.map && o.grain && HI) defs.GRAIN = '';
+    if (o.map && o.bump && HI) defs.BUMP = '';
     const uni = Object.assign({}, U, {
       map: { value: o.map || null }, uRep: { value: new THREE.Vector2(1 / (o.rep || 1), 1 / (o.repV || o.rep || 1)) },
       uTint: { value: new THREE.Color(o.tint == null ? 0xffffff : o.tint) }, uEmis: { value: new THREE.Color(o.emis || 0x000000) },
       uLit: { value: o.lit == null ? 1 : o.lit }, uGlowUse: { value: o.glow == null ? 1 : o.glow }, uSpec: { value: o.spec || 0 }, uShadeK: { value: o.shade == null ? 1 : o.shade },
       uAlpha: { value: o.alphaTest || 0.5 },
+      uVary: { value: o.vary || 0 }, uGrain: { value: o.grain || 0 }, uBump: { value: o.bump || 0 }, uRepG: { value: 1 / (o.rep || 1) },
     });
     const frag = CHUNK_F_HEAD + `
-      uniform sampler2D map; uniform float uAlpha;
+      uniform sampler2D map; uniform float uAlpha, uVary, uGrain, uBump, uRepG;
       void main() {
         #ifdef CUT
           cutAway(vW);
         #endif
         vec3 alb = toLin(uTint) * vCol;
+        vec3 n = normalize(vN); if (!gl_FrontFacing) n = -n;
         #ifdef USE_MAP
           vec4 tx = texture2D(map, vUv);
           #ifdef ALPHA_TEST
             if (tx.a < uAlpha) discard;
           #endif
           alb *= toLin(tx.rgb);
+          #ifdef VARY
+            // a slow drift of tone along the surface (weathering): lighter and darker stretches, a touch warmer or cooler
+            vec2 wq = vec2(vW.x + vW.z * 0.83, vW.y * 1.3 + vW.z * 0.21);
+            float v1 = vnoise(wq * 0.42 + 7.3), v2 = vnoise(wq * 1.37 + 31.7);
+            float vv = (v1 * 0.65 + v2 * 0.35 - 0.5) * uVary;
+            alb *= (1.0 + vv * 1.5) * vec3(1.0 + vv * 0.35, 1.0, 1.0 - vv * 0.45);
+          #endif
+          #ifdef GRAIN
+            float gd = distance(vW, cameraPosition), gk = (1.0 - smoothstep(2.5, 9.0, gd)) * uGrain;
+            if (gk > 0.001) {
+              vec2 gq = vUv * 1.0 / max(abs(uRepG), 0.0001);
+              float g1 = vnoise(gq * 46.0) * 0.6 + vnoise(gq * 131.0 + 9.1) * 0.4;
+              alb *= 1.0 + (g1 - 0.5) * gk;
+            }
+          #endif
+          #ifdef BUMP
+            vec2 bx = dFdx(vUv), by = dFdy(vUv);
+            float h0 = dot(tx.rgb, vec3(0.3333)), hx = dot(texture2D(map, vUv + bx).rgb, vec3(0.3333)), hy = dot(texture2D(map, vUv + by).rgb, vec3(0.3333));
+            vec3 sx = dFdx(vW), sy = dFdy(vW);
+            vec3 r1 = cross(sy, n), r2 = cross(n, sx); float det = dot(sx, r1);
+            vec3 bg = sign(det) * ((hx - h0) * r1 + (hy - h0) * r2) * uBump;
+            float bf = 1.0 - smoothstep(18.0, 45.0, distance(vW, cameraPosition));
+            n = normalize(abs(det) * n - bg * bf);
+          #endif
         #endif
-        vec3 n = normalize(vN); if (!gl_FrontFacing) n = -n;
         float sh = shade(vW);
         vec3 c = alb * (nightLight(vW, n, sh) + lampLight(vW, n) * uGlowUse) * uLit + alb * (1.0 - uLit) + toLin(uEmis);
         // a glint of moon on wet or polished things
@@ -292,7 +332,7 @@
         #endif
       }`;
     const m = new THREE.ShaderMaterial({ uniforms: uni, vertexShader: CHUNK_V, fragmentShader: frag, defines: defs, vertexColors: true, side: o.side || THREE.FrontSide, transparent: !!o.transparent });
-    m.extensions = { derivatives: false };
+    m.extensions = { derivatives: !!defs.BUMP };
     return m;
   };
 
@@ -320,11 +360,24 @@
         c = mix(c, two(tCob, w, uRep4.x) * uCobTint, s.r);
         c = mix(c, two(tPave, w, uRep4.w) * uPaveTint, s.b);
         vec3 n = normalize(vN);
+        #ifdef HIGH
+          // on the laptop: fine grain close up, and relief from the ground's own light and dark (cobbles stand up from
+          // their joints under the moon and the lamps)
+          float gd = distance(vW, cameraPosition);
+          float gk = (1.0 - smoothstep(2.5, 9.0, gd)) * 0.2;
+          c *= 1.0 + (vnoise(w * 46.0) * 0.6 + vnoise(w * 131.0 + 9.1) * 0.4 - 0.5) * gk;
+          float gh0 = dot(sqrt(c), vec3(0.3333));
+          vec3 sx = dFdx(vW), sy = dFdy(vW); vec3 r1 = cross(sy, n), r2 = cross(n, sx); float det = dot(sx, r1);
+          vec3 bg = sign(det) * (dFdx(gh0) * r1 + dFdy(gh0) * r2) * 0.06;
+          n = normalize(abs(det) * n - bg * (1.0 - smoothstep(12.0, 30.0, gd)));
+        #endif
         float sh = shade(vW);
         vec3 col = c * (nightLight(vW, n, sh) + lampLight(vW, n));
         gl_FragColor = outC(fogged(col, vW));
       }`;
-    return new THREE.ShaderMaterial({ uniforms: uni, vertexShader: CHUNK_V, fragmentShader: frag, vertexColors: true });
+    const gm = new THREE.ShaderMaterial({ uniforms: uni, vertexShader: CHUNK_V, fragmentShader: frag, vertexColors: true, defines: W3D.quality === 'high' ? { HIGH: '' } : {} });
+    gm.extensions = { derivatives: W3D.quality === 'high' };
+    return gm;
   };
 
   // still water: its dark texture drifting, the moon's glint, the lamps' light lying on it in long wobbling streaks,

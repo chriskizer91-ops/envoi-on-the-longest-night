@@ -41,23 +41,33 @@
     const ST = (k) => T(SURF[k]);
     // place.tints: a colour to multiply any surface by (stone, dry, timber, planks, roof, wood, deck, pave, cloth, rock, leaves, firs, bush, bark)
     const TINT = Object.assign({ leaves: 0xd8ffee, firs: 0xa8c8c0, bush: 0xd8ffe8, wood: 0xc0a088 }, place.tints || {});
+    // (the reskin job, November 17) Walls, roofs, decks and paving never thin away any more: the camera keeps a clear line to
+    // Io instead (walker.js), so nothing built is ever seen through. Walls are drawn from both sides. Each has `vary` (no two
+    // stretches quite the same tone), and on the laptop `grain` (close up) and `bump` (relief under the moon).
+    // A made texture is a bigger picture than its stand-in (more stones, more boards), so it covers more wall: MADE_REP.
+    const MADE_REP = { shared_stone_wall_rough: 3.4, shared_stone_wall_frosted: 3.4, shared_wall_castle: 3.4, shared_drystone: 2.4, shared_roof_tiles_red: 2.6,
+      shared_roof_shingle: 2.6, shared_roof_thatch: 2.8, shared_roof_slate_snow: 2.6, cottage_roof_moss: 2.6, heart_roof_red: 2.6, misthollow_roof_blue_slate: 2.6 };
+    const REP = (k, d) => (used[SURF[k]] === 'made' && MADE_REP[SURF[k]]) || d;
     const MAT = {
-      stone: m({ tint: TINT.stone, map: ST('stone'), rep: 2.4, cut: true, shade: 0.35 }),
-      dry: m({ tint: TINT.dry, map: ST('dry'), rep: 1.5, cut: true, shade: 0.5 }),
-      timber: m({ tint: TINT.timber, map: ST('timber'), rep: 3.0, cut: true, shade: 0.3 }),
-      planks: m({ tint: TINT.planks, map: ST('planks'), rep: 2.0, repV: 2.0, cut: true, shade: 0.4 }),
-      roof: m({ tint: TINT.roof, map: ST('roof'), rep: 2.0, cut: true, side: DS, shade: 0.15 }),
-      wood: m({ map: ST('wood'), rep: 1.1, tint: TINT.wood, cut: true, shade: 0.5 }),
-      deck: m({ tint: TINT.deck, map: ST('deck'), rep: 2.2, cut: true, shade: 0.6 }),
-      pave: m({ tint: TINT.pave, map: ST('pave'), rep: 2.6, cut: true, shade: 0.6 }),
-      iron: m({ tint: 0x2a2632, spec: 0.6, cut: true, shade: 0.5 }),
+      stone: m({ tint: TINT.stone, map: ST('stone'), rep: REP('stone', 2.4), side: DS, shade: 0.35, vary: 0.2, grain: 0.22, bump: 0.05 }),
+      dry: m({ tint: TINT.dry, map: ST('dry'), rep: REP('dry', 1.5), side: DS, shade: 0.5, vary: 0.2, grain: 0.22, bump: 0.05 }),
+      timber: m({ tint: TINT.timber, map: ST('timber'), rep: REP('timber', 3.0), side: DS, shade: 0.3, vary: 0.14, grain: 0.18, bump: 0.035 }),
+      planks: m({ tint: TINT.planks, map: ST('planks'), rep: REP('planks', 2.0), repV: REP('planks', 2.0), side: DS, shade: 0.4, vary: 0.18, grain: 0.2, bump: 0.03 }),
+      roof: m({ tint: TINT.roof, map: ST('roof'), rep: REP('roof', 2.0), side: DS, shade: 0.15, vary: 0.22, grain: 0.18, bump: 0.05 }),
+      wood: m({ map: ST('wood'), rep: 1.1, tint: TINT.wood, shade: 0.5, vary: 0.15, grain: 0.2, bump: 0.025 }),
+      // the timber frames' real timbers (reskin): `beam` lies along a wall, `post` stands (its grain turned to run up it)
+      beam: m({ map: T('shared_boardwalk_planks') || ST('wood'), rep: 2.4, repV: 2.6, tint: 0x6a5248, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.03 }),
+      post: m({ map: T('shared_boardwalk_planks') || ST('wood'), rep: 2.4, repV: 2.6, swap: true, tint: 0x6a5248, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.03 }),
+      deck: m({ tint: TINT.deck, map: ST('deck'), rep: 2.2, shade: 0.6, vary: 0.18, grain: 0.2, bump: 0.03 }),
+      pave: m({ tint: TINT.pave, map: ST('pave'), rep: 2.6, shade: 0.6, vary: 0.16, grain: 0.2, bump: 0.04 }),
+      iron: m({ tint: 0x2a2632, spec: 0.6, shade: 0.5 }),
       cloth: m({ tint: TINT.cloth, map: ST('cloth'), rep: 1, cut: true, side: DS, shade: 0.3 }),
-      glass: m({ lit: 0, cut: true }),
+      glass: m({ lit: 0 }),
       win: m({ map: pics.win, lit: 0 }), winDark: m({ map: pics.winDark, shade: 0.3 }), winColour: m({ map: pics.winColour, lit: 0 }), rose: m({ map: pics.rose, lit: 0 }),
       door: m({ map: pics.door, shade: 0.4 }), doorArch: m({ map: pics.doorArch, alphaTest: 0.5, shade: 0.4 }), doorArch2: m({ map: pics.doorArch2, alphaTest: 0.5, shade: 0.4 }),
       produce: m({ map: pics.produce, shade: 0.3 }), moonwater: m({ map: pics.moonwater, lit: 0 }),
       soil: m({ map: ST('soil'), rep: 1.5, tint: 0x6a5a50, shade: 0.7 }),
-      rock: m({ tint: TINT.rock, map: ST('rock'), rep: 1.8, shade: 0.7, cut: true }),
+      rock: m({ tint: TINT.rock, map: ST('rock'), rep: 1.8, shade: 0.7, vary: 0.2, grain: 0.22, bump: 0.05 }),
       hills: m({ lit: 0, nofog: true, side: DS, glow: 0 }),
       leafBush: m({ map: ST('leaves'), rep: 1, tint: TINT.bush, cut: true, shade: 0.6 }),
       bark: m({ map: ST('bark'), rep: 1.2, cut: true, shade: 0.6 }),
@@ -242,6 +252,33 @@
     });
     const along = (S, side, f) => side === 's' || side === 'n' ? (X(f.x) - S.o[0]) * S.t[0] : (Z(f.y) - S.o[2]) * S.t[2];
     const TEXKEY = { stone: 'stone', timber: 'timber', planks: 'planks', dry: 'dry' };
+    // ---- how a wall's picture is laid (the reskin job, November 17) ----
+    // Before, every wall started the picture at the same spot and repeated it every few metres, so every house showed the
+    // same stones and the timber frame was cut wherever a wall ended. Now:
+    //  - a timber-framed picture (two bays across, two rows up, posts on its edges) is fitted to the wall: a whole number of
+    //    bays from corner to corner and its rows to the storey, so the posts stand at the corners and no beam is cut; each
+    //    wall starts on a different bay and may be mirrored;
+    //  - board walls fit the storey's height, so the line where the boards' picture repeats never shows;
+    //  - stone starts somewhere different on every wall of every house.
+    const RW = rand(4242);
+    const FRAMED = { wick_wall_timber_plaster: { cols: 2, rows: 2 } };
+    const VFIT = { shared_planks_wall: 1 };
+    const repOf = (k) => { const u = MAT[k] && MAT[k].uniforms.uRep.value; return u ? [1 / u.x, 1 / u.y] : [1, 1]; };
+    const fitOf = (k) => { const id = SURF[k]; if (used[id] !== 'made') return null; return FRAMED[id] ? { framed: FRAMED[id] } : VFIT[id] ? { vfit: true } : null; };
+    // the uv rectangle [u0, v0, u1, v1] (metres, as the materials take them) for a stretch of wall `len` long from y0 to y1;
+    // `lay` is the wall's own start, kept for the gable above it
+    function layWall(k, len, y0, y1, lay) {
+      const [ru, rv] = repOf(k), f = fitOf(k), h = y1 - y0;
+      if (f && f.framed && h > 1.2) {
+        const rowsUp = h >= 1.9 ? 2 : 1, bay = h / rowsUp, n = Math.max(1, Math.round(len / bay));
+        const u0 = lay.bay0 / f.framed.cols, du = n / f.framed.cols * (lay.flip ? -1 : 1);
+        return { uv: [u0 * ru, 0, (u0 + du) * ru, rowsUp / f.framed.rows * rv], bay, n };
+      }
+      if (f && f.vfit && h > 1.4 && h < 3.8) return { uv: [lay.u * ru, 0, lay.u * ru + len, rv] };
+      return { uv: [lay.u * ru, y0 + lay.v * rv, lay.u * ru + len, y1 + lay.v * rv] };
+    }
+    const newLay = () => ({ u: RW(), v: RW(), bay0: RW() < 0.5 ? 0 : 1, flip: RW() < 0.5 });
+    const POST = [0.95, 0.9, 0.9], LAYS = {};
     const built = [];
     for (const b of place.buildings) {
       const [px0, py0, px1, py1] = b.fp, x0 = X(px0), x1 = X(px1), z0 = Z(py0), z1 = Z(py1);
@@ -254,29 +291,57 @@
       const E = y, top = levels[levels.length - 1].k, rise = b.roof.rise, ridge = b.roof.ridge;
       const info = { cx, cz, w, d, E, rise, ridge }; built.push(Object.assign({ b }, info));
       // walls
+      const lays = { s: newLay(), n: newLay(), e: newLay(), w: newLay() }; if (b.id) LAYS[b.id] = lays;
       for (const side of ['s', 'n', 'e', 'w']) {
         if (b.open === side) continue;
         const F = S[side], a = F.o, e = add3(F.o, mul(F.t, F.len));
-        for (const L of levels) B.quad(L.k, [a[0], L.y0, a[2]], [e[0], L.y0, e[2]], [e[0], L.y1, e[2]], [a[0], L.y1, a[2]], [0, L.y0, F.len, L.y1]);
+        for (const L of levels) B.quad(L.k, [a[0], L.y0, a[2]], [e[0], L.y0, e[2]], [e[0], L.y1, e[2]], [a[0], L.y1, a[2]], layWall(L.k, F.len, L.y0, L.y1, lays[side]).uv);
       }
+      // a timber-framed storey gets real timbers too: a post standing a little proud at each corner, and a beam round the
+      // house under it and over it (nothing Io can bump into)
+      for (const L of levels) {
+        const f = fitOf(L.k); if (!f || !f.framed || L.y1 - L.y0 <= 1.2) continue;
+        const NS = { solid: false };
+        for (const [qx, qz] of [[x0, z0], [x1, z0], [x0, z1], [x1, z1]]) B.box('post', qx, L.y0, qz, 0.26, L.y1 - L.y0, 0.26, 0, POST, NS);
+        for (const yb of [L.y0 - 0.1, L.y1 - 0.12]) {
+          if (b.open !== 's') B.box('beam', cx, yb, z1 + 0.03, w + 0.3, 0.22, 0.14, 0, POST, NS);
+          if (b.open !== 'n') B.box('beam', cx, yb, z0 - 0.03, w + 0.3, 0.22, 0.14, 0, POST, NS);
+          if (b.open !== 'e') B.box('beam', x1 + 0.03, yb, cz, 0.14, 0.22, d + 0.3, 0, POST, NS);
+          if (b.open !== 'w') B.box('beam', x0 - 0.03, yb, cz, 0.14, 0.22, d + 0.3, 0, POST, NS);
+        }
+      }
+      // where one storey of boards stands on another, a trim board runs round the house over the joint (the boards'
+      // picture ends at each storey, so its edge is never seen)
+      for (let i = 1; i < levels.length; i++) {
+        const f0 = fitOf(levels[i - 1].k), f1 = fitOf(levels[i].k); if (!(f0 && f0.vfit && f1 && f1.vfit)) continue;
+        const yb = levels[i].y0 - 0.09, NS = { solid: false }, TR = [0.8, 0.76, 0.76];
+        if (b.open !== 's') B.box('beam', cx, yb, z1 + 0.02, w + 0.14, 0.18, 0.1, 0, TR, NS);
+        if (b.open !== 'n') B.box('beam', cx, yb, z0 - 0.02, w + 0.14, 0.18, 0.1, 0, TR, NS);
+        if (b.open !== 'e') B.box('beam', x1 + 0.02, yb, cz, 0.1, 0.18, d + 0.14, 0, TR, NS);
+        if (b.open !== 'w') B.box('beam', x0 - 0.02, yb, cz, 0.1, 0.18, d + 0.14, 0, TR, NS);
+      }
+      // the gables' picture carries on from the wall under each: the same bays, the rows the same height
+      const topH = levels[levels.length - 1].y1 - levels[levels.length - 1].y0;
+      const gab = (side, len) => { const q = layWall(top, len, E, E + topH, lays[side]).uv, vk = (q[3] - q[1]) / topH; return { u0: q[0], u1: q[2], v: (yy) => q[1] + (yy - E) * vk }; };
+      const gtri = (side, len, A, Bp, Cp, fa, fb, fc) => { const g = gab(side, len), U = (fr) => g.u0 + (g.u1 - g.u0) * fr; B.tri(top, A, Bp, Cp, [[U(fa), g.v(A[1])], [U(fb), g.v(Bp[1])], [U(fc), g.v(Cp[1])]]); };
       if (b.open) {   // the open side: posts, and the back wall shows through
         for (const px of b.posts || []) B.box('wood', X(px), low, z1 - 0.15, 0.24, E - low, 0.24, 0, [0.8, 0.7, 0.62]);
         B.box('wood', cx, E - 0.3, z1 - 0.15, w, 0.3, 0.26, 0, [0.7, 0.6, 0.55]);
       }
       // gables, or a lean-to's high wall
       if (b.roof.lean === 'n') {
-        B.quad(top, [x1, E, z0], [x0, E, z0], [x0, E + rise, z0], [x1, E + rise, z0], [0, E, w, E + rise]);
-        B.tri(top, [x1, E, z1], [x1, E, z0], [x1, E + rise, z0], [[0, E], [d, E], [d, E + rise]]);
-        B.tri(top, [x0, E, z0], [x0, E, z1], [x0, E + rise, z0], [[0, E], [d, E], [0, E + rise]]);
+        { const g = gab('n', w); B.quad(top, [x1, E, z0], [x0, E, z0], [x0, E + rise, z0], [x1, E + rise, z0], [g.u0, g.v(E), g.u1, g.v(E + rise)]); }
+        gtri('e', d, [x1, E, z1], [x1, E, z0], [x1, E + rise, z0], 0, 1, 1);
+        gtri('w', d, [x0, E, z0], [x0, E, z1], [x0, E + rise, z0], 0, 1, 0);
       } else if (b.roof.lean === 'w') {
-        B.tri(top, [x0, E, z1], [x1, E, z1], [x0, E + rise, z1], [[0, E], [w, E], [0, E + rise]]);
-        B.tri(top, [x1, E, z0], [x0, E, z0], [x0, E + rise, z0], [[0, E], [w, E], [w, E + rise]]);
+        gtri('s', w, [x0, E, z1], [x1, E, z1], [x0, E + rise, z1], 0, 1, 0);
+        gtri('n', w, [x1, E, z0], [x0, E, z0], [x0, E + rise, z0], 0, 1, 1);
       } else if (ridge === 'ns') {
-        B.tri(top, [x0, E, z1], [x1, E, z1], [cx, E + rise, z1], [[0, E], [w, E], [w / 2, E + rise]]);
-        B.tri(top, [x1, E, z0], [x0, E, z0], [cx, E + rise, z0], [[0, E], [w, E], [w / 2, E + rise]]);
+        gtri('s', w, [x0, E, z1], [x1, E, z1], [cx, E + rise, z1], 0, 1, 0.5);
+        gtri('n', w, [x1, E, z0], [x0, E, z0], [cx, E + rise, z0], 0, 1, 0.5);
       } else {
-        B.tri(top, [x1, E, z1], [x1, E, z0], [x1, E + rise, cz], [[0, E], [d, E], [d / 2, E + rise]]);
-        B.tri(top, [x0, E, z0], [x0, E, z1], [x0, E + rise, cz], [[0, E], [d, E], [d / 2, E + rise]]);
+        gtri('e', d, [x1, E, z1], [x1, E, z0], [x1, E + rise, cz], 0, 1, 0.5);
+        gtri('w', d, [x0, E, z0], [x0, E, z1], [x0, E + rise, cz], 0, 1, 0.5);
       }
       roof(b.roof.mat || 'roof', cx, cz, w, d, E, rise, b.roof.over, ridge, b.roof.lean);
       // a dark band where the walls meet the ground, and the shade round the house on the ground
@@ -602,7 +667,11 @@
     // ---- the place's own things (tents, boats, campfires...): its data's extra(K) builds them with the same parts ----
     function extras() {
       if (typeof place.extra !== 'function') return;
+      // (the reskin job) K.layWall(k, len, y0, y1, lay, s0): the uv rectangle for a wall a place builds itself, laid as the
+      // engine's are (above: fitted bays, boards to the storey, stone from the wall's own start); K.lays[buildingId][side]:
+      // that building's own starts, so a wall carried on in extra matches it (s0: metres along from that wall's start)
       const K = { B, M, X, Z, gh, walkH, terrain, R, TAU, lantern, bench, addBlock, circlePx, lights, halos, shadeMarks, lamps3d, ico, rockG: rockShapes, far: farB,
+        layWall: (k, len, y0, y1, lay, s0) => { const q = layWall(k, len, y0, y1, lay || newLay()); if (s0 && !q.n) { q.uv[0] += s0; q.uv[2] += s0; } return q.uv; }, lays: LAYS, newLay,
         light: (px, py, r, s, kind) => lights.push([px, py, r, s, kind || 'warm']),
         halo: (x, y, z, size, rgb) => halos.push([x, y, z, size, rgb[0], rgb[1], rgb[2]]),
         fire(px, py, size) { const x = X(px), z = Z(py), y = gh(px, py), s = size || 1; B.box('stone', x, y - 0.1, z, 0.9 * s, 0.25, 0.9 * s, 0.785, [0.6, 0.58, 0.6]); B.box('glass', x, y + 0.1, z, 0.45 * s, 0.35 * s, 0.45 * s, 0.3, [2.0, 0.85, 0.3]); B.box('glass', x, y + 0.3 * s, z, 0.25 * s, 0.35 * s, 0.25 * s, 1.1, [2.2, 1.2, 0.4]); halos.push([x, y + 0.5 * s, z, 2.6 * s, 1.0, 0.5, 0.2]); lights.push([px, py, 170 * s, 1.4, 'forge']); lamps3d.push({ x, y: y + 0.6, z, c: 0xff8a40, k: 1.8 }); addBlock(circlePx(px, py, 0.6 * s, 8)); },
@@ -950,13 +1019,65 @@
     function precompile(renderer, cam) { for (const mesh of treeMeshes) mesh.material = TM.cut[mesh.userData.tree]; renderer.compile(scene, cam); for (const mesh of treeMeshes) mesh.material = TM.whole[mesh.userData.tree]; renderer.compile(scene, cam); }
     stats.solids = solidCount;
     // the big solid things the camera mustn't sit inside (walls, houses, towers, roofs): footprints over a square metre
+    // (the reskin job, November 17: thin things too, a porch roof or a deck overhead, so the camera's line to Io can be kept
+    // clear of everything built; and every house, with the shape of its roof, in camHouses)
     const camSolids = [];
     for (const sd of allSolids()) {
-      if (/^(glass|win|winDark|winColour|rose|door|doorArch|doorArch2|moonwater|soil|hills|produce|cloth|leaves|firs)$|^fl_/.test(sd.k) || sd.y1 - sd.y0 < 1.2) continue;
+      if (/^(glass|win|winDark|winColour|rose|door|doorArch|doorArch2|moonwater|soil|hills|produce|cloth|leaves|firs)$|^fl_/.test(sd.k) || sd.y1 - sd.y0 < 0.08) continue;
       const b = [1e9, 1e9, -1e9, -1e9]; for (const [x, z] of sd.poly) { b[0] = Math.min(b[0], x); b[1] = Math.min(b[1], z); b[2] = Math.max(b[2], x); b[3] = Math.max(b[3], z); }
-      if ((b[2] - b[0]) * (b[3] - b[1]) < 1) continue;
-      camSolids.push({ p: sd.poly, b, y0: sd.y0, y1: sd.y1 });
+      if ((b[2] - b[0]) * (b[3] - b[1]) < (sd.y1 - sd.y0 < 1.2 ? 2.5 : 1)) continue;
+      camSolids.push({ p: sd.poly, b, y0: sd.y0, y1: sd.y1, thin: sd.y1 - sd.y0 < 1.2 });
     }
+    // ---- the camera's line of sight (the reskin job, November 17) ----
+    // Every large face of everything built (walls, roofs, decks, rock: whatever built it, the engine or a place's own extra),
+    // kept in a grid over the ground, so the walker can ask "what is the first thing between Io's head and here?" in a few
+    // hundred sums. sight.hit(ax, ay, az, bx, by, bz) gives how far along the line (0 to 1) the first face is, 1 if none.
+    const sight = (function () {
+      const mats = new Set(['stone', 'dry', 'timber', 'planks', 'roof', 'deck', 'pave', 'rock', 'wood', 'beam', 'post'].map((k) => MAT[k]));
+      const T9 = [], CELL = 3, grid = new Map();
+      const va = new THREE.Vector3(), vb = new THREE.Vector3(), vc = new THREE.Vector3(), e1 = new THREE.Vector3(), e2 = new THREE.Vector3();
+      scene.updateMatrixWorld(true);
+      scene.traverse((o) => {
+        if (!o.isMesh || o.isInstancedMesh || !mats.has(o.material) || !o.geometry.attributes.position) return;
+        const pa = o.geometry.attributes.position, ix = o.geometry.index, n = ix ? ix.count : pa.count;
+        for (let i = 0; i + 2 < n; i += 3) {
+          va.fromBufferAttribute(pa, ix ? ix.getX(i) : i).applyMatrix4(o.matrixWorld); vb.fromBufferAttribute(pa, ix ? ix.getX(i + 1) : i + 1).applyMatrix4(o.matrixWorld); vc.fromBufferAttribute(pa, ix ? ix.getX(i + 2) : i + 2).applyMatrix4(o.matrixWorld);
+          e1.subVectors(vb, va); e2.subVectors(vc, va);
+          if (e1.cross(e2).length() * 0.5 < 0.35) continue;   // posts, rails, crates: too small to hide her
+          const id = T9.length / 9; T9.push(va.x, va.y, va.z, vb.x, vb.y, vb.z, vc.x, vc.y, vc.z);
+          const cx0 = Math.floor(Math.min(va.x, vb.x, vc.x) / CELL), cx1 = Math.floor(Math.max(va.x, vb.x, vc.x) / CELL), cz0 = Math.floor(Math.min(va.z, vb.z, vc.z) / CELL), cz1 = Math.floor(Math.max(va.z, vb.z, vc.z) / CELL);
+          for (let cx = cx0; cx <= cx1; cx++) for (let cz = cz0; cz <= cz1; cz++) { const key = cx * 4096 + cz; let g = grid.get(key); if (!g) grid.set(key, g = []); g.push(id); }
+        }
+      });
+      const tri = new Float32Array(T9), stamp = new Int32Array(tri.length / 9); let tick = 0;
+      function hit(ax, ay, az, bx, by, bz) {
+        const dx = bx - ax, dy = by - ay, dz = bz - az, Lxz = Math.hypot(dx, dz), steps = Math.max(1, Math.ceil(Lxz / (CELL * 0.5)));
+        let best = 1; tick++; let lastKey = null;
+        for (let sI = 0; sI <= steps; sI++) {
+          const f = sI / steps, gx = Math.floor((ax + dx * f) / CELL), gz = Math.floor((az + dz * f) / CELL);
+          for (let ox = -1; ox <= 1; ox++) for (let oz = -1; oz <= 1; oz++) {
+            if ((ox || oz) && sI % 2) continue;
+            const key = (gx + ox) * 4096 + (gz + oz); if (key === lastKey) continue; const g = grid.get(key); if (!g) continue;
+            for (let q = 0; q < g.length; q++) {
+              const id = g[q]; if (stamp[id] === tick) continue; stamp[id] = tick;
+              const o = id * 9, x0 = tri[o], y0 = tri[o + 1], z0 = tri[o + 2];
+              const ux = tri[o + 3] - x0, uy = tri[o + 4] - y0, uz = tri[o + 5] - z0, vx = tri[o + 6] - x0, vy = tri[o + 7] - y0, vz = tri[o + 8] - z0;
+              // Moller-Trumbore, either side
+              const px = dy * vz - dz * vy, py = dz * vx - dx * vz, pz = dx * vy - dy * vx, det = ux * px + uy * py + uz * pz;
+              if (det > -1e-9 && det < 1e-9) continue;
+              const inv = 1 / det, tx = ax - x0, ty = ay - y0, tz = az - z0, uu = (tx * px + ty * py + tz * pz) * inv; if (uu < 0 || uu > 1) continue;
+              const qx = ty * uz - tz * uy, qy = tz * ux - tx * uz, qz = tx * uy - ty * ux, vv = (dx * qx + dy * qy + dz * qz) * inv; if (vv < 0 || uu + vv > 1) continue;
+              const t = (vx * qx + vy * qy + vz * qz) * inv; if (t > 1e-4 && t < best) best = t;
+            }
+          }
+        }
+        return best;
+      }
+      return { hit, count: tri.length / 9 };
+    })();
+    stats.sight = sight.count;
+    const camHouses = built.map((q) => ({ x0: q.cx - q.w / 2, x1: q.cx + q.w / 2, z0: q.cz - q.d / 2, z1: q.cz + q.d / 2, cx: q.cx, cz: q.cz, w: q.w, d: q.d,
+      y0: q.E - 30, E: q.E, rise: q.rise, ridge: q.ridge, lean: q.b.roof.lean || null, over: q.b.roof.over || 0, open: q.b.open || null }));
     // ---- taking the place down again (a zone page walks on to the next place without a reload: world3d/game/): every
     // geometry, material and texture the place made is let go, and its painted canvases emptied. The walker takes its own
     // things (Io, her lights, the guide) out of the scene first ----
@@ -976,7 +1097,7 @@
       while (scene.children.length) scene.remove(scene.children[0]);
       U.uGlow.value = U.uShade.value = null; walkGrid = null; walkPic = null;
     }
-    return { scene, U, M, walkable, walkH, terrain, update, precompile, stats, used, place, lamps: lamps3d, items, takeItem, maps: { splat, glow, shade }, exits: place.exits || [], camSolids,
+    return { scene, U, M, walkable, walkH, terrain, update, precompile, stats, used, place, lamps: lamps3d, items, takeItem, maps: { splat, glow, shade }, exits: place.exits || [], camSolids, camHouses, sight,
       walkPic: () => walkPic, walkRect: [WX0, WY0, WX1, WY1], dispose };
   };
 })(window);

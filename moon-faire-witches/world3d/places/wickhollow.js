@@ -90,21 +90,21 @@
     // each texture: Chris's made one if the page carries it (texture-packs/made/), else the pack's stand-in. Written out in
     // full, so the offline build finds the pictures and puts them inside the file.
     textures: [
-      { id: 'shared_cobbles_town', made: "./../texture-packs/made/shared_cobbles_town.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_cobbles_town.png" },
-      { id: 'shared_grass_meadow', made: "./../texture-packs/made/shared_grass_meadow.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_grass_meadow.png" },
-      { id: 'shared_roof_tiles_red', made: "./../texture-packs/made/shared_roof_tiles_red.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_roof_tiles_red.png" },
-      { id: 'shared_stone_wall_rough', made: "./../texture-packs/made/shared_stone_wall_rough.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_stone_wall_rough.png" },
-      { id: 'wick_bridge_paving', made: "./../texture-packs/made/wick_bridge_paving.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/wick_bridge_paving.png" },
-      { id: 'wick_wall_timber_plaster', made: "./../texture-packs/made/wick_wall_timber_plaster.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/wick_wall_timber_plaster.png" },
-      { id: 'shared_boardwalk_planks', made: "./../texture-packs/made/shared_boardwalk_planks.png", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_boardwalk_planks.png" },
-      { id: 'shared_drystone', made: "./../texture-packs/made/shared_drystone.png", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_drystone.png" },
-      { id: 'shared_awning_stripes', made: "./../texture-packs/made/shared_awning_stripes.png", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_awning_stripes.png" },
-      { id: 'shared_water_dark', made: "./../texture-packs/made/shared_water_dark.png", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_water_dark.png" },
-      { id: 'shared_dirt_track', made: "./../texture-packs/made/shared_dirt_track.png", stand: "./../texture-packs/wickhollow/thornwood/stand-in/shared_dirt_track.png" },
-      { id: 'shared_water_river', made: "./../texture-packs/made/shared_water_river.png", stand: "./../texture-packs/wickhollow/thornwood/stand-in/shared_water_river.png" },
-      { id: 'wick_leaf_canopy', made: "./../texture-packs/made/wick_leaf_canopy.png", stand: "./../texture-packs/wickhollow/cottage/stand-in/wick_leaf_canopy.png" },
-      { id: 'shared_bark_oak', made: "./../texture-packs/made/shared_bark_oak.png", stand: "./../texture-packs/wickhollow/cottage/stand-in/shared_bark_oak.png" },
-      { id: 'thorn_rock_mossy', made: "./../texture-packs/made/thorn_rock_mossy.png", stand: "./../texture-packs/wickhollow/thornwood/stand-in/thorn_rock_mossy.png" },
+      { id: 'shared_cobbles_town', made: "./../texture-packs/made-web/shared_cobbles_town.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_cobbles_town.png" },
+      { id: 'shared_grass_meadow', made: "./../texture-packs/made-web/shared_grass_meadow.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_grass_meadow.png" },
+      { id: 'shared_roof_tiles_red', made: "./../texture-packs/made-web/shared_roof_tiles_red.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_roof_tiles_red.png" },
+      { id: 'shared_stone_wall_rough', made: "./../texture-packs/made-web/shared_stone_wall_rough.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_stone_wall_rough.png" },
+      { id: 'wick_bridge_paving', made: "./../texture-packs/made-web/wick_bridge_paving.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/wick_bridge_paving.png" },
+      { id: 'wick_wall_timber_plaster', made: "./../texture-packs/made-web/wick_wall_timber_plaster.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/wick_wall_timber_plaster.png" },
+      { id: 'shared_boardwalk_planks', made: "./../texture-packs/made-web/shared_boardwalk_planks.webp", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_boardwalk_planks.png" },
+      { id: 'shared_drystone', made: "./../texture-packs/made-web/shared_drystone.webp", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_drystone.png" },
+      { id: 'shared_awning_stripes', made: "./../texture-packs/made-web/shared_awning_stripes.webp", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_awning_stripes.png" },
+      { id: 'shared_water_dark', made: "./../texture-packs/made-web/shared_water_dark.webp", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_water_dark.png" },
+      { id: 'shared_dirt_track', made: "./../texture-packs/made-web/shared_dirt_track.webp", stand: "./../texture-packs/wickhollow/thornwood/stand-in/shared_dirt_track.png" },
+      { id: 'shared_water_river', made: "./../texture-packs/made-web/shared_water_river.webp", stand: "./../texture-packs/wickhollow/thornwood/stand-in/shared_water_river.png" },
+      { id: 'wick_leaf_canopy', made: "./../texture-packs/made-web/wick_leaf_canopy.webp", stand: "./../texture-packs/wickhollow/cottage/stand-in/wick_leaf_canopy.png" },
+      { id: 'shared_bark_oak', made: "./../texture-packs/made-web/shared_bark_oak.webp", stand: "./../texture-packs/wickhollow/cottage/stand-in/shared_bark_oak.png" },
+      { id: 'thorn_rock_mossy', made: "./../texture-packs/made-web/thorn_rock_mossy.webp", stand: "./../texture-packs/wickhollow/thornwood/stand-in/thorn_rock_mossy.png" },
     ],
     ground_h: ground,
     // where Io's feet stand: the ground, or a deck over the water
@@ -308,12 +308,25 @@
       // which runs on south from 580 (each texture carries on across the join) ----
       const x0 = X(LH.x0), x1 = X(LH.x1), zN = Z(LH.y0), zS = Z(LH.split), cx = (x0 + x1) / 2, w = x1 - x0, E = LH.E, rise = LH.rise, o = LH.over;
       const lo = LOW - 0.3, mid = LOW + 3.2, dB = zS - zN, dF = Z(LH.y1) - zS;
+      // (the reskin job, November 17: each wall's picture is laid as the engine lays the front half's, K.layWall with that
+      // building's own starts, so the stone carries on across the join and the timber frame's bays are whole; and the
+      // timber storey's corner posts and beams go round the back half too)
+      const LY = K.lays.lower || {};
       for (const [k, ya, yb] of [['stone', lo, mid], ['timber', mid, E]]) {
-        B.quad(k, [x1, ya, zN], [x0, ya, zN], [x0, yb, zN], [x1, yb, zN], [0, ya, w, yb]);                    // the back wall
-        B.quad(k, [x0, ya, zN], [x0, ya, zS], [x0, yb, zS], [x0, yb, zN], [-dB, ya, 0, yb]);                 // the west wall's back half
-        B.quad(k, [x1, ya, zS], [x1, ya, zN], [x1, yb, zN], [x1, yb, zS], [dF, ya, dF + dB, yb]);            // the east wall's back half
+        B.quad(k, [x1, ya, zN], [x0, ya, zN], [x0, yb, zN], [x1, yb, zN], K.layWall(k, w, ya, yb, LY.n));              // the back wall
+        B.quad(k, [x0, ya, zN], [x0, ya, zS], [x0, yb, zS], [x0, yb, zN], K.layWall(k, dB, ya, yb, LY.w, -dB));       // the west wall's back half
+        B.quad(k, [x1, ya, zS], [x1, ya, zN], [x1, yb, zN], [x1, yb, zS], K.layWall(k, dB, ya, yb, LY.e, dF));        // the east wall's back half
       }
-      B.tri('timber', [x1, E, zN], [x0, E, zN], [cx, E + rise, zN], [[0, E], [w, E], [w / 2, E + rise]]);
+      {
+        const q = K.layWall('timber', w, E, E + (E - mid), LY.n), vk = (q[3] - q[1]) / (E - mid);
+        B.tri('timber', [x1, E, zN], [x0, E, zN], [cx, E + rise, zN], [[q[0], q[1]], [q[2], q[1]], [(q[0] + q[2]) / 2, q[1] + rise * vk]]);
+        const POST = [0.95, 0.9, 0.9];
+        for (const qx of [x0, x1]) B.box('post', qx, mid, zN, 0.26, E - mid, 0.26, 0, POST);
+        for (const yb of [mid - 0.1, E - 0.12]) {
+          B.box('beam', cx, yb, zN - 0.03, w + 0.3, 0.22, 0.14, 0, POST);
+          B.box('beam', x1 + 0.03, yb, (zN + zS) / 2, 0.14, 0.22, dB, 0, POST); B.box('beam', x0 - 0.03, yb, (zN + zS) / 2, 0.14, 0.22, dB, 0, POST);
+        }
+      }
       {
         const sl = rise / (w / 2), ye = E - o * sl, yr = E + rise, za = zN - o, zb = zS - o, len = Math.hypot(w / 2 + o, rise + o * sl), LF = dF + 2 * o;
         B.quad('roof', [x0 - o, ye, za], [x0 - o, ye, zb], [cx, yr, zb], [cx, yr, za], [-dB, 0, 0, len]);

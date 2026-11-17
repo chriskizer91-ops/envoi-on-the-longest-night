@@ -44,7 +44,7 @@ Draw the walk and block areas over the painting before placing anything.
   way (`down: 's' | 'n' | 'e' | 'w'`, `mat`, `tops: [...]` for each tread's height; otherwise each tread stands as high as the ground under its high edge and fills down to the ground, so a steep slope never pokes through; `cheeks: [true, false]` leaves out the south or east cheek, `[false, true]` the north or west), dormers with `dark: true`, and `startYaw`
   (which way the camera first looks: 0 is north, as the painting; turn by radians).
 - Each texture written out in full with double quotes, as in `places/wickhollow.js` (the offline build only packs
-  pictures it finds as plain paths): `made: "./../texture-packs/made/<id>.png"` and `stand: "./../texture-packs/<group>/<place>/stand-in/<id>.png"`.
+  pictures it finds as plain paths): `made: "./../texture-packs/made-web/<id>.webp"` (the full-size web copy of Chris's made texture; `texture-packs/made-web/README.md`) and `stand: "./../texture-packs/<group>/<place>/stand-in/<id>.png"`.
   A shared texture's stand-in is wherever it was made: `ls moon-faire-witches/texture-packs/*/*/stand-in/<id>.png`. If a
   texture your place needs has no stand-in anywhere, use the nearest that has one and say so in your report.
 - `places/<id>-trees.js`: made by `tools/make-trees.mjs <id>` from the painting (set `treeGen` in your place first; add

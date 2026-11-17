@@ -335,17 +335,17 @@ const BUILDINGS = [
     // each texture: Chris's made one if the page carries it (texture-packs/made/), else the pack's stand-in. Written out in
     // full, so the offline build finds the pictures and puts them inside the file.
     textures: [
-      { id: 'shared_cobbles_town', made: "./../texture-packs/made/shared_cobbles_town.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_cobbles_town.png" },
-      { id: 'shared_snow', made: "./../texture-packs/made/shared_snow.png", stand: "./../texture-packs/north/frozen-pass/stand-in/shared_snow.png" },
-      { id: 'shared_rock_cliff_snowy', made: "./../texture-packs/made/shared_rock_cliff_snowy.png", stand: "./../texture-packs/north/frozen-pass/stand-in/shared_rock_cliff_snowy.png" },
-      { id: 'shared_stone_wall_frosted', made: "./../texture-packs/made/shared_stone_wall_frosted.png", stand: "./../texture-packs/north/moonwell/stand-in/shared_stone_wall_frosted.png" },
-      { id: 'shared_roof_slate_snow', made: "./../texture-packs/made/shared_roof_slate_snow.png", stand: "./../texture-packs/north/shipyard/stand-in/shared_roof_slate_snow.png" },
-      { id: 'shipyard_icy_sea', made: "./../texture-packs/made/shipyard_icy_sea.png", stand: "./../texture-packs/north/shipyard/stand-in/shipyard_icy_sea.png" },
-      { id: 'shared_boardwalk_planks', made: "./../texture-packs/made/shared_boardwalk_planks.png", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_boardwalk_planks.png" },
-      { id: 'wick_wall_timber_plaster', made: "./../texture-packs/made/wick_wall_timber_plaster.png", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/wick_wall_timber_plaster.png" },
-      { id: 'fir_foliage_snowladen', made: "./../texture-packs/made/fir_foliage_snowladen.png", stand: "./../texture-packs/wilds-north/frozen-camp/stand-in/fir_foliage_snowladen.png" },
-      { id: 'shared_bark_oak', made: "./../texture-packs/made/shared_bark_oak.png", stand: "./../texture-packs/wickhollow/cottage/stand-in/shared_bark_oak.png" },
-      { id: 'shared_ice', made: "./../texture-packs/made/shared_ice.png", stand: "./../texture-packs/north/frozen-pass/stand-in/shared_ice.png" },
+      { id: 'shared_cobbles_town', made: "./../texture-packs/made-web/shared_cobbles_town.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/shared_cobbles_town.png" },
+      { id: 'shared_snow', made: "./../texture-packs/made-web/shared_snow.webp", stand: "./../texture-packs/north/frozen-pass/stand-in/shared_snow.png" },
+      { id: 'shared_rock_cliff_snowy', made: "./../texture-packs/made-web/shared_rock_cliff_snowy.webp", stand: "./../texture-packs/north/frozen-pass/stand-in/shared_rock_cliff_snowy.png" },
+      { id: 'shared_stone_wall_frosted', made: "./../texture-packs/made-web/shared_stone_wall_frosted.webp", stand: "./../texture-packs/north/moonwell/stand-in/shared_stone_wall_frosted.png" },
+      { id: 'shared_roof_slate_snow', made: "./../texture-packs/made-web/shared_roof_slate_snow.webp", stand: "./../texture-packs/north/shipyard/stand-in/shared_roof_slate_snow.png" },
+      { id: 'shipyard_icy_sea', made: "./../texture-packs/made-web/shipyard_icy_sea.webp", stand: "./../texture-packs/north/shipyard/stand-in/shipyard_icy_sea.png" },
+      { id: 'shared_boardwalk_planks', made: "./../texture-packs/made-web/shared_boardwalk_planks.webp", stand: "./../texture-packs/wickhollow/jetty/stand-in/shared_boardwalk_planks.png" },
+      { id: 'wick_wall_timber_plaster', made: "./../texture-packs/made-web/wick_wall_timber_plaster.webp", stand: "./../texture-packs/wickhollow/wickhollow/stand-in/wick_wall_timber_plaster.png" },
+      { id: 'fir_foliage_snowladen', made: "./../texture-packs/made-web/fir_foliage_snowladen.webp", stand: "./../texture-packs/wilds-north/frozen-camp/stand-in/fir_foliage_snowladen.png" },
+      { id: 'shared_bark_oak', made: "./../texture-packs/made-web/shared_bark_oak.webp", stand: "./../texture-packs/wickhollow/cottage/stand-in/shared_bark_oak.png" },
+      { id: 'shared_ice', made: "./../texture-packs/made-web/shared_ice.webp", stand: "./../texture-packs/north/frozen-pass/stand-in/shared_ice.png" },
     ],
     // which texture each kind of surface uses: the walls, towers and stone floors of frosted castle blocks, the timber
     // framing of the houses (the half-timbered bay has no stand-in yet: Wickhollow's timber and plaster stands in), the
