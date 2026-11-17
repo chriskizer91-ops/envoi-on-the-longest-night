@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Witches' Songs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* The Witches' Songs: Chris's five Suno songs for the Moon Faire witches (November 17, 2026), compressed for phones,
+   each with where it plays. They play at the game's quiet background level unless "Louder" is on. The files are in this
+   folder (moon-faire-witches/music/, Opus in WebM, all levelled to the same loudness); his originals are in original/. */
+:root { --ink: #efe8f6; --muted: #b6a9c8; --night: #120d1a; --gold: #e2bd6a; --leaf: #9fe0a8; --line: rgba(255, 255, 255, 0.14); color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--night); color: var(--ink); font-family: "Atkinson Hyperlegible", system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { min-height: 100vh; background: radial-gradient(ellipse at 50% -10%, #23304a 0%, var(--night) 60%) fixed; padding: 14px 12px calc(24px + env(safe-area-inset-bottom)); }
+.wrap { max-width: 640px; margin: 0 auto; }
+h1 { margin: 0; font-family: "IM Fell English", Georgia, serif; font-weight: 400; font-size: 26px; color: var(--gold); }
+#lvl { display: flex; gap: 6px; margin: 12px 0 4px; }
+#lvl button { flex: 1; font: inherit; font-size: 14px; font-weight: 700; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 8px; cursor: pointer; }
+#lvl button.on { color: #1a1122; background: var(--gold); border-color: var(--gold); }
+h2 { font-family: "IM Fell English", Georgia, serif; font-weight: 400; font-size: 19px; margin: 18px 2px 2px; }
+.where { margin: 0 2px 8px; font-size: 13px; color: var(--muted); line-height: 1.4; }
+.card { display: block; width: 100%; text-align: left; font: inherit; color: var(--ink); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; margin-bottom: 8px; cursor: pointer; }
+.card.on { border-color: var(--leaf); background: rgba(159, 224, 168, 0.1); }
+.top { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
+.ic { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 12px; color: var(--gold); }
+.card.on .ic { color: var(--leaf); border-color: var(--leaf); }
+.meta { margin-left: auto; font-weight: 400; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.bar { height: 3px; background: rgba(255, 255, 255, 0.08); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--leaf); }
+.note { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>The Witches' Songs</h1>
+  <div id="lvl"><button data-v="0.3" class="on">Game level (quiet)</button><button data-v="1">Louder</button></div>
+  <div id="list"></div>
+</div>
+<script src="./songs.js"></script>
+</body>
+</html>
