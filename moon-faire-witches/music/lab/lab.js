@@ -23,8 +23,19 @@
     if (c.code) SND.stopMusic(0.3);
     c.el.classList.remove('on'); c.el.querySelector('.ic').innerHTML = '&#9654;'; c.el.querySelector('.bar i').style.width = '0';
   }
+  // the song's bytes: read straight out of the page (some phone file viewers block fetching a song that sits inside
+  // the page, which left every card saying "loading"), or fetched when it is a file beside the page
+  function bytes(file) {
+    if (file.startsWith('data:')) {
+      const b64 = file.slice(file.indexOf(',') + 1), s = atob(b64), u = new Uint8Array(s.length);
+      for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
+      return Promise.resolve(u.buffer);
+    }
+    return fetch(file).then((r) => r.arrayBuffer());
+  }
   async function buffer(file) {
-    if (!S.bufs[file]) S.bufs[file] = fetch(file).then((r) => r.arrayBuffer()).then((a) => new Promise((ok, no) => S.ctx.decodeAudioData(a, ok, no)));
+    if (!S.bufs[file]) S.bufs[file] = bytes(file).then((a) => new Promise((ok, no) => S.ctx.decodeAudioData(a, ok, no)));
+    S.bufs[file].catch(() => { delete S.bufs[file]; });
     return S.bufs[file];
   }
   async function play(c) {
@@ -38,7 +49,14 @@
       return;
     }
     c.el.querySelector('.meta').textContent = 'loading';
-    const b = await buffer(c.file);
+    let b;
+    try { b = await buffer(c.file); } catch (e) {
+      // the phone couldn't decode it in Web Audio: play it as a plain audio element instead (it may gap at the loop)
+      if (S.cur !== c) return;
+      const a = new Audio(c.file); a.loop = true; a.volume = LEVELS[S.level].file; a.play().catch(() => {});
+      c.src = { stop: () => a.pause() }; c.t0 = S.ctx.currentTime; c.len = 0; c.el.querySelector('.meta').textContent = 'playing';
+      S.err = String(e && e.message || e); return;
+    }
     if (S.cur !== c) return;
     c.el.querySelector('.meta').textContent = mmss(b.duration);
     const src = S.ctx.createBufferSource(); src.buffer = b; src.loop = true; src.connect(S.out); src.start(); c.src = src; c.t0 = S.ctx.currentTime; c.len = b.duration;
