@@ -53,6 +53,21 @@ all 27 are Chris's own, none a stand-in). Four of them he made for this map on N
 | 25 | `shared_grass_meadow` | drifts of meadow in zone 1's open grass |
 | 26 | `riverglade_clover_grass` | drifts of clover in zone 1's open grass |
 
+## The walking places, as the 3D game builds them
+
+Made by `../tools/make-places.mjs` from the 3D world (`moon-faire-witches/world3d/`, read at 8b876cc on work/world-3d;
+nothing there is changed). Run it again when the places change.
+
+- `aethermoor-place-layers.webp` (1024 x 1152): the 70 textures the 21 walking places use in the game (walls, roofs,
+  planks, rock, snow, ice, cobbles, paths, each place's grass), each a 128 x 128 square, eight to a row, in the order
+  listed in `../map/place-models.js` (`layers`). All 70 are Chris's made textures (`texture-packs/made/`, read at
+  bb4a5f0 on work/textures-made); none is a stand-in.
+- `aethermoor-place-grounds.webp` (1536 x 1536): for each place, two 256 x 192 squares, one over the other, six places
+  to a row, in the alphabetical order of the places' ids. Upper square: where its ground is cobbles (red), earth
+  (green) and paving (blue); black is grass. Lower square: where its water lies (white).
+- `../map/place-models.js` (2.1 MB): for each place, the shape of its ground, everything solid in it (155,613
+  triangles in all), its 16,978 trees and 225 lamps.
+
 ## The buildings' textures
 
 `aethermoor-building-layers.webp` (1024 x 1024) is thirteen of Chris's made wall and roof textures, each a 256 x 256

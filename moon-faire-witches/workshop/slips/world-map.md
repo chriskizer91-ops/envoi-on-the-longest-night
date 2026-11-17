@@ -1,7 +1,9 @@
 SLIP: world-map
-State:    Working: step 1 of 4, the 3D land, now textured with Chris's own ground textures, coloured by zone, and in two
-          levels of detail, phone and laptop; real tree models at three levels; and a pass on the water, the mountains and the
-          buildings, which are now the 3D game's own (November 17). Next: step 2 (choosing where to go, the dotted line).
+State:    Working: step 1 of 4, the 3D land, textured with Chris's own ground textures, coloured by zone, in two
+          levels of detail, phone and laptop; real tree models at three levels. Since November 17, 10:01: all 21
+          walking places stand on the map as the 3D game builds them (ground, water, houses, walls, bridges, jetties,
+          trees, lamps); the bog lies at sea level round Bogmire and the fen's dark heart, with cliffs at its shore;
+          the zone line is a thin violet dash. Next: step 2 (choosing where to go, the dotted line).
 Plan:     From the project document claude/travel-and-3d-map.md (its starter text). A demo page at a time, one offline
           HTML each: 1) the 3D map of Aethermoor, showing where Io is; 2) choosing where to go, on foot or by flight,
           with a dotted line from here to there for a flight; 3) the flight in Skies of Aethermoor on the night map, as
@@ -36,6 +38,12 @@ Chris said: (15:22, after the first build, which laid the night atlas over a hei
           pink on his laptop.) All done (below). And he wants to consider what it would take for this 3D map to reflect
           the actual in-game map: the buildings accurate, in less detail than the game, and the wild zones looking
           right. Answered with a plan in three passes (Open 7); waiting for his word.
+          (10:01) Go: places can be drawn 7.5 times life size; it needn't be to scale, but representing them correctly
+          would be cool (and fine if it's too hard). The 3D world's floor plans are locked for the most part (it is
+          being reskinned). Bogmire and the fen's dark heart are swamp at near sea level: that whole stretch is bog
+          all the way to the sea, with water all through it, and then cliffs at the shore; they must not stand on the
+          high ground beside it (this will bug him). The line drawn for each zone looks like a strip of sand: change
+          it. Everything else looks gorgeous. All three done (below).
 Branch:   work/world-map (from work/world-3d at 0046851)
 Files:    moon-faire-witches/world-map/ (all new to the game): README.md, envoi-map-where.html, map/map3d.js,
           map/places.js, map/art.js, map/moods.js, map/map.css, art/aethermoor-terrain-height.png,
@@ -44,11 +52,12 @@ Files:    moon-faire-witches/world-map/ (all new to the game): README.md, envoi-
           art/aethermoor-building-layers.webp, map/buildings.js, tools/make-buildings.mjs, art-requests/world-map-round-1.md,
           art/trees/ (24 files: eight trees, each <id>.glb, <id>_mid.glb and <id>_far.glb), map/tree-models.js,
           tools/make-tree-mids.mjs, tools/make-tree-models.mjs, tools/tree-lineup.html, tools/make-terrain.mjs, tools/make-ground-layers.mjs, tools/make-moods.mjs, tools/check-places.mjs,
-          tools/shots.mjs, tools/touch-test.mjs
+          tools/shots.mjs, tools/touch-test.mjs, tools/make-places.mjs, map/place-models.js,
+          art/aethermoor-place-layers.webp, art/aethermoor-place-grounds.webp
           moon-faire-witches/workshop/slips/world-map.md
           (The first build's art/night-1..4.avif, art/height.png, art/land.png and tools/make-map-art.mjs are gone.)
           Nothing else changed.
-File for Chris: envoi-map-where.html (6.0 MB, works offline, one file for phone and laptop: it picks the level, and the
+File for Chris: envoi-map-where.html (8.6 MB, works offline, one file for phone and laptop: it picks the level, and the
           "Move Io" list has the switch). It opens on the whole land and flies down to Io at
           Wickhollow. One finger turns the land and tips the view; two fingers pinch to zoom, slide to move, twist to
           turn. The moon button (bottom right) finds Io again. "Move Io" (bottom left) puts her in any of the 21 places.
@@ -117,6 +126,11 @@ Checked:  (08:42's fixes) Phone, all views, and laptop, 6 views: 0 page errors; 
           them. Drawn: 450,000 triangles for the whole land, 170,000 to 810,000 close in (most where forest fills the
           view); 25 to 45 draw calls. Frame rate on the Pixel 7a: not measurable headless; the "Move Io" list shows it
           (the page draws less sharp on its own if it falls under 40 frames a second).
+          (November 17, places) All 21 places taken from the game's engine at 8b876cc: 155,613 triangles, 16,978 trees,
+          225 lamps, 70 textures (all Chris's made ones, no stand-in). Bogmire and the fen's dark heart: fen, 13 m (they
+          were grass at 105 m and forest at 148 m); the bog's shore cliffs 90 to 150 m. Every view at the phone's level
+          and 18 at the laptop's: 0 page errors; touch test 10 of 10; places check passes. Drawn zoomed in on
+          Wickhollow: phone 1.7 million triangles. The file is 8.6 MB (it was 6.0). Frame rates not measured.
 For the hub: Not ready to bring in yet (steps 2 to 4 to come). When it is: take moon-faire-witches/world-map/ and this
           slip. Build: node tools/build.mjs --offline moon-faire-witches/world-map/envoi-map-where.html.
 Open:     0. For the hub: the page's textures are packed from texture-packs/made/ as it stands on work/textures-made;
@@ -127,20 +141,27 @@ Open:     0. For the hub: the page's textures are packed from texture-packs/made
              laptop level's frame rate on his MSI.
           1. For Chris: the frame rate on his phone, and whether the land reads right (the heights are inferred: tell
              me any hill, cliff or valley that should be otherwise, and the reader can be told).
-          2. Of the places built in 3D, only their buildings are on the map (not walls, wells, bridges, jetties, lamps).
-             Misthollow's houses sit on steep ground and some are half sunk in it.
+          2. Done (November 17): every walking place is on the map as the game builds it. What is left out of each,
+             on purpose: small things (fence rails, lamp posts, flowers, bushes, reeds, glass), and people. A place's
+             own stream or pond stops at the place's edge: it doesn't yet run on into the map's rivers. Where a place
+             stands on steep land (Frostmere's shore), its ground meets the land in a bank of rock.
+             For Chris: the frame rate zoomed in on a town, on the phone above all (a town adds up to 240,000
+             triangles to what the phone draws). If it drags, the places can be made lighter still.
+             To run again when the 3D world changes: tools/make-places.mjs --src <a checkout of work/world-3d>.
           3. Not there yet: roads, the long bridge to the shipyard, Rotbridge, waterfalls, beaches.
              (The sea made to be seen from high up and the layered mountain rock asked for in
              art-requests/world-map-round-1.md: Chris made them the same morning, and they are in.)
           4. For Chris: are the walking places where he sees them? The jetty is west of Wickhollow on foot, but the
              Magpie's dock is east of it on the atlas; the map keeps it at the dock.
           5. Answered (20:18): Skies' four ships, the next ship part of each gate between zones.
-          7. To make the map reflect the game's places truly (Chris asked what it would take): three passes. (a) Each
+          7. (Passes a and b done November 17, for all 21 places at once, from the game's own engine and not place by
+             place from the place files. Pass c, roads between places and exits lined up, is still to do.)
+             To make the map reflect the game's places truly (Chris asked what it would take): three passes. (a) Each
              place's own ground on the map: its paths, cobbles, lawns, water, bridge, walls, steps, well and jetties,
              read from its place file as the buildings are, the map's land shaped level under it. (b) Each place's own
              trees where the game has them (its -trees.js file), and the wild places' wide fields, thickets, rocks and
              fog colour. (c) Lining places up with each other: exits pointing at the next place, roads between. The
              catch is scale: a place is about 61 m across and the map is 46 km, so places stay drawn about 7.5 times
-             life size, as now. Waiting on Chris to say go, and which place first.
+             life size, as now.
           6. For the world-3d job, when the zone shell is in: its travel hook opens WorldMap.create with Io's place
              and spot, and the zones reached (from the shared save).

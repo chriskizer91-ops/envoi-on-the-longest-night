@@ -96,12 +96,25 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   down to look from above). Two fingers pinch to zoom, slide to move, twist to turn. The moon button flies back to Io,
   north up. The page opens on the whole land and flies down to her. "Move Io" (this demo only) puts her in any of the
   21 walking places; its list shows the frame rate and the counts.
-- **Size:** 6.0 MB, works offline (one file for both levels).
+- **The walking places, as the game builds them** (November 17): each of the 21 places stands on the map with its own
+  ground (cobbles, earth, paving, lawns), its water lying still, and everything solid in it: houses, chapel, walls,
+  steps, bridges, jetties, boardwalks, stalls, rocks, snow and ice. Its trees stand where the game has them, and its
+  lamps glow. They are taken from the 3D world's own engine by `tools/make-places.mjs` (nothing is drawn again by
+  hand), in less detail than the game: 155,613 triangles for all 21, against 40,000 to 110,000 for one place in the
+  game. A place is drawn 7.5 times life size (0.75 map units to a metre), like the trees, or it would be a speck.
+  Each place's ground lies over the land where the place stands and meets it over its outer few units, with a ragged,
+  rounded edge. A place's houses and walls are drawn from up to 13 km away on a phone, 32 km on a laptop.
+- **The bog** (November 17): Bogmire and the fen's dark heart stand in fen at 13 m (they were on grass at 105 m and in
+  forest at 148 m). The reader carries the bog round both and on to the sea, lays it near sea level with pools and
+  channels all through it, and ends it at the shore in cliffs 90 to 150 m high.
+- **The zone line** (November 17): the edge of the zone Io is in is a thin dashed line of violet light (the gold band
+  it was looked like a strip of sand).
+- **Size:** 8.6 MB, works offline (one file for both levels).
 
 ### What isn't there yet
 
-- Of the places already built in 3D, only their **buildings** are on the map: not their walls, wells, bridges, jetties,
-  lamps, paving or people.
+- In the walking places: no people, and none of the small things (fence rails, lamp posts, flowers, bushes, reeds). A
+  place's own stream or pond stops at the place's edge; it doesn't run on into the map's rivers yet.
 - No beaches to speak of (the reader keeps only low, pale ground by the water as sand, and little passes), no roads, no
   bridges (the long stone bridge to the shipyard, Rotbridge), no waterfalls.
 
@@ -140,13 +153,16 @@ on November 17 (`art/world-map-round-1/`), and they are in.
 - `map/places.js`: the zones, the 21 walking places and the 7 landings on the atlas.
 - `map/art.js`, `map/map.css`: the art it reads, and the page's look.
 - `map/moods.js`: each walking place's atmosphere (made by `tools/make-moods.mjs`, not by hand).
-- `map/buildings.js`: the walking places' buildings (made by `tools/make-buildings.mjs`, not by hand).
+- `map/place-models.js`: the 21 walking places as the 3D game builds them (made by `tools/make-places.mjs`, not by hand).
+- `map/buildings.js`: the walking places' buildings as plain houses (made by `tools/make-buildings.mjs`, not by hand):
+  used only in a browser too old to unpack `place-models.js`.
 - `map/tree-models.js`: the eight tree models, packed (made by `tools/make-tree-models.mjs`, not by hand).
 - `art/`: the two data pictures, the ground textures in one picture, the tree models (`trees/`), and `LABELS.md`,
   which says what each holds.
 - `tools/`: `make-terrain.mjs` (reads the atlas; `--look <folder>` writes pictures to check by eye),
   `make-ground-layers.mjs` (packs the made textures), `make-moods.mjs` (reads the places' atmospheres),
   `make-buildings.mjs` (reads the 3D game's buildings and packs their textures),
+  `make-places.mjs` (builds every place with the 3D game's own engine and takes it down for the map),
   `make-tree-mids.mjs` (makes the middle tree models), `make-tree-models.mjs` (packs the tree models),
   `tree-lineup.html` (a check page: every tree at its three levels), `check-places.mjs`,
   `shots.mjs` (stills at a phone's size, from set views), `touch-test.mjs` (the fingers and buttons, as a phone would).
@@ -158,6 +174,7 @@ node moon-faire-witches/world-map/tools/make-terrain.mjs          (only if the a
 node moon-faire-witches/world-map/tools/make-ground-layers.mjs    (when Chris remakes a texture; reads texture-packs/made/)
 node moon-faire-witches/world-map/tools/make-moods.mjs            (when the 3D world's places change their tints or fog)
 node moon-faire-witches/world-map/tools/make-buildings.mjs        (when the 3D world's places change their buildings)
+node moon-faire-witches/world-map/tools/make-places.mjs --src <a checkout of work/world-3d> [--made <made textures>]   (when the 3D world's places change)
 node moon-faire-witches/world-map/tools/make-tree-mids.mjs        (when a detailed tree model changes; then the next line)
 node moon-faire-witches/world-map/tools/make-tree-models.mjs      (when a tree model in art/trees/ changes)
 node moon-faire-witches/world-map/tools/check-places.mjs

@@ -280,6 +280,54 @@
       vec3 c = ${tex ? 'mooded(texture(blayers, vUv).rgb * 1.35 * vT, vW, uMood) * (vec3(0.8, 0.84, 0.98) * (0.62 + 0.38 * sv.y) + vec3(0.8) * max(l, 0.0) * sv.x)' : 'moonlit(mooded(vT, vW, uMood), n, sv)'};
       gl_FragColor = vec4(finish(c, vW, vDepth, 0.0), 1.0);
     }`;
+  // a walking place's own ground, as the game lays it: cobbles, earth and paving over its grass, and its water lying
+  // still (puv: across, down, and how far in from the patch's edge; the edge is ragged, so it melts into the land)
+  const PG_V = `
+    attribute vec3 puv; varying vec3 vW, vP; varying float vDepth;
+    void main() { vP = puv; vW = position; vec4 mv = modelViewMatrix * vec4(position, 1.0); vDepth = -mv.z; gl_Position = projectionMatrix * mv; }`;
+  const pgF = (tex) => `
+    ${tex ? 'precision highp sampler2DArray; uniform sampler2DArray players;' : ''}
+    uniform sampler2D pgrounds; uniform vec4 uTile, uL, uRep; uniform vec3 uT0, uT1, uT2, uT3; uniform float uMood, uIce;
+    varying vec3 vW, vP; varying float vDepth;
+    ${FINISH}
+    vec3 lay(float l, float r, vec3 t) { return ${tex ? 'texture(players, vec3(vW.xz * r, l)).rgb * t' : 't'}; }
+    void main() {
+      if (smoothstep(0.5, 7.0, vP.z) < 0.1 + 0.85 * fbm(vW.xz * 0.23)) discard;
+      vec2 uv = uTile.xy + clamp(vP.xy, 0.004, 0.996) * uTile.zw;
+      vec3 sp = texture2D(pgrounds, uv).rgb; float wet = texture2D(pgrounds, uv + vec2(0.0, uTile.w)).r;
+      vec3 a = lay(uL.y, uRep.y, uT1);
+      a = mix(a, lay(uL.z, uRep.z, uT2), smoothstep(0.2, 0.62, sp.g));
+      a = mix(a, lay(uL.x, uRep.x, uT0), smoothstep(0.2, 0.62, sp.r));
+      a = mix(a, lay(uL.w, uRep.w, uT3), smoothstep(0.2, 0.62, sp.b));
+      vec3 n = normalize(cross(dFdx(vW), dFdy(vW))); vec2 sv = shadeAt(vW);
+      // where the place's ground has to climb or drop steeply to meet the land, bare rock
+      float steep = 1.0 - smoothstep(0.5, 0.78, abs(n.y)); a = mix(a, vec3(0.34, 0.34, 0.4) * (0.8 + 0.4 * n2(vW.xz * 0.9 + vW.y * 1.7)), steep); wet *= 1.0 - steep;
+      // (lit as the buildings are: these are the game's own textures, paler than the map's night-painted ground)
+      float l = dot(n, uMoon);
+      vec3 c = ${tex ? 'mooded(a, vW, uMood) * (vec3(0.8, 0.84, 0.98) * (0.62 + 0.38 * sv.y) + vec3(0.75) * max(l, 0.0) * sv.x)' : 'moonlit(mooded(a, vW, uMood), n, sv)'};
+      vec3 wc = uIce > 0.5 ? moonlit(vec3(0.62, 0.74, 0.86), vec3(0.0, 1.0, 0.0), sv) : water(vec3(0.07, 0.19, 0.34), vW, vDepth, 0.08, 0.0) * (0.62 + 0.38 * sv.x);
+      c = mix(c, wc, smoothstep(0.35, 0.6, wet));
+      gl_FragColor = vec4(finish(c, vW, vDepth, 1.0), 1.0);
+    }`;
+  // everything solid in a walking place, as the game builds it (pinfo: its texture, how many times that repeats in a
+  // map unit, 1 if it gives light; ptint: its colour). The texture is laid on by which way each face looks
+  const SOLID_V = `
+    attribute vec3 pinfo, ptint; varying vec3 vW, vI, vT; varying float vDepth;
+    void main() { vI = pinfo; vT = ptint; vW = position; vec4 mv = modelViewMatrix * vec4(position, 1.0); vDepth = -mv.z; gl_Position = projectionMatrix * mv; }`;
+  const solidF = (tex) => `
+    ${tex ? 'precision highp sampler2DArray; uniform sampler2DArray players;' : ''}
+    uniform float uMood;
+    varying vec3 vW, vI, vT; varying float vDepth;
+    ${FINISH}
+    void main() {
+      vec3 n = normalize(cross(dFdx(vW), dFdy(vW))), an = abs(n), q = vW * vI.y;
+      vec2 uv = an.y > 0.55 ? q.xz : (an.x > an.z ? q.zy : q.xy);
+      vec3 t = ${tex ? 'vI.x < -0.5 ? vec3(0.8) : texture(players, vec3(uv, floor(vI.x + 0.5))).rgb * 1.35' : 'vec3(0.8)'};
+      vec2 sv = shadeAt(vW); float l = dot(n, uMoon);
+      vec3 c = mooded(t * vT, vW, uMood) * (vec3(0.8, 0.84, 0.98) * (0.62 + 0.38 * sv.y) + vec3(0.8) * max(l, 0.0) * sv.x);
+      if (vI.z > 0.5) c = vT * (1.0 + 0.3 * uGlow);
+      gl_FragColor = vec4(finish(c, vW, vDepth, 0.0), 1.0);
+    }`;
   // the towns' lit windows: small warm points, dimmed under the mist
   const GLOW_V = `
     uniform sampler2D zones; uniform vec4 uOpen; uniform float uTime, uSize;
@@ -344,9 +392,9 @@
   // than nearZoom, the middle from 3 to 3.5 times as far off (midZoom), the light from zoom; looking no farther than
   // reach for them
   const DETAIL = {
-    phone: { squares: [576, 384], pieces: [4, 4], treeGap: 8.5, treeFar: 3900, layer: 256, sharp: 1.75, pine: [5, 2], leaf: [6, 1],
+    phone: { placeStep: 2, placeFar: 1300, squares: [576, 384], pieces: [4, 4], treeGap: 8.5, treeFar: 3900, layer: 256, sharp: 1.75, pine: [5, 2], leaf: [6, 1],
       models: { near: 56, mid: 400, far: 700, nearZoom: 360, midZoom: 1080, zoom: 1300, reach: 520 } },
-    laptop: { squares: [1152, 768], pieces: [8, 8], treeGap: 6, treeFar: 5000, treeFull: 1500, patches: [12, 8], layer: 512, sharp: 2, pine: [7, 3], leaf: [7, 2],
+    laptop: { placeStep: 1, placeFar: 3200, squares: [1152, 768], pieces: [8, 8], treeGap: 6, treeFar: 5000, treeFull: 1500, patches: [12, 8], layer: 512, sharp: 2, pine: [7, 3], leaf: [7, 2],
       models: { near: 150, mid: 1600, far: 3200, nearZoom: 560, midZoom: 1960, zoom: 2000, reach: 900 } },
   };
   function create(host, opts) {
@@ -366,7 +414,45 @@
       const fx = clamp(ax / DS - 0.5, 0, DW - 1.001), fy = clamp(ay / DS - 0.5, 0, DH - 1.001), x = fx | 0, y = fy | 0, tx = fx - x, ty = fy - y, i = y * DW + x;
       return (Hf[i] * (1 - tx) + Hf[i + 1] * tx) * (1 - ty) + (Hf[i + DW] * (1 - tx) + Hf[i + DW + 1] * tx) * ty;
     }
-    const heightAt = (ax, ay) => (Hf ? rawHeight(ax, ay) * EXAG : 0); // in scene units; below 0 is under the sea
+    const landH = (ax, ay) => (Hf ? rawHeight(ax, ay) * EXAG : 0); // the land's own height, in scene units; below 0 is under the sea
+    // ---- the walking places as the game builds them (map/place-models.js, made by tools/make-places.mjs): each keeps
+    // its own ground, laid over the land where the place stands, 0.75 map units to a metre like the trees ----
+    const PM = window.MAP_PLACE_MODELS || null, PL = [], PK = 0.75;
+    async function unpackPlaces() {
+      if (!PM || !PM.packed || typeof DecompressionStream === 'undefined') return null;
+      const b = atob(PM.packed), raw = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) raw[i] = b.charCodeAt(i);
+      return new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+    }
+    function setPlaces(buf) {
+      const kx = 0.04 * PK, kz = 0.05 * PK;
+      for (const [id, m] of Object.entries(PM.places)) {
+        const p = P.PLACES[id]; if (!p) continue;
+        const [nx, nz] = m.grid, H = new Int16Array(buf, m.h, (nx + 1) * (nz + 1));
+        const a = { id, m, buf, at: p.at, nx, nz, H, x0: p.at[0] + (m.rect[0] - 768) * kx, y0: p.at[1] + (m.rect[1] - 512) * kz, x1: p.at[0] + (m.rect[2] - 768) * kx, y1: p.at[1] + (m.rect[3] - 512) * kz };
+        let lo = 1e9; for (let i = 0; i < H.length; i++) lo = Math.min(lo, H[i]);
+        // its ground meets the land at the place's middle, and none of it lies under the sea
+        a.base = Math.max(Math.max(landH(p.at[0], p.at[1]), 0.5) - m.mid / 100 * PK, 0.4 - lo / 100 * PK);
+        a.gh = (ax, ay) => { // the game's ground there, in scene units
+          const fx = clamp((ax - a.x0) / (a.x1 - a.x0) * nx, 0, nx - 0.001), fy = clamp((ay - a.y0) / (a.y1 - a.y0) * nz, 0, nz - 0.001), x = fx | 0, y = fy | 0, tx = fx - x, ty = fy - y, i = y * (nx + 1) + x;
+          return a.base + ((H[i] * (1 - tx) + H[i + 1] * tx) * (1 - ty) + (H[i + nx + 1] * (1 - tx) + H[i + nx + 2] * tx) * ty) / 100 * PK;
+        };
+        // how far in from its edge: the edge runs round the corners, so a place is never a plain rectangle on the land
+        const cx = (a.x0 + a.x1) / 2, cy = (a.y0 + a.y1) / 2, hx = (a.x1 - a.x0) / 2, hy = (a.y1 - a.y0) / 2, RR = Math.min(hx, hy) * 0.55;
+        a.edge = (ax, ay) => { const qx = Math.abs(ax - cx) - (hx - RR), qy = Math.abs(ay - cy) - (hy - RR); return RR - Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - Math.min(Math.max(qx, qy), 0); };
+        a.meet = Math.min(a.x1 - a.x0, a.y1 - a.y0) > 100 ? 24 : 13; // over how many units its ground comes to meet the land's (longer for the wide places)
+        PL.push(a);
+      }
+    }
+    const placeAt = (ax, ay) => { for (const a of PL) if (ax > a.x0 && ax < a.x1 && ay > a.y0 && ay < a.y1) return a; return null; };
+    // the ground's height: the land's, and inside a walking place the place's own (the two meet over its outer few units)
+    const heightAt = (ax, ay) => { const h = landH(ax, ay), a = placeAt(ax, ay); return a ? h + (a.gh(ax, ay) - h) * sstep(5, a.meet, a.edge(ax, ay)) : h; };
+    // the land's sheet: under a walking place it drops a little below the place's ground, out of its way
+    const sheetH = (ax, ay, s) => {
+      const h = landH(ax, ay), a = placeAt(ax, ay); if (!a) return h;
+      const d = a.edge(ax, ay); if (d < 3) return h;
+      let lo = h; for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) lo = Math.min(lo, heightAt(ax + i * s, ay + j * s));
+      return h + (lo - 1.2 - h) * sstep(3, 10, d);
+    };
     const groundAt = (ax, ay) => Math.max(0, heightAt(ax, ay)); // what a thing would stand on (the sea's top, at sea)
     const kindAt = (ax, ay) => (Kd ? Kd[clamp(Math.floor(ay / DS), 0, DH - 1) * DW + clamp(Math.floor(ax / DS), 0, DW - 1)] : 0);
     const W3 = (ax, ay, lift) => new THREE.Vector3(ax - AW / 2, groundAt(ax, ay) + (lift || 0), ay - AH / 2);
@@ -435,11 +521,11 @@
       uniforms.moods.value = tex(moods); uniforms.hazes.value = tex(hazes);
     }
     // the made ground textures: one picture of twenty-four squares (art/LABELS.md), cut into a stack of layers that each repeat
-    async function loadLayers(url, size) {
+    async function loadLayers(url, size, per) {
       const img = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error('no ground textures')); i.src = url; });
-      const L = size || LV.layer, cell = img.width / 4, n = Math.round(img.height / cell) * 4, data = new Uint8Array(L * L * 4 * n);
+      const PER = per || 4, L = size || LV.layer, cell = img.width / PER, n = Math.round(img.height / cell) * PER, data = new Uint8Array(L * L * 4 * n);
       const c = document.createElement('canvas'); c.width = c.height = L; const g = c.getContext('2d', { willReadFrequently: true });
-      for (let i = 0; i < n; i++) { g.drawImage(img, (i % 4) * cell, Math.floor(i / 4) * cell, cell, cell, 0, 0, L, L); data.set(g.getImageData(0, 0, L, L).data, i * L * L * 4); }
+      for (let i = 0; i < n; i++) { g.drawImage(img, (i % PER) * cell, Math.floor(i / PER) * cell, cell, cell, 0, 0, L, L); data.set(g.getImageData(0, 0, L, L).data, i * L * L * 4); }
       const t = new THREE.DataTexture2DArray(data, L, L, n);
       t.format = THREE.RGBAFormat; t.type = THREE.UnsignedByteType; t.wrapS = t.wrapT = THREE.RepeatWrapping;
       t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; t.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy()); t.needsUpdate = true;
@@ -523,8 +609,9 @@
         const p = g.attributes.position, nrm = new Float32Array(p.count * 3), v = new THREE.Vector3();
         for (let i = 0; i < p.count; i++) {
           const ax = p.getX(i) + pw / 2 + qx, ay = p.getZ(i) + ph / 2 + qy;
-          p.setXYZ(i, ax - AW / 2, heightAt(ax, ay), ay - AH / 2);
-          const s = AW / LV.squares[0], dx = heightAt(ax + s, ay) - heightAt(ax - s, ay), dz = heightAt(ax, ay + s) - heightAt(ax, ay - s);
+          const s = AW / LV.squares[0];
+          p.setXYZ(i, ax - AW / 2, sheetH(ax, ay, s), ay - AH / 2);
+          const dx = landH(ax + s, ay) - landH(ax - s, ay), dz = landH(ax, ay + s) - landH(ax, ay - s);
           v.set(-dx, 2 * s, -dz).normalize(); nrm.set([v.x, v.y, v.z], i * 3);
         }
         g.deleteAttribute('normal'); g.deleteAttribute('uv');
@@ -572,6 +659,23 @@
           : byWater ? (r5 < 0.55 ? 'tree_cottonwood' : 'tree_willow')
           : (r5 < 0.5 ? 'tree_oak' : r5 < 0.75 ? 'tree_aspen' : 'tree_cottonwood');
         lists[pine ? 'pine' : 'leafy'][clamp(Math.floor(ay / chh), 0, CY - 1) * CX + clamp(Math.floor(ax / cw), 0, CX - 1)].push({ ax, ay, size: size * (dry ? 0.6 : 1), ry: r4 * 6.28, c, pine, sp, zone });
+      }
+      // the walking places' own trees, each where the game has it (0 leafy, 1 fir, 2 bare and thorny)
+      for (const a of PL) {
+        const T = a.m.trees, zone = World.bandAt(a.at[0], a.at[1]), fen = kindAt(a.at[0], a.at[1]) === KIND.fen;
+        for (let i = 0; i < T.length; i += 4) {
+          const ax = a.at[0] + (T[i] - 768) * 0.04 * PK, ay = a.at[1] + (T[i + 1] - 512) * 0.05 * PK, kind = T[i + 3], r4 = hash2(T[i] * 0.37, T[i + 1] * 0.53), r5 = hash2(T[i + 1] * 1.31 + 2.2, T[i] * 0.71 + 5.1);
+          if (ax < 12 || ay < 12 || ax > AW - 12 || ay > AH - 12 || heightAt(ax, ay) < 0.3) continue;
+          if (r5 > sstep(-2, 12, a.edge(ax, ay)) * (kindAt(ax, ay) <= KIND.lake ? 0 : 1) + (a.edge(ax, ay) > 12 ? 1 : 0)) continue; // thinning out toward the place's edge, so its woods have no straight side; none in the land's own water
+          const pine = kind === 1, bare = kind === 2;
+          let c = pine ? [0.07 + r4 * 0.05, 0.22 + r4 * 0.1, 0.15 + r4 * 0.05] : fen ? [0.30 + r4 * 0.1, 0.42 + r4 * 0.08, 0.2] : [0.16 + r4 * 0.1, 0.4 + r4 * 0.14, 0.13 + r4 * 0.05];
+          if (zone === 2 && !pine) c = [0.17 + r4 * 0.08, 0.46 + r4 * 0.14, 0.24 + r4 * 0.08];
+          else if (zone === 3) c = pine ? [0.2 + r4 * 0.1, 0.36 + r4 * 0.1, 0.36 + r4 * 0.1] : r4 < 0.5 ? [0.36 + r4 * 0.16, 0.27, 0.22] : [0.3, 0.25 + r4 * 0.08, 0.34];
+          else if (zone === 4) c = pine ? [0.56 + r4 * 0.16, 0.66 + r4 * 0.14, 0.86] : [0.5 + r4 * 0.1, 0.6 + r4 * 0.1, 0.6];
+          if (bare) c = zone === 4 ? [0.5, 0.52, 0.56] : [0.24 + r4 * 0.06, 0.22, 0.2];
+          const sp = bare ? 'tree_snag' : pine ? (zone < 3 && r5 < 0.3 ? 'tree_ponderosa' : 'tree_spruce') : fen ? (r5 < 0.7 ? 'tree_willow' : 'tree_cottonwood') : zone >= 3 ? (r5 < 0.7 ? 'tree_aspen' : 'tree_oak') : (r5 < 0.55 ? 'tree_oak' : r5 < 0.8 ? 'tree_aspen' : 'tree_cottonwood');
+          lists[pine ? 'pine' : 'leafy'][clamp(Math.floor(ay / chh), 0, CY - 1) * CX + clamp(Math.floor(ax / cw), 0, CX - 1)].push({ ax, ay, size: clamp(T[i + 2] / 100, 0.6, 1.5) * 0.5, ry: r4 * 6.28, c, pine, sp, zone });
+        }
       }
       // a pine: two cones, one on the other; a leafy tree: a round crown, a ring of faces under a low cap (both stand on
       // y = 0). Built by hand, a triangle per face, so nothing is drawn that can't be seen
@@ -698,7 +802,9 @@
       CLEAR.push([p.at[0] + (Math.min(...xs) - 768) * kx - 3, p.at[1] + (Math.min(...ys) - 512) * kz - 3, p.at[0] + (Math.max(...xs) - 768) * kx + 3, p.at[1] + (Math.max(...ys) - 512) * kz + 3]);
     }
     CLEAR.push([2340 - 50, 1240 - 42, 2340 + 50, 1240 + 42]);
-    const cleared = (ax, ay) => CLEAR.some((r) => ax > r[0] && ay > r[1] && ax < r[2] && ay < r[3]);
+    // (a walking place brings its own trees; the land's scattered ones stop a little inside its edge)
+    const cleared = (ax, ay) => { const a = placeAt(ax, ay); return !!(a && a.edge(ax, ay) > 5) || clearedTown(ax, ay); };
+    const clearedTown = (ax, ay) => CLEAR.some((r) => ax > r[0] && ay > r[1] && ax < r[2] && ay < r[3]);
     function Struct() {
       const pos = [], uv = [], tint = [], flat = [], REP = 2.6, ONE = [1, 1, 1];
       const push = (p, u, v, layer, t) => { pos.push(p[0], p[1], p[2]); uv.push(u / REP, v / REP, layer); tint.push(t[0], t[1], t[2]); const a = (BD.layers[layer] || { avg: [0.3, 0.3, 0.3] }).avg; flat.push(a[0] * t[0] * 2.2, a[1] * t[1] * 2.2, a[2] * t[2] * 2.2); };
@@ -746,6 +852,48 @@
       };
       return S;
     }
+    // the walking places themselves: for each, its ground (a fine sheet over the land) and everything solid in it
+    function buildGamePlaces(players, pgrounds) {
+      const two = !!players, D = THREE.DoubleSide, lay = PM.layers, per = PM.gper, rows = Math.ceil(Object.keys(PM.places).length / per), GWt = per * PM.gw, GHt = rows * PM.gh * 2;
+      const solidMat = material(SOLID_V, solidF(two), { players: { value: players }, uMood: { value: 0.3 } }, { side: D });
+      let tris = 0;
+      for (const a of PL) {
+        const m = a.m, st = LV.placeStep, gx = Math.ceil(a.nx / st), gz = Math.ceil(a.nz / st), zone = World.bandAt(a.at[0], a.at[1]);
+        // its ground
+        const pos = new Float32Array((gx + 1) * (gz + 1) * 3), puv = new Float32Array((gx + 1) * (gz + 1) * 3), idx = new Uint32Array(gx * gz * 6);
+        for (let j = 0; j <= gz; j++) for (let i = 0; i <= gx; i++) {
+          const ax = a.x0 + (a.x1 - a.x0) * i / gx, ay = a.y0 + (a.y1 - a.y0) * j / gz, k = (j * (gx + 1) + i) * 3;
+          pos[k] = ax - AW / 2; pos[k + 1] = heightAt(ax, ay) + 0.08; pos[k + 2] = ay - AH / 2; puv[k] = i / gx; puv[k + 1] = j / gz; puv[k + 2] = a.edge(ax, ay);
+        }
+        for (let j = 0, q = 0; j < gz; j++) for (let i = 0; i < gx; i++) { const v = j * (gx + 1) + i; idx.set([v, v + gx + 1, v + 1, v + 1, v + gx + 1, v + gx + 2], q); q += 6; }
+        const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('puv', new THREE.BufferAttribute(puv, 3)); g.setIndex(new THREE.BufferAttribute(idx, 1)); g.computeBoundingSphere();
+        const G = m.ground, tc = (i) => { const t = G.tint[i], av = two ? [1, 1, 1] : (lay[G.layers[i]] || { avg: [90, 100, 90] }).avg.map((v) => v / 255 * 2.2); return new THREE.Vector3(t[0] * av[0], t[1] * av[1], t[2] * av[2]); };
+        const tx = (m.tile % per) * PM.gw, ty = Math.floor(m.tile / per) * PM.gh * 2;
+        const mesh = new THREE.Mesh(g, material(PG_V, pgF(two), { players: { value: players }, pgrounds: { value: pgrounds },
+          uTile: { value: new THREE.Vector4(tx / GWt, 1 - ty / GHt, PM.gw / GWt, -PM.gh / GHt) }, uL: { value: new THREE.Vector4(...G.layers) }, uRep: { value: new THREE.Vector4(...G.rep.map((r) => 1 / (r * PK))) },
+          uT0: { value: tc(0) }, uT1: { value: tc(1).multiplyScalar(zone <= 2 ? 1.4 : 1.15) }, uT2: { value: tc(2) }, uT3: { value: tc(3) }, uMood: { value: 0.3 }, uIce: { value: zone === 4 ? 1 : 0 } }));
+        mesh.matrixAutoUpdate = false; scene.add(mesh); tris += idx.length / 3;
+        // everything solid in it: each point stands on the ground under it, so nothing floats where the place's
+        // ground meets the land
+        let nv = 0, ni = 0; for (const gr of m.groups) { nv += gr.n; ni += gr.in; }
+        if (!nv) continue;
+        const sp = new Float32Array(nv * 3), info = new Float32Array(nv * 3), tint = new Float32Array(nv * 3), si = new Uint32Array(ni); let v0 = 0, i0 = 0;
+        for (const gr of m.groups) {
+          const V = new Int16Array(a.buf, gr.v, gr.n * 3), I = gr.wide ? new Uint32Array(a.buf, gr.i, gr.in) : new Uint16Array(a.buf, gr.i, gr.in);
+          const av = two || gr.layer < 0 || gr.glow ? [1, 1, 1] : lay[gr.layer].avg.map((c) => c / 255 * 1.7), r = 1 / (gr.rep * PK);
+          for (let k = 0; k < gr.n; k++) {
+            const ax = a.at[0] + V[k * 3] / 50 * PK, ay = a.at[1] + V[k * 3 + 2] / 50 * PK, o = (v0 + k) * 3;
+            sp[o] = ax - AW / 2; sp[o + 1] = heightAt(ax, ay) + V[k * 3 + 1] / 50 * PK - (a.gh(ax, ay) - a.base); sp[o + 2] = ay - AH / 2;
+            info[o] = gr.layer; info[o + 1] = r; info[o + 2] = gr.glow; tint[o] = gr.tint[0] * av[0]; tint[o + 1] = gr.tint[1] * av[1]; tint[o + 2] = gr.tint[2] * av[2];
+          }
+          for (let k = 0; k < gr.in; k++) si[i0 + k] = I[k] + v0;
+          v0 += gr.n; i0 += gr.in;
+        }
+        const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp, 3)); sg.setAttribute('pinfo', new THREE.BufferAttribute(info, 3)); sg.setAttribute('ptint', new THREE.BufferAttribute(tint, 3)); sg.setIndex(new THREE.BufferAttribute(si, 1)); sg.computeBoundingSphere();
+        const sm = new THREE.Mesh(sg, solidMat); sm.matrixAutoUpdate = false; scene.add(sm); tris += ni / 3; a.solid = sm; a.mid = sg.boundingSphere.center;
+      }
+      stats.places = PL.length; stats.placeTriangles = Math.round(tris);
+    }
     function buildPlaces(blayers) {
       const S = Struct(), R = rng(404), glow = [];
       const STONE = BL('shared_stone_wall_rough'), TIMBER = BL('wick_wall_timber_plaster'), TILE = BL('shared_roof_tiles_red'), THATCH = BL('shared_roof_thatch'), PLANKS = BL('shared_planks_wall'),
@@ -754,8 +902,9 @@
       // the ground under a footprint: where its floor stands (base) and how far down its walls must reach (low)
       const footing = (ax0, ay0, ax1, ay1) => { const g = [[(ax0 + ax1) / 2, (ay0 + ay1) / 2], [ax0, ay0], [ax1, ay0], [ax0, ay1], [ax1, ay1]].map(([x, y]) => groundAt(x, y)), lo = Math.min(...g), hi = Math.max(...g); return { base: Math.max(g[0], (lo + hi) / 2), low: lo - 1.5 }; };
       // ---- the walking places' own buildings ----
+      for (const a of PL) { const L = a.m.lamps; for (let i = 0; i < L.length; i += 4) { const ax = a.at[0] + L[i] * PK, ay = a.at[1] + L[i + 2] * PK; glow.push([ax, heightAt(ax, ay) + L[i + 1] * PK - (a.gh(ax, ay) - a.base) + 0.3, ay]); } }
       for (const [id, list] of Object.entries(BD.places)) {
-        const p = P.PLACES[id]; if (!p) continue;
+        const p = P.PLACES[id]; if (!p || PL.some((a) => a.id === id)) continue;
         const kx = 0.04 * BK, kz = 0.05 * BK, X = (px) => p.at[0] + (px - 768) * kx, Y = (py) => p.at[1] + (py - 512) * kz, stilts = id.indexOf('bogmire') === 0;
         for (const b of list) {
           const ax0 = X(b.fp[0]), ay0 = Y(b.fp[1]), ax1 = X(b.fp[2]), ay1 = Y(b.fp[3]), f = footing(ax0, ay0, ax1, ay1), x0 = sx(ax0), z0 = sz(ay0), x1 = sx(ax1), z1 = sz(ay1);
@@ -977,6 +1126,8 @@
       }
       placeCamera();
       pickTrees();
+      // a place's houses and walls are drawn only from near enough to make them out
+      for (const a of PL) if (a.solid) a.solid.visible = camera.position.distanceTo(a.mid) < LV.placeFar;
       // trees: only the patches on the screen and near enough to be more than specks
       pm.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); frustum.setFromProjectionMatrix(pm);
       for (const m of treePatches) {
@@ -1033,7 +1184,15 @@
       moodTextures();
       if (art.layers && renderer.capabilities.isWebGL2) layers = await loadLayers(art.layers).catch(() => null);
       const blayers = art.blayers && renderer.capabilities.isWebGL2 ? await loadLayers(art.blayers, 256).catch(() => null) : null;
-      buildLand(); buildTrees(); buildModels(); buildPlaces(blayers); makeTags();
+      // the walking places as the game builds them (if this browser can't unpack them, the map keeps its plain houses)
+      let players = null, pgrounds = null;
+      const pbuf = art.pgrounds ? await unpackPlaces().catch(() => null) : null;
+      if (pbuf) {
+        pgrounds = await new Promise((ok) => new THREE.TextureLoader().load(art.pgrounds, ok, undefined, () => ok(null)));
+        if (pgrounds) { pgrounds.minFilter = pgrounds.magFilter = THREE.LinearFilter; pgrounds.generateMipmaps = false; setPlaces(pbuf); }
+        if (pgrounds && art.players && renderer.capabilities.isWebGL2) players = await loadLayers(art.players, PM.tile, PM.per).catch(() => null);
+      }
+      buildLand(); if (PL.length) buildGamePlaces(players, pgrounds); buildTrees(); buildModels(); buildPlaces(blayers); makeTags();
       api.setOpen(api.open);
       resize();
       if (opts.io) api.setIo(opts.io.place, opts.io.spot, false);

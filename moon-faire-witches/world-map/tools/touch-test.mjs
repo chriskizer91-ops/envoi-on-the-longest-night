@@ -18,7 +18,8 @@ let v0 = null;
 for (let i = 0; i < 600 && !v0; i++) { const shown = await page.evaluate(() => !document.getElementById('chip').hidden); if (shown) v0 = await view(); else await page.waitForTimeout(25); }
 let ok = 0, bad = 0; const check = (name, cond, detail) => { console.log((cond ? 'ok   ' : 'FAIL ') + name + (detail ? ' · ' + detail : '')); cond ? ok++ : bad++; };
 check('the camera starts over the whole map', v0 && v0.dist > 9000, v0 && 'from ' + Math.round(v0.dist) + ' away');
-await page.waitForTimeout(7000); // (the flight down, and its last frames: slow without a graphics card)
+// (the flight down, and its last frames: slow without a graphics card, so wait until the camera has come to rest)
+for (let i = 0, was = null; i < 60; i++) { await page.waitForTimeout(700); const v = await view(); if (was && v.dist < 1300 && Math.abs(v.dist - was.dist) < 0.01 && Math.abs(v.x - was.x) < 0.01) break; was = v; }
 const v1 = await view(); check('then flies down to Io at Wickhollow (1348, 1838)', Math.hypot(v1.x - 1348, v1.y - 1838) < 30 && v1.dist < 1300, 'at ' + Math.round(v1.x) + ', ' + Math.round(v1.y) + ', ' + Math.round(v1.dist) + ' away');
 // fingers on the canvas, as pointer events (two at once for the pinch)
 const fingers = (steps) => page.evaluate((steps) => {
