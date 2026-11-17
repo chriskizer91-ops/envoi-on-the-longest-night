@@ -1,5 +1,6 @@
 // make-tree-models.mjs: packs the tree models in art/trees/ (Chris's, from his Field & Forest · Forest Builder: eight
-// trees, each as a detailed model, <id>.glb, and a light one, <id>_far.glb; art/LABELS.md lists them) into
+// trees, each as a detailed model, <id>.glb, and a light one, <id>_far.glb; and the middle one made from his detailed
+// one by tools/make-tree-mids.mjs, <id>_mid.glb; art/LABELS.md lists them) into
 // map/tree-models.js, which the 3D map reads to draw real trees as the view comes close.
 // Each model is plain: corners with a direction and a colour, in two parts (bark, foliage), no pictures. Packed small:
 // places as 16-bit numbers, directions and colours as 8-bit. The models' colours are stored the way a screen shows
@@ -37,15 +38,15 @@ function pack(m) {
 }
 const trees = {};
 for (const id of IDS) {
-  const near = read(path.join(DIR, id + '.glb')), far = read(path.join(DIR, id + '_far.glb'));
+  const near = read(path.join(DIR, id + '.glb')), mid = read(path.join(DIR, id + '_mid.glb')), far = read(path.join(DIR, id + '_far.glb'));
   let top = 0; for (let i = 1; i < near.pos.length; i += 3) top = Math.max(top, near.pos[i]);
-  trees[id] = { name: near.asset.name, where: near.asset.where, tall: Math.round(top * 100) / 100, near: pack(near), far: pack(far) };
-  console.log(id.padEnd(16) + near.asset.name.padEnd(16) + (top.toFixed(1) + ' m tall').padEnd(13) + 'detailed ' + String(trees[id].near.triangles).padStart(5) + ' triangles · light ' + String(trees[id].far.triangles).padStart(4));
+  trees[id] = { name: near.asset.name, where: near.asset.where, tall: Math.round(top * 100) / 100, near: pack(near), mid: pack(mid), far: pack(far) };
+  console.log(id.padEnd(16) + near.asset.name.padEnd(16) + (top.toFixed(1) + ' m tall').padEnd(13) + 'detailed ' + String(trees[id].near.triangles).padStart(5) + ' triangles · middle ' + String(trees[id].mid.triangles).padStart(4) + ' · light ' + String(trees[id].far.triangles).padStart(4));
 }
 const out = `// tree-models.js: Chris's eight tree models from his Field & Forest · Forest Builder (art/trees/, listed in
 // art/LABELS.md), packed by tools/make-tree-models.mjs. Not written by hand.
-// Each tree: its name, where it grows (the Forest Builder's own note), how tall it stands in metres, and two models,
-// near (detailed) and far (light). A model's data, base64: every corner's place (three 16-bit numbers, times
+// Each tree: its name, where it grows (the Forest Builder's own note), how tall it stands in metres, and three models:
+// near (detailed), mid (about a quarter as detailed, made from it) and far (light). A model's data, base64: every corner's place (three 16-bit numbers, times
 // reach / 32767 = metres), then every corner's direction (three 8-bit numbers and a spare), then every corner's
 // colour (red, green, blue, and 1 for foliage or 0 for bark), then the triangles (three 16-bit corner numbers each).
 // leaf: the foliage's average colour.

@@ -45,8 +45,11 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   3D world (`map/moods.js`: leaf tints, fog, moonlight), so the fen's heart is dark and the Thornwood a little violet.
 - **Real trees as you zoom in** (November 16, night): eight of Chris's tree models from his Field & Forest · Forest
   Builder (`art/trees/`: spruce, ponderosa pine, bur oak, cottonwood, aspen, weeping willow, mesquite, dead snag).
-  Far off, a tree is its simple shape. Closer than 6.5 km (13 km on a laptop) the trees nearest the eye become his
-  light models; closer than 3.6 km (5.6 km) the very nearest become his detailed ones. They are the same trees in the
+  Far off, a tree is its simple shape. Closer than 13 km (20 km on a laptop) the trees nearest the eye become his
+  light models; closer than 3.6 km (5.6 km) the very nearest become his detailed ones. Between the two (Chris,
+  November 17) stand **middle models**, made from his detailed ones at about a quarter of the triangles
+  (`tools/make-tree-mids.mjs`), and drawn from three times as far off as the detailed ones (3.5 times on a laptop):
+  closer than 10.8 km (19.6 km). If the frames come slowly with models on the screen, fewer trees are drawn as models. They are the same trees in the
   same places, each kind where it belongs (willows in the fen, cottonwoods by water, spruce in the cold zones, mesquite
   in the desert), tinted to the colours their simple shapes have, so zone 3's are frosted and zone 4's under snow.
   The view now comes as close as 550 m.
@@ -58,8 +61,8 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   | The land's squares | 576 x 384 | 1152 x 768 |
   | Trees | 47,900, plain shapes | 96,100; fuller shapes near, plain far off |
   | Ground textures | 256 px each | 512 px each |
-  | Tree models, zoomed in | 56 detailed, 900 light | 150 detailed, 4,200 light |
-  | Triangles drawn | 0.2 to 1.1 million | 1.3 to 3.9 million |
+  | Tree models, zoomed in | 56 detailed, 400 middle, 700 light | 150 detailed, 1,600 middle, 3,200 light |
+  | Triangles drawn | 0.4 to 1.6 million | 1.8 to 6.0 million |
 
 - **The zones** are the game's four level bands (`src/game/world.js`). A zone not reached yet lies under a low, ragged
   mist; so does everything outside the four. Tall ground stands half out of it, and the castle and towers show through.
@@ -70,7 +73,7 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   down to look from above). Two fingers pinch to zoom, slide to move, twist to turn. The moon button flies back to Io,
   north up. The page opens on the whole land and flies down to her. "Move Io" (this demo only) puts her in any of the
   21 walking places; its list shows the frame rate and the counts.
-- **Size:** 5.2 MB, works offline (one file for both levels).
+- **Size:** 5.5 MB, works offline (one file for both levels).
 
 ### What isn't there yet
 
@@ -114,7 +117,8 @@ It needs three.js r128, `src/game/world.js`, `map/places.js`, `map/art.js` and `
   which says what each holds.
 - `tools/`: `make-terrain.mjs` (reads the atlas; `--look <folder>` writes pictures to check by eye),
   `make-ground-layers.mjs` (packs the made textures), `make-moods.mjs` (reads the places' atmospheres),
-  `make-tree-models.mjs` (packs the tree models), `check-places.mjs`,
+  `make-tree-mids.mjs` (makes the middle tree models), `make-tree-models.mjs` (packs the tree models),
+  `tree-lineup.html` (a check page: every tree at its three levels), `check-places.mjs`,
   `shots.mjs` (stills at a phone's size, from set views), `touch-test.mjs` (the fingers and buttons, as a phone would).
 
 ## Build and check
@@ -123,6 +127,7 @@ It needs three.js r128, `src/game/world.js`, `map/places.js`, `map/art.js` and `
 node moon-faire-witches/world-map/tools/make-terrain.mjs          (only if the atlas or the reading changes)
 node moon-faire-witches/world-map/tools/make-ground-layers.mjs    (when Chris remakes a texture; reads texture-packs/made/)
 node moon-faire-witches/world-map/tools/make-moods.mjs            (when the 3D world's places change their tints or fog)
+node moon-faire-witches/world-map/tools/make-tree-mids.mjs        (when a detailed tree model changes; then the next line)
 node moon-faire-witches/world-map/tools/make-tree-models.mjs      (when a tree model in art/trees/ changes)
 node moon-faire-witches/world-map/tools/check-places.mjs
 node tools/build.mjs --offline moon-faire-witches/world-map/envoi-map-where.html

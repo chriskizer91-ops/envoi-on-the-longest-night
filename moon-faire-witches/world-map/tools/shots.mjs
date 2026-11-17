@@ -32,6 +32,9 @@ const VIEWS = [
   { name: 'trees-frost', io: 'cold-moor', open: [1, 2, 3], view: { x: 1500, y: 700, dist: 140, yaw: 0.9, tilt: 0.3 } },
   { name: 'trees-snow', io: 'frozen-camp', open: [1, 2, 3, 4], view: { x: 2790, y: 1080, dist: 130, yaw: -0.6, tilt: 0.3 } },
   { name: 'trees-mid', io: 'dawnroost', open: [1, 2], view: { x: 1240, y: 1180, dist: 420, yaw: 0.3, tilt: 0.5 } },
+  { name: 'trees-far-1', io: 'wickhollow', open: [1, 2], view: { x: 1085, y: 1535, dist: 330, yaw: -0.4, tilt: 0.42 } },
+  { name: 'trees-far-2', io: 'wickhollow', open: [1, 2], view: { x: 1085, y: 1535, dist: 700, yaw: -0.4, tilt: 0.5 } },
+  { name: 'trees-far-3', io: 'wickhollow', open: [1, 2], view: { x: 1085, y: 1535, dist: 1050, yaw: -0.4, tilt: 0.55 } },
   { name: 'castle', io: 'crossroads', open: [1, 2, 3, 4], view: { x: 2340, y: 1240, dist: 420, yaw: -0.5, tilt: 0.42 } },
   { name: 'mesas', io: 'crossroads', open: [1, 2, 3, 4], view: { x: 3650, y: 1750, dist: 1500, yaw: 2.2, tilt: 0.45 } },
   { name: 'west-from-sea', io: 'dawnroost', open: [1, 2, 3, 4], view: { x: 1100, y: 1500, dist: 2400, yaw: -1.5, tilt: 0.4 } },
@@ -64,7 +67,7 @@ for (const v of VIEWS) {
   }, v);
   const f = path.join(out, v.name + '.png');
   await page.screenshot({ path: f });
-  console.log(v.name.padEnd(18), r.triangles + ' triangles, ' + r.calls + ' draw calls' + (r.models && (r.models.near || r.models.mid) ? ' · tree models: ' + r.models.near + ' detailed, ' + r.models.mid + ' light' : ''));
+  console.log(v.name.padEnd(18), r.triangles + ' triangles, ' + r.calls + ' draw calls' + (r.models && (r.models.near || r.models.mid || r.models.far) ? ' · tree models: ' + r.models.near + ' detailed, ' + r.models.mid + ' middle, ' + r.models.far + ' light' : ''));
 }
 console.log(errors.length ? errors.join('\n') : '0 page errors');
 await browser.close();

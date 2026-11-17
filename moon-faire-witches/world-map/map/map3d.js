@@ -268,13 +268,15 @@
 
   // how much is drawn: 'phone' (what a Pixel 7a runs well) or 'laptop' (twice the land's squares each way, about
   // twice the trees with fuller shapes, the ground textures twice as sharp).
-  // models: how many of the nearest trees are drawn as Chris's detailed tree models (near) and as his light ones (mid),
-  // once the view is closer than zoom (nearZoom for the detailed ones), looking no farther than reach for them
+  // models: how many of the nearest trees are drawn as Chris's detailed tree models (near), as the middle models made
+  // from them at about a quarter of the detail (mid), and as his light ones (far): the detailed once the view is closer
+  // than nearZoom, the middle from 3 to 3.5 times as far off (midZoom), the light from zoom; looking no farther than
+  // reach for them
   const DETAIL = {
     phone: { squares: [576, 384], pieces: [4, 4], treeGap: 8.5, treeFar: 3900, layer: 256, sharp: 1.75, pine: [5, 2], leaf: [6, 1],
-      models: { near: 56, mid: 900, zoom: 650, nearZoom: 360, reach: 420 } },
+      models: { near: 56, mid: 400, far: 700, nearZoom: 360, midZoom: 1080, zoom: 1300, reach: 520 } },
     laptop: { squares: [1152, 768], pieces: [8, 8], treeGap: 6, treeFar: 5000, treeFull: 1500, patches: [12, 8], layer: 512, sharp: 2, pine: [7, 3], leaf: [7, 2],
-      models: { near: 150, mid: 4200, zoom: 1300, nearZoom: 560, reach: 800 } },
+      models: { near: 150, mid: 1600, far: 3200, nearZoom: 560, midZoom: 1960, zoom: 2000, reach: 900 } },
   };
   function create(host, opts) {
     const P = window.MapPlaces, art = opts.art, detail = DETAIL[opts.detail] ? opts.detail : 'phone', LV = DETAIL[detail];
@@ -503,12 +505,13 @@
     }
 
     // ---- Chris's tree models (map/tree-models.js, from his Forest Builder), for the trees nearest the eye.
-    // Far off a tree is its simple shape. As the view comes close, the nearest trees become his light models, and the very
-    // nearest his detailed ones: the same trees, in the same places, tinted to the same colours ----
+    // Far off a tree is its simple shape. As the view comes close, the nearest trees become his light models, then the
+    // middle models (about a quarter of the detail, from three times as far off as the detailed), and the very nearest
+    // his detailed ones: the same trees, in the same places, tinted to the same colours ----
     // how tall each stands on the map at size 1, in the map's units (trees are drawn about seven times life size, as the
     // simple shapes are, or a forest would be a film of moss at this scale)
     const TALL = { tree_spruce: 12, tree_ponderosa: 13.5, tree_oak: 7.6, tree_cottonwood: 8.8, tree_aspen: 10, tree_willow: 7.2, tree_mesquite: 6.5, tree_snag: 6.5 };
-    const models = {}; let chosen = new Map(), lastPick = null; const MD = LV.models;
+    const models = {}; let chosen = new Map(), lastPick = null, treeQ = 1; const MD = LV.models; // treeQ: the share of the budgets in use (it drops if the frames come slowly)
     function buildModels() {
       const src = window.MAP_TREES; if (!src) return;
       const mat = material(THING_V, THING_F, null, { side: THREE.DoubleSide, defines: { MODEL: '' } }), C = new THREE.Color(1, 1, 1);
@@ -525,7 +528,7 @@
       };
       for (const [id, m] of Object.entries(src)) {
         const make = (lod, cap) => { const mesh = new THREE.InstancedMesh(unpack(m[lod]), mat, cap); mesh.setColorAt(0, C); mesh.count = 0; mesh.frustumCulled = false; scene.add(mesh); return mesh; };
-        models[id] = { tall: m.tall, leaf: m.near.leaf, near: make('near', MD.near), mid: make('far', MD.mid) };
+        models[id] = { tall: m.tall, leaf: m.near.leaf, near: make('near', MD.near), mid: make('mid', MD.mid), far: make('far', MD.far) };
       }
       stats.treeModels = Object.keys(models).length;
     }
@@ -559,10 +562,11 @@
           }
         }
         cand.sort((a, b) => a.d - b.d);
-        const nNear = C.dist < MD.nearZoom ? Math.min(MD.near, cand.length) : 0, nAll = Math.min(cand.length, nNear + MD.mid);
-        for (let i = 0; i < nAll; i++) want.set(cand[i], i < nNear ? 'near' : 'mid');
+        const nNear = C.dist < MD.nearZoom ? Math.min(Math.round(MD.near * treeQ), cand.length) : 0, nMid = nNear + (C.dist < MD.midZoom ? Math.round(MD.mid * treeQ) : 0);
+        const nAll = Math.min(cand.length, nMid + Math.round(MD.far * treeQ));
+        for (let i = 0; i < nAll; i++) want.set(cand[i], i < nNear ? 'near' : i < nMid ? 'mid' : 'far');
       }
-      for (const m of Object.values(models)) { m.near.count = 0; m.mid.count = 0; }
+      for (const m of Object.values(models)) { m.near.count = 0; m.mid.count = 0; m.far.count = 0; }
       const touched = new Set();
       for (const [t, tier] of want) {
         const mesh = models[t.sp][tier], i = mesh.count++, tint = modelTint(t);
@@ -571,7 +575,7 @@
       }
       for (const t of chosen.keys()) if (!want.has(t)) { t.mesh.setMatrixAt(t.i, shapeMatrix(t)); touched.add(t.mesh); } // and comes back
       for (const mesh of touched) { mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true; }
-      chosen = want; stats.models = { near: 0, mid: 0 }; for (const tier of want.values()) stats.models[tier]++;
+      chosen = want; stats.models = { near: 0, mid: 0, far: 0 }; for (const tier of want.values()) stats.models[tier]++;
     }
 
     // ---- the castle, and a little of each town and landmark (at this height a town is a few roofs and their lights) ----
@@ -772,7 +776,9 @@
       step(dt, real); render();
       frames++; fpsT += real; if (fpsT >= 1) { fps = frames / fpsT; frames = 0; fpsT = 0;
         // a phone that draws the map slowly gets it a little less sharp (never below one pixel per pixel)
-        if (fps < 40 && pr > 1) { if (++slow >= 2) { pr = Math.max(1, pr - 0.25); renderer.setPixelRatio(pr); resize(); slow = 0; } } else slow = 0; }
+        if (fps < 40 && pr > 1) { if (++slow >= 2) { pr = Math.max(1, pr - 0.25); renderer.setPixelRatio(pr); resize(); slow = 0; } } else slow = 0;
+        // and if the frames still come slowly with tree models on the screen, fewer of them are drawn as models
+        if (fps < 26 && chosen.size && treeQ > 0.3) { treeQ = Math.max(0.3, treeQ * 0.75); lastPick = null; } }
     }
     function step(dt, real) {
       uniforms.uTime.value += dt; uniforms.uGlow.value = 0.5 + 0.5 * Math.sin(uniforms.uTime.value * 1.8);
@@ -820,7 +826,7 @@
       // to Io: close enough to see her country, north up, looking across the land
       findIo() { return ioAt ? flyTo(ioAt[0], ioAt[1], 1000, undefined, 0, 0.72) : Promise.resolve(); },
       get io() { return ioAt && { place: ioPlace, at: ioAt.slice() }; },
-      numbers() { return { detail, textured: !!layers, models: stats.models, fps: Math.round(fps), triangles: renderer.info.render.triangles, calls: renderer.info.render.calls, sharp: pr, trees: stats.trees, houses: stats.houses }; },
+      numbers() { return { detail, textured: !!layers, models: stats.models, treeShare: treeQ, fps: Math.round(fps), triangles: renderer.info.render.triangles, calls: renderer.info.render.calls, sharp: pr, trees: stats.trees, houses: stats.houses }; },
       stop() { running = false; },
       P: { scene, camera, renderer, C },
     };
