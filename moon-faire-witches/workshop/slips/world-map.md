@@ -130,8 +130,8 @@ Open:     0. For the hub: the page's textures are packed from texture-packs/made
           2. Of the places built in 3D, only their buildings are on the map (not walls, wells, bridges, jetties, lamps).
              Misthollow's houses sit on steep ground and some are half sunk in it.
           3. Not there yet: roads, the long bridge to the shipyard, Rotbridge, waterfalls, beaches.
-             The open sea's texture still shows its repeat from far above: art-requests/world-map-round-1.md asks
-             Chris for a sea made to be seen from high up, and for layered mountain rock.
+             (The sea made to be seen from high up and the layered mountain rock asked for in
+             art-requests/world-map-round-1.md: Chris made them the same morning, and they are in.)
           4. For Chris: are the walking places where he sees them? The jetty is west of Wickhollow on foot, but the
              Magpie's dock is east of it on the atlas; the map keeps it at the dock.
           5. Answered (20:18): Skies' four ships, the next ship part of each gate between zones.
