@@ -1403,7 +1403,147 @@ function makeBattleSound(opts) {
       if (sec >= 3 && !ebb && s === 0 && !(bar & 1)) iDrone(K, [659.26, 698.46], t, 32 * sd, 0.022 * p, { att: 1.2, rel: 1.2, cut: 1700, to: trem(K.pad, 9, 0.7, t, 32 * sd) });   // near the height: high strings shivering on two notes a half step apart
     },
   });
-  const parts = ['battle', 'boss', 'lift', 'ashenReel', 'ethereal', 'ominous'].map((n) => ({ name: n, what: SONGS[n].what, seconds: SONGS[n].seconds, bars: SONGS[n].bars }));
+  // ---- three more in the same dark vein, each at its own energy (November 17, 2026). Chris heard the three above and
+  // said: "lock those three in ... Let's make three more in that direction, but different energy, same vibe." They use
+  // the same players (the out-of-tune music box, the low strings, the voices, the far bell, the kettle and deep drums,
+  // the drones) in the same key (E minor with its sour F and B flat), and nothing bright: no cymbals, no tambourine.
+  //   frenzy:    the highest energy. A dance that cannot stop, in 6/8 at 150 beats a minute, 64 bars (about 51 seconds):
+  //              the low strings gallop on every step over a deep drum. A (the music box runs a frantic tune), B (voices
+  //              wail over it), C (hard short calls on low brass, kettle drums answering, a sour swell rising), D (the
+  //              ashen reel's own tune comes back at full speed on the box, the strings shadowing it, the bell tolling)
+  //   dirge:     the lowest energy. A lament, 4/4 at 52 beats a minute, 12 bars (about 55 seconds): a long low drone, a
+  //              funeral drum and a faint pulse, a cold breath of wind, and the music box alone, a note or two a bar,
+  //              with one low voice under its long notes. A bowed low string joins for the last four bars
+  //   reckoning: rising and resolute. A slow march in 12/8 at 90 beats a minute, 24 bars (64 seconds), in six steps of
+  //              four bars: the low strings tread alone, the tune comes in low on brass and climbs a step at a time,
+  //              voices and a running harp join, then the music box on top, up to an arrival on the home chord with the
+  //              great bell (bar 23). The last bar draws back so the round can begin again without a jolt
+  song('frenzy', {
+    what: 'The highest energy: a dance that cannot stop. Low strings galloping over a deep drum, the music box running a frantic tune, voices wailing, kettle drums. For ambushes, a fight going badly, the last stand.', bpm: 150, beat: 3, spb: 6, per: 6,
+    chords: 'Em Em Em Em F F Em Em  Am Am Em Em F F B B   Am Am Em Em Bb Bb F F  Am Am Em Em F F B B   Em Em Em Em Bb Bb Bb Bb  Em Em Em Em F F B B   Em Em Dm Dm C C F B  Em Em Gm Gm Am Am B B',
+    tune: [
+      // A: the box runs
+      'e5 - b4 e5 f5 g5', 'a5 - g5 f5 - e5', 'e5 - b4 e5 f5 g5', 'b5 - a5 g5 f5 e5', 'f5 - c5 f5 g5 a5', 'c6 - a5 f5 - c5', 'b4 e5 g5 b5 a5 g5', 'f5 - e5 d#5 - b4',
+      'a5 - e5 a5 b5 c6', 'e6 - c6 a5 - e5', 'g5 - e5 g5 a5 b5', 'e6 - b5 g5 - e5', 'f5 a5 c6 f6 c6 a5', 'a5 - g5 f5 - e5', 'd#5 f#5 b5 d#6 b5 f#5', 'a5 - f#5 d#5 - b4',
+      // B: the voices wail over the gallop
+      'e5 - - - - -', 'c5 - - e5 - -', 'b4 - - - - -', '- - - g5 - -', 'f5 - - - - -', 'd5 - - f5 - -', 'a5 - - - - -', 'g5 - - f5 - -',
+      'e5 - - a5 - -', 'b5 - - a5 - -', 'g5 - - - - -', 'e5 - - b4 - -', 'c5 - - f5 - -', 'a5 - - - g5 f5', 'f#5 - - - - -', 'd#5 - - b4 - -',
+      // C: hard short calls, the kettle drums answering
+      'e5 . . g5 f5 e5', 'b4 - - . . .', 'e5 . . g5 a5 g5', 'e5 - - . . .', 'f5 . . bb5 a5 f5', 'd5 - - . . .', 'f5 . . bb5 c6 bb5', 'e5 - - . . .',
+      'g5 . . b5 a5 g5', 'e5 - - b4 - -', 'g5 . . b5 c6 b5', 'e6 - - . . .', 'f5 . . a5 c6 a5', 'f5 - - c5 - -', 'b4 d#5 f#5 b5 f#5 d#5', 'b5 - - a5 g5 f#5',
+      // D: the ashen reel's own tune, at full speed
+      'e5 - b4 e5 - g5', 'f5 - e5 b4 - -', 'd5 - a4 d5 - f5', 'e5 - d5 a4 - -', 'c5 - g4 c5 - e5', 'd5 - c5 g4 - -', 'a4 - c5 f5 - a5', 'g5 - f#5 d#5 - b4',
+      'e5 - b4 e5 - g5', 'b5 - a5 g5 f5 e5', 'd5 - g5 bb5 - d6', 'bb5 - a5 g5 - d5', 'c5 - e5 a5 - c6', 'b5 - a5 e5 - c5', 'b4 d#5 f#5 b5 - a5', 'f#5 - d#5 b4 - -',
+    ],
+    lead(K, f, t, dur, bar) {
+      const sec = bar >> 4;
+      if (sec === 1) { iChoir(K, f, t, dur + 0.25, 0.17, { att: 0.12, rel: 0.3 }); iBox(K, f, t, 0.16, 1); }                 // B: a wailing voice, the box striking each of her notes
+      else if (sec === 2) { iLead(K, f / 2, t, dur * 0.85, 0.19, 'brass'); iStr(K, f / 2, t, dur, 0.12, { att: 0.02 }); }   // C: low brass and strings, in short hard calls
+      else { iBox(K, f, t, 0.27, 0.9); if (sec === 3) iStr(K, f / 2, t, dur, 0.11, { att: 0.03, hold: 0.8 }); }               // A and D: the box; in D the strings shadow it
+    },
+    play(K, bar, s, t, ch) {
+      const sec = bar >> 4, q = bar & 15, sd = this.sd, n = heldFor(this, bar), N = ch.notes;
+      if (bar === 0 && s === 0) K.echo.delayTime.setValueAtTime(sd * 3, t);
+      if (s === 0 && (q === 0 || (sec === 3 && (bar & 3) === 0))) bell(K.toll, 246.94, t, sec === 3 ? 0.42 : 0.34, { set: 'toll', len: 4, strike: 0 });   // the far bell: the top of each section, every four bars in D
+      if (s === 0 && n) iDrone(K, [ch.bass, ch.bass * 1.5, ch.bass * 2], t, n * 6 * sd + 0.4, 0.08, { att: 0.3, rel: 0.4, cut: 460 });
+      const a = [1, 0.5, 0.62, 0.85, 0.5, 0.7][s];
+      if (sec === 2) {                                                                 // C: the gallop drops to a tremor; the strings stab on the two beats
+        iStr(K, ch.bass * 2, t, sd * 0.6, 0.085 * a);
+        if (s === 0 || s === 3) { iStr(K, ch.bass, t, sd * 1.6, 0.27 * a); N.forEach((x) => iStr(K, x / 2, t, sd * 1.2, 0.078)); }
+        if ((bar & 1) && s >= 3 && !this.mel.has(bar * 6 + 3)) timp(K, t, ch.bass * [1.5, 1.26, 1][s - 3], 0.3 + (s - 3) * 0.06);     // the kettle drums answer where the call rests
+        if ((q === 0 || q === 8) && s === 0) { const r = N[0]; iDrone(K, [r, r * 1.0595, r * 1.4142], t, 48 * sd, 0.05, { att: 48 * sd, rel: 0.3, cut: 450, cut1: 1600 }); }   // a sour swell, rising over each eight bars
+      } else {                                                                         // the gallop: the bass note on every step, and the chord running over it an octave higher
+        iStr(K, ch.bass * (s === 5 ? 1.5 : 1), t, sd * 0.85, 0.225 * a);
+        iStr(K, N[[0, 1, 2, 0, 2, 1][s]] / 2, t, sd * 0.8, (sec === 0 && q < 8 ? 0.11 : 0.145) * a);
+      }
+      if (s === 0 || s === 3) lowDrum(K, t, 110, 52, 0.2, s ? 0.32 : 0.41);             // the deep drum on the two beats of every bar
+      if (sec === 3 && s === 5) lowDrum(K, t, 96, 50, 0.16, 0.26);
+      noise(K.perc, t, 0.05, [0.075, 0.03, 0.045, 0.06, 0.03, 0.045][s], { f: 2300, q: 1.5, att: 0.003 });      // a dry rattle on every step
+      if ((sec || q >= 8) && (s === 2 || s === 5)) knock(K.perc, t, 440, 0.1, 0.09);   // and a knock of wood, like bones, off the beat
+      if (sec !== 2 && sec && s === 0 && n) timp(K, t, ch.bass, 0.36);                 // kettle drums at each new chord, from B on
+      if (sec === 3 && s === 0 && !(bar & 3)) iDrone(K, [659.26, 698.46], t, 24 * sd, 0.02, { att: 0.8, rel: 0.8, cut: 1700, to: trem(K.pad, 9, 0.7, t, 24 * sd) });   // D: high strings shivering
+      if (q === 15 && s >= 3) timp(K, t, ch.bass * (s === 5 ? 1.5 : 1), 0.24 + (s - 3) * 0.08);      // three strokes into the next section, and round into the top
+    },
+  });
+  song('dirge', {
+    what: 'The lowest energy: a lament, nearly still. A long low drone, a funeral drum and a faint pulse, a cold breath of wind, and the music box alone, a note or two at a time, with one low voice under it. For the quiet dangerous places, a witch fallen, the night closing in.', bpm: 52, beat: 2, spb: 8, per: 8,
+    chords: 'Em Em Em C  Am Am Em Em  F F Em B',
+    tune: [
+      'b5 - - - g5 - - -', 'e5 - - - - - f5 -', 'e5 - - - - - . .', 'g5 - - - e5 - - -',
+      'c5 - - - - - a5 -', 'g5 - - - e5 - - -', 'b4 - - - - - - -', '- - - - . . . .',
+      'c6 - - - a5 - - -', 'f5 - - - - - g5 -', 'e5 - - - b4 - - -', 'd#5 - - - - - f#5 -',
+    ],
+    lead(K, f, t, dur) {                                                               // the box, each note left to ring; under the long ones a single low voice, slow to come and slow to go
+      iBox(K, f, t, 0.36, 3.2);
+      if (dur > this.sd * 5) iChoir(K, f / 2, t + 0.3, dur + 1, 0.125, { form: OO, att: 1.4, rel: 1.6 });
+    },
+    play(K, bar, s, t, ch) {
+      const sd = this.sd, n = heldFor(this, bar), N = ch.notes;
+      if (bar === 0 && s === 0) K.echo.delayTime.setValueAtTime(sd * 2, t);
+      if (s === 0 && n) {                                                              // the drone, each chord fading into the next, and a thin cold air above it
+        const len = n * 8 * sd;
+        iDrone(K, [ch.bass, ch.bass * 1.5, ch.bass * 2, N[1]], t, len + 2.4, 0.105, { att: 2.4, rel: 2.4, cut: 480 });
+        iDrone(K, [N[0] * 2, N[2] * 2], t, len + 2.4, 0.027, { att: 2.4, rel: 2.4, cut: 1800, type: 'sine', to: K.far });
+      }
+      if (s % 2 === 0) {                                                               // the faint pulse: a soft low note on each beat, with a muted pluck so a phone carries it
+        const a = [1, 0.4, 0.65, 0.4][s / 2];
+        tone(K.bass, 'triangle', ch.bass * 2, t, sd * 1.8, 0.25 * a, { att: 0.03 }); tone(K.bass, 'sine', ch.bass, t, sd * 1.8, 0.2 * a, { att: 0.03 }); iHarp(K, ch.bass * 4, t, 0.19 * a, 0.5);
+      }
+      if (s === 0 || s === 4) lowDrum(K, t, 92, 50, 0.32, s ? 0.27 : 0.46);            // the funeral drum: the first and third beats, and a soft stroke before every other bar
+      if ((bar & 1) && s === 7) lowDrum(K, t, 84, 48, 0.22, 0.17);
+      if (s === 0 && !(bar & 1)) whoosh(K.far, t, 16 * sd, 0.5, 320, 620, { buf: 'pink', q: 1.2 });        // a breath of cold wind, rising and falling over two bars
+      if (s === 0 && (bar === 0 || bar === 6)) bell(K.toll, bar ? 164.81 : 246.94, t, bar ? 0.32 : 0.42, { set: 'toll', len: 7, strike: 0 });   // the far bell, twice a round
+      if (bar >= 8 && s === 0) iStr(K, ch.bass, t, sd * 7, 0.15, { att: 0.8, hold: 0.7 });                   // the last four bars: one low string, bowed slowly
+      // a glass bell or two, a long way off, where the box rests
+      const g = (bar === 2 ? [[6, 2, 2]] : bar === 7 ? [[4, 0, 4], [6, 2, 2]] : bar === 10 ? [[7, 1, 2]] : []).find((x) => x[0] === s);
+      if (g) iGlass(K, N[g[1]] * g[2], t, 0.27);
+    },
+  });
+  song('reckoning', {
+    what: 'Rising and resolute: a slow dark march that climbs. Low strings treading, the tune coming in low on brass and rising step by step, voices and a running harp joining, the music box on top, up to an arrival with the great bell. For Curtain Call, the final boss’s last phase, a hard-won stand.', bpm: 90, beat: 3, spb: 12, per: 12,
+    chords: 'Em Em C C  Em Em C D  Em G C D  Am Am C D  Em G C D  C D Em B',
+    tune: [
+      '. . . . . . . . . . . .', '. . . . . . . . . . . .', '. . . . . . . . . . . .', '. . . . . . . . . . . .',                           // 1: the strings tread alone
+      'e4 - - - - - g4 - - a4 - -', 'b4 - - - - - - - - . . .', 'c5 - - - - - b4 - - g4 - -', 'a4 - - - - - - - - f#4 - -',                 // 2: the tune comes in, low
+      'g4 - - - - - a4 - - b4 - -', 'd5 - - - - - - - - b4 - -', 'e5 - - - - - d5 - - c5 - -', 'd5 - - - - - a4 - - d5 - -',                // 3: it climbs; the voices come in
+      'e5 - - - - - c5 - - e5 - -', 'a5 - - - - - g5 - - e5 - -', 'g5 - - - - - e5 - - c5 - -', 'f#5 - - - - - a5 - - - - -',               // 4: higher; the harp runs
+      'g5 - - - - - a5 - - b5 - -', 'd6 - - - - - - - - b5 - -', 'e6 - - - - - d6 - - c6 - -', 'd6 - - - - - a5 - - d6 - -',                // 5: the height: step 3's tune an octave up, the box on top
+      'e6 - - - - - c6 - - e6 - -', 'f#6 - - - - - d6 - - f#6 - -', 'g6 - - - - - - - - - - -', 'b4 - - - - - - - - . . .',                 // 6: three steps up to the arrival, then it draws back
+    ],
+    // how hard the band plays at each bar: the climb, and the last bar that draws back
+    power(bar) { return bar === 23 ? 0.62 : [0.5, 0.64, 0.78, 0.9, 1, 1.06][bar >> 2]; },
+    lead(K, f, t, dur, bar) {                                                          // the tune: brass, strings under it; from step 4 a voice on its long notes, from step 5 the box on top
+      const p = this.power(bar), sec = bar >> 2, ebb = bar === 23;
+      iLead(K, f / 2, t, dur, 0.22 * p, 'brass'); iStr(K, sec >= 4 ? f / 4 : f / 2, t, dur, 0.12 * p, { att: 0.08, hold: 0.85 });
+      if (sec >= 3 && !ebb && dur > this.sd * 5) iChoir(K, f / 2, t, dur + 0.4, 0.12 * p, { att: 0.3 });
+      if (sec >= 4 && !ebb) iBox(K, f, t, 0.24, 1.6);
+    },
+    play(K, bar, s, t, ch) {
+      const sec = bar >> 2, q = bar & 3, sd = this.sd, p = this.power(bar), n = heldFor(this, bar), N = ch.notes, ebb = bar === 23;
+      if (bar === 0 && s === 0) K.echo.delayTime.setValueAtTime(sd * 3, t);
+      // the bell, on the chord's fifth: the top of the round, the top of each step from the third, every two bars from the height, and loudest at the arrival
+      if (s === 0 && (bar === 0 || (sec >= 2 && q === 0) || (sec >= 4 && q === 2))) bell(K.toll, N[2] / 2, t, bar === 22 ? 0.6 : 0.3 + 0.15 * p, { set: 'toll', len: 6, strike: 0 });
+      if (s === 0 && n) {                                                              // under it all: a low drone; from step 3 the chord itself, opening as the round climbs, and voices holding it
+        const len = n * 12 * sd;
+        iDrone(K, [ch.bass / 2, ch.bass, ch.bass * 1.5], t, len + 0.8, 0.06 * (0.6 + 0.4 * p), { att: 0.8, rel: 0.8, cut: 420 });
+        if (sec >= 2) { iDrone(K, [N[0], N[1], N[2], N[0] * 2], t, len + 0.8, 0.035 * p, { att: 0.8, rel: 0.8, cut: 500 + 700 * p }); iChoir(K, N[0], t, len + 0.5, 0.07 * p); }
+        if (sec >= 3) iChoir(K, N[2], t, len + 0.5, 0.06 * p);
+        if (sec >= 5 && !ebb) iChoir(K, N[1] * 2, t, len + 0.5, 0.05 * p);
+      }
+      if (s % 3 === 0) {                                                               // the low strings tread: four to the bar, the last one leaning up to the fifth once the tune is in
+        const i = s / 3, a = [1, 0.6, 0.8, 0.65][i] * p;
+        iStr(K, ch.bass * (i === 3 && sec >= 1 ? 1.5 : 1), t, sd * 2.3, 0.36 * a); iStr(K, ch.bass * 2, t, sd * 2, (sec >= 2 ? 0.22 : 0.14) * a);
+      } else if (s % 3 === 2 || sec >= 4) iStr(K, ch.bass * 2, t, sd * 0.8, (s % 3 === 2 ? 0.11 : 0.07) * p);      // a short step before each tread; at the height the strings fill every step
+      if (sec >= 1 && s === 0) timp(K, t, ch.bass, 0.38 * p);                          // kettle drums: the top of each bar; from step 4 the third beat too; three strokes into each new step
+      if (sec >= 3 && s === 6) timp(K, t, ch.bass * 1.5, 0.24 * p);
+      if (sec >= 1 && q === 3 && !ebb && s >= 9) timp(K, t, ch.bass * (s === 11 ? 1.5 : 1), (0.18 + (s - 9) * 0.06) * p);
+      if (bar === 21 && s >= 6 && s < 9) timp(K, t, ch.bass, 0.16 + (s - 6) * 0.04);   // and a roll into the arrival
+      if (sec >= 3 && !ebb && (s === 3 || s === 9)) lowDrum(K, t, 120, 50, 0.3, 0.45 * p);                   // a heavy low drum between the treads, from step 4
+      if (bar === 22 && s === 0) lowDrum(K, t, 120, 46, 0.45, 0.6);
+      if (sec >= 3 && !ebb) iHarp(K, N[[0, 1, 2, 1, 2, 0][s % 6]] * (s >= 6 ? 2 : 1), t, 0.12 * p, 0.6);     // from step 4: a harp running over the chord
+    },
+  });
+  const parts = ['battle', 'boss', 'lift', 'ashenReel', 'ethereal', 'ominous', 'frenzy', 'dirge', 'reckoning'].map((n) => ({ name: n, what: SONGS[n].what, seconds: SONGS[n].seconds, bars: SONGS[n].bars }));
   function playStep(K, S, bar, s, t) {
     S.play(K, bar, s, t, S.chords[bar]);
     if (s % S.unit === 0) { const ev = S.mel.get(bar * S.per + s / S.unit); if (ev) S.lead(K, ev.f, t, ev.len * S.unit * S.sd, bar); }
