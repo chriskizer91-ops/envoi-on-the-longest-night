@@ -3,6 +3,9 @@
 The world3d job (November 16, 2026): Envoi's places made 3D one at a time, with Moon Faire's Io walking them. The first
 is Wickhollow's town square. Brief: `../workshop/world-3d.md`; slip: `../workshop/slips/world-3d.md`.
 
+**To play (November 17):** all 21 walking places are built, in four zones (`game/`, joined on foot). Ready-to-play
+offline copies of the four zones are in `builds/`; its README labels each one.
+
 ## The page
 
 | Page | File | State |
