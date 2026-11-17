@@ -128,6 +128,8 @@
       vec2 p = (vW.xz + ((k == 1 || k == 2) ? uTime * vec2(1.2, 0.7) : vec2(0.0))) * fine;
       vec3 t1 = texture(layers, vec3(p / 96.0, L)).rgb, t2 = texture(layers, vec3(mat2(0.8, -0.6, 0.6, 0.8) * p / 250.0 + 0.37, L)).rgb;
       vec3 c = mix(t1, t2, clamp(0.3 * smoothstep(0.3, 0.7, n2(vW.xz * 0.006 + 3.0)) + 0.55 * smoothstep(500.0, 2600.0, vDepth), 0.0, 0.85));
+      // close to, the same texture again much finer, so the ground has grain under the trees
+      c = mix(c, texture(layers, vec3(p / 21.0 + 0.11, L)).rgb, 0.5 * (1.0 - smoothstep(60.0, 300.0, vDepth)));
       // a steep face: the cliff texture (the mesa's own in the east), laid on it upright
       vec2 q = vec2(dot(vW.xz, vec2(0.7071)), vW.y * 1.3) / 80.0;
       vec3 cl = texture(layers, vec3(q, mix(9.0, 7.0, dry))).rgb * mix(1.0, 0.8, dry);
@@ -167,33 +169,44 @@
       c = mix(c, vec3(0.80, 0.86, 0.95), surf * (0.45 + 0.4 * n2(vW.xz * 0.4 + uTime * 0.4)));
       gl_FragColor = vec4(finish(c, vW, vDepth, 1.0), 1.0);
     }`;
-  // trees (one shape drawn thousands of times, each with its own colour) and buildings (one mesh, a colour per corner)
+  // trees and buildings. Three sorts: a simple tree shape drawn thousands of times, each with its own colour; one mesh
+  // of buildings with a colour per corner; and (MODEL) Chris's tree models, with their own colours, tinted per tree
   const THING_V = `
-    #ifdef USE_INSTANCING_COLOR
-      varying vec3 vC;
-    #else
-      attribute vec3 acolor; varying vec3 vC;
+    #if defined(MODEL) || !defined(USE_INSTANCING_COLOR)
+      attribute vec3 acolor;
     #endif
-    varying vec3 vW; varying float vDepth;
+    varying vec3 vC, vW, vN; varying float vDepth;
     void main() {
       #ifdef USE_INSTANCING
-        vec4 w = modelMatrix * instanceMatrix * vec4(position, 1.0);
+        mat4 mm = modelMatrix * instanceMatrix;
       #else
-        vec4 w = modelMatrix * vec4(position, 1.0);
+        mat4 mm = modelMatrix;
       #endif
-      #ifdef USE_INSTANCING_COLOR
-        vC = instanceColor;
+      #ifdef MODEL
+        vC = acolor * instanceColor; vN = normalize(mat3(mm) * normal);
       #else
-        vC = acolor;
+        vN = vec3(0.0, 1.0, 0.0);
+        #ifdef USE_INSTANCING_COLOR
+          vC = instanceColor;
+        #else
+          vC = acolor;
+        #endif
       #endif
+      vec4 w = mm * vec4(position, 1.0);
       vW = w.xyz; vec4 mv = viewMatrix * w; vDepth = -mv.z; gl_Position = projectionMatrix * mv;
     }`;
   const THING_F = `
     uniform float uMood;
-    varying vec3 vC, vW; varying float vDepth;
+    varying vec3 vC, vW, vN; varying float vDepth;
     ${FINISH}
     void main() {
-      vec3 n = normalize(cross(dFdx(vW), dFdy(vW)));
+      #ifdef MODEL
+        // a model's own directions; a leaf is lit on whichever side is seen, and a little from above always
+        vec3 n = normalize(vN); if (!gl_FrontFacing) n = -n;
+        n = normalize(n + vec3(0.0, 0.55, 0.0));
+      #else
+        vec3 n = normalize(cross(dFdx(vW), dFdy(vW)));
+      #endif
       gl_FragColor = vec4(finish(moonlit(mooded(vC, vW, uMood), n), vW, vDepth, 0.0), 1.0);
     }`;
   // the towns' lit windows: small warm points, dimmed under the mist
@@ -254,10 +267,14 @@
   }
 
   // how much is drawn: 'phone' (what a Pixel 7a runs well) or 'laptop' (twice the land's squares each way, about
-  // twice the trees with fuller shapes, the ground textures twice as sharp)
+  // twice the trees with fuller shapes, the ground textures twice as sharp).
+  // models: how many of the nearest trees are drawn as Chris's detailed tree models (near) and as his light ones (mid),
+  // once the view is closer than zoom (nearZoom for the detailed ones), looking no farther than reach for them
   const DETAIL = {
-    phone: { squares: [576, 384], pieces: [4, 4], treeGap: 8.5, treeFar: 3900, layer: 256, sharp: 1.75, pine: [5, 2], leaf: [6, 1] },
-    laptop: { squares: [1152, 768], pieces: [8, 8], treeGap: 6, treeFar: 5000, treeFull: 1500, patches: [12, 8], layer: 512, sharp: 2, pine: [7, 3], leaf: [7, 2] },
+    phone: { squares: [576, 384], pieces: [4, 4], treeGap: 8.5, treeFar: 3900, layer: 256, sharp: 1.75, pine: [5, 2], leaf: [6, 1],
+      models: { near: 56, mid: 900, zoom: 650, nearZoom: 360, reach: 420 } },
+    laptop: { squares: [1152, 768], pieces: [8, 8], treeGap: 6, treeFar: 5000, treeFull: 1500, patches: [12, 8], layer: 512, sharp: 2, pine: [7, 3], leaf: [7, 2],
+      models: { near: 150, mid: 4200, zoom: 1300, nearZoom: 560, reach: 800 } },
   };
   function create(host, opts) {
     const P = window.MapPlaces, art = opts.art, detail = DETAIL[opts.detail] ? opts.detail : 'phone', LV = DETAIL[detail];
@@ -416,7 +433,10 @@
     }
 
     // ---- the trees: stood where the forests are, in patches of the map so the far ones needn't be drawn ----
-    const treePatches = [];
+    const treePatches = [], treeCells = [], CELL = 96, CELLS = Math.ceil(AW / CELL);
+    const TM = new THREE.Matrix4(), TQ = new THREE.Quaternion(), TUP = new THREE.Vector3(0, 1, 0), TS = new THREE.Vector3(), TT = new THREE.Vector3();
+    // where a tree's simple shape stands (hide: shrunk to nothing, while one of Chris's models stands there instead)
+    const shapeMatrix = (t, hide) => TM.compose(TT.set(t.ax - AW / 2, t.y - 0.3, t.ay - AH / 2), TQ.setFromAxisAngle(TUP, t.ry), hide ? TS.set(0, 0, 0) : TS.set(t.size, t.size * (t.pine ? 1.15 : 1), t.size));
     function buildTrees() {
       const R = rng(1911), SP = LV.treeGap, [CX, CY] = LV.patches || [6, 4], cw = AW / CX, chh = AH / CY;
       const lists = { pine: [], leafy: [] }; for (const k in lists) for (let i = 0; i < CX * CY; i++) lists[k].push([]);
@@ -438,7 +458,16 @@
         if (zone === 2 && !pine) c = [0.17 + r4 * 0.08, 0.46 + r4 * 0.14, 0.24 + r4 * 0.08];
         else if (zone === 3) c = pine ? [0.2 + r4 * 0.1, 0.36 + r4 * 0.1, 0.36 + r4 * 0.1] : r4 < 0.5 ? [0.36 + r4 * 0.16, 0.27, 0.22] : [0.3, 0.25 + r4 * 0.08, 0.34];
         else if (zone === 4) c = pine ? [0.56 + r4 * 0.16, 0.66 + r4 * 0.14, 0.86] : [0.46 + r4 * 0.1, 0.52 + r4 * 0.1, 0.64];
-        lists[pine ? 'pine' : 'leafy'][clamp(Math.floor(ay / chh), 0, CY - 1) * CX + clamp(Math.floor(ax / cw), 0, CX - 1)].push([ax, ay, size * (dry ? 0.6 : 1), r4 * 6.28, c]);
+        // which of Chris's trees it is, seen close: by its ground, its zone, and whether water is by
+        const r5 = hash2(gx * 1.37 + 3.1, gy * 2.11 + 1.7), wet = (q) => q === KIND.river || q === KIND.lake;
+        const byWater = wet(kindAt(ax + 14, ay)) || wet(kindAt(ax - 14, ay)) || wet(kindAt(ax, ay + 14)) || wet(kindAt(ax, ay - 14));
+        const sp = pine ? (zone >= 3 ? (r5 < 0.9 ? 'tree_spruce' : 'tree_snag') : (k === KIND.rock || r5 < 0.38 ? 'tree_ponderosa' : 'tree_spruce'))
+          : fen ? (r5 < 0.62 ? 'tree_willow' : r5 < 0.82 ? 'tree_snag' : 'tree_cottonwood')
+          : dry ? (r5 < 0.85 ? 'tree_mesquite' : 'tree_snag')
+          : zone >= 3 ? (r5 < 0.6 ? 'tree_aspen' : r5 < 0.8 ? 'tree_snag' : 'tree_oak')
+          : byWater ? (r5 < 0.55 ? 'tree_cottonwood' : 'tree_willow')
+          : (r5 < 0.5 ? 'tree_oak' : r5 < 0.75 ? 'tree_aspen' : 'tree_cottonwood');
+        lists[pine ? 'pine' : 'leafy'][clamp(Math.floor(ay / chh), 0, CY - 1) * CX + clamp(Math.floor(ax / cw), 0, CX - 1)].push({ ax, ay, size: size * (dry ? 0.6 : 1), ry: r4 * 6.28, c, pine, sp, zone });
       }
       // a pine: two cones, one on the other; a leafy tree: a round crown, a ring of faces under a low cap (both stand on
       // y = 0). Built by hand, a triangle per face, so nothing is drawn that can't be seen
@@ -452,14 +481,14 @@
       const [ps, pt] = LV.pine, [ls, lb] = LV.leaf;
       const pineGeo = pt === 2 ? plain.pine : shape(cone(3.4, 5.2, 0.5, ps), cone(2.7, 4.6, 3.3, ps), cone(1.8, 4.4, 6.0, ps));
       const leafGeo = lb === 1 ? plain.leafy : shape(band(2.2, 0.8, 3.5, 2.6, ls), band(3.5, 2.6, 3.0, 4.6, ls), band(3.0, 4.6, 1.6, 5.9, ls), cone(1.6, 0.5, 5.9, ls));
-      const mat = material(THING_V, THING_F, null, { side: THREE.DoubleSide }), M = new THREE.Matrix4(), Q = new THREE.Quaternion(), UP = new THREE.Vector3(0, 1, 0), S = new THREE.Vector3(), T = new THREE.Vector3(), C = new THREE.Color();
+      const mat = material(THING_V, THING_F, null, { side: THREE.DoubleSide }), C = new THREE.Color();
       for (const [kind, geo] of [['pine', pineGeo], ['leafy', leafGeo]]) for (let ci = 0; ci < CX * CY; ci++) {
         const list = lists[kind][ci]; if (!list.length) continue;
         const mesh = new THREE.InstancedMesh(geo, mat, list.length); let top = 0;
-        list.forEach(([ax, ay, size, ry, c], i) => {
-          const y = heightAt(ax, ay); top = Math.max(top, y);
-          M.compose(T.set(ax - AW / 2, y - 0.3, ay - AH / 2), Q.setFromAxisAngle(UP, ry), S.set(size, size * (kind === 'pine' ? 1.15 : 1), size));
-          mesh.setMatrixAt(i, M); mesh.setColorAt(i, C.setRGB(c[0], c[1], c[2]));
+        list.forEach((t, i) => {
+          t.y = heightAt(t.ax, t.ay); top = Math.max(top, t.y); t.mesh = mesh; t.i = i;
+          mesh.setMatrixAt(i, shapeMatrix(t)); mesh.setColorAt(i, C.setRGB(t.c[0], t.c[1], t.c[2]));
+          const cell = Math.floor(t.ax / CELL) + Math.floor(t.ay / CELL) * CELLS; (treeCells[cell] || (treeCells[cell] = [])).push(t);
         });
         mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
         mesh.frustumCulled = false; // (an instanced mesh's own bounds are its one shape's: the patch is tested below instead)
@@ -471,6 +500,78 @@
           far.frustumCulled = false; far.visible = false; scene.add(far); mesh.userData.far = far;
         }
       }
+    }
+
+    // ---- Chris's tree models (map/tree-models.js, from his Forest Builder), for the trees nearest the eye.
+    // Far off a tree is its simple shape. As the view comes close, the nearest trees become his light models, and the very
+    // nearest his detailed ones: the same trees, in the same places, tinted to the same colours ----
+    // how tall each stands on the map at size 1, in the map's units (trees are drawn about seven times life size, as the
+    // simple shapes are, or a forest would be a film of moss at this scale)
+    const TALL = { tree_spruce: 12, tree_ponderosa: 13.5, tree_oak: 7.6, tree_cottonwood: 8.8, tree_aspen: 10, tree_willow: 7.2, tree_mesquite: 6.5, tree_snag: 6.5 };
+    const models = {}; let chosen = new Map(), lastPick = null; const MD = LV.models;
+    function buildModels() {
+      const src = window.MAP_TREES; if (!src) return;
+      const mat = material(THING_V, THING_F, null, { side: THREE.DoubleSide, defines: { MODEL: '' } }), C = new THREE.Color(1, 1, 1);
+      const unpack = (m) => {
+        const raw = atob(m.data), bytes = new Uint8Array(raw.length); for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+        const n = m.corners, i16 = new Int16Array(bytes.buffer, 0, n * 3), i8 = new Int8Array(bytes.buffer, n * 6, n * 4), u8 = new Uint8Array(bytes.buffer, n * 10, n * 4);
+        const pos = new Float32Array(n * 3), nrm = new Float32Array(n * 3), col = new Float32Array(n * 3);
+        for (let i = 0; i < n * 3; i++) pos[i] = i16[i] * m.reach / 32767;
+        for (let i = 0; i < n; i++) for (let c = 0; c < 3; c++) { nrm[i * 3 + c] = i8[i * 4 + c] / 127; col[i * 3 + c] = u8[i * 4 + c] / 255; }
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(nrm, 3)); g.setAttribute('acolor', new THREE.BufferAttribute(col, 3));
+        g.setIndex(new THREE.BufferAttribute(new Uint16Array(bytes.buffer, n * 14, m.triangles * 3), 1));
+        return g;
+      };
+      for (const [id, m] of Object.entries(src)) {
+        const make = (lod, cap) => { const mesh = new THREE.InstancedMesh(unpack(m[lod]), mat, cap); mesh.setColorAt(0, C); mesh.count = 0; mesh.frustumCulled = false; scene.add(mesh); return mesh; };
+        models[id] = { tall: m.tall, leaf: m.near.leaf, near: make('near', MD.near), mid: make('far', MD.mid) };
+      }
+      stats.treeModels = Object.keys(models).length;
+    }
+    // where a tree's model stands and what it is tinted: so that its foliage comes out the colour its simple shape has
+    function modelMatrix(t) { const sc = TALL[t.sp] * t.size / models[t.sp].tall; return TM.compose(TT.set(t.ax - AW / 2, t.y - 0.1, t.ay - AH / 2), TQ.setFromAxisAngle(TUP, t.ry), TS.set(sc, sc, sc)); }
+    function modelTint(t) {
+      if (t.tint) return t.tint;
+      const leaf = models[t.sp].leaf, snow = t.zone === 4 ? [1.5, 1.6, 1.9] : t.zone === 3 ? [1.05, 1.15, 1.25] : [1, 1, 1];
+      return (t.tint = leaf ? t.c.map((v, i) => clamp(v / leaf[i] * 1.08, 0.3, 5)) : snow.map((v) => v * 1.25));
+    }
+    const PC = new THREE.Color();
+    function pickTrees() {
+      if (!stats.treeModels) return;
+      const cp = camera.position, now = uniforms.uTime.value;
+      if (lastPick && (now - lastPick.t < 0.12 || (Math.hypot(cp.x - lastPick.x, cp.y - lastPick.y, cp.z - lastPick.z) < Math.max(2.5, C.dist * 0.04) && Math.abs(C.dist - lastPick.dist) < C.dist * 0.04))) return;
+      lastPick = { x: cp.x, y: cp.y, z: cp.z, dist: C.dist, t: now };
+      const want = new Map();
+      if (C.dist < MD.zoom) {
+        // the trees within reach of the camera and of the spot it looks at, nearest the camera first
+        const cx = cp.x + AW / 2, cy = cp.z + AH / 2, reach = Math.min(MD.reach, C.dist * 1.1 + 110), r2 = reach * reach;
+        const fwx = C.x - cx, fwy = C.y - cy, fl = Math.hypot(fwx, fwy), cand = [];
+        const x0 = Math.max(0, Math.floor((Math.min(cx, C.x) - reach) / CELL)), x1 = Math.min(CELLS - 1, Math.floor((Math.max(cx, C.x) + reach) / CELL));
+        const y0 = Math.max(0, Math.floor((Math.min(cy, C.y) - reach) / CELL)), y1 = Math.floor((Math.max(cy, C.y) + reach) / CELL);
+        for (let gy = y0; gy <= y1; gy++) for (let gx = x0; gx <= x1; gx++) {
+          const cell = treeCells[gx + gy * CELLS]; if (!cell) continue;
+          for (const t of cell) {
+            const dx = t.ax - cx, dy = t.ay - cy, df = (t.ax - C.x) * (t.ax - C.x) + (t.ay - C.y) * (t.ay - C.y);
+            if (dx * dx + dy * dy > r2 && df > r2) continue;
+            if (fl > 30 && (dx * fwx + dy * fwy) / fl < -25) continue; // behind the camera
+            const dh = t.y - cp.y; t.d = dx * dx + dy * dy + dh * dh; cand.push(t);
+          }
+        }
+        cand.sort((a, b) => a.d - b.d);
+        const nNear = C.dist < MD.nearZoom ? Math.min(MD.near, cand.length) : 0, nAll = Math.min(cand.length, nNear + MD.mid);
+        for (let i = 0; i < nAll; i++) want.set(cand[i], i < nNear ? 'near' : 'mid');
+      }
+      for (const m of Object.values(models)) { m.near.count = 0; m.mid.count = 0; }
+      const touched = new Set();
+      for (const [t, tier] of want) {
+        const mesh = models[t.sp][tier], i = mesh.count++, tint = modelTint(t);
+        mesh.setMatrixAt(i, modelMatrix(t)); mesh.setColorAt(i, PC.setRGB(tint[0], tint[1], tint[2])); touched.add(mesh);
+        if (!chosen.has(t)) { t.mesh.setMatrixAt(t.i, shapeMatrix(t, true)); touched.add(t.mesh); } // its simple shape steps aside
+      }
+      for (const t of chosen.keys()) if (!want.has(t)) { t.mesh.setMatrixAt(t.i, shapeMatrix(t)); touched.add(t.mesh); } // and comes back
+      for (const mesh of touched) { mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true; }
+      chosen = want; stats.models = { near: 0, mid: 0 }; for (const tier of want.values()) stats.models[tier]++;
     }
 
     // ---- the castle, and a little of each town and landmark (at this height a town is a few roofs and their lights) ----
@@ -566,17 +667,17 @@
     // ---- the camera: it looks at a spot on the land from `dist` away, turned by `yaw` (0: north is up the screen) and
     // lifted by `tilt` (radians above the ground: low looks across the land, high looks down on it) ----
     const C = { x: AW / 2, y: AH / 2, dist: 1e6, yaw: 0, tilt: 0.95, gy: 0 }; // it opens on the whole map (clamped to DMAX)
-    const DMIN = 150, TMIN = 0.16, TMAX = 1.5; let DMAX = 6200;
+    const DMIN = 55, TMIN = 0.16, TMAX = 1.5; let DMAX = 6200; // (as close as 550 m: near enough to see a tree as a tree)
     function placeCamera() {
       C.x = clamp(C.x, 0, AW); C.y = clamp(C.y, 0, AH); C.dist = clamp(C.dist, DMIN, DMAX); C.tilt = clamp(C.tilt, TMIN, TMAX);
       const gy = groundAt(C.x, C.y); C.gy += (gy - C.gy) * 0.15;
       const hd = Math.cos(C.tilt) * C.dist, tx = C.x - AW / 2, tz = C.y - AH / 2;
       camera.position.set(tx + Math.sin(C.yaw) * hd, C.gy + Math.sin(C.tilt) * C.dist, tz + Math.cos(C.yaw) * hd);
       // never inside a hill
-      const under = groundAt(camera.position.x + AW / 2, camera.position.z + AH / 2) + 14 + C.dist * 0.02;
+      const under = groundAt(camera.position.x + AW / 2, camera.position.z + AH / 2) + 17 + C.dist * 0.02; // (and over the treetops)
       if (camera.position.y < under) camera.position.y = under;
       camera.lookAt(tx, C.gy, tz);
-      camera.near = Math.max(4, C.dist * 0.02); camera.far = 90000; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+      camera.near = Math.max(2, C.dist * 0.02); camera.far = 90000; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
       uniforms.uFogNear.value = C.dist * 1.3 + 400; uniforms.uFogFar.value = C.dist * 4 + 5200;
     }
     // a flight of the camera to a spot: out and over if it is far, then down
@@ -681,6 +782,7 @@
         if (Math.abs(vel.x) + Math.abs(vel.y) > 0.05) { pan(vel.x, vel.y); vel.x *= 0.9; vel.y *= 0.9; }
       }
       placeCamera();
+      pickTrees();
       // trees: only the patches on the screen and near enough to be more than specks
       pm.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); frustum.setFromProjectionMatrix(pm);
       for (const m of treePatches) {
@@ -718,7 +820,7 @@
       // to Io: close enough to see her country, north up, looking across the land
       findIo() { return ioAt ? flyTo(ioAt[0], ioAt[1], 1000, undefined, 0, 0.72) : Promise.resolve(); },
       get io() { return ioAt && { place: ioPlace, at: ioAt.slice() }; },
-      numbers() { return { detail, textured: !!layers, fps: Math.round(fps), triangles: renderer.info.render.triangles, calls: renderer.info.render.calls, sharp: pr, trees: stats.trees, houses: stats.houses }; },
+      numbers() { return { detail, textured: !!layers, models: stats.models, fps: Math.round(fps), triangles: renderer.info.render.triangles, calls: renderer.info.render.calls, sharp: pr, trees: stats.trees, houses: stats.houses }; },
       stop() { running = false; },
       P: { scene, camera, renderer, C },
     };
@@ -736,7 +838,7 @@
       uniforms.zones.value = zoneTexture();
       moodTextures();
       if (art.layers && renderer.capabilities.isWebGL2) layers = await loadLayers(art.layers).catch(() => null);
-      buildLand(); buildTrees(); buildPlaces(); makeTags();
+      buildLand(); buildTrees(); buildModels(); buildPlaces(); makeTags();
       api.setOpen(api.open);
       resize();
       if (opts.io) api.setIo(opts.io.place, opts.io.spot, false);

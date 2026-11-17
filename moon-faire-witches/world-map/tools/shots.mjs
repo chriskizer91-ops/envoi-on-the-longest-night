@@ -26,6 +26,12 @@ const VIEWS = [
   { name: 'misthollow', io: 'misthollow', open: [1, 2, 3, 4], view: 'io' },
   { name: 'peaks-from-south', io: 'misthollow', open: [1, 2, 3, 4], view: { x: 3200, y: 700, dist: 1900, yaw: 0.5, tilt: 0.34 } },
   { name: 'peaks-in-mist', io: 'wickhollow', open: [1], view: { x: 3200, y: 700, dist: 1900, yaw: 0.5, tilt: 0.34 } },
+  { name: 'trees-wickhollow', io: 'wickhollow', open: [1, 2], view: { x: 1300, y: 1905, dist: 150, yaw: 0.5, tilt: 0.3 } },
+  { name: 'trees-leafy', io: 'wickhollow', open: [1, 2], view: { x: 1085, y: 1535, dist: 120, yaw: -0.4, tilt: 0.32 } },
+  { name: 'trees-fen', io: 'bogmire', open: [1, 2], view: { x: 1930, y: 2330, dist: 130, yaw: 0.2, tilt: 0.3 } },
+  { name: 'trees-frost', io: 'cold-moor', open: [1, 2, 3], view: { x: 1500, y: 700, dist: 140, yaw: 0.9, tilt: 0.3 } },
+  { name: 'trees-snow', io: 'frozen-camp', open: [1, 2, 3, 4], view: { x: 2790, y: 1080, dist: 130, yaw: -0.6, tilt: 0.3 } },
+  { name: 'trees-mid', io: 'dawnroost', open: [1, 2], view: { x: 1240, y: 1180, dist: 420, yaw: 0.3, tilt: 0.5 } },
   { name: 'castle', io: 'crossroads', open: [1, 2, 3, 4], view: { x: 2340, y: 1240, dist: 420, yaw: -0.5, tilt: 0.42 } },
   { name: 'mesas', io: 'crossroads', open: [1, 2, 3, 4], view: { x: 3650, y: 1750, dist: 1500, yaw: 2.2, tilt: 0.45 } },
   { name: 'west-from-sea', io: 'dawnroost', open: [1, 2, 3, 4], view: { x: 1100, y: 1500, dist: 2400, yaw: -1.5, tilt: 0.4 } },
@@ -54,11 +60,11 @@ for (const v of VIEWS) {
     else m.view = Object.assign({ x: at[0], y: at[1], yaw: 0, tilt: 0.72 }, v.view);
     for (let i = 0; i < 40; i++) m.step(1 / 30); // the camera settles on the ground's height
     m.render();
-    return m.numbers();
+    const nb = m.numbers(); nb.kind = m.kindAt(m.view.x, m.view.y); return nb;
   }, v);
   const f = path.join(out, v.name + '.png');
   await page.screenshot({ path: f });
-  console.log(v.name.padEnd(18), r.triangles + ' triangles, ' + r.calls + ' draw calls');
+  console.log(v.name.padEnd(18), r.triangles + ' triangles, ' + r.calls + ' draw calls' + (r.models && (r.models.near || r.models.mid) ? ' · tree models: ' + r.models.near + ' detailed, ' + r.models.mid + ' light' : ''));
 }
 console.log(errors.length ? errors.join('\n') : '0 page errors');
 await browser.close();

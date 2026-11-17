@@ -48,6 +48,27 @@ all 24 are Chris's own, none a stand-in). The names are the cards' file names, s
 | 22 | `frosted_undergrowth` | zone 4's leafy forest |
 | 23 | `crossroads_frost_moor` | zone 4's farmland |
 
+## The tree models
+
+`trees/` holds eight of Chris's tree models, taken from his **Field & Forest · Forest Builder** page (the file he
+uploaded on November 16; its own names kept). Each tree is two files: `<id>.glb`, the detailed model, and
+`<id>_far.glb`, a light one for farther off. They are plain glTF models with a colour at every corner (two parts, bark
+and foliage), no pictures, in metres, standing on y = 0. `../tools/make-tree-models.mjs` packs them into
+`../map/tree-models.js` for the page.
+
+| File | Tree | Tall | Triangles (detailed / light) | On the map |
+|---|---|---|---|---|
+| `tree_spruce` | Spruce | 15.9 m | 4,303 / 106 | pine forest; all the firs of zones 3 and 4 |
+| `tree_ponderosa` | Ponderosa Pine | 17.4 m | 6,906 / 76 | pine forest on rock and hills, and mixed among the spruce |
+| `tree_oak` | Bur Oak | 10.4 m | 5,442 / 844 | leafy forest |
+| `tree_cottonwood` | Cottonwood | 12.2 m | 6,269 / 492 | leafy forest, and by rivers and lakes |
+| `tree_aspen` | Quaking Aspen | 13.8 m | 4,574 / 340 | leafy forest; most of zone 3's and 4's leafy trees |
+| `tree_willow` | Weeping Willow | 9.5 m | 7,511 / 112 | the fen, and by rivers and lakes |
+| `tree_mesquite` | Mesquite | 5.1 m | 5,194 / 590 | the desert and the mesas |
+| `tree_snag` | Dead Snag | 7.3 m | 1,723 / 144 | the fen, the desert, the cold zones |
+
+The Forest Builder also has grass, bushes and props (not brought in).
+
 ## Each place's atmosphere
 
 `../map/moods.js` isn't art but goes with it: every walking place's leaf tints, fog and moonlight, read from the 3D

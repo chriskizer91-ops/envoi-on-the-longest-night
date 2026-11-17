@@ -1,6 +1,6 @@
 SLIP: world-map
 State:    Working: step 1 of 4, the 3D land, now textured with Chris's own ground textures, coloured by zone, and in two
-          levels of detail, phone and laptop (November 16, evening). Next: step 2 (choosing where to go, the dotted line).
+          levels of detail, phone and laptop; and real tree models as you zoom in (November 16, night). Next: step 2 (choosing where to go, the dotted line).
 Plan:     From the project document claude/travel-and-3d-map.md (its starter text). A demo page at a time, one offline
           HTML each: 1) the 3D map of Aethermoor, showing where Io is; 2) choosing where to go, on foot or by flight,
           with a dotted line from here to there for a flight; 3) the flight in Skies of Aethermoor on the night map, as
@@ -21,16 +21,19 @@ Chris said: (15:22, after the first build, which laid the night atlas over a hei
           zones' looks, yes (done); a generated picture as the land's surface, not recommended (it is the picture on a
           shape he turned down, it wouldn't line up with the coasts, and it blurs up close), though blurred right down
           it could serve as a soft colour guide later. Waiting to hear whether he agrees.
+          (21:19) He uploaded his Field & Forest · Forest Builder page: can we do something like this, using trees like
+          these as we zoom in. Done (below).
 Branch:   work/world-map (from work/world-3d at 0046851)
 Files:    moon-faire-witches/world-map/ (all new to the game): README.md, envoi-map-where.html, map/map3d.js,
           map/places.js, map/art.js, map/moods.js, map/map.css, art/aethermoor-terrain-height.png,
           art/aethermoor-terrain-kinds.png, art/aethermoor-ground-layers.webp, art/LABELS.md (what each art file holds),
-          tools/make-terrain.mjs, tools/make-ground-layers.mjs, tools/make-moods.mjs, tools/check-places.mjs,
+          art/trees/ (16 files: eight trees, each <id>.glb and <id>_far.glb), map/tree-models.js,
+          tools/make-tree-models.mjs, tools/make-terrain.mjs, tools/make-ground-layers.mjs, tools/make-moods.mjs, tools/check-places.mjs,
           tools/shots.mjs, tools/touch-test.mjs
           moon-faire-witches/workshop/slips/world-map.md
           (The first build's art/night-1..4.avif, art/height.png, art/land.png and tools/make-map-art.mjs are gone.)
           Nothing else changed.
-File for Chris: envoi-map-where.html (3.9 MB, works offline, one file for phone and laptop: it picks the level, and the
+File for Chris: envoi-map-where.html (5.2 MB, works offline, one file for phone and laptop: it picks the level, and the
           "Move Io" list has the switch). It opens on the whole land and flies down to Io at
           Wickhollow. One finger turns the land and tips the view; two fingers pinch to zoom, slide to move, twist to
           turn. The moon button (bottom right) finds Io again. "Move Io" (bottom left) puts her in any of the 21 places.
@@ -51,7 +54,15 @@ Done:     Nothing of the painting is on the model. tools/make-terrain.mjs reads 
           and hazed from its walking places' own leaf tints, fog and moonlight (map/moods.js, read from work/world-3d at
           e99820b). Two levels: phone (576 x 384 squares, 47,900 trees, 256 px textures) and laptop (1152 x 768 squares,
           96,100 trees with fuller shapes near, 512 px textures).
-Checked:  (evening) Both levels: 0 page errors; touch test 10 of 10 at the phone's level; places check passes. Drawn: phone
+          Night: eight of Chris's tree models from his Field & Forest · Forest Builder (art/trees/, labelled): spruce,
+          ponderosa pine, bur oak, cottonwood, aspen, weeping willow, mesquite, dead snag, each as a detailed model and
+          a light one. Every tree on the map is one of them by its ground, its zone and whether water is by. Far off it
+          is its simple shape; as the view comes close the nearest trees become the light models and the very nearest
+          the detailed ones (phone: 56 detailed, 900 light; laptop: 150 and 4,200), tinted to the colours of their
+          simple shapes. The view comes as close as 550 m (it was 1.5 km), and the ground has a finer grain close to.
+Checked:  (night) Zoomed-in stills in every zone at both levels: 0 page errors; touch test 10 of 10; places check passes.
+          Drawn zoomed in: phone 0.4 to 1.1 million triangles, laptop 1.3 to 3.9 million. Frame rates not measured.
+          (evening) Both levels: 0 page errors; touch test 10 of 10 at the phone's level; places check passes. Drawn: phone
           0.2 to 0.8 million triangles; laptop 1.4 to 3.1 million, 76 to 244 draw calls. The laptop's frame rate isn't
           measured (headless): for Chris to say. Earlier: check-places.mjs: all 21 places on land (or at the water's edge) in their own zones, all 7 landings in their
           zones. touch-test.mjs at 412 x 915, as a phone's fingers: 10 of 10 (opens on the whole land; flies down to Io
@@ -67,6 +78,8 @@ For the hub: Not ready to bring in yet (steps 2 to 4 to come). When it is: take 
           slip. Build: node tools/build.mjs --offline moon-faire-witches/world-map/envoi-map-where.html.
 Open:     0. For the hub: the page's textures are packed from texture-packs/made/ as it stands on work/textures-made;
              this branch doesn't hold that folder. After that job is brought in, make-ground-layers.mjs runs as is.
+             The tree models came from Chris's upload, not from a repository: if they live in one of his repositories
+             too, the labels could name it. His Forest Builder's grass, bushes and props are not brought in.
              For Chris: zone 3 reads strongly purple (his frosted heather card); say if it should be calmer. The
              laptop level's frame rate on his MSI.
           1. For Chris: the frame rate on his phone, and whether the land reads right (the heights are inferred: tell
