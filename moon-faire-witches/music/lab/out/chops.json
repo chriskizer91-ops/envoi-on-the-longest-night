@@ -1,0 +1,29 @@
+[
+ {
+  "file": "chop-1-rebuilt.webm",
+  "title": "Rebuilt",
+  "did": "The song\u2019s own beats cut up and rearranged into a new 60-second loop: quiet music box, heavy part, quiet, heavy, and a middle stretch that leads back to the start. Cuts are only made where both sides match, and every piece is set to one steady speed.",
+  "feel": "Sounds like Carnival of Ashes, but a new order of its parts that loops forever with no ending or fade.",
+  "use": "Every fight.",
+  "seconds": 56.5,
+  "loops": true
+ },
+ {
+  "file": "chop-2-rebuilt-dark.webm",
+  "title": "Rebuilt, dark",
+  "did": "The same rebuilt loop through the dark mix: 12% slower, two half-steps lower, softer highs, a faint wobble and a room.",
+  "feel": "Darker and heavier, still with a steady beat.",
+  "use": "Every fight, or only the bosses.",
+  "seconds": 65.0,
+  "loops": true
+ },
+ {
+  "file": "chop-3-fractured.webm",
+  "title": "Fractured lullaby",
+  "did": "Built from fragments: the quietest music-box bars smeared into a floating chord, its little tunes slowed and echoing (some backwards, as swells), a slow heartbeat made from its own kick drum, and its heaviest hits far off like thunder.",
+  "feel": "Ethereal and ominous: no carnival left, only its ghost. Slow, with a heartbeat for a pulse.",
+  "use": "Wraiths, the final boss, or as the danger-zone music.",
+  "seconds": 52.1,
+  "loops": true
+ }
+]

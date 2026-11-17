@@ -1,0 +1,58 @@
+[
+ {
+  "file": "fx-0-as-made.webm",
+  "title": "As you made it",
+  "did": "Nothing: the song as it is, at the same loudness as the others.",
+  "feel": "For comparing.",
+  "use": "",
+  "seconds": 147.7
+ },
+ {
+  "file": "fx-1-slower.webm",
+  "title": "Slower",
+  "did": "Played 20% slower; the pitch stays the same.",
+  "feel": "Heavier and dragging, like the carnival is winding down.",
+  "use": "Every fight, if the original feels too quick for turn-based battles.",
+  "seconds": 184.7
+ },
+ {
+  "file": "fx-2-lower.webm",
+  "title": "Lower",
+  "did": "Moved down three half-steps; the speed stays the same.",
+  "feel": "Darker and deeper; the music box sounds older and heavier.",
+  "use": "Boss fights, so they sound darker than ordinary ones.",
+  "seconds": 147.7
+ },
+ {
+  "file": "fx-3-slowed-reverb.webm",
+  "title": "Slowed and in a big room",
+  "did": "Played slower like a record turned down (15%, so it is also lower), in a big echoing room.",
+  "feel": "Dreamy, ghostly and far off: the \"slowed and reverb\" sound.",
+  "use": "A witch\u2019s trance, Curtain Call, or the quiet after a fight is won.",
+  "seconds": 178.0
+ },
+ {
+  "file": "fx-4-far-away.webm",
+  "title": "From far away",
+  "did": "The highs cut away and a lot of echo, as if heard through fog or a wall.",
+  "feel": "Soft, muffled, in the background; tense rather than loud.",
+  "use": "While you choose a move, then back to full when a blow lands; or when a witch is nearly beaten.",
+  "seconds": 151.3
+ },
+ {
+  "file": "fx-5-warped.webm",
+  "title": "Warped tape",
+  "did": "Two half-steps lower with a slow, wavering wobble, like an old tape or a music box running down.",
+  "feel": "Unsettling and haunted: the carnival is wrong somehow.",
+  "use": "Shadow wraiths and the final boss.",
+  "seconds": 150.5
+ },
+ {
+  "file": "fx-6-dark-mix.webm",
+  "title": "Dark mix (my pick for battles)",
+  "did": "A little of each: 12% slower, two half-steps lower, the harshest highs softened, a faint wobble and a medium room.",
+  "feel": "Still Carnival of Ashes, still has a beat, but darker, heavier and more ethereal.",
+  "use": "Every fight, quietly in the background.",
+  "seconds": 170.5
+ }
+]

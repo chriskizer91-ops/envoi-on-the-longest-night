@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Battle Music Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* The Battle Music Lab (November 17, 2026): three ways to darken the battle music, to hear side by side.
+   Effects: Carnival of Ashes through studio effects (make_effects.py). Chopped: Carnival of Ashes cut up and rebuilt
+   (make_chops.py). Made in code: the battle music in src/battle/sound.js and its dark versions. */
+:root { --ink: #efe8f6; --muted: #b6a9c8; --night: #120d1a; --gold: #e2bd6a; --leaf: #9fe0a8; --line: rgba(255, 255, 255, 0.14); color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--night); color: var(--ink); font-family: "Atkinson Hyperlegible", system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { min-height: 100vh; background: radial-gradient(ellipse at 50% -10%, #3a1d2c 0%, var(--night) 60%) fixed; }
+header { position: sticky; top: 0; z-index: 2; padding: 12px 12px 8px; background: linear-gradient(to bottom, rgba(18, 13, 26, 0.97) 85%, rgba(18, 13, 26, 0)); }
+h1 { margin: 0; font-family: "IM Fell English", Georgia, serif; font-weight: 400; font-size: 25px; color: var(--gold); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+#lvl { font: inherit; font-size: 13px; color: var(--muted); background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
+#tabs { display: flex; gap: 6px; margin-top: 10px; }
+.tab { flex: 1; font: inherit; font-size: 14px; font-weight: 700; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 8px 4px; cursor: pointer; }
+.tab.on { color: #1a1122; background: var(--gold); border-color: var(--gold); }
+#about { margin: 10px 2px 0; font-size: 13px; line-height: 1.4; color: var(--muted); }
+main { padding: 4px 12px calc(28px + env(safe-area-inset-bottom)); display: grid; gap: 9px; max-width: 680px; margin: 0 auto; }
+.card { text-align: left; color: var(--ink); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; cursor: pointer; }
+.card.on { border-color: var(--leaf); background: rgba(159, 224, 168, 0.09); }
+.top { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
+.ic { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 12px; color: var(--gold); }
+.card.on .ic { color: var(--leaf); border-color: var(--leaf); }
+.meta { margin-left: auto; font-weight: 400; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.line { margin-top: 7px; font-size: 13px; line-height: 1.42; color: var(--muted); }
+.line b { color: var(--ink); font-weight: 700; }
+.bar { height: 3px; background: rgba(255, 255, 255, 0.08); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--leaf); }
+#gate { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(12, 8, 18, 0.95); text-align: center; padding: 24px; cursor: pointer; }
+#gate .big { font-family: "IM Fell English", Georgia, serif; font-size: 30px; color: var(--gold); }
+#gate .small { font-size: 14px; color: var(--muted); max-width: 310px; line-height: 1.45; }
+#gate.gone { display: none; }
+</style>
+</head>
+<body>
+<div id="gate"><div class="big">Battle Music Lab</div><div class="small">Tap anywhere to start. Tap a piece to play it, tap again to stop. Everything loops, as it would in a fight.</div></div>
+<header>
+  <h1><span>Battle Music Lab</span><button id="lvl">Game level</button></h1>
+  <div id="tabs"></div>
+  <p id="about"></p>
+</header>
+<main id="list"></main>
+<script src="../../src/battle/sound.js"></script>
+<script src="./lab-data.js"></script>
+<script src="./lab.js"></script>
+</body>
+</html>
