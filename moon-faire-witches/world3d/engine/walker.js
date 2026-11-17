@@ -116,37 +116,55 @@
       const gy = P.terrain(M.px(out.x), M.py(out.z)) + 1.2; if (out.y < gy) out.y = gy;
       return out;
     }
-    const _w = new THREE.Vector3(), _best = new THREE.Vector3();
+    const _w = new THREE.Vector3(), _best = new THREE.Vector3(); let boxed = false;
+    // (the last resort) is the point inside a wall, a house or a roof? As the camera's first check was (the Moonwell's wish)
+    function insideSolid(v) {
+      for (const s of P.camSolids || []) {
+        if (s.thin || v.y < s.y0 - 0.25 || v.y > s.y1 + 0.25 || v.x < s.b[0] - 0.3 || v.x > s.b[2] + 0.3 || v.z < s.b[1] - 0.3 || v.z > s.b[3] + 0.3) continue;
+        if (W3D.inPoly(s.p, v.x, v.z) || W3D.edgeDist(s.p, v.x, v.z) < 0.3) return true;
+      }
+      return false;
+    }
     function placeCamera(dt, snap) {
       const p = pos(), ah = view.ahead || 0;
       const aimAt = (yaw) => new THREE.Vector3(p.x - Math.sin(yaw) * ah, p.y + C.aim, p.z - Math.cos(yaw) * ah);
       let aim = aimAt(C.yaw);
       const want = new THREE.Vector3();
       _head.set(p.x, p.y + 1.45, p.z);
-      // where it wants to be. If the line to her isn't clear: first look from higher (over the wall); if she is right up
-      // against something tall, swing round to the nearest side that is clear (and the view turns with it, so the thumb
-      // still walks her the way it looks); failing all, come in to this side of whatever is in the way
-      let bestD = -1, bestYaw = C.yaw;
+      // where it wants to be. If the line to her isn't clear: first look from a little higher (over the wall); then swing
+      // round to the nearest side that is clear (the view turns with it, so the thumb still walks her the way it looks);
+      // then look from right above her; failing all, come in to this side of whatever is in the way
+      let bestD = -1, bestClear = 0, bestYaw = C.yaw;
       const tryAt = (yaw, pitch, handicap) => {
         wantAt(aimAt(yaw), yaw, pitch, C.dist, _w);
         const t = clearTo(_head, _w), dClear = t * _w.distanceTo(_head);
-        if (dClear - handicap > bestD) { bestD = dClear - handicap; bestYaw = yaw; _best.copy(_head).addScaledVector(_d, t); }   // (_d: clearTo's line)
+        if (dClear - handicap > bestD) { bestD = dClear - handicap; bestClear = dClear; bestYaw = yaw; _best.copy(_head).addScaledVector(_d, t); }   // (_d: clearTo's line)
         return t >= 0.999;
       };
       let ok = tryAt(C.yaw, C.pitch, 0);
       if (!ok && !guide.on) {
         for (const up of [0.2, 0.4]) { if (C.pitch + up > 1.25) break; if (tryAt(C.yaw, C.pitch + up, up * 3)) { ok = true; break; } }
-        if (!ok && bestD < C.dist * 0.5) for (const dy of [0.5, -0.5, 1.0, -1.0, 1.6, -1.6, 2.3, -2.3, Math.PI]) { if (tryAt(C.yaw + dy, C.pitch, 1.2 + Math.abs(dy) * 0.4) || tryAt(C.yaw + dy, Math.min(1.25, C.pitch + 0.3), 2.0 + Math.abs(dy) * 0.4)) { ok = true; break; } }
-        if (!ok && bestD < C.dist * 0.3) for (const up of [0.6, 0.8]) { if (C.pitch + up > 1.3) break; if (tryAt(C.yaw, C.pitch + up, up * 3)) break; }
+        if (!ok && bestClear < C.dist * 0.5) for (const dy of [0.5, -0.5, 1.0, -1.0, 1.6, -1.6, 2.3, -2.3, Math.PI]) { if (tryAt(C.yaw + dy, C.pitch, 1.2 + Math.abs(dy) * 0.4) || tryAt(C.yaw + dy, Math.min(1.25, C.pitch + 0.3), 2.0 + Math.abs(dy) * 0.4)) { ok = true; break; } }
+        if (!ok && bestClear < C.dist * 0.45) for (const pt of [1.0, 1.2, 1.4]) { if (pt <= C.pitch + 0.4) continue; if (tryAt(C.yaw, pt, 1.0)) { ok = true; break; } }
       }
-      want.copy(_best);
-      if (bestYaw !== C.yaw) { const dy = bestYaw - C.yaw; C.yaw += dy * (snap ? 1 : Math.min(1, dt * 2.5)); C.auto = Math.max(C.auto || 0, 1.2); aim = aimAt(C.yaw); }
+      // The last resort: she is boxed in (under a hull on its cradle, inside a shed, under a low deck), with no clear line
+      // to her longer than a couple of metres from anywhere. Then the camera goes where it wanted to, as it used to, and
+      // what stands between thins away, as it used to (world.js: cutw). Nowhere else is anything built seen through.
+      boxed = !guide.on && !ok && bestClear < (boxed ? 2.6 : 2.0);
+      P.U.uCutW.value = boxed ? 1 : 0;
+      if (boxed) {
+        wantAt(aim, C.yaw, C.pitch, C.dist, want);
+        if (insideSolid(want)) { const d = want.clone().sub(aim); for (let t = 0.92; t > 0.12; t -= 0.06) { const v = aim.clone().addScaledVector(d, t); if (!insideSolid(v)) { want.copy(v); break; } } }
+      } else {
+        want.copy(_best);
+        if (bestYaw !== C.yaw) { const dy = bestYaw - C.yaw; C.yaw += dy * (snap ? 1 : Math.min(1, dt * 2.5)); C.auto = Math.max(C.auto || 0, 1.2); aim = aimAt(C.yaw); }
+      }
       const k = snap ? 1 : 1 - Math.exp(-dt * 7);
       camPos.lerp(want, k); camAim.lerp(aim, snap ? 1 : 1 - Math.exp(-dt * 10));
       // on its way there it never cuts a corner through anything either
-      const t2 = clearTo(_head, camPos); if (t2 < 0.999) camPos.copy(_head).addScaledVector(_d, t2);
+      if (!boxed) { const t2 = clearTo(_head, camPos); if (t2 < 0.999) camPos.copy(_head).addScaledVector(_d, t2); }   // (_d: clearTo's line from her head to camPos)
       // close in, it looks at her rather than past her
-      const near = 1 - clamp((camPos.distanceTo(_head) - 1.5) / 3, 0, 1);
+      const near = boxed ? 0 : 1 - clamp((camPos.distanceTo(_head) - 1.5) / 3, 0, 1);
       cam.position.copy(camPos); cam.lookAt(_q.copy(camAim).lerp(_head, near * 0.85));
     }
 
@@ -183,7 +201,9 @@
     const RAD = 58;
     cv.addEventListener('pointerdown', (e) => {
       const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
-      if (x < r.width / 2 && !input.move) { input.move = { id: e.pointerId, x0: x, y0: y }; input.x = input.y = input.mag = 0; if (ring) { ring.style.display = 'block'; ring.style.left = x + 'px'; ring.style.top = y + 'px'; dot.style.transform = 'translate(-50%,-50%)'; } }
+      // a mouse only turns the camera, anywhere on the screen (the keys walk her): the thumb's ring is for fingers (Chris,
+      // November 17: on the laptop the joystick popping up made it harder to move about)
+      if (e.pointerType !== 'mouse' && x < r.width / 2 && !input.move) { input.move = { id: e.pointerId, x0: x, y0: y }; input.x = input.y = input.mag = 0; if (ring) { ring.style.display = 'block'; ring.style.left = x + 'px'; ring.style.top = y + 'px'; dot.style.transform = 'translate(-50%,-50%)'; } }
       else if (!input.look) input.look = { id: e.pointerId, x, y };
       cv.setPointerCapture(e.pointerId); e.preventDefault();
     });
@@ -204,17 +224,29 @@
       if (input.look && e.pointerId === input.look.id) input.look = null;
     };
     cv.addEventListener('pointerup', lift); cv.addEventListener('pointercancel', lift);
-    window.addEventListener('keydown', (e) => { input.keys[e.key.toLowerCase()] = true; });
-    window.addEventListener('keyup', (e) => { input.keys[e.key.toLowerCase()] = false; });
+    // The keys (Chris, November 17): a direction key walks her; tapped twice quickly and held, she runs, and keeps running
+    // while any direction key is down; Shift is a sprint, faster than the run. F: the Flipbook look on and off.
+    const MOVE_KEYS = { arrowleft: 1, arrowright: 1, arrowup: 1, arrowdown: 1, a: 1, d: 1, w: 1, s: 1 };
+    const run = { on: false, key: null, t: -1e9 };
+    const anyMoveKey = () => Object.keys(MOVE_KEYS).some((k) => input.keys[k]);
+    window.addEventListener('keydown', (e) => {
+      const k = e.key.toLowerCase();
+      if (MOVE_KEYS[k] && !e.repeat && !input.keys[k]) { const now = performance.now(); if (run.key === k && now - run.t < 340) run.on = true; run.key = k; run.t = now; }
+      if (k === 'f' && !e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey) setLook({ flip: !look.flip });
+      if (MOVE_KEYS[k] && k.startsWith('arrow')) e.preventDefault();
+      input.keys[k] = true;
+    });
+    window.addEventListener('keyup', (e) => { input.keys[e.key.toLowerCase()] = false; if (!anyMoveKey()) run.on = false; });
+    window.addEventListener('blur', () => { input.keys = {}; run.on = false; });
     const keyMove = () => {
       const k = input.keys; let x = 0, y = 0;
       if (k.arrowleft || k.a) x -= 1; if (k.arrowright || k.d) x += 1; if (k.arrowup || k.w) y -= 1; if (k.arrowdown || k.s) y += 1;
-      const L = Math.hypot(x, y); return L ? { x: x / L, y: y / L, mag: k.shift ? 1 : 0.6 } : null;
+      const L = Math.hypot(x, y); return L ? { x: x / L, y: y / L, mag: k.shift ? 1.3 : run.on ? 1 : 0.6 } : null;
     };
 
     // ---- each frame ----
     const NATURAL = { walk: 0.62 * 1.7, jog: 1.25 * 1.7 };   // her own steps' speeds, in metres a second (moon-io-walker.js)
-    const SPEED = { walk: 1.3, jog: 3.0 };
+    const SPEED = { walk: 1.3, jog: 3.0, sprint: 5.2 };   // (sprint: the keys' Shift)
     let exitShown = null, scripted = null, busy = false;   // busy: between two places (switchTo)
     // the keepsakes found so far (kept on the phone between visits; not in a test run)
     const FOUND_KEY = 'envoi3d-found';
@@ -229,7 +261,7 @@
       const fx = -Math.sin(C.yaw), fz = -Math.cos(C.yaw), rx = Math.cos(C.yaw), rz = -Math.sin(C.yaw);
       let mx = rx * ix + fx * -iy, mz = rz * ix + fz * -iy; const ml = Math.hypot(mx, mz);
       const go = mag > 0.14 && ml > 0;
-      const jog = mag > 0.82, want = go ? (jog ? SPEED.jog : SPEED.walk * clamp(mag / 0.65, 0.45, 1)) : 0;
+      const jog = mag > 0.82, want = go ? (mag > 1.15 ? SPEED.sprint : jog ? SPEED.jog : SPEED.walk * clamp(mag / 0.65, 0.45, 1)) : 0;
       io.speed += (want - io.speed) * Math.min(1, dt * (want > io.speed ? 7 : 10));
       if (go) { mx /= ml; mz /= ml; const ty = Math.atan2(mx, mz); let d = ty - io.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); io.yaw += d * Math.min(1, dt * 11); }
       let moved = 0;
@@ -248,7 +280,7 @@
       const p = pos();
       A.root.position.copy(p); A.root.rotation.set(0, io.yaw, 0);
       A.walkRun = io.jog;
-      const rate = io.moving ? clamp(io.speed / (io.jog ? NATURAL.jog : NATURAL.walk), 0.6, 1.6) : 1;
+      const rate = io.moving ? clamp(io.speed / (io.jog ? NATURAL.jog : NATURAL.walk), 0.6, 2.3) : 1;
       A.camera = cam; A.animate(0, io.moving ? 1 : 0, t, dt * rate);
       blob.position.set(p.x, io.y + 0.03, p.z);
       // the lamps nearest her light her
@@ -284,10 +316,69 @@
     }
     function numbers() { const i = renderer.info.render; return { fps: Math.round(perf.fps), ms: +perf.ms.toFixed(1), triangles: i.triangles, calls: i.calls, dpr, world: P.stats.triangles, io: ioDrawn() }; }
 
+    // ---- the two looks (Chris, November 17): as painted, and the Flipbook look of the 3D models and the battle
+    // (moon-faire-witches/src/flipbook.js, unchanged): the 3D drawn on a grid of rows down the screen, every pixel taking
+    // the nearest of 64 colours (32 from the place's own painting, 32 of the witches'), enlarged with hard pixels. The
+    // fineness is how many rows: Chris likes it very fine, so it starts near the top. A small button beside the map's
+    // opens the two settings; they are kept on the device (envoi3d-look). ?look=flipbook&rows=540 sets them from the address.
+    const LOOK_KEY = 'envoi3d-look', ROWS = [160, 720];
+    const look = { flip: false, rows: 600 };
+    if (!TEST) try { const q = JSON.parse(localStorage.getItem(LOOK_KEY) || 'null'); if (q && typeof q === 'object') { look.flip = !!q.flip; if (+q.rows) look.rows = clamp(+q.rows, ROWS[0], ROWS[1]); } } catch (e) { /* as painted */ }
+    { const m = location.search.match(/[?&]look=(flipbook|painted)/); if (m) look.flip = m[1] === 'flipbook'; const r = location.search.match(/[?&]rows=(\d+)/); if (r) look.rows = clamp(+r[1], ROWS[0], ROWS[1]); }
+    let FB = null;
+    if (G.makeFlipbook) {
+      FB = G.makeFlipbook(renderer, { rows: look.rows });
+      // her own materials are three.js's, which write to the Flipbook's small picture in its colour space: the same as the screen's
+      const srt = renderer.setRenderTarget.bind(renderer);
+      renderer.setRenderTarget = (tg, a, b) => { if (tg && tg.texture && tg.texture.encoding !== THREE.sRGBEncoding) tg.texture.encoding = THREE.sRGBEncoding; return srt(tg, a, b); };
+    }
+    // the place's own colours, from its painting (flipbook.js takes them the first time it is handed a painting)
+    function lookColours() {
+      if (!FB || !place.paintingSrc) return;
+      const im = new Image(); im.onload = () => { try { const c = document.createElement('canvas'); c.width = c.height = 8; FB.paint(c.getContext('2d'), im, 0, 0, im.naturalWidth, im.naturalHeight, 8, 8); } catch (e) { /* the witches' colours */ } }; im.src = place.paintingSrc;
+    }
+    lookColours();
+    let lookUI = null;
+    function setLook(q) {
+      if (q.flip != null) look.flip = !!q.flip && !!FB;
+      if (q.rows != null) look.rows = clamp(Math.round(+q.rows) || 600, ROWS[0], ROWS[1]);
+      if (!TEST) try { localStorage.setItem(LOOK_KEY, JSON.stringify(look)); } catch (e) { /* kept while the page is open */ }
+      if (lookUI) lookUI.show();
+    }
+    function drawFrame() {
+      if (guide.on || !look.flip || !FB) { renderer.render(scene, guide.on ? top : cam); return; }
+      // never finer than the screen can show: a row is at least a pixel and a half of the canvas
+      FB.on = true; FB.rows = Math.min(look.rows, Math.max(ROWS[0], Math.floor(cv.height / 1.5)));
+      FB.render(scene, cam); renderer.setClearColor(0x0a0b18, 1);
+    }
+    // the settings: one small round button left of the map's, and a small panel under it (made here, so every page has it)
+    if (FB && root && !TEST) {
+      const st = document.createElement('style');
+      st.textContent = '#lookbtn{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:calc(68px + env(safe-area-inset-right,0px));z-index:4;appearance:none;width:46px;height:46px;border-radius:23px;border:1px solid rgba(214,222,255,.45);background:rgba(14,14,36,.62);display:grid;place-items:center;padding:0;cursor:pointer}' +
+        '#lookbtn svg{width:22px;height:22px}#lookbtn.on{background:rgba(70,60,130,.8);border-color:rgba(200,190,255,.75)}' +
+        '#lookpanel{position:absolute;top:calc(66px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));z-index:5;display:none;width:232px;box-sizing:border-box;padding:12px 14px;border-radius:16px;border:1px solid rgba(214,222,255,.4);background:rgba(14,12,34,.9);color:#ece8ff;font:15px/1.3 "Atkinson Hyperlegible",system-ui,sans-serif}' +
+        '#lookpanel.open{display:block}#lookpanel label{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}' +
+        '#lookpanel input[type=checkbox]{width:20px;height:20px;accent-color:#a895ff}#lookpanel .fine{margin-top:12px;display:none}#lookpanel.flip .fine{display:block}' +
+        '#lookpanel input[type=range]{width:100%;margin:6px 0 0;accent-color:#a895ff}#lookpanel small{display:flex;justify-content:space-between;color:#b8b4e0;font-size:12px;margin-top:2px}';
+      document.head.appendChild(st);
+      const btn = document.createElement('button'); btn.id = 'lookbtn'; btn.setAttribute('aria-label', 'The look: settings');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#eee8ff" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>';
+      const pan = document.createElement('div'); pan.id = 'lookpanel';
+      pan.innerHTML = '<label>Flipbook look <input type="checkbox" id="lookflip"></label><div class="fine"><span>Fineness</span><input type="range" id="lookrows" min="' + ROWS[0] + '" max="' + ROWS[1] + '" step="20"><small><span>chunky</span><span>very fine</span></small></div>';
+      root.appendChild(btn); root.appendChild(pan);
+      const cb = pan.querySelector('#lookflip'), rg = pan.querySelector('#lookrows');
+      lookUI = { show() { cb.checked = look.flip; rg.value = look.rows; pan.classList.toggle('flip', look.flip); btn.classList.toggle('on', look.flip); } };
+      btn.addEventListener('click', () => pan.classList.toggle('open'));
+      cb.addEventListener('change', () => setLook({ flip: cb.checked }));
+      rg.addEventListener('input', () => setLook({ rows: rg.value }));
+      cv.addEventListener('pointerdown', () => pan.classList.remove('open'));
+      lookUI.show();
+    }
+
     let last = null, clock = 0;
     function frame(now) {
       const dt = last == null ? 0 : Math.min(0.05, (now - last) / 1000); last = now; clock += dt;
-      if (!busy) { tick(dt, clock); renderer.render(scene, guide.on ? top : cam); measure(now); }
+      if (!busy) { tick(dt, clock); drawFrame(); measure(now); }
       requestAnimationFrame(frame);
     }
     window.addEventListener('resize', layout);
@@ -323,7 +414,7 @@
       scene.environment = env; for (const o of mine) scene.add(o);
       md = P.U.uMoonDir.value; fog0 = [P.U.uFogNear.value, P.U.uFogFar.value];
       cam.far = (place.night && place.night.far) || 800; cam.updateProjectionMatrix();
-      pW = M.W * M.SX; pH = M.H * M.SZ; paintTex = new THREE.TextureLoader().load(place.paintingSrc);
+      pW = M.W * M.SX; pH = M.H * M.SZ; paintTex = new THREE.TextureLoader().load(place.paintingSrc); lookColours();
       paintPlane.material.map = paintTex; paintPlane.geometry.dispose(); paintPlane.geometry = new THREE.PlaneGeometry(pW, pH);
       for (const it of P.items) if (found[it.id]) { it.got = true; P.takeItem(it); }
       exitShown = null;
@@ -337,8 +428,8 @@
     // the page's hooks, for headless stills and the checks (?test: the clock only moves when told)
     const api = {
       P, A, io, C, cam, renderer, guide: setGuide, numbers, switchTo, warm, nearestFit, isBusy: () => busy,
-      step(sec, fps, draw) { const n = Math.max(1, Math.round(sec * (fps || 30))); for (let i = 0; i < n; i++) { clock += 1 / (fps || 30); tick(1 / (fps || 30), clock); } if (draw !== false && !busy) renderer.render(scene, guide.on ? top : cam); return numbers(); },
-      render() { if (!busy) renderer.render(scene, guide.on ? top : cam); },
+      step(sec, fps, draw) { const n = Math.max(1, Math.round(sec * (fps || 30))); for (let i = 0; i < n; i++) { clock += 1 / (fps || 30); tick(1 / (fps || 30), clock); } if (draw !== false && !busy) drawFrame(); return numbers(); },
+      render() { if (!busy) drawFrame(); }, setLook, look,
       setIo(px, py, yaw) { io.px = px; io.py = py; io.y = P.walkH(px, py); if (yaw != null) io.yaw = yaw; placeCamera(0, true); },
       setCam(yaw, pitch, dist) { if (yaw != null) C.yaw = yaw; C.pitch = pitch != null ? pitch : view.pitch; C.pitchSet = pitch != null; C.dist = dist != null ? dist : view.dist; C.auto = 99; placeCamera(0, true); },
       push(x, y, mag) { scripted = x == null ? null : { x, y, mag: mag == null ? 0.7 : mag }; },

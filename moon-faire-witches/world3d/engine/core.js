@@ -186,7 +186,7 @@
       uMoonDir: { value: new THREE.Vector3(-0.35, 0.8, -0.48).normalize() }, uMoon: { value: new THREE.Color().setRGB(...(opt.moon || [0.42, 0.43, 0.56])) },
       uFog: { value: new THREE.Color().setRGB(...(opt.fog || [0.075, 0.08, 0.16])) }, uFogNear: { value: opt.fogNear || 30 }, uFogFar: { value: opt.fogFar || 115 },
       uGlowK: { value: opt.glowK || 1.7 }, uTime: { value: 0 },
-      uCam: { value: new THREE.Vector3() }, uIo: { value: new THREE.Vector3(0, -99, 0) }, uCut: { value: 0 },
+      uCam: { value: new THREE.Vector3() }, uIo: { value: new THREE.Vector3(0, -99, 0) }, uCut: { value: 0 }, uCutW: { value: 0 },
     };
   };
   const CHUNK_V = `
@@ -215,7 +215,7 @@
     varying vec3 vW; varying vec3 vN; varying vec2 vUv; varying vec3 vCol;
     uniform sampler2D uGlow, uShade; uniform vec4 uMapK;
     uniform vec3 uSky, uGround, uMoonDir, uMoon, uFog; uniform float uFogNear, uFogFar, uGlowK, uTime;
-    uniform vec3 uCam, uIo; uniform float uCut;
+    uniform vec3 uCam, uIo; uniform float uCut, uCutW;
     uniform vec3 uTint, uEmis; uniform float uLit, uGlowUse, uSpec, uShadeK;
     vec2 paintUv(vec3 w) { return vec2(w.x * uMapK.x + uMapK.z, w.z * uMapK.y + uMapK.w); }
     vec3 toLin(vec3 c) { return c * c; }
@@ -233,6 +233,11 @@
     }
     // anything between the camera and Io thins away in a fine dither, so she is never hidden
     void cutAway(vec3 w) {
+      #ifdef CUTW
+        // walls, roofs and decks thin away only as a last resort: when Io is boxed in and the camera has no clear line to
+        // her at all (walker.js sets uCutW then)
+        if (uCutW < 0.5) return;
+      #endif
       if (uCut < 0.5) return;
       vec2 q0 = mod(floor(gl_FragCoord.xy), 4.0);
       float dith0 = (mod(q0.x + q0.y * 2.0, 4.0) * 4.0 + mod(q0.x * 2.0 + q0.y * 3.0, 4.0) + 0.5) / 16.0;
@@ -264,7 +269,8 @@
     const defs = {};
     if (o.map) defs.USE_MAP = '';
     if (o.alphaTest) defs.ALPHA_TEST = '';
-    if (o.cut) defs.CUT = '';
+    if (o.cut || o.cutw) defs.CUT = '';
+    if (o.cutw) defs.CUTW = '';
     if (o.water) defs.WATER = '';
     if (o.nofog) defs.NOFOG = '';
     // the reskin job (November 17): vary: no two stretches of a surface quite the same tone, so a repeated picture doesn't

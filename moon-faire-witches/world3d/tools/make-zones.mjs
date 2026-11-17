@@ -41,6 +41,7 @@ const page = (n, Z, ids) => `<!doctype html>
 <script src="../../build/io_plus.js"></script>
 <script src="../../witches/witch_levels.js"></script>
 <script src="../../src/moon-io.js"></script>
+<script src="../../src/flipbook.js"></script>
 <script src="../../../src/game/maps.js"></script>
 <script src="../../../envoi-final-draft/items/items.js"></script>
 <script src="../engine/core.js"></script>
@@ -65,12 +66,14 @@ for (const n of Object.keys(ZONES)) {
   const files = [], key = {}, byHash = {};
   for (const id of ids) {
     const src = fs.readFileSync(path.join(D, 'places', id + '.js'), 'utf8');
+    // a stand-in is carried only where a texture needs it: where its own made texture isn't here (the reskin job,
+    // November 17; a stand-in can serve another texture too, as the oak's bark does the northern camp's pines)
+    const unused = new Set(), needed = new Set();
+    for (const t of src.matchAll(/made: "\.\/\.\.\/(texture-packs\/[^"]+)", stand: "\.\/\.\.\/(texture-packs\/[^"]+)"/g)) (fs.existsSync(path.join(MF, t[1])) ? unused : needed).add(t[2]);
     for (const m of src.matchAll(/"\.\/\.\.\/(texture-packs\/[^"]+\.(?:png|jpe?g|webp|avif))"/g)) {
       const p = m[1], f = path.join(MF, p);
       if (key[p] != null || !fs.existsSync(f)) continue;
-      // a stand-in whose made texture is here isn't carried: the page would never use it (the reskin job, November 17)
-      const sid = p.match(/\/stand-in\/([A-Za-z0-9_]+)\.png$/);
-      if (sid && fs.existsSync(path.join(MF, 'texture-packs/made-web', sid[1] + '.webp'))) continue;
+      if (unused.has(p) && !needed.has(p)) continue;
       const h = crypto.createHash('sha1').update(fs.readFileSync(f)).digest('hex');
       if (byHash[h] == null) { byHash[h] = files.length; files.push(p); }
       key[p] = byHash[h];

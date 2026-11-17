@@ -225,7 +225,7 @@
     const a = W.nearestFit(start.at[0], start.at[1]); W.setIo(a[0], a[1], start.face);
     placeGlow(); W.warm();
     $('load').style.opacity = 0; setTimeout(() => { $('load').style.display = 'none'; }, 700);
-    setTimeout(() => toast('Drag on the left to walk · drag on the right to look'), 900);
+    setTimeout(() => toast(W3D.quality === 'high' ? 'W A S D or the arrows to walk · tap twice to run · Shift to sprint · drag to look' : 'Drag on the left to walk · drag on the right to look'), 900);
     // for the checks (tools/zone-test.mjs)
     window.__zone = { n, have, roadsOf, arrival, outward, HOLD, glow, get here() { return here; }, get switching() { return switching; }, get last() { return last; }, get roads() { return roads; } };
     window.__ready = true;

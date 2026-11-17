@@ -41,25 +41,26 @@
     const ST = (k) => T(SURF[k]);
     // place.tints: a colour to multiply any surface by (stone, dry, timber, planks, roof, wood, deck, pave, cloth, rock, leaves, firs, bush, bark)
     const TINT = Object.assign({ leaves: 0xd8ffee, firs: 0xa8c8c0, bush: 0xd8ffe8, wood: 0xc0a088 }, place.tints || {});
-    // (the reskin job, November 17) Walls, roofs, decks and paving never thin away any more: the camera keeps a clear line to
-    // Io instead (walker.js), so nothing built is ever seen through. Walls are drawn from both sides. Each has `vary` (no two
+    // (the reskin job, November 17) Walls, roofs, decks and paving don't thin away any more: the camera keeps a clear line to
+    // Io instead (walker.js), so nothing built is seen through. Only where she is boxed in, with no clear line to her from
+    // anywhere (under a hull on its cradle, inside a shed), do they thin as they used to (cutw: core.js uCutW). (Walls are still drawn from their fronts only: some places are built round that, such as a gate passage seen from inside.) Each has `vary` (no two
     // stretches quite the same tone), and on the laptop `grain` (close up) and `bump` (relief under the moon).
     // A made texture is a bigger picture than its stand-in (more stones, more boards), so it covers more wall: MADE_REP.
     const MADE_REP = { shared_stone_wall_rough: 3.4, shared_stone_wall_frosted: 3.4, shared_wall_castle: 3.4, shared_drystone: 2.4, shared_roof_tiles_red: 2.6,
       shared_roof_shingle: 2.6, shared_roof_thatch: 2.8, shared_roof_slate_snow: 2.6, cottage_roof_moss: 2.6, heart_roof_red: 2.6, misthollow_roof_blue_slate: 2.6 };
     const REP = (k, d) => (used[SURF[k]] === 'made' && MADE_REP[SURF[k]]) || d;
     const MAT = {
-      stone: m({ tint: TINT.stone, map: ST('stone'), rep: REP('stone', 2.4), side: DS, shade: 0.35, vary: 0.2, grain: 0.22, bump: 0.05 }),
-      dry: m({ tint: TINT.dry, map: ST('dry'), rep: REP('dry', 1.5), side: DS, shade: 0.5, vary: 0.2, grain: 0.22, bump: 0.05 }),
-      timber: m({ tint: TINT.timber, map: ST('timber'), rep: REP('timber', 3.0), side: DS, shade: 0.3, vary: 0.14, grain: 0.18, bump: 0.035 }),
-      planks: m({ tint: TINT.planks, map: ST('planks'), rep: REP('planks', 2.0), repV: REP('planks', 2.0), side: DS, shade: 0.4, vary: 0.18, grain: 0.2, bump: 0.03 }),
-      roof: m({ tint: TINT.roof, map: ST('roof'), rep: REP('roof', 2.0), side: DS, shade: 0.15, vary: 0.22, grain: 0.18, bump: 0.05 }),
-      wood: m({ map: ST('wood'), rep: 1.1, tint: TINT.wood, shade: 0.5, vary: 0.15, grain: 0.2, bump: 0.025 }),
+      stone: m({ cutw: true, tint: TINT.stone, map: ST('stone'), rep: REP('stone', 2.4), shade: 0.35, vary: 0.2, grain: 0.22, bump: 0.05 }),
+      dry: m({ cutw: true, tint: TINT.dry, map: ST('dry'), rep: REP('dry', 1.5), shade: 0.5, vary: 0.2, grain: 0.22, bump: 0.05 }),
+      timber: m({ cutw: true, tint: TINT.timber, map: ST('timber'), rep: REP('timber', 3.0), shade: 0.3, vary: 0.14, grain: 0.18, bump: 0.035 }),
+      planks: m({ cutw: true, tint: TINT.planks, map: ST('planks'), rep: REP('planks', 2.0), repV: REP('planks', 2.0), shade: 0.4, vary: 0.18, grain: 0.2, bump: 0.03 }),
+      roof: m({ cutw: true, tint: TINT.roof, map: ST('roof'), rep: REP('roof', 2.0), side: DS, shade: 0.15, vary: 0.22, grain: 0.18, bump: 0.05 }),
+      wood: m({ cutw: true, map: ST('wood'), rep: 1.1, tint: TINT.wood, shade: 0.5, vary: 0.15, grain: 0.2, bump: 0.025 }),
       // the timber frames' real timbers (reskin): `beam` lies along a wall, `post` stands (its grain turned to run up it)
-      beam: m({ map: T('shared_boardwalk_planks') || ST('wood'), rep: 2.4, repV: 2.6, tint: 0x6a5248, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.03 }),
-      post: m({ map: T('shared_boardwalk_planks') || ST('wood'), rep: 2.4, repV: 2.6, swap: true, tint: 0x6a5248, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.03 }),
-      deck: m({ tint: TINT.deck, map: ST('deck'), rep: 2.2, shade: 0.6, vary: 0.18, grain: 0.2, bump: 0.03 }),
-      pave: m({ tint: TINT.pave, map: ST('pave'), rep: 2.6, shade: 0.6, vary: 0.16, grain: 0.2, bump: 0.04 }),
+      beam: m({ cutw: true, map: T('shared_boardwalk_planks') || ST('wood'), rep: 2.4, repV: 2.6, tint: 0x6a5248, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.03 }),
+      post: m({ cutw: true, map: T('shared_boardwalk_planks') || ST('wood'), rep: 2.4, repV: 2.6, swap: true, tint: 0x6a5248, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.03 }),
+      deck: m({ cutw: true, tint: TINT.deck, map: ST('deck'), rep: 2.2, shade: 0.6, vary: 0.18, grain: 0.2, bump: 0.03 }),
+      pave: m({ cutw: true, tint: TINT.pave, map: ST('pave'), rep: 2.6, shade: 0.6, vary: 0.16, grain: 0.2, bump: 0.04 }),
       iron: m({ tint: 0x2a2632, spec: 0.6, shade: 0.5 }),
       cloth: m({ tint: TINT.cloth, map: ST('cloth'), rep: 1, cut: true, side: DS, shade: 0.3 }),
       glass: m({ lit: 0 }),
@@ -67,7 +68,7 @@
       door: m({ map: pics.door, shade: 0.4 }), doorArch: m({ map: pics.doorArch, alphaTest: 0.5, shade: 0.4 }), doorArch2: m({ map: pics.doorArch2, alphaTest: 0.5, shade: 0.4 }),
       produce: m({ map: pics.produce, shade: 0.3 }), moonwater: m({ map: pics.moonwater, lit: 0 }),
       soil: m({ map: ST('soil'), rep: 1.5, tint: 0x6a5a50, shade: 0.7 }),
-      rock: m({ tint: TINT.rock, map: ST('rock'), rep: 1.8, shade: 0.7, vary: 0.2, grain: 0.22, bump: 0.05 }),
+      rock: m({ cutw: true, tint: TINT.rock, map: ST('rock'), rep: 1.8, shade: 0.7, vary: 0.2, grain: 0.22, bump: 0.05 }),
       hills: m({ lit: 0, nofog: true, side: DS, glow: 0 }),
       leafBush: m({ map: ST('leaves'), rep: 1, tint: TINT.bush, cut: true, shade: 0.6 }),
       bark: m({ map: ST('bark'), rep: 1.2, cut: true, shade: 0.6 }),
@@ -1033,17 +1034,21 @@
     // kept in a grid over the ground, so the walker can ask "what is the first thing between Io's head and here?" in a few
     // hundred sums. sight.hit(ax, ay, az, bx, by, bz) gives how far along the line (0 to 1) the first face is, 1 if none.
     const sight = (function () {
-      const mats = new Set(['stone', 'dry', 'timber', 'planks', 'roof', 'deck', 'pave', 'rock', 'wood', 'beam', 'post'].map((k) => MAT[k]));
+      // masonry, walls, roofs and decks count however small their pieces (the stones of an arch); wood only where it is
+      // 0.3 m across or more, so slim posts, rails and rungs don't push the camera about
+      const mats = new Map(['stone', 'dry', 'timber', 'planks', 'roof', 'deck', 'pave', 'rock', 'wood', 'beam', 'post'].map((k) => [MAT[k], /^(wood|beam|post)$/.test(k) ? 0.3 : 0.1]));
       const T9 = [], CELL = 3, grid = new Map();
       const va = new THREE.Vector3(), vb = new THREE.Vector3(), vc = new THREE.Vector3(), e1 = new THREE.Vector3(), e2 = new THREE.Vector3();
       scene.updateMatrixWorld(true);
       scene.traverse((o) => {
         if (!o.isMesh || o.isInstancedMesh || !mats.has(o.material) || !o.geometry.attributes.position) return;
-        const pa = o.geometry.attributes.position, ix = o.geometry.index, n = ix ? ix.count : pa.count;
+        const pa = o.geometry.attributes.position, ix = o.geometry.index, n = ix ? ix.count : pa.count, slim = mats.get(o.material);
         for (let i = 0; i + 2 < n; i += 3) {
           va.fromBufferAttribute(pa, ix ? ix.getX(i) : i).applyMatrix4(o.matrixWorld); vb.fromBufferAttribute(pa, ix ? ix.getX(i + 1) : i + 1).applyMatrix4(o.matrixWorld); vc.fromBufferAttribute(pa, ix ? ix.getX(i + 2) : i + 2).applyMatrix4(o.matrixWorld);
           e1.subVectors(vb, va); e2.subVectors(vc, va);
-          if (e1.cross(e2).length() * 0.5 < 0.35) continue;   // posts, rails, crates: too small to hide her
+          // slim things can't hide her (`slim`: how far across a face must be to count)
+          const longest = Math.max(e1.length(), e2.length(), vb.distanceTo(vc)), area2 = e1.cross(e2).length();
+          if (area2 < 0.03 || area2 / longest < slim) continue;
           const id = T9.length / 9; T9.push(va.x, va.y, va.z, vb.x, vb.y, vb.z, vc.x, vc.y, vc.z);
           const cx0 = Math.floor(Math.min(va.x, vb.x, vc.x) / CELL), cx1 = Math.floor(Math.max(va.x, vb.x, vc.x) / CELL), cz0 = Math.floor(Math.min(va.z, vb.z, vc.z) / CELL), cz1 = Math.floor(Math.max(va.z, vb.z, vc.z) / CELL);
           for (let cx = cx0; cx <= cx1; cx++) for (let cz = cz0; cz <= cz1; cz++) { const key = cx * 4096 + cz; let g = grid.get(key); if (!g) grid.set(key, g = []); g.push(id); }

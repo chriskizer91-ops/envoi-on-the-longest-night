@@ -27,11 +27,12 @@ await page.evaluate(() => { document.getElementById('load').style.display = 'non
 const info = await page.evaluate(() => ({ stats: window.__w3d.P.stats, used: window.__w3d.P.used, io: window.__w3d.numbers().io }));
 console.log('world:', JSON.stringify(info.stats), '· Io:', info.io, 'triangles');
 console.log('textures:', Object.entries(info.used).map(([k, v]) => k + ' ' + v).join(', '));
-let n = 0;
+let n = 0; const seenAll = [], hidden = [], boxedIn = [];
 for (const p of plan) {
   const r = await page.evaluate(async (p) => {
     const w = window.__w3d;
     w.guide(!!(p.guide || p.top || p.walkmap), p.walkmap ? 'walk' : !p.top);
+    if (p.look && w.setLook) w.setLook(p.look);   // { flip, rows }: the Flipbook look
     if (p.io) w.setIo(p.io[0], p.io[1], p.io[2]);
     if (p.cam) w.setCam(p.cam[0], p.cam[1], p.cam[2]); else w.C.auto = 0;
     w.P.scene.updateMatrixWorld();
@@ -49,11 +50,21 @@ for (const p of plan) {
     }
     const t0 = performance.now(); const num = w.step(p.settle || 0.5, 30); const ms = (performance.now() - t0);
     const t1 = performance.now(); w.render(); const one = performance.now() - t1;
-    return { num, at: [Math.round(w.io.px), Math.round(w.io.py)], one: +one.toFixed(1) };
+    // is Io seen? (the reskin job: the camera keeps a clear line to her, and walls no longer thin away, so nothing may stand
+    // between) The picture with her and without her, small: how many pixels differ
+    let seen = null;
+    if (!(p.guide || p.top || p.walkmap) && w.A && w.A.root) {
+      const cv = w.renderer.domElement, grab = () => { const c = document.createElement('canvas'); c.width = 320; c.height = Math.max(1, Math.round(320 * cv.height / cv.width)); const g = c.getContext('2d'); g.drawImage(cv, 0, 0, c.width, c.height); return g.getImageData(0, 0, c.width, c.height).data; };
+      const a = grab(); w.A.root.visible = false; w.render(); const b = grab(); w.A.root.visible = true; w.render();
+      seen = 0; for (let i = 0; i < a.length; i += 4) if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 30) seen++;
+    }
+    return { num, at: [Math.round(w.io.px), Math.round(w.io.py)], one: +one.toFixed(1), seen, boxed: w.P.U.uCutW ? w.P.U.uCutW.value : 0 };
   }, p);
   const f = path.join(out, String(n++).padStart(2, '0') + '-' + p.name + '.jpg');
   await page.screenshot({ path: f, type: 'jpeg', quality: 84 });
-  console.log(path.basename(f), 'Io at', r.at.join(','), '·', r.num.triangles, 'triangles,', r.num.calls, 'draw calls, one frame', r.one, 'ms (software)');
+  console.log(path.basename(f), 'Io at', r.at.join(','), '·', r.num.triangles, 'triangles,', r.num.calls, 'draw calls, one frame', r.one, 'ms (software)' + (r.seen == null ? '' : ' · Io seen: ' + r.seen + ' px' + (r.boxed ? ' (boxed in: the last resort)' : '')));
+  if (r.seen != null) { seenAll.push(r.seen); if (r.seen < 30) hidden.push(path.basename(f) + ' (' + r.seen + ' px)'); if (r.boxed) boxedIn.push(path.basename(f)); }
 }
+console.log('Io seen in ' + (seenAll.length - hidden.length) + ' of ' + seenAll.length + ' views' + (hidden.length ? '; hardly or not at all in: ' + hidden.join(', ') : '') + (boxedIn.length ? '; boxed in (walls thinned, the last resort) in: ' + boxedIn.join(', ') : ''));
 console.log(errors.length ? errors.length + ' page errors:\n  ' + [...new Set(errors)].slice(0, 12).join('\n  ') : 'no page errors');
 await browser.close();

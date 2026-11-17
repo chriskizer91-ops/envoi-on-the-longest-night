@@ -44,6 +44,7 @@ html,body{margin:0;height:100%;background:#0a0b18;overflow:hidden;overscroll-beh
 <script src="../build/io_plus.js"></script>
 <script src="../witches/witch_levels.js"></script>
 <script src="../src/moon-io.js"></script>
+<script src="../src/flipbook.js"></script>
 <script src="../../src/game/maps.js"></script>
 <script src="../../envoi-final-draft/items/items.js"></script>
 <script src="./engine/core.js"></script>
@@ -76,7 +77,7 @@ html,body{margin:0;height:100%;background:#0a0b18;overflow:hidden;overscroll-beh
     $('card').addEventListener('click', () => $('card').classList.remove('on'));
     $('guide').addEventListener('click', () => W.guide(!W.P || !$('guide').classList.contains('on')));
     $('load').style.opacity = 0; setTimeout(() => { $('load').style.display = 'none'; }, 700);
-    setTimeout(() => toast('Drag on the left to walk · drag on the right to look'), 900);
+    setTimeout(() => toast(W3D.quality === 'high' ? 'W A S D or the arrows to walk · tap twice to run · Shift to sprint · drag to look' : 'Drag on the left to walk · drag on the right to look'), 900);
     window.__ready = true;
   } catch (e) { console.error(e); $('loadmsg').textContent = 'Something went wrong: ' + e.message; }
 })();
