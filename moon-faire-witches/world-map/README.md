@@ -53,6 +53,23 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   same places, each kind where it belongs (willows in the fen, cottonwoods by water, spruce in the cold zones, mesquite
   in the desert), tinted to the colours their simple shapes have, so zone 3's are frosted and zone 4's under snow.
   The view now comes as close as 550 m.
+- **The water** (November 17): the sea is one flat sheet wearing Chris's two sea textures, drifting (the shallow one by
+  the shores, the deep one beyond, laid twice at two sizes so its repeat shows less), the sea bed pale through the
+  shallowest water, a line of foam on the shore and two more rolling in. All water tilts its face in small crossing
+  ripples, takes the sky's sheen at a low angle, and carries the moon's path of light. Rivers and lakes are drawn to
+  smooth, slightly ragged banks (not in squares), with a damp dark edge; in zone 4 they are frozen (`shared_lake_ice`).
+- **The mountains** (November 17): the height reader now wears the mountain country with rain (140,000 drops, each
+  cutting where it runs steep and dropping what it carries where it slows), which gives gullies, sharp ridges and fans;
+  the ridges are bent so they don't run straight. On the model, mountain ground is bare rock banded as it rises, snow
+  where it is high and not too steep (and wherever the painting has snow), rock with snow in its hollows between.
+- **Moon shadows** (November 17): worked out once from the land's shape: hills and peaks throw shadows away from the
+  moon (across the land, the sea, the trees and the buildings), and valleys and gullies lie in shade.
+- **The buildings are the 3D game's** (November 17): the 86 buildings of the nine walking places that have any
+  (`map/buildings.js`, read from the world-3d job's places by `tools/make-buildings.mjs`) stand in their true
+  arrangement: each with its own footprint, storeys of wall, ridged roof or lean-to, chimneys, belfry and lit windows,
+  wearing the game's own wall and roof textures (13, all Chris's). Bogmire's stand on stilts. Like the trees they are
+  drawn several times life size (a town is about 460 m across on the map, 61 m in the game). The castle and the towns
+  no walking place covers are built the same way in the same textures. Trees keep clear of each town.
 - **Two levels of detail,** chosen by the page (a big screen with a mouse gets the laptop's; `?detail=phone` or
   `?detail=laptop` sets it; the "Move Io" list has the switch):
 
@@ -73,12 +90,12 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   down to look from above). Two fingers pinch to zoom, slide to move, twist to turn. The moon button flies back to Io,
   north up. The page opens on the whole land and flies down to her. "Move Io" (this demo only) puts her in any of the
   21 walking places; its list shows the frame rate and the counts.
-- **Size:** 5.5 MB, works offline (one file for both levels).
+- **Size:** 5.8 MB, works offline (one file for both levels).
 
 ### What isn't there yet
 
-- **The places already built in 3D** (the world-3d job's 21 walking places) aren't matched one for one: a walking place is
-  about 720 m by 480 m, which at this height is a thumbnail. Each town is a handful of roofs in the right spot.
+- Of the places already built in 3D, only their **buildings** are on the map: not their walls, wells, bridges, jetties,
+  lamps, paving or people.
 - No beaches to speak of (the reader keeps only low, pale ground by the water as sand, and little passes), no roads, no
   bridges (the long stone bridge to the shipyard, Rotbridge), no waterfalls.
 
@@ -104,6 +121,10 @@ map.heightAt(x, y)          // the land's height at an atlas spot (for the fligh
 
 It needs three.js r128, `src/game/world.js`, `map/places.js`, `map/art.js` and `map/map3d.js` (and `map/map.css`).
 
+## Art requests
+
+`art-requests/world-map-round-1.md`: four textures worth generating for the sea and the mountains, with prompts.
+
 ## Files
 
 - `envoi-map-where.html`: step 1's page.
@@ -112,11 +133,13 @@ It needs three.js r128, `src/game/world.js`, `map/places.js`, `map/art.js` and `
 - `map/places.js`: the zones, the 21 walking places and the 7 landings on the atlas.
 - `map/art.js`, `map/map.css`: the art it reads, and the page's look.
 - `map/moods.js`: each walking place's atmosphere (made by `tools/make-moods.mjs`, not by hand).
+- `map/buildings.js`: the walking places' buildings (made by `tools/make-buildings.mjs`, not by hand).
 - `map/tree-models.js`: the eight tree models, packed (made by `tools/make-tree-models.mjs`, not by hand).
 - `art/`: the two data pictures, the ground textures in one picture, the tree models (`trees/`), and `LABELS.md`,
   which says what each holds.
 - `tools/`: `make-terrain.mjs` (reads the atlas; `--look <folder>` writes pictures to check by eye),
   `make-ground-layers.mjs` (packs the made textures), `make-moods.mjs` (reads the places' atmospheres),
+  `make-buildings.mjs` (reads the 3D game's buildings and packs their textures),
   `make-tree-mids.mjs` (makes the middle tree models), `make-tree-models.mjs` (packs the tree models),
   `tree-lineup.html` (a check page: every tree at its three levels), `check-places.mjs`,
   `shots.mjs` (stills at a phone's size, from set views), `touch-test.mjs` (the fingers and buttons, as a phone would).
@@ -127,6 +150,7 @@ It needs three.js r128, `src/game/world.js`, `map/places.js`, `map/art.js` and `
 node moon-faire-witches/world-map/tools/make-terrain.mjs          (only if the atlas or the reading changes)
 node moon-faire-witches/world-map/tools/make-ground-layers.mjs    (when Chris remakes a texture; reads texture-packs/made/)
 node moon-faire-witches/world-map/tools/make-moods.mjs            (when the 3D world's places change their tints or fog)
+node moon-faire-witches/world-map/tools/make-buildings.mjs        (when the 3D world's places change their buildings)
 node moon-faire-witches/world-map/tools/make-tree-mids.mjs        (when a detailed tree model changes; then the next line)
 node moon-faire-witches/world-map/tools/make-tree-models.mjs      (when a tree model in art/trees/ changes)
 node moon-faire-witches/world-map/tools/check-places.mjs

@@ -3,5 +3,6 @@
 window.MAP_ART = {
   height: "./art/aethermoor-terrain-height.png", // how high each spot of Aethermoor stands
   kinds: "./art/aethermoor-terrain-kinds.png", // what kind of ground each spot is
+  blayers: "./art/aethermoor-building-layers.webp", // the 3D game's wall and roof textures, in one picture
   layers: "./art/aethermoor-ground-layers.webp", // Chris's sixteen world-map ground textures, in one picture
 };

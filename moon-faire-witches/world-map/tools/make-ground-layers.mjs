@@ -1,7 +1,7 @@
 // make-ground-layers.mjs: packs the world-map ground textures Chris made (texture-packs/made/, the "aethermoor" cards
 // of round 2, and eight of the walking places' own ground cards; a stand-in from texture-packs/world/aethermoor/stand-in/
 // wherever a world-map one isn't made yet) into one picture the
-// 3D map reads: art/aethermoor-ground-layers.webp, 2048 x 3072, twenty-four 512 x 512 squares, left to right, top to bottom,
+// 3D map reads: art/aethermoor-ground-layers.webp, 2048 wide, 512 x 512 squares four to a row, left to right, top to bottom,
 // in the order of LAYERS below (art/LABELS.md lists them). Each texture repeats, so the land stays sharp at any zoom.
 // Usage: node moon-faire-witches/world-map/tools/make-ground-layers.mjs [--made <folder of the made textures>]
 import fs from 'fs';
@@ -15,7 +15,9 @@ export const LAYERS = ['pine_forest', 'broadleaf_forest', 'grassland', 'farmland
   'bare_rock', 'coastal_cliff', 'snowfield', 'snowy_mountainside', 'river_water', 'shallow_sea', 'deep_sea', 'mountain_lake',
   // the zones' own ground, from their walking places' cards: zone 2's flowered grass; zone 3's frosted heather, frosted
   // firs and bracken; zone 4's frost meadow, snow-laden firs, frosted undergrowth and frost moor
-  'dawn_grass_flowers', 'moor_heather_frost', 'frostmere_frost_meadow', 'fir_foliage_frosted', 'fir_foliage_snowladen', 'moor_bracken_heather', 'frosted_undergrowth', 'crossroads_frost_moor'];
+  'dawn_grass_flowers', 'moor_heather_frost', 'frostmere_frost_meadow', 'fir_foliage_frosted', 'fir_foliage_snowladen', 'moor_bracken_heather', 'frosted_undergrowth', 'crossroads_frost_moor',
+  // zone 4's frozen rivers and lakes
+  'shared_lake_ice'];
 const mi = process.argv.indexOf('--made');
 const MADE = mi >= 0 ? path.resolve(process.argv[mi + 1]) : path.join(R, 'moon-faire-witches/texture-packs/made');
 const STAND = path.join(R, 'moon-faire-witches/texture-packs/world/aethermoor/stand-in');

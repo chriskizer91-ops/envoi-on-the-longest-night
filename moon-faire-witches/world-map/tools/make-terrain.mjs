@@ -198,7 +198,9 @@ for (let i = 0; i < N; i++) {
   // (rising over the first mile and a half from the sea, not straight out of it)
   const rise = sstep(0, 160, dOpen), m = high[i] * massif[i] * rise;
   v += high[i] * rise * (massif[i] * 95 + peaks[i] * 50 + snowB[i] * 60);
-  v += m * (ridged(ax / 190, ay / 190, 4) * 105 + ridged(ax / 60 + 9, ay / 60 + 4, 3) * 20) * sstep(0.12, 0.5, massif[i]);
+  // (the ridges are bent a little as they run, so they don't lie in straight lines)
+  const wx = ax + (fbm(ax / 260 + 4.2, ay / 260, 3) - 0.5) * 150, wy = ay + (fbm(ax / 260, ay / 260 + 8.8, 3) - 0.5) * 150;
+  v += m * (ridged(wx / 190, wy / 190, 4) * 112 + ridged(wx / 62 + 9, wy / 62 + 4, 3) * 30) * sstep(0.12, 0.5, massif[i]);
   // the east: flat-topped mesas, in two cliff steps, on a rolling desert floor
   const e = east[i];
   v += e * (sstep(0.42, 0.56, mesaNear[i]) * 30 + sstep(0.5, 0.62, mesaWide[i]) * sstep(0.8, 0.95, mesaNear[i]) * 22 + mesaWide[i] * 10);
@@ -206,6 +208,45 @@ for (let i = 0; i < N; i++) {
 }
 // one soft pass over the land so no single pixel spikes (the mesas' steps stay steep enough)
 { const hb = blur(hgt, 1), lb = blur(Float32Array.from(land), 1); for (let i = 0; i < N; i++) if (land[i]) hgt[i] = Math.max(0.8, hb[i] / Math.max(lb[i], 0.35)); }
+// the mountains worn by water, as real ones are: many thousands of drops of rain fall on the high country, each runs
+// downhill, cutting where it runs fast and steep and leaving what it carries where it slows. That gives the ranges
+// their gullies, sharp ridges between them, and fans at the valleys' feet. Only the mountain country is worn (the
+// lowlands, the fen and the mesas keep the shapes read off the painting), and never down to the sea.
+{
+  const hc = new Float32Array(N); for (let i = 0; i < N; i++) hc[i] = hgt[i] / S; // heights in squares, so a slope of 1 is 45 degrees
+  const wear = new Float32Array(N); for (let i = 0; i < N; i++) wear[i] = land[i] ? high[i] * sstep(18, 60, hgt[i]) : 0;
+  const starts = []; for (let i = 0; i < N; i++) if (wear[i] > 0.25) starts.push(i);
+  let seed = 20261117; const rnd = () => { seed = (seed + 0x6D2B79F5) >>> 0; let t = seed; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const DROPS = Math.round(starts.length * 1.5), INERTIA = 0.06, CARRY = 2.2, MINCARRY = 0.01, CUT = 0.22, DROP = 0.3, DRY = 0.02, GRAV = 4, LIFE = 70, RAD = 2;
+  // the brush a drop cuts with: a small round patch, heaviest at its middle
+  const brush = []; { let tot = 0; for (let dy = -RAD; dy <= RAD; dy++) for (let dx = -RAD; dx <= RAD; dx++) { const d = Math.hypot(dx, dy); if (d <= RAD) { brush.push([dx, dy, RAD + 0.5 - d]); tot += RAD + 0.5 - d; } } for (const b of brush) b[2] /= tot; }
+  const at = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), u = x - xi, v = y - yi, i = yi * W + xi; const a = hc[i], b = hc[i + 1], c = hc[i + W], d = hc[i + W + 1];
+    return [(a * (1 - u) + b * u) * (1 - v) + (c * (1 - u) + d * u) * v, (b - a) * (1 - v) + (d - c) * v, (c - a) * (1 - u) + (d - b) * u]; };
+  for (let n = 0; n < DROPS; n++) {
+    const s0 = starts[Math.floor(rnd() * starts.length)]; let x = s0 % W + rnd(), y = Math.floor(s0 / W) + rnd(), dx = 0, dy = 0, speed = 1, water = 1, load = 0;
+    for (let life = 0; life < LIFE; life++) {
+      if (x < 2 || y < 2 || x > W - 4 || y > H - 4) break;
+      const xi = Math.floor(x), yi = Math.floor(y), i = yi * W + xi, u = x - xi, v = y - yi, [h0, gx, gy] = at(x, y);
+      dx = dx * INERTIA - gx * (1 - INERTIA); dy = dy * INERTIA - gy * (1 - INERTIA);
+      const len = Math.hypot(dx, dy); if (len < 1e-6) break; dx /= len; dy /= len; x += dx; y += dy;
+      if (x < 2 || y < 2 || x > W - 4 || y > H - 4) break;
+      const j = Math.floor(y) * W + Math.floor(x); if (!land[j]) break; // it has reached water
+      const dh = at(x, y)[0] - h0, can = Math.max(-dh * speed * water * CARRY, MINCARRY), k = wear[i];
+      if (load > can || dh > 0) { // it slows or meets a rise: it leaves some of its load at the four corners it stood among
+        const put = (dh > 0 ? Math.min(dh, load) : (load - can) * DROP) * k; load -= put;
+        hc[i] += put * (1 - u) * (1 - v); hc[i + 1] += put * u * (1 - v); hc[i + W] += put * (1 - u) * v; hc[i + W + 1] += put * u * v;
+      } else { // it cuts
+        const take = Math.min((can - load) * CUT, -dh) * k;
+        for (const [bx, by, bw] of brush) { const q = i + bx + by * W; if (q < 0 || q >= N || !land[q]) continue; const t = Math.min(take * bw, Math.max(0, hc[q] - 1.2 / S)); hc[q] -= t; load += t; }
+      }
+      speed = Math.sqrt(Math.max(0, speed * speed - dh * GRAV)); water *= 1 - DRY;
+    }
+  }
+  // the worn land, a little softened where it was worn (a drop's cuts are a square wide), and never under the shore
+  const worn = blur(hc, 1), worn2 = blur(hc, 2); let moved = 0;
+  for (let i = 0; i < N; i++) if (land[i] && wear[i] > 0) { const v = Math.max(0.8, (hc[i] * 0.3 + worn[i] * 0.45 + worn2[i] * 0.25) * S); moved += Math.abs(v - hgt[i]); hgt[i] = v; }
+  console.log('the mountains worn by ' + DROPS.toLocaleString('en-US') + ' drops of rain: ' + (moved / starts.length * 10).toFixed(0) + ' m moved on average');
+}
 // the sea floor: a shallow shelf, then deeper
 for (let i = 0; i < N; i++) if (kind[i] === KIND.sea) hgt[i] = -0.6 - sstep(0, 70, dLand[i] * S) * 16 - sstep(60, 400, dLand[i] * S) * 14;
 // rivers: at sea level where they meet the sea, climbing inland no faster than their banks

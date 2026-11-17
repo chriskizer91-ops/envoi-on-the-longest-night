@@ -15,10 +15,10 @@ To read a spot at atlas (x, y): the pixel at (floor(x / 4), floor(y / 4)).
 
 ## The ground textures
 
-`aethermoor-ground-layers.webp` (2048 x 3072) is twenty-four of Chris's made textures in one picture, each a 512 x 512
+`aethermoor-ground-layers.webp` (2048 x 3584) is twenty-five of Chris's made textures in one picture, each a 512 x 512
 square that repeats, left to right, top to bottom. Packed by `../tools/make-ground-layers.mjs` from
 `moon-faire-witches/texture-packs/made/<name>.png` (on the branch `work/textures-made` when this was packed, November 16;
-all 24 are Chris's own, none a stand-in). The names are the cards' file names, so each can be found again in
+all 25 are Chris's own, none a stand-in). The names are the cards' file names, so each can be found again in
 `texture-packs/made/index.csv`.
 
 | # | Texture (file name in `made/`) | Worn by |
@@ -31,10 +31,10 @@ all 24 are Chris's own, none a stand-in). The names are the cards' file names, s
 | 5 | `beach_sand` | beaches and shores |
 | 6 | `desert_ground` | the desert floor |
 | 7 | `sandstone_mesa` | the mesas, and their cliff faces |
-| 8 | `bare_rock` | mountain rock |
+| 8 | `bare_rock` | the mountains' rock, and their steep faces |
 | 9 | `coastal_cliff` | every steep face outside the desert |
 | 10 | `snowfield` | snow |
-| 11 | `snowy_mountainside` | (packed, not worn yet) |
+| 11 | `snowy_mountainside` | the mountains between bare rock and full snow |
 | 12 | `river_water` | rivers |
 | 13 | `shallow_sea` | the sea by the shores |
 | 14 | `deep_sea` | the deep sea |
@@ -47,6 +47,30 @@ all 24 are Chris's own, none a stand-in). The names are the cards' file names, s
 | 21 | `moor_bracken_heather` | zone 3's leafy forest |
 | 22 | `frosted_undergrowth` | zone 4's leafy forest |
 | 23 | `crossroads_frost_moor` | zone 4's farmland |
+| 24 | `shared_lake_ice` | zone 4's rivers and lakes, frozen |
+
+## The buildings' textures
+
+`aethermoor-building-layers.webp` (1024 x 1024) is thirteen of Chris's made wall and roof textures, each a 256 x 256
+square that repeats, four to a row. Packed by `../tools/make-buildings.mjs` (all 13 his own, none a stand-in), which
+also writes `../map/buildings.js`: the 86 buildings of the nine walking places that have any, read from the 3D world's
+places (`moon-faire-witches/world3d/places/`).
+
+| # | Texture (file name in `made/`) | Worn by |
+|---|---|---|
+| 0 | `shared_stone_wall_rough` | stone ground floors (Wickhollow, the cottage, Dawnroost), chimneys, towers |
+| 1 | `wick_wall_timber_plaster` | timber-framed upper storeys |
+| 2 | `shared_roof_tiles_red` | Wickhollow's and Dawnroost's roofs |
+| 3 | `shared_roof_thatch` | thatched roofs in the towns no walking place covers |
+| 4 | `shared_planks_wall` | Bogmire's plank houses, the hut at Frostmere's shore |
+| 5 | `shared_roof_shingle` | Bogmire's roofs |
+| 6 | `shared_wall_castle` | Hearthstone Keep's walls and towers |
+| 7 | `misthollow_roof_blue_slate` | Misthollow's roofs, the castle's roofs |
+| 8 | `shared_stone_wall_frosted` | Misthollow's, the Moonwell's and the shipyard's walls |
+| 9 | `shared_roof_slate_snow` | the Moonwell's and the shipyard's roofs |
+| 10 | `shared_boardwalk_planks` | plank sheds and lean-tos |
+| 11 | `cottage_roof_moss` | Io's cottage |
+| 12 | `shared_snow` | the snowed-over roof at Frostmere's shore |
 
 ## The tree models
 
