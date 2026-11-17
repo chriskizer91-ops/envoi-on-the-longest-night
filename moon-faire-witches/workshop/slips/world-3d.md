@@ -1,6 +1,8 @@
 SLIP: world-3d
-State:    Working: every walking place is built in 3D (21 of 21) and the four zone pages walk them place to place
-          (November 16, afternoon); every place passes walls-test, and nearly all of each 2D walk is walkable in 3D.
+State:    Ready to bring in: the whole walking game in 3D. All 21 walking maps are built, in four zones each with its
+          towns and wild places, joined on foot (Chris, November 17, 09:17: "these are the four zones each with wilds").
+          Every place passes walls-test; nearly all of each 2D walk is walkable in 3D. Built to play: builds/ (pushed).
+          Next, when Chris says: his made textures in (all 130 are on work/textures-made), the townsfolk.
 Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, while his textures (rounds one and two are
           all made) come in slowly through their own conversation: the project document claude/textures-in.md has the
           way and the starter text. Every 3D place swaps a made texture in by its file name on the next rebuild.
@@ -73,7 +75,7 @@ Plan:     Chris: build the whole 3D world now with the stand-ins, with helpers, 
           For Chris to confirm (helpers' calls under his 11:22 rule): the frozen ice of the frozen pass's river and of the
           cold moor's tarn and Frostmere's near ice is walkable (its far open water isn't); the camp's stream is open water.
           The frozen camp's wish (ff429d4): bark takes a place's tint (white birches).
-Branch:   work/world-3d   Commit: 25a58fb
+Branch:   work/world-3d   Commit: 9007065 (code at 25a58fb; after it the slip, builds/ and two READMEs)
 Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.html, engine/core.js, engine/paint.js,
           engine/world.js, engine/walker.js, places/wickhollow.js, places/wickhollow-trees.js, tools/check-layout.mjs,
           tools/make-trees.mjs, tools/shots.mjs, tools/walls-test.mjs, tools/beside.mjs, tools/plan-wickhollow.json,
@@ -82,10 +84,12 @@ Files:    moon-faire-witches/world3d/ (all new): README.md, envoi-3d-wickhollow.
           dawnroost-node, moonwell, misthollow, shipyard, crossroads, frozen-pass, warm-roads-camp,
           ember-line-road, dawnroost-road, eldergrove-edge, northern-camp, cold-moor, frozen-camp,
           frostmere-shore); game/ (README.md, zones.js, zone.js, zone-1..4.html and their art lists),
-          tools/make-zones.mjs, tools/zone-test.mjs
+          tools/make-zones.mjs, tools/zone-test.mjs, builds/ (README.md, the labels; the four zones built to play
+          offline: envoi-3d-zone-1-wickhollow-and-the-fen.html 21.7 MB, -2-the-warm-roads 22.5 MB,
+          -3-the-northern-wilds 24.0 MB, -4-the-northeast-peaks 20.7 MB; one commit and push each)
           moon-faire-witches/workshop/slips/world-3d.md
           Nothing else changed.
-File for Chris: zone-1.html to zone-4.html (the whole of each zone, walked place to place), and envoi-3d-<place>.html for Wickhollow, the cottage, the jetty, the Thornwood, Bogmire, Bogmire's
+File for Chris: builds/envoi-3d-zone-1..4-<name>.html (the whole of each zone, walked place to place; in the repository), and envoi-3d-<place>.html for Wickhollow, the cottage, the jetty, the Thornwood, Bogmire, Bogmire's
           heart, Dawnroost, Dawnroost's node, Misthollow, the Moonwell, the shipyard, the crossroads, the frozen pass,
           the Warm Roads camp, the Ember Line road, the forest road to Dawnroost, Eldergrove's edge, the northern camp, the cold moor, the frozen camp and Frostmere's shore (each 12 to 14 MB, works offline). In each: Drag on the left half of the screen to walk (push far
           and she jogs), drag on the right half to turn the camera. The map button (top right) shows your painting over
@@ -112,9 +116,12 @@ Checked:  Stills at 412 x 915 and 915 x 412: from straight above beside the pain
           on the Pixel 7a: not measurable headless (software rendering); the page shows it on the painting view. It starts
           at 1.5 x sharpness and drops a step if it falls under 27 frames a second.
 Chris said: (not yet)
-For the hub: Take moon-faire-witches/world3d/ and this slip; nothing else changed. Build: node moon-faire-witches/tools/
-          patch-io.mjs, then node tools/build.mjs --offline moon-faire-witches/world3d/envoi-3d-wickhollow.html. It reads
-          src/game/maps.js (MAPS.wickhollow) and the texture packs' stand-ins, read only. When Chris's textures land in
+For the hub: Take moon-faire-witches/world3d/ (builds/ included) and this slip; nothing else changed. Build: node
+          moon-faire-witches/tools/patch-io.mjs, then node moon-faire-witches/world3d/tools/make-zones.mjs and node
+          tools/build.mjs --offline moon-faire-witches/world3d/game/zone-<n>.html (or envoi-3d-<place>.html for one place).
+          It reads src/game/maps.js, src/game/game.js (LANDINGS), envoi-final-draft/items/items.js and the texture packs'
+          stand-ins, read only. The 3D map job (work/world-map) opens from the zone pages' hook W3D.zoneFly
+          (game/README.md: ?fly=<page>, back with ?landing=<id>, the shared save envoi3d-save). When Chris's textures land in
           texture-packs/made/, rebuilding picks them up (the page uses a made texture wherever one is there). Please add
           the page to moon-faire-witches/README.md's table and to the board, and a textures-made job to the board
           (claude/textures-in.md has its starter text).
@@ -124,5 +131,11 @@ Open:     1. (Done in walk pass 2: the lower house's roof walk. The Crescent Loc
           3. All 15 textures are stand-ins; the timber-and-plaster walls and the bark are the roughest. shared_planks_wall
              isn't made in any pack yet, so the shed and the lean-to use the boardwalk planks.
           4. For Chris: the frame rate on his phone (the painting view shows it).
+          6. Chris's made textures: all 130 of rounds one and two are on work/textures-made. Bringing them in means
+             merging that branch, making phone-size copies (a made texture can be a few MB; each page inlines its
+             textures), rebuilding every place and zone, and showing Chris each place before and after, with any of the
+             six textures that show a line where they repeat (claude/slips/textures-made.md). Waiting for his word.
+          7. For Chris: the frozen ice that's walkable (the frozen pass's river, the cold moor's tarn, Frostmere's near
+             ice), and whether Io steps off at a camp facing the fire instead of south.
           5. Headless stills show a faint fixed rectangle on the ground near the bottom left of the upright screen: the
              software renderer's, not the page's (it stays put with Io hidden and the camera moved).
