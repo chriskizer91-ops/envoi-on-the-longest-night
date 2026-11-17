@@ -380,7 +380,7 @@
     function lightning(k) {
       if (SKY.v < 0.3) return;
       SKY.bolt = k; UI.flash('#ff7a5a', 0.28 * k, 0.3); addShake(5 * k);
-      setTimeout(() => SND.sfx.boom(0.5 + 0.5 * k), 350 + Math.random() * 500);
+      setTimeout(() => SND.sfx.thunder(0.5 + 0.5 * k), 350 + Math.random() * 500);
     }
     function stepSky(rdt) {
       SKY.v += (SKY.to - SKY.v) * Math.min(1, rdt * 0.6); SKY.bolt = Math.max(0, SKY.bolt - rdt * 3);
@@ -503,7 +503,7 @@
         if (e.key === 'ArrowDown') { move(1); e.preventDefault(); }
         else if (e.key === 'ArrowUp') { move(-1); e.preventDefault(); }
         else if (e.key === 'Enter' || e.key === ' ') { if (document.activeElement && document.activeElement.tagName === 'BUTTON' && cmdEl.contains(document.activeElement)) return; pick(sel); e.preventDefault(); }
-        else if (e.key === 'Escape' || e.key === 'Backspace') { if (items.some((it) => it.id === 'back')) { SND.sfx.menu(); cb('back'); e.preventDefault(); } }
+        else if (e.key === 'Escape' || e.key === 'Backspace') { if (items.some((it) => it.id === 'back')) { SND.sfx.menuBack(); cb('back'); e.preventDefault(); } }
       });
       function banner(text, dur) { bannerEl.textContent = text; bannerEl.classList.add('on'); clearTimeout(bannerTO); bannerTO = setTimeout(() => bannerEl.classList.remove('on'), (dur || 1.4) * 1000); }
       function msg(text, low) { msgEl.textContent = text; msgEl.classList.toggle('low', !!low); msgEl.classList.add('on'); }
@@ -725,7 +725,7 @@
       else if (e.t === 'hover') D[e.who].aloft = true;
       else if (e.t === 'ward') wardHit();
       else if (e.t === 'tranceReady') {
-        D[e.who].tr = 1; SND.sfx.chime(); FX.burst(chest(who), [1, 0.92, 1], 30, 2.5);
+        D[e.who].tr = 1; SND.sfx.tranceReady(e.who); FX.burst(chest(who), [1, 0.92, 1], 30, 2.5);
         UI.note(E.unit(e.who).name + '’s Trance gauge is full.' + (cfg.tips && cfg.tips.trance && !S.tipTrance ? ' ' + cfg.tips.trance : ''), cfg.tips && cfg.tips.trance && !S.tipTrance ? 4.2 : 1.5); S.tipTrance = true;
       } else if (e.t === 'bound') word(to, 'Bound');
       else if (e.t === 'sundered') word(to, 'Sundered');
@@ -750,7 +750,7 @@
       else if (e.t === 'oath') word(who, 'Warden’s Oath');
       // ---- the Jester's Fate (Moon Faire's rules) ----
       else if (e.t === 'fate') { D[e.to].fate = e.fate; if (e.why === 'peril' && !S.perilSaid) { S.perilSaid = true; UI.note('A friend falls under half: every foe gains Fate.', 2); } else if (e.why === 'halved') word(to, 'Fate halved'); else if (e.n > 0 && e.why !== 'peril') word(to, 'Fate', 'heat'); }
-      else if (e.t === 'sealed') { D[e.to].sealedShown = true; word(to, 'SEALED', 'weak'); SND.sfx.chime(); FX.ring(to.pos, 0xffd27a, 0.2, 1.8, 0.6, 1); if (!S.sealTip) { S.sealTip = true; UI.note('Its Fate has met its Life: it is sealed. The Jester’s Sealed Fate can end it.', 3); } }
+      else if (e.t === 'sealed') { D[e.to].sealedShown = true; word(to, 'SEALED', 'weak'); SND.sfx.sealToll(); FX.ring(to.pos, 0xffd27a, 0.2, 1.8, 0.6, 1); if (!S.sealTip) { S.sealTip = true; UI.note('Its Fate has met its Life: it is sealed. The Jester’s Sealed Fate can end it.', 3); } }
       else if (e.t === 'catch') { word(who, 'Caught!', 'heat'); }
       else if (e.t === 'taunt') { word(who, 'Taunt ×' + e.n, 'heat'); }
       else if (e.t === 'buff') { word(to, e.name, 'heat'); }
@@ -769,7 +769,7 @@
       else if (e.t === 'down') {
         const u = E.unit(e.who);
         if (u.side === 'foe') {
-          D[e.who].hp = 0; who.out = true; const da = who.look.downAct || 'die'; if (da !== 'none') who.m.play(da, true); SND.sfx.shriek(0.9);
+          D[e.who].hp = 0; who.out = true; const da = who.look.downAct || 'die'; if (da !== 'none') who.m.play(da, true); SND.sfx.release(who.kind);
           // its Wrath's red storm clears as it falls
           if (who.wrathShown) { if (BF) BF.storm(0); skyTo(0); }
           if (who.look.downNote) UI.note(who.look.downNote, 2.6);
@@ -785,7 +785,7 @@
     function strikeFx(t, big, color, rot) {
       const p = chest(t);
       FX.slash(p, color || 0xffffff, rot === undefined ? rnd(-0.6, 2.6) : rot, big ? 1.3 : 1.05, 0.3); FX.burst(p, [1, 0.95, 0.8], big ? 40 : 26, big ? 4 : 3.2); FX.flashLight(p, 0xfff1d0, big ? 3 : 2, 0.2);
-      SND.sfx.hit(big ? 1.2 : 0.9); addShake(big ? 9 : 5); hitStop(big ? 0.11 : 0.06);
+      SND.sfx.strike(big ? 1.2 : 0.9, color); addShake(big ? 9 : 5); hitStop(big ? 0.11 : 0.06);
       if (big && BF && t.pos) BF.impact(t.pos, 0.55);
     }
     // a hero's move that runs up to its foe, plays its motion, lands each blow at the motion's hit times, and runs back
@@ -798,7 +798,7 @@
       h.aim = t; const m = h.m; m.play(act, true);
       const H = m.ACTIONS[act].hits;
       for (let k = 0; k < H.length; k++) {
-        await untilP(m, H[k] - 0.04); SND.sfx.swish();
+        await untilP(m, H[k] - 0.04); SND.sfx.swing(h.key);
         await untilP(m, H[k]);
         if (!ev.has() || countering(ev)) continue;
         if (ev.peek().t === 'miss') { ev.show(); continue; }
@@ -820,11 +820,11 @@
       const f = F[c.who]; if (!f) return;
       UI.banner('Warden’s Vow: Counter', 1.4);
       faceTo(f, h); shotAt(mid(h.pos, f.pos), 1.7, 3);
-      f.aim = h; f.m.play('counter', true); SND.sfx.swish();
+      f.aim = h; f.m.play('counter', true); SND.sfx.bladeSwing();
       await untilP(f.m, f.m.ACTIONS.counter.hits[0]);
       const p = chest(h);
       FX.slash(p, 0x9ec4ff, rnd(-0.6, 2.6), 1.2, 0.3); FX.burst(p, [0.6, 0.75, 1], 32, 3.4); FX.flashLight(p, 0x8fb8ff, 3, 0.3);
-      SND.sfx.hit(1.1); addShake(9); hitStop(0.09);
+      SND.sfx.bladeHit(1.1); addShake(9); hitStop(0.09);
       ev.show();
       await until(() => !f.m.busy); f.aim = null;
       if (E.unit(f.key).vow > 0 && !E.over) f.m.play('vowStance', true);
@@ -836,7 +836,7 @@
       attack: (h, t, ev) => melee(h, t, ev, 'combo', 1.4, { rots: [-0.5, 2.5, 0.15] }),
       async flame(h, t, ev) {
         faceTo(h, t); shotBoth(h.pos, t.pos, 1.05, 2.5); await wait(0.15);
-        const m = h.m; m.play('throw', true); SND.sfx.fire();
+        const m = h.m; m.play('throw', true); SND.sfx.witchfire();
         await untilP(m, m.ACTIONS.throw.cues[0]);
         const proj = { from: m.flamePos(V()), dur: 0.5, arc: 0.45, color: 0xe08cff, halo: 0x9a3cff, size: 0.34, trail: [0.8, 0.35, 1], light: 0xb455ff, lightI: 3 };
         if (ev.peek() && ev.peek().t === 'miss') { FX.projectile(Object.assign(proj, { to: () => chest(t).add(new THREE.Vector3(0.9, 0.4, 0.6)) })); await wait(0.45); ev.show(); }
@@ -844,24 +844,24 @@
           await FX.projectile(Object.assign(proj, { to: () => chest(t) }));
           const p = chest(t);
           FX.burst(p, [0.85, 0.4, 1], 60, 4.2); FX.ring(t.pos, 0xc060ff, 0.2, 1.9, 0.6, 0.9); FX.flashLight(p, 0xc070ff, 4, 0.4, 7);
-          SND.sfx.boom(0.8); addShake(10); hitStop(0.1); ev.show({ big: true });
+          SND.sfx.witchfireBurst(0.8); addShake(10); hitStop(0.1); ev.show({ big: true });
         }
         await until(() => !m.busy); ev.rest();
       },
       async crescent(h, t, ev) {
         faceTo(h, t); shotAt(h.pos, 1.55, 2.5);
-        const m = h.m, C = m.ACTIONS[m.witch ? 'e_raise' : 'crescent'].cues; m.play(m.witch ? 'e_raise' : 'crescent', true); SND.sfx.chime();
+        const m = h.m, C = m.ACTIONS[m.witch ? 'e_raise' : 'crescent'].cues; m.play(m.witch ? 'e_raise' : 'crescent', true); SND.sfx.moonBlades();
         await untilP(m, C[0]);
         const list = FX.blades(() => chest(h), 5);
         await untilP(m, C[1]); shotBoth(h.pos, t.pos, 1.05, 3);
         const hits = [];
         for (let i = 0; i < 5; i++) {
-          SND.sfx.blade();
+          SND.sfx.moonBladeFly();
           hits.push(FX.launchBlade(list[i], () => chest(t), 0.32).then(() => {
             if (!ev.has()) return;
             if (ev.peek().t === 'miss') { ev.show(); return; }
             const p = chest(t); FX.slash(p, 0xcfe0ff, rnd(0, TAU), 0.9, 0.25); FX.burst(p, [0.7, 0.8, 1], 18, 2.8);
-            SND.sfx.hit(0.7); addShake(4); hitStop(0.04); ev.show();
+            SND.sfx.moonBladeHit(0.7); addShake(4); hitStop(0.04); ev.show();
           }));
           await wait(0.13);
         }
@@ -869,13 +869,13 @@
       },
       async briars(h, t, ev) {
         faceTo(h, t); shotBoth(h.pos, t.pos, 1.05, 2.5); await wait(0.12);
-        const m = h.m; m.play('briar', true); SND.sfx.fire();
+        const m = h.m; m.play('briar', true); SND.sfx.rootCast();
         await untilP(m, m.ACTIONS.briar.cues[0]);
         shotAt(t.pos, 1.45, 3.2);
         FX.sigil(t.pos, 0xc070ff, 2.4, 1.8, 2); FX.briars(t.pos, 1.7);
         FX.burst(new THREE.Vector3(t.pos.x, 0.25, t.pos.z), [0.75, 0.35, 1], 50, 3, { up: 1 });
-        SND.sfx.grasp(); await untilP(m, m.ACTIONS.briar.hits[0]);
-        FX.flashLight(chest(t), 0xb455ff, 3, 0.4); SND.sfx.hit(1.1); addShake(10); hitStop(0.08);
+        SND.sfx.briarsRise(); await untilP(m, m.ACTIONS.briar.hits[0]);
+        FX.flashLight(chest(t), 0xb455ff, 3, 0.4); SND.sfx.thornHit(1.1); addShake(10); hitStop(0.08);
         ev.show();
         await until(() => !m.busy); ev.rest();
       },
@@ -883,7 +883,7 @@
       async mend(h, t, ev) {
         const all = healed(ev);
         if (all.length > 1) shotField(2.5); else shotAt(t.pos, 1.8, 2.5);
-        const m = h.m; m.play('mend', true); SND.sfx.heal();
+        const m = h.m; m.play('mend', true); SND.sfx.mend();
         for (const f of all) { FX.rise(() => f.pos, [0.6, 1, 0.75], 1.5, 40, 0.55); FX.sigil(f.pos, 0xb8ffd0, 1.8, 1.8, 1.5); }
         await untilP(m, m.ACTIONS.mend.hits[0]);
         while (ev.peek() && ev.peek().t === 'heal') { FX.burst(chest(F[ev.peek().to]), [0.6, 1, 0.75], 30, 2, { up: 1 }); ev.show(); }
@@ -892,7 +892,7 @@
       async waxing(h, t, ev) {
         const W2 = IOS.SPELLS.waxing, m = h.m, mv = m.witch ? 'summon' : 'mend', dur = m.ACTIONS[mv].dur;
         shotField(2.5);
-        m.play(mv, true); SND.sfx.heal();
+        m.play(mv, true); SND.sfx.waxingLight();
         const allies = living('hero');
         await untilP(m, W2.cues[0]);
         const p = allies.length > 1 ? mid(allies[0].pos, allies[1].pos) : h.pos;
@@ -904,28 +904,28 @@
       async moonsteel(h, t, ev) {
         const M2 = IOS.SPELLS.moonsteel, m = h.m, dur = m.ACTIONS.cast.dur;
         faceTo(h, t); shotBoth(h.pos, t.pos, 1.05, 2.5);
-        m.play('cast', true); SND.sfx.chime();
+        m.play('cast', true); SND.sfx.blessCast();
         await untilP(m, M2.cues[0]);
         const T1 = V(), blade = t.key === 'jester' ? (A2, B2) => { t.m.anchor('handR', B2); t.m.anchor('bells', A2); A2.sub(B2).multiplyScalar(1.6).add(B2); } : (A2, B2) => { t.m.anchor('blade', T1); t.m.anchor('hit', B2); A2.copy(T1).sub(B2).multiplyScalar(0.8172).add(T1); };
         IOS.moonsteel({ palm: () => h.m.flamePos(V()), blade, releaseIn: (M2.cues[1] - M2.cues[0]) * dur, landIn: (M2.hits[0] - M2.cues[0]) * dur, glowFor: M2.glow });
         await untilP(m, M2.hits[0]);
-        SND.sfx.blade(); ev.rest();
+        SND.sfx.moonsteel(); ev.rest();
         await until(() => !m.busy);
       },
       // Harvest Moon: a warm full moon swells over her palm and sinks into Sol; her blade glows amber
       async harvest(h, t, ev) {
         const M2 = IOS.SPELLS.harvest, m = h.m, dur = m.ACTIONS.cast.dur;
         faceTo(h, t); shotBoth(h.pos, t.pos, 1.05, 2.5);
-        m.play('cast', true); SND.sfx.chime();
+        m.play('cast', true); SND.sfx.blessCast();
         await untilP(m, M2.cues[0]);
         const T1 = V(), blade = t.key === 'jester' ? (A2, B2) => { t.m.anchor('handR', B2); t.m.anchor('bells', A2); A2.sub(B2).multiplyScalar(1.6).add(B2); } : (A2, B2) => { t.m.anchor('blade', T1); t.m.anchor('hit', B2); A2.copy(T1).sub(B2).multiplyScalar(0.8172).add(T1); };
         IOS.harvestMoon({ palm: () => h.m.flamePos(V()), chest: () => chest(t), feet: () => t.pos, blade, releaseIn: (M2.cues[1] - M2.cues[0]) * dur, landIn: (M2.hits[0] - M2.cues[0]) * dur, glowFor: M2.glow });
         await untilP(m, M2.hits[0]);
-        SND.sfx.fire(); ev.rest();
+        SND.sfx.harvestMoon(); ev.rest();
         await until(() => !m.busy);
       },
       async defend(h, t, ev) {
-        UI.banner('Defend'); h.m.guard(true); S.guard[h.key] = true; SND.sfx.guard();
+        UI.banner('Defend'); h.m.guard(true); S.guard[h.key] = true; SND.sfx.ioGuard();
         const f = firstFoe(); if (f) faceTo(h, f);
         FX.shield(true, h.pos, f ? faceYaw(h.pos, f.pos) : h.yaw);
         await wait(0.6); ev.rest();
@@ -933,7 +933,7 @@
       async moonlight(h, t, ev) {
         UI.cinematic(true); UI.vignette(0.55);
         shotAt(h.pos, 1.5, 2);
-        const m = h.m, A2 = m.ACTIONS.moon; m.play('moon', true); SND.sfx.moon();
+        const m = h.m, A2 = m.ACTIONS.moon; m.play('moon', true); SND.sfx.moonlight();
         await untilP(m, A2.cues[0]);
         shotAt(t.pos, 1.3, 3.2);
         await untilP(m, A2.cues[1]);
@@ -943,7 +943,7 @@
           if (!ev.has()) break;
           const p = chest(t);
           FX.burst(p, [0.85, 0.92, 1], 70, 5, { spread: 0.3 }); FX.ring(t.pos, 0xe6eeff, 0.3, 3.2, 0.7, 1); FX.flashLight(p, 0xe8f0ff, 6, 0.5, 9);
-          UI.flash('#ffffff', 0.75 - k * 0.2, 0.35); SND.sfx.boom(1.1); addShake(14); hitStop(0.12);
+          UI.flash('#ffffff', 0.75 - k * 0.2, 0.35); SND.sfx.moonlightHit(1.1); addShake(14); hitStop(0.12);
           ev.show({ big: true, quiet: true });
         }
         await until(() => !m.busy);
@@ -954,36 +954,36 @@
       async thorn(h, t, ev) {
         const m = h.m, A = m.ACTIONS.thorn;
         await runUp(h, t, A.near || 1.4, 3.2); await wait(0.15); shotBoth(h.pos, t.pos, 1.2, 2.5);
-        m.play('thorn', true); SND.sfx.fire();
-        await untilP(m, A.cues[0]); SND.sfx.grasp();
+        m.play('thorn', true); SND.sfx.thornwakeCast();
+        await untilP(m, A.cues[0]); SND.sfx.briarsRise();
         await untilP(m, A.hits[0]);
-        if (ev.has()) { const p = chest(t); FX.burst(p, [0.75, 0.35, 1], 50, 3.5); FX.flashLight(p, 0xb455ff, 4, 0.4); SND.sfx.hit(1.1); addShake(10); hitStop(0.08); ev.show({ big: true }); }
+        if (ev.has()) { const p = chest(t); FX.burst(p, [0.75, 0.35, 1], 50, 3.5); FX.flashLight(p, 0xb455ff, 4, 0.4); SND.sfx.thornHit(1.1); addShake(10); hitStop(0.08); ev.show({ big: true }); }
         await until(() => !m.busy || m.progress > 0.62); ev.rest(); await goHome(h);
       },
       async salve(h, t, ev) {
         const m = h.m, A = m.ACTIONS.salve;
         if (t && t !== h) { await runUp(h, t, A.near || 1.3, 3.2); await wait(0.15); shotBoth(h.pos, t.pos, 1.2, 2.5); } else shotAt(h.pos, 1.6, 2.5);
-        m.play('salve', true); SND.sfx.chime();
-        await untilP(m, A.hits[0]); SND.sfx.heal(); ev.show();
+        m.play('salve', true); SND.sfx.salveOpen();
+        await untilP(m, A.hits[0]); SND.sfx.salve(); ev.show();
         await until(() => !m.busy); ev.rest(); await goHome(h);
       },
       async garden(h, t, ev) {
         const m = h.m, A = m.ACTIONS.garden; h.tyaw = 0.3; shotField(2.5);
-        m.play('garden', true); SND.sfx.chime();
-        await untilP(m, A.hits[0]); SND.sfx.heal(); while (ev.peek() && ev.peek().t === 'heal') ev.show();
+        m.play('garden', true); SND.sfx.seedSow();
+        await untilP(m, A.hits[0]); SND.sfx.gardenBloom(); while (ev.peek() && ev.peek().t === 'heal') ev.show();
         await until(() => !m.busy); ev.rest(); h.tyaw = h.home.yaw;
       },
       async revive(h, t, ev) {
         const m = h.m, A = m.ACTIONS.revive;
         if (t && t !== h) { await runUp(h, t, A.near || 1.3, 3.2); await wait(0.15); }
         shotAt(h.pos, 1.5, 2.5);
-        m.play('revive', true); SND.sfx.chime();
-        await untilP(m, A.hits[0]); SND.sfx.heal(); ev.show();
+        m.play('revive', true); SND.sfx.rootCall();
+        await untilP(m, A.hits[0]); SND.sfx.rootboundReturn(); ev.show();
         await until(() => !m.busy); ev.rest(); await goHome(h);
       },
       async cradle(h, t, ev) {
         UI.banner('Bramble Cradle'); const m = h.m; const f = firstFoe(); if (f) faceTo(h, f);
-        shotAt(h.pos, 1.5, 2.5); m.play('cradle', true); SND.sfx.guard();
+        shotAt(h.pos, 1.5, 2.5); m.play('cradle', true); SND.sfx.brambleCradle();
         await untilP(m, 0.4); ev.rest();
       },
       // her own summon: a seed becomes a stag of living wood that charges the foe and bursts into vines
@@ -992,11 +992,11 @@
         const m = h.m, A = m.ACTIONS.guardian;
         await runUp(h, t, A.near || 1.8, 3.2); await wait(0.2);
         shotFit([h.pos, t.pos, { x: h.pos.x, y: 3, z: h.pos.z }], 1, 2);
-        m.play('guardian', true); SND.sfx.chime();
-        await untilP(m, A.cues[0]); SND.sfx.moon(); shotAt(h.pos, 1.5, 2);
-        await untilP(m, A.cues[1]); SND.sfx.swish(); shotBoth(h.pos, t.pos, 1.15, 3);
+        m.play('guardian', true); SND.sfx.prayer('guardian');
+        await untilP(m, A.cues[0]); SND.sfx.guardianGrow(); shotAt(h.pos, 1.5, 2);
+        await untilP(m, A.cues[1]); SND.sfx.guardianCharge(); shotBoth(h.pos, t.pos, 1.15, 3);
         await untilP(m, A.hits[0]);
-        if (ev.has()) { const p = chest(t); FX.burst(p, [0.7, 1, 0.6], 80, 5); FX.flashLight(p, 0xb8ffb0, 6, 0.5, 8); UI.flash('#e8ffd8', 0.4, 0.4); SND.sfx.boom(1.3); addShake(16); hitStop(0.12); ev.show({ big: true }); }
+        if (ev.has()) { const p = chest(t); FX.burst(p, [0.7, 1, 0.6], 80, 5); FX.flashLight(p, 0xb8ffb0, 6, 0.5, 8); UI.flash('#e8ffd8', 0.4, 0.4); SND.sfx.guardianBurst(1.3); addShake(16); hitStop(0.12); ev.show({ big: true }); }
         await until(() => !m.busy); ev.rest(); UI.vignette(0); UI.cinematic(false); await goHome(h);
       },
       lunara: (h, t, ev) => summonLunara(h, t, ev),
@@ -1020,7 +1020,7 @@
         await untilP(m, hits[k]);
         if (!ev.has()) continue;
         if (ev.peek().t === 'miss' || ev.peek().t === 'heal') { ev.show(); continue; }
-        const tg = F[ev.peek().to] || t; strikeFx(tg, o.big, 0xffd890); SND.sfx.hit(0.9); addShake(6); hitStop(0.05); ev.show({ big: o.big });
+        const tg = F[ev.peek().to] || t; strikeFx(tg, o.big, 0xffd890); SND.sfx.chainLash(0.9); addShake(6); hitStop(0.05); ev.show({ big: o.big });
       }
       await until(() => !m.busy); ev.rest(); h.tyaw = h.home.yaw;
     }
@@ -1033,25 +1033,25 @@
       m.game.others = foes.filter((f) => f !== t && D[f.key].hp > 0 && !f.out).map((f) => ({ x: f.pos.x, z: f.pos.z, h: f.tall }));
       m.game.friends = heroes.filter((x) => D[x.key].hp <= 0).map((x) => ({ x: x.pos.x, z: x.pos.z }));
       UI.banner(curtain ? 'Curtain Call' : 'Sealed Fate', curtain ? 3.2 : 2.2);
-      if (curtain) { UI.cinematic(true); UI.vignette(0.5); h.glowHold = true; SND.sfx.trance(); }
+      if (curtain) { UI.cinematic(true); UI.vignette(0.5); h.glowHold = true; SND.sfx.curtainCall(); }
       jAim(h, t); await wait(0.3);
       shotFit(standing().map((f) => ({ x: f.pos.x, y: f.tall, z: f.pos.z })).concat(standing().map((f) => f.pos)), 1, 2);
-      m.play(anim, true); SND.sfx.eclipse();
+      m.play(anim, true); SND.sfx.sealBegin(curtain);
       const H = A.hits, at = (i) => H[Math.min(i, H.length - 1)] || 0.5;
       await untilP(m, at(1));                                           // the seal closes: the sealed foe is ended
-      if (ev.has()) { UI.flash('#c080ff', 0.45, 0.5); SND.sfx.boom(1.2); addShake(12); hitStop(0.1); ev.show({ big: true }); word(t, 'Ended', 'weak'); }
+      if (ev.has()) { UI.flash('#c080ff', 0.45, 0.5); SND.sfx.fateEnds(1.2); addShake(12); hitStop(0.1); ev.show({ big: true }); word(t, 'Ended', 'weak'); }
       await untilP(m, at(2));                                           // its end runs out to every other foe
-      while (ev.peek() && ev.peek().t === 'hit') { ev.show(); SND.sfx.hit(0.8); }
-      if (curtain) { await untilP(m, at(5)); SND.sfx.heal(); }            // the fallen get up
+      while (ev.peek() && ev.peek().t === 'hit') { ev.show(); SND.sfx.fateRipple(0.8); }
+      if (curtain) { await untilP(m, at(5)); SND.sfx.curtainBow(); }            // the fallen get up
       ev.rest();
       await until(() => !m.busy);
       h.glowHold = false; if (curtain) { UI.vignette(0); UI.cinematic(false); }
       h.tyaw = h.home.yaw;
     }
     const JESTER_MOVES = {
-      rebuke: (h, t, ev) => jesterCast(h, t, ev, 'g_rebuke', { sfx: 'blade' }),
-      jab: (h, t, ev) => jesterCast(h, t, ev, 'taunt_attack', { sfx: 'swish' }),
-      hheal: (h, t, ev) => jesterCast(h, h, ev, 'taunt_heal', { sfx: 'heal' }),
+      rebuke: (h, t, ev) => jesterCast(h, t, ev, 'g_rebuke', { sfx: 'bellFlail' }),
+      jab: (h, t, ev) => jesterCast(h, t, ev, 'taunt_attack', { sfx: 'jesterJab' }),
+      hheal: (h, t, ev) => jesterCast(h, h, ev, 'taunt_heal', { sfx: 'jesterHeal' }),
       seal: (h, t, ev) => sealedFate(h, t, ev, false),
       curtain: (h, t, ev) => sealedFate(h, t, ev, true),
       flee: (h, t, ev) => flee(h, t, ev),
@@ -1116,7 +1116,7 @@
     // ---------- Flee: the party turns and runs; from a pack it can fail ----------
     async function flee(h, t, ev) {
       const e = ev.list.find((x) => x.t === 'flee'), ok = !!(e && e.ok);
-      shotField(2); SND.sfx.swish();
+      shotField(2); SND.sfx.flee();
       const runners = living('hero');
       for (const f of runners) { const away = { x: f.pos.x + (f.pos.x - firstFoe().pos.x) * 0.25, z: f.pos.z + (f.pos.z - firstFoe().pos.z) * 0.25 }; moveTo(f, away.x, away.z, ok ? 4.5 : 2.5); }
       await wait(ok ? 1.1 : 0.9);
@@ -1134,7 +1134,7 @@
       if (h.key === 'io') h.m.play('cast', true);
       await wait(0.45);
       for (const t of tg.length ? [...new Set(tg)] : [h]) { FX.rise(() => t.pos, warm ? [1, 0.7, 0.35] : [0.75, 1, 0.8], 0.9, 30, 0.5); FX.sigil(t.pos, warm ? 0xffc070 : 0xd8ffe0, 1.4, 1.2, 1.2); }
-      SND.sfx.heal(); await wait(0.4);
+      SND.sfx.herb(); await wait(0.4);
       ev.rest(); await wait(0.5);
     }
 
@@ -1144,7 +1144,7 @@
       const isJ = h.key === 'jester';
       UI.banner(isIo ? 'Lunar Trance' : isJ ? 'Doom Dance' : 'Dawnbreaker', 2.8); if (TRANCE_FX[h.key]) h.glowHold = true; UI.cinematic(true); UI.vignette(0.55); UI.tint(isIo ? 0.55 : 0.3);
       shotAt(h.pos, 1.95, 2.4);
-      const m = h.m; m.play('transform', true); SND.sfx.trance(); if (isIo) SND.sfx.moon(); else SND.sfx.fire();
+      const m = h.m; m.play('transform', true); SND.sfx.tranceBegin(h.key, () => D[h.key].inTrance); if (isIo) SND.sfx.lunarTrance(); else SND.sfx[isJ ? 'doomDance' : 'fire']();
       if (isIo) { FX.sigil(h.pos, 0xdfe9ff, 2.3, 3.0, 2.5); FX.beam(h.pos, 0xe6eeff, 1.5, 12, 2.6); FX.spiral(() => chest(h), [0.8, 0.9, 1], 1.5, 90); }
       else { FX.sigil(h.pos, 0xffd28a, 2.3, 3.0, 2.5); FX.beam(h.pos, 0xffe6a8, 1.5, 12, 2.6); FX.spiral(() => chest(h), [1, 0.85, 0.5], 1.5, 90); }
       const cue = (m.ACTIONS.transform.cues && m.ACTIONS.transform.cues[0]) || 0.55;
@@ -1152,7 +1152,7 @@
       D[h.key].inTrance = true;
       const c = chest(h);
       FX.burst(c, isIo ? [0.85, 0.92, 1] : [1, 0.85, 0.5], 100, 4.8, { spread: 0.25 }); FX.ring(h.pos, 0xffffff, 0.3, 3.2, 0.8, 1);
-      FX.flashLight(c, isIo ? 0xe8f0ff : 0xffe0a0, 5, 0.6, 7); UI.flash('#ffffff', 0.6, 0.45); SND.sfx.boom(0.7); SND.sfx.chime(); addShake(8);
+      FX.flashLight(c, isIo ? 0xe8f0ff : 0xffe0a0, 5, 0.6, 7); UI.flash('#ffffff', 0.6, 0.45); SND.sfx.tranceBurst(0.7); SND.sfx.tranceShine(h.key); addShake(8);
       await until(() => !m.busy);
       h.glowHold = false;
       UI.msg(isIo ? 'The moon answers. She becomes Lunara’s vessel.' : isJ ? 'She dances inside the stars: every blow she lands writes Fate.' : 'Her blade burns white: the sun at its height.', true); await wait(1.2); UI.hideMsg();
@@ -1167,12 +1167,12 @@
       UI.banner('Summon: Lunara', 2.8);
       UI.cinematic(true); UI.vignette(0.6); UI.tint(0.6);
       h.tyaw = faceYaw(h.pos, LUN); shotAt(h.pos, 1.7, 2.4);
-      const m = h.m; m.play('summon', true); SND.sfx.chime();
+      const m = h.m; m.play('summon', true); SND.sfx.prayer('lunara');
       FX.sigil(h.pos, 0xd8c8ff, 1.9, 2.6, -2);
       await untilP(m, m.ACTIONS.summon.cues[0]);
       await FX.projectile({ from: m.flamePos(V()), to: new THREE.Vector3(WELL.x, 1.1, WELL.z), dur: 0.7, arc: 1.7, color: 0xffffff, halo: 0xcfe0ff, size: 0.26, trail: [0.85, 0.9, 1], light: 0xe6eeff, lightI: 3 });
       shotAt(WELL, 1.5, 2.6);
-      SND.sfx.moon(); SND.sfx.boom(0.6);
+      SND.sfx.moonwellWake(); SND.sfx.wellSurge(0.6);
       FX.ring(WELL, 0xe6eeff, 0.2, 2.6, 0.7, 1); FX.ring(WELL, 0xbfd6ff, 0.2, 4.2, 1.2, 0.8); FX.sigil(WELL, 0xdfe9ff, 4.4, 4.8, 1.2);
       FX.geyser(WELL, 2.6, [0.85, 0.9, 1]); FX.beam(WELL, 0xe6eeff, 2.4, 14, 2.4);
       for (const [dx, dz] of [[1.7, 1.0], [-1.7, 1.0], [1.7, -1.0], [-1.7, -1.0]]) FX.beam({ x: WELL.x + dx, z: WELL.z + dz }, 0xcfe0ff, 0.5, 10, 2.6);
@@ -1186,12 +1186,12 @@
       shotFit(standing().map((f) => f.pos).concat([{ x: LUN.x, y: 4.6, z: LUN.z }, { x: LUN.x, y: 0, z: LUN.z }]), 1, 0.9);
       await untilP(L, L.ACTIONS.appear.cues[1]);
       FX.burst(L.anchor('head', V()), [0.75, 1, 0.88], 90, 4.5, { spread: 0.9 }); FX.ring(LUN, 0xdfffee, 0.4, 4.6, 0.9, 0.8);
-      UI.flash('#ffffff', 0.45, 0.4); SND.sfx.chime(); SND.sfx.boom(0.5); addShake(5);
+      UI.flash('#ffffff', 0.45, 0.4); SND.sfx.lunaraRise(); SND.sfx.wingBeat(0.5); addShake(5);
       UI.msg('Lunara, the Pale Mother, rises from ' + SUMMON_FROM + '.', true);
       await until(() => !L.busy);
       UI.hideMsg();
       // the Embrace: her wings close over the party, then open: the party heals, the fallen rise, and blows are softened
-      L.play('embrace', true); SND.sfx.heal();
+      L.play('embrace', true); SND.sfx.lunaraEmbrace();
       await untilP(L, L.ACTIONS.embrace.cues[0]);
       FX.converge(() => L.anchor('chest', V()), [0.8, 1, 0.88], 1.0, 90);
       for (const f of heroes) FX.rise(() => f.pos, [0.75, 1, 0.85], 1.2, 40, 0.6);
@@ -1209,11 +1209,11 @@
       const L = LU.m, R = L.ACTIONS.release;
       UI.banner('Lunara: Silver Requiem', 3.2); UI.cinematic(true); UI.vignette(0.75); UI.tint(0.65);
       shotFit(standing().map((f) => f.pos).concat([{ x: LUN.x, y: 5.2, z: LUN.z }]), 1, 2);
-      L.play('charge', true); SND.sfx.moon();
+      L.play('charge', true); SND.sfx.requiemGather();
       const orbP = () => L.anchor('orb', V());
       FX.converge(orbP, [0.85, 0.9, 1], 1.9, 110); FX.rise(() => LUN, [0.85, 0.9, 1], 1.9, 50, 1.4);
       await until(() => !L.busy);
-      L.play('release', true); SND.sfx.blade(); FX.burst(orbP(), [0.9, 0.95, 1], 50, 3.5);
+      L.play('release', true); SND.sfx.requiemRelease(); FX.burst(orbP(), [0.9, 0.95, 1], 50, 3.5);
       await untilP(L, R.cues[0]);
       // the engine lists six beams and then Moonfall; if the foes fell early, the list stops there
       const hits = ev.list.filter((e) => e.t === 'hit'), beams = Math.min(6, hits.length), moonfall = hits.length === 7 ? F[hits[6].to] : null;
@@ -1225,17 +1225,17 @@
         const t = F[ev.peek().to] || sky;
         const a = rnd(0, TAU), r = rnd(0.2, 0.8), p = { x: t.pos.x + Math.cos(a) * r, z: t.pos.z + Math.sin(a) * r * 0.8 };
         FX.beam(p, 0xe6eeff, 0.9, 12, 0.55); FX.ring(p, 0xe6eeff, 0.1, 1.2, 0.5, 0.9); FX.burst(new THREE.Vector3(p.x, 0.3, p.z), [0.8, 0.88, 1], 26, 3, { up: 1 });
-        SND.sfx.hit(0.8); addShake(6); hitStop(0.03); ev.show();
+        SND.sfx.moonbeamHit(0.8); addShake(6); hitStop(0.03); ev.show();
       }
       if (moonfall) {
         const t = moonfall;
         await untilP(L, R.cues[1]);
-        UI.banner('Moonfall', 1.6); SND.sfx.eclipse(); shotAt(t.pos, 1.15, 3);
+        UI.banner('Moonfall', 1.6); SND.sfx.moonfallDrop(); shotAt(t.pos, 1.15, 3);
         const dur = (R.hits[6] - R.cues[1]) * R.dur;
         FX.ring(t.pos, 0xdfe8ff, 3.5, 1.0, dur, 0.7); FX.moonfall(t.pos, L.moonTex, dur);
         await untilP(L, R.hits[6]);
         const p = chest(t);
-        UI.flash('#ffffff', 1.0, 0.8); SND.sfx.boom(1.5); SND.sfx.boom(1.0); addShake(22); hitStop(0.25);
+        UI.flash('#ffffff', 1.0, 0.8); SND.sfx.moonfallImpact(1.5); SND.sfx.moonfallRing(1.0); addShake(22); hitStop(0.25);
         FX.beam(t.pos, 0xffffff, 5.4, 16, 1.6); FX.sigil(t.pos, 0xe6eeff, 4.8, 1.9, 3);
         for (const [r1, d, op] of [[5.5, 0.9, 1], [7.5, 1.3, 0.7], [3.5, 0.6, 1]]) FX.ring(t.pos, 0xffffff, 0.3, r1, d, op);
         FX.burst(p, [0.9, 0.95, 1], 160, 6.5, { spread: 0.6 }); FX.flashLight(p, 0xffffff, 10, 0.9, 13);
@@ -1332,7 +1332,7 @@
         d.life = 0; d.max = 0.7 + Math.random() * 0.6; d.r = 0.22 + Math.random() * 0.34; d.s.visible = true;
       }
       for (const h of reach()) word(h, 'Warded', 'ward');
-      SND.sfx.hit(1.0); addShake(8); hitStop(0.08);
+      SND.sfx.wardHit(1.0); addShake(8); hitStop(0.08);
     }
     const envoiShot = (extra, k) => shotFit(standing().map((f) => f.pos).concat([{ x: EN.pos.x, y: 6.4, z: EN.pos.z }, { x: EN.pos.x, y: 0, z: EN.pos.z }], extra || []), 1, k || 1);
     async function summonEnvoi(h, t, ev) {
@@ -1341,26 +1341,26 @@
       UI.cinematic(true); UI.vignette(0.55); UI.tint(0.45);
       envoiHome(); EN.wrap = t;
       h.tyaw = faceYaw(h.pos, EN.pos); shotAt(h.pos, 1.7, 2.4);
-      h.m.play('summon', true); SND.sfx.chime();
+      h.m.play('summon', true); SND.sfx.prayer('envoi');
       FX.sigil(h.pos, 0xffd9a0, 1.9, 2.6, -2);
       await untilP(h.m, h.m.ACTIONS.summon.cues[0]);
       // the letters leave her hand and fold into the wyrm where it will stand
       await FX.projectile({ from: h.m.flamePos(V()), to: () => new THREE.Vector3(EN.pos.x, 1.6, EN.pos.z), dur: 0.6, arc: 1.2, color: 0xfff1d8, halo: 0xffb45a, size: 0.24, trail: [1, 0.85, 0.6], light: 0xffc890, lightI: 3 });
       M.root.visible = true; if (M.fx) M.fx.visible = true; EN.shadow.visible = true; EN.on = true;
-      M.play('summon', true); SND.sfx.fire();
+      M.play('summon', true); SND.sfx.lettersFold();
       envoiShot(null, 1.2);
       UI.msg('Io’s letters to the dead fold into Envoi, the Letter Wyrm.', true);
       // the Jester's bells (Sol's blade, in Envoi) light the heart lantern as it wakes
       await untilP(M, 0.27);
-      if (s && !s.out) { if (s.key === 'jester') { jAim(s, EN); s.m.play('g_rebuke', true); } else { s.tyaw = faceYaw(s.pos, EN.pos); s.m.play('flareCut', true); } SND.sfx.swish(); }
+      if (s && !s.out) { if (s.key === 'jester') { jAim(s, EN); s.m.play('g_rebuke', true); } else { s.tyaw = faceYaw(s.pos, EN.pos); s.m.play('flareCut', true); } SND.sfx.lanternSpark(); }
       await untilP(M, A.cues[0]);
       UI.hideMsg();
       const heat = Math.round(D.sol ? D.sol.heat : 0), u = E.unit('sol');
       if (s && D.sol && !(u && u.inTrance)) { D.sol.heat = 0; if (heat > 0) word(s, '−' + heat + ' Heat', 'heat'); }
-      FX.ring(M.anchor('heart', V()), 0xffd08a, 0.2, 2.4, 0.6, 1); SND.sfx.boom(0.6); addShake(5);
+      FX.ring(M.anchor('heart', V()), 0xffd08a, 0.2, 2.4, 0.6, 1); SND.sfx.heartLantern(0.6); addShake(5);
       UI.banner('Heart Lantern', 1.2);
       await untilP(M, A.hits[0]);
-      FX.ring(M.anchor('seal', V()), 0xfff1c8, 0.2, 3, 0.7, 1); UI.flash('#fff1c8', 0.4, 0.35); SND.sfx.boom(1.0); addShake(9);
+      FX.ring(M.anchor('seal', V()), 0xfff1c8, 0.2, 3, 0.7, 1); UI.flash('#fff1c8', 0.4, 0.35); SND.sfx.sealBreak(1.0); addShake(9);
       UI.banner('Seal Break', 1.2);
       await untilP(M, A.cues[1]);
       FX.ring(M.anchor('ward', V()), 0xffe0a8, 0.3, 3.6, 0.8, 0.9);
@@ -1383,19 +1383,19 @@
       io.tyaw = faceYaw(io.pos, EN.pos); if (s) s.tyaw = faceYaw(s.pos, EN.pos);
       shotBoth(io.pos, EN.pos, 1, 2);
       UI.msg(cfg.envoiLines[0], true); await wait(3.2);
-      io.m.play('summon', true); SND.sfx.chime();
+      io.m.play('summon', true); SND.sfx.prayer('envoi');
       await untilP(io.m, io.m.ACTIONS.summon.cues[0]);
       await FX.projectile({ from: io.m.flamePos(V()), to: () => new THREE.Vector3(EN.pos.x, 1.6, EN.pos.z), dur: 0.7, arc: 1.2, color: 0xfff1d8, halo: 0xffb45a, size: 0.24, trail: [1, 0.85, 0.6], light: 0xffc890, lightI: 3 });
       M.root.visible = true; if (M.fx) M.fx.visible = true; EN.shadow.visible = true; EN.on = true;
-      M.play('summon', true); SND.sfx.fire();
+      M.play('summon', true); SND.sfx.lettersFold();
       envoiShot(null, 1.2);
       UI.msg(cfg.envoiLines[1], true);
       await untilP(M, 0.27);
-      if (s && D.sol.hp > 0) { s.m.play('flareCut', true); SND.sfx.swish(); }
+      if (s && D.sol.hp > 0) { s.m.play('flareCut', true); SND.sfx.lanternSpark(); }
       await untilP(M, A.cues[0]);
-      FX.ring(M.anchor('heart', V()), 0xffd08a, 0.2, 2.4, 0.6, 1); SND.sfx.boom(0.6); addShake(5);
+      FX.ring(M.anchor('heart', V()), 0xffd08a, 0.2, 2.4, 0.6, 1); SND.sfx.heartLantern(0.6); addShake(5);
       await untilP(M, A.hits[0]);
-      FX.ring(M.anchor('seal', V()), 0xfff1c8, 0.2, 3, 0.7, 1); UI.flash('#fff1c8', 0.4, 0.35); SND.sfx.boom(1.0); addShake(8);
+      FX.ring(M.anchor('seal', V()), 0xfff1c8, 0.2, 3, 0.7, 1); UI.flash('#fff1c8', 0.4, 0.35); SND.sfx.sealBreak(1.0); addShake(8);
       await until(() => !M.busy); await wait(1.0);
       UI.msg(cfg.envoiLines[2], true); await wait(2.6);
       EN.on = false; M.play('leave', true);
@@ -1410,19 +1410,19 @@
       UI.banner('Envoi', 2.4); UI.cinematic(true); UI.vignette(0.6); UI.tint(0.4);
       envoiShot([{ x: tgt.pos.x, y: tgt.tall, z: tgt.pos.z }], 1.5);
       io().m.play('cast', true);
-      M.play('envoi', true); SND.sfx.fire();
+      M.play('envoi', true); SND.sfx.envoiWrap();
       // the engine lists eight blows and then the Last Word; if the foes fell early, the list stops there
       for (let k = 0; k < hits.length; k++) {
         const last = k === hits.length - 1 && hits.length === A.hits.length;
         await untilP(M, A.hits[last ? A.hits.length - 1 : Math.min(k, A.hits.length - 2)]);
         const t = F[hits[k].to] || tgt, p = chest(t);
         if (last) {
-          UI.banner('Last Word', 1.6); UI.flash('#fff1c8', 0.9, 0.7); SND.sfx.boom(1.5); SND.sfx.boom(1.0); addShake(20); hitStop(0.22);
+          UI.banner('Last Word', 1.6); UI.flash('#fff1c8', 0.9, 0.7); SND.sfx.lastWord(1.5); SND.sfx.lettersSent(1.0); addShake(20); hitStop(0.22);
           FX.ring(t.pos, 0xffd08a, 0.3, 5.5, 0.9, 1); FX.burst(p, [1, 0.8, 0.5], 140, 6, { spread: 0.6 }); FX.flashLight(p, 0xffd0a0, 9, 0.8, 12);
           ev.show({ big: true });
         } else {
           if (k === 0) UI.banner('Letting Go', 1.6);
-          FX.burst(p, [1, 0.75, 0.4], 26, 3); FX.flashLight(p, 0xffb060, 2.5, 0.25); SND.sfx.hit(0.8); addShake(5); hitStop(0.03);
+          FX.burst(p, [1, 0.75, 0.4], 26, 3); FX.flashLight(p, 0xffb060, 2.5, 0.25); SND.sfx.letterBurn(0.8); addShake(5); hitStop(0.03);
           ev.show();
         }
       }
@@ -1443,25 +1443,25 @@
         await moveTo(f, spot.x, spot.z, 3.4);
         faceTo(f, t); await wait(0.15);
         if (f.tall > 3) shotBoth(t.pos, f.pos, 1.1, 3); else shotAt(mid(t.pos, f.pos), 1.65, 3);
-        W.play('sweep', true); SND.sfx.shriek(0.6);
-        await untilP(W, W.ACTIONS.sweep.cues[0]); SND.sfx.swish();
+        W.play('sweep', true); SND.sfx.wraithCry(0.6);
+        await untilP(W, W.ACTIONS.sweep.cues[0]); SND.sfx.wraithSwing();
         await untilP(W, W.ACTIONS.sweep.hits[0]);
         const p = chest(blowTarget(ev));
         FX.slash(p, 0x5dff9d, rnd(2.4, 3.0), 1.5 * Math.sqrt(k), 0.35); FX.burst(p, [0.3, 1, 0.55], 40, 3.6); FX.flashLight(p, 0x4dff90, 3, 0.3);
-        SND.sfx.hit(1.1); addShake(10 * k); hitStop(0.09); ev.show();
+        SND.sfx.wraithClaw(1.1); addShake(10 * k); hitStop(0.09); ev.show();
         await until(() => !W.busy); ev.rest();
         await goHome(f, 3.2);
       },
       async bolts(f, ev) {
         const t = blowTarget(ev); faceTo(f, t); shotField(2.5);
-        const W = f.m; W.play('cast', true); SND.sfx.shriek(0.5);
+        const W = f.m; W.play('cast', true); SND.sfx.wraithCry(0.5);
         const aims = ev.list.filter((e) => e.t === 'hit').map((e) => F[e.to]), hits = [];
         for (const u of W.ACTIONS.cast.hits) {
-          await untilP(W, u); SND.sfx.fire();
+          await untilP(W, u); SND.sfx.wraithBolt();
           const tt = aims[hits.length] || t;
           hits.push(FX.projectile({ from: W.anchor('bolt', V()), to: () => chest(tt), dur: 0.55, arc: rnd(0.3, 0.9), side: rnd(-0.25, 0.25), color: 0x9dffc4, halo: 0x2cff7c, size: 0.2, trail: [0.25, 1, 0.5], light: 0x3cff8a, lightI: 2 }).then(() => {
             if (!ev.has()) return;
-            const p = chest(F[ev.peek().to] || tt); FX.burst(p, [0.3, 1, 0.55], 22, 2.6); SND.sfx.hit(0.7); addShake(5); hitStop(0.04); ev.show();
+            const p = chest(F[ev.peek().to] || tt); FX.burst(p, [0.3, 1, 0.55], 22, 2.6); SND.sfx.wraithBoltHit(0.7); addShake(5); hitStop(0.04); ev.show();
           }));
         }
         await Promise.all(hits); await until(() => !W.busy); ev.rest();
@@ -1469,23 +1469,23 @@
       async grasp(f, ev) {
         const t = blowTarget(ev); faceTo(f, t); shotBoth(t.pos, f.pos, 1.0, 2.5);
         FX.sigil(t.pos, 0x2dff7a, 2.0, 1.9, -2);
-        const W = f.m; W.play('grasp', true); SND.sfx.grasp();
+        const W = f.m; W.play('grasp', true); SND.sfx.graveGrasp();
         await untilP(W, W.ACTIONS.grasp.cues[0]); shotAt(t.pos, 1.6, 3.5);
         FX.tendrils(t.pos, 1.3); FX.burst(new THREE.Vector3(t.pos.x, 0.2, t.pos.z), [0.2, 0.9, 0.45], 50, 3, { up: 1 });
         await untilP(W, W.ACTIONS.grasp.hits[0]);
-        FX.flashLight(chest(blowTarget(ev)), 0x3cff8a, 3, 0.4); SND.sfx.hit(1.2); addShake(12); hitStop(0.1); ev.show();
+        FX.flashLight(chest(blowTarget(ev)), 0x3cff8a, 3, 0.4); SND.sfx.graspHit(1.2); addShake(12); hitStop(0.1); ev.show();
         await until(() => !W.busy); ev.rest();
       },
       async eclipse(f, ev) {
         UI.cinematic(true); UI.vignette(0.9);
         const t = blowTarget(ev); faceTo(f, t); shotAt(f.pos, 1.25, 2);
-        const W = f.m, EC = W.ACTIONS.eclipse, k = f.look.fxScale || 1; W.play('eclipse', true); SND.sfx.eclipse(); SND.sfx.shriek(1.4);
+        const W = f.m, EC = W.ACTIONS.eclipse, k = f.look.fxScale || 1; W.play('eclipse', true); SND.sfx.blackSun(); SND.sfx.wraithCry(1.4);
         FX.blackSun(W.anchor('sun', V()), 2.4 * (EC.dur / 2.8), k > 1 ? k * 0.55 : 1);
         await untilP(W, EC.cues[1]); shotField(3);
         FX.ring(f.pos, 0x2dff7a, 0.3, 6.5 * k, 0.9, 1);
         await untilP(W, EC.hits[0]);
         for (const h of reach()) { const p = chest(h); FX.burst(p, [0.2, 1, 0.5], 80, 5); FX.flashLight(p, 0x3cff8a, 5, 0.5, 8); }
-        UI.flash('#0b2a16', 0.7, 0.4); SND.sfx.boom(1.3); addShake(16); hitStop(0.14);
+        UI.flash('#0b2a16', 0.7, 0.4); SND.sfx.blackSunFall(1.3); addShake(16); hitStop(0.14);
         ev.showAll({ big: true });
         await until(() => !W.busy); ev.rest();
         UI.vignette(0); UI.cinematic(false);
@@ -1497,12 +1497,12 @@
         const W = f.m, A = W.ACTIONS.breath, tg = reach(), mid = centerOf((tg.length ? tg : living('hero')).map((h) => h.pos));
         f.aimAt = { pos: mid, look: {}, m: { anchor: (n, o) => (o || V()).set(mid.x, 1.1, mid.z) } };
         faceTo(f, { pos: mid }); shotField(2.5);
-        W.play('breath', true); SND.sfx.shriek(0.8);
-        await untilP(W, A.cues[0]); SND.sfx.fire(); addShake(5);
+        W.play('breath', true); SND.sfx.wraithCry(0.8);
+        await untilP(W, A.cues[0]); SND.sfx.stolenFire(); addShake(5);
         for (let k = 0; k < A.hits.length; k++) {
           await untilP(W, A.hits[k]);
           for (const h of reach()) { const p = chest(h); FX.burst(p, [1, 0.7, 0.3], k ? 18 : 30, 3); FX.flashLight(p, 0xffa040, 3, 0.4, 6); }
-          SND.sfx.fire(); addShake(k ? 5 : 9); hitStop(0.06);
+          SND.sfx.stolenFireHit(); addShake(k ? 5 : 9); hitStop(0.06);
           if (k === 0) ev.showAll();
         }
         await until(() => !W.busy); f.aimAt = null; ev.rest();
@@ -1510,11 +1510,11 @@
       async swallow(f, ev) {
         const W = f.m, A = W.ACTIONS.swallow;
         shotAt(f.pos, 0.95, 2.4, f.tall * 0.55);
-        W.play('swallow', true); SND.sfx.grasp();
+        W.play('swallow', true); SND.sfx.lampDrink();
         await untilP(W, A.cues[0]);
         FX.converge(() => W.anchor('heart', V()), [1, 0.78, 0.4], 1.3, 90);
         await untilP(W, A.hits[0]);
-        FX.burst(W.anchor('heart', V()), [1, 0.82, 0.45], 50, 3.4); FX.flashLight(W.anchor('heart', V()), 0xffb45a, 4, 0.6, 8); SND.sfx.heal();
+        FX.burst(W.anchor('heart', V()), [1, 0.82, 0.45], 50, 3.4); FX.flashLight(W.anchor('heart', V()), 0xffb45a, 4, 0.6, 8); SND.sfx.foeHeal('wraith');
         ev.show();
         await until(() => !W.busy); ev.rest();
       },
@@ -1522,33 +1522,33 @@
     const WISP_MOVES = {
       async flicker(f, ev) {
         const t = blowTarget(ev); faceTo(f, t); shotBoth(t.pos, f.pos, 1.0, 2.6);
-        f.aim = t; const W = f.m; W.play('flicker', true); SND.sfx.fire();
+        f.aim = t; const W = f.m; W.play('flicker', true); SND.sfx.wispFlicker();
         await untilP(W, W.ACTIONS.flicker.hits[0]);
-        const p = chest(blowTarget(ev)); FX.burst(p, [0.85, 0.5, 1], 30, 3); FX.flashLight(p, 0xb070ff, 2.5, 0.3); SND.sfx.hit(0.8); addShake(5); hitStop(0.05);
+        const p = chest(blowTarget(ev)); FX.burst(p, [0.85, 0.5, 1], 30, 3); FX.flashLight(p, 0xb070ff, 2.5, 0.3); SND.sfx.wispTouch(0.8); addShake(5); hitStop(0.05);
         ev.show();
         await until(() => !W.busy); f.aim = null; ev.rest();
       },
       // it latches on and drinks: each sip a blow on its prey, then a heal on itself
       async cling(f, ev) {
         const t = blowTarget(ev); faceTo(f, t); shotBoth(t.pos, f.pos, 1.15, 2.6);
-        f.aim = t; const W = f.m, A2 = W.ACTIONS.cling; W.play('cling', true); SND.sfx.grasp();
+        f.aim = t; const W = f.m, A2 = W.ACTIONS.cling; W.play('cling', true); SND.sfx.wispCling();
         for (let k = 0; k < A2.hits.length; k++) {
           await untilP(W, A2.hits[k]);
-          if (ev.has() && ev.peek().t === 'hit') { const p = chest(blowTarget(ev)); FX.burst(p, [0.75, 0.45, 1], 16, 2); SND.sfx.hit(0.6); ev.show(); }
+          if (ev.has() && ev.peek().t === 'hit') { const p = chest(blowTarget(ev)); FX.burst(p, [0.75, 0.45, 1], 16, 2); SND.sfx.wispSip(0.6); ev.show(); }
           await untilP(W, A2.cues[k]);
           if (ev.peek() && ev.peek().t === 'heal') ev.show();
         }
         await until(() => !W.busy); f.aim = null; ev.rest();
       },
       async wail(f, ev) {
-        shotField(2.5); const W = f.m; W.play('wail', true); SND.sfx.shriek(0.9);
+        shotField(2.5); const W = f.m; W.play('wail', true); SND.sfx.wispWail(0.9);
         await untilP(W, W.ACTIONS.wail.hits[0]);
         for (const h of reach()) FX.burst(chest(h), [0.8, 0.6, 1], 26, 2.6);
         addShake(8); hitStop(0.06); ev.showAll();
         await until(() => !W.busy); ev.rest();
       },
       async breath(f, ev) {
-        shotField(2.5); const W = f.m; W.play('breath', true); SND.sfx.fire();
+        shotField(2.5); const W = f.m; W.play('breath', true); SND.sfx.frostBreath();
         await untilP(W, W.ACTIONS.breath.hits[0]);
         for (const h of reach()) { const p = chest(h); FX.burst(p, [0.7, 0.9, 1], 30, 2.8); FX.flashLight(p, 0x9fd8ff, 2.5, 0.4); }
         addShake(7); hitStop(0.05); ev.showAll(); ev.rest();
@@ -1570,7 +1570,7 @@
     function halHitFx(t, big) {
       const p = chest(t);
       FX.slash(p, HAL_BLUE, rnd(-0.6, 2.6), big ? 1.4 : 1.15, 0.3); FX.burst(p, [0.6, 0.75, 1], big ? 44 : 30, big ? 4 : 3.2); FX.flashLight(p, 0x8fb8ff, big ? 4 : 3, 0.3);
-      SND.sfx.hit(big ? 1.2 : 1.0); addShake(big ? 12 : 9); hitStop(big ? 0.11 : 0.08);
+      SND.sfx.bladeHit(big ? 1.2 : 1.0); addShake(big ? 12 : 9); hitStop(big ? 0.11 : 0.08);
     }
     // a blade blow on one hero: she closes to `dist` (her own lunge carries her the rest), strikes, and walks back
     async function halMelee(f, ev, act, dist, o) {
@@ -1580,13 +1580,13 @@
       await runUp(f, t, dist, 4.6);
       shotAt(mid(t.pos, f.pos), 1.6, 3);
       f.aim = t; if (o.drink) f.aimAt = t;
-      W.play(act, true); SND.sfx.swish();
+      W.play(act, true); SND.sfx.bladeSwing();
       await untilP(W, W.ACTIONS[act].hits[0]);
       if (ev.has()) { halHitFx(blowTarget(ev), o.big); ev.show(); }
       if (o.drink) {
         // the stolen light streams up into her blade: she heals by what she took, and drinks Sol's Heat or Io's MP
         await untilP(W, 0.62);
-        if (ev.peek() && ev.peek().t === 'heal') { FX.converge(() => W.anchor('blade', V()), [0.75, 0.85, 1], 0.6, 50); SND.sfx.heal(); ev.show(); }
+        if (ev.peek() && ev.peek().t === 'heal') { FX.converge(() => W.anchor('blade', V()), [0.75, 0.85, 1], 0.6, 50); SND.sfx.lightDrink(); ev.show(); }
       }
       await until(() => !W.busy); f.aim = null; f.aimAt = null; ev.rest();
       await goHome(f, 3.6);
@@ -1602,7 +1602,7 @@
         shotField(2.5);
         const spot = toward(f.pos, c, 2.0); await moveTo(f, spot.x, spot.z, 4.6); faceTo(f, { pos: c }); await wait(0.1);
         shotField(3);
-        W.play('duskArc', true); SND.sfx.swish();
+        W.play('duskArc', true); SND.sfx.duskArc();
         await untilP(W, W.ACTIONS.duskArc.hits[0]);
         if (warded(ev)) halHitFx(ENV.ward, true); else for (const h of reach()) halHitFx(h);
         FX.ring(c, HAL_BLUE, 0.4, 3.2, 0.6, 0.8);
@@ -1613,7 +1613,7 @@
       // Sol's own stance: until her next turn she counters every physical blow; magic doesn't set it off
       async vowStance(f, ev) {
         const W = f.m; shotAt(f.pos, 1.6, 2.6);
-        W.play('vowStance', true); SND.sfx.guard();
+        W.play('vowStance', true); SND.sfx.vowStance();
         await until(() => !W.busy || W.progress >= 0.95);
         word(f, 'Warden’s Vow');
         UI.note(S.vowSeen ? 'Warden’s Vow: she counters any physical blow until her next turn.' : 'Warden’s Vow: until her next turn she counters every physical blow. Magic doesn’t set it off.', 2.4);
@@ -1626,11 +1626,11 @@
         UI.cinematic(true); UI.vignette(0.85);
         shotField(2.2);
         const spot = toward(f.pos, c, 3.0); await moveTo(f, spot.x, spot.z, 4.6); faceTo(f, { pos: c });
-        W.play('blackNoon', true); SND.sfx.eclipse();
-        await untilP(W, A.hits[0] - 0.08); SND.sfx.swish();
+        W.play('blackNoon', true); SND.sfx.blackNoon();
+        await untilP(W, A.hits[0] - 0.08); SND.sfx.bladeSwing();
         await untilP(W, A.hits[0]);
         for (const h of warded(ev) ? [ENV.ward] : reach()) { const p = chest(h); FX.burst(p, [0.5, 0.6, 1], 80, 5); FX.flashLight(p, 0x7fa0ff, 5, 0.5, 8); }
-        UI.flash('#0a0c1e', 0.8, 0.5); SND.sfx.boom(1.5); addShake(20); hitStop(0.18);
+        UI.flash('#0a0c1e', 0.8, 0.5); SND.sfx.blackNoonFall(1.5); addShake(20); hitStop(0.18);
         ev.showAll({ big: true });
         await until(() => !W.busy); ev.rest();
         UI.vignette(0); if (!E.over) UI.cinematic(false);
@@ -1645,11 +1645,11 @@
       async crownShards(f, ev) {
         const W = f.m, A = W.ACTIONS.crownShards, aims = ev.list.filter((e) => e.t === 'hit').map((e) => F[e.to]);
         f.aimAt = aims[0] || blowTarget(ev); shotField(2.5);
-        W.play('crownShards', true); SND.sfx.chime();
+        W.play('crownShards', true); SND.sfx.shardCast();
         for (let k = 0; k < A.hits.length; k++) {
           f.aimAt = aims[k] || f.aimAt;
           await untilP(W, A.hits[k]);
-          if (ev.has()) { const p = chest(blowTarget(ev)); FX.burst(p, [0.8, 0.7, 1], 26, 3); FX.flashLight(p, 0xb69cff, 2.5, 0.3); SND.sfx.hit(0.8); addShake(6); hitStop(0.04); ev.show(); }
+          if (ev.has()) { const p = chest(blowTarget(ev)); FX.burst(p, [0.8, 0.7, 1], 26, 3); FX.flashLight(p, 0xb69cff, 2.5, 0.3); SND.sfx.shardHit(0.8); addShake(6); hitStop(0.04); ev.show(); }
         }
         await until(() => !W.busy); f.aimAt = null; ev.rest();
       },
@@ -1657,10 +1657,10 @@
       async voidSphere(f, ev) {
         const W = f.m, A = W.ACTIONS.voidSphere;
         UI.cinematic(true); UI.vignette(0.7); shotField(2.2);
-        W.play('voidSphere', true); SND.sfx.eclipse();
+        W.play('voidSphere', true); SND.sfx.voidOpen();
         await untilP(W, A.hits[0]);
         for (const h of warded(ev) ? [ENV.ward] : reach()) { const p = chest(h); FX.burst(p, [0.7, 0.5, 1], 70, 4.6); FX.flashLight(p, 0x9a6cff, 5, 0.5, 8); }
-        UI.flash('#1a0830', 0.85, 0.5); SND.sfx.boom(1.5); addShake(20); hitStop(0.16);
+        UI.flash('#1a0830', 0.85, 0.5); SND.sfx.voidCollapse(1.5); addShake(20); hitStop(0.16);
         ev.showAll({ big: true });
         await until(() => !W.busy); ev.rest();
         UI.vignette(0); if (!E.over) UI.cinematic(false);
@@ -1668,7 +1668,7 @@
       // the party slows; the blow waits in the frost and lands as it thaws
       async frostDust(f, ev) {
         const W = f.m; shotField(2.5);
-        W.play('frostDust', true); SND.sfx.chime();
+        W.play('frostDust', true); SND.sfx.frostDust();
         await untilP(W, 0.45); ev.rest();
         UI.note('Frost Dust: the party slows. Its blow lands as the frost thaws.', 2.6);
         await until(() => !W.busy);
@@ -1676,12 +1676,12 @@
       // the light leaves; Halcyon strikes out of the dark; the damage shows as the light comes back
       async blackout(f, ev) {
         const W = f.m, bo = ev.list.find((e) => e.t === 'blackout'), h = bo ? F[bo.by] : null, t = blowTarget(ev);
-        shotField(2.5); W.play('blackout', true); SND.sfx.eclipse();
+        shotField(2.5); W.play('blackout', true); SND.sfx.blackout();
         await untilP(W, 0.17); darkTo(0.95, 0.5); UI.tint(0.8);
         await untilP(W, 0.36);
         if (h && t && F[t.key] && D[h.key].hp > 0) { const s2 = toward(h.pos, t.pos, 1.4); h.pos = { x: s2.x, z: s2.z }; faceTo(h, t); h.aim = t; h.m.play('severance', true); }
         await untilP(W, 0.6);
-        UI.flash('#9cc4ff', 0.3, 0.25); SND.sfx.swish(); SND.sfx.hit(1.3); addShake(14); hitStop(0.1);
+        UI.flash('#9cc4ff', 0.3, 0.25); SND.sfx.bladeSwing(); SND.sfx.bladeHit(1.3); addShake(14); hitStop(0.1);
         await untilP(W, 0.8); darkTo(0, 0.6); UI.tint(0);
         if (t && F[t.key]) halHitFx(t, true);
         ev.showAll({ big: true });
@@ -1693,7 +1693,7 @@
     async function thaw(hd, ev) {
       apply(hd); shotField(2.5);
       for (const h of warded(ev) ? [ENV.ward] : reach()) { const p = chest(h); FX.burst(p, [0.8, 0.92, 1], 40, 3.6); FX.flashLight(p, 0xbfe0ff, 3, 0.4, 6); }
-      UI.flash('#e6f4ff', 0.45, 0.35); SND.sfx.hit(1.1); addShake(10); hitStop(0.08);
+      UI.flash('#e6f4ff', 0.45, 0.35); SND.sfx.frostCrack(1.1); addShake(10); hitStop(0.08);
       ev.showAll(); await wait(0.8); ev.rest();
     }
 
@@ -1704,20 +1704,20 @@
     function thornFx(t, big) {
       const p = chest(t);
       FX.slash(p, BERRY, rnd(-0.6, 2.6), big ? 1.35 : 1.1, 0.3); FX.burst(p, [0.95, 0.35, 0.5], big ? 40 : 26, big ? 3.8 : 3); FX.flashLight(p, 0xff6080, big ? 3 : 2, 0.3);
-      SND.sfx.hit(big ? 1.2 : 0.95); addShake(big ? 11 : 7); hitStop(big ? 0.1 : 0.06);
+      SND.sfx.thornLash(big ? 1.2 : 0.95); addShake(big ? 11 : 7); hitStop(big ? 0.1 : 0.06);
     }
     const BRAMBLE_MOVES = {
       async strike(f, ev) {
         const t = blowTarget(ev), W = f.m; f.aimAt = t;
         shotBoth(t.pos, f.pos, 1.05, 2.6);
-        W.play('strike', true); SND.sfx.swish();
+        W.play('strike', true); SND.sfx.caneSwing();
         await untilP(W, W.ACTIONS.strike.hits[0]);
         if (ev.has()) { thornFx(blowTarget(ev), true); ev.show(); }
         await until(() => !W.busy); f.aimAt = null; ev.rest();
       },
       async sweep(f, ev) {
         const W = f.m; shotField(2.5);
-        W.play('sweep', true); SND.sfx.swish();
+        W.play('sweep', true); SND.sfx.caneSwing();
         await untilP(W, W.ACTIONS.sweep.hits[0]);
         if (warded(ev)) thornFx(ENV.ward, true); else for (const h of reach()) thornFx(h);
         addShake(9); ev.showAll();
@@ -1728,7 +1728,7 @@
         const t = blowTarget(ev), W = f.m, A = W.ACTIONS.grab, real = !!F[t.key] && t.side === 'hero';
         f.aimAt = t; shotBoth(t.pos, f.pos, 1.0, 2.4);
         if (real) { t.chestH = chest(t).y - (t.y || 0); t.heldBy = f; }
-        W.play('grab', true); SND.sfx.grasp();
+        W.play('grab', true); SND.sfx.caneGrab();
         for (let k = 0; k < A.hits.length; k++) {
           await untilP(W, A.hits[k]);
           if (ev.has()) { thornFx(blowTarget(ev), k === A.hits.length - 1); ev.show(); }
@@ -1740,12 +1740,12 @@
       async consume(f, ev) {
         const t = blowTarget(ev), W = f.m, A = W.ACTIONS.consume;
         f.aimAt = t; shotBoth(t.pos, f.pos, 1.0, 2.4);
-        W.play('consume', true); SND.sfx.grasp();
+        W.play('consume', true); SND.sfx.rootFeed();
         for (let k = 0; k < A.hits.length; k++) {
           await untilP(W, A.hits[k]);
-          if (ev.peek() && ev.peek().t !== 'heal') { const p = chest(blowTarget(ev)); FX.burst(p, [0.95, 0.3, 0.55], 22, 2.4); FX.flashLight(p, 0xff3d8a, 2.4, 0.3); SND.sfx.hit(0.8); addShake(5); ev.show(); }
+          if (ev.peek() && ev.peek().t !== 'heal') { const p = chest(blowTarget(ev)); FX.burst(p, [0.95, 0.3, 0.55], 22, 2.4); FX.flashLight(p, 0xff3d8a, 2.4, 0.3); SND.sfx.rootPulse(0.8); addShake(5); ev.show(); }
           await untilP(W, A.cues[k]);
-          if (ev.peek() && ev.peek().t === 'heal') { FX.burst(W.anchor('hollow', V()), [1, 0.35, 0.6], 20, 2); SND.sfx.heal(); ev.show(); }
+          if (ev.peek() && ev.peek().t === 'heal') { FX.burst(W.anchor('hollow', V()), [1, 0.35, 0.6], 20, 2); SND.sfx.foeHeal('bramble'); ev.show(); }
         }
         await until(() => !W.busy); f.aimAt = null; ev.rest();
       },
@@ -1753,8 +1753,8 @@
       async undergrowth(f, ev) {
         const t = blowTarget(ev), W = f.m, A = W.ACTIONS.undergrowth;
         f.aimAt = t; shotBoth(t.pos, f.pos, 1.0, 2.4);
-        W.play('undergrowth', true); SND.sfx.grasp();
-        await untilP(W, A.cues[0]); addShake(9); hitStop(0.05); SND.sfx.boom(0.6);
+        W.play('undergrowth', true); SND.sfx.caneStab();
+        await untilP(W, A.cues[0]); addShake(9); hitStop(0.05); SND.sfx.groundBreak(0.6);
         if (!warded(ev)) FX.briars(t.pos, 1.9);
         for (let k = 0; k < A.hits.length; k++) {
           await untilP(W, A.hits[k]);
@@ -1767,7 +1767,7 @@
     async function lureTurn(f, hd, ev) {
       const W = f.m, t = hd.to ? F[hd.to] : null;
       UI.banner('Lure', 2.2); if (t) { f.aimAt = t; shotBoth(t.pos, f.pos, 1.0, 2.2); } else shotAt(f.pos, 1.2, 2.2);
-      W.play('lure', true); SND.sfx.chime(); f.charged = true;
+      W.play('lure', true); SND.sfx.lure(); f.charged = true;
       await untilP(W, W.ACTIONS.lure.hits[0]);
       if (t) {
         word(t, 'Lured');
@@ -1787,7 +1787,7 @@
     function quake(p, k) {
       FX.ring(p, 0xffd9c8, 0.3, 3.4 * k, 0.8, 0.8);
       FX.burst(new THREE.Vector3(p.x, 0.15, p.z), [0.5, 0.42, 0.36], Math.round(44 * k), 3.2, { up: 1 });
-      addShake(12 * k); SND.sfx.boom(0.6 + 0.4 * k);
+      addShake(12 * k); SND.sfx.quake(0.6 + 0.4 * k);
       if (BF) BF.impact(p, k);
     }
     // the party's middle, for the moves that fall on everyone
@@ -1802,8 +1802,8 @@
       async lance(f, ev) {
         const t = blowTarget(ev), W = f.m, A = W.ACTIONS.lance; f.aimAt = t;
         shotBoth(t.pos, f.pos, 1, 2.4);
-        W.play('lance', true); SND.sfx.grasp();
-        await untilP(W, A.cues[0]); SND.sfx.swish();
+        W.play('lance', true); SND.sfx.colossusHeave();
+        await untilP(W, A.cues[0]); SND.sfx.colossusSwing();
         await untilP(W, A.hits[0]);
         if (ev.has()) { const tt = blowTarget(ev); thornFx(tt, true); quake(tt.pos, 0.7); hitStop(0.12); ev.show({ big: true }); }
         await until(() => !W.busy); f.aimAt = null; ev.rest();
@@ -1813,27 +1813,27 @@
       async slam(f, ev) {
         const t = blowTarget(ev), W = f.m, A = W.ACTIONS.slam; f.aimAt = t;
         shotBoth(t.pos, f.pos, 0.95, 2.2);
-        W.play('slam', true); SND.sfx.grasp();
-        await untilP(W, A.cues[0]); FX.converge(() => W.anchor('heart', V()), [1, 0.35, 0.5], 0.7, 70); SND.sfx.eclipse();
+        W.play('slam', true); SND.sfx.colossusHeave();
+        await untilP(W, A.cues[0]); FX.converge(() => W.anchor('heart', V()), [1, 0.35, 0.5], 0.7, 70); SND.sfx.heartBlaze();
         await untilP(W, A.hits[0]);
         if (ev.has()) { const tt = blowTarget(ev); thornFx(tt, true); quake(tt.pos, 1.25); UI.flash('#ffd8c8', 0.35, 0.3); hitStop(0.12); ev.show({ big: true }); }
         await untilP(W, A.hits[1]);
-        if (ev.has()) { shotField(3); for (const h of reach()) FX.burst(chest(h), [0.7, 0.58, 0.48], 26, 2.8); addShake(10); SND.sfx.hit(0.9); ev.showAll(); }
+        if (ev.has()) { shotField(3); for (const h of reach()) FX.burst(chest(h), [0.7, 0.58, 0.48], 26, 2.8); addShake(10); SND.sfx.shockwave(0.9); ev.showAll(); }
         await until(() => !W.busy); f.aimAt = null; ev.rest();
       },
       // Maelstrom: it winds round, then every cane whirls round it twice at three heights, four blows on the whole party
       async whirl(f, ev) {
         const W = f.m, A = W.ACTIONS.whirl; f.aimAt = partyAim();
         shotField(2.2);
-        W.play('whirl', true); SND.sfx.grasp();
-        await untilP(W, A.cues[0]); SND.sfx.swish();
+        W.play('whirl', true); SND.sfx.colossusHeave();
+        await untilP(W, A.cues[0]); SND.sfx.maelstrom();
         if (AF) AF.vortex(f.pos.x, f.pos.z, 10, 1); // in an arena, a whirlwind of torn grass and dust round it
         for (let k = 0; k < A.hits.length; k++) {
           await untilP(W, A.hits[k]);
           if (!ev.has()) continue;
           if (warded(ev)) { thornFx(ENV.ward, true); ev.show(); continue; }
           for (const h of reach()) thornFx(h, k === A.hits.length - 1);
-          SND.sfx.swish(); addShake(7 + 2 * k); showWave(ev, k);
+          SND.sfx.colossusSwing(); addShake(7 + 2 * k); showWave(ev, k);
         }
         if (AF) AF.vortex(f.pos.x, f.pos.z, 10, 0);
         await until(() => !W.busy); f.aimAt = null; ev.rest();
@@ -1842,8 +1842,8 @@
       async volley(f, ev) {
         const W = f.m, A = W.ACTIONS.volley; f.aimAt = partyAim();
         shotField(2.4);
-        W.play('volley', true); SND.sfx.swish();
-        for (const c of A.cues) { await untilP(W, c); SND.sfx.swish(); addShake(4); }
+        W.play('volley', true); SND.sfx.caneSwing();
+        for (const c of A.cues) { await untilP(W, c); SND.sfx.whipCrack(); addShake(4); }
         for (let k = 0; k < A.hits.length; k++) {
           await untilP(W, A.hits[k]);
           if (!ev.has()) continue;
@@ -1858,7 +1858,7 @@
       async briar(f, ev) {
         const t = blowTarget(ev), W = f.m, A = W.ACTIONS.briar; f.aimAt = t;
         shotBoth(t.pos, f.pos, 1, 2.4);
-        W.play('briar', true); SND.sfx.grasp();
+        W.play('briar', true); SND.sfx.caneStab();
         await untilP(W, A.cues[0]); quake(t.pos, 0.6); hitStop(0.05);
         if (!warded(ev)) FX.briars(t.pos, 2.4);
         for (let k = 0; k < A.hits.length; k++) {
@@ -1874,17 +1874,17 @@
         const t = blowTarget(ev), W = f.m, A = W.ACTIONS.devour, real = !!F[t.key] && t.side === 'hero';
         f.aimAt = t; shotBoth(t.pos, f.pos, 0.95, 2.2);
         if (real) { t.chestH = chest(t).y - (t.y || 0); t.heldBy = f; }
-        W.play('devour', true); SND.sfx.grasp();
+        W.play('devour', true); SND.sfx.caneGrab();
         await untilP(W, A.hits[0]);
         if (ev.has()) { thornFx(blowTarget(ev), true); ev.show(); }
         followShot(() => W.anchor('bud', V()), 1.1, 2.4);
         for (let k = 1; k < A.hits.length; k++) {
           await untilP(W, A.hits[k]);
-          if (ev.peek() && ev.peek().t !== 'heal') { const p = W.anchor('bloom', V()); FX.burst(p, [0.95, 0.3, 0.55], 26, 2.4); FX.flashLight(p, 0xff3d8a, 3, 0.3); SND.sfx.hit(0.85); addShake(6); ev.show(); }
+          if (ev.peek() && ev.peek().t !== 'heal') { const p = W.anchor('bloom', V()); FX.burst(p, [0.95, 0.3, 0.55], 26, 2.4); FX.flashLight(p, 0xff3d8a, 3, 0.3); SND.sfx.gulp(0.85); addShake(6); ev.show(); }
           await untilP(W, A.cues[k - 1]);
-          if (ev.peek() && ev.peek().t === 'heal') { FX.burst(W.anchor('heart', V()), [1, 0.35, 0.6], 22, 2); SND.sfx.heal(); ev.show(); }
+          if (ev.peek() && ev.peek().t === 'heal') { FX.burst(W.anchor('heart', V()), [1, 0.35, 0.6], 22, 2); SND.sfx.foeHeal('bramble'); ev.show(); }
         }
-        await untilP(W, A.cues[A.cues.length - 1]); shotBoth(t.pos, f.pos, 0.95, 2.4); SND.sfx.boom(0.6);
+        await untilP(W, A.cues[A.cues.length - 1]); shotBoth(t.pos, f.pos, 0.95, 2.4); SND.sfx.budBurst(0.6);
         await until(() => !W.busy); f.aimAt = null; ev.rest();
         if (real) { await until(() => !t.heldBy && !(t.y > 0.01)); if (D[t.key].hp > 0) await goHome(t, 3); }
       },
@@ -1892,11 +1892,11 @@
       async enrage(f, ev) {
         const W = f.m, A = W.ACTIONS.enrage;
         UI.cinematic(true); shotAt(f.pos, 0.85, 2.2, f.tall * 0.55);
-        W.play('enrage', true); SND.sfx.grasp();
+        W.play('enrage', true); SND.sfx.colossusHeave();
         await untilP(W, A.cues[0]);
         W.state.wrath = 1; f.wrathShown = true;
         FX.ring(f.pos, 0xff4a2a, 0.5, 7.5, 1.1, 1); FX.flashLight(W.anchor('heart', V()), 0xff4a2a, 5, 0.8, 14);
-        UI.flash('#ff5a3a', 0.45, 0.6); SND.sfx.eclipse(); SND.sfx.shriek(1.3); addShake(16); hitStop(0.1);
+        UI.flash('#ff5a3a', 0.45, 0.6); SND.sfx.wrathBurst(); SND.sfx.colossusRoar(1.3); addShake(16); hitStop(0.1);
         UI.note('Its Wrath: it is quicker and hits harder now. Its flower has burst open, and its heart is bare.', 3);
         await until(() => !W.busy); ev.rest();
         UI.cinematic(false);
@@ -1907,7 +1907,7 @@
     async function bloomTurn(f, hd, ev) {
       const W = f.m, A = W.ACTIONS.bloom, t = hd.to ? F[hd.to] : null;
       UI.banner(hd.name, 2.4); f.aimAt = partyAim(); shotBoth(t ? t.pos : f.aimAt.pos, f.pos, 0.95, 2.2);
-      W.play('bloom', true); SND.sfx.chime(); f.charged = true;
+      W.play('bloom', true); SND.sfx.sirenBloom(); f.charged = true;
       await untilP(W, A.cues[0]);
       FX.converge(() => W.anchor('bloom', V()), [1, 0.7, 0.85], 1, 60);
       await untilP(W, A.hits[0]);
@@ -1939,7 +1939,7 @@
         if (!ev.has()) continue;
         const last = i === H.length - 1;
         if (warded(ev)) { fx(ENV.ward, true); ev.show(); continue; }
-        if (self) { const p = chest(f); FX.burst(p, rgb, 30, 2.6); if (ev.peek().t === 'heal') SND.sfx.heal(); ev.show(); continue; }
+        if (self) { const p = chest(f); FX.burst(p, rgb, 30, 2.6); if (ev.peek().t === 'heal') SND.sfx.foeHeal(f.kind); ev.show(); continue; }
         if (all) { for (const h of reach()) fx(h, last); if (H.length > 1) showWave(ev, i); else ev.showAll(); continue; }
         fx(blowTarget(ev), last && H.length > 1); ev.show({ big: last && H.length > 1 });
       }
@@ -1962,7 +1962,7 @@
       UI.banner(hd.name, 2.2); shotAt(f.pos, 1.2, 2.4);
       const W = f.m; if (W.ACTIONS && W.ACTIONS.blackNoonCharge) W.play('blackNoonCharge', true); else if (W.ACTIONS && W.ACTIONS.charge) W.play('charge', true); else if (W.ACTIONS && W.ACTIONS.cast) W.play('cast', true);
       FX.ring(f.pos, 0xc49cff, 0.3, 3.2 * (f.look.fxScale || 1), 1.2, 0.9); FX.converge(() => chest(f), [0.8, 0.65, 1], 1.3, 80);
-      SND.sfx.eclipse(); f.charged = true;
+      SND.sfx.darkGather(); f.charged = true;
       UI.note(shownName(E.unit(f.key)) + ' gathers ' + hd.name + '. It falls on its next turn.', 2.6);
       await wait(1.8); ev.rest();
     }
@@ -2133,7 +2133,7 @@
         await ws(1.5);
         W.root.visible = true;
         if (!S.skip) {
-          W.play('appear', true); SND.sfx.shriek(1.2);
+          W.play('appear', true); SND.sfx.wraithRise(1.2);
           FX.burst(new THREE.Vector3(f.pos.x, 1.4, f.pos.z), [0.3, 1, 0.55], 60, 3); FX.ring(f.pos, 0x3cff8a, 0.2, 2.2, 0.8, 1);
           await ws(1.7);
         }
@@ -2154,7 +2154,7 @@
           FX.burst(new THREE.Vector3(f.pos.x, f.tall * 0.6, f.pos.z), f.look.appearColor || (f.kind === 'wisp' ? [0.8, 0.6, 1] : [0.3, 1, 0.55]), 40, 2.6);
           await wait(0.25);
         }
-        if (!cfg.standing) { SND.sfx.shriek(1.0); if (BF) BF.roar(foes.some((f) => f.tall > 3) ? 1.2 : 0.6); await wait(0.6); }
+        if (!cfg.standing) { SND.sfx.foesAppear(foes[0] && foes[0].kind); if (BF) BF.roar(foes.some((f) => f.tall > 3) ? 1.2 : 0.6); await wait(0.6); }
         if (told && cfg.introAfter && !S.skip) { UI.msg(said(cfg.introAfter), true); await ws(2.6); }
         UI.hideMsg(); $('skip').hidden = true;
       }
@@ -2176,7 +2176,7 @@
       UI.showBattle(true); UI.buildWindows(); UI.status(); layoutView();
       DIR.start();
       shotField(2);
-      io().m.play('cast'); UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic();
+      io().m.play('cast'); UI.msg(cfg.attackText ? cfg.attackText(E.foes) : 'The foes attack!'); SND.startMusic(cfg.fanfare || cfg.finale || foes.some((f) => f.kind === 'halcyon' || f.kind === 'noctara' || f.kind === 'colossus') ? 'boss' : 'battle');
       await wait(1.4); UI.hideMsg();
       S.state = 'battle'; S.t0 = clock.t;
     }
@@ -2190,7 +2190,7 @@
         // (in an arena the windows are far off beyond the fen: each light flies off toward its own, and is lost in the dark)
         const to = new THREE.Vector3(); if (AF) rayAt(u, v).at(60, to); else if (!rayAt(u, v).intersectPlane(plane, to)) return;
         arrivals.push(wait(i * 0.16).then(() => FX.projectile({ from: from.clone(), to: () => to, dur: 0.85 + Math.random() * 0.35, arc: 1.2 + Math.random(), side: rnd(-0.3, 0.3), color: 0xffe2a8, halo: 0xff9a40, size: 0.2, trail: [1, 0.78, 0.4], light: 0xffb45a, lightI: 2 }))
-          .then(() => { TOWN.to[i] = 1; SND.sfx.chime(); }));
+          .then(() => { TOWN.to[i] = 1; SND.sfx.windowLight(); }));
       });
       await Promise.all(arrivals);
       await wait(1.6); UI.hideMsg();
@@ -2213,7 +2213,7 @@
         const lastF = foes.filter((f) => f.m.action === 'die').sort((a, b) => a.m.progress - b.m.progress)[0] || foes[0];
         shotAt(lastF.pos, lastF.tall > 3 ? 0.8 : 1.35, 2, lastF.tall * 0.5);
         for (let i = 0; i < 4; i++) { await wait(0.28); const p = chest(lastF); p.x += rnd(-0.3, 0.3); p.y += rnd(-0.4, 0.3); FX.burst(p, lastF.look.appearColor || (lastF.kind === 'wisp' ? [0.8, 0.6, 1] : [0.3, 1, 0.55]), 26, 3); }
-        SND.sfx.boom(0.9); mark('die');
+        SND.sfx.soulHome(lastF.kind); mark('die');
         await until(() => lastF.m.progress >= 0.7 || lastF.m.progress < 0); mark('moth');
         UI.msg((typeof cfg.winMoth === 'function' ? cfg.winMoth(E.foes) : cfg.winMoth) || 'A pale moth rises and drifts down into the Moonwell: the soul has gone home.', true);
         await until(() => foes.every((f) => f.m.progress >= 0.99 || f.m.progress < 0 || f.m.action !== 'die'));
@@ -2254,21 +2254,21 @@
       if (EN && noc) {
         const M = EN.m;
         EN.pos = { x: EN.home.x, z: EN.home.z }; EN.yaw = EN.tyaw = faceYaw(EN.home, noc.pos) - 0.5; EN.wrap = noc;
-        io.tyaw = faceYaw(io.pos, EN.pos); io.m.play('summon', true); SND.sfx.chime();
+        io.tyaw = faceYaw(io.pos, EN.pos); io.m.play('summon', true); SND.sfx.prayer('envoi');
         await untilP(io.m, io.m.ACTIONS.summon.cues[0]);
         await FX.projectile({ from: io.m.flamePos(V()), to: () => new THREE.Vector3(EN.pos.x, 1.6, EN.pos.z), dur: 0.7, arc: 1.2, color: 0xfff1d8, halo: 0xffb45a, size: 0.26, trail: [1, 0.85, 0.6], light: 0xffc890, lightI: 3 });
         M.root.visible = true; if (M.fx) M.fx.visible = true; EN.shadow.visible = true; EN.on = true;
-        M.play('summon', true); SND.sfx.fire(); envoiShot([{ x: noc.pos.x, y: noc.tall, z: noc.pos.z }], 1.2);
-        await untilP(M, 0.27); if (s && D.sol.hp > 0) { s.m.play('flareCut', true); SND.sfx.swish(); }
+        M.play('summon', true); SND.sfx.lettersFold(); envoiShot([{ x: noc.pos.x, y: noc.tall, z: noc.pos.z }], 1.2);
+        await untilP(M, 0.27); if (s && D.sol.hp > 0) { s.m.play('flareCut', true); SND.sfx.lanternSpark(); }
         await until(() => !M.busy);
         if (L[1]) UI.msg(L[1], true);
-        M.play('envoi', true); SND.sfx.fire();
+        M.play('envoi', true); SND.sfx.envoiWrap();
         const A = M.ACTIONS.envoi;
         for (let k = 0; k < A.hits.length; k++) {
           await untilP(M, A.hits[k]);
           const p = chest(noc), last = k === A.hits.length - 1;
           FX.burst(p, [1, 0.8, 0.5], last ? 140 : 26, last ? 6 : 3); FX.flashLight(p, 0xffd0a0, last ? 9 : 2.5, last ? 0.8 : 0.25, last ? 12 : 6);
-          if (last) { UI.flash('#fff1c8', 0.95, 0.9); SND.sfx.boom(1.5); addShake(20); } else { SND.sfx.hit(0.7); addShake(4); }
+          if (last) { UI.flash('#fff1c8', 0.95, 0.9); SND.sfx.lastWord(1.5); addShake(20); } else { SND.sfx.letterBurn(0.7); addShake(4); }
         }
         // the letters' light rises into the sky, and the stars come back
         for (let i = 0; i < 18; i++) { const a = rnd(0, TAU), r = rnd(0.2, 2.2); FX.beam({ x: noc.pos.x + Math.cos(a) * r, z: noc.pos.z + Math.sin(a) * r }, 0xfff0c8, 0.25, 16, 2.4 + rnd(0, 1.2)); }
@@ -2280,11 +2280,11 @@
       TOWN.starsTo = 1; shot(IW / 2, IH * 0.3, 0, 0.9);
       if (L[2]) { UI.msg(L[2], true); await wait(3.6); }
       // Noctara becomes night with stars in it
-      if (noc) { shotAt(noc.pos, 0.9, 1.4); noc.m.play('die', true); SND.sfx.moon(); }
+      if (noc) { shotAt(noc.pos, 0.9, 1.4); noc.m.play('die', true); SND.sfx.starsReturn(); }
       if (L[3]) { UI.msg(L[3], true); await wait(4.2); }
       mark('night');
       // Halcyon's blade warms, and she goes home as a moth rising
-      if (hal) { shotAt(hal.pos, 1.3, 1.4); hal.m.play('die', true); SND.sfx.chime(); }
+      if (hal) { shotAt(hal.pos, 1.3, 1.4); hal.m.play('die', true); SND.sfx.release('halcyon'); }
       if (L[4]) { UI.msg(L[4], true); await wait(5.2); }
       mark('home');
       UI.hideMsg(); SND.sfx.victory();
@@ -2333,7 +2333,7 @@
       UI.cinematic(true); faceTo(f, { pos: centerOf(heroes.map((h) => h.pos)) });
       shotAt(f.pos, 1.3, 2);
       if (L[0]) { UI.msg(L[0], true); await wait(3.0); }
-      f.m.play('retreat', true); SND.sfx.eclipse();
+      f.m.play('retreat', true); SND.sfx.darkRetreat();
       if (L[1]) UI.msg(L[1], true);
       await until(() => !f.m.busy); f.out = true; mark('retreat');
       await wait(1.2); UI.hideMsg(); UI.hideEnemy();
@@ -2364,7 +2364,7 @@
       mark('stand');
       f.m.play('stagger', true);
       if (L[2]) { UI.msg(L[2], true); await wait(3.4); }
-      f.m.play('retreat', true); SND.sfx.eclipse();
+      f.m.play('retreat', true); SND.sfx.darkRetreat();
       if (L[3]) UI.msg(L[3], true);
       await until(() => !f.m.busy); f.out = true; mark('retreat');
       await wait(1.2); UI.hideMsg(); UI.hideEnemy(); UI.vignette(0);
@@ -2398,7 +2398,7 @@
           el('dt', null, dl, 'Io’s MP'); el('dd', null, dl, Math.round(RL.HEROES.io.mp * RL.mpScale(lead.level)) + ' → ' + Math.round(RL.HEROES.io.mp * RL.mpScale(lv)));
           el('dt', null, dl, 'Flame Bolt'); el('dd', null, dl, nf(330 * k0) + ' → ' + nf(330 * k1));
           $('lvlBox').hidden = false;
-          SND.sfx.chime();
+          SND.sfx.levelUp();
         }
       }
       $('end').hidden = false; if (!coarse) $('again').focus({ preventScroll: true });
@@ -2479,7 +2479,7 @@
       const fl = FX.flashLight, rg = FX.ring;
       FX.flashLight = (p, color, I, dur, dist) => { const G = glows[gi++ % 3]; G.p.copy(p); G.r = (dist || 6) * 0.9; G.c.set(color); G.I = Math.min(2.4, I * 0.3); G.t = 0; G.dur = Math.max(0.2, dur); return fl(p, color, I, dur, dist); };
       FX.ring = (p, color, r0, r1, dur, op, tex) => { if (p && r1 >= 1.2) AF.ripple(p.x, p.z, Math.min(0.8, r1 * 0.1) * (op || 1)); return rg(p, color, r0, r1, dur, op, tex); };
-      AF.onThunder = (k, near) => { SND.sfx.boom(near ? 1.3 : 0.4 + 0.4 * k); addShake(near ? 10 : 3); if (near) UI.flash('#ffe0e0', 0.45, 0.35); };
+      AF.onThunder = (k, near) => { SND.sfx.thunder(near ? 1.3 : 0.4 + 0.4 * k); addShake(near ? 10 : 3); if (near) UI.flash('#ffe0e0', 0.45, 0.35); };
       // somewhere on the ground the camera sees, at least 4 m from everyone in the fight
       const away = () => {
         let best = { x: 0, z: -14 };
