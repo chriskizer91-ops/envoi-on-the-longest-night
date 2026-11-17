@@ -65,9 +65,11 @@
     const v3 = new THREE.Vector3(), n3 = new THREE.Vector3(), nm = new THREE.Matrix3();
     const api = {
       // a flat quad from four corners (counter-clockwise seen from the front), uv as [u0, v0, u1, v1] in metres
-      quad(k, a, b, c, d, uv, col) {
+      // (nrm: its normal given, not the flat one: a bough's card is lit as the crown it is part of, not as a flat board)
+      quad(k, a, b, c, d, uv, col, nrm) {
         const g = get(k), e1 = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], e2 = [d[0] - a[0], d[1] - a[1], d[2] - a[2]];
         let nx = e1[1] * e2[2] - e1[2] * e2[1], ny = e1[2] * e2[0] - e1[0] * e2[2], nz = e1[0] * e2[1] - e1[1] * e2[0];
+        if (nrm) { nx = nrm[0]; ny = nrm[1]; nz = nrm[2]; }
         const L = Math.hypot(nx, ny, nz) || 1; nx /= L; ny /= L; nz /= L;
         const [u0, v0, u1, v1] = uv || [0, 0, Math.hypot(...e1), Math.hypot(...e2)];
         const P = [a, b, c, a, c, d], U = [[u0, v0], [u1, v0], [u1, v1], [u0, v0], [u1, v1], [u0, v1]];
@@ -91,10 +93,12 @@
         const A = P(-hw, 0, hd), Bq = P(hw, 0, hd), C = P(hw, h, hd), D = P(-hw, h, hd);
         const E = P(hw, 0, -hd), F = P(-hw, 0, -hd), Gq = P(-hw, h, -hd), H = P(hw, h, -hd);
         const u = opt.u0 || 0, vb = opt.v0 != null ? opt.v0 : y;
-        if (!opt.noFront) api.quad(k, A, Bq, C, D, [u, vb, u + w, vb + h], col);
-        if (!opt.noBack) api.quad(k, E, F, Gq, H, [u, vb, u + w, vb + h], col);
-        if (!opt.noSides) { api.quad(k, Bq, E, H, C, [u, vb, u + d, vb + h], col); api.quad(k, F, A, D, Gq, [u, vb, u + d, vb + h], col); }
-        if (!opt.noTop) api.quad(k, D, C, H, Gq, [x - hw, z - hd, x + hw, z + hd], col);
+        // opt.fit: each face is one whole picture (a crate's side)
+        const FIT = opt.fit ? [0, 0, 1, 1] : null;
+        if (!opt.noFront) api.quad(k, A, Bq, C, D, FIT || [u, vb, u + w, vb + h], col);
+        if (!opt.noBack) api.quad(k, E, F, Gq, H, FIT || [u, vb, u + w, vb + h], col);
+        if (!opt.noSides) { api.quad(k, Bq, E, H, C, FIT || [u, vb, u + d, vb + h], col); api.quad(k, F, A, D, Gq, FIT || [u, vb, u + d, vb + h], col); }
+        if (!opt.noTop) api.quad(k, D, C, H, Gq, FIT || [x - hw, z - hd, x + hw, z + hd], col);
         if (opt.bottom) api.quad(k, F, E, Bq, A, [0, 0, w, d], col);
       },
       // any three.js geometry, placed by a matrix; uvScale turns its uvs into metres
@@ -151,7 +155,7 @@
     const aniso = Math.min(W3D.quality === 'high' ? 16 : 8, renderer.capabilities.getMaxAnisotropy());
     const out = {}, used = {};
     const jobs = list.map((t) => new Promise((res) => {
-      const tex = new THREE.Texture(); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.anisotropy = aniso;
+      const tex = new THREE.Texture(); tex.wrapS = tex.wrapT = t.clamp ? THREE.ClampToEdgeWrapping : THREE.RepeatWrapping; tex.anisotropy = aniso;   // (clamp: a cut-out, one thing, never repeated)
       tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter; out[t.id] = tex;
       const tries = (t.made ? [['made', t.made]] : []).concat(t.stand ? [['stand-in', t.stand]] : []);
       const next = () => {
@@ -278,6 +282,8 @@
     // bump: relief from the picture's own light and dark (mortar lines sink, stones and beams stand out) under the moon
     const HI = W3D.quality === 'high';
     if (o.swap) defs.SWAPUV = '';
+    if (o.noflip) defs.NOFLIP = '';   // seen from behind it is lit the same (a bough's card)
+    if (o.map && o.glowmap) defs.GLOWMAP = '';   // the bright, coloured parts of the picture glow by themselves (a lit window's glass); the rest is lit by the night
     if (o.map && o.vary) defs.VARY = '';
     if (o.map && o.grain && HI) defs.GRAIN = '';
     if (o.map && o.bump && HI) defs.BUMP = '';
@@ -295,7 +301,10 @@
           cutAway(vW);
         #endif
         vec3 alb = toLin(uTint) * vCol;
-        vec3 n = normalize(vN); if (!gl_FrontFacing) n = -n;
+        vec3 n = normalize(vN);
+        #ifndef NOFLIP
+          if (!gl_FrontFacing) n = -n;
+        #endif
         #ifdef USE_MAP
           vec4 tx = texture2D(map, vUv);
           #ifdef ALPHA_TEST
@@ -329,6 +338,11 @@
         #endif
         float sh = shade(vW);
         vec3 c = alb * (nightLight(vW, n, sh) + lampLight(vW, n) * uGlowUse) * uLit + alb * (1.0 - uLit) + toLin(uEmis);
+        #ifdef GLOWMAP
+          float gmx = max(tx.r, max(tx.g, tx.b)), gmn = min(tx.r, min(tx.g, tx.b));
+          float gw = smoothstep(0.3, 0.6, gmx - gmn) * smoothstep(0.35, 0.7, gmx);
+          c = mix(c, alb * 1.15, gw);
+        #endif
         // a glint of moon on wet or polished things
         if (uSpec > 0.0) { vec3 v = normalize(cameraPosition - vW); vec3 h = normalize(v + uMoonDir); c += uMoon * pow(max(dot(n, h), 0.0), 40.0) * uSpec * sh; }
         #ifdef NOFOG

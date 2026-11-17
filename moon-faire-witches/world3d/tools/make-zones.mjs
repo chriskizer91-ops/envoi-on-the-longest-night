@@ -45,6 +45,8 @@ const page = (n, Z, ids) => `<!doctype html>
 <script src="../../../src/game/maps.js"></script>
 <script src="../../../envoi-final-draft/items/items.js"></script>
 <script src="../engine/core.js"></script>
+<script src="../engine/cutouts.js"></script>
+<script src="../engine/extras.js"></script>
 <script src="../engine/paint.js"></script>
 <script src="../engine/world.js"></script>
 <script src="../engine/walker.js"></script>
@@ -60,12 +62,22 @@ W3D.zone(${n}).catch((e) => { console.error(e); document.getElementById('loadmsg
 </html>
 `;
 
+// engine/extras.js's list, read as text: each entry's id, `with`, `src` and made path
+const EXTRAS = [...fs.readFileSync(path.join(D, 'engine/extras.js'), 'utf8').matchAll(/\{ id: '(\w+)',(.*?)made: "([^"]+)" \}/g)].map((m) => {
+  const w = m[2].match(/with: (\[[^\]]*\]|'[^']*')/), sr = m[2].match(/src: ("[^"]*"|'[^']*')/);
+  return { id: m[1], made: m[3], with: w ? (w[1][0] === '[' ? [...w[1].matchAll(/'([^']+)'/g)].map((q) => q[1]) : w[1].slice(1, -1)) : null, src: sr ? sr[1].slice(1, -1) : null };
+});
 for (const n of Object.keys(ZONES)) {
   const Z = ZONES[n], ids = Z.places.filter((id) => fs.existsSync(path.join(D, 'places', id + '.js')));
   // every texture picture the places name (as "./../texture-packs/..."), once each by its content
   const files = [], key = {}, byHash = {};
   for (const id of ids) {
-    const src = fs.readFileSync(path.join(D, 'places', id + '.js'), 'utf8');
+    let src = fs.readFileSync(path.join(D, 'places', id + '.js'), 'utf8');
+    // and the extras this place gets (engine/extras.js: Chris's short list), as if the place had named them
+    for (const e of EXTRAS) {
+      const uses = e.with === '*' || [].concat(e.with || []).some((w) => new RegExp("id: '" + w + "'").test(src)) || (e.src && new RegExp(e.src).test(src));
+      if (uses && !new RegExp("id: '" + e.id + "'").test(src)) src += `\n{ id: '${e.id}', made: "${e.made}", stand: "./../texture-packs/none" }`;
+    }
     // a stand-in is carried only where a texture needs it: where its own made texture isn't here (the reskin job,
     // November 17; a stand-in can serve another texture too, as the oak's bark does the northern camp's pines)
     const unused = new Set(), needed = new Set();

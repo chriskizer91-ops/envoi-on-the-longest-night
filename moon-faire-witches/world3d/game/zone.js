@@ -32,6 +32,8 @@
   // write their textures' paths for a page in world3d/, one folder up from here, so the build couldn't find them: this
   // page's own list (zone-<n>-art.js, written by make-zones.mjs) names each from here, and the build puts it inside ----
   const fromRoot = (p) => (/^data:/.test(p) ? p : '../../../' + p);
+  // (the extras, engine/extras.js: Chris's short list, are named the same way)
+  for (const e of W3D.EXTRAS || []) { const key = e.made.replace(/^\.\/\.\.\//, ''); e.made = (G.W3D_ART || {})[key] || './../../' + key; }
   function fixArt(place) {
     if (place.zoneArt) return; place.zoneArt = true;
     const ART = G.W3D_ART || {};

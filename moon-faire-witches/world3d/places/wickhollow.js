@@ -311,16 +311,16 @@
       // (the reskin job, November 17: each wall's picture is laid as the engine lays the front half's, K.layWall with that
       // building's own starts, so the stone carries on across the join and the timber frame's bays are whole; and the
       // timber storey's corner posts and beams go round the back half too)
-      const LY = K.lays.lower || {};
-      for (const [k, ya, yb] of [['stone', lo, mid], ['timber', mid, E]]) {
+      const LY = K.lays.lower || {}, WR = K.wear.lower || {};   // (and the pictures the front half wears)
+      for (const [k, ya, yb] of [[WR.stone || 'stone', lo, mid], [WR.timber || 'timber', mid, E]]) {
         B.quad(k, [x1, ya, zN], [x0, ya, zN], [x0, yb, zN], [x1, yb, zN], K.layWall(k, w, ya, yb, LY.n));              // the back wall
         B.quad(k, [x0, ya, zN], [x0, ya, zS], [x0, yb, zS], [x0, yb, zN], K.layWall(k, dB, ya, yb, LY.w, -dB));       // the west wall's back half
         B.quad(k, [x1, ya, zS], [x1, ya, zN], [x1, yb, zN], [x1, yb, zS], K.layWall(k, dB, ya, yb, LY.e, dF));        // the east wall's back half
       }
       {
-        const q = K.layWall('timber', w, E, E + (E - mid), LY.n), vk = (q[3] - q[1]) / (E - mid);
-        B.tri('timber', [x1, E, zN], [x0, E, zN], [cx, E + rise, zN], [[q[0], q[1]], [q[2], q[1]], [(q[0] + q[2]) / 2, q[1] + rise * vk]]);
-        const POST = [0.95, 0.9, 0.9];
+        const gk = WR.gable || 'timber', q = K.layWall(gk, w, E, E + (E - mid), LY.n), vk = (q[3] - q[1]) / (E - mid);
+        B.tri(gk, [x1, E, zN], [x0, E, zN], [cx, E + rise, zN], [[q[0], q[1]], [q[2], q[1]], [(q[0] + q[2]) / 2, q[1] + rise * vk]]);
+        const POST = K.have('shared_beam_oak') ? [1, 1, 1] : [0.95, 0.9, 0.9];
         for (const qx of [x0, x1]) B.box('post', qx, mid, zN, 0.26, E - mid, 0.26, 0, POST);
         for (const yb of [mid - 0.1, E - 0.12]) {
           B.box('beam', cx, yb, zN - 0.03, w + 0.3, 0.22, 0.14, 0, POST);

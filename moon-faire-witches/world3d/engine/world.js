@@ -16,8 +16,10 @@
     const U = W3D.night(M, place.night || {});
     const map2d = (window.MAPS || {})[place.mapId] || { walk: [], block: [] };
     const scene = new THREE.Scene();
-    const { tex, used } = await W3D.loadTextures(place.textures, renderer);
+    const { tex, used } = await W3D.loadTextures(place.textures.concat(W3D.extrasFor ? W3D.extrasFor(place) : []), renderer);
     const T = (id) => tex[id];
+    // Chris's short-list pictures (engine/extras.js), where the page carries them: HAVE(id), and a cut-out's trimmed size
+    const HAVE = (id) => used[id] === 'made', CUT = W3D.CUTOUTS || {};
     const X = M.x, Z = M.z, gh = place.ground_h;
     const R = rand(17);
 
@@ -49,39 +51,94 @@
     const MADE_REP = { shared_stone_wall_rough: 3.4, shared_stone_wall_frosted: 3.4, shared_wall_castle: 3.4, shared_drystone: 2.4, shared_roof_tiles_red: 2.6,
       shared_roof_shingle: 2.6, shared_roof_thatch: 2.8, shared_roof_slate_snow: 2.6, cottage_roof_moss: 2.6, heart_roof_red: 2.6, misthollow_roof_blue_slate: 2.6 };
     const REP = (k, d) => (used[SURF[k]] === 'made' && MADE_REP[SURF[k]]) || d;
+    const PIC = (id) => HAVE(id) && CUT[id];
+    const OAK = HAVE('shared_beam_oak');   // (short list, group C) old oak for posts, beams and plain wood, in place of the jetty's floor planks
     const MAT = {
       stone: m({ cutw: true, tint: TINT.stone, map: ST('stone'), rep: REP('stone', 2.4), shade: 0.35, vary: 0.2, grain: 0.22, bump: 0.05 }),
       dry: m({ cutw: true, tint: TINT.dry, map: ST('dry'), rep: REP('dry', 1.5), shade: 0.5, vary: 0.2, grain: 0.22, bump: 0.05 }),
       timber: m({ cutw: true, tint: TINT.timber, map: ST('timber'), rep: REP('timber', 3.0), shade: 0.3, vary: 0.14, grain: 0.18, bump: 0.035 }),
       planks: m({ cutw: true, tint: TINT.planks, map: ST('planks'), rep: REP('planks', 2.0), repV: REP('planks', 2.0), shade: 0.4, vary: 0.18, grain: 0.2, bump: 0.03 }),
       roof: m({ cutw: true, tint: TINT.roof, map: ST('roof'), rep: REP('roof', 2.0), side: DS, shade: 0.15, vary: 0.22, grain: 0.18, bump: 0.05 }),
-      wood: m({ cutw: true, map: ST('wood'), rep: 1.1, tint: TINT.wood, shade: 0.5, vary: 0.15, grain: 0.2, bump: 0.025 }),
+      wood: OAK && SURF.wood === 'shared_boardwalk_planks' ? m({ cutw: true, map: T('shared_beam_oak'), rep: 1.3, tint: place.tints && place.tints.wood != null ? place.tints.wood : 0xf2e4dc, shade: 0.5, vary: 0.15, grain: 0.2, bump: 0.03 })
+        : m({ cutw: true, map: ST('wood'), rep: 1.1, tint: TINT.wood, shade: 0.5, vary: 0.15, grain: 0.2, bump: 0.025 }),
       // the timber frames' real timbers (reskin): `beam` lies along a wall, `post` stands (its grain turned to run up it)
-      beam: m({ cutw: true, map: T('shared_boardwalk_planks') || ST('wood'), rep: 2.4, repV: 2.6, tint: 0x6a5248, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.03 }),
-      post: m({ cutw: true, map: T('shared_boardwalk_planks') || ST('wood'), rep: 2.4, repV: 2.6, swap: true, tint: 0x6a5248, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.03 }),
+      beam: OAK ? m({ cutw: true, map: T('shared_beam_oak'), rep: 2.2, repV: 0.9, tint: 0xd8ccc8, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.035 })
+        : m({ cutw: true, map: T('shared_boardwalk_planks') || ST('wood'), rep: 2.4, repV: 2.6, tint: 0x6a5248, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.03 }),
+      post: OAK ? m({ cutw: true, map: T('shared_beam_oak'), rep: 2.2, repV: 0.9, swap: true, tint: 0xd8ccc8, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.035 })
+        : m({ cutw: true, map: T('shared_boardwalk_planks') || ST('wood'), rep: 2.4, repV: 2.6, swap: true, tint: 0x6a5248, shade: 0.4, vary: 0.2, grain: 0.22, bump: 0.03 }),
       deck: m({ cutw: true, tint: TINT.deck, map: ST('deck'), rep: 2.2, shade: 0.6, vary: 0.18, grain: 0.2, bump: 0.03 }),
       pave: m({ cutw: true, tint: TINT.pave, map: ST('pave'), rep: 2.6, shade: 0.6, vary: 0.16, grain: 0.2, bump: 0.04 }),
       iron: m({ tint: 0x2a2632, spec: 0.6, shade: 0.5 }),
       cloth: m({ tint: TINT.cloth, map: ST('cloth'), rep: 1, cut: true, side: DS, shade: 0.3 }),
       glass: m({ lit: 0 }),
-      win: m({ map: pics.win, lit: 0 }), winDark: m({ map: pics.winDark, shade: 0.3 }), winColour: m({ map: pics.winColour, lit: 0 }), rose: m({ map: pics.rose, lit: 0 }),
-      door: m({ map: pics.door, shade: 0.4 }), doorArch: m({ map: pics.doorArch, alphaTest: 0.5, shade: 0.4 }), doorArch2: m({ map: pics.doorArch2, alphaTest: 0.5, shade: 0.4 }),
-      produce: m({ map: pics.produce, shade: 0.3 }), moonwater: m({ map: pics.moonwater, lit: 0 }),
+      // doors and windows: Chris's painted ones where the page carries them (short list, group B: cut-outs, the frame and
+      // the sill in the picture; a lit window's glass glows by itself, glowmap), else the ones paint.js draws
+      win: PIC('shared_window_lit') ? m({ map: T('shared_window_lit'), alphaTest: 0.5, glowmap: true, shade: 0.3 }) : m({ map: pics.win, lit: 0 }),
+      winShut: PIC('shared_window_shuttered') ? m({ map: T('shared_window_shuttered'), alphaTest: 0.5, glowmap: true, shade: 0.3 }) : m({ map: pics.win, lit: 0 }),
+      winDark: PIC('shared_window_dark') ? m({ map: T('shared_window_dark'), alphaTest: 0.5, shade: 0.3, spec: 0.25 }) : m({ map: pics.winDark, shade: 0.3 }),
+      winColour: m({ map: pics.winColour, lit: 0 }),
+      rose: PIC('chapel_rose_window') ? m({ map: T('chapel_rose_window'), alphaTest: 0.5, glowmap: true, shade: 0.3 }) : m({ map: pics.rose, lit: 0 }),
+      door: PIC('shared_door_plank') ? m({ map: T('shared_door_plank'), alphaTest: 0.5, shade: 0.4 }) : m({ map: pics.door, shade: 0.4 }),
+      doorArch: PIC('shared_door_arched') ? m({ map: T('shared_door_arched'), alphaTest: 0.5, shade: 0.4 }) : m({ map: pics.doorArch, alphaTest: 0.5, shade: 0.4 }),
+      doorArch2: PIC('shared_door_double_arched') ? m({ map: T('shared_door_double_arched'), alphaTest: 0.5, shade: 0.4 }) : m({ map: pics.doorArch2, alphaTest: 0.5, shade: 0.4 }),
+      produce: HAVE('shared_market_produce') ? m({ map: T('shared_market_produce'), shade: 0.3 }) : m({ map: pics.produce, shade: 0.3 }),
+      moonwater: m({ map: pics.moonwater, lit: 0 }),
+      // barrels and crates (short list, group C): a barrel's side is one picture all the way round, hoops and all; a crate's
+      // face one picture
+      barrel: m({ cutw: true, map: T('shared_barrel_side'), rep: 1, shade: 0.5, vary: 0.1, grain: 0.2, bump: 0.03 }),
+      crate: m({ cutw: true, map: T('shared_crate_side'), rep: 1, shade: 0.5, vary: 0.1, grain: 0.2, bump: 0.03 }),
       soil: m({ map: ST('soil'), rep: 1.5, tint: 0x6a5a50, shade: 0.7 }),
       rock: m({ cutw: true, tint: TINT.rock, map: ST('rock'), rep: 1.8, shade: 0.7, vary: 0.2, grain: 0.22, bump: 0.05 }),
       hills: m({ lit: 0, nofog: true, side: DS, glow: 0 }),
       leafBush: m({ map: ST('leaves'), rep: 1, tint: TINT.bush, cut: true, shade: 0.6 }),
       bark: m({ map: ST('bark'), rep: 1.2, cut: true, shade: 0.6 }),
     };
+    // ---- a house takes one of its wall's pictures (short list, group A) ----
+    // VARIANTS: for the texture a surface uses, the other pictures a house may wear instead. Each gets a material of its
+    // own under the key '<surface>~<n>' ('timber~1'), made as the surface's own is; wallKey(surface, n) names it. Only the
+    // houses (place.buildings) choose; walls, bridges and whatever else uses the surface keep its own picture.
+    const VARIANTS = { wick_wall_timber_plaster: ['wick_wall_timber_plaster_b', 'wick_wall_timber_plaster_c'], shared_stone_wall_rough: ['shared_stone_wall_rough_b'],
+      shared_stone_wall_frosted: ['shared_stone_wall_frosted_b'], shared_planks_wall: ['shared_planks_wall_b'] };
+    const VAR_REP = { shared_stone_wall_rough_b: 3.8, shared_stone_wall_frosted_b: 3.4, shared_stone_ashlar: 3.6, shared_plaster_plain: 3.0 };
+    const WALL_OPT = { stone: { shade: 0.35, vary: 0.2, grain: 0.22, bump: 0.05 }, timber: { shade: 0.3, vary: 0.14, grain: 0.18, bump: 0.035 }, planks: { shade: 0.4, vary: 0.18, grain: 0.2, bump: 0.03 }, dry: { shade: 0.5, vary: 0.2, grain: 0.22, bump: 0.05 } };
+    const VARS = {}, VAR_ID = {};   // VARS.timber = 2 (how many besides its own); VAR_ID['timber~1'] = the picture's id
+    for (const k of ['stone', 'timber', 'planks']) {
+      const list = (VARIANTS[SURF[k]] || []).filter(HAVE); VARS[k] = used[SURF[k]] === 'made' ? list.length : 0;
+      for (let i = 0; i < VARS[k]; i++) { const id = list[i], r0 = MAT[k].uniforms.uRep.value, rep = VAR_REP[id] || 1 / r0.x;
+        MAT[k + '~' + (i + 1)] = m(Object.assign({ cutw: true, tint: TINT[k], map: T(id), rep, repV: VAR_REP[id] ? rep : 1 / r0.y }, WALL_OPT[k])); VAR_ID[k + '~' + (i + 1)] = id; }
+    }
+    // dressed stone for a chapel, a tower, a gatehouse or a hall, and plain plaster for some gables
+    if (HAVE('shared_stone_ashlar') && SURF.stone === 'shared_stone_wall_rough') { MAT['stone~ashlar'] = m(Object.assign({ cutw: true, tint: TINT.stone, map: T('shared_stone_ashlar'), rep: VAR_REP.shared_stone_ashlar }, WALL_OPT.stone)); VAR_ID['stone~ashlar'] = 'shared_stone_ashlar'; }
+    if (HAVE('shared_plaster_plain') && SURF.timber === 'wick_wall_timber_plaster') { MAT['timber~plain'] = m(Object.assign({ cutw: true, tint: TINT.timber, map: T('shared_plaster_plain'), rep: VAR_REP.shared_plaster_plain }, WALL_OPT.timber)); VAR_ID['timber~plain'] = 'shared_plaster_plain'; }
+    const surfOf = (k) => VAR_ID[k] || SURF[k.split('~')[0]];   // the picture a wall key wears
     for (const k of FLOWER_KINDS) MAT['fl_' + k] = m({ map: pics['fl_' + k], alphaTest: 0.5, side: DS, cut: true, shade: 0.5 });
     // a place's own materials: { tex (none: a plain colour), rep, tint, emis, lit, glow, spec, cut (false: never thins away near Io), side, shade }
     for (const k in place.extraMats || {}) { const e = place.extraMats[k]; MAT[k] = m({ map: e.tex ? T(e.tex) : null, rep: e.rep || 2, tint: e.tint, emis: e.emis, lit: e.lit, glow: e.glow, spec: e.spec, cut: e.cut !== false, side: e.side === 'double' ? DS : THREE.FrontSide, shade: e.shade == null ? 0.4 : e.shade }); }
     // the trees, with and without the thinning-away (it costs a little, so only the patches near Io's line of sight get it)
-    const TREE_MAT = (cut) => ({
-      leaves: m({ map: ST('leaves'), rep: 1, tint: TINT.leaves, cut, shade: 0.55 }),
-      firs: m({ map: T(SURF.firs || SURF.leaves), rep: 1, tint: TINT.firs, cut, shade: 0.55 }),
-      bark: m({ map: ST('bark'), rep: 1, tint: TINT.bark, cut, shade: 0.6 }),
-    });
+    // (short list, group D) Crowns built of Chris's painted boughs, where the page carries the bough for the place's kind of
+    // leaf: BOUGH.leaf for its broadleaf trees, BOUGH.fir for its firs, BOUGH.bare for its bare ones; BUSH for flower beds.
+    const BOUGH_FOR = { wick_leaf_canopy: 'shared_bough_oak', wilds_oak_leaves: 'shared_bough_oak', wilds_birch_leaves: 'shared_bough_birch', wilds_fir_boughs: 'shared_bough_fir',
+      fir_foliage_frosted: 'shared_bough_fir_snow', fir_foliage_snowladen: 'shared_bough_fir_snow' };
+    const pick = (id) => (id && PIC(id) ? id : null);
+    const firB = BOUGH_FOR[SURF.firs || SURF.leaves];
+    const BOUGH = { leaf: pick(BOUGH_FOR[SURF.leaves]), fir: pick(/fir/.test(firB || '') ? firB : 'shared_bough_fir'), bare: pick('shared_bough_thorn') };
+    const BUSH = { green: pick('shared_bush_round'), flower: pick('shared_bush_flowering') };
+    // (the pictures are painted lit; in the night here they want to sit as dark as the leaves they replace: BOUGH_TINT)
+    const BOUGH_TINT = { shared_bough_oak: 0x8fa39c, shared_bough_birch: 0xa8b4a4, shared_bough_fir: 0x7f9494, shared_bough_fir_snow: 0xa9b2c4, shared_bough_thorn: 0xb4a8b8, shared_bush_round: 0x97aaa0, shared_bush_flowering: 0xa6b4ac };
+    const boughMat = (id, cut, tint) => m({ map: T(id), alphaTest: 0.38, side: DS, noflip: true, cut, shade: 0.5, tint: tint != null ? tint : BOUGH_TINT[id] });
+    if (BUSH.green) MAT.bushGreen = boughMat(BUSH.green, true);
+    if (BUSH.flower) MAT.bushFlower = boughMat(BUSH.flower, true);
+    const TREE_MAT = (cut) => {
+      const o = {
+        leaves: m({ map: ST('leaves'), rep: 1, tint: TINT.leaves, cut, shade: 0.55 }),
+        firs: m({ map: T(SURF.firs || SURF.leaves), rep: 1, tint: TINT.firs, cut, shade: 0.55 }),
+        bark: m({ map: ST('bark'), rep: 1, tint: TINT.bark, cut, shade: 0.6 }),
+      };
+      if (BOUGH.leaf) o.bough = boughMat(BOUGH.leaf, cut, place.tints && place.tints.bough);
+      if (BOUGH.fir) o.boughFir = boughMat(BOUGH.fir, cut, place.tints && place.tints.boughFir);
+      if (BOUGH.bare) o.boughBare = boughMat(BOUGH.bare, cut, place.tints && place.tints.boughBare);
+      return o;
+    };
     const TM = { cut: TREE_MAT(true), whole: TREE_MAT(false) };
 
     // ---- where Io can walk: the walking map's own areas and blocks, and everything solid the 3D adds ----
@@ -262,10 +319,10 @@
     //  - board walls fit the storey's height, so the line where the boards' picture repeats never shows;
     //  - stone starts somewhere different on every wall of every house.
     const RW = rand(4242);
-    const FRAMED = { wick_wall_timber_plaster: { cols: 2, rows: 2 } };
+    const FRAMED = { wick_wall_timber_plaster: { cols: 2, rows: 2 }, wick_wall_timber_plaster_b: { cols: 2, rows: 2 }, wick_wall_timber_plaster_c: { cols: 2, rows: 2 } };
     const VFIT = { shared_planks_wall: 1 };
     const repOf = (k) => { const u = MAT[k] && MAT[k].uniforms.uRep.value; return u ? [1 / u.x, 1 / u.y] : [1, 1]; };
-    const fitOf = (k) => { const id = SURF[k]; if (used[id] !== 'made') return null; return FRAMED[id] ? { framed: FRAMED[id] } : VFIT[id] ? { vfit: true } : null; };
+    const fitOf = (k) => { const id = surfOf(k); if (used[id] !== 'made') return null; return FRAMED[id] ? { framed: FRAMED[id] } : VFIT[id] ? { vfit: true } : null; };
     // the uv rectangle [u0, v0, u1, v1] (metres, as the materials take them) for a stretch of wall `len` long from y0 to y1;
     // `lay` is the wall's own start, kept for the gable above it
     function layWall(k, len, y0, y1, lay) {
@@ -279,7 +336,7 @@
       return { uv: [lay.u * ru, y0 + lay.v * rv, lay.u * ru + len, y1 + lay.v * rv] };
     }
     const newLay = () => ({ u: RW(), v: RW(), bay0: RW() < 0.5 ? 0 : 1, flip: RW() < 0.5 });
-    const POST = [0.95, 0.9, 0.9], LAYS = {};
+    const POST = OAK ? [1, 1, 1] : [0.95, 0.9, 0.9], LAYS = {}, WEAR = {}, turn = { stone: 0, timber: 1, planks: 0 }, RV = rand(9191);
     const built = [];
     for (const b of place.buildings) {
       const [px0, py0, px1, py1] = b.fp, x0 = X(px0), x1 = X(px1), z0 = Z(py0), z1 = Z(py1);
@@ -287,9 +344,19 @@
       const base = b.floor != null ? b.floor : gh(pxm, py1 + 4);
       let low = base; for (const [a, c] of [[px0, py0], [px1, py0], [px0, py1], [px1, py1], [pxm, py0], [pxm, py1]]) low = Math.min(low, gh(a, c)); low -= 0.3;
       const S = SIDES(x0, z0, x1, z1);
+      // which of its walls' pictures this house wears (short list, group A): the houses take turns, so neighbours differ;
+      // a chapel, a tower, a gatehouse or a hall is dressed stone; one timber-framed house in three has plain plaster gables.
+      // A place can say for itself: wear: { stone: 'stone~1', timber: 'timber', gable: 'timber~plain' }
+      const wear = {};
+      for (const k of ['stone', 'timber', 'planks']) { const pick = VARS[k] ? turn[k]++ % (VARS[k] + 1) : 0; wear[k] = pick ? k + '~' + pick : k; }
+      if (MAT['stone~ashlar'] && /chapel|church|tower|gate|keep|hall|temple/i.test(b.id || '')) wear.stone = 'stone~ashlar';
+      const plainGable = RV() < 0.34;
+      Object.assign(wear, b.wear || {}); if (b.id) WEAR[b.id] = wear;
       let y = base; const levels = [];
-      b.walls.forEach((s, i) => { levels.push({ k: TEXKEY[s.t], y0: i === 0 ? low : y, y1: y + s.h }); y += s.h; });
+      b.walls.forEach((s, i) => { levels.push({ k: wear[TEXKEY[s.t]] || TEXKEY[s.t], y0: i === 0 ? low : y, y1: y + s.h }); y += s.h; });
       const E = y, top = levels[levels.length - 1].k, rise = b.roof.rise, ridge = b.roof.ridge;
+      if (!wear.gable) wear.gable = MAT['timber~plain'] && /^timber/.test(top) && plainGable ? 'timber~plain' : top;
+      const gk = wear.gable;
       const info = { cx, cz, w, d, E, rise, ridge }; built.push(Object.assign({ b }, info));
       // walls
       const lays = { s: newLay(), n: newLay(), e: newLay(), w: newLay() }; if (b.id) LAYS[b.id] = lays;
@@ -323,15 +390,15 @@
       }
       // the gables' picture carries on from the wall under each: the same bays, the rows the same height
       const topH = levels[levels.length - 1].y1 - levels[levels.length - 1].y0;
-      const gab = (side, len) => { const q = layWall(top, len, E, E + topH, lays[side]).uv, vk = (q[3] - q[1]) / topH; return { u0: q[0], u1: q[2], v: (yy) => q[1] + (yy - E) * vk }; };
-      const gtri = (side, len, A, Bp, Cp, fa, fb, fc) => { const g = gab(side, len), U = (fr) => g.u0 + (g.u1 - g.u0) * fr; B.tri(top, A, Bp, Cp, [[U(fa), g.v(A[1])], [U(fb), g.v(Bp[1])], [U(fc), g.v(Cp[1])]]); };
+      const gab = (side, len) => { const q = layWall(gk, len, E, E + topH, lays[side]).uv, vk = (q[3] - q[1]) / topH; return { u0: q[0], u1: q[2], v: (yy) => q[1] + (yy - E) * vk }; };
+      const gtri = (side, len, A, Bp, Cp, fa, fb, fc) => { const g = gab(side, len), U = (fr) => g.u0 + (g.u1 - g.u0) * fr; B.tri(gk, A, Bp, Cp, [[U(fa), g.v(A[1])], [U(fb), g.v(Bp[1])], [U(fc), g.v(Cp[1])]]); };
       if (b.open) {   // the open side: posts, and the back wall shows through
         for (const px of b.posts || []) B.box('wood', X(px), low, z1 - 0.15, 0.24, E - low, 0.24, 0, [0.8, 0.7, 0.62]);
         B.box('wood', cx, E - 0.3, z1 - 0.15, w, 0.3, 0.26, 0, [0.7, 0.6, 0.55]);
       }
       // gables, or a lean-to's high wall
       if (b.roof.lean === 'n') {
-        { const g = gab('n', w); B.quad(top, [x1, E, z0], [x0, E, z0], [x0, E + rise, z0], [x1, E + rise, z0], [g.u0, g.v(E), g.u1, g.v(E + rise)]); }
+        { const g = gab('n', w); B.quad(gk, [x1, E, z0], [x0, E, z0], [x0, E + rise, z0], [x1, E + rise, z0], [g.u0, g.v(E), g.u1, g.v(E + rise)]); }
         gtri('e', d, [x1, E, z1], [x1, E, z0], [x1, E + rise, z0], 0, 1, 1);
         gtri('w', d, [x0, E, z0], [x0, E, z1], [x0, E + rise, z0], 0, 1, 0);
       } else if (b.roof.lean === 'w') {
@@ -351,8 +418,12 @@
       for (const f of b.doors || []) {
         const F = S[f.side], a = along(S[f.side], f.side, f), c = add3(add3(F.o, mul(F.t, a)), mul(F.n, 0.04)); c[1] = base;
         const col = f.red ? [1.5, 0.55, 0.45] : f.green ? [0.55, 1.05, 0.8] : [1, 1, 1];
-        onWall(f.plain ? 'wood' : 'stone', add3(c, mul(F.n, -0.01)), F.t, f.w + (f.plain ? 0.24 : 0.5), f.h + (f.plain ? 0.12 : 0.3), f.plain ? [0.45, 0.36, 0.32] : [0.75, 0.72, 0.75], [0, base, f.w + 0.5, base + f.h + 0.3]);
-        onWall(f.arch ? (f.double ? 'doorArch2' : 'doorArch') : 'door', c, F.t, f.w, f.h, col);
+        // (short list, group B) a painted door brings its own frame, or its own arch of stones: drawn a little larger, with
+        // no surround behind it
+        const dpic = PIC(f.arch ? (f.double ? 'shared_door_double_arched' : 'shared_door_arched') : 'shared_door_plank');
+        if (!dpic) onWall(f.plain ? 'wood' : 'stone', add3(c, mul(F.n, -0.01)), F.t, f.w + (f.plain ? 0.24 : 0.5), f.h + (f.plain ? 0.12 : 0.3), f.plain ? [0.45, 0.36, 0.32] : [0.75, 0.72, 0.75], [0, base, f.w + 0.5, base + f.h + 0.3]);
+        const dg = dpic ? (f.arch ? (f.double ? [1.27, 1.1] : [1.36, 1.11]) : [1.1, 1.05]) : [1, 1];
+        onWall(f.arch ? (f.double ? 'doorArch2' : 'doorArch') : 'door', c, F.t, f.w * dg[0], f.h * dg[1], col);
         if (!f.plain) B.box('stone', c[0] + F.n[0] * 0.35, base - 0.4, c[2] + F.n[2] * 0.35, Math.abs(F.n[2]) > 0.5 ? f.w + 0.6 : 0.7, 0.42, Math.abs(F.n[0]) > 0.5 ? f.w + 0.6 : 0.7, 0, [0.85, 0.85, 0.9]);
         if (f.light !== false) lights.push([M.px(c[0] + F.n[0]), M.py(c[2] + F.n[2]), 50, 0.25, 'warm']);
       }
@@ -361,15 +432,25 @@
         const F = S[f.side], a = along(F, f.side, f.side === 's' || f.side === 'n' ? f : { y: f.y }), sill = f.side === 's' || f.side === 'n' ? f.y : f.z;
         const c = add3(add3(F.o, mul(F.t, a)), mul(F.n, 0.05)); c[1] = base + sill;
         if (f.rose) {
-          onWall('stone', add3(c, mul(F.n, -0.02)), F.t, f.w + 0.5, f.h + 0.5, [0.85, 0.82, 0.86], [0, 0, f.w + 0.5, f.h + 0.5]);
-          onWall('rose', add3(c, [0, 0.25, 0]), F.t, f.w, f.h);
+          if (PIC('chapel_rose_window')) onWall('rose', c, F.t, f.w + 0.5, f.h + 0.5);   // (its ring of stone is in the picture)
+          else { onWall('stone', add3(c, mul(F.n, -0.02)), F.t, f.w + 0.5, f.h + 0.5, [0.85, 0.82, 0.86], [0, 0, f.w + 0.5, f.h + 0.5]); onWall('rose', add3(c, [0, 0.25, 0]), F.t, f.w, f.h); }
           halos.push([c[0] + F.n[0] * 0.3, c[1] + 0.25 + f.h / 2, c[2] + F.n[2] * 0.3, f.w * 1.6, 1.0, 0.62, 0.36]);
           continue;
         }
         const k = f.dark ? 'winDark' : f.colour ? 'winColour' : 'win';
-        onWall('wood', add3(c, mul(F.n, -0.015)), F.t, f.w + 0.22, f.h + 0.22, [0.45, 0.36, 0.32], [0, 0, f.w + 0.22, f.h + 0.22]);
-        onWall(k, add3(c, [0, 0.11, 0]), F.t, f.w, f.h);
-        B.box('stone', c[0] + F.n[0] * 0.08, c[1] - 0.04, c[2] + F.n[2] * 0.08, Math.abs(F.n[2]) > 0.5 ? f.w + 0.36 : 0.2, 0.1, Math.abs(F.n[0]) > 0.5 ? f.w + 0.36 : 0.2, 0, [0.85, 0.85, 0.9]);
+        // (short list, group B) a painted window brings its own frame and sill: drawn to cover where they were. One lit
+        // window in four, low on a wall with room beside it, is the one with its shutters open
+        const wpic = !f.colour && PIC(f.dark ? 'shared_window_dark' : 'shared_window_lit');
+        if (wpic) {
+          const ww = f.w + 0.34, wh = f.h + 0.42, sw = ww * 1.9, sh = sw * (CUT.shared_window_shuttered ? CUT.shared_window_shuttered.h / CUT.shared_window_shuttered.w : 0.63);
+          const want = !f.dark && PIC('shared_window_shuttered') && sill < 3.4 && RV() < 0.27, others = (b.windows || []).concat(b.doors || []).filter((o) => o !== f && o.side === f.side);
+          const room = want && a - sw / 2 > 0.3 && a + sw / 2 < F.len - 0.3 && others.every((o) => { const oa = along(S[o.side], o.side, o); return Math.abs(oa - a) > sw / 2 + (o.w || 1) / 2 + 0.35; });
+          if (room) onWall('winShut', add3(c, [0, -0.2, 0]), F.t, sw, sh); else onWall(k, add3(c, [0, -0.1, 0]), F.t, ww, wh);
+        } else {
+          onWall('wood', add3(c, mul(F.n, -0.015)), F.t, f.w + 0.22, f.h + 0.22, [0.45, 0.36, 0.32], [0, 0, f.w + 0.22, f.h + 0.22]);
+          onWall(k, add3(c, [0, 0.11, 0]), F.t, f.w, f.h);
+          B.box('stone', c[0] + F.n[0] * 0.08, c[1] - 0.04, c[2] + F.n[2] * 0.08, Math.abs(F.n[2]) > 0.5 ? f.w + 0.36 : 0.2, 0.1, Math.abs(F.n[0]) > 0.5 ? f.w + 0.36 : 0.2, 0, [0.85, 0.85, 0.9]);
+        }
         if (!f.dark) {
           halos.push([c[0] + F.n[0] * 0.25, c[1] + 0.11 + f.h / 2, c[2] + F.n[2] * 0.25, Math.max(f.w, f.h) * 1.25, f.colour ? 0.9 : 1.0, f.colour ? 0.55 : 0.68, f.colour ? 0.45 : 0.36]);
           if (sill < 3) lights.push([M.px(c[0] + F.n[0] * 1.2), M.py(c[2] + F.n[2] * 1.2), 46, 0.3, 'warm']);
@@ -451,7 +532,8 @@
       B.quad('cloth', A1, A2, A3, A4, [0, 0, Math.round(L / 0.45), 1]);
       B.quad('cloth', add3(A1, [0, -0.3, 0]), add3(A2, [0, -0.3, 0]), A2, A1, [0, 0, Math.round(L / 0.45), 0.25]);
       // crates and baskets round it
-      B.box('wood', back[0] + t[0] * (L / 2 + 0.4), base, back[2] + t[2] * (L / 2 + 0.4), 0.6, 0.5, 0.6, ry, [0.8, 0.65, 0.5]);
+      if (HAVE('shared_crate_side')) B.box('crate', back[0] + t[0] * (L / 2 + 0.4), base, back[2] + t[2] * (L / 2 + 0.4), 0.6, 0.5, 0.6, ry, [1, 1, 1], { fit: true });
+      else B.box('wood', back[0] + t[0] * (L / 2 + 0.4), base, back[2] + t[2] * (L / 2 + 0.4), 0.6, 0.5, 0.6, ry, [0.8, 0.65, 0.5]);
       const poly = [add3(add3(mid, mul(t, -L / 2)), mul(n, 0.1)), add3(add3(mid, mul(t, L / 2)), mul(n, 0.1)), add3(add3(back, mul(t, L / 2)), [0, 0, 0]), add3(add3(back, mul(t, -L / 2)), [0, 0, 0])].map((p) => [M.px(p[0]), M.py(p[2])]);
       addBlock(poly); shadeMarks.push(['poly', poly, 0.6]);
       lights.push([M.px(mid[0] + n[0]), M.py(mid[2] + n[2]), 60, 0.3, 'warm']);
@@ -646,8 +728,10 @@
       const x = X(pr.at[0]), z = Z(pr.at[1]), y = pr.y != null ? pr.y : gh(pr.at[0], pr.at[1]);
       const solid = (r) => addBlock(circlePx(pr.at[0], pr.at[1], r, 8));
       if (pr.k === 'bench') { bench(x, y, z, pr.face || 0); }
+      // (short list, group C) a barrel's side is one picture all the way round, its hoops in it; a crate's faces one picture each
+      else if (pr.k === 'barrel' && HAVE('shared_barrel_side')) { const ns = B.solid; B.cyl('barrel', x, y, z, 0.33, 0.33, 0.9, 14, [1, 1, 1], [1, 1], true); B.solid = false; B.cyl('wood', x, y + 0.84, z, 0.315, 0.315, 0.03, 14, [0.8, 0.62, 0.5]); B.solid = ns; shadeMarks.push(['dot', pr.at[0], pr.at[1], 14, 0.7]); }
       else if (pr.k === 'barrel') { B.cyl('wood', x, y, z, 0.33, 0.33, 0.9, 10, [0.75, 0.55, 0.42], [2.1, 0.9]); B.cyl('iron', x, y + 0.15, z, 0.345, 0.345, 0.06, 10, null, null, true); B.cyl('iron', x, y + 0.7, z, 0.345, 0.345, 0.06, 10, null, null, true); shadeMarks.push(['dot', pr.at[0], pr.at[1], 14, 0.7]); }
-      else if (pr.k === 'crates') { B.box('wood', x, y, z, 0.8, 0.6, 0.7, 0.2, [0.85, 0.7, 0.55]); B.box('wood', x + 0.1, y + 0.6, z - 0.05, 0.6, 0.5, 0.55, -0.15, [0.8, 0.65, 0.5]); shadeMarks.push(['dot', pr.at[0], pr.at[1], 18, 0.68]); }
+      else if (pr.k === 'crates') { const ck = HAVE('shared_crate_side') ? 'crate' : 'wood', co = { fit: ck === 'crate' }; B.box(ck, x, y, z, 0.8, 0.6, 0.7, 0.2, ck === 'crate' ? [1, 1, 1] : [0.85, 0.7, 0.55], co); B.box(ck, x + 0.1, y + 0.6, z - 0.05, 0.6, 0.5, 0.55, -0.15, ck === 'crate' ? [0.92, 0.9, 0.88] : [0.8, 0.65, 0.5], co); shadeMarks.push(['dot', pr.at[0], pr.at[1], 18, 0.68]); }
       else if (pr.k === 'anvil') { B.box('wood', x, y, z, 0.5, 0.45, 0.5, 0, [0.6, 0.45, 0.38]); B.box('iron', x, y + 0.45, z, 0.3, 0.2, 0.22, 0); B.box('iron', x, y + 0.65, z, 0.75, 0.16, 0.26, 0); B.cyl('iron', x + 0.45, y + 0.66, z, 0.1, 0.02, 0.14, 6); }
       else if (pr.k === 'pot') { B.cyl('stone', x, y, z, 0.2, 0.28, 0.42, 9, [1.3, 0.75, 0.55]); const kk = FLOWER_KINDS[Math.floor(R() * 3)]; for (const r_ of [0, 1.57]) B.quad('fl_' + kk, [x - Math.cos(r_) * 0.35, y + 0.3, z - Math.sin(r_) * 0.35], [x + Math.cos(r_) * 0.35, y + 0.3, z + Math.sin(r_) * 0.35], [x + Math.cos(r_) * 0.35, y + 0.85, z + Math.sin(r_) * 0.35], [x - Math.cos(r_) * 0.35, y + 0.85, z - Math.sin(r_) * 0.35], [0, 0, 1, 1]); }
       else if (pr.k === 'statue') { B.box('stone', x, y, z, 0.6, 0.8, 0.6, 0, [0.95, 0.95, 1]); B.cyl('stone', x, y + 0.8, z, 0.17, 0.12, 0.8, 8, [0.95, 0.95, 1]); const sg = new THREE.SphereGeometry(0.13, 8, 6); B.geom('stone', sg, new THREE.Matrix4().makeTranslation(x, y + 1.72, z), [0.95, 0.95, 1], 1); sg.dispose(); solid(0.4); }
@@ -670,9 +754,10 @@
       if (typeof place.extra !== 'function') return;
       // (the reskin job) K.layWall(k, len, y0, y1, lay, s0): the uv rectangle for a wall a place builds itself, laid as the
       // engine's are (above: fitted bays, boards to the storey, stone from the wall's own start); K.lays[buildingId][side]:
-      // that building's own starts, so a wall carried on in extra matches it (s0: metres along from that wall's start)
+      // that building's own starts, so a wall carried on in extra matches it (s0: metres along from that wall's start);
+      // K.wear[buildingId]: the wall keys that house wears ({ stone, timber, planks, gable }), for the same reason
       const K = { B, M, X, Z, gh, walkH, terrain, R, TAU, lantern, bench, addBlock, circlePx, lights, halos, shadeMarks, lamps3d, ico, rockG: rockShapes, far: farB,
-        layWall: (k, len, y0, y1, lay, s0) => { const q = layWall(k, len, y0, y1, lay || newLay()); if (s0 && !q.n) { q.uv[0] += s0; q.uv[2] += s0; } return q.uv; }, lays: LAYS, newLay,
+        layWall: (k, len, y0, y1, lay, s0) => { const q = layWall(k, len, y0, y1, lay || newLay()); if (s0 && !q.n) { q.uv[0] += s0; q.uv[2] += s0; } return q.uv; }, lays: LAYS, newLay, wear: WEAR, have: HAVE,
         light: (px, py, r, s, kind) => lights.push([px, py, r, s, kind || 'warm']),
         halo: (x, y, z, size, rgb) => halos.push([x, y, z, size, rgb[0], rgb[1], rgb[2]]),
         fire(px, py, size) { const x = X(px), z = Z(py), y = gh(px, py), s = size || 1; B.box('stone', x, y - 0.1, z, 0.9 * s, 0.25, 0.9 * s, 0.785, [0.6, 0.58, 0.6]); B.box('glass', x, y + 0.1, z, 0.45 * s, 0.35 * s, 0.45 * s, 0.3, [2.0, 0.85, 0.3]); B.box('glass', x, y + 0.3 * s, z, 0.25 * s, 0.35 * s, 0.25 * s, 1.1, [2.2, 1.2, 0.4]); halos.push([x, y + 0.5 * s, z, 2.6 * s, 1.0, 0.5, 0.2]); lights.push([px, py, 170 * s, 1.4, 'forge']); lamps3d.push({ x, y: y + 0.6, z, c: 0xff8a40, k: 1.8 }); addBlock(circlePx(px, py, 0.6 * s, 8)); },
@@ -682,10 +767,34 @@
 
     // ---- flower beds and flowering bushes ----
     const blobCol = (cy, r) => (v) => { const t = clamp((v.y - cy) / r * 0.5 + 0.5, 0, 1); const k = 0.42 + 0.68 * t; return [k * 0.95, k, k * 1.02]; };
+    // ---- a painted cut-out standing in the world (short list, group D) ----
+    // card(builder, key, id, foot, dir, len, spin, col, hang): the cut-out `id` from `foot` along `dir` (need not be unit),
+    // `len` long, turned about `dir` by `spin`; its width follows the picture. hang: the picture's cut end is at its top (a
+    // birch's hanging bough). Lit as part of a round crown (its normal mostly up), the same from both sides.
+    const RD = rand(5151), _cd = new THREE.Vector3(), _cr = new THREE.Vector3(), _cu = new THREE.Vector3();
+    function card(TB, key, id, foot, dir, len, spin, col, hang) {
+      const c = CUT[id]; if (!c) return;
+      _cd.set(dir[0], dir[1], dir[2]).normalize();
+      _cr.set(_cd.z, 0, -_cd.x); if (_cr.lengthSq() < 1e-4) _cr.set(1, 0, 0); _cr.normalize().applyAxisAngle(_cd, spin || 0);
+      const w = len * c.w / c.h, fu = hang ? c.head : c.foot, L = [-w * fu, w * (1 - fu)];
+      const a = [foot[0] + _cr.x * L[0], foot[1] + _cr.y * L[0], foot[2] + _cr.z * L[0]], b = [foot[0] + _cr.x * L[1], foot[1] + _cr.y * L[1], foot[2] + _cr.z * L[1]];
+      const e = [_cd.x * len, _cd.y * len, _cd.z * len], nr = [_cd.x * 0.6, 0.62 + Math.abs(_cd.y) * 0.1, _cd.z * 0.6];
+      TB.quad(key, a, b, [b[0] + e[0], b[1] + e[1], b[2] + e[2]], [a[0] + e[0], a[1] + e[1], a[2] + e[2]], hang ? [0, 1, 1, 0] : [0, 0, 1, 1], col, nr);
+    }
+    const crossed = (TB, key, id, foot, dir, len, spin, col, hang) => { card(TB, key, id, foot, dir, len, spin, col, hang); card(TB, key, id, foot, dir, len, spin + Math.PI / 2, col, hang); };
     for (const [fx, fy, rr, kind] of place.flowers || []) {
       const x = X(fx), z = Z(fy), y = gh(fx, fy), h = rr * 0.75;
-      B.geom('leafBush', ico[(((fx + fy) % 3) + 3) % 3], new THREE.Matrix4().compose(new THREE.Vector3(x, y + h * 0.55, z), new THREE.Quaternion(), new THREE.Vector3(rr, h, rr)), blobCol(y + h * 0.55, h), 2.2);
-      const n = Math.max(2, Math.round(rr * 4));
+      // (short list, group D) painted bushes standing in the bed, over a lower mound of leaves; fewer loose blossoms
+      const bushId = /^(mix|white|violet)$/.test(kind) ? BUSH.flower || BUSH.green : BUSH.green, bk = bushId === BUSH.flower ? 'bushFlower' : 'bushGreen', lump = bushId ? 0.26 : 1;
+      B.geom('leafBush', ico[(((fx + fy) % 3) + 3) % 3], new THREE.Matrix4().compose(new THREE.Vector3(x, y + h * 0.55 * lump, z), new THREE.Quaternion(), new THREE.Vector3(rr * (bushId ? 0.62 : 1), h * lump, rr * (bushId ? 0.62 : 1))), blobCol(y + h * 0.55 * lump, h * lump), 2.2);
+      if (bushId) {
+        const nb = Math.max(1, Math.min(7, Math.round(rr * rr * 1.3)));
+        for (let i = 0; i < nb; i++) {
+          const a = RD() * TAU, d = nb === 1 ? 0 : Math.sqrt(RD()) * rr * 0.5, sz = Math.min(1.7, Math.max(0.8, rr * 1.5)) * (0.85 + RD() * 0.3), k = 0.82 + RD() * 0.25;
+          crossed(B, bk, bushId, [x + Math.cos(a) * d, y - 0.06, z + Math.sin(a) * d], [0, 1, 0], sz, RD() * TAU, [k, k, k]);
+        }
+      }
+      const n = bushId === BUSH.flower && bushId ? 0 : Math.max(2, Math.round(rr * 4));   // (the painted bush has its own blossoms)
       for (let i = 0; i < n; i++) {
         const a = R() * TAU, d = R() * rr * 0.75, cx_ = x + Math.cos(a) * d, cz_ = z + Math.sin(a) * d, hh = y + h * (0.6 + R() * 0.6), s = 0.45 + R() * 0.25, r2 = R() * Math.PI;
         B.quad('fl_' + kind, [cx_ - Math.cos(r2) * s, hh - s * 0.6, cz_ - Math.sin(r2) * s], [cx_ + Math.cos(r2) * s, hh - s * 0.6, cz_ + Math.sin(r2) * s], [cx_ + Math.cos(r2) * s, hh + s, cz_ + Math.sin(r2) * s], [cx_ - Math.cos(r2) * s, hh + s, cz_ - Math.sin(r2) * s], [0, 0, 1, 1]);
@@ -730,9 +839,24 @@
       if (fir) {
         const H = (5.8 + r() * 2.6) * size, rb = (1.35 + r() * 0.4) * size;
         TB.geom('bark', trunk, new THREE.Matrix4().compose(new THREE.Vector3(x, y + 0.9, z), new THREE.Quaternion(), new THREE.Vector3(0.22 * size, 1.8, 0.22 * size)), [0.7, 0.6, 0.6], [1.5, 2]);
+        // (short list, group D) with painted boughs: the cones stay inside as a slimmer, darker heart, a trunk runs up the
+        // whole tree, and tiers of boughs sweep out and down round it, shorter toward the top, two crossed at the tip
+        const BF = BOUGH.fir, slim = BF ? 0.58 : 1, dark = BF ? 0.8 : 1;
+        if (BF) limb(TB, new THREE.Vector3(x, y + 1.6, z), UPV, H * 0.8, 0.2 * size, [0.7, 0.6, 0.6]);
         for (let i = 0; i < 3; i++) {
-          const cy = y + H * (0.3 + i * 0.24), cr = rb * (1 - i * 0.26), ch = H * (0.42 - i * 0.04);
-          TB.geom('firs', cone, new THREE.Matrix4().compose(new THREE.Vector3(x, cy, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, r() * TAU, 0)), new THREE.Vector3(cr, ch, cr)), blobCol(cy, ch * 0.6), [3, 2]);
+          const cy = y + H * (0.3 + i * 0.24), cr = rb * (1 - i * 0.26) * slim, ch = H * (0.42 - i * 0.04), bc = blobCol(cy, ch * 0.6);
+          TB.geom('firs', cone, new THREE.Matrix4().compose(new THREE.Vector3(x, cy, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, r() * TAU, 0)), new THREE.Vector3(cr, ch, cr)), BF ? (v) => { const q = bc(v); return [q[0] * dark, q[1] * dark, q[2] * dark]; } : bc, [3, 2]);
+        }
+        if (BF) {
+          const tiers = far ? 3 : 6;
+          for (let ti = 0; ti < tiers; ti++) {
+            const t = ti / tiers, hy = y + H * (0.2 + 0.66 * t), L = rb * (1.5 - 1.05 * t) + 0.25, nb = far ? 4 : 6 - Math.floor(t * 2.2), a0 = r() * TAU, k0 = 0.7 + 0.4 * t;
+            for (let j = 0; j < nb; j++) {
+              const a = a0 + j / nb * TAU + (r() - 0.5) * 0.35, el = -(0.48 - 0.5 * t) - r() * 0.18, k = k0 + r() * 0.12;
+              card(TB, 'boughFir', BF, [x + Math.cos(a) * 0.1, hy, z + Math.sin(a) * 0.1], [Math.cos(a) * Math.cos(el), Math.sin(el), Math.sin(a) * Math.cos(el)], L * (0.9 + r() * 0.2), (r() - 0.5) * 0.5, [k, k, k]);
+            }
+          }
+          crossed(TB, 'boughFir', BF, [x, y + H * 0.76, z], [0, 1, 0], H * 0.27, r() * TAU, [1.08, 1.08, 1.08]);
         }
         shadeMarks.push(['dot', tx, ty, rb / M.SX * 0.9, 0.55]);
       } else if (kind === 2) {
@@ -746,15 +870,37 @@
           limb(TB, at, d, L, 0.075 * size, col);
           const tip = at.clone().addScaledVector(d.clone().normalize(), L * (0.55 + r() * 0.3));
           for (let k = 0; k < 2; k++) limb(TB, tip, new THREE.Vector3(Math.cos(a + (r() - 0.5) * 2), 0.3 + r(), Math.sin(a + (r() - 0.5) * 2)), (0.5 + r() * 0.7) * size, 0.03 * size, col);
+          // (short list, group D) a painted spray of fine thorny twigs off every other branch, and one at the top
+          if (BOUGH.bare && (i % 2 === 0 || !far)) { const tw = at.clone().addScaledVector(d.clone().normalize(), L * 0.5), kk = 0.8 + r() * 0.3; (far ? card : crossed)(TB, 'boughBare', BOUGH.bare, [tw.x, tw.y, tw.z], [d.x, d.y + 0.25, d.z], (1.3 + r() * 0.9) * size, r() * TAU, [kk, kk, kk]); }
         }
+        if (BOUGH.bare) crossed(TB, 'boughBare', BOUGH.bare, [top.x, top.y - 0.5 * size, top.z], [lean.x, lean.y, lean.z], (1.5 + r() * 0.8) * size, r() * TAU, [1, 1, 1]);
         shadeMarks.push(['dot', tx, ty, 1.2 * size / M.SX, 0.7]);
       } else {
         const H = (2.6 + r() * 1.2) * size, cr = (1.45 + r() * 0.5) * size;
         TB.geom('bark', trunk, new THREE.Matrix4().compose(new THREE.Vector3(x, y + H / 2 - 0.2, z), new THREE.Quaternion(), new THREE.Vector3(0.24 * size, H + 0.4, 0.24 * size)), [0.75, 0.62, 0.58], [1.5, 3]);
+        // (short list, group D) with painted boughs: the round lumps stay inside as a smaller, darker heart, and boughs
+        // reach out of it all round: one up through the top, the rest fanned from low and wide to steep. A birch's boughs
+        // hang instead, from points round the crown
+        const BL = BOUGH.leaf, hang = BL === 'shared_bough_birch', slim = BL ? 0.6 : 1, dark = BL ? 0.82 : 1;
         const nb = far ? 2 : 3;
         for (let i = 0; i < nb; i++) {
-          const a = r() * TAU, d = i === 0 ? 0 : cr * 0.55, bx = x + Math.cos(a) * d, bz = z + Math.sin(a) * d, by = y + H + cr * (i === 0 ? 0.6 : 0.2 + r() * 0.35), br = cr * (i === 0 ? 1 : 0.68 + r() * 0.15);
-          TB.geom('leaves', ico[(((seed + i) % 3) + 3) % 3], new THREE.Matrix4().compose(new THREE.Vector3(bx, by, bz), new THREE.Quaternion().setFromEuler(new THREE.Euler(r(), r() * TAU, 0)), new THREE.Vector3(br, br * 0.82, br)), blobCol(by, br * 0.82), 2.6);
+          const a = r() * TAU, d = i === 0 ? 0 : cr * 0.55 * slim, bx = x + Math.cos(a) * d, bz = z + Math.sin(a) * d, by = y + H + cr * (i === 0 ? 0.6 : 0.2 + r() * 0.35), br = cr * (i === 0 ? 1 : 0.68 + r() * 0.15) * slim, bc = blobCol(by, br * 0.82);
+          TB.geom('leaves', ico[(((seed + i) % 3) + 3) % 3], new THREE.Matrix4().compose(new THREE.Vector3(bx, by, bz), new THREE.Quaternion().setFromEuler(new THREE.Euler(r(), r() * TAU, 0)), new THREE.Vector3(br, br * 0.82, br)), BL ? (v) => { const q = bc(v); return [q[0] * dark, q[1] * dark, q[2] * dark]; } : bc, 2.6);
+        }
+        if (BL && !hang) {
+          const n = far ? 5 : 10, a0 = r() * TAU, fy0 = y + H + cr * 0.12;
+          crossed(TB, 'bough', BL, [x, fy0 + cr * 0.1, z], [(r() - 0.5) * 0.3, 1, (r() - 0.5) * 0.3], cr * (1.45 + r() * 0.2), r() * TAU, [1.08, 1.08, 1.08]);
+          for (let j = 1; j < n; j++) {
+            const a = a0 + j * 2.399, el = 0.05 + (j / n) * 0.95 + (r() - 0.5) * 0.2, k = 0.74 + 0.3 * (el / 1.1) + r() * 0.1, len = cr * (1.12 + r() * 0.3);
+            const f = [x + Math.cos(a) * cr * 0.12, fy0 + r() * cr * 0.25, z + Math.sin(a) * cr * 0.12], dr = [Math.cos(a) * Math.cos(el), Math.sin(el), Math.sin(a) * Math.cos(el)];
+            (far ? card : crossed)(TB, 'bough', BL, f, dr, len, far ? r() * 1.2 : r() * TAU, [k, k, k]);
+          }
+        } else if (BL) {
+          const n = far ? 6 : 11, a0 = r() * TAU, cy0 = y + H + cr * 0.55;
+          for (let j = 0; j < n; j++) {
+            const a = a0 + j * 2.399, rad = cr * (j === 0 ? 0 : 0.35 + r() * 0.4), up = cr * (0.75 - (j / n) * 0.5 + r() * 0.2), k = 0.85 + r() * 0.25, len = cr * (1.25 + r() * 0.45);
+            (far ? card : crossed)(TB, 'bough', BL, [x + Math.cos(a) * rad, cy0 + up, z + Math.sin(a) * rad], [Math.cos(a) * 0.22, -1, Math.sin(a) * 0.22], len, r() * TAU, [k, k, k], true);
+          }
         }
         shadeMarks.push(['dot', tx, ty, cr / M.SX * 0.95, 0.5]);
       }
@@ -1036,7 +1182,7 @@
     const sight = (function () {
       // masonry, walls, roofs and decks count however small their pieces (the stones of an arch); wood only where it is
       // 0.3 m across or more, so slim posts, rails and rungs don't push the camera about
-      const mats = new Map(['stone', 'dry', 'timber', 'planks', 'roof', 'deck', 'pave', 'rock', 'wood', 'beam', 'post'].map((k) => [MAT[k], /^(wood|beam|post)$/.test(k) ? 0.3 : 0.1]));
+      const mats = new Map(Object.keys(MAT).filter((k) => /^(stone|dry|timber|planks)(~.*)?$|^(roof|deck|pave|rock|wood|beam|post|barrel|crate)$/.test(k)).map((k) => [MAT[k], /^(wood|beam|post|barrel|crate)$/.test(k) ? 0.3 : 0.1]));
       const T9 = [], CELL = 3, grid = new Map();
       const va = new THREE.Vector3(), vb = new THREE.Vector3(), vc = new THREE.Vector3(), e1 = new THREE.Vector3(), e2 = new THREE.Vector3();
       scene.updateMatrixWorld(true);

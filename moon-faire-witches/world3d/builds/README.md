@@ -9,10 +9,10 @@ Aethermoor, from the 3D map) comes later.
 
 | File | Zone | Size | Its places (the wild ones in bold) |
 |---|---|---|---|
-| `envoi-3d-zone-1-wickhollow-and-the-fen.html` | 1, Wickhollow and the fen | 33.6 MB | Wickhollow, Io's cottage, the jetty, **the Thornwood**, Bogmire, the fen's dark heart |
-| `envoi-3d-zone-2-the-warm-roads.html` | 2, The Warm Roads | 35.3 MB | the Warm Roads camp, **the Ember Line road**, **the forest road to Dawnroost**, Dawnroost, Dawnroost's living node |
-| `envoi-3d-zone-3-the-northern-wilds.html` | 3, The northern wilds | 41.8 MB | the northern camp, **Eldergrove's edge**, **the cold moor**, **the northern crossroads**, the shipyard |
-| `envoi-3d-zone-4-the-northeast-peaks.html` | 4, The northeast peaks | 33.2 MB | the frozen camp, **Frostmere's shore**, **the frozen pass**, Misthollow, the dead Moonwell |
+| `envoi-3d-zone-1-wickhollow-and-the-fen.html` | 1, Wickhollow and the fen | 45.5 MB | Wickhollow, Io's cottage, the jetty, **the Thornwood**, Bogmire, the fen's dark heart |
+| `envoi-3d-zone-2-the-warm-roads.html` | 2, The Warm Roads | 47.7 MB | the Warm Roads camp, **the Ember Line road**, **the forest road to Dawnroost**, Dawnroost, Dawnroost's living node |
+| `envoi-3d-zone-3-the-northern-wilds.html` | 3, The northern wilds | 54.4 MB | the northern camp, **Eldergrove's edge**, **the cold moor**, **the northern crossroads**, the shipyard |
+| `envoi-3d-zone-4-the-northeast-peaks.html` | 4, The northeast peaks | 43.6 MB | the frozen camp, **Frostmere's shore**, **the frozen pass**, Misthollow, the dead Moonwell |
 
 Each zone starts at its landing: zone 1 on the jetty, zones 2 to 4 at their camps.
 
@@ -41,8 +41,12 @@ Both:
 ## What's in them
 
 - **Textures:** all four zones are reskinned (November 17, the reskin job, branch `work/reskin`): Chris's own made
-  textures at their full size, each wall's picture fitted to its wall, real timbers on the timber-framed houses. One
-  texture is still a stand-in: the northern camp's pine bark.
+  textures at their full size, each wall's picture fitted to its wall, real timbers on the timber-framed houses. No
+  texture is a stand-in any more.
+- **The short list is in** (November 17, afternoon; `docs/art-requests/15-3d-world-textures-short-list.md`, all 28
+  pictures): houses take turns among several wall pictures; painted doors, windows and the chapel's rose window; oak
+  beams, barrels, crates and the stall's table; tree crowns built of painted boughs, and painted bushes in the flower
+  beds; Bogmire's dark heart's deck and the snowy planks made again.
 - **Nothing built is seen through:** the camera keeps a clear line to Io instead (it looks from higher, swings round,
   looks from right above her, or comes in). Only where she is boxed in with no clear line at all do walls thin away.
 - **Made for the laptop first:** full sharpness, grain close up and relief on surfaces. A phone gets the lighter
