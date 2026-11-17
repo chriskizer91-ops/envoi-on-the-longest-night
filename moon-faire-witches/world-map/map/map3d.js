@@ -53,7 +53,7 @@
   // moonlight on a colour; then the mist over closed zones (low: what stands tall rises out of it), the zone lines, the
   // gold ring round Io's zone, and the night's haze with distance
   const FINISH = `
-    uniform sampler2D zones, moods, hazes, shades; uniform vec4 uOpen, uHere; uniform vec3 uMoon, uFog, uMist, uEye; uniform float uTime, uFogNear, uFogFar, uGlow, uPierce, uMistAmt;
+    uniform sampler2D zones, moods, hazes, shades; uniform vec4 uOpen, uHere; uniform vec3 uMoon, uFog, uMist, uEye; uniform float uTime, uFogNear, uFogFar, uGlow, uPierce, uMistAmt, uViolet;
     ${NOISE}
     // the region's own look in the game (from its walking places): what grows there is tinted this, by w
     vec3 mooded(vec3 c, vec3 wp, float w) {
@@ -102,6 +102,12 @@
       vec2 e2 = min(at, 1.0 - at); float inner = smoothstep(0.0, 0.05, min(e2.x, e2.y * 1.5)) * inMap;
       float open = clamp(dot(zs, uOpen), 0.0, 1.0), mist = (1.0 - open) * inner * (1.0 - uPierce * smoothstep(26.0, 130.0, wp.y)) * (1.0 - 0.5 * step(0.9, uPierce)) * uMistAmt;
       // the region's own night haze lying in its low ground (each place's fog colour in the game)
+      // zones 1 and 2 under a violet night (Chris, November 17: the game's places are violet by night, and stood as
+      // purple squares on a field of green; the land should read green and purple at once). The shadows and the dark
+      // of the woods take most of it; lit grass keeps most of its green
+      float vl = dot(c, vec3(0.3, 0.59, 0.11)), vz = clamp(z.r + z.g, 0.0, 1.0) * uViolet * inMap * (1.0 - 0.55 * smoothstep(0.05, 0.3, c.r - c.b)); // (warm things, the fields' gold and the roofs' red, keep more of their own colour)
+      c *= mix(vec3(1.0), vec3(1.1, 0.95, 1.24), vz);
+      c = mix(c, vec3(vl) * vec3(1.2, 0.86, 1.66), vz * 0.52 * (1.0 - smoothstep(0.03, 0.26, vl)));
       vec4 hz = texture2D(hazes, clamp(at, 0.0, 1.0));
       c = mix(c, hz.rgb * 1.5, hz.a * 0.16 * inMap * (1.0 - smoothstep(4.0, 70.0, wp.y)) * (0.5 + 0.9 * n));
       c = mix(c, uMist * (0.7 + 0.55 * n + 0.2 * nb), mist * clamp(0.55 + 0.4 * n, 0.0, 0.9));
@@ -285,8 +291,9 @@
   const PG_V = `
     attribute vec3 puv; varying vec3 vW, vP; varying float vDepth;
     void main() { vP = puv; vW = position; vec4 mv = modelViewMatrix * vec4(position, 1.0); vDepth = -mv.z; gl_Position = projectionMatrix * mv; }`;
-  const pgF = (tex) => `
+  const pgF = (tex, land) => `
     ${tex ? 'precision highp sampler2DArray; uniform sampler2DArray players;' : ''}
+    ${land ? 'uniform sampler2DArray layers; uniform vec3 uGT, uGT25, uGT26; uniform vec4 uG;' : ''}
     uniform sampler2D pgrounds; uniform vec4 uTile, uL, uRep; uniform vec3 uT0, uT1, uT2, uT3; uniform float uMood, uIce;
     varying vec3 vW, vP; varying float vDepth;
     ${FINISH}
@@ -305,6 +312,27 @@
       // (lit as the buildings are: these are the game's own textures, paler than the map's night-painted ground)
       float l = dot(n, uMoon);
       vec3 c = ${tex ? 'mooded(a, vW, uMood) * (vec3(0.8, 0.84, 0.98) * (0.62 + 0.38 * sv.y) + vec3(0.75) * max(l, 0.0) * sv.x)' : 'moonlit(mooded(a, vW, uMood), n, sv)'};
+      ${land ? `
+      // in zones 1 and 2 its grass is the map's own ground for where it stands (uG: the texture, how fine it is laid,
+      // how much of the region's look it takes, and 1 for drifts of meadow and clover), with tufts and flower specks;
+      // only what is made (paths, cobbles, paving) and a little of its own colour in its middle come from the game
+      if (uG.x > -0.5) {
+        // (its paths and cobbles a little greyer and darker here: under the violet night they were turning pink)
+        float cl = dot(c, vec3(0.3, 0.59, 0.11)); c = mix(c, vec3(cl) * vec3(0.96, 0.93, 1.0), 0.45) * 0.88;
+        vec2 p = vW.xz * uG.y;
+        vec3 gr = mix(texture(layers, vec3(p / 96.0, uG.x)).rgb, texture(layers, vec3(p / 21.0 + 0.11, uG.x)).rgb, 0.5) * uGT;
+        float m1 = fbm(vW.xz * 0.021 + 4.0), m2 = fbm(vW.xz * 0.034 + 11.0);
+        if (uG.w > 0.5) {
+          gr = mix(gr, texture(layers, vec3(p / 70.0, 25.0)).rgb * uGT25, smoothstep(0.42, 0.6, m1) * 0.85);
+          gr = mix(gr, texture(layers, vec3(p / 60.0, 26.0)).rgb * uGT26, smoothstep(0.52, 0.66, m2) * 0.8);
+        }
+        gr *= 0.8 + 0.42 * fbm(vW.xz * 0.075 + 1.5);
+        gr *= 1.0 - 0.38 * smoothstep(0.22, 0.5, n2(vW.xz * 0.9) * n2(vW.xz * 2.3 + 3.0));
+        gr += vec3(0.5, 0.48, 0.3) * smoothstep(0.86, 0.93, n2(vW.xz * 3.1 + 7.0)) * smoothstep(0.45, 0.6, m2);
+        gr = mix(gr, vec3(0.34, 0.34, 0.4), steep);
+        float made = clamp(max(max(smoothstep(0.2, 0.62, sp.r), smoothstep(0.2, 0.62, sp.g)), smoothstep(0.2, 0.62, sp.b)), 0.0, 1.0);
+        c = mix(moonlitTex(mooded(gr, vW, uG.z), n, sv), c, mix(0.22 * smoothstep(6.0, 24.0, vP.z), 1.0, made));
+      }` : ''}
       vec3 wc = uIce > 0.5 ? moonlit(vec3(0.62, 0.74, 0.86), vec3(0.0, 1.0, 0.0), sv) : water(vec3(0.07, 0.19, 0.34), vW, vDepth, 0.08, 0.0) * (0.62 + 0.38 * sv.x);
       c = mix(c, wc, smoothstep(0.35, 0.6, wet));
       gl_FragColor = vec4(finish(c, vW, vDepth, 1.0), 1.0);
@@ -460,7 +488,7 @@
     const uniforms = {
       zones: { value: null }, uOpen: { value: new THREE.Vector4() }, uHere: { value: new THREE.Vector4() },
       uMoon: { value: MOON }, uFog: { value: FOG }, uMist: { value: MIST },
-      uTime: { value: 0 }, uFogNear: { value: 0 }, uFogFar: { value: 1 }, uGlow: { value: 0 },
+      uTime: { value: 0 }, uFogNear: { value: 0 }, uFogFar: { value: 1 }, uGlow: { value: 0 }, uViolet: { value: 1 },
       moods: { value: null }, hazes: { value: null }, shades: { value: null }, uEye: { value: null }, uMood: { value: 0.85 },
       uMistAmt: { value: 1 }, // 1: mist over the closed zones; 0: none (map.mist(0), to see the whole land)
       uPierce: { value: 0.55 }, // how far tall things stand out of the mist (buildings: 1, and half the mist)
@@ -534,6 +562,7 @@
 
     // ---- the land ----
     const landMeshes = [], stats = { trees: 0, houses: 0, detail };
+    let GT = null; // the ground textures' tables, for the walking places' grass
     let layers = null; // the made ground textures, stacked (WebGL 2), or null: flat colours
     function buildLand() {
       // the ground's colour, a pixel for each data pixel: its kind's colour, the fields in a patchwork; alpha: a river or lake
@@ -602,6 +631,7 @@
         [1.0, 1.02, 1.05], [1.35, 1.6, 1.1], [1.3, 1.7, 1.15]].flat());
       // the sheet, in pieces (so what's off the screen isn't drawn): 576 x 384 squares on a phone, 1152 x 768 on a laptop
       const [PX, PY] = LV.pieces, nx = LV.squares[0] / PX, ny = LV.squares[1] / PY, pw = AW / PX, ph = AH / PY;
+      GT = { LAYER, MOODW, TINT };
       const mat = material(LAND_V, landF(!!layers), { ground: { value: ground }, kinds: { value: kinds }, layers: { value: layers }, uLayer: { value: LAYER }, uMoodW: { value: MOODW }, uTint: { value: TINT } });
       for (let q = 0; q < PX * PY; q++) {
         const qx = (q % PX) * pw, qy = Math.floor(q / PX) * ph;
@@ -619,7 +649,7 @@
         const mesh = new THREE.Mesh(g, mat); scene.add(mesh); landMeshes.push(mesh);
       }
       // the sea: one flat sheet at sea level, far past the map's edges
-      const sea = new THREE.Mesh(new THREE.PlaneGeometry(90000, 90000), material(SEA_V, seaF(!!layers), { layers: { value: layers } }));
+      const sea = new THREE.Mesh(new THREE.PlaneGeometry(90000, 90000), material(SEA_V, seaF(!!layers), { layers: { value: layers }, uViolet: { value: 0.35 } }));
       sea.rotation.x = -Math.PI / 2; scene.add(sea);
     }
 
@@ -855,7 +885,7 @@
     // the walking places themselves: for each, its ground (a fine sheet over the land) and everything solid in it
     function buildGamePlaces(players, pgrounds) {
       const two = !!players, D = THREE.DoubleSide, lay = PM.layers, per = PM.gper, rows = Math.ceil(Object.keys(PM.places).length / per), GWt = per * PM.gw, GHt = rows * PM.gh * 2;
-      const solidMat = material(SOLID_V, solidF(two), { players: { value: players }, uMood: { value: 0.3 } }, { side: D });
+      const solidMat = material(SOLID_V, solidF(two), { players: { value: players }, uMood: { value: 0.3 }, uViolet: { value: 0.55 } }, { side: D }); // (walls and roofs take less of the violet night than the land: stone was turning bright purple)
       let tris = 0;
       for (const a of PL) {
         const m = a.m, st = LV.placeStep, gx = Math.ceil(a.nx / st), gz = Math.ceil(a.nz / st), zone = World.bandAt(a.at[0], a.at[1]);
@@ -869,7 +899,11 @@
         const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('puv', new THREE.BufferAttribute(puv, 3)); g.setIndex(new THREE.BufferAttribute(idx, 1)); g.computeBoundingSphere();
         const G = m.ground, tc = (i) => { const t = G.tint[i], av = two ? [1, 1, 1] : (lay[G.layers[i]] || { avg: [90, 100, 90] }).avg.map((v) => v / 255 * 2.2); return new THREE.Vector3(t[0] * av[0], t[1] * av[1], t[2] * av[2]); };
         const tx = (m.tile % per) * PM.gw, ty = Math.floor(m.tile / per) * PM.gh * 2;
-        const mesh = new THREE.Mesh(g, material(PG_V, pgF(two), { players: { value: players }, pgrounds: { value: pgrounds },
+        // the map's own ground for its grass, in zones 1 and 2: the fen's in the bog, else open grass (the zone's own)
+        const onLand = two && !!layers && !!GT, row = kindAt(a.at[0], a.at[1]) === KIND.fen ? KIND.fen : KIND.grass, GL = onLand && zone >= 1 && zone <= 2 ? GT.LAYER[row * 5 + zone] : -1;
+        const tv = (l) => new THREE.Vector3(GT.TINT[l * 3], GT.TINT[l * 3 + 1], GT.TINT[l * 3 + 2]);
+        const mesh = new THREE.Mesh(g, material(PG_V, pgF(two, onLand), { players: { value: players }, pgrounds: { value: pgrounds }, layers: { value: layers },
+          uG: { value: new THREE.Vector4(GL, GL > 15.5 ? 2.4 : 1, GL < 0 ? 0 : GT.MOODW[row], row === KIND.grass && zone <= 1 ? 1 : 0) }, uGT: { value: onLand && GL >= 0 ? tv(GL) : new THREE.Vector3(1, 1, 1) }, uGT25: { value: onLand ? tv(25) : new THREE.Vector3(1, 1, 1) }, uGT26: { value: onLand ? tv(26) : new THREE.Vector3(1, 1, 1) },
           uTile: { value: new THREE.Vector4(tx / GWt, 1 - ty / GHt, PM.gw / GWt, -PM.gh / GHt) }, uL: { value: new THREE.Vector4(...G.layers) }, uRep: { value: new THREE.Vector4(...G.rep.map((r) => 1 / (r * PK))) },
           uT0: { value: tc(0) }, uT1: { value: tc(1).multiplyScalar(zone <= 2 ? 1.4 : 1.15) }, uT2: { value: tc(2) }, uT3: { value: tc(3) }, uMood: { value: 0.3 }, uIce: { value: zone === 4 ? 1 : 0 } }));
         mesh.matrixAutoUpdate = false; scene.add(mesh); tris += idx.length / 3;

@@ -109,6 +109,12 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   channels all through it, and ends it at the shore in cliffs 90 to 150 m high.
 - **The zone line** (November 17): the edge of the zone Io is in is a thin dashed line of violet light (the gold band
   it was looked like a strip of sand).
+- **The violet night over zones 1 and 2** (November 17): the game's places are violet by night and stood as purple
+  squares on a green field, so the map leans toward the game there. The shadows and the dark of the woods take a
+  violet tint, lit grass keeps most of its green, warm things (the fields' gold, the roofs' red) keep more of their own
+  colour. In those two zones a place's grass is the map's own ground for where it stands, with tufts and flower
+  specks; only its paths, cobbles, paving, water and everything built come from the game. Zones 3 and 4, whose land
+  already matched their places, are unchanged.
 - **Size:** 8.6 MB, works offline (one file for both levels).
 
 ### What isn't there yet

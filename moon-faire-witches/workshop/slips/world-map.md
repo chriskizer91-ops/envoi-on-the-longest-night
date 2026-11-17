@@ -3,7 +3,9 @@ State:    Working: step 1 of 4, the 3D land, textured with Chris's own ground te
           levels of detail, phone and laptop; real tree models at three levels. Since November 17, 10:01: all 21
           walking places stand on the map as the 3D game builds them (ground, water, houses, walls, bridges, jetties,
           trees, lamps); the bog lies at sea level round Bogmire and the fen's dark heart, with cliffs at its shore;
-          the zone line is a thin violet dash. Next: step 2 (choosing where to go, the dotted line).
+          the zone line is a thin violet dash. Since 11:30: zones 1 and 2 lie under a violet night (green and purple at
+          once), and each place there wears the map's own grass, so no place is a purple square on green.
+          Next: step 2 (choosing where to go, the dotted line).
 Plan:     From the project document claude/travel-and-3d-map.md (its starter text). A demo page at a time, one offline
           HTML each: 1) the 3D map of Aethermoor, showing where Io is; 2) choosing where to go, on foot or by flight,
           with a dotted line from here to there for a flight; 3) the flight in Skies of Aethermoor on the night map, as
@@ -44,6 +46,14 @@ Chris said: (15:22, after the first build, which laid the night atlas over a hei
           all the way to the sea, with water all through it, and then cliffs at the shore; they must not stand on the
           high ground beside it (this will bug him). The line drawn for each zone looks like a strip of sand: change
           it. Everything else looks gorgeous. All three done (below).
+          (11:26) Zones 3 and 4 have the right colours. But the game's places are purple-tinted, so in zones 1 and 2
+          they are purple squares on a field of green; and zoomed in, a place's ground is a flat purple sheet. He didn't
+          know which way to take it and asked to think first. Three directions put to him (places borrow the map's
+          ground; the map leans toward the game; plants back on the place ground), with a filter on the game advised
+          against (the reskin job is changing the game's textures now).
+          (11:30) He trusts the artistic choice. The fine detail on a place's ground needn't be the game's plants: the
+          generic grass texture the map uses, purple-tinted. And the map leans toward the game: a gentle violet night
+          tint over the land and trees of zones 1 and 2, so it reads green and purple at once. Done (below).
 Branch:   work/world-map (from work/world-3d at 0046851)
 Files:    moon-faire-witches/world-map/ (all new to the game): README.md, envoi-map-where.html, map/map3d.js,
           map/places.js, map/art.js, map/moods.js, map/map.css, art/aethermoor-terrain-height.png,
@@ -131,6 +141,14 @@ Checked:  (08:42's fixes) Phone, all views, and laptop, 6 views: 0 page errors; 
           were grass at 105 m and forest at 148 m); the bog's shore cliffs 90 to 150 m. Every view at the phone's level
           and 18 at the laptop's: 0 page errors; touch test 10 of 10; places check passes. Drawn zoomed in on
           Wickhollow: phone 1.7 million triangles. The file is 8.6 MB (it was 6.0). Frame rates not measured.
+          (November 17, 11:30, the violet night) In zones 1 and 2: shadows and dark woods lean violet, lit grass keeps
+          most of its green, warm things (fields, roofs) keep more of their own colour, walls and roofs take about half
+          of it, the sea a third. A place's grass there is the map's own ground for where it stands (the fen's in the
+          bog, the zone's open grass elsewhere) with tufts and flower specks, a fifth of the game's own ground colour
+          kept in its middle; its paths, cobbles and paving are still the game's, a little greyer. Zones 3 and 4 are
+          as they were. Every view at the phone's level and 14 at the laptop's: 0 page errors; touch test 10 of 10;
+          places check passes. Held beside the build before it: the purple patches at the forest road, the Thornwood
+          and the cottage are gone.
 For the hub: Not ready to bring in yet (steps 2 to 4 to come). When it is: take moon-faire-witches/world-map/ and this
           slip. Build: node tools/build.mjs --offline moon-faire-witches/world-map/envoi-map-where.html.
 Open:     0. For the hub: the page's textures are packed from texture-packs/made/ as it stands on work/textures-made;
