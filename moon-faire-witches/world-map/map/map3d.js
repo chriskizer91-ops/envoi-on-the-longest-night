@@ -53,8 +53,18 @@
   // moonlight on a colour; then the mist over closed zones (low: what stands tall rises out of it), the zone lines, the
   // gold ring round Io's zone, and the night's haze with distance
   const FINISH = `
-    uniform sampler2D zones; uniform vec4 uOpen, uHere; uniform vec3 uMoon, uFog, uMist; uniform float uTime, uFogNear, uFogFar, uGlow, uPierce, uMistAmt;
+    uniform sampler2D zones, moods, hazes; uniform vec4 uOpen, uHere; uniform vec3 uMoon, uFog, uMist; uniform float uTime, uFogNear, uFogFar, uGlow, uPierce, uMistAmt;
     ${NOISE}
+    // the region's own look in the game (from its walking places): what grows there is tinted this, by w
+    vec3 mooded(vec3 c, vec3 wp, float w) {
+      vec2 at = clamp(vec2((wp.x + ${AW / 2}.0) / ${AW}.0, (wp.z + ${AH / 2}.0) / ${AH}.0), 0.0, 1.0);
+      return c * mix(vec3(1.0), texture2D(moods, at).rgb * 2.0, w);
+    }
+    // moonlight on one of the made ground textures (they are painted by night already, so this lifts them)
+    vec3 moonlitTex(vec3 t, vec3 n) {
+      float l = dot(n, uMoon);
+      return t * (vec3(1.02, 1.04, 1.1) + vec3(1.55, 1.55, 1.6) * max(l, 0.0) - vec3(0.22) * max(-l, 0.0));
+    }
     vec3 moonlit(vec3 albedo, vec3 n) {
       float l = dot(n, uMoon);
       return albedo * (vec3(0.30, 0.35, 0.52) + vec3(0.92, 0.94, 1.0) * max(l, 0.0) * 0.95 + vec3(0.05, 0.06, 0.10) * max(n.y, 0.0));
@@ -71,6 +81,9 @@
       // (no mist past the map's edges, fading in over the last of the map; tall ground stands half out of it)
       vec2 e2 = min(at, 1.0 - at); float inner = smoothstep(0.0, 0.05, min(e2.x, e2.y * 1.5)) * inMap;
       float open = clamp(dot(zs, uOpen), 0.0, 1.0), mist = (1.0 - open) * inner * (1.0 - uPierce * smoothstep(26.0, 130.0, wp.y)) * (1.0 - 0.5 * step(0.9, uPierce)) * uMistAmt;
+      // the region's own night haze lying in its low ground (each place's fog colour in the game)
+      vec4 hz = texture2D(hazes, clamp(at, 0.0, 1.0));
+      c = mix(c, hz.rgb * 1.5, hz.a * 0.16 * inMap * (1.0 - smoothstep(4.0, 70.0, wp.y)) * (0.5 + 0.9 * n));
       c = mix(c, uMist * (0.7 + 0.55 * n + 0.2 * nb), mist * clamp(0.55 + 0.4 * n, 0.0, 0.9));
       if (lines > 0.5) {
         float sum = z.r + z.g + z.b + z.a;
@@ -86,8 +99,10 @@
     attribute vec3 snormal;
     varying vec3 vW, vN; varying float vDepth;
     void main() { vW = position; vN = snormal; vec4 mv = modelViewMatrix * vec4(position, 1.0); vDepth = -mv.z; gl_Position = projectionMatrix * mv; }`;
-  const LAND_F = `
-    uniform sampler2D ground;
+  // tex: true where the phone or laptop can hold the made ground textures as a stack of layers (WebGL 2); else flat colours
+  const landF = (tex) => `
+    ${tex ? 'precision highp sampler2DArray;' : ''}
+    uniform sampler2D ground, kinds; ${tex ? 'uniform sampler2DArray layers; uniform float uLayer[65], uMoodW[13]; uniform vec3 uTint[24];' : ''}
     varying vec3 vW, vN; varying float vDepth;
     ${FINISH}
     void main() {
@@ -96,17 +111,37 @@
       // each little face of the land catches the moon its own way (close up); far off, the land's smooth slope
       vec3 face = normalize(cross(dFdx(vW), dFdy(vW))); if (face.y < 0.0) face = -face;
       vec3 n = normalize(mix(face, normalize(vN), smoothstep(1400.0, 4200.0, vDepth)));
-      // steep ground is bare rock, whatever grows round it; water only lies where the ground is near level (g.a is 1 on
-      // a river or a lake: on a steep face that is the paint of the bank's edge, so it is rock too)
+      // steep ground is bare rock, whatever grows round it; water only lies where the ground is near level
       float steep = smoothstep(0.26, 0.5, 1.0 - face.y), wet = g.a * (1.0 - steep);
+      // the kind of ground here, read a little to one side and another so that kinds meet in a ragged line, not in squares
+      vec2 wob = ((vec2(n2(vW.xz * 0.05), n2(vW.xz * 0.05 + 17.3)) - 0.5) * 2.6 + (vec2(n2(vW.xz * 0.33), n2(vW.xz * 0.33 + 5.1)) - 0.5)) / vec2(${DW}.0, ${DH}.0);
+      ${tex ? `
+      int k = int(texture2D(kinds, at + wob).r * 255.0 + 0.5);
+      float mw = uMoodW[k];
+      // which zone this is (0: none), its edge ragged too: grass, woods and fields wear their zone's own ground
+      vec2 zw = (vec2(fbm(vW.xz * 0.012), fbm(vW.xz * 0.012 + 9.7)) - 0.5) * 0.045;
+      vec4 zq = texture2D(zones, at + zw); int zi = 0; float zb = 0.35;
+      if (zq.r > zb) { zi = 1; zb = zq.r; } if (zq.g > zb) { zi = 2; zb = zq.g; } if (zq.b > zb) { zi = 3; zb = zq.b; } if (zq.a > zb) { zi = 4; }
+      // its texture, repeating every 960 m (the zones' close-up ground every 400 m), mixed with the same texture laid
+      // larger and turned so the repeat doesn't show
+      float L = uLayer[k * 5 + zi], dry = (k == 9 || k == 10) ? 1.0 : 0.0, fine = L > 15.5 ? 2.4 : 1.0;
+      vec2 p = (vW.xz + ((k == 1 || k == 2) ? uTime * vec2(1.2, 0.7) : vec2(0.0))) * fine;
+      vec3 t1 = texture(layers, vec3(p / 96.0, L)).rgb, t2 = texture(layers, vec3(mat2(0.8, -0.6, 0.6, 0.8) * p / 250.0 + 0.37, L)).rgb;
+      vec3 c = mix(t1, t2, clamp(0.3 * smoothstep(0.3, 0.7, n2(vW.xz * 0.006 + 3.0)) + 0.55 * smoothstep(500.0, 2600.0, vDepth), 0.0, 0.85));
+      // a steep face: the cliff texture (the mesa's own in the east), laid on it upright
+      vec2 q = vec2(dot(vW.xz, vec2(0.7071)), vW.y * 1.3) / 80.0;
+      vec3 cl = texture(layers, vec3(q, mix(9.0, 7.0, dry))).rgb * mix(1.0, 0.8, dry);
+      c = mix(mooded(c * uTint[int(L + 0.5)], vW, mw), mooded(cl * mix(vec3(1.25), vec3(1.6, 1.0, 0.74), dry), vW, 0.35), steep);
+      c = moonlitTex(c, n);` : `
       vec3 c = mix(g.rgb, vec3(0.44, 0.44, 0.47), g.a * steep) * (0.9 + 0.2 * n2(vW.xz * 0.35));
       c = mix(c, mix(vec3(0.40, 0.40, 0.44), c * 0.62, 0.45), steep);
-      c = moonlit(c, n);
+      c = moonlit(mooded(c, vW, 0.8 * (1.0 - steep)), n);`}
       c += wet * vec3(0.06, 0.09, 0.15) * (0.5 + 0.5 * n2(vW.xz * 0.6 + uTime * vec2(0.5, 0.3))); // the water's shimmer
       gl_FragColor = vec4(finish(c, vW, vDepth, 1.0), 1.0);
     }`;
   const SEA_V = 'varying vec3 vW; varying float vDepth; void main() { vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; vec4 mv = viewMatrix * w; vDepth = -mv.z; gl_Position = projectionMatrix * mv; }';
-  const SEA_F = `
+  const seaF = (tex) => `
+    ${tex ? 'precision highp sampler2DArray; uniform sampler2DArray layers;' : ''}
     uniform sampler2D depths; uniform vec3 uEye;
     varying vec3 vW; varying float vDepth;
     ${FINISH}
@@ -115,7 +150,13 @@
       float inMap = step(0.0, at.x) * step(at.x, 1.0) * step(0.0, at.y) * step(at.y, 1.0);
       vec2 e3 = min(at, 1.0 - at); float inner3 = smoothstep(0.0, 0.03, min(e3.x, e3.y * 1.5)) * inMap;
       float d = mix(1.0, texture2D(depths, clamp(at, 0.0, 1.0)).r, inner3); // 0 at the shore, 1 in the deep (and past the map's edge)
-      vec3 c = mix(vec3(0.10, 0.36, 0.46), vec3(0.035, 0.085, 0.22), smoothstep(0.0, 0.75, d));
+      ${tex ? `
+      // the made sea textures, drifting: the shallow one by the shores, the deep one beyond (laid twice, crossing)
+      vec2 d1 = uTime * vec2(1.6, 0.9), d2 = uTime * vec2(-0.9, 1.3);
+      vec3 sh = texture(layers, vec3((vW.xz + d1) / 130.0, 13.0)).rgb * 1.6;
+      vec3 dp = 0.5 * (texture(layers, vec3((vW.xz + d1) / 150.0, 14.0)).rgb + texture(layers, vec3((mat2(0.8, -0.6, 0.6, 0.8) * vW.xz + d2) / 230.0, 14.0)).rgb);
+      vec3 c = mix(sh, dp, smoothstep(0.0, 0.75, d)) * vec3(1.05, 1.05, 1.1);` : `
+      vec3 c = mix(vec3(0.10, 0.36, 0.46), vec3(0.035, 0.085, 0.22), smoothstep(0.0, 0.75, d));`}
       // small waves, the moon's glitter on them, and surf where the water is shallowest
       vec2 p = vW.xz * 0.05; float w = n2(p * 3.0 + uTime * vec2(0.35, 0.2)) + 0.5 * n2(p * 7.0 - uTime * vec2(0.3, 0.45));
       vec3 n = normalize(vec3((w - 0.75) * 0.22, 1.0, (n2(p * 3.0 + 9.0 + uTime * 0.3) - 0.5) * 0.22));
@@ -148,11 +189,12 @@
       vW = w.xyz; vec4 mv = viewMatrix * w; vDepth = -mv.z; gl_Position = projectionMatrix * mv;
     }`;
   const THING_F = `
+    uniform float uMood;
     varying vec3 vC, vW; varying float vDepth;
     ${FINISH}
     void main() {
       vec3 n = normalize(cross(dFdx(vW), dFdy(vW)));
-      gl_FragColor = vec4(finish(moonlit(vC, n), vW, vDepth, 0.0), 1.0);
+      gl_FragColor = vec4(finish(moonlit(mooded(vC, vW, uMood), n), vW, vDepth, 0.0), 1.0);
     }`;
   // the towns' lit windows: small warm points, dimmed under the mist
   const GLOW_V = `
@@ -211,10 +253,16 @@
     };
   }
 
+  // how much is drawn: 'phone' (what a Pixel 7a runs well) or 'laptop' (twice the land's squares each way, about
+  // twice the trees with fuller shapes, the ground textures twice as sharp)
+  const DETAIL = {
+    phone: { squares: [576, 384], pieces: [4, 4], treeGap: 8.5, treeFar: 3900, layer: 256, sharp: 1.75, pine: [5, 2], leaf: [6, 1] },
+    laptop: { squares: [1152, 768], pieces: [8, 8], treeGap: 6, treeFar: 5000, treeFull: 1500, patches: [12, 8], layer: 512, sharp: 2, pine: [7, 3], leaf: [7, 2] },
+  };
   function create(host, opts) {
-    const P = window.MapPlaces, art = opts.art;
+    const P = window.MapPlaces, art = opts.art, detail = DETAIL[opts.detail] ? opts.detail : 'phone', LV = DETAIL[detail];
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
-    let pr = Math.min(window.devicePixelRatio || 1, 1.75);
+    let pr = Math.min(window.devicePixelRatio || 1, LV.sharp);
     renderer.setPixelRatio(pr);
     renderer.setClearColor(0x0b0d22);
     host.appendChild(renderer.domElement);
@@ -237,6 +285,7 @@
       zones: { value: null }, uOpen: { value: new THREE.Vector4() }, uHere: { value: new THREE.Vector4() },
       uMoon: { value: MOON }, uFog: { value: FOG }, uMist: { value: MIST },
       uTime: { value: 0 }, uFogNear: { value: 0 }, uFogFar: { value: 1 }, uGlow: { value: 0 },
+      moods: { value: null }, hazes: { value: null }, uMood: { value: 0.85 },
       uMistAmt: { value: 1 }, // 1: mist over the closed zones; 0: none (map.mist(0), to see the whole land)
       uPierce: { value: 0.55 }, // how far tall things stand out of the mist (buildings: 1, and half the mist)
     };
@@ -274,8 +323,41 @@
       moon.position.copy(MOON).multiplyScalar(48000); moon.scale.setScalar(9000); moon.renderOrder = -8; scene.add(moon);
     }
 
+    // ---- each region's own look: what grows there is tinted, and its low ground hazed, as its walking places are in
+    // the game (map/moods.js). Between places the looks blend; far from any (the east, the islands) nothing changes ----
+    function moodTextures() {
+      const MW = 192, MH = 128, moods = new Uint8Array(MW * MH * 4), hazes = new Uint8Array(MW * MH * 4), M = window.MAP_MOODS || {};
+      const lum = (c) => c[0] * 0.3 + c[1] * 0.55 + c[2] * 0.15, base = lum([0.42, 0.43, 0.56]);
+      const spots = Object.entries(P.PLACES).filter(([id]) => M[id]).map(([id, p]) => {
+        const m = M[id], dim = Math.pow(lum(m.moon) / base, 0.75); // a darker moon there: darker ground
+        // (the differences are made a little stronger than in the game, so they read from this height)
+        return { x: p.at[0], y: p.at[1], tint: m.grow.map((v) => clamp((1 + (v - 1) * 1.8) * dim, 0.3, 1.9)), fog: m.fog, zone: p.zone };
+      });
+      for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) {
+        const ax = (x + 0.5) * AW / MW, ay = (y + 0.5) * AH / MH; let wt = 0.012, t = [0.012, 0.012, 0.012], f = [0, 0, 0], wf = 1e-6;
+        for (const sp of spots) { const d = Math.hypot(ax - sp.x, ay - sp.y), w = Math.exp(-d * d / (2 * 240 * 240)) + 0.02 / (1 + d * d / 90000); wt += w; wf += w; for (let c = 0; c < 3; c++) { t[c] += w * sp.tint[c]; f[c] += w * sp.fog[c]; } }
+        const i = (y * MW + x) * 4, near = clamp((wt - 0.012) * 3.5, 0, 1);
+        for (let c = 0; c < 3; c++) { moods[i + c] = clamp(t[c] / wt / 2, 0, 1) * 255; hazes[i + c] = clamp(f[c] / wf * 2.2, 0, 1) * 255; }
+        moods[i + 3] = 255; hazes[i + 3] = near * 255;
+      }
+      const tex = (d) => { const t = new THREE.DataTexture(d, MW, MH, THREE.RGBAFormat); t.magFilter = t.minFilter = THREE.LinearFilter; t.needsUpdate = true; return t; };
+      uniforms.moods.value = tex(moods); uniforms.hazes.value = tex(hazes);
+    }
+    // the made ground textures: one picture of twenty-four squares (art/LABELS.md), cut into a stack of layers that each repeat
+    async function loadLayers(url) {
+      const img = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error('no ground textures')); i.src = url; });
+      const L = LV.layer, cell = img.width / 4, n = Math.round(img.height / cell) * 4, data = new Uint8Array(L * L * 4 * n);
+      const c = document.createElement('canvas'); c.width = c.height = L; const g = c.getContext('2d', { willReadFrequently: true });
+      for (let i = 0; i < n; i++) { g.drawImage(img, (i % 4) * cell, Math.floor(i / 4) * cell, cell, cell, 0, 0, L, L); data.set(g.getImageData(0, 0, L, L).data, i * L * L * 4); }
+      const t = new THREE.DataTexture2DArray(data, L, L, n);
+      t.format = THREE.RGBAFormat; t.type = THREE.UnsignedByteType; t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearMipmapLinearFilter; t.generateMipmaps = true; t.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy()); t.needsUpdate = true;
+      return t;
+    }
+
     // ---- the land ----
-    const landMeshes = [], stats = { trees: 0, houses: 0 };
+    const landMeshes = [], stats = { trees: 0, houses: 0, detail };
+    let layers = null; // the made ground textures, stacked (WebGL 2), or null: flat colours
     function buildLand() {
       // the ground's colour, a pixel for each data pixel: its kind's colour, the fields in a patchwork; alpha: a river or lake
       const tex = new Uint8Array(DW * DH * 4), dep = new Uint8Array(DW * DH * 4);
@@ -296,16 +378,32 @@
       const two = renderer.capabilities.isWebGL2;
       const ground = new THREE.DataTexture(tex, DW, DH, THREE.RGBAFormat); ground.magFilter = THREE.LinearFilter; ground.minFilter = two ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter; ground.generateMipmaps = two; ground.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy()); ground.needsUpdate = true;
       const depths = new THREE.DataTexture(dep, DW, DH, THREE.RGBAFormat); depths.magFilter = depths.minFilter = THREE.LinearFilter; depths.needsUpdate = true;
-      // the sheet: 576 x 384 squares in sixteen pieces (so what's off the screen isn't drawn)
-      const nx = 144, ny = 96, mat = material(LAND_V, LAND_F, { ground: { value: ground } });
-      for (let q = 0; q < 16; q++) {
-        const qx = (q % 4) * 1152, qy = Math.floor(q / 4) * 768;
-        const g = new THREE.PlaneGeometry(1152, 768, nx, ny); g.rotateX(-Math.PI / 2);
+      // the kind of ground at each spot, for the textures (read exactly, pixel by pixel)
+      const kd = new Uint8Array(DW * DH * 4); for (let i = 0; i < DW * DH; i++) { kd[i * 4] = Kd[i] === KIND.sea ? KIND.sand : Kd[i]; kd[i * 4 + 3] = 255; }
+      const kinds = new THREE.DataTexture(kd, DW, DH, THREE.RGBAFormat); kinds.magFilter = kinds.minFilter = THREE.NearestFilter; kinds.needsUpdate = true;
+      // which texture layer each kind of ground wears (art/LABELS.md), and how much of its region's tint it takes
+      // (what grows takes it all; sand, rock and snow a little)
+      // (what grows takes it all; sand, rock and snow a little). Grass, woods and fields change with the zone: zone 2's
+      // flowered grass; zone 3's frosted heather, frosted firs and bracken; zone 4's frost meadow, snow-laden firs,
+      // frosted undergrowth and frost moor. Each row: no zone, zones 1 to 4
+      const LAYER = [[5], [12], [15], [0, 0, 0, 19, 20], [1, 1, 1, 21, 22], [2, 2, 16, 17, 18], [3, 3, 3, 3, 23], [4], [5], [6], [7], [8], [10]].map((r) => (r.length === 1 ? Array(5).fill(r[0]) : r)).flat();
+      const MOODW = [0.3, 0.5, 0.5, 1, 1, 1, 0.8, 1, 0.3, 0.35, 0.3, 0.45, 0.4];
+      // (the made textures are painted by night, at different brightnesses, and all lean blue: this evens them and gives
+      // each its own colour back, so the dark pine wood, the pale beach and the red mesas sit together). By layer
+      const TINT = new Float32Array([[1.8, 2.1, 1.7], [1.7, 1.9, 1.45], [1.25, 1.48, 1.02], [1.38, 1.3, 1.06], [1.5, 1.58, 1.28], [0.65, 0.62, 0.56], [1.27, 1.18, 0.76], [1.45, 1.0, 0.7],
+        [1.4, 1.33, 1.24], [1.25, 1.25, 1.25], [1.22, 1.08, 0.93], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25],
+        [2.1, 2.4, 1.8], [1.5, 1.5, 1.42], [1.7, 1.85, 1.65], [1.5, 1.75, 1.3], [0.95, 0.9, 0.82], [1.55, 1.45, 1.35], [1.9, 1.85, 1.8], [1.7, 1.65, 1.55]].flat());
+      // the sheet, in pieces (so what's off the screen isn't drawn): 576 x 384 squares on a phone, 1152 x 768 on a laptop
+      const [PX, PY] = LV.pieces, nx = LV.squares[0] / PX, ny = LV.squares[1] / PY, pw = AW / PX, ph = AH / PY;
+      const mat = material(LAND_V, landF(!!layers), { ground: { value: ground }, kinds: { value: kinds }, layers: { value: layers }, uLayer: { value: LAYER }, uMoodW: { value: MOODW }, uTint: { value: TINT } });
+      for (let q = 0; q < PX * PY; q++) {
+        const qx = (q % PX) * pw, qy = Math.floor(q / PX) * ph;
+        const g = new THREE.PlaneGeometry(pw, ph, nx, ny); g.rotateX(-Math.PI / 2);
         const p = g.attributes.position, nrm = new Float32Array(p.count * 3), v = new THREE.Vector3();
         for (let i = 0; i < p.count; i++) {
-          const ax = p.getX(i) + 576 + qx, ay = p.getZ(i) + 384 + qy;
+          const ax = p.getX(i) + pw / 2 + qx, ay = p.getZ(i) + ph / 2 + qy;
           p.setXYZ(i, ax - AW / 2, heightAt(ax, ay), ay - AH / 2);
-          const s = 8, dx = heightAt(ax + s, ay) - heightAt(ax - s, ay), dz = heightAt(ax, ay + s) - heightAt(ax, ay - s);
+          const s = AW / LV.squares[0], dx = heightAt(ax + s, ay) - heightAt(ax - s, ay), dz = heightAt(ax, ay + s) - heightAt(ax, ay - s);
           v.set(-dx, 2 * s, -dz).normalize(); nrm.set([v.x, v.y, v.z], i * 3);
         }
         g.deleteAttribute('normal'); g.deleteAttribute('uv');
@@ -313,14 +411,14 @@
         const mesh = new THREE.Mesh(g, mat); scene.add(mesh); landMeshes.push(mesh);
       }
       // the sea: one flat sheet at sea level, far past the map's edges
-      const sea = new THREE.Mesh(new THREE.PlaneGeometry(90000, 90000), material(SEA_V, SEA_F, { depths: { value: depths }, uEye: { value: camera.position } }));
+      const sea = new THREE.Mesh(new THREE.PlaneGeometry(90000, 90000), material(SEA_V, seaF(!!layers), { depths: { value: depths }, layers: { value: layers }, uEye: { value: camera.position } }));
       sea.rotation.x = -Math.PI / 2; scene.add(sea);
     }
 
     // ---- the trees: stood where the forests are, in patches of the map so the far ones needn't be drawn ----
     const treePatches = [];
     function buildTrees() {
-      const R = rng(1911), SP = 8.5, CX = 6, CY = 4, cw = AW / CX, chh = AH / CY;
+      const R = rng(1911), SP = LV.treeGap, [CX, CY] = LV.patches || [6, 4], cw = AW / CX, chh = AH / CY;
       const lists = { pine: [], leafy: [] }; for (const k in lists) for (let i = 0; i < CX * CY; i++) lists[k].push([]);
       // how likely a tree stands on each kind of ground, and how likely that tree is a pine
       const ODDS = { [KIND.pine]: [0.95, 0.9], [KIND.leafy]: [0.9, 0.12], [KIND.fen]: [0.34, 0.2], [KIND.grass]: [0.05, 0.4], [KIND.farm]: [0.02, 0.2], [KIND.rock]: [0.1, 0.9], [KIND.sand]: [0.02, 0.3], [KIND.desert]: [0.012, 0.2], [KIND.mesa]: [0.02, 0.5], [KIND.snow]: [0.02, 1] };
@@ -333,7 +431,13 @@
         const slope = Math.hypot(rawHeight(ax + 6, ay) - rawHeight(ax - 6, ay), rawHeight(ax, ay + 6) - rawHeight(ax, ay - 6)) / 12;
         if (slope > 0.85 || (k === KIND.rock && h > 150) || (k === KIND.snow && h > 120)) continue;
         const pine = r2 < o[1], size = 0.75 + r3 * 0.6, fen = k === KIND.fen, dry = k === KIND.desert || k === KIND.mesa;
-        const c = pine ? [0.07 + r4 * 0.05, 0.22 + r4 * 0.1, 0.15 + r4 * 0.05] : fen ? [0.30 + r4 * 0.1, 0.42 + r4 * 0.08, 0.2] : dry ? [0.36, 0.42 + r4 * 0.06, 0.2] : [0.16 + r4 * 0.1, 0.4 + r4 * 0.14, 0.13 + r4 * 0.05];
+        let c = pine ? [0.07 + r4 * 0.05, 0.22 + r4 * 0.1, 0.15 + r4 * 0.05] : fen ? [0.30 + r4 * 0.1, 0.42 + r4 * 0.08, 0.2] : dry ? [0.36, 0.42 + r4 * 0.06, 0.2] : [0.16 + r4 * 0.1, 0.4 + r4 * 0.14, 0.13 + r4 * 0.05];
+        // the zones' own trees (the edge between zones ragged, as on the ground): zone 2's brighter leaves; zone 3's
+        // frosted firs and rust-and-heather brush; zone 4's firs under snow
+        const zone = World.bandAt(ax + (hash2(gx >> 3, gy >> 3) - 0.5) * 110, ay + (hash2(gy >> 3, gx >> 3) - 0.5) * 110);
+        if (zone === 2 && !pine) c = [0.17 + r4 * 0.08, 0.46 + r4 * 0.14, 0.24 + r4 * 0.08];
+        else if (zone === 3) c = pine ? [0.2 + r4 * 0.1, 0.36 + r4 * 0.1, 0.36 + r4 * 0.1] : r4 < 0.5 ? [0.36 + r4 * 0.16, 0.27, 0.22] : [0.3, 0.25 + r4 * 0.08, 0.34];
+        else if (zone === 4) c = pine ? [0.56 + r4 * 0.16, 0.66 + r4 * 0.14, 0.86] : [0.46 + r4 * 0.1, 0.52 + r4 * 0.1, 0.64];
         lists[pine ? 'pine' : 'leafy'][clamp(Math.floor(ay / chh), 0, CY - 1) * CX + clamp(Math.floor(ax / cw), 0, CX - 1)].push([ax, ay, size * (dry ? 0.6 : 1), r4 * 6.28, c]);
       }
       // a pine: two cones, one on the other; a leafy tree: a round crown, a ring of faces under a low cap (both stand on
@@ -342,8 +446,12 @@
       const cone = (r, h, y, n) => { const p = []; for (let i = 0; i < n; i++) p.push(0, y + h, 0, ...ringAt(r, y, n, i + 1), ...ringAt(r, y, n, i)); return p; };
       const band = (r0, y0, r1, y1, n) => { const p = []; for (let i = 0; i < n; i++) { const a = ringAt(r0, y0, n, i), b = ringAt(r0, y0, n, i + 1), c = ringAt(r1, y1, n, i), d = ringAt(r1, y1, n, i + 1); p.push(...a, ...c, ...b, ...b, ...c, ...d); } return p; };
       const shape = (...ps) => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute([].concat(...ps), 3)); return g; };
-      const pineGeo = shape(cone(3.3, 6.5, 0.6, 5), cone(2.2, 5.5, 4.6, 5)); // 10 triangles
-      const leafGeo = shape(band(2.5, 1.0, 3.4, 3.4, 6), cone(3.4, 2.6, 3.4, 6)); // 18 triangles
+      // (the plain shapes: 2 tiers of 5 faces, 10 triangles, and a crown of 18. A laptop's near trees: 3 tiers of 7, 21,
+      // and a fuller crown of 49; its far trees are the plain shapes)
+      const plain = { pine: shape(cone(3.3, 6.5, 0.6, 5), cone(2.2, 5.5, 4.6, 5)), leafy: shape(band(2.5, 1.0, 3.4, 3.4, 6), cone(3.4, 2.6, 3.4, 6)) };
+      const [ps, pt] = LV.pine, [ls, lb] = LV.leaf;
+      const pineGeo = pt === 2 ? plain.pine : shape(cone(3.4, 5.2, 0.5, ps), cone(2.7, 4.6, 3.3, ps), cone(1.8, 4.4, 6.0, ps));
+      const leafGeo = lb === 1 ? plain.leafy : shape(band(2.2, 0.8, 3.5, 2.6, ls), band(3.5, 2.6, 3.0, 4.6, ls), band(3.0, 4.6, 1.6, 5.9, ls), cone(1.6, 0.5, 5.9, ls));
       const mat = material(THING_V, THING_F, null, { side: THREE.DoubleSide }), M = new THREE.Matrix4(), Q = new THREE.Quaternion(), UP = new THREE.Vector3(0, 1, 0), S = new THREE.Vector3(), T = new THREE.Vector3(), C = new THREE.Color();
       for (const [kind, geo] of [['pine', pineGeo], ['leafy', leafGeo]]) for (let ci = 0; ci < CX * CY; ci++) {
         const list = lists[kind][ci]; if (!list.length) continue;
@@ -358,6 +466,10 @@
         const cx = (ci % CX + 0.5) * cw - AW / 2, cz = (Math.floor(ci / CX) + 0.5) * chh - AH / 2;
         mesh.userData.sphere = new THREE.Sphere(new THREE.Vector3(cx, top / 2, cz), Math.hypot(cw, chh) / 2 + top / 2 + 20);
         scene.add(mesh); treePatches.push(mesh); stats.trees += list.length;
+        if (LV.treeFull && geo !== plain[kind]) { // the same trees in their plain shapes, drawn instead when the patch is far off
+          const far = new THREE.InstancedMesh(plain[kind], mat, list.length); far.instanceMatrix = mesh.instanceMatrix; far.instanceColor = mesh.instanceColor;
+          far.frustumCulled = false; far.visible = false; scene.add(far); mesh.userData.far = far;
+        }
       }
     }
 
@@ -400,7 +512,7 @@
         else tower(t[1], t[2], t[3], t[4], t[5], t[6]);
       }
       // (the castle and the towers show through the mist more than the land does: they are what to steer by)
-      const mesh = parts.mesh(material(THING_V, THING_F, { uPierce: { value: 1 } }, { side: THREE.DoubleSide })); scene.add(mesh); stats.buildingTriangles = parts.triangles;
+      const mesh = parts.mesh(material(THING_V, THING_F, { uPierce: { value: 1 }, uMood: { value: 0.3 } }, { side: THREE.DoubleSide })); scene.add(mesh); stats.buildingTriangles = parts.triangles;
       const g = new THREE.BufferGeometry(), pos = new Float32Array(glow.length * 3), seed = new Float32Array(glow.length);
       glow.forEach(([x, y, z], i) => { pos.set([x - AW / 2, y, z - AH / 2], i * 3); seed[i] = R(); });
       g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('seed', new THREE.BufferAttribute(seed, 1));
@@ -571,7 +683,10 @@
       placeCamera();
       // trees: only the patches on the screen and near enough to be more than specks
       pm.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse); frustum.setFromProjectionMatrix(pm);
-      for (const m of treePatches) { const s = m.userData.sphere; m.visible = camera.position.distanceTo(s.center) < 3900 + s.radius && frustum.intersectsSphere(s); }
+      for (const m of treePatches) {
+        const s = m.userData.sphere, d = camera.position.distanceTo(s.center), seen = d < LV.treeFar + s.radius && frustum.intersectsSphere(s), far = m.userData.far;
+        if (far) { const full = d < LV.treeFull + s.radius; m.visible = seen && full; far.visible = seen && !full; } else m.visible = seen;
+      }
       if (ioAt) {
         const s = C.dist / 1000, t = uniforms.uTime.value;
         io.position.copy(W3(ioAt[0], ioAt[1], 1));
@@ -603,12 +718,13 @@
       // to Io: close enough to see her country, north up, looking across the land
       findIo() { return ioAt ? flyTo(ioAt[0], ioAt[1], 1000, undefined, 0, 0.72) : Promise.resolve(); },
       get io() { return ioAt && { place: ioPlace, at: ioAt.slice() }; },
-      numbers() { return { fps: Math.round(fps), triangles: renderer.info.render.triangles, calls: renderer.info.render.calls, sharp: pr, trees: stats.trees, houses: stats.houses }; },
+      numbers() { return { detail, textured: !!layers, fps: Math.round(fps), triangles: renderer.info.render.triangles, calls: renderer.info.render.calls, sharp: pr, trees: stats.trees, houses: stats.houses }; },
       stop() { running = false; },
       P: { scene, camera, renderer, C },
     };
     api.ready = (async () => {
       const [hp, kp] = await Promise.all([loadPixels(art.height), loadPixels(art.kinds)]);
+      if (api.onStage) api.onStage('land');
       Hf = new Float32Array(DW * DH); Kd = new Uint8Array(DW * DH);
       for (let i = 0; i < DW * DH; i++) {
         Kd[i] = kp[i * 4]; let h = (hp[i * 4] * 256 + hp[i * 4 + 1]) / 10 - 100;
@@ -618,6 +734,8 @@
         Hf[i] = h;
       }
       uniforms.zones.value = zoneTexture();
+      moodTextures();
+      if (art.layers && renderer.capabilities.isWebGL2) layers = await loadLayers(art.layers).catch(() => null);
       buildLand(); buildTrees(); buildPlaces(); makeTags();
       api.setOpen(api.open);
       resize();
@@ -628,5 +746,5 @@
     })();
     return api;
   }
-  window.WorldMap = { create, AW, AH, EXAG, KIND };
+  window.WorldMap = { create, AW, AH, EXAG, KIND, DETAIL };
 })();

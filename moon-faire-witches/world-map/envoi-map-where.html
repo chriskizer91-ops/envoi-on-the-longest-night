@@ -23,6 +23,7 @@
   <div class="sheet-card">
     <div class="sheet-head"><b>Put Io in…</b><button id="sheet-x" class="x" type="button" aria-label="Close">✕</button></div>
     <div id="sheet-list" class="sheet-list"></div>
+    <p class="sheet-detail">Detail: <button id="d-phone" class="place" type="button">Phone</button> <button id="d-laptop" class="place" type="button">Laptop</button></p>
     <p id="sheet-nums" class="sheet-nums"></p>
   </div>
 </div>
@@ -32,6 +33,7 @@
 <script src="../../src/game/world.js"></script>
 <script src="./map/places.js"></script>
 <script src="./map/art.js"></script>
+<script src="./map/moods.js"></script>
 <script src="./map/map3d.js"></script>
 <script>
 (function () {
@@ -43,7 +45,11 @@
   let place = P.PLACES[at0] ? at0 : 'wickhollow';
   // a zone opens once the party gets there: here, every zone up to Io's is open and the rest lie under mist
   const openUpTo = (z) => [1, 2, 3, 4].filter((k) => k <= z);
-  const map = WorldMap.create($('map'), { art: window.MAP_ART, open: openUpTo(P.PLACES[place].zone), io: { place } });
+  // how much to draw: a laptop's level on a big screen with a mouse, a phone's otherwise; ?detail=phone or laptop sets it
+  const asked = (location.search.match(/[?&]detail=(phone|laptop)/) || [])[1];
+  const big = Math.min(screen.width, screen.height) >= 700 && window.matchMedia('(pointer: fine)').matches;
+  const detail = asked || (big ? 'laptop' : 'phone');
+  const map = WorldMap.create($('map'), { art: window.MAP_ART, detail, open: openUpTo(P.PLACES[place].zone), io: { place } });
   function showChip() { const p = P.PLACES[place]; $('chip-place').textContent = p.name; $('chip-zone').textContent = P.ZONES[p.zone].name; }
   map.ready.then(async () => {
     $('load').classList.add('gone'); setTimeout(() => { $('load').hidden = true; }, 700);
@@ -72,6 +78,8 @@
     const n = map.numbers(); $('sheet-nums').textContent = (n.fps ? n.fps + ' frames a second' : 'frame rate: measuring…') + ' · ' + Math.round(n.triangles / 1000) + ',000 triangles drawn · ' + n.trees.toLocaleString('en-US') + ' trees on the map';
     $('sheet').hidden = false;
   });
+  // the detail switch opens the page again at the other level
+  for (const d of ['phone', 'laptop']) { $('d-' + d).classList.toggle('on', d === detail); $('d-' + d).addEventListener('click', () => { if (d !== detail) location.search = '?detail=' + d + '&at=' + place; }); }
   $('sheet-x').addEventListener('click', () => { $('sheet').hidden = true; });
   $('sheet').addEventListener('click', (e) => { if (e.target === $('sheet')) $('sheet').hidden = true; });
 })();

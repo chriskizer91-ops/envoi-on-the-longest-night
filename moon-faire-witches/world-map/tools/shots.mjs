@@ -1,6 +1,6 @@
 // shots.mjs: opens a built map page headless at a phone's size and takes stills of set views; prints page errors and
 // the page's own numbers.
-// Usage: node moon-faire-witches/world-map/tools/shots.mjs dist/envoi-map-where.html <out dir> [--size 412x915]
+// Usage: node moon-faire-witches/world-map/tools/shots.mjs dist/envoi-map-where.html <out dir> [--size 412x915] [--detail phone|laptop]
 //   views (below): { name, io: place, open: [zones], view: { x, y, dist, yaw, tilt } or 'io' (as flown to Io), mist: 0 (none), bare: true (no names or buttons) }   [--only a,b]
 import fs from 'fs';
 import path from 'path';
@@ -37,7 +37,7 @@ const errors = [];
 page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
 page.on('console', (m) => { if ((m.type() === 'error' || m.type() === 'warning') && !/GL Driver Message|GPU stall/.test(m.text())) errors.push(m.type() + ': ' + m.text()); });
 const t0 = Date.now();
-await page.goto('file://' + page_ + '?test', { waitUntil: 'load', timeout: 240000 });
+await page.goto('file://' + page_ + '?test' + (opt('--detail', '') ? '&detail=' + opt('--detail', '') : ''), { waitUntil: 'load', timeout: 240000 });
 await page.waitForFunction(() => window.__ready || /wrong/.test(document.getElementById('loadmsg').textContent), null, { timeout: 240000 });
 console.log('loaded in', ((Date.now() - t0) / 1000).toFixed(1), 's', await page.evaluate(() => document.getElementById('loadmsg').textContent));
 await page.evaluate(() => { document.getElementById('hint').style.display = 'none'; window.__map.stop(); });

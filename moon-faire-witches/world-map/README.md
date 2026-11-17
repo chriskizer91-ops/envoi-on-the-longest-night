@@ -8,7 +8,7 @@ there, then Skies of Aethermoor flies the ship there, and the zone page opens at
 |---|---|---|
 | 1 | `envoi-map-where.html`: Aethermoor as a 3D model of the land, with Io's pin where she is | Built (November 16; rebuilt as a real 3D land the same day) |
 | 2 | Choosing where to go, on foot or by flight, with a dotted line for a flight | Next |
-| 3 | The flight in Skies of Aethermoor on the night map, with as many raiders as the flight is long | Waiting on Chris: which ship |
+| 3 | The flight in Skies of Aethermoor on the night map, with as many raiders as the flight is long. Chris (November 16): you fly Skies' four ships; upgrading to the next ship is part of each gate between zones | After step 2 |
 | 4 | Landing, back into the zone page at that landing | Later |
 
 ## Step 1: the land in 3D, and where Io is
@@ -30,11 +30,29 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   mile and a half from the sea; the east's red rock stands as flat-topped mesas in two cliff steps; the fen is flat;
   rivers run in their valleys down to sea level; lakes lie flat. The highest point is about 2,840 m, north-east of
   Misthollow. In the model heights are lifted 1.25 times so the land reads from above.
-- **The model** (`map/map3d.js`): a sheet of 576 x 384 squares lifted to the heights and coloured by kind (the fields a
-  patchwork), every steep face turning to bare rock, each small face catching the moon its own way. A flat sea, pale in
+- **The model** (`map/map3d.js`): a sheet of squares lifted to the heights, every steep face turning to cliff, each
+  small face catching the moon its own way. A flat sea, pale in
   the shallows, dark in the deep, with surf along the shores. About 47,000 small 3D trees where the forests are (pines,
   round leafy trees, paler ones in the fen). Hearthstone Keep on its island (ring wall, towers, keep and spire), and a
   few lit roofs and a tower where each town and landmark is. Night, stars, the moon high in the north-west.
+- **The ground wears Chris's own textures** (November 16, evening): the world-map textures he made (pine forest,
+  leafy forest, grassland, farmland, fen, sand, desert, mesa, rock, cliff, snow, river, sea, lake), each repeating on
+  its own kind of ground, so the land is sharp at any zoom. Kinds meet in a ragged line. No picture is laid over the
+  whole land.
+- **Each zone looks like itself.** Grass, woods and fields change with the zone, from the zones' own cards: zone 2's
+  flowered grass; zone 3's frosted heather, frosted firs and bracken; zone 4's frost meadow and snow-laden firs. The
+  trees change with them. On top of that each region is tinted and hazed from its walking places' own settings in the
+  3D world (`map/moods.js`: leaf tints, fog, moonlight), so the fen's heart is dark and the Thornwood a little violet.
+- **Two levels of detail,** chosen by the page (a big screen with a mouse gets the laptop's; `?detail=phone` or
+  `?detail=laptop` sets it; the "Move Io" list has the switch):
+
+  | | Phone | Laptop |
+  |---|---|---|
+  | The land's squares | 576 x 384 | 1152 x 768 |
+  | Trees | 47,900, plain shapes | 96,100; fuller shapes near, plain far off |
+  | Ground textures | 256 px each | 512 px each |
+  | Triangles drawn | 0.2 to 0.8 million | 1.4 to 3.1 million |
+
 - **The zones** are the game's four level bands (`src/game/world.js`). A zone not reached yet lies under a low, ragged
   mist; so does everything outside the four. Tall ground stands half out of it, and the castle and towers show through.
   A faint line runs where two zones meet; a gold line rings the zone Io is in.
@@ -44,7 +62,7 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   down to look from above). Two fingers pinch to zoom, slide to move, twist to turn. The moon button flies back to Io,
   north up. The page opens on the whole land and flies down to her. "Move Io" (this demo only) puts her in any of the
   21 walking places; its list shows the frame rate and the counts.
-- **Size:** 2.0 MB, works offline. 450,000 to 800,000 triangles drawn, depending on how much forest is in view.
+- **Size:** 3.9 MB, works offline (one file for both levels).
 
 ### What isn't there yet
 
@@ -81,17 +99,21 @@ It needs three.js r128, `src/game/world.js`, `map/places.js`, `map/art.js` and `
 - `map/map3d.js`: the 3D land (the sheet, the sea, the trees, the castle and towns, the mist and zone lines, Io's pin,
   the names, the camera and the fingers).
 - `map/places.js`: the zones, the 21 walking places and the 7 landings on the atlas.
-- `map/art.js`, `map/map.css`: the data pictures it reads, and the page's look.
-- `art/`: the two data pictures and `LABELS.md`, which says what each holds.
-- `tools/`: `make-terrain.mjs` (reads the atlas; `--look <folder>` writes pictures to check by eye), `check-places.mjs`,
+- `map/art.js`, `map/map.css`: the art it reads, and the page's look.
+- `map/moods.js`: each walking place's atmosphere (made by `tools/make-moods.mjs`, not by hand).
+- `art/`: the two data pictures, the ground textures in one picture, and `LABELS.md`, which says what each holds.
+- `tools/`: `make-terrain.mjs` (reads the atlas; `--look <folder>` writes pictures to check by eye),
+  `make-ground-layers.mjs` (packs the made textures), `make-moods.mjs` (reads the places' atmospheres), `check-places.mjs`,
   `shots.mjs` (stills at a phone's size, from set views), `touch-test.mjs` (the fingers and buttons, as a phone would).
 
 ## Build and check
 
 ```text
 node moon-faire-witches/world-map/tools/make-terrain.mjs          (only if the atlas or the reading changes)
+node moon-faire-witches/world-map/tools/make-ground-layers.mjs    (when Chris remakes a texture; reads texture-packs/made/)
+node moon-faire-witches/world-map/tools/make-moods.mjs            (when the 3D world's places change their tints or fog)
 node moon-faire-witches/world-map/tools/check-places.mjs
 node tools/build.mjs --offline moon-faire-witches/world-map/envoi-map-where.html
-node moon-faire-witches/world-map/tools/shots.mjs dist/envoi-map-where.html <folder> [--size 915x412] [--only a,b]
+node moon-faire-witches/world-map/tools/shots.mjs dist/envoi-map-where.html <folder> [--size 915x412] [--detail laptop] [--only a,b]
 node moon-faire-witches/world-map/tools/touch-test.mjs dist/envoi-map-where.html
 ```
