@@ -76,16 +76,18 @@
       return albedo * (vec3(0.30, 0.35, 0.52) * (0.62 + 0.38 * sv.y) + vec3(0.92, 0.94, 1.0) * max(l, 0.0) * 0.95 * sv.x + vec3(0.05, 0.06, 0.10) * max(n.y, 0.0));
     }
     // water under the moon, flat: two sets of small ripples crossing tilt its face a little; seen at a low angle it takes
-    // the sky's sheen; and the moon lays a path of light on it (calm: 1 the open sea, less for a river)
-    vec3 water(vec3 base, vec3 wp, float vd, float calm) {
-      vec2 p = wp.xz * 0.11, m1 = uTime * vec2(0.42, 0.25), m2 = uTime * vec2(-0.36, 0.5), e = vec2(0.7, 0.0);
+    // the sky's sheen; and the moon lays a path of light on it (calm: 1 the open sea, near 0 a river, which lies
+    // still: move 0)
+    vec3 water(vec3 base, vec3 wp, float vd, float calm, float move) {
+      vec2 p = wp.xz * 0.11, m1 = uTime * vec2(0.42, 0.25) * move, m2 = uTime * vec2(-0.36, 0.5) * move, e = vec2(0.7, 0.0);
       float a = n2(p + m1), b = n2(p * 2.3 + m2);
       vec2 g = vec2(n2(p + e + m1) - a, n2(p + e.yx + m1) - a) + 0.6 * vec2(n2(p * 2.3 + e + m2) - b, n2(p * 2.3 + e.yx + m2) - b);
       vec3 n = normalize(vec3(-g.x * calm * 0.45, 1.0, -g.y * calm * 0.45)), v = normalize(uEye - wp), r = reflect(-v, n);
       float fres = pow(1.0 - max(dot(n, v), 0.0), 4.0), mr = max(dot(r, uMoon), 0.0), nearBy = 1.0 - smoothstep(1500.0, 6500.0, vd);
       vec3 c = base * (0.86 + 0.28 * n2(p * 0.33 + m1 * 0.2));
       c = mix(c, vec3(0.15, 0.18, 0.34), fres * 0.6);
-      return c + vec3(0.85, 0.88, 1.0) * (pow(mr, 160.0) * 0.8 + pow(mr, 22.0) * 0.22) * (0.25 + 0.75 * nearBy);
+      // (the moon's light on it soft and broad: sharp glints made a busy scribble over the water near the coasts)
+      return c + vec3(0.85, 0.88, 1.0) * (pow(mr, 90.0) * 0.16 + pow(mr, 18.0) * 0.16) * (0.25 + 0.75 * nearBy);
     }
     vec3 finish(vec3 c, vec3 wp, float depth, float lines) {
       vec2 at = vec2((wp.x + ${AW / 2}.0) / ${AW}.0, (wp.z + ${AH / 2}.0) / ${AH}.0);
@@ -120,7 +122,7 @@
   // tex: true where the phone or laptop can hold the made ground textures as a stack of layers (WebGL 2); else flat colours
   const landF = (tex) => `
     ${tex ? 'precision highp sampler2DArray;' : ''}
-    uniform sampler2D ground, kinds; ${tex ? 'uniform sampler2DArray layers; uniform float uLayer[65], uMoodW[13]; uniform vec3 uTint[25];' : ''}
+    uniform sampler2D ground, kinds; ${tex ? 'uniform sampler2DArray layers; uniform float uLayer[65], uMoodW[13]; uniform vec3 uTint[27];' : ''}
     varying vec3 vW, vN; varying float vDepth;
     ${FINISH}
     void main() {
@@ -152,6 +154,19 @@
       // close to, the same texture again much finer, so the ground has grain under the trees
       c = mix(c, texture(layers, vec3(p / 21.0 + 0.11, L)).rgb, 0.5 * (1.0 - smoothstep(60.0, 300.0, vDepth)));
       c *= uTint[int(L + 0.5)];
+      // open grass has more to it than one even green: drifts of meadow and of clover, darker and lighter patches, and
+      // close to, tufts and the specks of flowers
+      if (k == 5) {
+        float m1 = fbm(vW.xz * 0.021 + 4.0), m2 = fbm(vW.xz * 0.034 + 11.0);
+        if (zi <= 1) {
+          c = mix(c, texture(layers, vec3(p / 70.0, 25.0)).rgb * uTint[25], smoothstep(0.42, 0.6, m1) * 0.85);
+          c = mix(c, texture(layers, vec3(p / 60.0, 26.0)).rgb * uTint[26], smoothstep(0.52, 0.66, m2) * 0.8);
+        }
+        c *= 0.8 + 0.42 * fbm(vW.xz * 0.075 + 1.5);
+        float near = 1.0 - smoothstep(120.0, 520.0, vDepth), tuft = n2(vW.xz * 0.9) * n2(vW.xz * 2.3 + 3.0);
+        c *= 1.0 - 0.38 * near * smoothstep(0.22, 0.5, tuft);
+        c += vec3(0.5, 0.48, 0.3) * near * smoothstep(0.86, 0.93, n2(vW.xz * 3.1 + 7.0)) * smoothstep(0.45, 0.6, m2);
+      }
       // the mountains: bare rock, banded as it rises; snow lying where the ground is high and not too steep (higher on
       // some slopes than others, and wherever the painting has snow); between the two, rock with snow in its hollows
       float slope = 1.0 - mix(face.y, sn.y, 0.5);
@@ -166,13 +181,15 @@
       c = mix(mooded(c, vW, mw), mooded(cl, vW, 0.35), steep * (mt ? 0.75 : 1.0));
       c = moonlitTex(c, n, sv);
       // inland water: its bank damp and dark, then the water (in zone 4 it is frozen: the lake ice)
-      vec3 wt = texture(layers, vec3((vW.xz + (zi == 4 ? vec2(0.0) : uTime * vec2(1.3, 0.8))) / 64.0, zi == 4 ? 24.0 : 12.0)).rgb;
-      vec3 wc = zi == 4 ? moonlitTex(wt * uTint[24], n, sv) : water(wt * vec3(1.05, 1.12, 1.25), vW, vDepth, 0.55) * (0.62 + 0.38 * sv.x);
+      // (Chris, November 17: flat and still. The river's texture has waves painted in it, which read as water running
+      // downhill between the trees: so mostly one even colour, a little of the texture laid large, and nothing moving)
+      vec3 wt = texture(layers, vec3(vW.xz / (zi == 4 ? 64.0 : 300.0), zi == 4 ? 24.0 : 15.0)).rgb;
+      vec3 wc = zi == 4 ? moonlitTex(wt * uTint[24], vec3(0.0, 1.0, 0.0), sv) : water(mix(vec3(0.07, 0.19, 0.36), wt * vec3(1.1, 1.2, 1.35), 0.3), vW, vDepth, 0.08, 0.0) * (0.62 + 0.38 * sv.x);
       c = mix(c * (1.0 - 0.3 * smoothstep(0.18, 0.42, g.a)), wc, wet);` : `
       vec3 c = g.rgb * (0.9 + 0.2 * n2(vW.xz * 0.35));
       c = mix(c, mix(vec3(0.40, 0.40, 0.44), c * 0.62, 0.45), steep);
       c = moonlit(mooded(c, vW, 0.8 * (1.0 - steep)), n, sv);
-      c = mix(c, water(vec3(0.07, 0.2, 0.34), vW, vDepth, 0.55), wet);`}
+      c = mix(c, water(vec3(0.07, 0.2, 0.34), vW, vDepth, 0.08, 0.0), wet);`}
       gl_FragColor = vec4(finish(c, vW, vDepth, 1.0), 1.0);
     }`;
   const SEA_V = 'varying vec3 vW; varying float vDepth; void main() { vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; vec4 mv = viewMatrix * w; vDepth = -mv.z; gl_Position = projectionMatrix * mv; }';
@@ -190,19 +207,17 @@
       ${tex ? `
       // (the textures drift; the deep one is laid twice, crossing, at two sizes, so its repeat doesn't show)
       vec2 d1 = uTime * vec2(1.6, 0.9), d2 = uTime * vec2(-0.9, 1.3);
-      vec3 sh = texture(layers, vec3((vW.xz + d1) / 130.0, 13.0)).rgb * 1.55;
-      vec3 dp = 0.5 * (texture(layers, vec3((vW.xz + d1) / 170.0, 14.0)).rgb + texture(layers, vec3((mat2(0.8, -0.6, 0.6, 0.8) * vW.xz + d2) / 410.0, 14.0)).rgb);
-      vec3 base = mix(sh, dp * vec3(1.25, 1.3, 1.4), smoothstep(0.0, 0.7, d));` : `
+      // (Chris's sea made to be seen from high up: one square covers 4 km, and again 11 km, crossing)
+      vec3 sh = texture(layers, vec3((vW.xz + d1) / 210.0, 13.0)).rgb * 0.7;
+      vec3 dp = 0.5 * (texture(layers, vec3((vW.xz + d1) / 420.0, 14.0)).rgb + texture(layers, vec3((mat2(0.8, -0.6, 0.6, 0.8) * vW.xz + d2) / 1100.0, 14.0)).rgb);
+      vec3 base = mix(sh, dp * vec3(1.04, 1.08, 1.16), smoothstep(0.0, 0.7, d));` : `
       vec3 base = mix(vec3(0.10, 0.36, 0.46), vec3(0.035, 0.085, 0.22), smoothstep(0.0, 0.75, d));`}
       // the sea bed showing pale through the shallowest water
       base = mix(vec3(0.22, 0.44, 0.43), base, smoothstep(0.0, 0.13, d) * 0.75 + 0.25);
-      vec3 c = water(base, vW, vDepth, 1.0) * (0.7 + 0.3 * mix(1.0, sd.g, inner3)); // (the cliffs' shadows lie on it)
-      // surf: a line of foam along the shore, and two more that roll in to it one after the other
-      float nz = n2(vW.xz * 0.35 + uTime * 0.25), ph = uTime * 0.16 + n2(vW.xz * 0.02) * 4.0, f1 = fract(ph), f2 = fract(ph + 0.5);
-      float foam = (1.0 - smoothstep(0.015, 0.06, d))
-        + (1.0 - smoothstep(0.0, 0.03, abs(d - (0.2 - 0.16 * f1)))) * smoothstep(0.0, 0.35, f1) * 0.8
-        + (1.0 - smoothstep(0.0, 0.03, abs(d - (0.2 - 0.16 * f2)))) * smoothstep(0.0, 0.35, f2) * 0.8;
-      c = mix(c, vec3(0.82, 0.88, 0.96), clamp(foam, 0.0, 1.0) * (0.4 + 0.6 * nz) * inMap * (1.0 - smoothstep(2500.0, 7000.0, vDepth) * 0.6));
+      vec3 c = water(base, vW, vDepth, 1.0, 1.0) * (0.7 + 0.3 * mix(1.0, sd.g, inner3)); // (the cliffs' shadows lie on it)
+      // (Chris, November 17: no bands of surf rolling in along the coasts. Only the water's own pale edge where it
+      // meets the land, soft and unmoving)
+      c = mix(c, vec3(0.62, 0.74, 0.82), (1.0 - smoothstep(0.0, 0.03, d)) * 0.35 * inMap);
       gl_FragColor = vec4(finish(c, vW, vDepth, 1.0), 1.0);
     }`;
   // trees and buildings. Three sorts: a simple tree shape drawn thousands of times, each with its own colour; one mesh
@@ -258,8 +273,9 @@
     ${FINISH}
     void main() {
       vec3 n = normalize(cross(dFdx(vW), dFdy(vW)));
-      vec3 c = ${tex ? 'texture(blayers, vUv).rgb * 1.9 * vT' : 'vT'};
-      c = ${tex ? 'moonlitTex' : 'moonlit'}(mooded(c, vW, uMood), n, shadeAt(vW));
+      vec2 sv = shadeAt(vW); float l = dot(n, uMoon);
+      // (lit more gently than the ground: on a real graphics card the walls and roofs were washing out to white and pink)
+      vec3 c = ${tex ? 'mooded(texture(blayers, vUv).rgb * 1.35 * vT, vW, uMood) * (vec3(0.8, 0.84, 0.98) * (0.62 + 0.38 * sv.y) + vec3(0.8) * max(l, 0.0) * sv.x)' : 'moonlit(mooded(vT, vW, uMood), n, sv)'};
       gl_FragColor = vec4(finish(c, vW, vDepth, 0.0), 1.0);
     }`;
   // the towns' lit windows: small warm points, dimmed under the mist
@@ -477,7 +493,7 @@
       const kd = new Uint8Array(DW * DH * 4);
       {
         const kk = Uint8Array.from(Kd), wetK = (v) => v === KIND.river || v === KIND.lake;
-        for (let pass = 0; pass < 14; pass++) { let left = 0; const next = Uint8Array.from(kk);
+        for (let pass = 0; pass < 120; pass++) { let left = 0; const next = Uint8Array.from(kk);
           for (let y = 1; y < DH - 1; y++) for (let x = 1; x < DW - 1; x++) { const i = y * DW + x; if (!wetK(kk[i])) continue; let got = 0; for (const j of [i - 1, i + 1, i - DW, i + DW]) if (kk[j] > KIND.lake) { got = kk[j]; break; } if (got) next[i] = got; else left++; }
           kk.set(next); if (!left) break; }
         for (let i = 0; i < DW * DH; i++) { kd[i * 4] = kk[i] <= KIND.lake ? KIND.sand : kk[i]; kd[i * 4 + 3] = 255; }
@@ -493,9 +509,9 @@
       // (the made textures are painted by night, at different brightnesses, and all lean blue: this evens them and gives
       // each its own colour back, so the dark pine wood, the pale beach and the red mesas sit together). By layer
       const TINT = new Float32Array([[1.8, 2.1, 1.7], [1.7, 1.9, 1.45], [1.25, 1.48, 1.02], [1.38, 1.3, 1.06], [1.5, 1.58, 1.28], [0.65, 0.62, 0.56], [1.27, 1.18, 0.76], [1.45, 1.0, 0.7],
-        [1.4, 1.33, 1.24], [1.25, 1.25, 1.25], [1.22, 1.08, 0.93], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25],
+        [0.94, 0.89, 0.83], [1.25, 1.25, 1.25], [1.22, 1.08, 0.93], [0.96, 0.96, 0.96], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25], [1.25, 1.25, 1.25],
         [2.1, 2.4, 1.8], [1.5, 1.5, 1.42], [1.7, 1.85, 1.65], [1.5, 1.75, 1.3], [0.95, 0.9, 0.82], [1.55, 1.45, 1.35], [1.45, 1.6, 1.6], [1.7, 1.65, 1.55],
-        [1.0, 1.02, 1.05]].flat());
+        [1.0, 1.02, 1.05], [1.35, 1.6, 1.1], [1.3, 1.7, 1.15]].flat());
       // the sheet, in pieces (so what's off the screen isn't drawn): 576 x 384 squares on a phone, 1152 x 768 on a laptop
       const [PX, PY] = LV.pieces, nx = LV.squares[0] / PX, ny = LV.squares[1] / PY, pw = AW / PX, ph = AH / PY;
       const mat = material(LAND_V, landF(!!layers), { ground: { value: ground }, kinds: { value: kinds }, layers: { value: layers }, uLayer: { value: LAYER }, uMoodW: { value: MOODW }, uTint: { value: TINT } });

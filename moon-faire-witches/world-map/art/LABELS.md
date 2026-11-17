@@ -15,10 +15,12 @@ To read a spot at atlas (x, y): the pixel at (floor(x / 4), floor(y / 4)).
 
 ## The ground textures
 
-`aethermoor-ground-layers.webp` (2048 x 3584) is twenty-five of Chris's made textures in one picture, each a 512 x 512
+`aethermoor-ground-layers.webp` (2048 x 3584) is twenty-seven of Chris's made textures in one picture, each a 512 x 512
 square that repeats, left to right, top to bottom. Packed by `../tools/make-ground-layers.mjs` from
 `moon-faire-witches/texture-packs/made/<name>.png` (on the branch `work/textures-made` when this was packed, November 16;
-all 25 are Chris's own, none a stand-in). The names are the cards' file names, so each can be found again in
+all 27 are Chris's own, none a stand-in). Four of them he made for this map on November 17, to be seen from high up
+(the prompts are in `../art-requests/world-map-round-1.md`); his files are kept as he sent them in
+`world-map-round-1/` (1254 x 1254 each), under the names below, for the hub to add to `texture-packs/made/` too. The names are the cards' file names, so each can be found again in
 `texture-packs/made/index.csv`.
 
 | # | Texture (file name in `made/`) | Worn by |
@@ -31,14 +33,14 @@ all 25 are Chris's own, none a stand-in). The names are the cards' file names, s
 | 5 | `beach_sand` | beaches and shores |
 | 6 | `desert_ground` | the desert floor |
 | 7 | `sandstone_mesa` | the mesas, and their cliff faces |
-| 8 | `bare_rock` | the mountains' rock, and their steep faces |
+| 8 | `aethermoor_mountain_rock` (it was `bare_rock`) | the mountains' rock, and their steep faces |
 | 9 | `coastal_cliff` | every steep face outside the desert |
 | 10 | `snowfield` | snow |
-| 11 | `snowy_mountainside` | the mountains between bare rock and full snow |
-| 12 | `river_water` | rivers |
-| 13 | `shallow_sea` | the sea by the shores |
-| 14 | `deep_sea` | the deep sea |
-| 15 | `mountain_lake` | lakes |
+| 11 | `aethermoor_mountain_scree_snow` (it was `snowy_mountainside`) | the mountains between bare rock and full snow |
+| 12 | `river_water` | (packed, not worn: its painted waves read as running water) |
+| 13 | `aethermoor_sea_shallows` (it was `shallow_sea`) | the sea by the shores |
+| 14 | `aethermoor_sea_from_high` (it was `deep_sea`) | the open sea |
+| 15 | `mountain_lake` | rivers and lakes (a little of it, laid large, over one even colour) |
 | 16 | `dawn_grass_flowers` | zone 2's grass |
 | 17 | `moor_heather_frost` | zone 3's grass |
 | 18 | `frostmere_frost_meadow` | zone 4's grass |
@@ -48,6 +50,8 @@ all 25 are Chris's own, none a stand-in). The names are the cards' file names, s
 | 22 | `frosted_undergrowth` | zone 4's leafy forest |
 | 23 | `crossroads_frost_moor` | zone 4's farmland |
 | 24 | `shared_lake_ice` | zone 4's rivers and lakes, frozen |
+| 25 | `shared_grass_meadow` | drifts of meadow in zone 1's open grass |
+| 26 | `riverglade_clover_grass` | drifts of clover in zone 1's open grass |
 
 ## The buildings' textures
 

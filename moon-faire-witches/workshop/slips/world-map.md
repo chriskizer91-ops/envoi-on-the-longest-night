@@ -30,10 +30,17 @@ Chris said: (15:22, after the first build, which laid the night atlas over a hei
           it); the cliffs look good but the mountains could have a fair bit of improvement; and the houses and buildings
           should look like structures from the 3D of the game. He can get images generated (water surface, mountainside)
           for anything this pass needs. Done (below); four textures asked for in art-requests/world-map-round-1.md.
+          (08:42, with four photos of his laptop's screen, and a zip of the four textures asked for) The ripples along
+          the coast would look better gone. The river looks as if it moves between the trees, less immersive: make it
+          flat. The open grass could have more texture. (His fourth photo showed the buildings washed out to white and
+          pink on his laptop.) All done (below). And he wants to consider what it would take for this 3D map to reflect
+          the actual in-game map: the buildings accurate, in less detail than the game, and the wild zones looking
+          right. Answered with a plan in three passes (Open 7); waiting for his word.
 Branch:   work/world-map (from work/world-3d at 0046851)
 Files:    moon-faire-witches/world-map/ (all new to the game): README.md, envoi-map-where.html, map/map3d.js,
           map/places.js, map/art.js, map/moods.js, map/map.css, art/aethermoor-terrain-height.png,
           art/aethermoor-terrain-kinds.png, art/aethermoor-ground-layers.webp, art/LABELS.md (what each art file holds),
+          art/world-map-round-1/ (Chris's four textures of November 17, as he sent them),
           art/aethermoor-building-layers.webp, map/buildings.js, tools/make-buildings.mjs, art-requests/world-map-round-1.md,
           art/trees/ (24 files: eight trees, each <id>.glb, <id>_mid.glb and <id>_far.glb), map/tree-models.js,
           tools/make-tree-mids.mjs, tools/make-tree-models.mjs, tools/tree-lineup.html, tools/make-terrain.mjs, tools/make-ground-layers.mjs, tools/make-moods.mjs, tools/check-places.mjs,
@@ -41,7 +48,7 @@ Files:    moon-faire-witches/world-map/ (all new to the game): README.md, envoi-
           moon-faire-witches/workshop/slips/world-map.md
           (The first build's art/night-1..4.avif, art/height.png, art/land.png and tools/make-map-art.mjs are gone.)
           Nothing else changed.
-File for Chris: envoi-map-where.html (5.8 MB, works offline, one file for phone and laptop: it picks the level, and the
+File for Chris: envoi-map-where.html (6.0 MB, works offline, one file for phone and laptop: it picks the level, and the
           "Move Io" list has the switch). It opens on the whole land and flies down to Io at
           Wickhollow. One finger turns the land and tips the view; two fingers pinch to zoom, slide to move, twist to
           turn. The moon button (bottom right) finds Io again. "Move Io" (bottom left) puts her in any of the 21 places.
@@ -83,7 +90,14 @@ Done:     Nothing of the painting is on the model. tools/make-terrain.mjs reads 
           (work/world-3d at e99820b) by tools/make-buildings.mjs, stand in their true arrangement in the game's 13 wall
           and roof textures (all Chris's made ones, from work/textures-made at bb4a5f0); the castle and the other
           towns are built the same way. 134 buildings, 4,306 triangles, 188 window lights.
-Checked:  (November 17, the pass) 27 views at the phone's level and 8 at the laptop's: 0 page errors; touch test 10 of 10;
+          November 17, 08:42's fixes: no surf bands (only the water's pale edge); rivers and lakes still and flat, one
+          even colour; soft moonlight on the sea, no sharp glints; open grass with drifts of meadow and clover, patches,
+          tufts and flower specks; buildings lit more gently (they washed out on his laptop's graphics card). His four
+          new textures are in: the open sea (4 km and 11 km to the square), the shallows, the mountain rock, the scree
+          and snow. 27 ground textures now, all his.
+Checked:  (08:42's fixes) Phone, all views, and laptop, 6 views: 0 page errors; touch test 10 of 10; places check passes.
+          The buildings' brightness on his laptop is for him to confirm (headless stills come out darker than his screen).
+          (November 17, the pass) 27 views at the phone's level and 8 at the laptop's: 0 page errors; touch test 10 of 10;
           places check passes. Frame rates not measured.
           (November 17) Both levels, zoomed in and at 3.3, 7 and 10.5 km: 0 page errors; touch test 10 of 10; places
           check passes. tree-lineup.html: every tree at its three levels, the middle ones keeping their shape. Drawn
@@ -121,5 +135,12 @@ Open:     0. For the hub: the page's textures are packed from texture-packs/made
           4. For Chris: are the walking places where he sees them? The jetty is west of Wickhollow on foot, but the
              Magpie's dock is east of it on the atlas; the map keeps it at the dock.
           5. Answered (20:18): Skies' four ships, the next ship part of each gate between zones.
+          7. To make the map reflect the game's places truly (Chris asked what it would take): three passes. (a) Each
+             place's own ground on the map: its paths, cobbles, lawns, water, bridge, walls, steps, well and jetties,
+             read from its place file as the buildings are, the map's land shaped level under it. (b) Each place's own
+             trees where the game has them (its -trees.js file), and the wild places' wide fields, thickets, rocks and
+             fog colour. (c) Lining places up with each other: exits pointing at the next place, roads between. The
+             catch is scale: a place is about 61 m across and the map is 46 km, so places stay drawn about 7.5 times
+             life size, as now. Waiting on Chris to say go, and which place first.
           6. For the world-3d job, when the zone shell is in: its travel hook opens WorldMap.create with Io's place
              and spot, and the zones reached (from the shared save).

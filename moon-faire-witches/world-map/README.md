@@ -58,10 +58,16 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   shallowest water, a line of foam on the shore and two more rolling in. All water tilts its face in small crossing
   ripples, takes the sky's sheen at a low angle, and carries the moon's path of light. Rivers and lakes are drawn to
   smooth, slightly ragged banks (not in squares), with a damp dark edge; in zone 4 they are frozen (`shared_lake_ice`).
+  Later that morning, at Chris's word: no bands of surf along the coasts (only the water's pale edge); rivers and
+  lakes flat and still, one even colour; the moon's light on the sea soft, with no sharp glints. The open sea and the
+  shallows wear the two sea textures he made for this map (`art/world-map-round-1/`), laid 4 km and 11 km to the square.
+- **Open grass** (November 17) has drifts of meadow and clover, darker and lighter patches, and tufts and flower specks
+  close to.
 - **The mountains** (November 17): the height reader now wears the mountain country with rain (140,000 drops, each
   cutting where it runs steep and dropping what it carries where it slows), which gives gullies, sharp ridges and fans;
   the ridges are bent so they don't run straight. On the model, mountain ground is bare rock banded as it rises, snow
   where it is high and not too steep (and wherever the painting has snow), rock with snow in its hollows between.
+  The rock and the scree-and-snow are the two mountain textures Chris made for this map.
 - **Moon shadows** (November 17): worked out once from the land's shape: hills and peaks throw shadows away from the
   moon (across the land, the sea, the trees and the buildings), and valleys and gullies lie in shade.
 - **The buildings are the 3D game's** (November 17): the 86 buildings of the nine walking places that have any
@@ -90,7 +96,7 @@ pictures (`art/`, labelled in `art/LABELS.md`): what kind of ground each spot is
   down to look from above). Two fingers pinch to zoom, slide to move, twist to turn. The moon button flies back to Io,
   north up. The page opens on the whole land and flies down to her. "Move Io" (this demo only) puts her in any of the
   21 walking places; its list shows the frame rate and the counts.
-- **Size:** 5.8 MB, works offline (one file for both levels).
+- **Size:** 6.0 MB, works offline (one file for both levels).
 
 ### What isn't there yet
 
@@ -123,7 +129,8 @@ It needs three.js r128, `src/game/world.js`, `map/places.js`, `map/art.js` and `
 
 ## Art requests
 
-`art-requests/world-map-round-1.md`: four textures worth generating for the sea and the mountains, with prompts.
+`art-requests/world-map-round-1.md`: four textures for the sea and the mountains, with prompts. Chris made all four
+on November 17 (`art/world-map-round-1/`), and they are in.
 
 ## Files
 
