@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Battle Sounds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* The Sound Board: every sound and every piece of music of the Moon Faire witches' battle, one tap each.
+   Everything on it comes from the list inside moon-faire-witches/src/battle/sound.js (its catalog), so the board and
+   the battle can never disagree. Made by the hub for the battle-sound job, November 17, 2026. */
+:root { --ink: #efe8f6; --muted: #b6a9c8; --night: #120d1a; --gold: #e2bd6a; --leaf: #9fe0a8; --line: rgba(255, 255, 255, 0.14); color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--night); color: var(--ink); font-family: "Atkinson Hyperlegible", system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { min-height: 100vh; background: radial-gradient(ellipse at 50% -10%, #2a1d3d 0%, var(--night) 60%) fixed; }
+header { position: sticky; top: 0; z-index: 2; padding: 12px 12px 8px; background: linear-gradient(to bottom, rgba(18, 13, 26, 0.97) 80%, rgba(18, 13, 26, 0)); }
+h1 { margin: 0; font-family: "IM Fell English", Georgia, serif; font-weight: 400; font-size: 24px; color: var(--gold); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+#stop { font: inherit; font-size: 13px; color: var(--muted); background: rgba(255, 255, 255, 0.06); border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; cursor: pointer; }
+#stop.live { color: var(--leaf); border-color: rgba(159, 224, 168, 0.5); }
+#tabs { display: flex; gap: 7px; overflow-x: auto; margin-top: 10px; padding-bottom: 2px; scrollbar-width: none; }
+#tabs::-webkit-scrollbar { display: none; }
+.tab { flex: none; font: inherit; font-size: 14px; color: var(--ink); background: rgba(255, 255, 255, 0.07); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; cursor: pointer; white-space: nowrap; }
+.tab.on { color: #1a1122; background: var(--gold); border-color: var(--gold); font-weight: 700; }
+#about { margin: 10px 2px 0; font-size: 13px; line-height: 1.4; color: var(--muted); }
+main { padding: 4px 12px calc(24px + env(safe-area-inset-bottom)); display: grid; gap: 8px; max-width: 760px; margin: 0 auto; }
+.card { text-align: left; font: inherit; color: var(--ink); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; cursor: pointer; display: block; width: 100%; transition: background 0.15s, border-color 0.15s; }
+.card .nm { font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+.card .nm::before { content: ""; flex: none; width: 0; height: 0; border-left: 10px solid var(--gold); border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+.card .wt { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--muted); }
+.card.play { background: rgba(226, 189, 106, 0.16); border-color: var(--gold); }
+.takes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.take { font: inherit; font-size: 12px; color: var(--ink); background: rgba(255, 255, 255, 0.08); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.take.play { border-color: var(--gold); color: var(--gold); }
+.card.song .nm::before { border-left-color: var(--leaf); }
+.card.song.play { background: rgba(159, 224, 168, 0.14); border-color: var(--leaf); }
+#gate { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(12, 8, 18, 0.94); text-align: center; padding: 24px; cursor: pointer; }
+#gate .big { font-family: "IM Fell English", Georgia, serif; font-size: 30px; color: var(--gold); }
+#gate .small { font-size: 14px; color: var(--muted); max-width: 300px; line-height: 1.45; }
+#gate.gone { display: none; }
+</style>
+</head>
+<body>
+<div id="gate"><div class="big">Battle Sounds</div><div class="small">Tap anywhere to start. Then tap any sound to hear it. Turn your phone's sound up.</div></div>
+<header>
+  <h1><span>Battle Sounds</span><button id="stop">Music off</button></h1>
+  <div id="tabs"></div>
+  <p id="about"></p>
+</header>
+<main id="list"></main>
+<script src="../src/battle/sound.js"></script>
+<script>
+(() => {
+  'use strict';
+  const SND = makeBattleSound();
+  const $ = (id) => document.getElementById(id);
+  // a sound's name in plain words: bellFlail -> Bell flail
+  const words = (n) => { const s = n.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase(); return s[0].toUpperCase() + s.slice(1); };
+  // the families in the order Chris would look for them: the music first, the plain old names last
+  const SHORT = 'Music: the short pieces';
+  const order = ['Music', 'Kore (the Jester)', 'Io (the Herbal Witch)', 'Trance', 'Summons', 'Wisps', 'Shadow Wraiths', 'Brambles',
+    'The Bramble Colossus', 'Halcyon', 'The fire that will not end', 'The cold court', 'Any foe', 'The fight around them', 'Menus', 'Plain sounds'];
+  const fams = SND.families.filter((f) => f.name !== SHORT);
+  const tabs = [{ name: 'Music', about: 'The battle’s music. The three long parts loop for as long as a fight lasts; the short pieces play once as a fight ends.' }]
+    .concat(fams.slice().sort((a, b) => (order.indexOf(a.name) + 1 || 99) - (order.indexOf(b.name) + 1 || 99)));
+  const label = (n) => n === 'Kore (the Jester)' ? 'Kore' : n === 'Io (the Herbal Witch)' ? 'Io' : n === 'The fire that will not end' ? 'Final boss' : n;
+  // the three looping parts: what each button does
+  const SONGS = {
+    battle: { nm: 'Battle music', go() { SND.stopMusic(0.05); setTimeout(() => SND.startMusic('battle'), 90); } },
+    boss: { nm: 'Boss music', go() { SND.stopMusic(0.05); setTimeout(() => SND.startMusic('boss'), 90); } },
+    lift: { nm: 'Trance lift', go() { if (!SND.musicOn) SND.startMusic('battle'); SND.lift(16); } },
+  };
+  const S = { tab: 0, played: 0, started: false };
+  function flash(el) { el.classList.add('play'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('play'), 600); }
+  function play(name, args, el) {
+    if (!S.started) return;
+    if (SND.catalog.find((c) => c.name === name && c.family === SHORT)) SND.stopMusic(0.3);   // an ending plays alone
+    SND.sfx[name](...(args || [])); S.played++; if (el) flash(el);
+  }
+  function stopLook() { const b = $('stop'); b.classList.toggle('live', !!SND.musicOn); b.textContent = SND.musicOn ? 'Stop music' : 'Music off'; }
+  function card(nm, what, cls) {
+    const b = document.createElement('div'); b.className = 'card' + (cls ? ' ' + cls : ''); b.setAttribute('role', 'button'); b.tabIndex = 0;
+    b.innerHTML = '<div class="nm"></div><div class="wt"></div>'; b.querySelector('.nm').textContent = nm; b.querySelector('.wt').textContent = what;
+    return b;
+  }
+  function show(i) {
+    S.tab = i; const t = tabs[i];
+    [...$('tabs').children].forEach((b, j) => b.classList.toggle('on', j === i));
+    $('about').textContent = t.about; const L = $('list'); L.innerHTML = '';
+    if (t.name === 'Music') {
+      for (const p of SND.parts) {
+        const s = SONGS[p.name]; if (!s) continue;
+        const b = card(s.nm, p.what + ' (' + Math.round(p.seconds) + ' seconds, then it loops.)', 'song');
+        b.onclick = () => { if (!S.started) return; s.go(); S.played++; flash(b); setTimeout(stopLook, 150); };
+        L.appendChild(b);
+      }
+    }
+    const fam = t.name === 'Music' ? SHORT : t.name;
+    for (const c of SND.catalog.filter((x) => x.family === fam)) {
+      const b = card(words(c.name), c.what);
+      b.onclick = (e) => { if (e.target.classList.contains('take')) return; play(c.name, c.demo, b); setTimeout(stopLook, 150); };
+      if (c.takes) {
+        const row = document.createElement('div'); row.className = 'takes';
+        for (const [k, a] of Object.entries(c.takes)) {
+          const x = document.createElement('button'); x.className = 'take'; x.textContent = k;
+          x.onclick = () => play(c.name, a, x); row.appendChild(x);
+        }
+        b.appendChild(row);
+      }
+      L.appendChild(b);
+    }
+    window.scrollTo(0, 0);
+  }
+  tabs.forEach((t, i) => { const b = document.createElement('button'); b.className = 'tab'; b.textContent = label(t.name); b.onclick = () => show(i); $('tabs').appendChild(b); });
+  $('stop').onclick = () => { SND.stopMusic(0.4); setTimeout(stopLook, 50); };
+  $('gate').onclick = () => { SND.init(); S.started = true; $('gate').classList.add('gone'); };
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { SND.stopMusic(0.2); stopLook(); } });
+  show(0);
+  // for the tests: everything the board can play, and what went wrong while playing it
+  window.__board = { SND, S, tabs, show, play, get count() { return SND.catalog.length; }, get missing() { return [...SND.missing]; }, get errors() { return SND.errors.slice(); } };
+})();
+</script>
+</body>
+</html>
