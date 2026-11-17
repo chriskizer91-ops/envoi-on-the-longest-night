@@ -12,7 +12,8 @@
 //      The same list feeds the Sound Board page (moon-faire-witches/sound/sound-board.html), so the page can never
 //      disagree with this file
 //   4. the music: three looping parts (battle, boss, lift) and three short pieces (victory, fanfare, defeat), written as
-//      notes in this file and played by a scheduler a little ahead of the audio clock
+//      notes in this file and played by a scheduler a little ahead of the audio clock. Since November 17 there are also
+//      three darker looping parts for Chris to choose from (ashenReel, ethereal, ominous): startMusic('ashenReel')
 // Extra, beyond Envoi's face (all optional): startMusic('battle' | 'boss'), setMood(name), lift(seconds or a function),
 // catalog (every sound: name, family, what, beats, demo), parts (the music's parts), missing and errors (for tests),
 // score(part, seconds) (for an offline render), and makeBattleSound({ context }) to play into a context of your own.
@@ -879,7 +880,7 @@ function makeBattleSound(opts) {
     const s = (pan, wet) => chan({ pan, wet, music });
     return { lead: s(0, 0.2), bell: s(0.3, 0.3), harp: s(-0.4, 0.18), chord: s(0.35, 0.12), pad: s(0, 0.28), bass: s(0, 0), drum: s(0, 0.05), perc: s(-0.25, 0.1), cym: s(0.2, 0.25) };
   }
-  function initMusic() { M = band(true); P = band(false); }
+  function initMusic() { M = band(true); P = band(false); darkBand(M); }
   // ---- the players ----
   // the tune: 'reed' (a fiddle-like buzz), 'flute' (soft and round) or 'brass' (broad and dark). Long notes get a little vibrato
   const LEADS = { reed: ['sawtooth', 'square', 1.003, 0.35, 2300, 0.016], flute: ['triangle', 'sine', 2, 0.3, 2600, 0.05], brass: ['sawtooth', 'sawtooth', 1.005, 0.8, 1700, 0.035] };
@@ -924,6 +925,66 @@ function makeBattleSound(opts) {
   const timp = (K, t, f, v) => { tone(K.drum, 'sine', f * 1.25, t, 0.7, v, { to: f, glide: 0.06, att: 0.003 }); tone(K.drum, 'triangle', f * 2, t, 0.35, v * 0.35, { att: 0.003 }); noise(K.drum, t, 0.04, v * 0.5, { type: 'lowpass', f: 700, att: 0.002 }); };
   const crash = (K, t, v) => { noise(K.cym, t, 1.5, v, { type: 'highpass', f: 5000, att: 0.002 }); noise(K.cym, t, 0.9, v * 0.6, { f: 9000, q: 1.5, att: 0.002 }); };
   const roll = (K, t, dur, v) => { const n = Math.round(dur / 0.055); for (let i = 0; i < n; i++) snare(K, t + i * dur / n, v * (0.3 + 0.7 * i / n)); };
+  // ---- the dark parts' players (November 17, 2026; Chris: "a little darker, a little more ominous, ethereal") ----
+  // the far room: whatever plays into it comes back dulled and a long way off, as echoes that fade into the reverb.
+  // K.far is its door and K.echo its echo (a part sets the echo's time to its own beat at the top of each round)
+  function farRoom() {
+    const inp = gain(1), lp = ctx.createBiquadFilter(), dl = ctx.createDelay(2), fb = gain(0.5), dry = gain(0.3), wet = gain(0.9);
+    lp.type = 'lowpass'; lp.frequency.value = 3000; lp.Q.value = 0.5; dl.delayTime.value = 0.5;
+    inp.connect(lp); lp.connect(dry); dry.connect(musBus); lp.connect(wet); wet.connect(musWet); lp.connect(dl); dl.connect(fb); fb.connect(lp);
+    return { inp, dl };
+  }
+  // the dark parts' own seats in the band: the far room, the music box, the voices, the low strings and the tolling bell
+  // (the music box, the voices and the bell each send a share of themselves into the far room as well)
+  function darkBand(K) {
+    const far = farRoom(), send = (ch, v) => { const g = gain(v); ch.connect(g); g.connect(far.inp); return ch; };
+    K.far = far.inp; K.echo = far.dl;
+    K.box = ctx.createBiquadFilter(); K.box.type = 'lowpass'; K.box.frequency.value = 4000; K.box.Q.value = 0.5;      // the music box, its edge taken off
+    K.box.connect(send(chan({ pan: -0.1, wet: 0.3, music: true }), 0.3));
+    K.choir = send(chan({ pan: 0.1, wet: 0.4, music: true }), 0.5);
+    K.str = chan({ pan: 0.15, wet: 0.16, music: true });
+    K.toll = send(chan({ pan: -0.2, wet: 0.45, music: true }), 0.4);
+  }
+  // a music box that has slipped out of tune: each tooth of its comb sounds twice, a hair apart, so the note beats
+  // against itself, and the whole box wanders a little sharp and flat as an old mechanism does
+  function iBox(K, f, t, vel, len) {
+    const d = K.box, wob = 13 * Math.sin(t * 1.9) + 8 * Math.sin(t * 5.3 + 1), L = len || 1.5;
+    tone(d, 'sine', f, t, L, vel, { att: 0.003, det: wob }); tone(d, 'sine', f, t + 0.011, L * 0.8, vel * 0.5, { att: 0.003, det: wob - 19 });
+    tone(d, 'sine', f * 2, t, L * 0.3, vel * 0.22, { att: 0.002, det: wob + 7 }); fm(d, f, 3, 1.2, t, 0.25, vel * 0.35, { idx1: 0.02, idxT: 0.1 });      // the pluck of the tooth: bright for a moment
+    noise(d, t, 0.012, vel * 0.12, { type: 'lowpass', f: 2200, att: 0.001 });
+  }
+  // a wordless voice, a few singers at once: the tool box's `voice` (a buzz through a vowel's mouth shape) twice, a
+  // hair apart, each with its own slow waver. Low notes sing "oo", middle ones "oh", high ones "ah"
+  function iChoir(K, f, t, dur, vel, o) {
+    o = o || {}; const q = { form: o.form || (f < 300 ? OO : f < 560 ? OH : AH), swell: true, att: o.att || 0.5, rel: o.rel || 0.7, vib: 4.6, vibD: f * 0.006 };
+    voice(K.choir, f * 0.997, t, dur, vel, q); voice(K.choir, f * 1.004, t + 0.03, dur, vel * 0.8, Object.assign({}, q, { vib: 5.3 }));
+  }
+  // a slow held note or cluster of notes, dull, and soft at both ends: the drones, the slow chords and the swells.
+  // o: att and rel (seconds in and out), cut (how dull, in Hz), cut1 (it opens to this as it goes), type, to (the seat)
+  function iDrone(K, fs, t, dur, vel, o) {
+    o = o || {}; const fl = ctx.createBiquadFilter(), g = ctx.createGain(); fl.type = 'lowpass'; fl.Q.value = 0.7;
+    fl.frequency.setValueAtTime(o.cut || 600, t); if (o.cut1) fl.frequency.exponentialRampToValueAtTime(o.cut1, t + dur * 0.7);
+    swell(g.gain, t, o.att || dur * 0.4, vel, dur, o.rel || dur * 0.4); fl.connect(g); g.connect(o.to || K.pad);
+    fs.forEach((f, i) => [-7, 6].forEach((det) => { const os = ctx.createOscillator(); os.type = o.type || 'sawtooth'; os.frequency.value = f; os.detune.value = det + (i % 2 ? 3 : -2); os.connect(fl); os.start(t); os.stop(t + dur + 0.05); }));
+  }
+  // low strings, bowed: two buzzes a hair apart and one an octave up, dulled, with the bow's soft start. Short notes
+  // pulse; long ones waver. o: att (the bow's start, seconds), hold (how much is left at the note's end, 0 to 1)
+  function iStr(K, f, t, dur, vel, o) {
+    o = o || {}; const fl = ctx.createBiquadFilter(), g = ctx.createGain(), g2 = gain(0.35), att = o.att || 0.025, t1 = t + Math.max(att + 0.01, dur);
+    fl.type = 'lowpass'; fl.Q.value = 0.8; fl.frequency.setValueAtTime(Math.min(1800, f * 14), t); fl.frequency.exponentialRampToValueAtTime(Math.min(1200, f * 7), t1);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vel, t + att); g.gain.linearRampToValueAtTime(vel * (o.hold || 0.6), t1); g.gain.setTargetAtTime(0, t1, 0.05);
+    [[f, -6, fl], [f, 6, fl], [f * 2, 3, g2]].forEach(([q, det, to]) => { const os = ctx.createOscillator(); os.type = 'sawtooth'; os.frequency.value = q; os.detune.value = det; if (dur > 0.6) vibrato(os.frequency, t + 0.2, dur, 5.2, q * 0.005); os.connect(to); os.start(t); os.stop(t1 + 0.4); });
+    g2.connect(fl); fl.connect(g); g.connect(K.str);
+  }
+  // a glass bell a long way off (the tool box's struck glass, played into the far room)
+  const iGlass = (K, f, t, vel, len) => { partials(K.far, f, t, RING.glass, vel, len || 1.6); tone(K.far, 'sine', f / 2, t, 0.5, vel * 0.3, { att: 0.004 }); };
+  // a soft deep drum: the tool box's `thump`, with a knock of the skin on top so a phone speaker still finds it
+  const lowDrum = (K, t, f0, f1, dur, v) => { thump(K.drum, t, f0, f1, dur, v); tone(K.drum, 'triangle', f0 * 3.2, t, dur * 0.4, v * 0.45, { to: f1 * 3.6, att: 0.004 }); noise(K.drum, t, 0.035, v * 0.35, { type: 'lowpass', f: 700, att: 0.002 }); };
+  // a heartbeat: two of them, the second softer
+  const heart = (K, t, v) => { lowDrum(K, t, 105, 52, 0.24, v); lowDrum(K, t + 0.3, 92, 48, 0.2, v * 0.6); };
+  // for drones and slow chords: how many bars the chord that starts at this bar is held (0 when this bar only carries
+  // the bar before's chord on). The first bar always starts one, so a round can begin anywhere
+  const heldFor = (S, bar) => { if (bar && S.chords[bar - 1].name === S.chords[bar].name) return 0; let n = 1; while (bar + n < S.bars && S.chords[bar + n].name === S.chords[bar].name) n++; return n; };
   // ---- the written music ----
   // a chord by name ('Em', 'B', 'A7', 'C#m'): its bass note (E2 up to D#3) and its three notes round middle C
   function chordOf(name) {
@@ -1039,7 +1100,118 @@ function makeBattleSound(opts) {
       if ((bar & 7) === 7 && s >= 3) snare(K, t, 0.2 + (s - 3) * 0.08);
     },
   });
-  const parts = ['battle', 'boss', 'lift'].map((n) => ({ name: n, what: SONGS[n].what, seconds: SONGS[n].seconds, bars: SONGS[n].bars }));
+  // ---- three darker parts, for Chris to choose from (November 17, 2026). He heard the battle reel and said: "it sounds
+  // like a carnival. It's very happy and upbeat. I'm thinking a little darker, a little more ominous, ethereal."
+  // Nothing above plays them yet: startMusic('ashenReel'), startMusic('ethereal') or startMusic('ominous') does.
+  //   ashenReel: the battle reel itself after the fair has gone to ash. The same tune at three quarters of the speed
+  //              (104 beats a minute), its F sharps flattened to F (the dark half step just above the home note), on an
+  //              out-of-tune music box, over low drones and a heartbeat. 48 bars, about 55 seconds: A (the box alone),
+  //              B (the box an octave down, voices under it), A again (low strings shadow the tune, a bell tolls)
+  //   ethereal:  floating and ghostly, in E minor, 4/4, 76 beats a minute, 16 bars (about 51 seconds): slow chords, a
+  //              wordless voice carrying a slow tune, glass bells a long way off, a soft pulse and a soft deep drum
+  //   ominous:   heavy and threatening, in E minor with its sourest chords (F and B flat), 4/4, 88 beats a minute, 20
+  //              bars (about 55 seconds): low strings pulsing, a tolling bell, kettle drums, sour swells. It builds in
+  //              five steps of four bars, and its last two bars draw back so the round can begin again without a jolt
+  song('ashenReel', {
+    what: 'The battle reel after the fair has gone to ash: the same tune, slower and in a darker key, on a music box that has slipped out of tune, over low drones and a heartbeat.', bpm: 104, beat: 3, spb: 6, per: 6,
+    chords: 'Em Em Dm Dm C C F B  Em Em Gm Gm Am Am B B   Em Em Dm Dm Am Am Em Em  C C Gm Gm Am Am B B   Em Em Dm Dm C C F B  Em Em Gm Gm Am Am B B',
+    tune: [
+      // A: the reel, gone dark
+      'e5 - b4 e5 - g5', 'f5 - e5 b4 - -', 'd5 - a4 d5 - f5', 'e5 - d5 a4 - -', 'c5 - g4 c5 - e5', 'd5 - c5 g4 - -', 'a4 - c5 f5 - a5', 'g5 - f#5 d#5 - b4',
+      'e5 - b4 e5 - g5', 'b5 - a5 g5 f5 e5', 'd5 - g5 bb5 - d6', 'bb5 - a5 g5 - d5', 'c5 - e5 a5 - c6', 'b5 - a5 e5 - c5', 'b4 d#5 f#5 b5 - a5', 'f#5 - d#5 b4 - -',
+      // B: the calm in it
+      'b5 - - d6 - -', 'b5 - - g5 - a5', 'a5 - - f5 - -', 'a5 - - f5 - d5', 'e5 - - a5 - -', 'c6 - - b5 - a5', 'g5 - - e5 - -', 'b4 - - e5 - f5',
+      'g5 - - c6 - -', 'e6 - - d6 - c6', 'bb5 - - d6 - -', 'g5 - - bb5 - a5', 'a5 - c6 e6 - c6', 'a5 - - e5 - a5', 'b5 - - f#5 - b5', 'b5 a5 g5 f#5 e5 d#5',
+      // A again, with the low strings under it
+      'e5 - b4 e5 - g5', 'f5 - e5 b4 - -', 'd5 - a4 d5 - f5', 'e5 - d5 a4 - -', 'c5 - g4 c5 - e5', 'd5 - c5 g4 - -', 'a4 - c5 f5 - a5', 'g5 - f#5 d#5 - b4',
+      'e5 - b4 e5 - g5', 'b5 - a5 g5 f5 e5', 'd5 - g5 bb5 - d6', 'bb5 - a5 g5 - d5', 'c5 - e5 a5 - c6', 'b5 - a5 e5 - c5', 'b4 d#5 f#5 b5 - a5', 'f#5 - d#5 b4 - -',
+    ],
+    lead(K, f, t, dur, bar) {
+      const sec = bar >> 4;
+      if (sec === 1) { iBox(K, f / 2, t, 0.34, 2); if (dur > this.sd * 2.5) iChoir(K, f / 2, t, dur + 0.4, 0.14); } else iBox(K, f, t, 0.3);
+      if (sec === 2) iStr(K, f / 4, t, dur, 0.11, { att: 0.06, hold: 0.85 });
+    },
+    play(K, bar, s, t, ch) {
+      const sec = bar >> 4, sd = this.sd, n = heldFor(this, bar);
+      if (bar === 0 && s === 0) K.echo.delayTime.setValueAtTime(sd * 3, t);
+      if ((bar & 15) === 0 && s === 0) bell(K.toll, 246.94, t, sec === 2 ? 0.4 : 0.3, { set: 'toll', len: 5, strike: 0 });       // a far bell at the top of each section
+      if (s === 0 && n) iDrone(K, [ch.bass, ch.bass * 1.5, ch.bass * 2], t, n * 6 * sd + 0.7, 0.1, { att: 0.7, rel: 0.7, cut: 460 });   // the drone, for as long as the chord lasts
+      if (s === 0) heart(K, t, sec === 2 ? 0.62 : 0.55);                                // the heartbeat, once a bar
+      if (sec === 1) {                                                                 // B: a slow harp under the box
+        if (s % 2 === 0) iHarp(K, ch.notes[s / 2], t, 0.13, 0.8);
+      } else {                                                                         // A: where the reel's chords used to stab, two soft plucks
+        if (s === 2 || s === 5) iHarp(K, ch.notes[s === 2 ? 1 : 2], t, 0.18, 0.6);
+        if (sec === 2) {                                                               // the last time: a slow bowed bass, and a kettle drum every four bars
+          if (s === 0) iStr(K, ch.bass, t, sd * 2.6, 0.2); if (s === 3) iStr(K, ch.bass * 1.5, t, sd * 2, 0.13);
+          if (s === 0 && (bar & 3) === 0) timp(K, t, ch.bass, 0.3);
+        }
+      }
+    },
+  });
+  song('ethereal', {
+    what: 'Floating and ghostly: slow chords, a wordless voice, glass bells a long way off in a big echoing room, and a soft pulse underneath.', bpm: 76, beat: 4, spb: 16, per: 8,
+    chords: 'Em Em C C  Am Am Em Em  G G Bm Bm  C C Bm Bm',
+    tune: [
+      'e5 - - - - - d5 -', 'b4 - - - - - - -', 'c5 - - - - - e5 -', 'g5 - - - - - - .', 'a5 - - - - - g5 -', 'e5 - - - - - c5 -', 'b4 - - - - - - -', '- - - - . . . .',
+      'd5 - - - - - g5 -', 'b5 - - - - - a5 -', 'f#5 - - - - - d5 -', 'f#5 - - - - - - .', 'g5 - - - - - e5 -', 'c5 - - - e5 - - -', 'd5 - - - - - b4 -', 'f#4 - - - - - . .',
+    ],
+    lead(K, f, t, dur) { iChoir(K, f, t, dur + 0.5, 0.2); iChoir(K, f / 2, t + 0.05, dur + 0.5, 0.1, { form: OO }); },      // the voice, and a lower one under her
+    play(K, bar, s, t, ch) {
+      const sd = this.sd, n = heldFor(this, bar), N = ch.notes;
+      if (bar === 0 && s === 0) K.echo.delayTime.setValueAtTime(sd * 3, t);
+      if (s === 0 && n) {                                                              // the slow chord, each one fading into the next, and a breath of air above it
+        const len = n * 16 * sd;
+        iDrone(K, [ch.bass, N[0], N[2], N[1] * 2], t, len + 1.5, 0.07, { att: 1.5, rel: 1.5, cut: 800 });
+        iDrone(K, [N[0] * 2, N[2] * 2, N[0] * 2.245], t, len + 1.5, 0.03, { att: 2, rel: 1.5, cut: 2000, type: 'sine', to: K.far });
+      }
+      if (s % 2 === 0) {                                                               // the pulse: a soft low note on every half beat, leaning on the first, with a muted pluck so a phone carries it
+        const a = [1, 0.3, 0.45, 0.75, 0.3, 0.55, 0.4, 0.3][s / 2];
+        tone(K.bass, 'triangle', ch.bass * 2, t, sd * 1.9, 0.24 * a, { att: 0.015 }); tone(K.bass, 'sine', ch.bass, t, sd * 1.9, 0.2 * a, { att: 0.015 }); iHarp(K, ch.bass * 4, t, 0.24 * a, 0.35);
+      }
+      if (s === 0 || s === 10 || (bar >= 8 && s === 6)) lowDrum(K, t, 96, 58, 0.3, s ? 0.28 : 0.42);       // a soft deep drum
+      if (s % 4 === 2) noise(K.perc, t, 0.06, 0.05, { f: 2300, q: 1.5, att: 0.004 });                       // a hush of a shaker
+      // the glass bells, far off: a few notes of the chord each bar, and a falling answer where the voice rests (bar 8)
+      const g = (bar === 7 ? [[8, 0, 4], [10, 2, 2], [12, 1, 2], [14, 0, 2]] : (bar & 1) ? [[4, 2, 2], [7, 0, 4], [13, 1, 2]] : [[2, 0, 2], [5, 2, 2], [8, 1, 4], [14, 2, 2]]).find((x) => x[0] === s);
+      if (g) { let f = N[g[1]] * g[2]; if (f > 1500) f /= 2; iGlass(K, f, t, 0.3); }
+    },
+  });
+  song('ominous', {
+    what: 'Heavy and threatening: low strings pulsing like something coming closer, a tolling bell, kettle drums and sour swells. It builds from almost nothing to its height, then draws back to begin again.', bpm: 88, beat: 4, spb: 16, per: 8,
+    chords: 'Em Em Em Em  Em Em F F  Em Em Bb Bb  Am Am F B  Em F Em Em',
+    tune: [
+      '. . . . . . . .', '. . . . . . . .', '. . . . . . . .', '. . . . . . . .',                                                     // 1: the strings alone
+      'e4 - - - - - f4 -', 'e4 - - - - - - -', 'a4 - - - - - g4 f4', 'f4 - - - - - . .',                                             // 2: the tune comes in, low
+      'e4 - - - g4 - b4 -', 'c5 - - - b4 - - -', 'bb4 - - - d5 - c5 -', 'bb4 - - - - - - .',                                         // 3: it climbs
+      'e5 - - - c5 - a4 -', 'c5 - - - e5 - - -', 'f5 - - - e5 - c5 -', 'd#5 - - - - - f#5 -',                                        // 4: higher, harder
+      'g5 - - - e5 - b4 -', 'c5 - - - a4 - f4 -', 'e4 - - - - - - -', '- - - - . . . .',                                             // 5: the height, then it draws back
+    ],
+    // how hard the band plays at each bar: the build, and the two bars that draw back
+    power(bar) { return bar >= 18 ? (bar === 18 ? 0.8 : 0.6) : [0.4, 0.6, 0.8, 1, 1.1][bar >> 2]; },
+    lead(K, f, t, dur, bar) {                                                          // the tune: low brass, low strings under it, and an octave on top near the height
+      const p = this.power(bar);
+      iLead(K, f / 2, t, dur, 0.24 * p, 'brass'); iStr(K, f / 4, t, dur, 0.14 * p, { att: 0.08, hold: 0.85 }); if (bar >= 12 && bar < 18) iLead(K, f, t, dur, 0.09 * p, 'brass');
+    },
+    play(K, bar, s, t, ch) {
+      const sec = bar >> 2, q = bar & 3, sd = this.sd, p = this.power(bar), n = heldFor(this, bar), ebb = bar >= 18;
+      if (bar === 0 && s === 0) K.echo.delayTime.setValueAtTime(sd * 4, t);
+      if (s === 0 && (q === 0 || (sec >= 3 && q === 2))) bell(K.toll, 246.94, t, 0.5, { set: 'toll', len: 6, strike: 0 });   // the bell: every four bars, every two near the height
+      if (s === 0 && n) iDrone(K, [ch.bass / 2, ch.bass, ch.bass * 1.5], t, n * 16 * sd + 0.8, 0.07 * (0.6 + 0.4 * p), { att: 0.8, rel: 0.8, cut: 420 });
+      if (s % 2 === 0) {                                                               // the low strings, pulsing; once the tune is in, the seventh pulse of a bar leans up a half step
+        const i = s / 2, f = ch.bass * (sec >= 1 && i === 6 ? 1.0595 : 1), a = (i === 0 ? 1 : i === 4 ? 0.8 : 0.55) * p;
+        iStr(K, f, t, sd * 1.5, 0.36 * a); iStr(K, f * 2, t, sd * 1.3, (sec >= 2 ? 0.24 : 0.16) * a);
+      } else if (sec >= 3 && !ebb) iStr(K, ch.bass * 2, t, sd * 0.8, 0.07 * p);         // near the height they play twice as fast
+      if (sec >= 1 && s === 0) timp(K, t, ch.bass, 0.4 * p);                           // kettle drums: the top of each bar, two more into each new section, a roll into the height
+      if (sec >= 1 && q === 3 && (s === 12 || s === 14)) timp(K, t, ch.bass * (s === 12 ? 1 : 1.5), 0.3 * p);
+      if (bar === 15 && s >= 8 && s < 12) timp(K, t, ch.bass, 0.14 + (s - 8) * 0.04);
+      if (sec >= 2 && (s === 8 || (sec >= 3 && !ebb && (s === 6 || s === 14)))) lowDrum(K, t, 120, 50, 0.3, 0.5 * p);     // a heavy low drum
+      if (q === 2 && s === 0 && sec < 4) {                                             // a sour swell over the last two bars of each section: the chord's root, the note a half step above it and the note that fits least
+        const r = ch.notes[0];
+        iDrone(K, [r, r * 1.0595, r * 1.4142].concat(sec >= 2 ? [r * 2.119] : []), t, 32 * sd + 0.5, 0.045 * p, { att: 32 * sd, rel: 0.5, cut: 450, cut1: 1500 });
+      }
+      if (sec >= 3 && !ebb && s === 0 && !(bar & 1)) iDrone(K, [659.26, 698.46], t, 32 * sd, 0.022 * p, { att: 1.2, rel: 1.2, cut: 1700, to: trem(K.pad, 9, 0.7, t, 32 * sd) });   // near the height: high strings shivering on two notes a half step apart
+    },
+  });
+  const parts = ['battle', 'boss', 'lift', 'ashenReel', 'ethereal', 'ominous'].map((n) => ({ name: n, what: SONGS[n].what, seconds: SONGS[n].seconds, bars: SONGS[n].bars }));
   function playStep(K, S, bar, s, t) {
     S.play(K, bar, s, t, S.chords[bar]);
     if (s % S.unit === 0) { const ev = S.mel.get(bar * S.per + s / S.unit); if (ev) S.lead(K, ev.f, t, ev.len * S.unit * S.sd, bar); }
