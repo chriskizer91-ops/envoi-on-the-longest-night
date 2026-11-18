@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Envoi: the map's trees at three levels of detail</title>
+<style>
+html,body{margin:0;background:#cfd6dc;font:14px/1.3 system-ui,sans-serif;color:#16202a}
+#wrap{position:relative;width:1600px;height:900px}
+canvas{position:absolute;inset:0}
+.lab{position:absolute;transform:translateX(-50%);text-align:center;white-space:nowrap}
+.lab b{display:block;font-size:15px}
+.row{position:absolute;left:8px;font-weight:700;font-size:16px;background:rgba(255,255,255,.7);padding:3px 8px;border-radius:8px}
+</style>
+</head>
+<body>
+<!-- A check page: Chris's eight trees (art/trees/, packed in map/tree-models.js) each at its three levels: detailed (his),
+     middle (made from it by tools/make-tree-mids.mjs, about a quarter of the triangles) and light (his). By day, untinted,
+     all at one scale. Build: node tools/build.mjs --offline moon-faire-witches/world-map/tools/tree-lineup.html -->
+<div id="wrap"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../map/tree-models.js"></script>
+<script>
+(function () {
+  const W = 1600, H = 900, wrap = document.getElementById('wrap'), T = window.MAP_TREES, ids = Object.keys(T), LODS = [['near', 'Detailed (yours)'], ['mid', 'Middle (new, about a quarter)'], ['far', 'Light (yours)']];
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setSize(W, H); renderer.setClearColor(0xcfd6dc); wrap.appendChild(renderer.domElement);
+  const scene = new THREE.Scene(), colW = 22, rowH = 21, cam = new THREE.OrthographicCamera(0, ids.length * colW, 3 * rowH, 0, -200, 200);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x556655, 1.0)); const sun = new THREE.DirectionalLight(0xffffff, 0.9); sun.position.set(-1, 2, 3); scene.add(sun);
+  const mat = new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide });
+  const unpack = (m) => {
+    const raw = atob(m.data), b = new Uint8Array(raw.length); for (let i = 0; i < raw.length; i++) b[i] = raw.charCodeAt(i);
+    const n = m.corners, i16 = new Int16Array(b.buffer, 0, n * 3), i8 = new Int8Array(b.buffer, n * 6, n * 4), u8 = new Uint8Array(b.buffer, n * 10, n * 4), pos = new Float32Array(n * 3), nrm = new Float32Array(n * 3), col = new Float32Array(n * 3);
+    for (let i = 0; i < n * 3; i++) pos[i] = i16[i] * m.reach / 32767;
+    for (let i = 0; i < n; i++) for (let c = 0; c < 3; c++) { nrm[i * 3 + c] = i8[i * 4 + c] / 127; col[i * 3 + c] = Math.pow(u8[i * 4 + c] / 255, 2.2) * 2.6; }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(nrm, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    g.setIndex(new THREE.BufferAttribute(new Uint16Array(b.buffer, n * 14, m.triangles * 3), 1)); return g;
+  };
+  ids.forEach((id, c) => LODS.forEach(([lod, label], r) => {
+    const mesh = new THREE.Mesh(unpack(T[id][lod]), mat); mesh.position.set((c + 0.5) * colW, (2 - r) * rowH + 2.2, 0); mesh.rotation.y = 0.6; scene.add(mesh);
+    const d = document.createElement('div'); d.className = 'lab'; d.style.left = ((c + 0.5) / ids.length * W) + 'px'; d.style.top = ((r + 1) / 3 * H - 22) + 'px';
+    d.textContent = T[id][lod].triangles.toLocaleString('en-US') + ' triangles'; wrap.appendChild(d);
+    if (r === 0) { const n = document.createElement('div'); n.className = 'lab'; n.style.left = d.style.left; n.style.top = '10px'; n.innerHTML = '<b>' + T[id].name + '</b>'; wrap.appendChild(n); }
+  }));
+  LODS.forEach(([, label], r) => { const d = document.createElement('div'); d.className = 'row'; d.style.top = (r / 3 * H + (r ? 8 : 34)) + 'px'; d.textContent = label; wrap.appendChild(d); });
+  renderer.render(scene, cam); window.__ready = true;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Envoi: the map of Aethermoor (where Io is)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="./map/map.css">
+</head>
+<body>
+<!-- Step 1 of the 3D map (the travel-and-3d-map note): Aethermoor as a 3D model of the land, read off the atlas (no
+     painting on it), with Io's pin where she is. In the game the zone pages open it with her place and her spot; here
+     "Move Io" puts her anywhere, to try. -->
+<div id="map"></div>
+<div id="chip" class="chip" hidden><b id="chip-place"></b><span id="chip-zone"></span></div>
+<button id="find" class="round" type="button" aria-label="Find Io" hidden>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.2A9 9 0 1 0 20.8 15 7.2 7.2 0 0 1 15.5 3.2z" fill="#f4f0ff"/></svg>
+</button>
+<button id="move" class="pill" type="button" hidden>Move Io</button>
+<div id="sheet" class="sheet" hidden>
+  <div class="sheet-card">
+    <div class="sheet-head"><b>Put Io in…</b><button id="sheet-x" class="x" type="button" aria-label="Close">✕</button></div>
+    <div id="sheet-list" class="sheet-list"></div>
+    <p class="sheet-detail">Detail: <button id="d-phone" class="place" type="button">Phone</button> <button id="d-laptop" class="place" type="button">Laptop</button></p>
+    <p id="sheet-nums" class="sheet-nums"></p>
+  </div>
+</div>
+<div id="hint" class="hint">Drag to turn the land · two fingers to zoom and slide</div>
+<div id="load" class="load"><p id="loadmsg">Unrolling the map of Aethermoor…</p></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../../src/game/world.js"></script>
+<script src="./map/places.js"></script>
+<script src="./map/art.js"></script>
+<script src="./map/moods.js"></script>
+<script src="./map/tree-models.js"></script>
+<script src="./map/buildings.js"></script>
+<script src="./map/place-models.js"></script>
+<script src="./map/map3d.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id), P = window.MapPlaces;
+  const test = /[?&]test/.test(location.search);
+  // where Io starts: the jetty at Wickhollow, or ?at=<place> to open on another
+  const at0 = (location.search.match(/[?&]at=([a-z-]+)/) || [])[1];
+  let place = P.PLACES[at0] ? at0 : 'wickhollow';
+  // a zone opens once the party gets there: here, every zone up to Io's is open and the rest lie under mist
+  const openUpTo = (z) => [1, 2, 3, 4].filter((k) => k <= z);
+  // how much to draw: a laptop's level on a big screen with a mouse, a phone's otherwise; ?detail=phone or laptop sets it
+  const asked = (location.search.match(/[?&]detail=(phone|laptop)/) || [])[1];
+  const big = Math.min(screen.width, screen.height) >= 700 && window.matchMedia('(pointer: fine)').matches;
+  const detail = asked || (big ? 'laptop' : 'phone');
+  const map = WorldMap.create($('map'), { art: window.MAP_ART, detail, open: openUpTo(P.PLACES[place].zone), io: { place } });
+  function showChip() { const p = P.PLACES[place]; $('chip-place').textContent = p.name; $('chip-zone').textContent = P.ZONES[p.zone].name; }
+  map.ready.then(async () => {
+    $('load').classList.add('gone'); setTimeout(() => { $('load').hidden = true; }, 700);
+    showChip(); $('chip').hidden = false; $('find').hidden = false; $('move').hidden = false;
+    if (test) { window.__map = map; window.__ready = true; return; }
+    // the whole of Aethermoor first, then down to Io
+    await new Promise((r) => setTimeout(r, 1300)); // a moment on the whole of Aethermoor
+    await map.findIo();
+    setTimeout(() => $('hint').classList.add('gone'), 3500);
+  }).catch((e) => { $('loadmsg').textContent = 'Something went wrong: ' + e.message; });
+  map.onTouch = () => $('hint').classList.add('gone');
+  $('find').addEventListener('click', () => map.findIo());
+  // the list of places, by zone
+  const list = $('sheet-list');
+  for (const [z, Z] of Object.entries(P.ZONES)) {
+    const h = document.createElement('h3'); h.textContent = Z.name + ' · ' + Z.land; list.appendChild(h);
+    const row = document.createElement('div'); row.className = 'sheet-row'; list.appendChild(row);
+    for (const id of Z.places) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'place'; b.textContent = P.PLACES[id].name; b.dataset.id = id;
+      b.addEventListener('click', () => { place = id; $('sheet').hidden = true; map.setOpen(openUpTo(P.PLACES[id].zone)); map.setIo(id, null, true); showChip(); });
+      row.appendChild(b);
+    }
+  }
+  $('move').addEventListener('click', () => {
+    for (const b of list.querySelectorAll('.place')) b.classList.toggle('on', b.dataset.id === place);
+    const n = map.numbers(); $('sheet-nums').textContent = (n.fps ? n.fps + ' frames a second' : 'frame rate: measuring…') + ' · ' + Math.round(n.triangles / 1000) + ',000 triangles drawn · ' + n.trees.toLocaleString('en-US') + ' trees on the map';
+    $('sheet').hidden = false;
+  });
+  // the detail switch opens the page again at the other level
+  for (const d of ['phone', 'laptop']) { $('d-' + d).classList.toggle('on', d === detail); $('d-' + d).addEventListener('click', () => { if (d !== detail) location.search = '?detail=' + d + '&at=' + place; }); }
+  $('sheet-x').addEventListener('click', () => { $('sheet').hidden = true; });
+  $('sheet').addEventListener('click', (e) => { if (e.target === $('sheet')) $('sheet').hidden = true; });
+})();
+</script>
+</body>
+</html>
