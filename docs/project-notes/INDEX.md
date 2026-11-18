@@ -8,6 +8,11 @@ merged into one game (Coven of the Moon Faire) in a new repository. This folder 
 - **`artifacts/`**: the two pages that live as claude.ai artifacts, saved as HTML, with their links.
 - **`sessions/`**: notes other conversations wrote about their own work. Not written here, not changed here.
 
+> **Added on `main`, November 18.** This index was written on the branch `project-notes`. Since then everything was
+> brought together on `main` (see `MAIN-LINE.md`). Two things below read differently there: the star map page is now on
+> this branch too, in `moon-faire-witches/star-map/`, and `sessions/` now holds four notes (the hub's, the reskin's, the
+> 3D map's and the star map's).
+
 ## How the copies were made, and the one change
 
 The 13 documents were typed out from the project's text, because the project hands its documents over as text and not
