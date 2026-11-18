@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Envoi in 3D: The northeast peaks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="./zone.css">
+</head>
+<body>
+<!-- zone-4.html: made by world3d/tools/make-zones.mjs from game/zones.js (do not edit by hand). Its places: frozen-camp, frostmere-shore, frozen-pass, misthollow, moonwell -->
+<div id="world"><canvas id="cv"></canvas><div id="ring"><div id="dot"></div></div>
+  <button id="guide" aria-label="Show the painting from above"><svg viewBox="0 0 24 24" fill="none" stroke="#eee8ff" stroke-width="1.7" stroke-linejoin="round"><path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20z"/><path d="M9 4v13.5M15 6.5V20"/></svg></button>
+  <button id="again">Start again</button>
+  <div id="numbers"></div><div id="toast"></div>
+  <div id="card" class="card" role="dialog" aria-live="polite"><img id="cardpic" alt=""><div><b id="cardname"></b><p id="cardlook"></p></div></div>
+  <div id="magpie" class="card" role="dialog" aria-live="polite"><div><b>The Magpie</b><p>Flying comes next.</p></div></div></div>
+<div id="fade"><h1 id="fadename"></h1></div>
+<div id="load"><div><h1>The northeast peaks</h1><p id="loadmsg">Loading…</p></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../../witches/meshopt_simplifier.js"></script>
+<script src="../../witches/palette.js"></script>
+<script src="../../witches/io_tex.js"></script>
+<script src="../../build/io_plus.js"></script>
+<script src="../../witches/witch_levels.js"></script>
+<script src="../../src/moon-io.js"></script>
+<script src="../../src/flipbook.js"></script>
+<script src="../../../src/game/maps.js"></script>
+<script src="../../../envoi-final-draft/items/items.js"></script>
+<script src="../engine/core.js"></script>
+<script src="../engine/cutouts.js"></script>
+<script src="../engine/extras.js"></script>
+<script src="../engine/paint.js"></script>
+<script src="../engine/world.js"></script>
+<script src="../engine/walker.js"></script>
+<script src="./zones.js"></script>
+<script src="./zone-4-art.js"></script>
+<script src="../places/frozen-camp.js"></script>
+<script src="../places/frozen-camp-trees.js"></script>
+<script src="../places/frostmere-shore.js"></script>
+<script src="../places/frostmere-shore-trees.js"></script>
+<script src="../places/frozen-pass.js"></script>
+<script src="../places/frozen-pass-trees.js"></script>
+<script src="../places/misthollow.js"></script>
+<script src="../places/misthollow-trees.js"></script>
+<script src="../places/moonwell.js"></script>
+<script src="../places/moonwell-trees.js"></script>
+<script src="./zone.js"></script>
+<script>
+// zone 4: The northeast peaks (the 3D game, world3d/game/README.md)
+W3D.zone(4).catch((e) => { console.error(e); document.getElementById('loadmsg').textContent = 'Something went wrong: ' + e.message; });
+</script>
+</body>
+</html>

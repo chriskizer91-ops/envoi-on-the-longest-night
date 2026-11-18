@@ -1,0 +1,332 @@
+[
+ {
+  "name": "walkable",
+  "walkmap": true
+ },
+ {
+  "name": "top-3d",
+  "top": true
+ },
+ {
+  "name": "top-with-painting",
+  "guide": true
+ },
+ {
+  "name": "walk-1-start",
+  "io": [
+   782,
+   60,
+   0
+  ],
+  "cam": [
+   3.14,
+   null
+  ]
+ },
+ {
+  "name": "walk-2-down-the-lane",
+  "to": [
+   768,
+   230
+  ]
+ },
+ {
+  "name": "walk-3-the-west-corner",
+  "to": [
+   600,
+   200
+  ]
+ },
+ {
+  "name": "walk-4-back-to-the-lane",
+  "to": [
+   716,
+   226
+  ]
+ },
+ {
+  "name": "walk-5-the-waterfront",
+  "to": [
+   768,
+   372
+  ]
+ },
+ {
+  "name": "walk-6-down-the-steps",
+  "to": [
+   768,
+   480
+  ]
+ },
+ {
+  "name": "walk-7-along-the-pier",
+  "to": [
+   768,
+   650
+  ]
+ },
+ {
+  "name": "walk-8-the-pier-end",
+  "to": [
+   768,
+   772
+  ]
+ },
+ {
+  "name": "walk-9-back-up-the-steps",
+  "to": [
+   768,
+   372
+  ]
+ },
+ {
+  "name": "walk-10-quills-stall",
+  "to": [
+   1150,
+   390
+  ]
+ },
+ {
+  "name": "walk-11-the-waterfronts-east-end",
+  "to": [
+   1250,
+   388
+  ]
+ },
+ {
+  "name": "walk-12-round-the-net-rack",
+  "to": [
+   1306,
+   322
+  ]
+ },
+ {
+  "name": "walk-13-into-the-yard",
+  "to": [
+   1294,
+   262
+  ]
+ },
+ {
+  "name": "walk-14-the-yard-behind-the-stall",
+  "to": [
+   1092,
+   256
+  ]
+ },
+ {
+  "name": "walk-15-out-again",
+  "to": [
+   1300,
+   300
+  ]
+ },
+ {
+  "name": "walk-15b-past-the-net-rack",
+  "to": [
+   1306,
+   360
+  ]
+ },
+ {
+  "name": "walk-16-back-to-the-waterfront",
+  "to": [
+   1250,
+   388
+  ]
+ },
+ {
+  "name": "walk-17-west-along-the-waterfront",
+  "to": [
+   600,
+   372
+  ]
+ },
+ {
+  "name": "walk-18-the-tracks-end",
+  "to": [
+   436,
+   362
+  ]
+ },
+ {
+  "name": "walk-19-behind-the-willow",
+  "to": [
+   362,
+   366
+  ]
+ },
+ {
+  "name": "walk-20-round-the-trunk",
+  "to": [
+   318,
+   418
+  ]
+ },
+ {
+  "name": "walk-21-the-hollow-and-the-coin",
+  "to": [
+   262,
+   448
+  ]
+ },
+ {
+  "name": "overview-from-the-lake",
+  "io": [
+   768,
+   620,
+   3.14
+  ],
+  "cam": [
+   0,
+   0.75,
+   30
+  ]
+ },
+ {
+  "name": "pier-end-looking-back",
+  "io": [
+   768,
+   770,
+   3.14
+  ],
+  "cam": [
+   0,
+   null
+  ]
+ },
+ {
+  "name": "east-corner",
+  "io": [
+   924,
+   222,
+   1.57
+  ],
+  "cam": [
+   -1.57,
+   null
+  ]
+ },
+ {
+  "name": "east-corner-from-above",
+  "io": [
+   940,
+   250,
+   0
+  ],
+  "cam": [
+   0,
+   1.15,
+   16
+  ]
+ },
+ {
+  "name": "stall-from-above",
+  "io": [
+   1180,
+   300,
+   0
+  ],
+  "cam": [
+   0,
+   1.15,
+   18
+  ]
+ },
+ {
+  "name": "willow-from-above",
+  "io": [
+   330,
+   400,
+   0
+  ],
+  "cam": [
+   0,
+   1.1,
+   18
+  ]
+ },
+ {
+  "name": "stall-from-the-west",
+  "io": [
+   1060,
+   380,
+   1.57
+  ],
+  "cam": [
+   -1.57,
+   null
+  ]
+ },
+ {
+  "name": "willow-track-from-the-east",
+  "io": [
+   520,
+   362,
+   -1.57
+  ],
+  "cam": [
+   1.57,
+   null
+  ]
+ },
+ {
+  "name": "onto-the-plank-arm",
+  "io": [
+   840,
+   494,
+   1.57
+  ],
+  "cam": [
+   -1.57,
+   null
+  ]
+ },
+ {
+  "name": "along-the-arms-north-side",
+  "to": [
+   1076,
+   494
+  ]
+ },
+ {
+  "name": "down-the-arms-east-side",
+  "to": [
+   1076,
+   760
+  ]
+ },
+ {
+  "name": "back-along-its-south-side",
+  "to": [
+   900,
+   782
+  ]
+ },
+ {
+  "name": "the-mooring-square-from-above",
+  "io": [
+   1076,
+   640,
+   3.14
+  ],
+  "cam": [
+   0,
+   1.15,
+   22
+  ]
+ },
+ {
+  "name": "the-arm-from-the-pier",
+  "io": [
+   850,
+   640,
+   1.57
+  ],
+  "cam": [
+   -1.57,
+   0.5,
+   9
+  ]
+ }
+]
